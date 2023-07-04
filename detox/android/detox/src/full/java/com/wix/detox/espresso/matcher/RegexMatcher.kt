@@ -12,12 +12,6 @@ class RegexMatcher<T>(private val jsRegex: String) : TypeSafeMatcher<T>() {
     override fun describeTo(description: Description) {
         description.appendText("should match the pattern: $jsRegex")
     }
-
-    companion object {
-        fun <T> matchesRegex(jsRegex: String): RegexMatcher<T> {
-            return RegexMatcher(jsRegex)
-        }
-    }
 }
 
 // Returns whether the whole string matches the given `jsRegex`.

@@ -17,7 +17,7 @@ import org.hamcrest.CoreMatchers.`is`
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
 fun <T> getRelevantMatcher(value: T, isRegex: Boolean): Matcher<T> =
-    if (isRegex) RegexMatcher.matchesRegex(value.toString()) else `is`(value)
+    if (isRegex) RegexMatcher(value.toString()) else `is`(value)
 
 fun withAccessibilityLabel(text: String, isRegex: Boolean): Matcher<View> =
     WithAccessibilityLabelMatcher(getRelevantMatcher(text, isRegex))
