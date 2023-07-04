@@ -9,8 +9,8 @@ const tempfile = require('tempfile');
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
-const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const { isRegExp } = require('../utils/isRegExp');
+const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
