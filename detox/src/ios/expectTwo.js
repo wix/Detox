@@ -9,6 +9,7 @@ const tempfile = require('tempfile');
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
+const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
@@ -231,7 +232,7 @@ class Element {
 
   performAccessibilityAction(actionName) {
     if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
-    
+
     const traceDescription = actionDescription.performAccessibilityAction(actionName);
     return this.withAction('accessibilityAction', traceDescription, actionName);
   }
@@ -409,14 +410,14 @@ class Matcher {
   }
 
   label(label) {
-    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
-    this.predicate = { type: 'label', value: label };
+    if (typeof label !== 'string' && !isRegExp(label)) throw new Error('label should be a string or regex, but got ' + (label + (' (' + (typeof label + ')'))));
+    this.predicate = { type: 'label', value: label.toString(), isRegex: isRegExp(label) };
     return this;
   }
 
   id(id) {
-    if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
-    this.predicate = { type: 'id', value: id };
+    if (typeof id !== 'string' && !isRegExp(id)) throw new Error('id should be a string or regex, but got ' + (id + (' (' + (typeof id + ')'))));
+    this.predicate = { type: 'id', value: id.toString(), isRegex: isRegExp(id) };
     return this;
   }
 
@@ -439,8 +440,8 @@ class Matcher {
   }
 
   text(text) {
-    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    this.predicate = { type: 'text', value: text };
+    if (typeof text !== 'string' && !isRegExp(text)) throw new Error(`text should be a string or regex, but got ` + (text + (' (' + (typeof text + ')'))));
+    this.predicate = { type: 'text', value: text.toString(), isRegex: isRegExp(text) };
     return this;
   }
 

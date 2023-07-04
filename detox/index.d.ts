@@ -971,20 +971,25 @@ declare global {
              * <TouchableOpacity testID={'tap_me'}>
              * // Then match with by.id:
              * await element(by.id('tap_me'));
+             * await element(by.id(/^tap_[a-z]+$/));
              */
-            id(id: string): NativeMatcher;
+            id(id: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
-             * @example await element(by.text('Tap Me'));
+             * @example
+             * await element(by.text('Tap Me'));
+             * await element(by.text(/^Tap .*$/));
              */
-            text(text: string): NativeMatcher;
+            text(text: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
-             * @example await element(by.label('Welcome'));
+             * @example
+             * await element(by.label('Welcome'));
+             * await element(by.label(/[a-z]+/i));
              */
-            label(label: string): NativeMatcher;
+            label(label: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by native view type.

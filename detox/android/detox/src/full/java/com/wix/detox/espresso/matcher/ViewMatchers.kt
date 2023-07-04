@@ -11,16 +11,28 @@ import com.wix.detox.espresso.common.SliderHelper
 import org.hamcrest.*
 import org.hamcrest.Matchers.*
 import kotlin.math.abs
+import org.hamcrest.CoreMatchers.`is`
 
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
+fun <T> getRelevantMatcher(value: T, isRegex: Boolean): Matcher<T> =
+    if (isRegex) RegexMatcher(value.toString()) else `is`(value)
 
-fun withAccessibilityLabel(text: String) =
-    WithAccessibilityLabelMatcher(`is`(text))
+fun withAccessibilityLabel(text: String, isRegex: Boolean): Matcher<View> =
+    WithAccessibilityLabelMatcher(getRelevantMatcher(text, isRegex))
 
-fun withShallowAccessibilityLabel(label: String): Matcher<View>
-    = anyOf(ViewMatchers.withContentDescription(label), ViewMatchers.withText(label))
+fun withShallowAccessibilityLabel(label: String, isRegex: Boolean): Matcher<View> =
+    anyOf(withContentDescription(label, isRegex), withText(label, isRegex))
+
+fun withText(text: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withText(getRelevantMatcher(text, isRegex))
+
+fun withContentDescription(label: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withContentDescription(getRelevantMatcher(label, isRegex))
+
+fun withTagValue(testId: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withTagValue(getRelevantMatcher<Any>(testId, isRegex))
 
 fun isOfClassName(className: String): Matcher<View> {
     try {

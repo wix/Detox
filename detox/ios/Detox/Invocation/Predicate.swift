@@ -16,6 +16,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
     static let predicate = "predicate"
     static let modifiers = "modifiers"
     static let predicates = "predicates"
+    static let isRegex = "isRegex"
   }
 
   struct Kind {
@@ -44,6 +45,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 
   class func with(dictionaryRepresentation: [String: Any]) throws -> Predicate {
     let kind = dictionaryRepresentation[Keys.kind] as! String //crash on failure
+    let isRegex = (dictionaryRepresentation[Keys.isRegex] as? Bool) ?? false
     let modifiers : Set<String>
     if let modifiersInput = dictionaryRepresentation[Keys.modifiers] as? [String] {
       modifiers = Set<String>(modifiersInput)
@@ -61,25 +63,24 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
       case Kind.label:
         let label = dictionaryRepresentation[Keys.value] as! String
         if ReactNativeSupport.isReactNativeApp == false {
-          return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true)
+          return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
         } else {
           //Will crash if RN app and neither class exists
           let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
 
           let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
             try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
-            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true)
+            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
           ], modifiers: []), modifiers: [Modifier.not])
           descendantPredicate.hidden = true
 
           return AndCompoundPredicate(predicates: [
-            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true),
+            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex),
             descendantPredicate
           ], modifiers: [])
         }
       case Kind.text:
         let text = dictionaryRepresentation[Keys.value] as! String
-
         var orPredicates = [
           try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextView.self)),
           try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(UITextField.self)),
@@ -96,12 +97,12 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
         orCompoundPredicate.hidden = true
 
         return AndCompoundPredicate(predicates: [
-          ValuePredicate(kind: kind, modifiers: modifiers, value: text, requiresAccessibilityElement: false),
+          ValuePredicate(kind: kind, modifiers: modifiers, value: text, requiresAccessibilityElement: false, isRegex: isRegex),
           orCompoundPredicate
         ], modifiers: [])
       case Kind.id:
         let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
-        return ValuePredicate(kind: kind, modifiers: modifiers, value: value, requiresAccessibilityElement: false)
+        return ValuePredicate(kind: kind, modifiers: modifiers, value: value, requiresAccessibilityElement: false, isRegex: isRegex)
       case Kind.value:
         let value = dictionaryRepresentation[Keys.value] as! CustomStringConvertible
         return ValuePredicate(kind: kind, modifiers: modifiers, value: value, requiresAccessibilityElement: true)
@@ -195,10 +196,12 @@ class KindOfPredicate : Predicate {
 class ValuePredicate : Predicate {
   let value : CustomStringConvertible
   let requiresAccessibilityElement: Bool
+  let isRegex: Bool
 
-  init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool) {
+  init(kind: String, modifiers: Set<String>, value: CustomStringConvertible, requiresAccessibilityElement: Bool, isRegex: Bool = false) {
     self.value = value
     self.requiresAccessibilityElement = requiresAccessibilityElement
+    self.isRegex = isRegex
 
     super.init(kind: kind, modifiers: modifiers)
   }
@@ -209,8 +212,17 @@ class ValuePredicate : Predicate {
         return false
       }
 
-      let value = self.getValue(evaluatedObject, fromKind: self.kind)
-      return value as? NSObject == self.value as? NSObject
+      let evaluatedValue = self.getValue(evaluatedObject, fromKind: self.kind)
+
+      guard let value = self.value as? String, let evaluatedValue = evaluatedValue as? String else {
+        return false
+      }
+
+      if self.isRegex {
+        return evaluatedValue.matchesJSRegex(to: value)
+      }
+
+      return evaluatedValue == value
     }
   }
 

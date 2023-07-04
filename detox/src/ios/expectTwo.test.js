@@ -33,7 +33,25 @@ describe('expectTwo', () => {
         action: 'tap',
         predicate: {
           type: 'text',
-          value: 'tapMe'
+          value: 'tapMe',
+          isRegex: false,
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for RegExp text matcher`, async () => {
+    const testCall = await e.element(e.by.text(/tapMe/)).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'text',
+          value: '/tapMe/',
+          isRegex: true,
         }
       }
     };
@@ -55,7 +73,8 @@ describe('expectTwo', () => {
         ],
         predicate: {
           type: 'text',
-          value: 'tapMe'
+          value: 'tapMe',
+          isRegex: false,
         }
       }
     };
@@ -74,11 +93,40 @@ describe('expectTwo', () => {
           predicates: [
             {
               type: 'id',
-              value: 'uniqueId'
+              value: 'uniqueId',
+              isRegex: false,
             },
             {
               type: 'text',
-              value: 'some text'
+              value: 'some text',
+              isRegex: false,
+            }
+          ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for element with RegExp id and text matchers`, async () => {
+    const testCall = await e.element(e.by.id(/uniqueId/).and(e.by.text(/some text/))).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'and',
+          predicates: [
+            {
+              type: 'id',
+              value: '/uniqueId/',
+              isRegex: true,
+            },
+            {
+              type: 'text',
+              value: '/some text/',
+              isRegex: true,
             }
           ]
         }
@@ -99,16 +147,65 @@ describe('expectTwo', () => {
           predicates: [
             {
               type: 'id',
-              value: 'child'
+              value: 'child',
+              isRegex: false,
             },
             {
               type: 'ancestor',
               predicate: {
                 type: 'id',
-                value: 'parent'
+                value: 'parent',
+                isRegex: false,
               }
             }
           ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for element with regex ancestor matcher`, async () => {
+    const testCall = await e.element(e.by.id('child').withAncestor(e.by.id(/parent/))).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'and',
+          predicates: [
+            {
+              type: 'id',
+              value: 'child',
+              isRegex: false,
+            },
+            {
+              type: 'ancestor',
+              predicate: {
+                type: 'id',
+                value: '/parent/',
+                isRegex: true,
+              }
+            }
+          ]
+        }
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  it(`should produce correct JSON for element with regex label`, async () => {
+    const testCall = await e.element(e.by.label(/tapMe/)).tap();
+    const jsonOutput = {
+      invocation: {
+        type: 'action',
+        action: 'tap',
+        predicate: {
+          type: 'label',
+          value: '/tapMe/',
+          isRegex: true,
         }
       }
     };
@@ -141,13 +238,15 @@ describe('expectTwo', () => {
           predicates: [
             {
               type: 'id',
-              value: 'child'
+              value: 'child',
+              isRegex: false,
             },
             {
               type: 'ancestor',
               predicate: {
                 type: 'id',
-                value: 'parent'
+                value: 'parent',
+                isRegex: false,
               }
             }
           ]
@@ -168,7 +267,8 @@ describe('expectTwo', () => {
           predicates: [
             {
               type: 'id',
-              value: 'child'
+              value: 'child',
+              isRegex: false,
             },
             {
               type: 'ancestor',
@@ -177,11 +277,13 @@ describe('expectTwo', () => {
                 predicates: [
                   {
                     type: 'id',
-                    value: 'parent'
+                    value: 'parent',
+                    isRegex: false,
                   },
                   {
                     type: 'text',
-                    value: 'text'
+                    value: 'text',
+                    isRegex: false,
                   }
                 ]
               }
@@ -205,15 +307,17 @@ describe('expectTwo', () => {
           predicates: [
             {
               type: 'id',
-              value: 'child'
+              value: 'child',
+              isRegex: false,
             },
             {
               type: 'text',
-              value: 'text'
+              value: 'text',
+              isRegex: false,
             },
             {
               type: 'value',
-              value: 'value'
+              value: 'value',
             }
           ]
         }
@@ -237,7 +341,8 @@ describe('expectTwo', () => {
         ],
         predicate: {
           type: 'id',
-          value: 'tappable'
+          value: 'tappable',
+          isRegex: false,
         }
       }
     };
@@ -254,12 +359,14 @@ describe('expectTwo', () => {
         params: [1000, 0.5, 0.5, null, null, 'fast', 1000],
         predicate: {
           type: 'id',
-          value: 'elementToDrag'
+          value: 'elementToDrag',
+          isRegex: false,
         },
         targetElement: {
           predicate: {
             type: 'id',
-            value: 'targetElement'
+            value: 'targetElement',
+            isRegex: false,
           }
         }
       }
@@ -274,7 +381,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'text',
-          value: 'Tap Working!!!'
+          value: 'Tap Working!!!',
+          isRegex: false,
         },
         expectation: 'toBeVisible'
       }
@@ -290,7 +398,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'id',
-          value: 'foo'
+          value: 'foo',
+          isRegex: false,
         },
         expectation: 'toBeVisible',
         params: [25]
@@ -307,7 +416,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'text',
-          value: 'Tap Working!!!'
+          value: 'Tap Working!!!',
+          isRegex: false,
         },
         modifiers: ['not'],
         expectation: 'toBeVisible'
@@ -324,7 +434,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'text',
-          value: 'Tap Working!!!'
+          value: 'Tap Working!!!',
+          isRegex: false,
         },
         expectation: 'toBeFocused'
       }
@@ -340,7 +451,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'text',
-          value: 'Tap Working!!!'
+          value: 'Tap Working!!!',
+          isRegex: false,
         },
         modifiers: ['not'],
         expectation: 'toBeFocused'
@@ -357,7 +469,8 @@ describe('expectTwo', () => {
         type: 'expectation',
         predicate: {
           type: 'id',
-          value: 'UniqueId204'
+          value: 'UniqueId204',
+          isRegex: false,
         },
         expectation: 'toHaveText',
         params: ['I contain some text']
@@ -375,7 +488,8 @@ describe('expectTwo', () => {
         'atIndex': 2,
         'predicate': {
           'type': 'text',
-          'value': 'Product'
+          'value': 'Product',
+          'isRegex': false,
         },
         'expectation': 'toHaveId',
         'params': ['ProductId002']
@@ -392,7 +506,8 @@ describe('expectTwo', () => {
         'type': 'expectation',
         'predicate': {
           'type': 'id',
-          'value': 'slider'
+          'value': 'slider',
+          'isRegex': false,
         },
         'expectation': 'toHaveSliderPosition',
         'params': [0.5, 1]
@@ -409,7 +524,8 @@ describe('expectTwo', () => {
         'type': 'expectation',
         'predicate': {
           'type': 'id',
-          'value': 'switch'
+          'value': 'switch',
+          'isRegex': false,
         },
         'expectation': 'toHaveValue',
         'params': ['1']
@@ -428,7 +544,8 @@ describe('expectTwo', () => {
         params: ['up', 'fast', 0.75, null, 0.5],
         predicate: {
           type: 'id',
-          value: 'ScrollView100'
+          value: 'ScrollView100',
+          isRegex: false,
         }
       }
     };
@@ -443,7 +560,7 @@ describe('expectTwo', () => {
         'type': 'action',
         'action': 'setDatePickerDate',
         'params': ['2019-01-01T00:00:00Z', 'ISO8601'],
-        'predicate': { 'type': 'id', 'value': 'datePicker' }
+        'predicate': { 'type': 'id', 'value': 'datePicker', 'isRegex': false }
       }
     };
 
@@ -457,7 +574,7 @@ describe('expectTwo', () => {
         'type': 'action',
         'action': 'setDatePickerDate',
         'params': ['2019-01-01T00:00:00.000Z', 'YYYY-MM-DDTHH:mm:sss.fT'],
-        'predicate': { 'type': 'id', 'value': 'datePicker' }
+        'predicate': { 'type': 'id', 'value': 'datePicker', 'isRegex': false }
       }
     };
 
@@ -474,13 +591,15 @@ describe('expectTwo', () => {
           params: [50, 'down', null, null],
           predicate: {
             type: 'id',
-            value: 'ScrollView630'
+            value: 'ScrollView630',
+            isRegex: false,
           },
           while: {
             type: 'expectation',
             predicate: {
               type: 'text',
-              value: 'Text5'
+              value: 'Text5',
+              isRegex: false,
             },
             modifiers: ['not'],
             expectation: 'toBeVisible'
@@ -499,7 +618,8 @@ describe('expectTwo', () => {
             type: 'expectation',
             predicate: {
               type: 'id',
-              value: 'createdAndVisibleText'
+              value: 'createdAndVisibleText',
+              isRegex: false,
             },
             expectation: 'toExist',
             timeout: 2000
@@ -518,7 +638,8 @@ describe('expectTwo', () => {
             atIndex: 1,
             predicate: {
               type: 'text',
-              value: 'Item'
+              value: 'Item',
+              isRegex: false,
             },
             expectation: 'toExist',
             timeout: 2000
@@ -535,7 +656,8 @@ describe('expectTwo', () => {
           type: 'expectation',
           predicate: {
             type: 'id',
-            value: 'uniqueId'
+            value: 'uniqueId',
+            isRegex: false,
           },
           modifiers: ['not'],
           expectation: 'toBeVisible',
@@ -575,6 +697,7 @@ describe('expectTwo', () => {
         action: 'takeScreenshot',
         ...(imageName && { params: [imageName] }),
         predicate: {
+          isRegex: false,
           type: 'id',
           value: 'uniqueId'
         }
@@ -631,7 +754,8 @@ describe('expectTwo', () => {
         action: 'accessibilityAction',
         predicate: {
           type: 'text',
-          value: 'tapMe'
+          value: 'tapMe',
+          isRegex: false,
         },
         params: [
           'activate'
