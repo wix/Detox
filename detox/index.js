@@ -10,3 +10,5 @@ function create() {
 module.exports = global['__detox__']
   ? global['__detox__'].clientApi
   : create();
+
+module.exports.runDetox = require('./local-cli/cli').runDetox;
