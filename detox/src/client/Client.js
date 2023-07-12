@@ -16,9 +16,7 @@ const actions = require('./actions/actions');
 
 class Client {
   /**
-   * @param {number} debugSynchronization
-   * @param {string} server
-   * @param {string} sessionId
+   * @param {DetoxInternals.RuntimeConfig['session']} config
    */
   constructor({ debugSynchronization, server, sessionId  }) {
     this._onAppConnected = this._onAppConnected.bind(this);

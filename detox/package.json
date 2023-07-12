@@ -57,6 +57,7 @@
     "react-native": "0.71.10",
     "react-native-codegen": "^0.0.8",
     "typescript": "^4.5.2",
+    "ts-jest": "^28.0.0",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
@@ -67,6 +68,7 @@
     "chalk": "^4.0.0",
     "child-process-promise": "^2.2.0",
     "execa": "^5.1.1",
+    "express": "^4.18.2",
     "find-up": "^5.0.0",
     "fs-extra": "^11.0.0",
     "funpermaproxy": "^1.1.0",
@@ -110,6 +112,9 @@
     "setupFiles": [
       "<rootDir>/__tests__/setupJest.js"
     ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "roots": [

@@ -101,7 +101,7 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 12 Pro Max',
+        type: 'iPhone 14 Pro Max',
       },
     },
 
@@ -110,7 +110,7 @@ const config = {
       headless: Boolean(process.env.CI),
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'Pixel_3A_API_29'
+        avdName: 'Pixel_API_28'
       },
     },
 

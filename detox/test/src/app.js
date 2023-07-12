@@ -43,7 +43,7 @@ export default class example extends Component {
       <TouchableOpacity onPress={() => {
         onPressCallback();
       }}>
-        <Text style={{color: 'blue', marginBottom: 8}}>{title}</Text>
+        <Text testID={(title || '').toLowerCase()} style={{color: 'blue', marginBottom: 8}}>{title}</Text>
       </TouchableOpacity>
     );
   }
