@@ -1,0 +1,22 @@
+{
+  "name": "@detox/client",
+  "version": "22.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "bunyan": "^2.0.5",
+    "bunyamin": "^1.1.0",
+    "funpermaproxy": "^1.1.0",
+    "ws": "^8.13.0",
+    "tslib": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.1",
+    "@types/ws": "^8.5.5",
+    "typescript": "^5.1.6",
+    "ts-node": "^10.9.1"
+  }
+}
