@@ -54,7 +54,7 @@ export default class ElementScreenshotScreen extends Component {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <TouchableHighlight testID='switchOrientation' onPress={this.switchOrientation}>
-          <ArtisticRectangle testID='fancyElement' borderSizeH={borderSizeH} borderSizeV={borderSizeV} />
+          <ArtisticRectangle borderSizeH={borderSizeH} borderSizeV={borderSizeV} />
         </TouchableHighlight>
       </View>
     );

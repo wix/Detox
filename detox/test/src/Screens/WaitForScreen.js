@@ -60,8 +60,11 @@ export default class WaitForScreen extends Component {
           ref={this.textInputRef}
         />
 
-        <TouchableOpacity onPress={this.onGoButtonPress.bind(this)}>
-          <Text testID='goButton' style={{color: 'blue', textAlign: 'center'}}>Go</Text>
+        <TouchableOpacity
+          testID='goButton'
+          onPress={this.onGoButtonPress.bind(this)}
+        >
+          <Text style={{color: 'blue', textAlign: 'center'}}>Go</Text>
         </TouchableOpacity>
 
       </View>

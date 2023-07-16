@@ -102,6 +102,11 @@ RCT_EXPORT_METHOD(presentOverlayWindow) {
     });
 }
 
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getLaunchArguments) {
+    NSUserDefaults* launchArgs = [NSUserDefaults standardUserDefaults];
+    return launchArgs.dictionaryRepresentation;
+}
+
 RCT_EXPORT_METHOD(presentOverlayView) {
     static UIView *overlayView;
 

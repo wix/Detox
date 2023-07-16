@@ -9,12 +9,12 @@ const log = require('../src/utils/logger').child({ cat: 'cli' });
 module.exports.command = 'rebuild-framework-cache';
 module.exports.desc = 'Rebuilds a cached Detox framework for the current environment in ~/Library/Detox. The cached framework is unique for each combination of Xcode and Detox version. (macOS only)';
 
-module.exports.handler = async function buildFrameworkCache() {
+module.exports.handler = async function rebuildFrameworkCache() {
   if (os.platform() === 'darwin') {
-    const frameworkPath = path.join(os.homedir(), '/Library/Detox');
+    const frameworkPath = path.join(os.homedir(), '/Library/Detox/ios/framework');
     log.info(`Removing framework binaries from ${frameworkPath}`);
     await fs.remove(frameworkPath);
-    cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), { stdio: 'inherit' });
+    cp.execSync(path.join(__dirname, '../scripts/build_local_framework.ios.sh'), { stdio: 'inherit' });
   } else {
     log.info(`The command is supported only on macOS, skipping the execution.`);
   }

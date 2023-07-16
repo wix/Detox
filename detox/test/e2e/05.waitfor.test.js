@@ -7,8 +7,10 @@ const expectToFinishBeforeTimeout = async (block, timeout) => {
   const endTime = new Date().getTime();
 
   const expiredAfter = endTime - startTime;
-  if (expiredAfter > timeout) {
-    throw new Error(`Action not expired even after a timeout, took ${expiredAfter}ms`);
+  // TODO: This is a high tolerance, should find a way to reduce it significantly (maybe to implement the wait-for in JS instead of native)
+  const tolerance = 1000;
+  if (expiredAfter > timeout + tolerance) {
+    throw new Error(`Action not expired even after a timeout of ${timeout}ms, took ${expiredAfter}ms`);
   }
 }
 

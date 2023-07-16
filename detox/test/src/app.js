@@ -124,6 +124,7 @@ export default class example extends Component {
         {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
         {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
+        {this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
 
         { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -150,7 +151,6 @@ export default class example extends Component {
         {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
           {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>

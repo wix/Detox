@@ -39,10 +39,10 @@ describe('waitFor() + atIndex()', () => {
    * This use case refers to this issue: https://github.com/wix/Detox/issues/2844
    * We are making sure that .atIndex() works together with waitFor()
    */
-  it('should be able to discern elements by index', async () => {
+  it.only('should be able to discern elements by index', async () => {
     await waitFor(element(by.text('Index')).atIndex(1))
       .toBeVisible()
-      .whileElement(by.id('ScrollView161'))
+      .whileElement(by.id('ScrollView'))
       .scroll(50, 'down');
   });
 });

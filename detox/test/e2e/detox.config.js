@@ -61,11 +61,28 @@ const config = {
       bundleId: 'com.wix.detox-example',
     },
 
+    'ios.debug.withArgs': {
+      type: 'ios.app',
+      name: 'exampleWithArgs',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      build: ':',
+      bundleId: 'com.wix.detox-example',
+      launchArgs
+    },
+
     'ios.release': {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+    },
+
+    'ios.release.withArgs': {
+      type: 'ios.app',
+      name: 'exampleWithArgs',
+      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
+      build: ':',
+      launchArgs
     },
 
     'android.debug': {
@@ -132,11 +149,11 @@ const config = {
   configurations: {
     'ios.sim.debug': {
       device: 'ios.simulator',
-      app: 'ios.debug',
+      apps: ['ios.debug', 'ios.debug.withArgs'],
     },
     'ios.sim.release': {
       device: 'ios.simulator',
-      app: 'ios.release',
+      apps: ['ios.release', 'ios.release.withArgs'],
       session: {
         debugSynchronization: 3000,
       },

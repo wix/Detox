@@ -177,6 +177,13 @@
 			remoteGlobalIDString = 39DE8F5122F707DD00780546;
 			remoteInfo = DetoxSync;
 		};
+		60BF52E1281EC53B00610DBD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 602F956A274528ED00BAFA74;
+			remoteInfo = DetoxSyncTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -788,6 +795,13 @@
 			fileType = wrapper.framework;
 			path = DetoxSync.framework;
 			remoteRef = 39DC984E24BB8FCD00FFB224 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		60BF52E2281EC53B00610DBD /* DetoxSyncTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DetoxSyncTests.xctest;
+			remoteRef = 60BF52E1281EC53B00610DBD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
