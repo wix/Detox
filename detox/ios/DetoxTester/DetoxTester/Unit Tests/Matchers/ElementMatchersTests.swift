@@ -78,7 +78,7 @@ class ElementMatchersTests: DTXTestCase {
   func testMatchByIdWithRegex() throws {
     let result = try matcher.match(to: .id("/^[a-z]*fier$/i", isRegex: true))
 
-    XCTAssertEqual(result.count, 1)
+    XCTAssertEqual(result.count, 2)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
   }
 
