@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.11.0",
+  "version": "20.11.1",
   "private": true,
   "engines": {
     "node": ">=14.5.0"
@@ -56,7 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "cross-env": "^7.0.3",
-    "detox": "^20.11.0",
+    "detox": "^20.11.1",
     "eslint": "^8.41.0",
     "eslint-plugin-unicorn": "^47.0.0",
     "execa": "^5.1.1",
