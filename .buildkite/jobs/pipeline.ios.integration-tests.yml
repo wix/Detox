@@ -3,3 +3,5 @@
       - "nvm install"
       - "cd detox/ios/DetoxTester"
       - "xcodebuild -project DetoxTesterApp.xcodeproj -scheme DetoxTester -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=15.0' test"
+    agents:
+        queue: uibuilder
