@@ -1,6 +1,7 @@
   - label: ":ios::detox: RN .70 + iOS: Tests app"
     command:
       - "nvm install"
+      - "xcrun simctl create 'iPhone 12 Pro Max' 'com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max'"
       - "./scripts/ci.ios.sh"
     env:
       REACT_NATIVE_VERSION: 0.70.7

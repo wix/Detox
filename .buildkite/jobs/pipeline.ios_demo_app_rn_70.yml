@@ -1,6 +1,7 @@
   - label: ":ios::react: RN. 70 + iOS: Demo app"
     command:
       - "nvm install"
+      - "xcrun simctl create 'iPhone 12 Pro Max' 'com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max'"
       - "./scripts/demo-projects.ios.sh"
     env:
       REACT_NATIVE_VERSION: 0.70.7

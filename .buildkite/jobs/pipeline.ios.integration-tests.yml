@@ -1,6 +1,7 @@
   - label: ":ios::detox: iOS: Integration Tests"
     command:
       - "nvm install"
+      - "xcrun simctl create 'iPhone 11 Pro' 'com.apple.CoreSimulator.SimDeviceType.iPhone-11-Pro'"
       - "cd detox/ios/DetoxTester"
       - "xcodebuild -project DetoxTesterApp.xcodeproj -scheme DetoxTester -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=15.0' test"
     agents:
