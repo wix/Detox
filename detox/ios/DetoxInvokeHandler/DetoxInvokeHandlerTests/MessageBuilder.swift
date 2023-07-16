@@ -211,19 +211,21 @@ class MessageBuilder {
     return setAction("swipe")
   }
 
-  func setTextPredicate(_ value: String) -> MessageBuilder {
-    return setPredicate("text", value)
+  func setTextPredicate(_ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    return setPredicate("text", value, isRegex)
   }
 
-  func setValuePredicate(_ value: String) -> MessageBuilder {
-    return setPredicate("value", value)
+  func setValuePredicate(_ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    return setPredicate("value", value, isRegex)
   }
 
-  func setPredicate(_ type: String, _ value: String) -> MessageBuilder {
-    message["predicate"] = [
+  func setPredicate(_ type: String, _ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    let predicate: [String: AnyHashable] = [
       "type": type,
-      "value": value
+      "value": value,
+      "isRegex": isRegex
     ]
+    message["predicate"] = predicate
 
     return self
   }
@@ -301,16 +303,16 @@ class MessageBuilder {
     return self
   }
 
-  func setIdPredicate(_ value: String) -> MessageBuilder {
-    return setPredicate("id", value)
+  func setIdPredicate(_ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    return setPredicate("id", value, isRegex)
   }
 
-  func setLabelPredicate(_ value: String) -> MessageBuilder {
-    return setPredicate("label", value)
+  func setLabelPredicate(_ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    return setPredicate("label", value, isRegex)
   }
 
-  func setTypePredicate(_ value: String) -> MessageBuilder {
-    return setPredicate("type", value)
+  func setTypePredicate(_ value: String, _ isRegex: Bool? = nil) -> MessageBuilder {
+    return setPredicate("type", value, isRegex)
   }
 
   func setTraitsPredicate(_ values: [String]) -> MessageBuilder {

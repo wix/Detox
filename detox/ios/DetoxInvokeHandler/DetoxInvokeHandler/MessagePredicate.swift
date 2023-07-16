@@ -5,9 +5,14 @@
 
 /// Predicate of a message.
 public struct MessagePredicate: MessagePredicateProtocol, Equatable {
+  /// The predicate type.
   var type: MessagePredicateType
 
+  /// Value to compare to.
   var value: AnyCodable?
+
+  /// Indicates whether the predicate value is a regular expression.
+  var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
   var predicates: [MessageSubPredicate]?
@@ -19,9 +24,14 @@ public struct MessagePredicate: MessagePredicateProtocol, Equatable {
 
 /// Sub-predicate, needed in case the message is consists of nested predicates.
 public struct MessageSubPredicate: MessagePredicateProtocol, Equatable {
+  /// The predicate type.
   var type: MessagePredicateType
 
+  /// Value to compare to.
   var value: AnyCodable?
+
+  /// Indicates whether the predicate value is a regular expression.
+  var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
   var predicates: [MessageSubSubPredicate]?
@@ -32,9 +42,14 @@ public struct MessageSubPredicate: MessagePredicateProtocol, Equatable {
 
 /// Sub-sub-predicate, needed in case the message is consists of nested predicates.
 public struct MessageSubSubPredicate: MessagePredicateProtocol, Equatable {
+  /// The predicate type.
   var type: MessagePredicateType
 
+  /// Value to compare to.
   var value: AnyCodable?
+
+  /// Indicates whether the predicate value is a regular expression.
+  var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
   var predicates: [MessageSubSubSubPredicate]?
@@ -45,7 +60,12 @@ public struct MessageSubSubPredicate: MessagePredicateProtocol, Equatable {
 
 /// Sub-sub-sub-predicate, needed in case the message is consists of nested predicates.
 public struct MessageSubSubSubPredicate: MessagePredicateProtocol, Equatable {
+  /// The predicate type.
   var type: MessagePredicateType
 
+  /// Value to compare to.
   var value: AnyCodable?
+
+  /// Indicates whether the predicate value is a regular expression.
+  var isRegex: Bool?
 }

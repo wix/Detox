@@ -682,6 +682,27 @@ class MessageSpec: QuickSpec {
         ))
       }
 
+      it("should parse predicate with text regular expression (`isRegex`)") {
+        let message = messageBuilder.setTextPredicate("foo", true).build()
+
+        let parsed = try Message(from: message)
+
+        expect(parsed).to(equal(
+          Message(
+            type: .action,
+            action: .tap,
+            expectation: nil,
+            modifiers: nil,
+            atIndex: nil,
+            params: nil,
+            predicate: .init(type: .text, value: "foo", isRegex: true),
+            targetElement: nil,
+            while: nil,
+            timeout: nil
+          )
+        ))
+      }
+
       it("should parse predicate with `value` type") {
         let message = messageBuilder.setValuePredicate("foo").build()
 
