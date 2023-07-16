@@ -219,10 +219,10 @@ class WhiteBoxExecutor {
 
         return .boolean(hasText)
 
-      case .findElementsByText(let text):
+      case .findElementsByText(let text, let isRegex):
         let message = createMessage(
           type: "findElementsByText",
-          params: ["text": AnyCodable(text)],
+          params: ["text": AnyCodable(text), "isRegex": AnyCodable(isRegex)],
           messageId: messageId
         )
 

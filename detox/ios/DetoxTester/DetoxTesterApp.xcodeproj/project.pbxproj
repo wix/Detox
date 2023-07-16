@@ -57,6 +57,7 @@
 		60634AD427C42E5200274F30 /* ActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD327C42E5200274F30 /* ActionDelegate.swift */; };
 		60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD727C4338800274F30 /* ElementMatcher.swift */; };
 		60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60634AD927C4339600274F30 /* ExpectationDelegate.swift */; };
+		6072BD4B2A64186F0043AC27 /* String+matchesJSRegex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6072BD4A2A64186F0043AC27 /* String+matchesJSRegex.swift */; };
 		607C900C29A79E14008FA6EA /* Executor+deliverPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */; };
 		607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */; };
 		607C901729AE01E2008FA6EA /* Executor+handleTestFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */; };
@@ -219,6 +220,7 @@
 		60634AD327C42E5200274F30 /* ActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDelegate.swift; sourceTree = "<group>"; };
 		60634AD727C4338800274F30 /* ElementMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcher.swift; sourceTree = "<group>"; };
 		60634AD927C4339600274F30 /* ExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationDelegate.swift; sourceTree = "<group>"; };
+		6072BD4A2A64186F0043AC27 /* String+matchesJSRegex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+matchesJSRegex.swift"; sourceTree = "<group>"; };
 		607C900B29A79E14008FA6EA /* Executor+deliverPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+deliverPayload.swift"; sourceTree = "<group>"; };
 		607C901429ADFD14008FA6EA /* Executor+sendToHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+sendToHome.swift"; sourceTree = "<group>"; };
 		607C901629AE01E2008FA6EA /* Executor+handleTestFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+handleTestFailure.swift"; sourceTree = "<group>"; };
@@ -655,6 +657,7 @@
 				60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */,
 				60FBF5E928183A9F000B73B1 /* XCUIElement+isVisible.swift */,
 				605980ED29814DCF00888841 /* XCUIElement+screenshotData.swift */,
+				6072BD4A2A64186F0043AC27 /* String+matchesJSRegex.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -996,6 +999,7 @@
 				605980DD298017A200888841 /* XCUIElement+shortPress.swift in Sources */,
 				60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */,
 				60C7F4F327D8D67D000D417A /* WebSocketClient.swift in Sources */,
+				6072BD4B2A64186F0043AC27 /* String+matchesJSRegex.swift in Sources */,
 				603497AA27F08C3700770EE0 /* Executor+sendAction.swift in Sources */,
 				604B94BB28314B6400508C27 /* Executor+shakeDevice.swift in Sources */,
 				60F96E02297AC44A0047B332 /* String+localize.swift in Sources */,

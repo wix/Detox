@@ -17,8 +17,8 @@ extension XCUIElementQuery {
     pattern: ElementPattern, whiteBoxMessageHandler: WhiteBoxMessageHandler, app: XCUIApplication
   ) throws -> XCUIElementQuery {
     switch pattern {
-      case .label(let label):
-        return matching(parameter: .label, byOperator: .equals, toValue: label)
+      case .label(let label, let isRegex):
+        return matching(parameter: .label, byOperator: .equals, toValue: label, withRegex: isRegex)
 
       case .value(let value):
         return matching(parameter: .value, byOperator: .equals, toValue: value)
@@ -34,7 +34,7 @@ extension XCUIElementQuery {
         }
         return query
 
-      case .id(let id):
+      case .id(let id, let isRegex):
         let predicate = NSPredicate { evaluatedObject, _ in
           guard
             let evaluatedObject = evaluatedObject as? NSObject,
@@ -48,12 +48,14 @@ extension XCUIElementQuery {
             return false
           }
 
-          return removeDetoxPostfix(from: identifier) == id
+          let cleanIdentifier = removeDetoxPostfix(from: identifier)
+
+          return isRegex ? cleanIdentifier.matchesJSRegex(to: id) : cleanIdentifier == id
         }
         return matching(predicate)
 
-      case .text(let text):
-        let response = whiteBoxMessageHandler(.findElementsByText(text: text))
+      case .text(let text, let isRegex):
+        let response = whiteBoxMessageHandler(.findElementsByText(text: text, isRegex: isRegex))
         guard let response = response else {
           execLog(
             "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
@@ -183,8 +185,29 @@ private extension XCUIElementQuery {
   func matching(
     parameter: ComparisonParameter,
     byOperator `operator`: ComparisonOperator,
-    toValue value: String
+    toValue value: String,
+    withRegex isRegex: Bool = false
   ) -> XCUIElementQuery {
+    if isRegex {
+      let predicate = NSPredicate { evaluatedObject, _ in
+        guard
+          let evaluatedObject = evaluatedObject as? NSObject,
+          let parameterValue = evaluatedObject.value(forKey: parameter.rawValue) as? String
+        else {
+          execLog(
+            "cannot run matching on a non UI element: `\(String(describing: evaluatedObject))`",
+            type: .error
+          )
+
+          return false
+        }
+
+        return parameterValue.matchesJSRegex(to: value)
+      }
+
+      return matching(predicate)
+    }
+
     let predicate = NSPredicate(format: "\(parameter.rawValue) \(`operator`.rawValue) %@", value)
     return matching(predicate)
   }

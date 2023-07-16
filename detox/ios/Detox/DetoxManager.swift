@@ -235,12 +235,15 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			case "findElementsByText":
 				DTXSyncManager.enqueueMainQueueIdleClosure {
 					let text = params["text"] as! String
+					let isRegex = params["isRegex"] as! Bool
+
 					let predicate = NSPredicate { evaluatedObject, _ in
 						guard let evaluatedObject = evaluatedObject as? NSObject else {
 							return false
 						}
 
-						return evaluatedObject.dtx_text == text
+						let evaluatedText = evaluatedObject.dtx_text
+						return isRegex ? evaluatedText.matchesJSRegex(to: text) : evaluatedText == text
 					}
 
 					let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]

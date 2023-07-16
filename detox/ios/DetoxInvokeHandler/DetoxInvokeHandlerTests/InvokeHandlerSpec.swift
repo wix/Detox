@@ -46,7 +46,7 @@ class InvokeHandlerSpec: QuickSpec {
       it("should find element by `text` predicate") {
         let message = messageBuilderWithAction.setTextPredicate("foo").build()
 
-        matcher.setMatch(from: .text("foo"), to: "bar")
+        matcher.setMatch(from: .text("foo", isRegex: false), to: "bar")
 
         expect { try handler.handle(message) }.notTo(throwError())
       }
@@ -62,7 +62,7 @@ class InvokeHandlerSpec: QuickSpec {
       it("should find element by `label` predicate") {
         let message = messageBuilderWithAction.setLabelPredicate("foo").build()
 
-        matcher.setMatch(from: .label("foo"), to: "bar")
+        matcher.setMatch(from: .label("foo", isRegex: false), to: "bar")
 
         expect { try handler.handle(message) }.notTo(throwError())
       }
@@ -86,8 +86,8 @@ class InvokeHandlerSpec: QuickSpec {
         ]).build()
 
         let pattern = ElementPattern.and(patterns: [
-          .text("foo"),
-          .label("bar")
+          .text("foo", isRegex: false),
+          .label("bar", isRegex: false)
         ])
         matcher.setMatch(from: pattern, to: "baz")
 
@@ -98,8 +98,8 @@ class InvokeHandlerSpec: QuickSpec {
         let message = messageBuilderWithAction.setChildWithAncestorPredicate("foo", "bar").build()
 
         let pattern = ElementPattern.and(patterns: [
-          .id("foo"),
-          .ancestor(pattern: .id("bar"))
+          .id("foo", isRegex: false),
+          .ancestor(pattern: .id("bar", isRegex: false))
         ])
         matcher.setMatch(from: pattern, to: "baz")
 
@@ -110,8 +110,8 @@ class InvokeHandlerSpec: QuickSpec {
         let message = messageBuilderWithAction.setParentWithDescendantPredicate("foo", "bar").build()
 
         let pattern = ElementPattern.and(patterns: [
-          .id("foo"),
-          .descendant(pattern: .id("bar"))
+          .id("foo", isRegex: false),
+          .descendant(pattern: .id("bar", isRegex: false))
         ])
         matcher.setMatch(from: pattern, to: "baz")
 
@@ -121,7 +121,7 @@ class InvokeHandlerSpec: QuickSpec {
       it("should throw if could not find element at index") {
         let message = messageBuilderWithAction.setTextPredicate("foo").at(index: 1).build()
 
-        matcher.setMatch(from: .text("foo"), to: "bar")
+        matcher.setMatch(from: .text("foo", isRegex: false), to: "bar")
 
         expect { try handler.handle(message) }.to(throwError(
           InvokeHandler.Error.noElementAtIndex(index: 1, elementsCount: 1)
@@ -131,7 +131,7 @@ class InvokeHandlerSpec: QuickSpec {
       it("should find element at index") {
         let message = messageBuilderWithAction.setTextPredicate("foo").at(index: 1).build()
 
-        let pattern: ElementPattern = .text("foo")
+        let pattern: ElementPattern = .text("foo", isRegex: false)
         matcher.setMatch(from: pattern, to: "bar")
         matcher.setMatch(from: pattern, to: "baz")
 
@@ -148,8 +148,8 @@ class InvokeHandlerSpec: QuickSpec {
       beforeEach {
         messageBuilderWithPredicate = MessageBuilder().setTextPredicate("bar")
 
-        matcher.setMatch(from: .text("bar"), to: element)
-        matcher.setMatch(from: .id("baz"), to: targetElement)
+        matcher.setMatch(from: .text("bar", isRegex: false), to: element)
+        matcher.setMatch(from: .id("baz", isRegex: false), to: targetElement)
       }
 
       it("should throw if action is throwing") {
@@ -601,7 +601,7 @@ class InvokeHandlerSpec: QuickSpec {
       beforeEach {
         messageBuilderWithPredicate = MessageBuilder().setTextPredicate("bar")
 
-        matcher.setMatch(from: .text("bar"), to: element)
+        matcher.setMatch(from: .text("bar", isRegex: false), to: element)
       }
 
       it("should throw if expectation delegate is throwing") {
@@ -728,8 +728,8 @@ class InvokeHandlerSpec: QuickSpec {
           .waitUntilVisible(id: "quz")
           .build()
 
-        matcher.setMatch(from: .id("qux"), to: firstElement)
-        matcher.setMatch(from: .id("quz"), to: secondElement)
+        matcher.setMatch(from: .id("qux", isRegex: false), to: firstElement)
+        matcher.setMatch(from: .id("quz", isRegex: false), to: secondElement)
       }
 
       it("should act while expectation is not fulfilled") {

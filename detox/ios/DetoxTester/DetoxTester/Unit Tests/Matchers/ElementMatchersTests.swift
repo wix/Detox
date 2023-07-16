@@ -29,21 +29,28 @@ class ElementMatchersTests: DTXTestCase {
   }
 
   func testMatchByDefaultLabel() throws {
-    let result = try matcher.match(to: .label("Label value"))
+    let result = try matcher.match(to: .label("Label value", isRegex: false))
 
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
   }
 
   func testMatchByCustomLabel() throws {
-    let result = try matcher.match(to: .label("Text field label"))
+    let result = try matcher.match(to: .label("Text field label", isRegex: false))
+
+    XCTAssertEqual(result.count, 1)
+    XCTAssertEqual((result.first as! XCUIElement).identifier, "textFieldIdentifier")
+  }
+
+  func testMatchByLabelWithRegex() throws {
+    let result = try matcher.match(to: .label("/^[a-z]* field label$/i", isRegex: true))
 
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "textFieldIdentifier")
   }
 
   func testMatchByWrongLabel() throws {
-    let result = try matcher.match(to: .label("Label valueZ"))
+    let result = try matcher.match(to: .label("Label valueZ", isRegex: false))
 
     XCTAssertEqual(result.count, 0)
   }
@@ -62,22 +69,29 @@ class ElementMatchersTests: DTXTestCase {
   }
 
   func testMatchById() throws {
-    let result = try matcher.match(to: .id("labelIdentifier"))
+    let result = try matcher.match(to: .id("labelIdentifier", isRegex: false))
+
+    XCTAssertEqual(result.count, 1)
+    XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
+  }
+
+  func testMatchByIdWithRegex() throws {
+    let result = try matcher.match(to: .id("/^[a-z]*fier$/i", isRegex: true))
 
     XCTAssertEqual(result.count, 1)
     XCTAssertEqual((result.first as! XCUIElement).identifier, "labelIdentifier")
   }
 
   func testMatchByWrongId() throws {
-    let result = try matcher.match(to: .id("labelIdentifierZ"))
+    let result = try matcher.match(to: .id("labelIdentifierZ", isRegex: false))
 
     XCTAssertEqual(result.count, 0)
   }
 
   func testMatchByIdAndLabel() throws {
     let result = try matcher.match(to: .and(patterns: [
-      .label("Label value"),
-      .id("labelIdentifier")
+      .label("Label value", isRegex: false),
+      .id("labelIdentifier", isRegex: false)
     ]))
 
     XCTAssertEqual(result.count, 1)
@@ -86,8 +100,8 @@ class ElementMatchersTests: DTXTestCase {
 
   func testMatchByWrongIdAndLabel() throws {
     let result = try matcher.match(to: .and(patterns: [
-      .label("Label value"),
-      .id("labelIdentifierz")
+      .label("Label value", isRegex: false),
+      .id("labelIdentifierz", isRegex: false)
     ]))
 
     XCTAssertEqual(result.count, 0)

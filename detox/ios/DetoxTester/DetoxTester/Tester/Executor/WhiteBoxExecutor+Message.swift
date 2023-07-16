@@ -50,7 +50,7 @@ extension WhiteBoxExecutor {
     case verifyText(ofElement: XCUIElement, equals: String)
 
     /// Returns response of `identifiersAndFrames`.
-    case findElementsByText(text: String)
+    case findElementsByText(text: String, isRegex: Bool)
 
     /// Returns response of `identifiersAndFrames`.
     case findElementsByType(type: String)
@@ -122,8 +122,8 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
         return "expect text to equal `\(equals)`, " +
           "for element with identifier: `\(ofElement.cleanIdentifier)`"
 
-      case .findElementsByText(text: let text):
-        return "match elements by text: `\(text)`"
+      case .findElementsByText(text: let text, isRegex: let isRegex):
+        return "match elements by text: `\(text)` (is-regex: \(isRegex ? "true" : "false"))"
 
       case .findElementsByType(type: let type):
         return "match elements by type: `\(type)`"

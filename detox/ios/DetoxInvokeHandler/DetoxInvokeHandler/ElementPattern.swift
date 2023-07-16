@@ -8,10 +8,10 @@ import UIKit
 /// Represents a pattern of element to match using the element matcher (`ElementMatcherProtocol`).
 public indirect enum ElementPattern: Hashable, Equatable {
   /// Text pattern, find elements that have the specified text.
-  case text(String)
+  case text(String, isRegex: Bool)
 
   /// Label pattern, find elements that have the specified label.
-  case label(String)
+  case label(String, isRegex: Bool)
 
   /// Value pattern, find elements that have the specified value.
   case value(String)
@@ -23,7 +23,7 @@ public indirect enum ElementPattern: Hashable, Equatable {
   case and(patterns: [ElementPattern])
 
   /// ID pattern, find elements that have the specified ID.
-  case id(String)
+  case id(String, isRegex: Bool)
 
   /// Traits pattern, find elements that have the specified accessibility traits.
   case traits([AccessibilityTrait])
@@ -48,16 +48,16 @@ extension ElementPattern {
   init(from predicate: MessagePredicate) throws {
     switch predicate.type {
       case .text:
-        self = .text(predicate.value?.value as! String)
+        self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .label:
-        self = .label(predicate.value?.value as! String)
+        self = .label(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .value:
         self = .value(predicate.value?.value as! String)
 
       case .id:
-        self = .id(predicate.value?.value as! String)
+        self = .id(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .type:
         self = .type(predicate.value?.value as! String)
@@ -81,16 +81,16 @@ extension ElementPattern {
   init(from predicate: MessageSubPredicate) throws {
     switch predicate.type {
       case .text:
-        self = .text(predicate.value?.value as! String)
+        self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .label:
-        self = .label(predicate.value?.value as! String)
+        self = .label(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .value:
         self = .value(predicate.value?.value as! String)
 
       case .id:
-        self = .id(predicate.value?.value as! String)
+        self = .id(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .type:
         self = .type(predicate.value?.value as! String)
@@ -114,16 +114,16 @@ extension ElementPattern {
   init(from predicate: MessageSubSubPredicate) throws {
     switch predicate.type {
       case .text:
-        self = .text(predicate.value?.value as! String)
+        self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
         
       case .label:
-        self = .label(predicate.value?.value as! String)
+        self = .label(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .value:
         self = .value(predicate.value?.value as! String)
 
       case .id:
-        self = .id(predicate.value?.value as! String)
+        self = .id(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .type:
         self = .type(predicate.value?.value as! String)
@@ -147,13 +147,13 @@ extension ElementPattern {
   init(from predicate: MessageSubSubSubPredicate) throws {
     switch predicate.type {
       case .text:
-        self = .text(predicate.value?.value as! String)
+        self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .label:
-        self = .label(predicate.value?.value as! String)
+        self = .label(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .id:
-        self = .id(predicate.value?.value as! String)
+        self = .id(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
 
       case .type:
         self = .type(predicate.value?.value as! String)
