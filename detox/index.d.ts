@@ -1482,6 +1482,9 @@ declare global {
         }
 
         interface WebElementActions {
+            /**
+             * Taps the element
+             */
             tap(): Promise<void>;
 
             /**
