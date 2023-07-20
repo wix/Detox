@@ -3,6 +3,8 @@
     "module": "commonjs",
     "target": "es2021",
     "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "rootDir": "src",
     "outDir": "dist",
   },

@@ -12,6 +12,7 @@ beforeAll(async () => {
   });
 
   await server.startServer();
+  console.log('WebDriverServer listening on port 4723');
 });
 
 test('WebDriverServer', (done) => {

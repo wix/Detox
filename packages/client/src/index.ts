@@ -1,20 +1,51 @@
 import {createSession, cleanupSessions} from './remote';
 
 async function main() {
-  const { device } = await createSession({
-    server: {},
+  const { device, expect, element, by } = await createSession({
+    server: {
+      baseURL: 'http://localhost:4723',
+    },
     capabilities: {
-      browserName: 'safari',
-      platformName: 'mac',
+      platformName: 'android',
+      webSocketUrl: true,
+      "detox:apps": {
+        "example": {
+          "type": "ios.app",
+          "name": "example",
+          "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
+          "bundleId": "com.wix.detox-example"
+        }
+      },
+      "detox:behavior": {
+        "init": {
+          "reinstallApp": true,
+          "exposeGlobals": true
+        },
+        "cleanup": {
+          "shutdownDevice": false
+        },
+        "launchApp": "auto"
+      },
+      "detox:device": {
+        "type": "ios.simulator",
+        "headless": false,
+        "device": {
+          "type": "iPhone 14 Pro Max"
+        }
+      },
     } as any,
   });
 
-  await device.openURL({ url: 'https://www.google.com' });
+  await device.launchApp();
+  await element(by.text('Sanity')).tap();
+  await expect(element(by.text('Welcome'))).toBeVisible();
+  await device.reloadReactNative();
+  await element(by.text('Sanity')).tap();
   await device.relaunchApp();
-  await cleanupSessions();
+  await element(by.text('Sanity')).tap();
 }
 
-main().catch((err) => {
+main().finally(cleanupSessions).catch((err) => {
   console.error(err);
   process.exit(1);
 });

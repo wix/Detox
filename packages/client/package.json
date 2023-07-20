@@ -6,6 +6,7 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
+    "@detox/client-plugin-ios": "^22.0.0",
     "axios": "^1.4.0",
     "bunyan": "^2.0.5",
     "bunyamin": "^1.1.0",

@@ -2,7 +2,8 @@ import axios, { AxiosInstance, CreateAxiosDefaults } from 'axios';
 import { RemoteDevice } from './RemoteDevice';
 import { WebDriverClient } from '../webdriver';
 import { WebDriverFetchWrapper } from '../webdriver/http';
-import { By } from '../matchers';
+import IosClientAPI from '@detox/client-plugin-ios';
+import { InvocationManager } from './InvocationManager';
 
 interface DetoxSessionConfig {
   server: CreateAxiosDefaults;
@@ -32,10 +33,9 @@ class RemoteDetoxSession {
   #sessionId: string;
   #capabilities: DetoxDriverCapabilities;
   #device: RemoteDevice;
-  #by: By;
-  #element: RemoteElementFactory;
   #fetch: AxiosInstance;
   #wd?: WebDriverClient;
+  #clientApi?: IosClientAPI;
 
   constructor(options: DetoxSessionConfig) {
     this.#sessionId = '';
@@ -76,10 +76,29 @@ class RemoteDetoxSession {
         appLaunchArgs: {},
       },
     });
+
+    const invocationManager = new InvocationManager(this.#wd);
+    this.#clientApi = new IosClientAPI(invocationManager);
   }
 
   get device() {
     return this.#device;
+  }
+
+  get element() {
+    return this.#clientApi.element;
+  }
+
+  get expect() {
+    return this.#clientApi.expect;
+  }
+
+  get waitFor() {
+    return this.#clientApi.waitFor;
+  }
+
+  get by() {
+    return this.#clientApi.by;
   }
 
   async cleanup() {
