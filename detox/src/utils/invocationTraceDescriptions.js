@@ -26,6 +26,22 @@ module.exports = {
     tapReturnKey: () => 'tap on return key',
     typeText: (value) => `type input text: "${value}"`,
   },
+  webViewActionDescription: {
+    tap: (value) => `tap${value !== undefined ? ` at ${JSON.stringify(value)}` : ''}`,
+    typeText: (value, isContentEditable) => `type input text: "${value}"${isContentEditable ? ' in content editable' : ''}`,
+    replaceText: (value) => `replace input text: "${value}"`,
+    clearText: () => 'clear input text',
+    selectAllText: () => 'select all input text',
+    getText: () => 'get input text',
+    scrollToView: () => 'scroll to view',
+    focus: () => 'focus',
+    moveCursorToEnd: () => 'move cursor to end',
+    runScript: (script) => `run script: "${script}"`,
+    runScriptWithArgs: (script, ...args) => `run script: "${script}" with args: "${args}"`,
+    getCurrentUrl: () => 'get current url',
+    getTitle: () => 'get title',
+    full: (actionDescription) => `perform web view action: ${actionDescription}`
+  },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,
     waitForWithTimeout: (expectDescription, timeout) => `${expectDescription} with timeout (${timeout} ms)`,

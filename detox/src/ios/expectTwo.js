@@ -6,12 +6,14 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
 
+
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
+const { webViewElement, webViewMatcher, webViewExpect, isWebViewElement } = require('./web');
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
@@ -400,7 +402,7 @@ class By {
   }
 
   get web() {
-    throw new Error('Detox does not support by.web matchers on iOS.');
+    return webViewMatcher();
   }
 }
 
@@ -763,6 +765,10 @@ class IosExpect {
   }
 
   expect(element) {
+    if (isWebViewElement(element)) {
+      return webViewExpect(this._invocationManager, element);
+    }
+
     return expect(this._invocationManager, element);
   }
 
@@ -770,8 +776,8 @@ class IosExpect {
     return waitFor(this._invocationManager, this._emitter, element);
   }
 
-  web(_matcher) {
-    throw new Error('Detox does not support web(), web.element() API on iOS.');
+  web(matcher) {
+    return webViewElement(this._invocationManager, this._emitter, matcher);
   }
 }
 

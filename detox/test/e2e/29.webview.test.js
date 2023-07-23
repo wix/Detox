@@ -1,13 +1,7 @@
 const jestExpect = require('expect').default;
 const MOCK_TEXT = 'Mock Text';
 
-describe(':ios: WebView', () => {
-  it('should throw a runtime error on attempt to use', () => {
-    jestExpect(() => web(by.id('webview_1'))).toThrowError(/Detox does not support .* on iOS/);
-  });
-});
-
-describe(':android: WebView', () => {
+describe('WebView', () => {
   let webview_1;
 
   beforeEach(async () => {
@@ -155,7 +149,7 @@ describe(':android: WebView', () => {
   });
 
   it('getWebView with matcher id', async () => {
-    const webview_2 = await web(by.id('webview_2'));
+    const webview_2 = web(by.id('webview_2'));
     await expect(webview_2.element(by.web.tag('p'))).toHaveText('Second Webview');
   });
 
