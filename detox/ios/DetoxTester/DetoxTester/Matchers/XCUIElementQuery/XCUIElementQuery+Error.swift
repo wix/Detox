@@ -5,6 +5,7 @@
 
 import Foundation
 import DetoxInvokeHandler
+import XCTest
 
 extension XCUIElementQuery {
   /// Represents an error caused by `XCUIElementQuery` extensions.
