@@ -7,6 +7,7 @@ import { promisify } from 'util';
 import express from 'express';
 import WebSocket from 'ws';
 
+import actions from '../client/actions/actions';
 import DeviceRegistry from '../devices/DeviceRegistry';
 import DetoxServer from '../server/DetoxServer';
 
@@ -493,7 +494,9 @@ export class WebDriverServer {
   @Command('POST', '/session/:sessionId/detox/invoke')
   async onDetoxInvoke({ req }) {
     const { client } = this.#getSession(req);
-    const result = await client.sendAction(req.body);
+
+    const invoke = new actions.Invoke(req.body);
+    const result = await client.sendAction(invoke);
     return result;
   }
 

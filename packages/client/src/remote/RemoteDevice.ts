@@ -107,7 +107,7 @@ export class RemoteDevice {
     const payload = { ...options, newInstance: true };
     if (bundleId) { payload.bundleId = bundleId; }
 
-    return this.#wd.http.session.post('/detox/launchApp', options);
+    return this.#wd.http.session.post('/detox/launchApp', payload);
   }
 
   async reloadReactNative(): Promise<void> {

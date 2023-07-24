@@ -44,20 +44,27 @@ class RemoteDetoxSession {
       baseURL: 'http://localhost:4444/wd/hub',
       ...options.server,
       headers: {
+        'Accept': 'application/json; charset=utf-8',
         'Content-Type': 'application/json;charset=UTF-8',
+        'User-Agent': 'selenium/4.10.0 (js mac)',
+
         ...options.server?.headers,
+      },
+      proxy: {
+        host: 'localhost',
+        port: 8888,
       },
     });
   }
 
   async init() {
     const wdw = new WebDriverFetchWrapper(this.#fetch);
-    const session = await wdw.post('/session', {
-      capabilities: {
-        alwaysMatch: this.#capabilities,
-      },
-    });
+    const capabilities = {
+      firstMatch: [{}],
+      alwaysMatch: this.#capabilities,
+    };
 
+    const session = await wdw.post('/session', { capabilities });
     this.#sessionId = session.sessionId;
     this.#capabilities = session.capabilities;
 
