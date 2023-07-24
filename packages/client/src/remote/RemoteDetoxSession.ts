@@ -50,10 +50,10 @@ class RemoteDetoxSession {
 
         ...options.server?.headers,
       },
-      proxy: {
-        host: 'localhost',
-        port: 8888,
-      },
+      // proxy: {
+      //   host: 'localhost',
+      //   port: 8888,
+      // },
     });
   }
 
@@ -109,7 +109,7 @@ class RemoteDetoxSession {
   }
 
   async cleanup() {
-    await this.#wd.http.destroy();
+    await this.#wd.http?.destroy();
   }
 }
 

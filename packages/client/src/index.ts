@@ -36,13 +36,15 @@ async function main() {
     } as any,
   });
 
+  await device.installApp();
   await device.launchApp();
-  await element(by.text('Sanity')).tap();
-  await expect(element(by.text('Welcome'))).toBeVisible();
+  await element(by.text('Step One')).tap();
+  await expect(element(by.text('See Your Changes'))).toBeVisible();
   await device.reloadReactNative();
-  await element(by.text('Sanity')).tap();
+  await waitFor(element(by.text('Follow us on Twitter'))).toBeVisible().whileElement(by.type('RCTScrollView')).scroll(200, 'down');
+  await element(by.text('Help')).tap();
   await device.relaunchApp();
-  await element(by.text('Sanity')).tap();
+  await expect(element(by.text('Step One'))).toBeVisible();
 }
 
 main().finally(cleanupSessions).catch((err) => {
