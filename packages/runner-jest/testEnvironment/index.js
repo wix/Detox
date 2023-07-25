@@ -12,6 +12,7 @@ const Timer = require('./utils/Timer');
 const {
   DetoxCoreListener,
   DetoxInitErrorListener,
+  DetoxPlatformFilterListener,
   SpecReporter,
 } = require('./listeners');
 const assertExistingContext = require('./utils/assertExistingContext');
@@ -57,6 +58,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     this.registerListeners({
       DetoxInitErrorListener,
       DetoxCoreListener,
+      DetoxPlatformFilterListener,
       SpecReporter,
     });
   }
