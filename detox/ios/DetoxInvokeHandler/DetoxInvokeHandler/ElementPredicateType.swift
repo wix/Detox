@@ -1,10 +1,10 @@
 //
-//  MessagePredicateType.swift (DetoxInvokeHandler)
+//  ElementPredicateType.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 /// Represents a message predicate type.
-public enum MessagePredicateType: String, Codable, Hashable {
+public enum ElementPredicateType: String, Codable, Hashable {
   /// Text predicate, expects the element's text to equal the specified `value`.
   case text = "text"
 

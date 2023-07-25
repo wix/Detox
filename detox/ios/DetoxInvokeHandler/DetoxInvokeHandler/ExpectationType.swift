@@ -7,7 +7,7 @@ import Foundation
 
 /// Representation of an element expectation.
 public enum ExpectationType: String, Codable, Equatable {
-  /// Expects the element to be visibile.
+  /// Expects the element to be visible.
   case toBeVisible = "toBeVisible"
 
   /// Expects the element to be focused.

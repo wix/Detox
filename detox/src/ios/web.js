@@ -7,10 +7,10 @@ const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 
-class WebViewExpect {
-  constructor(invocationManager, webViewElement) {
+class WebExpect {
+  constructor(invocationManager, element) {
     this._invocationManager = invocationManager;
-    this.webViewElement = webViewElement;
+    this.element = element;
     this.modifiers = [];
   }
 
@@ -32,11 +32,14 @@ class WebViewExpect {
   createInvocation(expectation, ...params) {
     const definedParams = _.without(params, undefined);
     return {
-      type: 'expectation',
-      webviewPredicate: this.webViewElement.matcher.predicate,
-      predicate: this.webViewElement.matcher.predicate,
-      ...(this.webViewElement.index !== undefined && { atIndex: this.webViewElement.index }),
-      ...(this.modifiers.length !== 0 && { modifiers: this.modifiers }),
+      type: 'webExpectation',
+      ...(this.element.webViewElement !== undefined) && {
+        predicate: this.element.webViewElement.matcher.predicate,
+        ...(this.element.webViewElement.index !== undefined && { atIndex: this.element.webViewElement.index }),
+      },
+      webPredicate: this.element.matcher.predicate,
+      ...(this.element.index !== undefined && { webAtIndex: this.element.index }),
+      ...(this.modifiers.length !== 0 && { webModifiers: this.modifiers }),
       expectation,
       ...(definedParams.length !== 0 && { params: definedParams })
     };
@@ -51,10 +54,11 @@ class WebViewExpect {
   }
 }
 
-class WebViewElement {
-  constructor(invocationManager, emitter, matcher, index) {
+class WebElement {
+  constructor(invocationManager, emitter, webViewElement, matcher, index) {
     this._invocationManager = invocationManager;
     this._emitter = emitter;
+    this.webViewElement = webViewElement;
     this.matcher = matcher;
     this.index = index;
   }
@@ -134,9 +138,13 @@ class WebViewElement {
     assert(traceDescription, `must provide trace description for action: \n ${JSON.stringify(action)}`);
 
     const invocation = {
-      type: 'action',
-      predicate: this.matcher.predicate,
-      ...(this.index !== undefined && { atIndex: this.index }),
+      type: 'webAction',
+      ...(this.webViewElement !== undefined) && {
+        predicate: this.webViewElement.matcher.predicate,
+        ...(this.webViewElement.index !== undefined && { atIndex: this.webViewElement.index }),
+      },
+      webPredicate: this.matcher.predicate,
+      ...(this.index !== undefined && { webAtIndex: this.index }),
       action,
       ...(params.length !== 0 && { params }),
     };
@@ -145,7 +153,7 @@ class WebViewElement {
   }
 }
 
-class WebViewMatcher {
+class WebElementMatcher {
   id(id) {
     if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
     this.predicate = { type: 'id', value: id.toString() };
@@ -195,15 +203,16 @@ class WebViewMatcher {
   }
 }
 
-function webViewMatcher() {
-  return new WebViewMatcher();
+function webMatcher() {
+  return new WebElementMatcher();
 }
 
-function webViewElement(invocationManager, emitter, matcher) {
-  if (!(matcher instanceof WebViewMatcher)) {
+function webElement(invocationManager, emitter, webViewElement, matcher) {
+  if (!(matcher instanceof WebElementMatcher)) {
     throwWebViewMatcherError(matcher);
   }
-  return new WebViewElement(invocationManager, emitter, matcher);
+
+  return new WebElement(invocationManager, emitter, webViewElement, matcher);
 }
 
 function throwWebViewMatcherError(param) {
@@ -211,30 +220,30 @@ function throwWebViewMatcherError(param) {
   throw new Error(`${paramDescription} is not a Detox web-view matcher. More about web-view matchers here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
-function webViewExpect(invocationManager, webViewElement) {
-  if (!(webViewElement instanceof WebViewElement)) {
-    throwWebViewElementError(webViewElement);
+function webExpect(invocationManager, element) {
+  if (!(element instanceof WebElement)) {
+    throwWebElementError(element);
   }
 
-  return new WebViewExpect(invocationManager, webViewElement);
+  return new WebExpect(invocationManager, element);
 }
 
-function throwWebViewElementError(param) {
+function throwWebElementError(param) {
   const paramDescription = JSON.stringify(param);
-  throw new Error(`${paramDescription} is not a Detox web-view element. More about web-view elements here: https://wix.github.io/Detox/docs/api/webviews`);
+  throw new Error(`${paramDescription} is not a web element. More about web elements here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
 function _executeInvocation(invocationManager, invocation, traceDescription) {
   return traceInvocationCall(traceDescription, invocation, invocationManager.execute(invocation));
 }
 
-function isWebViewElement(element) {
-  return element instanceof WebViewElement;
+function isWebElement(element) {
+  return element instanceof WebElement;
 }
 
 module.exports = {
-  webViewMatcher,
-  webViewElement,
-  webViewExpect,
-  isWebViewElement
+  webMatcher,
+  webElement,
+  webExpect,
+  isWebElement
 };

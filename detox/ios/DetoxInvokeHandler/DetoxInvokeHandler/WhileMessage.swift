@@ -14,7 +14,7 @@ public struct WhileMessage: Codable, Equatable {
   let expectation: ExpectationType
 
   /// Modifiers for the message predicate.
-  let modifiers: [MessagePredicateModifiers]?
+  let modifiers: [ElementPredicateModifiers]?
 
   /// Specifies the index of the element to perform on, in case of multiple elements matching.
   let atIndex: Int?
@@ -23,7 +23,7 @@ public struct WhileMessage: Codable, Equatable {
   let params: [AnyCodable]?
 
   /// Predicate of the message.
-  let predicate: MessagePredicate
+  let predicate: ElementPredicate
 }
 
 extension WhileMessage {

@@ -41,7 +41,7 @@ public class InvokeHandler {
   // TODO: Refactor, mainly extract to methods :)
   private func handle(parsedMessage: Message) throws -> AnyCodable? {
     let findElementsHandler: () throws -> [AnyHashable] = { [self] in
-      return try findElements(by: parsedMessage.predicate)
+      return try findElements(by: parsedMessage.predicate!)
     }
 
     // TODO: this is a very long method, needs massive refactoring.
@@ -98,6 +98,9 @@ public class InvokeHandler {
           target: targetElement
         )
 
+      case .webAction:
+        fatalError("does not support web action yet")
+
       case .expectation:
         let findElementHandler: () throws -> AnyHashable? = { [self] in
           return try getElement(from: try findElementsHandler(), at: parsedMessage.atIndex)
@@ -109,6 +112,9 @@ public class InvokeHandler {
           modifiers: parsedMessage.modifiers,
           timeout: parsedMessage.timeout
         )
+
+      case .webExpectation:
+        fatalError("does not support web expectation yet")
     }
 
     return nil
@@ -116,7 +122,7 @@ public class InvokeHandler {
 
   // MARK: - Find element
 
-  private func findElements(by predicate: MessagePredicate) throws -> [AnyHashable] {
+  private func findElements(by predicate: ElementPredicate) throws -> [AnyHashable] {
     let pattern = try ElementPattern(from: predicate)
     return try elementMatcher.match(to: pattern)
   }
@@ -415,7 +421,7 @@ public class InvokeHandler {
     on findElementHandler: () throws -> AnyHashable?,
     type: ExpectationType,
     params: [AnyCodable]?,
-    modifiers: [MessagePredicateModifiers]?,
+    modifiers: [ElementPredicateModifiers]?,
     timeout: Double?
   ) throws {
     let isTruthy: Bool = modifiers?.contains(.not) != true

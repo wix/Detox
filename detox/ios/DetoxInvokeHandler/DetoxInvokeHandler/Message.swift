@@ -18,17 +18,36 @@ struct Message: Codable, Equatable {
   /// `MessageType.expectation`.
   let expectation: ExpectationType?
 
+  /// Type of the action to perform, needs to be specified if the message `type` is
+  /// `MessageType.webAction`.
+  let webAction: WebActionType?
+
+  /// Type of the expectation to assert, needs to be specified if the message `type` is
+  /// `MessageType.webExpectation`.
+  let webExpectation: WebExpectationType?
+
   /// Modifiers of the message predicate.
-  let modifiers: [MessagePredicateModifiers]?
+  let modifiers: [ElementPredicateModifiers]?
+
+  /// Modifiers of the web predicate.
+  let webModifiers: [WebPredicateModifiers]?
 
   /// Specifies the index of the element to perform on, in case of multiple elements matching.
   let atIndex: Int?
 
+  /// Specifies the index of the web element to perform on, in case of multiple web elements
+  /// matching.
+  let webAtIndex: Int?
+
   /// Additional parameters of the action or expectation, if needed.
   let params: [AnyCodable]?
 
-  /// Predicate of the message.
-  let predicate: MessagePredicate
+  /// Predicate of the message, representing the element to perform on.
+  let predicate: ElementPredicate?
+
+  /// Predicate of the inner web element if exists (in case of message from types `webAction` or
+  /// `webExpectation`).
+  let webPredicate: WebPredicate?
 
   /// Target element of the action, if exists.
   let targetElement: TargetElement?
@@ -57,6 +76,12 @@ extension Message {
 
     /// Expectation type.
     case expectation = "expectation"
+
+    /// Web action type.
+    case webAction = "webAction"
+
+    /// Web expectation type.
+    case webExpectation = "webExpectation"
   }
 }
 

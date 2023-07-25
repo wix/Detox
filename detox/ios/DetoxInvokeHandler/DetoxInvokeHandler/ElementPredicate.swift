@@ -1,12 +1,12 @@
 //
-//  MessagePredicate.swift (DetoxInvokeHandler)
+//  ElementPredicate.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 /// Predicate of a message.
-public struct MessagePredicate: MessagePredicateProtocol, Equatable {
+public struct ElementPredicate: ElementPredicateProtocol, Equatable {
   /// The predicate type.
-  var type: MessagePredicateType
+  var type: ElementPredicateType
 
   /// Value to compare to.
   var value: AnyCodable?
@@ -15,17 +15,17 @@ public struct MessagePredicate: MessagePredicateProtocol, Equatable {
   var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
-  var predicates: [MessageSubPredicate]?
+  var predicates: [SubElementPredicate]?
 
   /// Underlying predicate, if there is any (when using `ancestor` or `descendant` predicates
   /// for example).
-  var predicate: MessageSubPredicate?
+  var predicate: SubElementPredicate?
 }
 
 /// Sub-predicate, needed in case the message is consists of nested predicates.
-public struct MessageSubPredicate: MessagePredicateProtocol, Equatable {
+public struct SubElementPredicate: ElementPredicateProtocol, Equatable {
   /// The predicate type.
-  var type: MessagePredicateType
+  var type: ElementPredicateType
 
   /// Value to compare to.
   var value: AnyCodable?
@@ -34,16 +34,16 @@ public struct MessageSubPredicate: MessagePredicateProtocol, Equatable {
   var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
-  var predicates: [MessageSubSubPredicate]?
+  var predicates: [SubSubElementPredicate]?
 
   /// Underlying predicate, if there is any (when using `ancestor` predicate type for example).
-  var predicate: MessageSubSubPredicate?
+  var predicate: SubSubElementPredicate?
 }
 
 /// Sub-sub-predicate, needed in case the message is consists of nested predicates.
-public struct MessageSubSubPredicate: MessagePredicateProtocol, Equatable {
+public struct SubSubElementPredicate: ElementPredicateProtocol, Equatable {
   /// The predicate type.
-  var type: MessagePredicateType
+  var type: ElementPredicateType
 
   /// Value to compare to.
   var value: AnyCodable?
@@ -52,16 +52,16 @@ public struct MessageSubSubPredicate: MessagePredicateProtocol, Equatable {
   var isRegex: Bool?
 
   /// Underlying predicates, if there are any (when using `and` predicate type for example).
-  var predicates: [MessageSubSubSubPredicate]?
+  var predicates: [SubSubSubElementPredicate]?
 
   /// Underlying predicate, if there is any (when using `ancestor` predicate type for example).
-  var predicate: MessageSubSubSubPredicate?
+  var predicate: SubSubSubElementPredicate?
 }
 
 /// Sub-sub-sub-predicate, needed in case the message is consists of nested predicates.
-public struct MessageSubSubSubPredicate: MessagePredicateProtocol, Equatable {
+public struct SubSubSubElementPredicate: ElementPredicateProtocol, Equatable {
   /// The predicate type.
-  var type: MessagePredicateType
+  var type: ElementPredicateType
 
   /// Value to compare to.
   var value: AnyCodable?

@@ -8,5 +8,5 @@ import Foundation
 /// Represent the target element of the action.
 public struct TargetElement: Codable, Hashable, Equatable {
   /// Predicate of the target element.
-  let predicate: MessagePredicate
+  let predicate: ElementPredicate
 }

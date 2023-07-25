@@ -20,7 +20,7 @@ class MessageSpec: QuickSpec {
 
     describe("expectation") {
       var messageBuilder: MessageBuilder!
-      let predicate = MessagePredicate.init(type: .text, value: "foo")
+      let predicate = ElementPredicate(type: .text, value: "foo")
 
       beforeEach {
         messageBuilder = MessageBuilder().setTextPredicate("foo")
@@ -32,17 +32,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
-            type: .expectation,
-            action: nil,
+          Message.defaultInstance(
+            type: Message.MessageType.expectation,
             expectation: .toBeFocused,
             modifiers: [.not],
-            atIndex: nil,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -53,16 +47,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toBeFocused,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
             predicate: predicate,
-            targetElement: nil,
-            while: nil,
             timeout: 50
           )
         ))
@@ -74,17 +62,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toHaveText,
-            modifiers: nil,
-            atIndex: nil,
             params: ["foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -95,17 +77,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toHaveId,
-            modifiers: nil,
-            atIndex: nil,
             params: ["foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -116,17 +92,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toBeFocused,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -137,17 +106,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toBeVisible,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -158,17 +120,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toBeVisible,
-            modifiers: nil,
-            atIndex: nil,
             params: [25],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -179,17 +135,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toHaveSliderPosition,
-            modifiers: nil,
-            atIndex: nil,
             params: [0.5],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -200,17 +150,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .expectation,
-            action: nil,
             expectation: .toExist,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -218,7 +161,7 @@ class MessageSpec: QuickSpec {
 
     describe("action") {
       var messageBuilder: MessageBuilder!
-      let predicate = MessagePredicate.init(type: .text, value: "foo")
+      let predicate = ElementPredicate.init(type: .text, value: "foo")
 
       beforeEach {
         messageBuilder = MessageBuilder().setTextPredicate("foo").at(index: 3)
@@ -230,24 +173,16 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
             predicate: predicate,
-            targetElement: nil,
-            while: WhileMessage(
+            while: WhileMessage.defaultInstance(
               type: .expectation,
               expectation: .toBeVisible,
-              modifiers: nil,
-              atIndex: nil,
-              params: nil,
-              predicate: .init(type: .id, value: "foo", predicates: nil, predicate: nil)
-            ),
-            timeout: nil
+              predicate: .init(type: .id, value: "foo")
+            )
           )
         ))
       }
@@ -258,17 +193,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -279,17 +208,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tapBackspaceKey,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -300,17 +223,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tapReturnKey,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -321,17 +238,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .typeText,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -342,17 +254,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .replaceText,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -363,17 +270,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .clearText,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -384,17 +285,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .multiTap,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [3],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -405,17 +301,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .scrollTo,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["left"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -431,17 +322,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .scroll,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [1.1, "right", .init(NSNull()), .init(NSNull())],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -452,17 +338,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .setColumnToValue,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [23, "foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -476,17 +357,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .setDatePickerDate,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["2022/02/22", "yyyy/MM/dd"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -497,17 +373,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .pinch,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [1, "slow", 2],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -518,17 +389,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .adjustSliderToPosition,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [0.5],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -539,17 +405,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .takeScreenshot,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["foo"],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -566,17 +427,12 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .swipe,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: ["down", "slow", .init(NSNull()), .init(NSNull()), .init(NSNull())],
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -587,17 +443,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .getAttributes,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -608,17 +458,11 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .longPress,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
-            params: nil,
-            predicate: predicate,
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: predicate
           )
         ))
       }
@@ -638,17 +482,13 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .longPress,
-            expectation: nil,
-            modifiers: nil,
             atIndex: 3,
             params: [55, 0.3, 0.2, .init(NSNull()), .init(NSNull()), 22, 10],
             predicate: predicate,
-            targetElement: .init(predicate: .init(type: .id, value: "foo")),
-            while: nil,
-            timeout: nil
+            targetElement: .init(predicate: .init(type: .id, value: "foo"))
           )
         ))
       }
@@ -667,17 +507,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: .init(type: .text, value: "foo"),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: .init(type: .text, value: "foo")
           )
         ))
       }
@@ -688,17 +521,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: .init(type: .text, value: "foo", isRegex: true),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: .init(type: .text, value: "foo", isRegex: true)
           )
         ))
       }
@@ -709,17 +535,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: .init(type: .value, value: "foo"),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: .init(type: .value, value: "foo")
           )
         ))
       }
@@ -733,20 +552,13 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
             predicate: .init(
               type: .traits,
               value: ["updatesFrequently", "startsMediaSession"]
-            ),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            )
           )
         ))
       }
@@ -757,17 +569,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: .init(type: .label, value: "bar"),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: .init(type: .label, value: "bar")
           )
         ))
       }
@@ -778,17 +583,10 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
-            predicate: .init(type: .type, value: "bar"),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            predicate: .init(type: .type, value: "bar")
           )
         ))
       }
@@ -802,20 +600,13 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
             predicate: .init(type: .and, predicates: [
               .init(type: .text, value: "foo"),
               .init(type: .label, value: "bar")
-            ]),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            ])
           )
         ))
       }
@@ -826,20 +617,13 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
             predicate: .init(type: .and, predicates: [
               .init(type: .id, value: "foo"),
               .init(type: .ancestor, predicate: .init(type: .id, value: "bar"))
-            ]),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            ])
           )
         ))
       }
@@ -850,20 +634,13 @@ class MessageSpec: QuickSpec {
         let parsed = try Message(from: message)
 
         expect(parsed).to(equal(
-          Message(
+          Message.defaultInstance(
             type: .action,
             action: .tap,
-            expectation: nil,
-            modifiers: nil,
-            atIndex: nil,
-            params: nil,
             predicate: .init(type: .and, predicates: [
               .init(type: .id, value: "foo"),
               .init(type: .descendant, predicate: .init(type: .id, value: "bar"))
-            ]),
-            targetElement: nil,
-            while: nil,
-            timeout: nil
+            ])
           )
         ))
       }

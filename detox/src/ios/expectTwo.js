@@ -13,7 +13,8 @@ const { actionDescription, expectDescription } = require('../utils/invocationTra
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
-const { webViewElement, webViewMatcher, webViewExpect, isWebViewElement } = require('./web');
+
+const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
@@ -402,7 +403,7 @@ class By {
   }
 
   get web() {
-    return webViewMatcher();
+    return webMatcher();
   }
 }
 
@@ -757,7 +758,7 @@ class IosExpect {
     this.waitFor = this.waitFor.bind(this);
     this.by = new By();
     this.web = this.web.bind(this);
-    this.web.element = this.web;
+    this.web.element = this.web();
   }
 
   element(matcher) {
@@ -765,8 +766,8 @@ class IosExpect {
   }
 
   expect(element) {
-    if (isWebViewElement(element)) {
-      return webViewExpect(this._invocationManager, element);
+    if (isWebElement(element)) {
+      return webExpect(this._invocationManager, element);
     }
 
     return expect(this._invocationManager, element);
@@ -777,7 +778,16 @@ class IosExpect {
   }
 
   web(matcher) {
-    return webViewElement(this._invocationManager, this._emitter, matcher);
+    return {
+      element: webMatcher => {
+        if (!(matcher instanceof Matcher) && matcher !== undefined) {
+          throwMatcherError(matcher);
+        }
+
+        const webViewElement = matcher ? element(this._invocationManager, this._emitter, matcher) : undefined;
+        return webElement(this._invocationManager, this._emitter, webViewElement, webMatcher);
+      }
+    };
   }
 }
 

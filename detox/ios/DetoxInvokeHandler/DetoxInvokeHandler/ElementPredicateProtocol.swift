@@ -1,14 +1,14 @@
 //
-//  MessagePredicateProtocol.swift (DetoxInvokeHandler)
+//  ElementPredicateProtocol.swift (DetoxInvokeHandler)
 //  Created by Asaf Korem (Wix.com) on 2022.
 //
 
 import Foundation
 
 /// Protocol for basic predicate of a message.
-protocol MessagePredicateProtocol: Codable, Hashable {
+protocol ElementPredicateProtocol: Codable, Hashable {
   /// Predicate type.
-  var type: MessagePredicateType { get set }
+  var type: ElementPredicateType { get set }
 
   /// Predicate value, if needed.
   var value: AnyCodable? { get set }

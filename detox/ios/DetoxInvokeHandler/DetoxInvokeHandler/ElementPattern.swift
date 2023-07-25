@@ -45,7 +45,7 @@ extension ElementPattern {
 
 extension ElementPattern {
   /// Initializes the element pattern from a message `predicate`.
-  init(from predicate: MessagePredicate) throws {
+  init(from predicate: ElementPredicate) throws {
     switch predicate.type {
       case .text:
         self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
@@ -78,7 +78,7 @@ extension ElementPattern {
   }
 
   /// Initializes the element pattern from a message `predicate`.
-  init(from predicate: MessageSubPredicate) throws {
+  init(from predicate: SubElementPredicate) throws {
     switch predicate.type {
       case .text:
         self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
@@ -111,7 +111,7 @@ extension ElementPattern {
   }
 
   /// Initializes the element pattern from a message `predicate`.
-  init(from predicate: MessageSubSubPredicate) throws {
+  init(from predicate: SubSubElementPredicate) throws {
     switch predicate.type {
       case .text:
         self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
@@ -144,7 +144,7 @@ extension ElementPattern {
   }
 
   /// Initializes the element pattern from a message `predicate`.
-  init(from predicate: MessageSubSubSubPredicate) throws {
+  init(from predicate: SubSubSubElementPredicate) throws {
     switch predicate.type {
       case .text:
         self = .text(predicate.value?.value as! String, isRegex: predicate.isRegex ?? false)
