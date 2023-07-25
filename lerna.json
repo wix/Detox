@@ -14,7 +14,7 @@
     "generation",
     "."
   ],
-  "version": "20.11.0",
+  "version": "22.0.0",
   "npmClient": "npm",
   "command": {
     "publish": {
@@ -32,7 +32,8 @@
     },
     "bootstrap": {
       "npmClientArgs": [
-        "--no-package-lock"
+        "--no-package-lock",
+        "--legacy-peer-deps"
       ]
     }
   }

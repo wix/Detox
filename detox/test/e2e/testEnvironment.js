@@ -1,4 +1,4 @@
-const { DetoxCircusEnvironment } = require('detox/runners/jest');
+const { DetoxCircusEnvironment } = require('@detox/runner-jest');
 const { worker } = require('detox/internals')
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {

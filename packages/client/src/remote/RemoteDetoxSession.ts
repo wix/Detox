@@ -11,21 +11,10 @@ interface DetoxSessionConfig {
 }
 
 interface DetoxDriverCapabilities {
-  /**
-   * The platform of the device under test.
-   * @example 'ios'
-   * @example 'android'
-   */
-  platformName: string;
-  /**
-   * The driver name.
-   * @example 'ios.simulator'
-   * @example 'android.emulator'
-   */
-  'detox:driverName': string;
-  'detox:driverOptions'?: unknown;
-  'detox:driverInfo'?: any;
-
+  browserName: 'safari';
+  'detox:apps': any;
+  'detox:device': any;
+  'detox:behavior': any;
   [capability: string]: unknown;
 }
 

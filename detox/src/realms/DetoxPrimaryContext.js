@@ -19,7 +19,7 @@ const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxCon
 const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
 const _ipcServer = Symbol('ipcServer');
 const _resetLockFile = Symbol('resetLockFile');
-const _wss = Symbol('wss');
+const _wds = Symbol('wds');
 const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
@@ -32,7 +32,7 @@ class DetoxPrimaryContext extends DetoxContext {
     super();
 
     this[_dirty] = false;
-    this[_wss] = null;
+    this[_wds] = null;
     this[_globalLifecycleHandler] = null;
     /** Path to file where the initial session object is serialized */
     this[_sessionFile] = '';
@@ -112,22 +112,21 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     // TODO: Detox-server creation ought to be delegated to a generator/factory.
-    const DetoxServer = require('../server/DetoxServer');
+    const WebDriverServer = require('../webdriver');
     if (sessionConfig.autoStart) {
-      this[_wss] = new DetoxServer({
+      this[_wds] = new WebDriverServer({
         port: sessionConfig.server
           ? new URL(sessionConfig.server).port
           : 0,
-        standalone: false,
       });
 
-      await this[_wss].open();
+      await this[_wds].startServer();
     }
 
     // TODO: double check that this config is indeed propogated onto the client create at the detox-worker side
-    if (!sessionConfig.server && this[_wss]) {
+    if (!sessionConfig.server && this[_wds]) {
       // @ts-ignore
-      sessionConfig.server = `ws://localhost:${this[_wss].port}`;
+      sessionConfig.server = `http://localhost:${this[_wds].port}`;
     }
 
     this[_sessionFile] = temporary.for.json(this[$sessionState].id);
@@ -165,9 +164,9 @@ class DetoxPrimaryContext extends DetoxContext {
         this[_globalLifecycleHandler] = null;
       }
 
-      if (this[_wss]) {
-        await this[_wss].close();
-        this[_wss] = null;
+      if (this[_wds]) {
+        await this[_wds].stopServer();
+        this[_wds] = null;
       }
 
       if (this[_ipcServer]) {
@@ -201,8 +200,8 @@ class DetoxPrimaryContext extends DetoxContext {
       this[_globalLifecycleHandler] = null;
     }
 
-    if (this[_wss]) {
-      this[_wss].close();
+    if (this[_wds]) {
+      this[_wds].close();
     }
 
     if (this[_ipcServer]) {

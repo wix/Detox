@@ -1,11 +1,3 @@
-const { androidBaseAppConfig } = require('./detox.config-android');
-
-const launchArgs = {
-  app: 'le',
-  goo: 'gle?',
-  micro: 'soft',
-};
-
 /** @type {Detox.DetoxConfig} */
 const config = {
   logger: {
@@ -14,7 +6,7 @@ const config = {
 
   testRunner: {
     args: {
-      $0: 'nyc jest',
+      $0: 'jest',
       config: 'e2e/jest.config.js',
       _: ['e2e/']
     },
@@ -34,13 +26,7 @@ const config = {
     }
   },
 
-  __session: {
-    server: 'ws://localhost:8099',
-    sessionId: 'test'
-  },
-
   artifacts: {
-    pathBuilder: process.env.DETOX_CUSTOM_PATH_BUILDER,
     plugins: {
       log: 'all',
       screenshot: {
@@ -67,33 +53,6 @@ const config = {
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
     },
-
-    'android.debug': {
-      ...androidBaseAppConfig('debug'),
-      name: 'example',
-      start: 'react-native start',
-      reversePorts: [8081],
-    },
-
-    'android.debug.withArgs': {
-      ...androidBaseAppConfig('debug'),
-      name: 'exampleWithArgs',
-      build: ':',
-      reversePorts: [8081],
-      launchArgs,
-    },
-
-    'android.release': {
-      ...androidBaseAppConfig('release'),
-      name: 'example',
-    },
-
-    'android.release.withArgs': {
-      ...androidBaseAppConfig('release'),
-      name: 'exampleWithArgs',
-      build: ':',
-      launchArgs,
-    },
   },
 
   devices: {
@@ -102,29 +61,6 @@ const config = {
       headless: Boolean(process.env.CI),
       device: {
         type: 'iPhone 14 Pro Max',
-      },
-    },
-
-    'android.emulator': {
-      type: 'android.emulator',
-      headless: Boolean(process.env.CI),
-      gpuMode: process.env.CI ? 'off' : undefined,
-      device: {
-        avdName: 'Pixel_API_28'
-      },
-    },
-
-    'android.genycloud.uuid': {
-      type: 'android.genycloud',
-      device: {
-        recipeUUID: '90450ce0-cdd8-4229-8618-18a1fc195b62',
-      },
-    },
-
-    'android.genycloud.name': {
-      type: 'android.genycloud',
-      device: {
-        recipeName: 'Detox_Pixel_3A_API_29',
       },
     },
   },
@@ -153,39 +89,6 @@ const config = {
         server: 'ws://localhost:8099',
         sessionId: 'com.wix.detox-example'
       }
-    },
-    'android.manual': {
-      device: 'android.emulator',
-      apps: ['android.debug', 'android.debug.withArgs'],
-      artifacts: false,
-      behavior: {
-        launchApp: 'manual'
-      },
-      session: {
-        autoStart: true,
-        server: 'ws://localhost:8099',
-        sessionId: 'test'
-      }
-    },
-    'android.emu.debug': {
-      device: 'android.emulator',
-      apps: ['android.debug', 'android.debug.withArgs'],
-    },
-    'android.emu.release': {
-      device: 'android.emulator',
-      apps: ['android.release', 'android.release.withArgs'],
-    },
-    'android.genycloud.debug': {
-      device: 'android.genycloud.uuid',
-      apps: ['android.debug'],
-    },
-    'android.genycloud.release': {
-      device: 'android.genycloud.uuid',
-      apps: ['android.release', 'android.release.withArgs'],
-    },
-    'android.genycloud.release2': {
-      device: 'android.genycloud.name',
-      apps: ['android.release', 'android.release.withArgs'],
     },
     'stub': {
       device: {

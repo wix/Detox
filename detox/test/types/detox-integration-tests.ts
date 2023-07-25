@@ -5,7 +5,7 @@ import {
   DetoxCircusEnvironment,
   DetoxCircusListener,
   DetoxCircusListenerConstructorOpts
-} from 'detox/runners/jest';
+} from '@detox/runner-jest';
 
 class NoneListener implements DetoxCircusListener {}
 
