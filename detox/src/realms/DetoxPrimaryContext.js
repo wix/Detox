@@ -201,7 +201,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     if (this[_wds]) {
-      this[_wds].close();
+      this[_wds].stopServer();
     }
 
     if (this[_ipcServer]) {

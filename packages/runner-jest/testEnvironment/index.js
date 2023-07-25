@@ -7,7 +7,7 @@ const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('detox/internals');
 const { createSession, cleanupSessions } = require('@detox/client');
-const Timer = require('utils/Timer');
+const Timer = require('./utils/Timer');
 
 const {
   DetoxCoreListener,
@@ -68,7 +68,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   /** @override */
   async setup() {
     await super.setup();
-    this.global.__detox__ = { clientApi: await this.initDetox() };
+    this.global['__detox__'] = { clientApi: await this.initDetox() };
   }
 
   async handleTestEvent(event, state) {
@@ -108,7 +108,9 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     }
 
     const worker = await createSession({
-      server: detox.config.session.server,
+      server: {
+        baseURL: detox.config.session.server,
+      },
       capabilities: {
         browserName: 'safari',
         'detox:apps': detox.config.apps,

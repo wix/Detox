@@ -21,12 +21,15 @@ class DetoxCoreListener {
     // Workaround to override Jest's expect
     if (detox.config.behavior.init.exposeGlobals) {
       const g = this._env.global;
+      const dtx = this._env.detox;
 
-      g.by = g.detox.by;
-      g.element = g.detox.element;
-      g.expect = g.detox.expect;
-      g.waitFor = g.detox.waitFor;
-      g.detox.log = detox.log;
+      dtx.log = detox.log;
+      g.by = dtx.by;
+      g.device = dtx.device;
+      g.element = dtx.element;
+      g.expect = dtx.expect;
+      g.waitFor = dtx.waitFor;
+      g.detox = dtx;
     }
   }
 

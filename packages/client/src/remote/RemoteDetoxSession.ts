@@ -98,7 +98,7 @@ class RemoteDetoxSession {
   }
 
   async cleanup() {
-    await this.#wd.http?.destroy();
+    await this.#wd?.http.destroy();
   }
 }
 

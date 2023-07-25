@@ -109,6 +109,12 @@ class WebDriver {
     return jsonMethodWrapper;
   }
 
+  get port() {
+    const address = this.#expressServer.address();
+    // @ts-ignore
+    return address.port;
+  }
+
   async startServer() {
     await Promise.all([
       this.#listen(),
