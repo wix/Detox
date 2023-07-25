@@ -28,6 +28,7 @@
     "tslib": "^2.0.3"
   },
   "devDependencies": {
+    "@detox/client": "^22.0.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
