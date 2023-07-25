@@ -171,6 +171,10 @@ class AndroidDriver extends DeviceDriverBase {
     await this.uiDevice.pressHome();
   }
 
+  async listApps() {
+    return await this.adb.listPackages(this.adbName);
+  }
+
   async typeText(text) {
     await this.adb.typeText(this.adbName, text);
   }

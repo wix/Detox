@@ -714,6 +714,15 @@ describe('Device', () => {
     });
   });
 
+  it(`listApps() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    driverMock.driver.listApps.mockResolvedValue(['com.app1', 'com.app2']);
+    const apps = await device.listApps();
+
+    expect(driverMock.driver.listApps).toHaveBeenCalledTimes(1);
+    expect(apps).toEqual(['com.app1', 'com.app2']);
+  });
+
   it(`sendToHome() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.sendToHome();

@@ -47,6 +47,10 @@ class StubRuntimeDriver extends DeviceDriverBase {
     return process.pid;
   }
 
+  async listApps() {
+    return ['com.wix.detox.test'];
+  }
+
   async deliverPayload(params) {
     await sleepVeryLittle();
   }

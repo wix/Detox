@@ -23,6 +23,7 @@ class RuntimeDevice {
       'installApp',
       'installUtilBinaries',
       'launchApp',
+      'listApps',
       'matchFace',
       'matchFinger',
       'openURL',
@@ -181,6 +182,10 @@ class RuntimeDevice {
       params['newInstance'] = true;
     }
     await this.launchApp(params, bundleId);
+  }
+
+  async listApps() {
+    return await this.deviceDriver.listApps();
   }
 
   async takeScreenshot(name) {

@@ -94,6 +94,14 @@ class ADB {
     return this.shell(deviceId, `date +"%m-%d %T.000"`);
   }
 
+  async listPackages(deviceId) {
+    const output = await this.shell(deviceId, `pm list packages`);
+    return output
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => line.split(':')[1]);
+  }
+
   async isPackageInstalled(deviceId, packageId) {
     const output = await this.shell(deviceId, `pm list packages ${packageId}`);
     const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');

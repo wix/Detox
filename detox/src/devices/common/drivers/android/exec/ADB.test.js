@@ -159,6 +159,13 @@ describe('ADB', () => {
     expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
   });
 
+  it(`listPackages`, async () => {
+    jest.spyOn(adb, 'shell').mockImplementation(async () =>
+      `package:com.android.mtp\npackage:com.android.nfc\n`);
+
+    expect(await adb.listPackages()).toEqual(['com.android.mtp', 'com.android.nfc']);
+  });
+
   it('push', async () => {
     const sourceFile = '/mock-source/file.xyz';
     const destFile = '/sdcard/file.abc';

@@ -1,3 +1,5 @@
+const jestExpect = require('expect').default;
+
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
@@ -83,5 +85,11 @@ describe('Device', () => {
     await element(by.text('Actions')).tap();
     await device.pressBack();
     await expect(element(by.text('Back pressed !'))).toBeVisible();
+  });
+
+  it('should list the installed apps, including the test app', async () => {
+    const apps = await device.listApps();
+    const expectedBundleId = device.getPlatform() === 'ios' ? 'com.wix.detox-example' : 'com.wix.detox.test';
+    jestExpect(apps).toContain(expectedBundleId);
   });
 });

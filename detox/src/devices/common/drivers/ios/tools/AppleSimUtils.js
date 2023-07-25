@@ -464,6 +464,23 @@ class AppleSimUtils {
     }
   }
 
+  async listApps(udid) {
+    const apps = [];
+    const result = await this._execSimctl({ cmd: `listapps ${udid}` });
+    if (result && result.stdout) {
+      const pattern = /^\s{4}"([^"]+)"/gm;
+
+      let match;
+      // eslint-disable-next-line no-cond-assign
+      while (match = pattern.exec(result.stdout)) {
+        const [_, bundleId] = match;
+        apps.push(bundleId);
+      }
+    }
+
+    return apps;
+  }
+
   async statusBarReset(udid) {
     await this._execSimctl({ cmd: `status_bar ${udid} clear` });
   }

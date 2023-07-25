@@ -725,6 +725,11 @@ declare global {
             terminateApp(bundle?: string): Promise<void>;
 
             /**
+             * Returns an array of currently installed apps on the device.
+             */
+            listApps(): Promise<string[]>;
+
+            /**
              * Send application to background by bringing com.apple.springboard to the foreground.
              * Combining sendToHome() with launchApp({newInstance: false}) will simulate app coming back from background.
              * @example

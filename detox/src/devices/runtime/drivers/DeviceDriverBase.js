@@ -51,6 +51,10 @@ class DeviceDriverBase {
     return '';
   }
 
+  async listApps() {
+    return [];
+  }
+
   async sendToHome() {
     return '';
   }

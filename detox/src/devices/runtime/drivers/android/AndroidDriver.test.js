@@ -468,6 +468,11 @@ describe('Android driver', () => {
     });
   });
 
+  it(`should invoke ADB listPackages`, async () => {
+    await uut.listApps();
+    expect(adb.listPackages).toHaveBeenCalledWith(adbName);
+  });
+
   describe('net-port reversing', () => {
     const port = 1337;
 

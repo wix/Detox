@@ -110,6 +110,11 @@ describe('IOS simulator driver', () => {
     });
   });
 
+  it(`should list apps via applesimutils`, async () => {
+    await uut.listApps();
+    expect(applesimutils.listApps).toHaveBeenCalledWith(udid);
+  });
+
   describe('biometrics', () => {
     it('enrolls in biometrics by passing to AppleSimUtils', async () => {
       await uut.setBiometricEnrollment('YES');

@@ -133,6 +133,10 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.unmatchBiometric(this.udid, 'Finger');
   }
 
+  async listApps() {
+    return await this._applesimutils.listApps(this.udid);
+  }
+
   async sendToHome() {
     await this._applesimutils.sendToHome(this.udid);
   }
