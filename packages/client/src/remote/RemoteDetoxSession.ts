@@ -65,12 +65,7 @@ class RemoteDetoxSession {
 
     this.#device = new RemoteDevice({
       wd: this.#wd,
-      info: {
-        id: 'emulator-5554',
-        name: 'emulator-5554 (Pixel_API_29)',
-        platform: 'android',
-        appLaunchArgs: {},
-      },
+      info: (this.#capabilities['detox:info'] ?? {}) as any,
     });
 
     const invocationManager = new InvocationManager(this.#wd);

@@ -185,6 +185,13 @@ class WebDriver {
       }
     }
 
+    session.capabilities['detox:info'] = {
+      id: session.device.id,
+      name: session.device.name,
+      platform: session.device.getPlatform(),
+      appLaunchArgs: {},
+    };
+
     this.#sessions[session.sessionId] = session;
     return session;
   }
