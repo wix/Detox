@@ -108,7 +108,11 @@ export async function createSession(options: DetoxSessionConfig): Promise<Remote
 }
 
 export async function cleanupSessions() {
-  await Promise.all(sessions.map(async (session) => {
-    await session.cleanup();
-  }));
+  try {
+    await Promise.all(sessions.map(async (session) => {
+      await session.cleanup();
+    }));
+  } finally {
+    sessions.splice(0, sessions.length);
+  }
 }
