@@ -50,3 +50,54 @@ public enum WebAction: Equatable, Hashable {
   /// Gets the current title.
   case getTitle
 }
+
+extension WebAction {
+  static func make(from type: WebActionType, params: [AnyCodable]?) -> WebAction {
+    switch type {
+      case .tap:
+        return .tap
+
+      case .typeText:
+        let text = params?[0].value as! String
+        let isContentEditable = params?.count == 2 ? params?[1].value as! Bool : false
+        return .typeText(text: text, isContentEditable: isContentEditable)
+
+      case .replaceText:
+        let text = params?[0].value as! String
+        return .replaceText(text: text)
+
+      case .clearText:
+        return .clearText
+
+      case .selectAllText:
+        return .selectAllText
+        
+      case .getText:
+        fatalError("invalid web action handling request, cannot handle get-text from here")
+
+      case .scrollToView:
+        return .scrollToView
+
+      case .focus:
+        return .focus
+
+      case .moveCursorToEnd:
+        return .moveCursorToEnd
+
+      case .runScript:
+        let script = params?[0].value as! String
+        return .runScript(script: script)
+
+      case .runScriptWithArgs:
+        let script = params?[0].value as! String
+        let scriptArgs = params?[1].value as! [String]
+        return .runScriptWithArgs(script: script, args: scriptArgs)
+
+      case .getCurrentUrl:
+        fatalError("invalid web action handling request, cannot handle get-url from here")
+
+      case .getTitle:
+        fatalError("invalid web action handling request, cannot handle get-title from here")
+    }
+  }
+}

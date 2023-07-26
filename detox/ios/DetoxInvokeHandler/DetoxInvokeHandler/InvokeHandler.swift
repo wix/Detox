@@ -5,9 +5,9 @@
 
 import Foundation
 
-/// Handles JSON messages by parsing them and routing them into the relevant delegate
-/// (`actionDelegate` or `expectationDelegate`) to handle the requested action or expectation on the
-/// specified element (in which located by the provided `elementMatcher`).
+/// Handles JSON messages by parsing them and routing them into the relevant delegate to handle the
+/// requested action or expectation on the specified element (in which located by the provided
+/// element matcher).
 public class InvokeHandler {
   /// Used to find elements by matching to a given pattern (the message predicate).
   private let elementMatcher: ElementMatcherProtocol
@@ -15,19 +15,28 @@ public class InvokeHandler {
   /// Used to delegate actions on elements.
   private let actionDelegate: ActionDelegateProtocol
 
+  /// Used to delegate web actions on web elements.
+  private let webActionDelegate: WebActionDelegateProtocol
+
   /// Used to delegate expectations on elements.
   private let expectationDelegate: ExpectationDelegateProtocol
 
-  /// Initializes the handler with given `elementMatcher`, `actionDelegate` and
-  /// `expectationDelegate`.
+  /// Used to delegate expectations on web elements.
+  private let webExpectationDelegate: WebExpectationDelegateProtocol
+
+  /// Initializes the handler with given params.
   public init(
     elementMatcher: ElementMatcherProtocol,
     actionDelegate: ActionDelegateProtocol,
-    expectationDelegate: ExpectationDelegateProtocol
+    webActionDelegate: WebActionDelegateProtocol,
+    expectationDelegate: ExpectationDelegateProtocol,
+    webExpectationDelegate: WebExpectationDelegateProtocol
   ) {
     self.elementMatcher = elementMatcher
     self.actionDelegate = actionDelegate
+    self.webActionDelegate = webActionDelegate
     self.expectationDelegate = expectationDelegate
+    self.webExpectationDelegate = webExpectationDelegate
   }
 
   /// Handles the given `message` by parsing and calling the relevant delegate.
@@ -38,84 +47,186 @@ public class InvokeHandler {
     return try handle(parsedMessage: parsedMessage)
   }
 
-  // TODO: Refactor, mainly extract to methods :)
   private func handle(parsedMessage: Message) throws -> AnyCodable? {
-    let findElementsHandler: () throws -> [AnyHashable] = { [self] in
-      return try findElements(by: parsedMessage.predicate!)
-    }
-
-    // TODO: this is a very long method, needs massive refactoring.
     switch parsedMessage.type {
       case .action:
-        guard let action = parsedMessage.action else {
-          fatalError("invalid action type (\(parsedMessage)")
-        }
-
-        // TODO: this is a dirty shameful workaround to avoid matching the element from the while
-        // statement if the wait-for expectation is already satisfied.
-        if let whileMessage = parsedMessage.whileMessage {
-          do {
-            try handleWhileMessage(whileMessage)
-            break // Break, expectation was satisfied (no error was thrown).
-          }
-          catch {
-            // Do nothing, expectation wasn't satisfied.
-          }
-        }
-
-        let elements = try findElementsHandler()
-
-        if action == .getAttributes && parsedMessage.atIndex == nil {
-          return try getAttributes(from: elements)
-        }
-
-        guard let element = try getElement(from: elements, at: parsedMessage.atIndex) else {
-          throw Error.noElementAtIndex(
-            index: parsedMessage.atIndex ?? 0,
-            elementsCount: elements.count
-          )
-        }
-
-        if action == .getAttributes {
-          return try getAttributes(from: [element])
-        }
-
-        if action == .takeScreenshot {
-          return try takeScreenshot(parsedMessage.params, of: element)
-        }
-
-        let targetElementPredicate = parsedMessage.targetElement?.predicate
-        let targetElements = targetElementPredicate != nil ?
-        try findElements(by: targetElementPredicate!) : nil
-        let targetElement = targetElements != nil ?
-        try getElement(from: targetElements!, at: 0) : nil
-
-        try handleAction(
-          on: element,
-          type: action,
-          params: parsedMessage.params,
-          whileMessage: parsedMessage.whileMessage,
-          target: targetElement
-        )
+        return try handleActionMessage(parsedMessage: parsedMessage)
 
       case .webAction:
-        fatalError("does not support web action yet")
+        return try handleWebActionMessage(parsedMessage: parsedMessage)
 
       case .expectation:
-        let findElementHandler: () throws -> AnyHashable? = { [self] in
-          return try getElement(from: try findElementsHandler(), at: parsedMessage.atIndex)
-        }
-        try handleExpectation(
-          on: findElementHandler,
-          type: parsedMessage.expectation!,
-          params: parsedMessage.params,
-          modifiers: parsedMessage.modifiers,
-          timeout: parsedMessage.timeout
-        )
+        return try handleExpectationMessage(parsedMessage: parsedMessage)
 
       case .webExpectation:
-        fatalError("does not support web expectation yet")
+        return try handleWebExpectationMessage(parsedMessage: parsedMessage)
     }
+  }
+
+  // MARK: - Handle Web Expectation Message
+
+  private func handleWebExpectationMessage(parsedMessage: Message) throws -> AnyCodable? {
+    guard let expectationType = parsedMessage.webExpectation else {
+      fatalError("invalid web expectation type (\(parsedMessage)")
+    }
+
+    let expectation = WebExpectation.make(from: expectationType, params: parsedMessage.params)
+    let isTruthy: Bool = parsedMessage.modifiers?.contains(.not) != true
+
+    let webViewElement = try findWebViewElement(from: parsedMessage)
+    try webExpectationDelegate.expect(expectation, isTruthy: isTruthy, on: webViewElement)
+
+    return nil
+  }
+
+  // MARK: - Handle Web Action Message
+
+  private func handleWebActionMessage(
+    parsedMessage: Message
+  ) throws -> AnyCodable? {
+    guard let webActionType = parsedMessage.webAction else {
+      fatalError("invalid web action type (\(parsedMessage)")
+    }
+
+    let webViewElement = try findWebViewElement(from: parsedMessage)
+
+    switch webActionType {
+      case .getText:
+        return try webActionDelegate.getText(of: webViewElement)
+
+      case .getCurrentUrl:
+        return try webActionDelegate.getCurrentUrl(of: webViewElement)
+
+      case .getTitle:
+        return try webActionDelegate.getTitle(of: webViewElement)
+
+      default:
+        let webAction = WebAction.make(from: webActionType, params: parsedMessage.params)
+        try webActionDelegate.act(action: webAction, on: webViewElement)
+    }
+
+    return nil
+  }
+
+  private func findWebViewElement(from parsedMessage: Message) throws -> AnyHashable {
+    let predicate = parsedMessage.predicate
+    let matchedWebViews = try findWebViews(by: predicate)
+    guard let webView = try getElement(from: matchedWebViews, at: parsedMessage.atIndex) else {
+      throw Error.noElementAtIndex(
+        index: parsedMessage.atIndex ?? 0,
+        elementsCount: matchedWebViews.count,
+        predicate: predicate
+      )
+    }
+
+    let matchedWebViewElements = try findWebViewElements(webView, by: parsedMessage.webPredicate)
+    guard let webViewElement = try getElement(
+      from: matchedWebViewElements,
+      at: parsedMessage.webAtIndex
+    ) else {
+      throw Error.noWebElementAtIndex(
+        index: parsedMessage.webAtIndex ?? 0,
+        elementsCount: matchedWebViewElements.count,
+        predicate: parsedMessage.webPredicate,
+        webViewPredicate: parsedMessage.predicate
+      )
+    }
+
+    return webViewElement
+  }
+
+  private func findWebViews(by predicate: ElementPredicate?) throws -> [AnyHashable] {
+    let pattern = (predicate != nil) ? try ElementPattern(from: predicate!) : nil
+    return try elementMatcher.matchWebViews(to: pattern)
+  }
+
+  private func findWebViewElements(
+    _ webView: AnyHashable,
+    by predicate: WebPredicate?
+  ) throws -> [AnyHashable] {
+    let pattern = try WebElementPattern(from: predicate!)
+    return try elementMatcher.matchWebViewElements(on: webView, to: pattern)
+  }
+
+  // MARK: - Handle Action Message
+
+  private func handleActionMessage(
+    parsedMessage: Message
+  ) throws -> AnyCodable? {
+    guard let action = parsedMessage.action else {
+      fatalError("invalid action type (\(parsedMessage)")
+    }
+
+    if let whileMessage = parsedMessage.whileMessage {
+      do {
+        try handleWhileMessage(whileMessage)
+
+        return nil // Expectation was satisfied.
+      }
+      catch {
+        // Do nothing, expectation wasn't satisfied.
+      }
+    }
+
+    let predicate = parsedMessage.predicate!
+    let elements = try findElements(by: predicate)
+
+    if action == .getAttributes && parsedMessage.atIndex == nil {
+      return try getAttributes(from: elements)
+    }
+
+    guard let element = try getElement(from: elements, at: parsedMessage.atIndex) else {
+      throw Error.noElementAtIndex(
+        index: parsedMessage.atIndex ?? 0,
+        elementsCount: elements.count,
+        predicate: predicate
+      )
+    }
+
+    if action == .getAttributes {
+      return try getAttributes(from: [element])
+    }
+
+    if action == .takeScreenshot {
+      return try takeScreenshot(parsedMessage.params, of: element)
+    }
+
+    let targetElementPredicate = parsedMessage.targetElement?.predicate
+    let targetElements = targetElementPredicate != nil ?
+    try findElements(by: targetElementPredicate!) : nil
+    let targetElement = targetElements != nil ?
+    try getElement(from: targetElements!, at: 0) : nil
+
+    try handleAction(
+      on: element,
+      type: action,
+      params: parsedMessage.params,
+      whileMessage: parsedMessage.whileMessage,
+      target: targetElement
+    )
+
+    return nil
+  }
+
+  // MARK: - Handle Expectation Message
+
+  private func handleExpectationMessage(
+    parsedMessage: Message
+  ) throws -> AnyCodable? {
+    let findElementHandler: () throws -> AnyHashable? = { [self] in
+      return try getElement(
+        from: try findElements(by: parsedMessage.predicate!),
+        at: parsedMessage.atIndex
+      )
+    }
+
+    try handleExpectation(
+      on: findElementHandler,
+      type: parsedMessage.expectation!,
+      params: parsedMessage.params,
+      modifiers: parsedMessage.modifiers,
+      timeout: parsedMessage.timeout
+    )
 
     return nil
   }
@@ -142,7 +253,7 @@ public class InvokeHandler {
     return try actionDelegate.getAttributes(from: elements)
   }
 
-  // MARK: - Get attributes
+  // MARK: - Take screenshot
 
   private func takeScreenshot(_ params: [AnyCodable]?, of element: AnyHashable) throws -> AnyCodable {
     return try actionDelegate.takeScreenshot(
