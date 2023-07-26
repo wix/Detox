@@ -81,6 +81,8 @@ class WebDriver {
       .post('/session/:sessionId/detox/uninstallApp', this.#bind(this.onDetoxUninstallApp))
       .post('/session/:sessionId/detox/unmatchFace', this.#bind(this.onDetoxUnmatchFace))
       .post('/session/:sessionId/detox/unmatchFinger', this.#bind(this.onDetoxUnmatchFinger))
+      .post('/session/:sessionId/detox/reverseTcpPort', this.#bind(this.onDetoxReverseTcpPort))
+      .post('/session/:sessionId/detox/unreverseTcpPort', this.#bind(this.onDetoxUnreverseTcpPort))
       .post('/session/:sessionId/detox/invoke', this.#bind(this.onDetoxInvoke))
       .use(this.onUnknownCommand);
 
@@ -517,6 +519,18 @@ class WebDriver {
   async onDetoxUnmatchFinger({ req }) {
     const { device } = this.#getSession(req);
     await device.unmatchFinger();
+  }
+
+  async onDetoxReverseTcpPort({ req }) {
+    const { device } = this.#getSession(req);
+    const { port } = req.body;
+    await device.reverseTcpPort(port);
+  }
+
+  async onDetoxUnreverseTcpPort({ req }) {
+    const { device } = this.#getSession(req);
+    const { port } = req.body;
+    await device.unreverseTcpPort(port);
   }
 
   async onDetoxInvoke({ req }) {

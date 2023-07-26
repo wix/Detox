@@ -184,4 +184,12 @@ export class RemoteDevice {
   async unmatchFinger() {
     await this.#wd.http.session.post('/detox/unmatchFinger');
   }
+
+  async reverseTcpPort(port) {
+    await this.#wd.http.session.post('/detox/reverseTcpPort', { port });
+  }
+
+  async unreverseTcpPort(port) {
+    await this.#wd.http.session.post('/detox/unreverseTcpPort', { port });
+  }
 }

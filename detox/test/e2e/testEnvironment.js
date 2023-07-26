@@ -1,13 +1,23 @@
+const _ = require('lodash');
 const { DetoxCircusEnvironment } = require('@detox/runner-jest');
-const { worker } = require('detox/internals')
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   async setup() {
     await super.setup();
+    this._addedTest = false;
+  }
 
-    this.global.__waitUntilArtifactsManagerIsIdle__ = () => {
-      return worker._artifactsManager._idlePromise;
-    };
+  handleTestEvent(event, state) {
+    if (event.name === 'add_test') {
+      if (this._addedTest) {
+        // skip tests after the first one
+        _.last(state.currentDescribeBlock.children).mode = 'skip';
+      } else {
+        this._addedTest = true;
+      }
+    }
+
+    return super.handleTestEvent(event, state);
   }
 }
 

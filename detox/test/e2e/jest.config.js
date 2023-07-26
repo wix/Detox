@@ -1,6 +1,6 @@
 module.exports = {
   rootDir: '..',
-  testEnvironment: '@detox/runner-jest/testEnvironment',
+  testEnvironment: '<rootDir>/e2e/testEnvironment.js',
   testMatch: [
     '<rootDir>/e2e/**/*.test.{js,ts}'
   ],

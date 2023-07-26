@@ -6,7 +6,7 @@ const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environmen
 const NodeEnvironment = maybeNodeEnvironment.default || maybeNodeEnvironment;
 
 const detox = require('detox/internals');
-const { createSession, cleanupSessions } = require('@detox/client');
+const { DetoxConstants, createSession, cleanupSessions } = require('@detox/client');
 const Timer = require('./utils/Timer');
 
 const {
@@ -120,6 +120,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
         'detox:device': detox.config.device,
       },
     });
+
+    worker.DetoxConstants = DetoxConstants;
 
     return worker;
   }

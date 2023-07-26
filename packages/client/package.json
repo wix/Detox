@@ -2,8 +2,8 @@
   "name": "@detox/client",
   "version": "22.0.0",
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "prepare": "tsc",
+    "build": "tsc"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

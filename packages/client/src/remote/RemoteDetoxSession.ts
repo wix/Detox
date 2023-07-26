@@ -72,6 +72,10 @@ class RemoteDetoxSession {
     this.#clientApi = new IosClientAPI(invocationManager);
   }
 
+  get id() {
+    return this.#sessionId;
+  }
+
   get device() {
     return this.#device;
   }
