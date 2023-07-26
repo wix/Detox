@@ -8,15 +8,6 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   }
 
   handleTestEvent(event, state) {
-    if (event.name === 'add_test') {
-      if (this._addedTest) {
-        // skip tests after the first one
-        _.last(state.currentDescribeBlock.children).mode = 'skip';
-      } else {
-        this._addedTest = true;
-      }
-    }
-
     return super.handleTestEvent(event, state);
   }
 }

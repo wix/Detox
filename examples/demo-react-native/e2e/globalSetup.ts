@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import { pathExists, ensureDir } from 'fs-extra';
 
 import { resolveConfig } from 'detox/internals';
-import { globalSetup } from '@detox/runner-jest';
+import { globalSetup } from 'detox/runners/jest';
 
 export default async function customGlobalSetup() {
   const config = await resolveConfig();

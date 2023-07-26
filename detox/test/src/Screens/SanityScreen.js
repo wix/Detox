@@ -18,7 +18,7 @@ export default class SanityScreen extends Component {
   renderTestButton(label, onPress) {
     return (
       <TouchableOpacity onPress={onPress}>
-        <Text testID={(label || '').toLowerCase().replace(/\s*/g, '')} style={{color: 'blue', marginBottom: 20}}>{label}</Text>
+        <Text style={{color: 'blue', marginBottom: 20}}>{label}</Text>
       </TouchableOpacity>
     )
   }
