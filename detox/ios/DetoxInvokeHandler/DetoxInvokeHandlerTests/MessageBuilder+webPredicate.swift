@@ -12,6 +12,10 @@ extension MessageBuilder {
     return self
   }
 
+  func setIdWebPredicate(_ value: String) -> Self {
+    return setWebPredicate("id", value)
+  }
+
   func setNameWebPredicate(_ value: String) -> Self {
     return setWebPredicate("name", value)
   }
