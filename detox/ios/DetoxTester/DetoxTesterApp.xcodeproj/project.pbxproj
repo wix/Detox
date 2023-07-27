@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6001CC272A7237A000AF1BAC /* WebActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6001CC262A7237A000AF1BAC /* WebActionDelegate.swift */; };
+		6001CC292A7237AD00AF1BAC /* WebExpectationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6001CC282A7237AD00AF1BAC /* WebExpectationDelegate.swift */; };
 		6014C3C42833C4910012C715 /* AppClientMessageSenderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014C3C32833C4910012C715 /* AppClientMessageSenderProtocol.swift */; };
 		6025B474284FA18D0073AE0E /* Executor+reportCurrentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */; };
 		6026FEAA28159E5900A016A1 /* ElementType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */; };
@@ -168,6 +170,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6001CC262A7237A000AF1BAC /* WebActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebActionDelegate.swift; sourceTree = "<group>"; };
+		6001CC282A7237AD00AF1BAC /* WebExpectationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectationDelegate.swift; sourceTree = "<group>"; };
 		6014C3C32833C4910012C715 /* AppClientMessageSenderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppClientMessageSenderProtocol.swift; sourceTree = "<group>"; };
 		6025B473284FA18D0073AE0E /* Executor+reportCurrentStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Executor+reportCurrentStatus.swift"; sourceTree = "<group>"; };
 		6026FEA928159E5800A016A1 /* ElementType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementType+Extensions.swift"; sourceTree = "<group>"; };
@@ -315,6 +319,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6001CC242A72377000AF1BAC /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				6001CC262A7237A000AF1BAC /* WebActionDelegate.swift */,
+				6001CC282A7237AD00AF1BAC /* WebExpectationDelegate.swift */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
 		6026FEAD2816C69500A016A1 /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -394,6 +407,7 @@
 				60FBF6142819863E000B73B1 /* Tester */,
 				60FBF60E281985E2000B73B1 /* Unit Tests */,
 				60FBF6152819864A000B73B1 /* Utils */,
+				6001CC242A72377000AF1BAC /* Web */,
 			);
 			path = DetoxTester;
 			sourceTree = "<group>";
@@ -985,6 +999,7 @@
 				605341CC28145C6800C0405D /* JSON.swift in Sources */,
 				6026FEB82816DCB300A016A1 /* XCUIElement+scroll.swift in Sources */,
 				60634ADA27C4339600274F30 /* ExpectationDelegate.swift in Sources */,
+				6001CC292A7237AD00AF1BAC /* WebExpectationDelegate.swift in Sources */,
 				60634AD827C4338800274F30 /* ElementMatcher.swift in Sources */,
 				60FBF60D28198433000B73B1 /* SliderTests.swift in Sources */,
 				607C900C29A79E14008FA6EA /* Executor+deliverPayload.swift in Sources */,
@@ -1012,6 +1027,7 @@
 				60BF52D0281E739D00610DBD /* XCUIElementQuery+matching.swift in Sources */,
 				60F96DDD296D9F050047B332 /* ActionDelegate+Error.swift in Sources */,
 				60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */,
+				6001CC272A7237A000AF1BAC /* WebActionDelegate.swift in Sources */,
 				60A3B466282D0439002F903B /* Executor+waitFor.swift in Sources */,
 				60A3B46C282D3605002F903B /* Executor+setSyncSettings.swift in Sources */,
 			);

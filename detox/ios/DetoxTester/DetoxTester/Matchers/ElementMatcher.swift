@@ -38,4 +38,15 @@ class ElementMatcher: ElementMatcherProtocol {
 
     return result
   }
+
+  func matchWebViews(to pattern: DetoxInvokeHandler.ElementPattern?) throws -> [AnyHashable] {
+    fatalError("unsupported yet")
+  }
+
+  func matchWebViewElements(
+    on webView: AnyHashable,
+    to pattern: DetoxInvokeHandler.WebElementPattern
+  ) throws -> [AnyHashable] {
+    fatalError("unsupported yet")
+  }
 }
