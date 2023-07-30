@@ -15,8 +15,9 @@ public protocol ElementMatcherProtocol {
   /// the first web view (list with single element).
   func matchWebViews(to pattern: ElementPattern?) throws -> [AnyHashable]
 
-  /// Returns inner elements of a given `webView` element that matches the given `pattern`.
-  func matchWebViewElements(
+  /// Returns a JS function that locates an element on the given `webView` based on the given
+  /// `pattern`.
+  func createJSWebViewElementMatcher(
     on webView: AnyHashable, to pattern: WebElementPattern
-  ) throws -> [AnyHashable]
+  ) throws -> JSWebViewHandler
 }
