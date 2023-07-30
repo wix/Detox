@@ -10,14 +10,14 @@ class FakeElementMatcher: ElementMatcherProtocol {
 
   private var patternToElements: [ElementPattern: [AnyHashable]] = [:]
   private var defaultWebView: AnyHashable = "webView"
-  private var webPatternToJSFunc: [WebElementPattern: String] = [:]
+  private var webPatternToElements: [WebElementPattern: [AnyHashable]] = [:]
 
   func setMatch(from: ElementPattern, to: AnyHashable) {
     patternToElements[from] = (patternToElements[from] ?? []) + [to]
   }
 
-  func setWebMatch(from: WebElementPattern, to jsFunction: String) {
-    webPatternToJSFunc[from] = jsFunction
+  func setWebMatch(from: WebElementPattern, to: AnyHashable) {
+    webPatternToElements[from] = (webPatternToElements[from] ?? []) + [to]
   }
 
   func match(to pattern: ElementPattern) throws -> [AnyHashable] {
@@ -40,13 +40,13 @@ class FakeElementMatcher: ElementMatcherProtocol {
     return elements
   }
 
-  func createJSWebViewElementMatcher(
+  func matchWebViewElements(
     on webView: AnyHashable, to pattern: WebElementPattern
-  ) throws -> JSWebViewHandler {
-    guard let handler = webPatternToJSFunc[pattern] else {
+  ) throws -> [AnyHashable] {
+    guard let elements = webPatternToElements[pattern] else {
       throw Error()
     }
 
-    return handler
+    return elements
   }
 }

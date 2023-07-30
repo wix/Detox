@@ -68,20 +68,31 @@ class ElementMatcher: ElementMatcherProtocol {
     return result
   }
 
-  func createJSWebViewElementMatcher(
+  func matchWebViewElements(
     on webView: AnyHashable,
     to pattern: WebElementPattern
-  ) throws -> JSWebViewHandler {
+  ) throws -> [AnyHashable] {
     matcherLog("called to match web-view elements with pattern: \(String(describing: pattern))")
 
     guard let webView = webView as? XCUIElement else {
       fatalError("`webView` must be an XCUIElement")
     }
 
-    return JSWebViewHandler(js: createJSFunction(from: pattern), onWebView: webView)
-  }
+    let query = try app.newQuery().webMatching(
+      pattern: pattern,
+      webView: webView
+    )
+    let result = query.run()
 
-  private func createJSFunction(from pattern: WebElementPattern) -> String {
-    return ""
+    if result.isEmpty {
+      matcherLog("found zero elements", type: .error)
+    } else {
+      matcherLog(
+        "matched elements: " +
+        "\(result.map {"(\($0.identifier), size: \($0.frame.size), origin: \($0.frame.origin))"})"
+      )
+    }
+
+    return result
   }
 }

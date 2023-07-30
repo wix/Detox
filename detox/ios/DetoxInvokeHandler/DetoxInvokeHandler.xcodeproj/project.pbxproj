@@ -66,8 +66,6 @@
 		607E33A22A7141ED00ED9B57 /* InvokeHandlerWebExpectationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607E33A12A7141ED00ED9B57 /* InvokeHandlerWebExpectationSpec.swift */; };
 		607E33A52A714E5000ED9B57 /* WebElementPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607E33A42A714E5000ED9B57 /* WebElementPattern.swift */; };
 		607E33A62A715B2100ED9B57 /* WebElementPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607E33A42A714E5000ED9B57 /* WebElementPattern.swift */; };
-		60A0EE792A762D6900DE0F00 /* JSWebViewHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0EE782A762D6900DE0F00 /* JSWebViewHandler.swift */; };
-		60A0EE7A2A762D8000DE0F00 /* JSWebViewHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0EE782A762D6900DE0F00 /* JSWebViewHandler.swift */; };
 		60BB923227BBD2340081D232 /* ElementMatcherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */; };
 		60BB923627BBDD0A0081D232 /* ElementPredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* ElementPredicateProtocol.swift */; };
 		60BB923B27BBE28C0081D232 /* ElementPredicateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB923527BBDD0A0081D232 /* ElementPredicateProtocol.swift */; };
@@ -181,7 +179,6 @@
 		607E339B2A713D9000ED9B57 /* InvokeHandlerWebPredicateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvokeHandlerWebPredicateSpec.swift; sourceTree = "<group>"; };
 		607E33A12A7141ED00ED9B57 /* InvokeHandlerWebExpectationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvokeHandlerWebExpectationSpec.swift; sourceTree = "<group>"; };
 		607E33A42A714E5000ED9B57 /* WebElementPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebElementPattern.swift; sourceTree = "<group>"; };
-		60A0EE782A762D6900DE0F00 /* JSWebViewHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSWebViewHandler.swift; sourceTree = "<group>"; };
 		60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementMatcherProtocol.swift; sourceTree = "<group>"; };
 		60BB923527BBDD0A0081D232 /* ElementPredicateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementPredicateProtocol.swift; sourceTree = "<group>"; };
 		60BB924827BC4D3F0081D232 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -401,7 +398,6 @@
 				60634AEB27C514ED00274F30 /* AccessibilityTraits.swift */,
 				60BB923127BBD2340081D232 /* ElementMatcherProtocol.swift */,
 				60BB926E27C2413D0081D232 /* ElementPattern.swift */,
-				60A0EE782A762D6900DE0F00 /* JSWebViewHandler.swift */,
 				607E33A42A714E5000ED9B57 /* WebElementPattern.swift */,
 			);
 			name = Matcher;
@@ -616,7 +612,6 @@
 				6046DAE72A6D6D1700DEC00F /* WebExpectationDelegateProtocol.swift in Sources */,
 				60BB923227BBD2340081D232 /* ElementMatcherProtocol.swift in Sources */,
 				60BB928B27C29CDB0081D232 /* ActionType.swift in Sources */,
-				60A0EE792A762D6900DE0F00 /* JSWebViewHandler.swift in Sources */,
 				605980EC29814D1600888841 /* ScreenshotProvidingProtocol.swift in Sources */,
 				6046DAE52A6D6D0000DEC00F /* WebExpectationType.swift in Sources */,
 				60BB928527C29BD20081D232 /* ElementPredicateModifiers.swift in Sources */,
@@ -663,7 +658,6 @@
 				607E33982A713A4E00ED9B57 /* InvokeHandlerExpectationSpec.swift in Sources */,
 				60BB925627BD0A100081D232 /* Action.swift in Sources */,
 				60BB927027C2413D0081D232 /* ElementPattern.swift in Sources */,
-				60A0EE7A2A762D8000DE0F00 /* JSWebViewHandler.swift in Sources */,
 				60BB924C27BCEB170081D232 /* FakeElementMatcher.swift in Sources */,
 				60BB928927C29CC40081D232 /* ExpectationType.swift in Sources */,
 				607E33892A6FEF8000ED9B57 /* MessageBuilder+webPredicate.swift in Sources */,

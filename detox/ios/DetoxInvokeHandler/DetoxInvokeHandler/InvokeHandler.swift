@@ -143,9 +143,9 @@ public class InvokeHandler {
   private func findWebViewElements(
     _ webView: AnyHashable,
     by predicate: WebPredicate?
-  ) throws -> JSWebViewHandler {
+  ) throws -> [AnyHashable] {
     let pattern = try WebElementPattern(from: predicate!)
-    return try elementMatcher.createJSWebViewElementMatcher(on: webView, to: pattern)
+    return try elementMatcher.matchWebViewElements(on: webView, to: pattern)
   }
 
   // MARK: - Handle Action Message

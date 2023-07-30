@@ -68,6 +68,7 @@
 		609AA17A279FE83F008F6617 /* Main.m in Sources */ = {isa = PBXBuildFile; fileRef = 609AA179279FE83F008F6617 /* Main.m */; };
 		609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA17C279FE932008F6617 /* DetoxTester.swift */; };
 		609AA19827A0247D008F6617 /* WebSocket+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609AA19727A0247D008F6617 /* WebSocket+Config.swift */; };
+		60A0EE762A75C3A700DE0F00 /* XCUIElementQuery+webMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A0EE752A75C3A700DE0F00 /* XCUIElementQuery+webMatching.swift */; };
 		60A3B444282A56B0002F903B /* WhiteBoxExecutor+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B443282A56B0002F903B /* WhiteBoxExecutor+Response.swift */; };
 		60A3B448282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B447282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift */; };
 		60A3B44A282AF75D002F903B /* WhiteBoxExecutor+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B449282AF75D002F903B /* WhiteBoxExecutor+Message.swift */; };
@@ -235,6 +236,7 @@
 		609AA17C279FE932008F6617 /* DetoxTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetoxTester.swift; sourceTree = "<group>"; };
 		609AA183279FEB01008F6617 /* DetoxTester-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DetoxTester-Bridging-Header.h"; sourceTree = "<group>"; };
 		609AA19727A0247D008F6617 /* WebSocket+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Config.swift"; sourceTree = "<group>"; };
+		60A0EE752A75C3A700DE0F00 /* XCUIElementQuery+webMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "XCUIElementQuery+webMatching.swift"; path = "../../../../../../../XCUIElementQuery+webMatching.swift"; sourceTree = "<group>"; };
 		60A3B443282A56B0002F903B /* WhiteBoxExecutor+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WhiteBoxExecutor+Response.swift"; sourceTree = "<group>"; };
 		60A3B447282A7B8F002F903B /* Executor+WhiteBoxExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+WhiteBoxExecutor.swift"; sourceTree = "<group>"; };
 		60A3B449282AF75D002F903B /* WhiteBoxExecutor+Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WhiteBoxExecutor+Message.swift"; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 				60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */,
 				60BF52CF281E739D00610DBD /* XCUIElementQuery+matching.swift */,
 				60BF52D4281E808D00610DBD /* XCUIElementQuery+run.swift */,
+				60A0EE752A75C3A700DE0F00 /* XCUIElementQuery+webMatching.swift */,
 			);
 			path = XCUIElementQuery;
 			sourceTree = "<group>";
@@ -973,6 +976,7 @@
 				60BF52ED281ECBFB00610DBD /* WhiteBoxExecutor.swift in Sources */,
 				60F96E06297AE00B0047B332 /* String+BundleIdentifiers.swift in Sources */,
 				605341D9281547AC00C0405D /* Encodable+Extensions.swift in Sources */,
+				60A0EE762A75C3A700DE0F00 /* XCUIElementQuery+webMatching.swift in Sources */,
 				60F96DDB296D77120047B332 /* XCUIElementQuery+Error.swift in Sources */,
 				604B94B928313C3200508C27 /* Executor+captureViewHierarchy.swift in Sources */,
 				60D3D4C229DB0B70008CE39E /* XCUIElement+assertions.swift in Sources */,
