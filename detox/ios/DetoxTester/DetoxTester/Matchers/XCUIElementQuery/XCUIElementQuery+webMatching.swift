@@ -15,27 +15,30 @@ extension XCUIElementQuery {
     pattern: WebElementPattern, webView: XCUIElement
   ) throws -> XCUIElementQuery {
     switch pattern {
-      case .id(_):
-        throw Error.operationNotSupported(pattern: pattern)
-
+      case .id(let id):
+        return webView.descendants(matching: .any).matching(identifier: id)
+        
       case .className(_):
         throw Error.operationNotSupported(pattern: pattern)
-
+        
       case .cssSelector(_):
         throw Error.operationNotSupported(pattern: pattern)
-
-      case .name(_):
-        throw Error.operationNotSupported(pattern: pattern)
+        
+      case .name(let name):
+        return webViews.descendants(matching: .any).matching(NSPredicate { evaluatedObject, _ in
+          guard let element = evaluatedObject as? XCUIElement else { return false }
+          return element.label == name
+        })
 
       case .xpath(_):
         throw Error.operationNotSupported(pattern: pattern)
-
+        
       case .href(_):
         throw Error.operationNotSupported(pattern: pattern)
-
+        
       case .hrefContains(_):
         throw Error.operationNotSupported(pattern: pattern)
-
+        
       case .tag(_):
         throw Error.operationNotSupported(pattern: pattern)
     }

@@ -5,6 +5,7 @@
 
 import Foundation
 import DetoxInvokeHandler
+import XCTest
 
 extension XCUIElement: DetoxInvokeHandler.ScreenshotProvidingProtocol {
   public func screenshotData() -> Data {

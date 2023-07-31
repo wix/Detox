@@ -9,7 +9,11 @@ import Foundation
 /// web actions on a specified web element.
 public protocol WebActionDelegateProtocol {
   /// Performs the provided `action` on the specified `element`.
-  func act(action: WebAction, on element: AnyHashable, host webView: AnyHashable) throws
+  func act(
+    action: WebAction,
+    on element: AnyHashable,
+    host webView: AnyHashable
+  ) throws
 
   /// Get the text from the specified `element`.
   func getText(of element: AnyHashable) throws -> AnyCodable

@@ -22,6 +22,20 @@ class WebActionDelegate: WebActionDelegateProtocol {
     on element: AnyHashable,
     host webView: AnyHashable
   ) throws {
+    return try act(
+      action: action,
+      on: element,
+      host: webView,
+      testCase: DetoxTester.shared.testCase!
+    )
+  }
+
+  func act(
+    action: DetoxInvokeHandler.WebAction,
+    on element: AnyHashable,
+    host webView: AnyHashable,
+    testCase: XCTestCase
+  ) throws {
     guard let element = element as? XCUIElement, let webView = webView as? XCUIElement else {
       fatalError("element is not XCUIElement")
     }
@@ -43,7 +57,7 @@ class WebActionDelegate: WebActionDelegateProtocol {
         try element.selectAllText(app: app, completion: nil)
 
       case .scrollToView:
-        try webView.scrollToView(to: element, testCase: DetoxTester.shared.testCase!)
+        try webView.scrollToView(to: element, testCase: testCase)
 
       case .focus:
         try element.focusKeyboard()
@@ -51,20 +65,11 @@ class WebActionDelegate: WebActionDelegateProtocol {
       case .moveCursorToEnd:
         try element.focusKeyboard()
 
-      case .runScript(_):
+      case .runScript, .runScriptWithArgs:
         fatalError("not supported")
 
-      case .runScriptWithArgs(_, _):
-        fatalError("not supported")
-
-      case .getText:
-        fatalError("should not get here")
-
-      case .getCurrentUrl:
-        fatalError("should not get here")
-
-      case .getTitle:
-        fatalError("should not get here")
+      case .getText, .getCurrentUrl, .getTitle:
+        fatalError("should not get here, this is a getter action!")
     }
   }
 
@@ -73,14 +78,10 @@ class WebActionDelegate: WebActionDelegateProtocol {
       fatalError("element is not XCUIElement")
     }
 
-    fatalError("not supported")
+    return AnyCodable(String(describing: element.value ?? ""))
   }
 
   func getCurrentUrl(of element: AnyHashable) throws -> AnyCodable {
-    guard let element = element as? XCUIElement else {
-      fatalError("element is not XCUIElement")
-    }
-
     fatalError("not supported")
   }
 
@@ -89,6 +90,6 @@ class WebActionDelegate: WebActionDelegateProtocol {
       fatalError("element is not XCUIElement")
     }
 
-    fatalError("not supported")
+    return AnyCodable(element.title)
   }
 }

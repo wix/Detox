@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import XCTest
 
 extension XCUIElement {
   /// Aliasing for `isHittable`.

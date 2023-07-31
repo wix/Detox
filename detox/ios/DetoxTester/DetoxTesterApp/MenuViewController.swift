@@ -102,6 +102,9 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
 
       case .elementsMatching:
         presentScreen("ElementsScreen")
+
+      case .webView:
+        presentScreen("WebScreen")
     }
   }
 
@@ -127,4 +130,5 @@ enum MenuOptions: String, CaseIterable {
   case setColumnToValue = "Column Picker"
   case pinch = "Pinch"
   case adjustSlider = "Adjust Slider"
+  case webView = "Safari Web View"
 }

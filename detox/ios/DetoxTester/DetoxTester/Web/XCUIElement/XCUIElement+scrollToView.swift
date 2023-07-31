@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import XCTest
 
 /// Extension for scrolling to a view.
 extension XCUIElement {

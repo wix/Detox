@@ -76,6 +76,9 @@
 		60A3B46C282D3605002F903B /* Executor+setSyncSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */; };
 		60A9CBBD2A778C78006B453B /* XCUIElementQuery+webMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A9CBBC2A778C78006B453B /* XCUIElementQuery+webMatching.swift */; };
 		60A9CBC02A77940C006B453B /* XCUIElement+scrollToView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A9CBBF2A77940C006B453B /* XCUIElement+scrollToView.swift */; };
+		60A9CBC92A77E2F2006B453B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A9CBC82A77E2F2006B453B /* WebViewController.swift */; };
+		60A9CBCF2A77E571006B453B /* WebScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60A9CBCE2A77E571006B453B /* WebScreen.storyboard */; };
+		60A9CBD22A77FEF7006B453B /* WebViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A9CBD12A77FEF7006B453B /* WebViewTests.swift */; };
 		60BB447D28070AED00772A2A /* DTXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BB447C28070AED00772A2A /* DTXTestCase.m */; };
 		60BF52D0281E739D00610DBD /* XCUIElementQuery+matching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52CF281E739D00610DBD /* XCUIElementQuery+matching.swift */; };
 		60BF52D2281E7D0600610DBD /* XCUIElement+query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BF52D1281E7D0600610DBD /* XCUIElement+query.swift */; };
@@ -245,6 +248,9 @@
 		60A3B46B282D3605002F903B /* Executor+setSyncSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setSyncSettings.swift"; sourceTree = "<group>"; };
 		60A9CBBC2A778C78006B453B /* XCUIElementQuery+webMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+webMatching.swift"; sourceTree = "<group>"; };
 		60A9CBBF2A77940C006B453B /* XCUIElement+scrollToView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+scrollToView.swift"; sourceTree = "<group>"; };
+		60A9CBC82A77E2F2006B453B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		60A9CBCE2A77E571006B453B /* WebScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = WebScreen.storyboard; sourceTree = "<group>"; };
+		60A9CBD12A77FEF7006B453B /* WebViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewTests.swift; sourceTree = "<group>"; };
 		60BB447C28070AED00772A2A /* DTXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTXTestCase.m; sourceTree = "<group>"; };
 		60BB448128070C6800772A2A /* DTXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXTestCase.h; sourceTree = "<group>"; };
 		60BF52CF281E739D00610DBD /* XCUIElementQuery+matching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+matching.swift"; sourceTree = "<group>"; };
@@ -436,6 +442,15 @@
 			path = XCUIElement;
 			sourceTree = "<group>";
 		};
+		60A9CBC72A77E27E006B453B /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				60A9CBCE2A77E571006B453B /* WebScreen.storyboard */,
+				60A9CBC82A77E2F2006B453B /* WebViewController.swift */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
 		60BF52CD281E711D00610DBD /* XCUIElementQuery */ = {
 			isa = PBXGroup;
 			children = (
@@ -531,6 +546,7 @@
 		60F9F94B28084F1B005DB569 /* Actions Screens */ = {
 			isa = PBXGroup;
 			children = (
+				60A9CBC72A77E27E006B453B /* Web */,
 				60FBF609281983B7000B73B1 /* Slider */,
 				60FBF5FE2819672B000B73B1 /* Pinch */,
 				60FBF5EB281844C9000B73B1 /* Picker */,
@@ -612,6 +628,7 @@
 				60FBF60C28198433000B73B1 /* SliderTests.swift */,
 				60534155280C177300C0405D /* SwipeTests.swift */,
 				605341A0280F010700C0405D /* TapTests.swift */,
+				60A9CBD12A77FEF7006B453B /* WebViewTests.swift */,
 				60FBF5F2281848C0000B73B1 /* WheelPickerTests.swift */,
 			);
 			path = Actions;
@@ -935,6 +952,7 @@
 				60C0202527CBB0A500EF6C1E /* Preview Assets.xcassets in Resources */,
 				60FBF60228196780000B73B1 /* PinchScreen.storyboard in Resources */,
 				60F9F95028084F7A005DB569 /* TapScreen.storyboard in Resources */,
+				60A9CBCF2A77E571006B453B /* WebScreen.storyboard in Resources */,
 				60FBF6C4281AABB1000B73B1 /* ElementsScreen.storyboard in Resources */,
 				6026FEAF2816C6AF00A016A1 /* KeyboardScreen.storyboard in Resources */,
 				60534199280EE6E700C0405D /* SwipeScreen.storyboard in Resources */,
@@ -976,6 +994,7 @@
 				60FBF6C1281AAA31000B73B1 /* ElementMatchersTests.swift in Sources */,
 				605341C628141EA600C0405D /* ElementAttributes.swift in Sources */,
 				605341CA2814536700C0405D /* GetAttributesTests.swift in Sources */,
+				60A9CBD22A77FEF7006B453B /* WebViewTests.swift in Sources */,
 				60C0203427CE610100EF6C1E /* WaitUntilDone.swift in Sources */,
 				609AA17D279FE932008F6617 /* DetoxTester.swift in Sources */,
 				605980EE29814DCF00888841 /* XCUIElement+screenshotData.swift in Sources */,
@@ -1060,6 +1079,7 @@
 				6053415F280C580500C0405D /* LongPressAndDragViewController.swift in Sources */,
 				60FBF60428196797000B73B1 /* PinchViewController.swift in Sources */,
 				60C0202427CBB0A500EF6C1E /* ContentView.swift in Sources */,
+				60A9CBC92A77E2F2006B453B /* WebViewController.swift in Sources */,
 				60F9F94928084EEB005DB569 /* TapViewController.swift in Sources */,
 				60FBF5EF28184583000B73B1 /* PickerViewController.swift in Sources */,
 				60F9F9392808369B005DB569 /* Menu.swift in Sources */,
