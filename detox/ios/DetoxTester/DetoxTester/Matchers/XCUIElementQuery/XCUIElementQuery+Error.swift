@@ -13,5 +13,21 @@ extension XCUIElementQuery {
     /// Cannot match by a pattern type using the XCUITest framework (running without white-box
     /// access).
     case cannotMatchByPattern(pattern: ElementPattern)
+
+    /// Cannot run matching from this pattern
+    case operationNotSupported(pattern: WebElementPattern)
+  }
+}
+
+extension XCUIElementQuery.Error: CustomStringConvertible {
+  public var description: String {
+    switch self {
+      case .cannotMatchByPattern(let pattern):
+        return "Cannot match by a pattern type using the XCUITest framework " +
+        "(running without white-box access). Pattern: \(pattern)"
+
+      case .operationNotSupported(let pattern):
+        return "Cannot run matching from this pattern: \(pattern)"
+    }
   }
 }

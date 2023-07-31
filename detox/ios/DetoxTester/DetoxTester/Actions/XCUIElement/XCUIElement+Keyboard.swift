@@ -35,7 +35,8 @@ extension XCUIElement {
     }
   }
 
-  private func focusKeyboard() throws {
+  /// Focuses the keyboard on the element.
+  func focusKeyboard() throws {
     if hasKeyboardFocus == true {
       return
     }
@@ -73,12 +74,18 @@ extension XCUIElement {
     }
   }
 
-  private func deleteText(app: XCUIApplication) throws {
+  /// Selects all text in the element.
+  func selectAllText(app: XCUIApplication, completion: (() -> Void)?) throws {
     try focusKeyboard()
 
     shortPress()
 
-    tapOnSelectAllIfPresent(app: app) { [self] in
+    tapOnSelectAllIfPresent(app: app, completion: nil)
+  }
+
+
+  private func deleteText(app: XCUIApplication) throws {
+    try selectAllText(app: app) { [self] in
       typeText(String(XCUIKeyboardKey.delete.rawValue))
     }
   }
@@ -92,12 +99,7 @@ extension XCUIElement {
   private func deleteAndPasteText(_ text: String, app: XCUIApplication) throws {
     UIPasteboard.general.string = text
 
-    try focusKeyboard()
-
-    // Activates text-view menu options.
-    shortPress()
-
-    tapOnSelectAllIfPresent(app: app, completion: nil)
+    try selectAllText(app: app, completion: nil)
     try tapOnPasteText(app: app, completion: pressOnAllowPaste)
   }
 

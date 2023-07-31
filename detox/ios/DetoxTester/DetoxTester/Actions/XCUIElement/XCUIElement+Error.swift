@@ -23,6 +23,9 @@ extension XCUIElement {
 
     /// Failed to scroll an element (element is not scrollable).
     case elementNotScrollable(element: XCUIElement)
+
+    /// Failed to scroll to an element (failed to find the element).
+    case failedToScrollToElement(element: XCUIElement)
   }
 }
 
@@ -34,20 +37,24 @@ extension XCUIElement.Error: CustomStringConvertible {
 
       case .failedToFocusKeyboardOnElement(let element):
         return "Failed to focus on element with the keyboard (element " +
-            "identifier: `\(element.cleanIdentifier)`)"
+        "identifier: `\(element.cleanIdentifier)`)"
 
       case .failedToPasteNewText(let onAction):
         return "Failed to paste new text on text input, on action: \(onAction)"
 
       case .elementNotHittable(let element):
         return "Failed to hit element with identifier " +
-          "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
-          "element is not hittable"
+        "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
+        "element is not hittable"
 
       case .elementNotScrollable(let element):
         return "Failed to scroll element with identifier " +
-          "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
-          "element is not scrollable"
+        "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`, " +
+        "element is not scrollable"
+
+      case .failedToScrollToElement(let element):
+        return "Failed to scroll to element with identifier " +
+        "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`"
     }
   }
 }

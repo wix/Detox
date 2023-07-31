@@ -51,14 +51,28 @@ extension XCUIElement {
   func assertValue(equals value: String, isTruthy: Bool) throws {
     let selfValue = accessibilityValue ?? self.value as? String
     let equals = selfValue == value
-    try assertProperty("value", expected: isTruthy, actual: equals, expectedValue: value, actualValue: selfValue)
+
+    try assertProperty(
+      "value",
+      expected: isTruthy,
+      actual: equals,
+      expectedValue: value,
+      actualValue: selfValue
+    )
   }
 
   /// Asserts whether the element label equals the expected value.
   func assertLabel(equals value: String, isTruthy: Bool) throws {
     let selfLabel = accessibilityLabel ?? label
     let equals = selfLabel == value
-    try assertProperty("label", expected: isTruthy, actual: equals, expectedValue: value, actualValue: selfLabel)
+
+    try assertProperty(
+      "label",
+      expected: isTruthy,
+      actual: equals,
+      expectedValue: value,
+      actualValue: selfLabel
+    )
   }
 
   /// Asserts whether the element value describes a boolean value that equals the expected value.

@@ -18,7 +18,7 @@ class FakeWebActionDelegate: WebActionDelegateProtocol {
 
   private(set) var actRecorder: [(WebAction, AnyHashable)] = []
 
-  func act(action: WebAction, on element: AnyHashable) throws {
+  func act(action: WebAction, on element: AnyHashable, host webView: AnyHashable) throws {
     actRecorder.append((action, element))
 
     if shouldThrow {

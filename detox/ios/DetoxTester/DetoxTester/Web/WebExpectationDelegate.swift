@@ -14,6 +14,21 @@ class WebExpectationDelegate: WebExpectationDelegateProtocol {
     isTruthy: Bool,
     on element: AnyHashable
   ) throws {
-    fatalError("unsupported")
+    guard let element = element as? XCUIElement else {
+      fatalError("element is not XCUIElement")
+    }
+
+    expectLog(
+      "expect element `\(String(describing: element.cleanIdentifier))` " +
+      "\(isTruthy ? "" : "not ")\(expectation)"
+    )
+
+    switch expectation {
+      case .toHaveText(let text):
+        try element.assertLabel(equals: text, isTruthy: isTruthy)
+
+      case .toExist:
+        try element.assertExists(isTruthy: isTruthy)
+    }
   }
 }

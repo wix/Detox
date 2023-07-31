@@ -74,7 +74,7 @@ public class InvokeHandler {
     let isTruthy: Bool = parsedMessage.modifiers?.contains(.not) != true
 
     let webViewElement = try findWebViewElement(from: parsedMessage)
-    try webExpectationDelegate.expect(expectation, isTruthy: isTruthy, on: webViewElement)
+    try webExpectationDelegate.expect(expectation, isTruthy: isTruthy, on: webViewElement.element)
 
     return nil
   }
@@ -92,23 +92,27 @@ public class InvokeHandler {
 
     switch webActionType {
       case .getText:
-        return try webActionDelegate.getText(of: webViewElement)
+        return try webActionDelegate.getText(of: webViewElement.element)
 
       case .getCurrentUrl:
-        return try webActionDelegate.getCurrentUrl(of: webViewElement)
+        return try webActionDelegate.getCurrentUrl(of: webViewElement.element)
 
       case .getTitle:
-        return try webActionDelegate.getTitle(of: webViewElement)
+        return try webActionDelegate.getTitle(of: webViewElement.element)
 
       default:
         let webAction = WebAction.make(from: webActionType, params: parsedMessage.params)
-        try webActionDelegate.act(action: webAction, on: webViewElement)
+        try webActionDelegate.act(
+          action: webAction,
+          on: webViewElement.element,
+          host: webViewElement.webView
+        )
     }
 
     return nil
   }
 
-  private func findWebViewElement(from parsedMessage: Message) throws -> AnyHashable {
+  private func findWebViewElement(from parsedMessage: Message) throws -> (webView: AnyHashable, element: AnyHashable) {
     let predicate = parsedMessage.predicate
     let matchedWebViews = try findWebViews(by: predicate)
     guard let webView = try getElement(from: matchedWebViews, at: parsedMessage.atIndex) else {
@@ -132,7 +136,7 @@ public class InvokeHandler {
       )
     }
 
-    return webViewElement
+    return (webView, webViewElement)
   }
 
   private func findWebViews(by predicate: ElementPredicate?) throws -> [AnyHashable] {
