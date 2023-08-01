@@ -62,6 +62,22 @@ class InvokeHandlerWebPredicateSpec: QuickSpec {
       expect { try handler.handle(message) }.notTo(throwError())
     }
 
+    it("should find element by `label` predicate") {
+      let message = messageBuilderWithAction.setLabelWebPredicate("label").build()
+
+      matcher.setWebMatch(from: .label("label"), to: "foo")
+
+      expect { try handler.handle(message) }.notTo(throwError())
+    }
+
+    it("should find element by `value` predicate") {
+      let message = messageBuilderWithAction.setValueWebPredicate("value").build()
+
+      matcher.setWebMatch(from: .value("value"), to: "foo")
+
+      expect { try handler.handle(message) }.notTo(throwError())
+    }
+
     it("should find element by `href` predicate") {
       let message = messageBuilderWithAction.setHrefWebPredicate("href").build()
 

@@ -31,6 +31,12 @@ public indirect enum WebElementPattern: Hashable, Equatable {
 
   /// Tag predicate, expects the element's tag to equal the specified value.
   case tag(String)
+
+  /// Label predicate, expects the element's label to equal the specified value.
+  case label(String)
+
+  /// Value predicate, expects the element's value to equal the specified value.
+  case value(String)
 }
 
 extension WebElementPattern {
@@ -68,6 +74,12 @@ extension WebElementPattern {
 
       case .tag:
         self = .tag(predicate.value)
+
+      case .label:
+        self = .label(predicate.value)
+
+      case .value:
+        self = .value(predicate.value)
     }
   }
 }

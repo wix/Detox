@@ -30,4 +30,10 @@ public enum WebPredicateType: String, Codable, Hashable {
 
   /// Tag predicate, expects the element's tag to equal the specified `value`.
   case tag = "tag"
+
+  /// Label predicate, expects the element's label to equal the specified `value`.
+  case label = "label"
+
+  /// Value predicate, expects the element's value to equal the specified `value`.
+  case value = "value"
 }

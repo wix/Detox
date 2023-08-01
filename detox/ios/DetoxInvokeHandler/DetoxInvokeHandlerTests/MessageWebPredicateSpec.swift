@@ -60,6 +60,34 @@ class MessageWebPredicateSpec: QuickSpec {
         ))
       }
 
+      it("should parse web-predicate with `label` type") {
+        let message = messageBuilder.setLabelWebPredicate("foo").build()
+
+        let parsed = try Message(from: message)
+
+        expect(parsed).to(equal(
+          Message.defaultInstance(
+            type: .webAction,
+            webAction: .tap,
+            webPredicate: .init(type: .label, value: "foo")
+          )
+        ))
+      }
+
+      it("should parse web-predicate with `value` type") {
+        let message = messageBuilder.setValueWebPredicate("foo").build()
+
+        let parsed = try Message(from: message)
+
+        expect(parsed).to(equal(
+          Message.defaultInstance(
+            type: .webAction,
+            webAction: .tap,
+            webPredicate: .init(type: .value, value: "foo")
+          )
+        ))
+      }
+
       it("should parse web-predicate with `name` type") {
         let message = messageBuilder.setNameWebPredicate("foo").build()
 

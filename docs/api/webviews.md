@@ -1,7 +1,7 @@
 # Web views
 
 :::caution Note
-Detox supports testing web views on **Android** only. We are working on adding support for iOS apps as well.
+There are some gaps between matchers in Android and iOS. Also, evaluation of JS code is not supported on iOS.
 :::
 
 A web view is a native component that displays content not available in a native format, such as a web page or a PDF document.
@@ -16,7 +16,7 @@ That's why Detox provides a set of matchers, actions, and expectations to allow 
 In the most common case, you will have a single web view on the screen, so you can use `web.element()` function with [web view matchers] to reference elements inside it. After you have a reference to a web element, you can use the [web view actions] and [web view expectations] on it, e.g.:
 
 ```js
-const innerElement = web.element(by.web.id('inner_element_identifier'))
+const innerElement = web.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
@@ -28,7 +28,7 @@ If you have multiple web views on the screen, you must locate a specific web vie
 
 ```js
 const myWebView = web(by.id('webview_identifier'));
-const innerElement = myWebView.element(by.web.id('inner_element_identifier'))
+const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
@@ -42,17 +42,21 @@ In the example above:
 
 Web view matchers are used to find elements within a web view:
 
-- [`by.web.id()`]
-- [`by.web.className()`]
-- [`by.web.cssSelector()`]
-- [`by.web.name()`]
-- [`by.web.xpath()`]
-- [`by.web.href()`]
-- [`by.web.hrefContains()`]
-- [`by.web.tag()`]
-- [`atIndex()`]
+- [`by.web.id(id)`] (**Android only**)
+- [`by.web.className(className)`] (**Android only**)
+- [`by.web.cssSelector(cssSelector)`] (**Android only**)
+- [`by.web.name(name)`] (**Android only**)
+- [`by.web.xpath(xpath)`] (**Android only**)
+- [`by.web.href(href)`] (**Android only**)
+- [`by.web.hrefContains(hrefContains)`] (**Android only**)
+- [`by.web.tag(tag)`] (**Android only**)
+- [`by.web.label(label)`] (**iOS only**)
+- [`by.web.value(value)`] (**iOS only**)
+- [`atIndex(index)`]
 
 ### `by.web.id(id)`
+
+**Android only**
 
 Match elements with the specified accessibility identifier.
 
@@ -62,6 +66,8 @@ web.element(by.web.id('identifier'));
 
 ### `by.web.className(className)`
 
+**Android only**
+
 Match elements with the specified CSS class name.
 
 ```js
@@ -69,6 +75,8 @@ web.element(by.web.className('className'));
 ```
 
 ### `by.web.cssSelector(cssSelector)`
+
+**Android only**
 
 Match elements with the specified CSS selector.
 
@@ -78,6 +86,8 @@ web.element(by.web.cssSelector('#cssSelector'));
 
 ### `by.web.name(name)`
 
+**Android only**
+
 Match elements with the specified name.
 
 ```js
@@ -85,6 +95,8 @@ web.element(by.web.name('name'));
 ```
 
 ### `by.web.xpath(xpath)`
+
+**Android only**
 
 Match elements with the specified XPath.
 
@@ -94,6 +106,8 @@ web.element(by.web.xpath('//*[@id="testingh1-1"]'));
 
 ### `by.web.href(href)`
 
+**Android only**
+
 Match elements with the specified `href`.
 
 ```js
@@ -101,6 +115,8 @@ web.element(by.web.href('https://wix.com'));
 ```
 
 ### `by.web.hrefContains(href)`
+
+**Android only**
 
 Match elements that contain the specified `href`.
 
@@ -110,10 +126,32 @@ web.element(by.web.hrefContains('wix'));
 
 ### `by.web.tag(tag)`
 
+**Android only**
+
 Match elements with the specified tag.
 
 ```js
 web.element(by.web.tag('h1'));
+```
+
+### `by.web.label(label)`
+
+**iOS only**
+
+Match elements with the specified label.
+
+```js
+web.element(by.web.label('label'));
+```
+
+### `by.web.value(value)`
+
+**iOS only**
+
+Match elements with the specified value.
+
+```js
+web.element(by.web.value('value'));
 ```
 
 ### `atIndex(index)`
@@ -131,18 +169,18 @@ Use it sparingly for those rare cases when you cannot make your matcher less amb
 Web view actions are used to interact with elements within a web view:
 
 - [`tap()`]
-- [`typeText()`]
-- [`replaceText()`]
+- [`typeText(text)`]
+- [`replaceText(text)`]
 - [`clearText()`]
 - [`selectAllText()`]
 - [`getText()`]
 - [`scrollToView()`]
 - [`focus()`]
 - [`moveCursorToEnd()`]
-- [`runScript()`]
-- [`runScriptWithArgs()`]
-- [`getCurrentUrl()`]
-- [`getTitle()`]
+- [`runScript(script)`] (**Android only**)
+- [`runScriptWithArgs(script, args)`] (**Android only**)
+- [`getCurrentUrl()`] (**Android only**)
+- [`getTitle()`] (**Android only**)
 
 ### `tap()`
 
@@ -236,6 +274,8 @@ await web.element(by.web.id('identifier')).moveCursorToEnd();
 
 ### `runScript(script)`
 
+**Android only**
+
 Run the specified script on the element.
 
 The script should be a string that contains a valid JavaScript function.
@@ -249,6 +289,8 @@ await webElement.runScript(`function foo(element) {
 ```
 
 ### `runScriptWithArgs(script, ...args)`
+
+**Android only**
 
 Run the specified script on the element with extra arguments.
 
@@ -264,6 +306,8 @@ await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
 
 ### `getCurrentUrl()`
 
+**Android only**
+
 Get the current URL of the web view.
 
 :::note
@@ -275,6 +319,8 @@ const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ```
 
 ### `getTitle()`
+
+**Android only**
 
 Get the title of the web view.
 
@@ -290,7 +336,7 @@ const title = await web.element(by.web.id('identifier')).getTitle();
 
 Web view expectations are used to assert the state of elements within a web view:
 
-- [`toHaveText()`]
+- [`toHaveText(text)`]
 - [`toExist()`]
 - [`not`]
 
@@ -328,31 +374,35 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [web view expectations]: webviews.md#expectations
 
-[`by.web.id()`]: webviews.md#byidid
+[`by.web.id(id)`]: webviews.md#bywebidid
 
-[`by.web.className()`]: webviews.md#byclassnameclassname
+[`by.web.className(className)`]: webviews.md#bywebclassnameclassname
 
-[`by.web.cssSelector()`]: webviews.md#bycssselectorcssselector
+[`by.web.cssSelector(cssSelector)`]: webviews.md#bywebcssselectorcssselector
 
-[`by.web.name()`]: webviews.md#byname
+[`by.web.name(name)`]: webviews.md#bywebnamename
 
-[`by.web.xpath()`]: webviews.md#byxpathxpath
+[`by.web.xpath(xpath)`]: webviews.md#bywebxpathxpath
 
-[`by.web.href()`]: webviews.md#byhrefhref
+[`by.web.href(href)`]: webviews.md#bywebhrefhref
 
-[`by.web.hrefContains()`]: webviews.md#byhrefcontainshref
+[`by.web.hrefContains(hrefContains)`]: webviews.md#bywebhrefcontainshref
 
-[`by.web.tag()`]: webviews.md#bytagtag
+[`by.web.tag(tag)`]: webviews.md#bywebtagtag
 
-[`atIndex()`]: webviews.md#atindexindex
+[`by.web.label(label)`]: webviews.md#byweblabellabel
+
+[`by.web.value(value)`]: webviews.md#bywebvaluevalue
+
+[`atIndex(index)`]: webviews.md#atindexindex
 
 [`tap()`]: webviews.md#tap
 
-[`typeText()`]: webviews.md#typetexttext-iscontenteditable
+[`typeText(text)`]: webviews.md#typetexttext-iscontenteditable
 
 [content-editable]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contentEditable
 
-[`replaceText()`]: webviews.md#replacetexttext
+[`replaceText(text)`]: webviews.md#replacetexttext
 
 [`clearText()`]: webviews.md#cleartext
 
@@ -366,15 +416,15 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [`moveCursorToEnd()`]: webviews.md#movecursortoend
 
-[`runScript()`]: webviews.md#runscriptscript
+[`runScript(script)`]: webviews.md#runscriptscript
 
-[`runScriptWithArgs()`]: webviews.md#runscriptwithargsscript-args
+[`runScriptWithArgs(script, args)`]: webviews.md#runscriptwithargsscript-args
 
 [`getCurrentUrl()`]: webviews.md#getcurrenturl
 
 [`getTitle()`]: webviews.md#gettitle
 
-[`toHaveText()`]: webviews.md#tohavetexttext
+[`toHaveText(text)`]: webviews.md#tohavetexttext
 
 [`toExist()`]: webviews.md#toexist
 

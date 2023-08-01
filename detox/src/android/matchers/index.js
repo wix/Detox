@@ -10,6 +10,7 @@ module.exports = {
   type: (value) => new native.TypeMatcher(value),
   value: (value) => new native.ValueMatcher(value),
 
+  // label and value not supported
   web: {
     id: (value) => new web.IdMatcher(value),
     className: (value) => new web.ClassNameMatcher(value),
@@ -19,5 +20,7 @@ module.exports = {
     xpath: (value) => new web.XPathMatcher(value),
     href: (value) => new web.LinkTextMatcher(value),
     hrefContains: (value) => new web.PartialLinkTextMatcher(value),
+    label: (value) => new web.LabelMatcher(value),
+    value: (value) => new web.ValueMatcher(value),
   },
 };

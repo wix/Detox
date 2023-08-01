@@ -84,9 +84,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         <body>
         <div>
         <h1>Hello, this is your custom HTML page!</h1>
-
-        <input type="text" id="myText" placeholder="Enter some text..." aria-label="Enter text">
         <button type="button" onclick="myFunction()">Press me!</button>
+        <input type="text" id="myText" placeholder="Enter some text..." aria-label="Enter text">
         <p id="myLabel"></p>
 
         </div>

@@ -1011,6 +1011,7 @@ declare global {
 
         interface ByWebFacade {
             /**
+             * (Android Only)
              * Find an element on the DOM tree by its id
              * @param id
              * @example
@@ -1019,6 +1020,7 @@ declare global {
             id(id: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an element on the DOM tree by its CSS class
              * @param className
              * @example
@@ -1027,6 +1029,7 @@ declare global {
             className(className: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an element on the DOM tree matching the given CSS selector
              * @param cssSelector
              * @example
@@ -1035,6 +1038,7 @@ declare global {
             cssSelector(cssSelector: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an element on the DOM tree by its "name" attribute
              * @param name
              * @example
@@ -1043,6 +1047,7 @@ declare global {
             name(name: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an element on the DOM tree by its XPath
              * @param xpath
              * @example
@@ -1051,6 +1056,7 @@ declare global {
             xpath(xpath: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an <a> element on the DOM tree by its link text (href content)
              * @param linkText
              * @example
@@ -1059,6 +1065,7 @@ declare global {
             href(linkText: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an <a> element on the DOM tree by its partial link text (href content)
              * @param linkTextFragment
              * @example
@@ -1067,12 +1074,31 @@ declare global {
             hrefContains(linkTextFragment: string): WebMatcher;
 
             /**
+             * (Android Only)
              * Find an element on the DOM tree by its tag name
              * @param tag
              * @example
              * web.element(by.web.tag('mark'))
              */
             tag(tagName: string): WebMatcher;
+
+            /**
+             * (iOS Only)
+             * Find an element on the web-view by its text content
+             * @param label
+             * @example
+             * web.element(by.web.label('Welcome'))
+             */
+            label(label: string): WebMatcher;
+
+            /**
+             * (iOS Only)
+             * Find an element on the web-view by its content description
+             * @param value
+             * @example
+             * web.element(by.web.value('Write a comment...'))
+             */
+            value(value: string): WebMatcher;
         }
 
         interface NativeMatcher {

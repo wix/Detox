@@ -1,6 +1,6 @@
 const MOCK_TEXT = 'Mock Text';
 
-describe('WebView', () => {
+describe(':android: WebView', () => {
   let webview;
 
   beforeEach(async () => {

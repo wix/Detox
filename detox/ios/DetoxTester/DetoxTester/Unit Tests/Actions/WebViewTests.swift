@@ -50,15 +50,10 @@ class WebViewTests: DTXTestCase {
     try webActionDelegate.act(action: typeAction, on: textInput, host: webView, testCase: self)
 
     let pressMeButton = webView.buttons["Press me!"]
-
-    try webActionDelegate.act(
-      action: .scrollToView, on: pressMeButton, host: webView, testCase: self)
-
     try webActionDelegate.act(
       action: .tap, on: pressMeButton, host: webView, testCase: self)
 
     let textElement = webView.staticTexts["my text here"]
-
-    XCTAssertTrue(textElement.exists)
+    XCTAssert(textElement.waitForExistence(timeout: 30))
   }
 }

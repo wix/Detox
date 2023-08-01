@@ -28,6 +28,14 @@ extension MessageBuilder {
     return setWebPredicate("cssSelector", value)
   }
 
+  func setLabelWebPredicate(_ value: String) -> Self {
+    return setWebPredicate("label", value)
+  }
+
+  func setValueWebPredicate(_ value: String) -> Self {
+    return setWebPredicate("value", value)
+  }
+
   func setXpathWebPredicate(_ value: String) -> Self {
     return setWebPredicate("xpath", value)
   }
