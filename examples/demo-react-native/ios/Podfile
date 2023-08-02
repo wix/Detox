@@ -1,5 +1,9 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
 platform :ios, '13.0'
 
@@ -16,12 +20,14 @@ target 'example' do
   post_install do |installer|
     __apply_update_deployment_target_workaround(installer)
 
-     react_native_post_install(
-       installer,
-       # Set `mac_catalyst_enabled` to `true` in order to apply patches
-       # necessary for Mac Catalyst builds
-       :mac_catalyst_enabled => false
-     )
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+      # necessary for Mac Catalyst builds
+      :mac_catalyst_enabled => false
+    )
   end
 end
 
