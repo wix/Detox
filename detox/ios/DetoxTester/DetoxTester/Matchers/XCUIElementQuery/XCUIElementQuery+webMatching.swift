@@ -41,14 +41,18 @@ extension XCUIElementQuery {
 
       case .label(let label):
         return webViews.descendants(matching: .any).matching(NSPredicate { evaluatedObject, _ in
-          guard let element = evaluatedObject as? XCUIElement else { return false }
-          return element.label == label
+          guard let element = evaluatedObject as? NSObject else {
+            return false
+          }
+          return element.value(forKey: "label") as? String == label
         })
 
       case .value(let value):
         return webViews.descendants(matching: .any).matching(NSPredicate { evaluatedObject, _ in
-          guard let element = evaluatedObject as? XCUIElement else { return false }
-          return String(describing: element.value) == value
+          guard let element = evaluatedObject as? NSObject else {
+            return false
+          }
+          return String(describing: element.value(forKey: "value")) == value
         })
     }
   }

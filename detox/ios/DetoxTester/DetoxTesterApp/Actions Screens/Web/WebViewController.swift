@@ -17,10 +17,9 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
           let statusBarManager = windowScene.statusBarManager else { return }
 
-    // Create navigation bar
     let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: statusBarManager.statusBarFrame.height, width: view.frame.size.width, height: 44))
     self.view.addSubview(navigationBar)
-    let navigationItem = UINavigationItem(title: "Custom Web View")
+    let navigationItem = UINavigationItem(title: "Web View")
     let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissWebView))
     navigationItem.rightBarButtonItem = doneButton
     navigationBar.setItems([navigationItem], animated: false)
@@ -71,7 +70,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
             }
 
             input[type=text] {
-                width: 100%;
+                width: 90%;
                 padding: 15px;
                 margin: 20px;
                 font-size: 2em;
@@ -80,15 +79,17 @@ class WebViewController: UIViewController, WKNavigationDelegate {
             }
 
         </style>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval'; object-src 'none';">
         </head>
         <body>
-        <div>
-        <h1>Hello, this is your custom HTML page!</h1>
+
+        <h1>This is a Web View</h1>
+
         <button type="button" onclick="myFunction()">Press me!</button>
+
         <input type="text" id="myText" placeholder="Enter some text..." aria-label="Enter text">
         <p id="myLabel"></p>
 
-        </div>
         <script>
             function myFunction() {
                 var x = document.getElementById("myText").value;
@@ -99,6 +100,27 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         </html>
         """
     webView.loadHTMLString(html, baseURL: nil)
+  }
+
+  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    let script = """
+      var element = document.querySelector('h1');
+      if (element) {
+          element.setAttribute('aria-label', 'hello-world');
+          element.innerText;
+      } else {
+          'No h1 element found';
+      }
+      """
+    webView.evaluateJavaScript(script) { (result, error) in
+      if error == nil {
+        if let content = result as? String {
+          print("Content of the H1 element: \(content)")
+        }
+      } else {
+        print("JS execution failed: \(error!.localizedDescription)")
+      }
+    }
   }
 
   @objc func dismissWebView() {

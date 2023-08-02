@@ -11,6 +11,7 @@ class WebViewTests: DTXTestCase {
   var app: XCUIApplication!
   var actionDelegate: ActionDelegate!
   var webActionDelegate: WebActionDelegate!
+  var matcher: ElementMatcher!
   var webView: XCUIElement!
 
   override func setUpWithError() throws {
@@ -23,6 +24,8 @@ class WebViewTests: DTXTestCase {
     )
 
     webActionDelegate = WebActionDelegate(app)
+
+    matcher = ElementMatcher(app, whiteBoxMessageHandler: { _ in return nil })
 
     app.launch()
 
@@ -42,6 +45,17 @@ class WebViewTests: DTXTestCase {
 
     webView = app.webViews.firstMatch
     XCTAssert(webView.waitForExistence(timeout: 30))
+  }
+
+  func testFindElementWithLabel() throws {
+    let helloWorldTitle = try matcher
+      .matchWebViewElements(on: webView, to: .label("hello-world")).first
+    guard let helloWorldTitle = helloWorldTitle as? XCUIElement else {
+      XCTFail("Expected to find hello-world label")
+      return
+    }
+
+    XCTAssert(helloWorldTitle.waitForExistence(timeout: 30))
   }
 
   func testTypeTextAndTap() throws {
