@@ -1,2 +1,2 @@
 include ':detox'
-includeBuild('../node_modules/react-native-gradle-plugin')
+includeBuild('../node_modules/@react-native/gradle-plugin')

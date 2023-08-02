@@ -27,7 +27,11 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
+        if (rnInfo.isRN72OrHigher) {
+            classpath "com.android.tools.build:gradle"
+        } else {
+            classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"            
+        }
 
         // In RN .71, they've switched to the gradle plugin they've uploaded to maven-central
         if (rnInfo.isRN71OrHigher) {

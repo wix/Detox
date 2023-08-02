@@ -28,7 +28,7 @@ buildscript {
         if (!rnInfo.isRN71OrNewer) {
             classpath "com.facebook.react:react-native-gradle-plugin"
         }
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
