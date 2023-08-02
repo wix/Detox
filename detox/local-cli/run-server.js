@@ -1,8 +1,8 @@
 const collectCliConfig = require('../src/configuration/collectCliConfig');
 const composeLoggerConfig = require('../src/configuration/composeLoggerConfig');
 const { DetoxRuntimeError } = require('../src/errors');
-const DetoxServer = require('../src/server/DetoxServer');
 const logger = require('../src/utils/logger');
+const WebDriverServer = require('../src/webdriver');
 
 module.exports.command = 'run-server';
 module.exports.desc = 'Start a standalone Detox server';
@@ -18,7 +18,7 @@ module.exports.builder = {
     describe: 'Port number',
     group: 'Configuration:',
     number: true,
-    default: 8099
+    default: 5789
   },
   'no-color': {
     describe: 'Disable colorful logs',
@@ -39,8 +39,9 @@ module.exports.handler = async function runServer(argv) {
     cliConfig: collectCliConfig({ argv }),
   }));
 
-  await new DetoxServer({
+  await new WebDriverServer({
     port: +argv.port,
-    standalone: true,
-  }).open();
+  }).startServer();
+
+  console.log(`Detox server listening on localhost:${argv.port}...`);
 };

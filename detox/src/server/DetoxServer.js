@@ -40,16 +40,16 @@ class DetoxServer {
     await this._startListening();
 
     const level = this._options.standalone ? 'info' : 'debug';
-    log[level](`Detox server listening on localhost:${this.port}...`);
+    log[level](`Detox app gateway listening on localhost:${this.port}...`);
   }
 
   async close() {
     try {
       await this._closeWithTimeout(10000);
-      log.debug('Detox server has been closed gracefully');
+      log.debug('Detox app gateway has been closed gracefully');
     } catch (err) {
       log.warn({ err },
-        `Detox server has been closed abruptly! See the error details below:`
+        `Detox app gateway has been closed abruptly! See the error details below:`
       );
     }
   }
@@ -88,7 +88,7 @@ class DetoxServer {
     } else if (this._closing) {
       this._closing.reject(err);
     } else {
-      log.error({ err }, 'Detox server has got an unhandled error:');
+      log.error({ err }, 'Detox app gateway has got an unhandled error:');
     }
   }
 
@@ -101,7 +101,7 @@ class DetoxServer {
 
     const handle = setTimeout(() => {
       this._closing.reject(new DetoxRuntimeError({
-        message: `Detox server close callback was not invoked within the ${timeoutValue} ms timeout`,
+        message: `Detox app gateway close callback was not invoked within the ${timeoutValue} ms timeout`,
       }));
       this._unlinkServer();
     }, timeoutValue);

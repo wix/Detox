@@ -90,7 +90,7 @@ class WebDriver {
     this.#wss = new WebSocket.Server({ server: this.#expressServer });
     this.#wss.on('connection', this.onWsConnection);
     this.#appGateway = new DetoxServer({
-      port: 8099,
+      port: 0,
       standalone: true,
     });
   }

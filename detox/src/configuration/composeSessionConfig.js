@@ -1,4 +1,4 @@
-const isValidWebsocketURL = require('../utils/isValidWebsocketURL');
+const isValidHTTPUrl = require('../utils/isValidHTTPUrl');
 
 /**
  * @param {{
@@ -18,7 +18,7 @@ async function composeSessionConfig(options) {
 
   if (session.server != null) {
     const value = session.server;
-    if (typeof value !== 'string' || !isValidWebsocketURL(value)) {
+    if (typeof value !== 'string' || !isValidHTTPUrl(value)) {
       throw errorComposer.invalidServerProperty();
     }
   }
