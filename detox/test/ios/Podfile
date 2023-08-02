@@ -41,6 +41,7 @@ end
 def __apply_update_deployment_target_workaround(installer)
   # This is a workaround for updating the deployment target of pod targets to the minimal supported version.
   # See StackOverflow: https://stackoverflow.com/questions/72729591/fbreactnativespec-h-error-after-upgrading-from-0-68-x-to-0-69-0/75915794#75915794
+  puts "Applying update deployment target workaround"
   installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['SWIFT_VERSION'] = '5.0'
@@ -51,8 +52,19 @@ def __apply_update_deployment_target_workaround(installer)
     end
 end
 
+def __apply_Xcode_15_post_install_workaround(installer)
+  # This is a workaround for Xcode 15, see: https://github.com/facebook/react-native/issues/37748.
+  puts "Applying Xcode 15 post install workaround"
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
+    end
+  end
+end
+
 post_install do |installer|
   __apply_update_deployment_target_workaround(installer)
+  __apply_Xcode_15_post_install_workaround(installer)
 
   if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
     react_native_post_install(installer)
