@@ -69,7 +69,7 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
-  const appsConfig = composeAppsConfig({
+  const appsConfig = await composeAppsConfig({
     errorComposer,
     configurationName,
     deviceConfig,

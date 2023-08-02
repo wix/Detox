@@ -1,6 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
+const resolveAsFile = require('../../utils/resolveAsFile');
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
@@ -237,7 +238,10 @@ class RuntimeDevice {
 
   async installApp(binaryPath, testBinaryPath) {
     const currentApp = binaryPath ? { binaryPath, testBinaryPath } : this._getCurrentApp();
-    await this.deviceDriver.installApp(currentApp.binaryPath, currentApp.testBinaryPath);
+    const resolvedBinaryPath = await resolveAsFile(currentApp.binaryPath);
+    const resolvedTestBinaryPath = await resolveAsFile(currentApp.testBinaryPath);
+
+    await this.deviceDriver.installApp(resolvedBinaryPath, resolvedTestBinaryPath);
 
     // This abstraction leaks because our drivers themselves leak,
     // so don't blame me - DeviceBaseDriver itself has `reverseTcpPort`,

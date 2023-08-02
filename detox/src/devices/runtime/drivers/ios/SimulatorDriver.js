@@ -3,6 +3,8 @@ const path = require('path');
 
 const exec = require('child-process-promise').exec;
 const _ = require('lodash');
+const fs = require('fs-extra');
+const unzipper = require('unzipper');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
@@ -65,7 +67,31 @@ class SimulatorDriver extends IosDriver {
   }
 
   async installApp(binaryPath) {
+    if (fs.statSync(binaryPath).isFile()) {
+      const appDir = path.join(path.dirname(binaryPath), 'app');
+      if (!fs.existsSync(appDir)) {
+        await this._unpackZip(binaryPath, appDir);
+      }
+      binaryPath = appDir;
+    }
+
     await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
+  }
+
+  async _unpackZip(zipPath, destDir) {
+    // Ensure the destination directory exists
+    await fs.ensureDir(destDir);
+
+    // Create a read stream from the ZIP file
+    const readStream = fs.createReadStream(zipPath);
+
+    try {
+      // Unzip the contents to the destination directory
+      await readStream.pipe(unzipper.Extract({ path: destDir })).promise();
+    } catch (e) {
+      // If an error occurs during unzipping, handle it here
+      throw new DetoxRuntimeError(`Failed to unzip '${zipPath}' to '${destDir}': ${e.message}`);
+    }
   }
 
   async uninstallApp(bundleId) {

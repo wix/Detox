@@ -2,6 +2,8 @@
 const _ = require('lodash');
 const parse = require('yargs-parser');
 
+const resolveAsFile = require('../utils/resolveAsFile');
+
 const deviceAppTypes = require('./utils/deviceAppTypes');
 
 const CLI_PARSER_OPTIONS = {
@@ -18,11 +20,26 @@ const CLI_PARSER_OPTIONS = {
  * @param {*} opts.cliConfig
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
-function composeAppsConfig(opts) {
+async function composeAppsConfig(opts) {
   const appsConfig = composeAppsConfigFromAliased(opts);
   overrideAppLaunchArgs(appsConfig, opts.cliConfig);
+  await resolveAppConfigs(appsConfig);
 
   return appsConfig;
+}
+
+async function resolveAppConfigs(appsConfig) {
+  await Promise.all(Object.values(appsConfig).map((appConfig) => resolveAppConfig(appConfig)));
+}
+
+async function resolveAppConfig(appConfig) {
+  if (appConfig.binaryPath) {
+    appConfig.binaryPath = await resolveAsFile(appConfig.binaryPath);
+  }
+
+  if (appConfig.testBinaryPath) {
+    appConfig.testBinaryPath = await resolveAsFile(appConfig.testBinaryPath);
+  }
 }
 
 /**

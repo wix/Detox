@@ -56,12 +56,13 @@
     "prettier": "^2.4.1",
     "react-native": "0.71.10",
     "react-native-codegen": "^0.0.8",
-    "typescript": "^4.5.2",
     "ts-jest": "^28.0.0",
+    "typescript": "^4.5.2",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
     "ajv": "^8.6.3",
+    "axios": "^1.4.0",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^3.1.0",
     "caf": "^15.0.1",
@@ -91,6 +92,7 @@
     "telnet-client": "1.2.8",
     "tempfile": "^2.0.0",
     "trace-event-lib": "^1.3.1",
+    "unzipper": "^0.10.14",
     "which": "^1.3.1",
     "ws": "^7.0.0",
     "yargs": "^17.0.0",

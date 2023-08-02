@@ -62,8 +62,8 @@ describe('composeAppsConfig', () => {
         localConfig.app = 'example1';
       });
 
-      it('should resolve the alias and extract the app config', () => {
-        expect(compose()).toEqual({
+      it('should resolve the alias and extract the app config', async () => {
+        await expect(compose()).resolves.toEqual({
           default: globalConfig.apps.example1
         });
       });
@@ -74,8 +74,8 @@ describe('composeAppsConfig', () => {
         localConfig.app = { ...globalConfig.apps.example2 };
       });
 
-      it('should resolve the alias and extract the app config', () => {
-        expect(compose()).toEqual({
+      it('should resolve the alias and extract the app config', async () => {
+        await expect(compose()).resolves.toEqual({
           default: globalConfig.apps.example2,
         });
       });
@@ -96,8 +96,8 @@ describe('composeAppsConfig', () => {
         localConfig.apps = ['example1', 'example2'];
       });
 
-      it('should resolve the alias and extract the app config', () => {
-        expect(compose()).toEqual({
+      it('should resolve the alias and extract the app config', async () => {
+        await expect(compose()).resolves.toEqual({
           app1: globalConfig.apps.example1,
           app2: globalConfig.apps.example2,
         });
@@ -114,8 +114,8 @@ describe('composeAppsConfig', () => {
           cliConfig.appLaunchArgs = '--no-arg2 -arg3=override';
         });
 
-        it('should parse it and merge the values inside', () => {
-          const { app1, app2 } = compose();
+        it('should parse it and merge the values inside', async () => {
+          const { app1, app2 } = await compose();
 
           expect(app1.launchArgs).toEqual({ arg3: 'override' });
           expect(app2.launchArgs).toEqual({ arg1: 'value1', arg3: 'override' });
@@ -131,8 +131,8 @@ describe('composeAppsConfig', () => {
         ];
       });
 
-      it('should resolve the alias and extract the app config', () => {
-        expect(compose()).toEqual({
+      it('should resolve the alias and extract the app config', async () => {
+        await expect(compose()).resolves.toEqual({
           app1: globalConfig.apps.example1,
           app2: globalConfig.apps.example2,
         });
@@ -151,8 +151,8 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = './stub/driver';
       });
 
-      it('should return an empty app config', () => {
-        expect(compose()).toEqual({});
+      it('should return an empty app config', async () => {
+        await expect(compose()).resolves.toEqual({});
       });
     });
   });
@@ -173,70 +173,70 @@ describe('composeAppsConfig', () => {
         ['android.attached'],
         ['android.emulator'],
         ['android.genycloud'],
-      ])('no app/apps is defined when device is %s', (deviceType) => {
+      ])('no app/apps is defined when device is %s', async (deviceType) => {
         delete localConfig.app;
         delete localConfig.apps;
         deviceConfig.type = deviceType;
 
-        expect(compose).toThrowError(errorComposer.noAppIsDefined(deviceType));
+        await expect(compose).rejects.toThrowError(errorComposer.noAppIsDefined(deviceType));
       });
 
-      test('both app/apps are defined', () => {
+      test('both app/apps are defined', async () => {
         localConfig.app = 'example1';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.ambiguousAppAndApps());
+        await expect(compose).rejects.toThrowError(errorComposer.ambiguousAppAndApps());
       });
 
-      test('app is defined as an array', () => {
+      test('app is defined as an array', async () => {
         localConfig.app = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.multipleAppsConfigArrayTypo());
+        await expect(compose).rejects.toThrowError(errorComposer.multipleAppsConfigArrayTypo());
       });
 
-      test('apps are defined as a string', () => {
+      test('apps are defined as a string', async () => {
         localConfig.apps = 'example1';
 
-        expect(compose).toThrowError(errorComposer.multipleAppsConfigShouldBeArray());
+        await expect(compose).rejects.toThrowError(errorComposer.multipleAppsConfigShouldBeArray());
       });
 
-      test('"apps" dictionary is undefined', () => {
+      test('"apps" dictionary is undefined', async () => {
         delete globalConfig.apps;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.thereAreNoAppConfigs('example1'));
+        await expect(compose).rejects.toThrowError(errorComposer.thereAreNoAppConfigs('example1'));
       });
 
-      test('non-existent app, cannot resolve alias', () => {
+      test('non-existent app, cannot resolve alias', async () => {
         localConfig.app = 'elbereth';
 
-        expect(compose).toThrowError(errorComposer.cantResolveAppAlias('elbereth'));
+        await expect(compose).rejects.toThrowError(errorComposer.cantResolveAppAlias('elbereth'));
       });
 
-      test('undefined inline app', () => {
+      test('undefined inline app', async () => {
         localConfig.apps = ['example1', null];
 
-        expect(compose).toThrowError(
+        await expect(compose).rejects.toThrowError(
           errorComposer.appConfigIsUndefined(['configurations', configurationName, 'apps', 1])
         );
       });
 
-      test('apps have no name (collision)', () => {
+      test('apps have no name (collision)', async () => {
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
+        await expect(compose).rejects.toThrowError(errorComposer.duplicateAppConfig({
           appName: undefined,
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
         }));
       });
 
-      test('apps have the same name (collision)', () => {
+      test('apps have the same name (collision)', async () => {
         globalConfig.apps.example1.name = 'sameApp';
         globalConfig.apps.example2.name = 'sameApp';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
+        await expect(compose).rejects.toThrowError(errorComposer.duplicateAppConfig({
           appName: 'sameApp',
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
@@ -248,13 +248,13 @@ describe('composeAppsConfig', () => {
         ['android.apk', 'android.attached'],
         ['android.apk', 'android.emulator'],
         ['android.apk', 'android.genycloud'],
-      ])('known app (device type = %s) has no binaryPath', (appType, deviceType) => {
+      ])('known app (device type = %s) has no binaryPath', async (appType, deviceType) => {
         delete globalConfig.apps.example1.binaryPath;
         globalConfig.apps.example1.type = appType;
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.missingAppBinaryPath(
+        await expect(compose).rejects.toThrowError(errorComposer.missingAppBinaryPath(
           ['apps', 'example1']
         ));
       });
@@ -264,26 +264,26 @@ describe('composeAppsConfig', () => {
         ['android.apk', 'android.attached'],
         ['android.apk', 'android.emulator'],
         ['android.apk', 'android.genycloud'],
-      ])('known app (device type = %s) has malformed launchArgs', (appType, deviceType) => {
+      ])('known app (device type = %s) has malformed launchArgs', async (appType, deviceType) => {
         globalConfig.apps.example1.launchArgs = '-hello -world';
         globalConfig.apps.example1.type = appType;
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.malformedAppLaunchArgs(
+        await expect(compose).rejects.toThrowError(errorComposer.malformedAppLaunchArgs(
           ['apps', 'example1']
         ));
       });
 
       test.each([
         ['ios.app', 'ios.simulator'],
-      ])('known app (device type = %s) has unsupported reversePorts', (appType, deviceType) => {
+      ])('known app (device type = %s) has unsupported reversePorts', async (appType, deviceType) => {
         globalConfig.apps.example1.reversePorts = [3000];
         globalConfig.apps.example1.type = appType;
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.unsupportedReversePorts(
+        await expect(compose).rejects.toThrowError(errorComposer.unsupportedReversePorts(
           ['apps', 'example1']
         ));
       });
@@ -293,12 +293,12 @@ describe('composeAppsConfig', () => {
         ['ios.app', 'android.attached'],
         ['ios.app', 'android.emulator'],
         ['ios.app', 'android.genycloud'],
-      ])('app type (%s) is incompatible with device (%s)', (appType, deviceType) => {
+      ])('app type (%s) is incompatible with device (%s)', async (appType, deviceType) => {
         localConfig.app = 'example1';
         globalConfig.apps.example1.type = appType;
         deviceConfig.type = deviceType;
 
-        expect(compose).toThrowError(
+        await expect(compose).rejects.toThrowError(
           errorComposer.invalidAppType({
             appPath: ['apps', 'example1'],
             allowedAppTypes: [appType === 'android.apk' ? 'ios.app' : 'android.apk'],
