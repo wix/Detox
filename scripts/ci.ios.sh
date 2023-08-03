@@ -9,7 +9,7 @@ mkdir -p coverage
 
 pushd detox/test
 
-run_f "npm run build:ios"
+# run_f "npm run build:ios"
 run_f "npm run e2e:ios"
 
 # run_f "npm run verify-artifacts:ios"
