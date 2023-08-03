@@ -3,6 +3,8 @@
       - "nvm install"
       - "./scripts/ci.ios.sh"
     env:
+      DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true
       REACT_NATIVE_VERSION: 0.71.10
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
