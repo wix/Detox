@@ -50,7 +50,8 @@ const config = {
     'ios.release': {
       type: 'ios.app',
       name: 'example',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
+      binaryPath: "http://46.101.117.193/DetoxExample.zip",
+      bundleId: 'com.wix.detox-example',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
     },
   },
@@ -74,7 +75,7 @@ const config = {
       device: 'ios.simulator',
       app: 'ios.release',
       session: {
-        debugSynchronization: 3000,
+        server: 'http://46.101.117.193:4444/wd/hub',
       },
     },
     'ios.manual': {
