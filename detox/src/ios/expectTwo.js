@@ -758,7 +758,7 @@ class IosExpect {
     this.waitFor = this.waitFor.bind(this);
     this.by = new By();
     this.web = this.web.bind(this);
-    this.web.element = this.web();
+    this.web.element = this.web().element;
   }
 
   element(matcher) {

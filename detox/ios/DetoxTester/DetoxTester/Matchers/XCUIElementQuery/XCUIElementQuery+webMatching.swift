@@ -52,7 +52,7 @@ extension XCUIElementQuery {
           guard let element = evaluatedObject as? NSObject else {
             return false
           }
-          return String(describing: element.value(forKey: "value")) == value
+          return element.value(forKey: "value") as? String == value
         })
     }
   }

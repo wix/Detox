@@ -201,6 +201,18 @@ class WebElementMatcher {
     this.predicate = { type: 'tag', value: tag.toString() };
     return this;
   }
+
+  label(label) {
+    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
+    this.predicate = { type: 'label', value: label.toString() };
+    return this;
+  }
+
+  value(value) {
+    if (typeof value !== 'string') throw new Error('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
+    this.predicate = { type: 'value', value: value.toString() };
+    return this;
+  }
 }
 
 function webMatcher() {

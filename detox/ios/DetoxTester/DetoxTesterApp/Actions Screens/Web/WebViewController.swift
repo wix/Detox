@@ -79,11 +79,11 @@ class WebViewController: UIViewController, WKNavigationDelegate {
             }
 
         </style>
-        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval'; object-src 'none';">
+
         </head>
         <body>
 
-        <h1>This is a Web View</h1>
+        <h1 aria-label="hello-world">This is a Web View</h1>
 
         <button type="button" onclick="myFunction()">Press me!</button>
 
@@ -104,19 +104,11 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     let script = """
-      var element = document.querySelector('h1');
-      if (element) {
-          element.setAttribute('aria-label', 'hello-world');
-          element.innerText;
-      } else {
-          'No h1 element found';
-      }
+      document.getElementById("myLabel").innerHTML = "Hello world!";
       """
     webView.evaluateJavaScript(script) { (result, error) in
       if error == nil {
-        if let content = result as? String {
-          print("Content of the H1 element: \(content)")
-        }
+        print("Success!")
       } else {
         print("JS execution failed: \(error!.localizedDescription)")
       }

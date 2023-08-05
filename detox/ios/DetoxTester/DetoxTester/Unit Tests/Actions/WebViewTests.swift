@@ -47,6 +47,17 @@ class WebViewTests: DTXTestCase {
     XCTAssert(webView.waitForExistence(timeout: 30))
   }
 
+  func testFindElementWithValue() throws {
+    let helloWorldTitle = try matcher
+      .matchWebViewElements(on: webView, to: .value("Enter some text...")).first
+    guard let helloWorldTitle = helloWorldTitle as? XCUIElement else {
+      XCTFail("Expected to find `Enter some text...` value")
+      return
+    }
+
+    XCTAssert(helloWorldTitle.waitForExistence(timeout: 30))
+  }
+
   func testFindElementWithLabel() throws {
     let helloWorldTitle = try matcher
       .matchWebViewElements(on: webView, to: .label("hello-world")).first
