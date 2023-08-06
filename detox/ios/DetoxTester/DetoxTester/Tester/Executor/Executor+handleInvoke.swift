@@ -31,6 +31,8 @@ extension Executor {
       return nil
     }
 
+    execLog("handling invoke message: \(params)", type: .debug)
+
     let handler = InvokeHandler(
       elementMatcher: ElementMatcher(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
       actionDelegate: ActionDelegate(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
@@ -39,15 +41,27 @@ extension Executor {
       webExpectationDelegate: WebExpectationDelegate()
     )
 
+    execLog("invoke handler is ready to handle message: \(params)", type: .debug)
+
     let handlerResult = try handler.handle(params)
+
+    execLog("invoke handler finished handling message: \(params)", type: .debug)
 
     guard let result = (
       handlerResult?.value ?? [:] as [String : Any]
     ) as? [String : Any]
     else {
       let resultString = String(describing: handlerResult?.value)
+
+      execLog(
+        "failed to handle response for message: \(params), received: \(resultString)",
+        type: .error
+      )
+
       throw Error.failedToHandleResponse(received: resultString)
     }
+
+    execLog("sending action result: \(result)", type: .debug)
 
     sendAction(
       .reportInvokeResult,

@@ -52,34 +52,34 @@ extension WebElementPattern {
   init(from predicate: WebPredicate) throws {
     switch predicate.type {
       case .id:
-        self = .id(predicate.value)
+        self = .id(predicate.value.value as! String)
 
       case .className:
-        self = .className(predicate.value)
+        self = .className(predicate.value.value as! String)
 
       case .cssSelector:
-        self = .cssSelector(predicate.value)
+        self = .cssSelector(predicate.value.value as! String)
 
       case .name:
-        self = .name(predicate.value)
+        self = .name(predicate.value.value as! String)
 
       case .xpath:
-        self = .xpath(predicate.value)
+        self = .xpath(predicate.value.value as! String)
 
       case .href:
-        self = .href(predicate.value)
+        self = .href(predicate.value.value as! String)
 
       case .hrefContains:
-        self = .hrefContains(predicate.value)
+        self = .hrefContains(predicate.value.value as! String)
 
       case .tag:
-        self = .tag(predicate.value)
+        self = .tag(predicate.value.value as! String)
 
       case .label:
-        self = .label(predicate.value)
+        self = .label(predicate.value.value as! String)
 
       case .value:
-        self = .value(predicate.value)
+        self = .value(predicate.value.value as! String)
     }
   }
 }

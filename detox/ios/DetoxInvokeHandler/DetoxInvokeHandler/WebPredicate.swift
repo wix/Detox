@@ -11,5 +11,5 @@ public struct WebPredicate: Codable, Equatable {
   var type: WebPredicateType
 
   /// Value to compare to.
-  var value: String
+  var value: AnyCodable
 }

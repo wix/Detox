@@ -15,6 +15,7 @@ class WebExpectationDelegate: WebExpectationDelegateProtocol {
     on element: AnyHashable
   ) throws {
     guard let element = element as? XCUIElement else {
+      expectLog("element is not XCUIElement: \(element)")
       fatalError("element is not XCUIElement")
     }
 

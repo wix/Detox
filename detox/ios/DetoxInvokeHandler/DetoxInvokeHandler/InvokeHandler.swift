@@ -74,7 +74,11 @@ public class InvokeHandler {
     let isTruthy: Bool = parsedMessage.modifiers?.contains(.not) != true
 
     let webViewElement = try findWebViewElement(from: parsedMessage)
-    try webExpectationDelegate.expect(expectation, isTruthy: isTruthy, on: webViewElement.element)
+    try webExpectationDelegate.expect(
+      expectation,
+      isTruthy: isTruthy,
+      on: webViewElement.element
+    )
 
     return nil
   }
@@ -112,7 +116,9 @@ public class InvokeHandler {
     return nil
   }
 
-  private func findWebViewElement(from parsedMessage: Message) throws -> (webView: AnyHashable, element: AnyHashable) {
+  private func findWebViewElement(
+    from parsedMessage: Message
+  ) throws -> (webView: AnyHashable, element: AnyHashable) {
     let predicate = parsedMessage.predicate
     let matchedWebViews = try findWebViews(by: predicate)
     guard let webView = try getElement(from: matchedWebViews, at: parsedMessage.atIndex) else {

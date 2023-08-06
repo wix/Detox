@@ -29,7 +29,7 @@ class WebExpect {
     return this;
   }
 
-  createInvocation(expectation, ...params) {
+  createInvocation(webExpectation, ...params) {
     const definedParams = _.without(params, undefined);
     return {
       type: 'webExpectation',
@@ -40,7 +40,7 @@ class WebExpect {
       webPredicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { webAtIndex: this.element.index }),
       ...(this.modifiers.length !== 0 && { webModifiers: this.modifiers }),
-      expectation,
+      webExpectation,
       ...(definedParams.length !== 0 && { params: definedParams })
     };
   }
