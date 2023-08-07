@@ -9,6 +9,7 @@
 import UIKit
 import DetoxSync
 import LNViewHierarchyDumper
+import WebKit
 
 fileprivate let recordingManager : DetoxInstrumentsManager = {
 	return DetoxInstrumentsManager()
@@ -519,6 +520,29 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "evaluateJavaScript":
+				let webViewIdentifier = params["webViewIdentifier"] as! String
+				let webViewFrame = params["A"] as! [NSNumber]
+
+				let script = params["script"] as! String
+
+				let webView = findElement(
+					byIdentifier: webViewIdentifier,
+					andFrame: webViewFrame
+				) as! WKWebView
+
+				webView.evaluateJavaScript(script, completionHandler: { (result, error) in
+					var params: [String: String] = [:]
+					params["result"] = result as? String
+					params["error"] = error?.localizedDescription
+
+					self.safeSend(
+						action: "didEvaluateJavaScript",
+						params: params,
+						messageId: messageId
+					)
+				})
+
 			case "longPressAndDrag":
 				let elementIdentifier = params["elementID"] as! String
 				let elementFrame = params["elementFrame"] as! [NSNumber]
@@ -709,7 +733,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 		return 0;
 	}
-	
+
 	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
 		let xPos, yPos: Double
 

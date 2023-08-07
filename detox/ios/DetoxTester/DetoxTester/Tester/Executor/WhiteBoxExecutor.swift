@@ -330,13 +330,13 @@ class WhiteBoxExecutor {
             ]),
             "duration": AnyCodable(duration),
             "normalizedPositionX": (normalizedPositionX != nil) ?
-                AnyCodable(normalizedPositionX!) : nil,
+            AnyCodable(normalizedPositionX!) : nil,
             "normalizedPositionY": (normalizedPositionY != nil) ?
-                AnyCodable(normalizedPositionY!) : nil,
+            AnyCodable(normalizedPositionY!) : nil,
             "normalizedTargetPositionX": (normalizedTargetPositionX != nil) ?
-                AnyCodable(normalizedTargetPositionX!) : nil,
+            AnyCodable(normalizedTargetPositionX!) : nil,
             "normalizedTargetPositionY": (normalizedTargetPositionY != nil) ?
-                AnyCodable(normalizedTargetPositionY!) : nil,
+            AnyCodable(normalizedTargetPositionY!) : nil,
             "speed": (speed != nil) ? AnyCodable(speed!.rawValue) : nil,
             "holdDuration": (holdDuration != nil) ? AnyCodable(holdDuration!) : nil
           ],
@@ -371,6 +371,33 @@ class WhiteBoxExecutor {
         ).map { EquatableDictionary(value: $0) }
 
         return .elementsAttributes(attributes)
+
+      case .evaluateJavaScript(webViewElement: let element, script: let script):
+        let message = createMessage(
+          type: "evaluateJavaScript",
+          params: [
+            "webViewIdentifier": AnyCodable(element.identifier),
+            "webViewFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ]),
+            "script": AnyCodable(script)
+          ],
+          messageId: messageId
+        )
+
+        let resultOrError = send(
+          message,
+          andExpectToType: "didEvaluateJavaScript",
+          messageId: messageId
+        )
+
+        let result = resultOrError["result"] as? String
+        let error = resultOrError["error"] as? String
+
+        return result != nil ? .string(result!) : .failed(reason: error ?? "unknown error")
     }
   }
 

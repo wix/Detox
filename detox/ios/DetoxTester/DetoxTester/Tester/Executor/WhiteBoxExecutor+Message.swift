@@ -78,6 +78,12 @@ extension WhiteBoxExecutor {
     case requestAttributes(
       ofElements: [XCUIElement]
     )
+
+    /// Returns response of `string` if successfully done or `failed` otherwise.
+    case evaluateJavaScript(
+      webViewElement: XCUIElement,
+      script: String
+    )
   }
 }
 
@@ -149,6 +155,10 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
         return "request for setting recording state with recording path: " +
           "`\(String(describing: recordingPath))` and " +
           "sampling interval: `\(String(describing: samplingInterval))"
+
+      case .evaluateJavaScript(webViewElement: let element, script: _):
+        return "evaluate javascript on web view element with identifier: " +
+          "`\(element.cleanIdentifier)`"
     }
   }
 }
