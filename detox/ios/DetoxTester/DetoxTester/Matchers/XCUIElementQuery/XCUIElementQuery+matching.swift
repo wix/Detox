@@ -176,7 +176,7 @@ extension XCUIElementQuery {
   }
 }
 
-private extension XCUIElementQuery {
+extension XCUIElementQuery {
   /// Returns a new query matches descendants elements by `parameter` `value`, using comparison
   /// `operator`.
   ///

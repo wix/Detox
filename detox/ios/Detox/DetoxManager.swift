@@ -522,7 +522,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 			case "evaluateJavaScript":
 				let webViewIdentifier = params["webViewIdentifier"] as! String
-				let webViewFrame = params["A"] as! [NSNumber]
+				let webViewFrame = params["webViewFrame"] as! [NSNumber]
 
 				let script = params["script"] as! String
 

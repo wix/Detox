@@ -37,11 +37,13 @@ extension InvokeHandler.Error: CustomStringConvertible {
       case .noWebElementAtIndex(let index, let elementsCount, let predicate, let webViewPredicate):
         if (elementsCount == 0) {
           return "No web elements were found for the given matcher: " +
-          "\(predicate.debugDescription), on web-view: \(webViewPredicate.debugDescription)"
+              "\(predicate.debugDescription), on web-view: " +
+              "\(webViewPredicate != nil ? webViewPredicate.debugDescription : "default web-view")"
         }
 
         return "Index \(index) beyond bounds [0 .. \(elementsCount - 1)] for the given web " +
-        "matcher: \(predicate.debugDescription), on web-view: \(webViewPredicate.debugDescription)"
+            "matcher: \(predicate.debugDescription), on web-view: " +
+            "\(webViewPredicate != nil ? webViewPredicate.debugDescription : "default web-view")"
 
       case .noStateChangeWhileMessage(let error):
         return "Element state hasn't changed in the last wait-for expectation action, " +

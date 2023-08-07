@@ -80,7 +80,8 @@ class ElementMatcher: ElementMatcherProtocol {
 
     let query = try app.newQuery().webMatching(
       pattern: pattern,
-      webView: webView
+      webView: webView,
+      whiteBoxMessageHandler: whiteBoxMessageHandler
     )
     let result = query.run()
 

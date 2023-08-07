@@ -13,3 +13,10 @@ public struct WebPredicate: Codable, Equatable {
   /// Value to compare to.
   var value: AnyCodable
 }
+
+/// String representations for the predicate types.
+extension WebPredicate: CustomStringConvertible {
+  public var description: String {
+    "Web(\(type) == `\(value)`)"
+  }
+}
