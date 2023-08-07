@@ -104,11 +104,14 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     let script = """
-      document.getElementById("myLabel").innerHTML = "Hello world!";
+      (() => {
+        document.getElementById("myLabel").innerHTML = "Hello world!";
+        return "myLabel value changed successfully!";
+      })();
       """
     webView.evaluateJavaScript(script) { (result, error) in
       if error == nil {
-        print("Success!")
+        print("Success! \(result ?? "no result")")
       } else {
         print("JS execution failed: \(error!.localizedDescription)")
       }

@@ -531,6 +531,8 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					andFrame: webViewFrame
 				) as! WKWebView
 
+				log.info("evaluating JS script: \(script) on web-view \(webView.debugDescription)")
+
 				webView.evaluateJavaScript(script, completionHandler: { (result, error) in
 					var params: [String: String] = [:]
 					params["result"] = result as? String
