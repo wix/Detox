@@ -709,7 +709,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 		return 0;
 	}
-
+	
 	func getNormalizedPoint(xPosition: NSNumber?, yPosition: NSNumber?) -> CGPoint {
 		let xPos, yPos: Double
 
