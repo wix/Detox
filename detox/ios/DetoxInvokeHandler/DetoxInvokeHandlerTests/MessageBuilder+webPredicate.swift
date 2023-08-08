@@ -21,11 +21,11 @@ extension MessageBuilder {
   }
 
   func setClassNameWebPredicate(_ value: String) -> Self {
-    return setWebPredicate("className", value)
+    return setWebPredicate("class", value)
   }
 
   func setCssSelectorWebPredicate(_ value: String) -> Self {
-    return setWebPredicate("cssSelector", value)
+    return setWebPredicate("css", value)
   }
 
   func setLabelWebPredicate(_ value: String) -> Self {

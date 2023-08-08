@@ -71,13 +71,27 @@ public class InvokeHandler {
     }
 
     let expectation = WebExpectation.make(from: expectationType, params: parsedMessage.params)
-    let isTruthy: Bool = parsedMessage.modifiers?.contains(.not) != true
+    let isTruthy: Bool = parsedMessage.webModifiers?.contains(.not) != true
 
     let webViewElement = try findWebViewElement(from: parsedMessage)
+    guard let element = webViewElement.element else {
+      if case .toExist = expectation, isTruthy == false {
+        // The element does not exist and we expect it to not exist, so we're good.
+        return nil
+      }
+
+      throw Error.noWebElementAtIndex(
+        index: parsedMessage.webAtIndex ?? 0,
+        elementsCount: webViewElement.matchedWebViewElements,
+        predicate: parsedMessage.webPredicate,
+        webViewPredicate: parsedMessage.predicate
+      )
+    }
+
     try webExpectationDelegate.expect(
       expectation,
       isTruthy: isTruthy,
-      on: webViewElement.element
+      on: element
     )
 
     return nil

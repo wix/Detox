@@ -60,6 +60,12 @@ extension MessageBuilder {
     return self
   }
 
+  func webNegateExpectation() -> Self {
+    message["webModifiers"] = ["not"]
+
+    return self
+  }
+
   fileprivate func expect(value: String) -> Self {
     message.merge([
       "type": "expectation",

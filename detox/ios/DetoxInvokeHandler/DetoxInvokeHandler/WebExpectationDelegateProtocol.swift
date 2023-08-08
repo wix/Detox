@@ -13,6 +13,6 @@ public protocol WebExpectationDelegateProtocol {
   func expect(
     _ expectation: WebExpectation,
     isTruthy: Bool,
-    on element: AnyHashable?
+    on element: AnyHashable
   ) throws
 }

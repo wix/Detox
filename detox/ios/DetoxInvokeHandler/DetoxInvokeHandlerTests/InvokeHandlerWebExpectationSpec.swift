@@ -45,7 +45,7 @@ class InvokeHandlerWebExpectationSpec: QuickSpec {
     }
 
     it("should call delegate with negated expectation") {
-      let message = messageBuilderWithPredicate.webExpectToExist().negateExpectation().build()
+      let message = messageBuilderWithPredicate.webExpectToExist().webNegateExpectation().build()
 
       expect(try handler.handle(message)).to(beNil())
 
