@@ -2,6 +2,7 @@ const assert = require('assert');
 
 const _ = require('lodash');
 
+const { DetoxRuntimeError } = require('../errors');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -28,7 +29,7 @@ class WebExpect {
     this.modifiers.push('not');
     return this;
   }
-
+  getText;
   createInvocation(webExpectation, ...params) {
     const definedParams = _.without(params, undefined);
     return {
@@ -64,7 +65,7 @@ class WebElement {
   }
 
   atIndex(index) {
-    if (typeof index !== 'number') throw new Error(`atIndex argument must be a number, got ${typeof index}`);
+    if (typeof index !== 'number') throw new DetoxRuntimeError(`atIndex argument must be a number, got ${typeof index}`);
     this.index = index;
     return this;
   }
@@ -94,9 +95,15 @@ class WebElement {
     return this.withAction('selectAllText', traceDescription);
   }
 
-  getText() {
+  async getText() {
     const traceDescription = webViewActionDescription.getText();
-    return this.withAction('getText', traceDescription);
+    let result = await this.withAction('getText', traceDescription);
+
+    if (result['text']) {
+      return result['text'];
+    } else {
+      throw new DetoxRuntimeError(`Failed to extract text from result: ${JSON.stringify(result)}`);
+    }
   }
 
   scrollToView() {
@@ -124,14 +131,26 @@ class WebElement {
     return this.withAction('runScriptWithArgs', traceDescription, script, ...args);
   }
 
-  getCurrentUrl() {
+  async getCurrentUrl() {
     const traceDescription = webViewActionDescription.getCurrentUrl();
-    return this.withAction('getCurrentUrl', traceDescription);
+    let result = await this.withAction('getCurrentUrl', traceDescription);
+
+    if (result['url']) {
+      return result['url'];
+    } else {
+      throw new DetoxRuntimeError(`Failed to extract url from result: ${JSON.stringify(result)}`);
+    }
   }
 
-  getTitle() {
+  async getTitle() {
     const traceDescription = webViewActionDescription.getTitle();
-    return this.withAction('getTitle', traceDescription);
+    let result = await this.withAction('getTitle', traceDescription);
+
+    if (result['title']) {
+      return result['title'];
+    } else {
+      throw new DetoxRuntimeError(`Failed to extract title from result: ${JSON.stringify(result)}`);
+    }
   }
 
   withAction(action, traceDescription, ...params) {
@@ -145,7 +164,7 @@ class WebElement {
       },
       webPredicate: this.matcher.predicate,
       ...(this.index !== undefined && { webAtIndex: this.index }),
-      action,
+      webAction: action,
       ...(params.length !== 0 && { params }),
     };
     traceDescription = webViewActionDescription.full(traceDescription);
@@ -155,61 +174,61 @@ class WebElement {
 
 class WebElementMatcher {
   id(id) {
-    if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
+    if (typeof id !== 'string') throw new DetoxRuntimeError('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
     this.predicate = { type: 'id', value: id.toString() };
     return this;
   }
 
   className(className) {
-    if (typeof className !== 'string') throw new Error('className should be a string, but got ' + (className + (' (' + (typeof className + ')'))));
+    if (typeof className !== 'string') throw new DetoxRuntimeError('className should be a string, but got ' + (className + (' (' + (typeof className + ')'))));
     this.predicate = { type: 'class', value: className.toString() };
     return this;
   }
 
   cssSelector(cssSelector) {
-    if (typeof cssSelector !== 'string') throw new Error('cssSelector should be a string, but got ' + (cssSelector + (' (' + (typeof cssSelector + ')'))));
+    if (typeof cssSelector !== 'string') throw new DetoxRuntimeError('cssSelector should be a string, but got ' + (cssSelector + (' (' + (typeof cssSelector + ')'))));
     this.predicate = { type: 'css', value: cssSelector.toString() };
     return this;
   }
 
   name(name) {
-    if (typeof name !== 'string') throw new Error('name should be a string, but got ' + (name + (' (' + (typeof name + ')'))));
+    if (typeof name !== 'string') throw new DetoxRuntimeError('name should be a string, but got ' + (name + (' (' + (typeof name + ')'))));
     this.predicate = { type: 'name', value: name.toString() };
     return this;
   }
 
   xpath(xpath) {
-    if (typeof xpath !== 'string') throw new Error('xpath should be a string, but got ' + (xpath + (' (' + (typeof xpath + ')'))));
+    if (typeof xpath !== 'string') throw new DetoxRuntimeError('xpath should be a string, but got ' + (xpath + (' (' + (typeof xpath + ')'))));
     this.predicate = { type: 'xpath', value: xpath.toString() };
     return this;
   }
 
   href(href) {
-    if (typeof href !== 'string') throw new Error('href should be a string, but got ' + (href + (' (' + (typeof href + ')'))));
+    if (typeof href !== 'string') throw new DetoxRuntimeError('href should be a string, but got ' + (href + (' (' + (typeof href + ')'))));
     this.predicate = { type: 'href', value: href.toString() };
     return this;
   }
 
   hrefContains(href) {
-    if (typeof href !== 'string') throw new Error('href should be a string, but got ' + (href + (' (' + (typeof href + ')'))));
+    if (typeof href !== 'string') throw new DetoxRuntimeError('href should be a string, but got ' + (href + (' (' + (typeof href + ')'))));
     this.predicate = { type: 'hrefContains', value: href.toString() };
     return this;
   }
 
   tag(tag) {
-    if (typeof tag !== 'string') throw new Error('tag should be a string, but got ' + (tag + (' (' + (typeof tag + ')'))));
+    if (typeof tag !== 'string') throw new DetoxRuntimeError('tag should be a string, but got ' + (tag + (' (' + (typeof tag + ')'))));
     this.predicate = { type: 'tag', value: tag.toString() };
     return this;
   }
 
   label(label) {
-    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
+    if (typeof label !== 'string') throw new DetoxRuntimeError('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
     this.predicate = { type: 'label', value: label.toString() };
     return this;
   }
 
   value(value) {
-    if (typeof value !== 'string') throw new Error('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
+    if (typeof value !== 'string') throw new DetoxRuntimeError('value should be a string, but got ' + (value + (' (' + (typeof value + ')'))));
     this.predicate = { type: 'value', value: value.toString() };
     return this;
   }
@@ -229,7 +248,7 @@ function webElement(invocationManager, emitter, webViewElement, matcher) {
 
 function throwWebViewMatcherError(param) {
   const paramDescription = JSON.stringify(param);
-  throw new Error(`${paramDescription} is not a Detox web-view matcher. More about web-view matchers here: https://wix.github.io/Detox/docs/api/webviews`);
+  throw new DetoxRuntimeError(`${paramDescription} is not a Detox web-view matcher. More about web-view matchers here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
 function webExpect(invocationManager, element) {
@@ -242,7 +261,7 @@ function webExpect(invocationManager, element) {
 
 function throwWebElementError(param) {
   const paramDescription = JSON.stringify(param);
-  throw new Error(`${paramDescription} is not a web element. More about web elements here: https://wix.github.io/Detox/docs/api/webviews`);
+  throw new DetoxRuntimeError(`${paramDescription} is not a web element. More about web elements here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
 function _executeInvocation(invocationManager, invocation, traceDescription) {

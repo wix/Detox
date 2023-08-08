@@ -4,6 +4,7 @@ const rnMinorVer = require('./rn-consts').rnVersion.minor;
 const _it = {
   withFailureIf: {
     android: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('android')),
+    ios: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('ios')),
     iOSWithRNLessThan67: (spec, specFn) => runOrExpectFailByPredicates(spec, specFn, platformIs('ios'), rnVerLessThan(67)),
   },
 };

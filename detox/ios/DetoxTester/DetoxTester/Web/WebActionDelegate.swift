@@ -78,11 +78,12 @@ class WebActionDelegate: WebActionDelegateProtocol {
       fatalError("element is not XCUIElement")
     }
 
-    return AnyCodable(String(describing: element.value ?? ""))
+    return AnyCodable(["text": String(describing: element.value ?? "")])
   }
 
   func getCurrentUrl(of element: AnyHashable) throws -> AnyCodable {
     fatalError("`getCurrentUrl` is not supported on iOS")
+    // TODO: white-box handler...
   }
 
   func getTitle(of element: AnyHashable) throws -> AnyCodable {
@@ -90,6 +91,6 @@ class WebActionDelegate: WebActionDelegateProtocol {
       fatalError("element is not XCUIElement")
     }
 
-    return AnyCodable(element.title)
+    return AnyCodable(["title": element.title])
   }
 }

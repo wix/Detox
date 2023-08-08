@@ -22,7 +22,8 @@ extension XCUIElementQuery {
         let elementsMatcher = try createJSElementsMatcher(pattern: pattern)
 
         // Create a JS code that uses the function generated above, and for each element replaces
-        // its aria-label to a unique value and eventually return the list of UUIDs.
+        // its aria-label to a unique value and eventually return the list of new labels to match
+        // natively.
         let script = """
           (() => {
             let elements = \(elementsMatcher)();
@@ -105,7 +106,7 @@ extension XCUIElementQuery {
   private func createJSElementsMatcher(pattern: WebElementPattern) throws -> String {
     switch pattern {
       case .id(let id):
-        return "(() => Array.from(document.getElementsByClassName('\(id)')))"
+        return "(() => Array.from(document.querySelectorAll('#\(id)')))"
 
       case .className(let className):
         return "(() => Array.from(document.getElementsByClassName('\(className)')))"

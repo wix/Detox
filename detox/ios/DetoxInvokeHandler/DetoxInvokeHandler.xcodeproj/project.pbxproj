@@ -107,6 +107,8 @@
 		60BB928C27C29CDB0081D232 /* ActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB928A27C29CDB0081D232 /* ActionType.swift */; };
 		60BB928E27C3BE140081D232 /* WhileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB928D27C3BE140081D232 /* WhileMessage.swift */; };
 		60BB928F27C3BE140081D232 /* WhileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB928D27C3BE140081D232 /* WhileMessage.swift */; };
+		60C1FFC42A8211720009728E /* WebViewElementTuple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1FFC32A8211720009728E /* WebViewElementTuple.swift */; };
+		60C1FFC52A8211C70009728E /* WebViewElementTuple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1FFC32A8211720009728E /* WebViewElementTuple.swift */; };
 		60D3D4A229D9CC6E008CE39E /* ScreenshotProvidingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605980EB29814D1600888841 /* ScreenshotProvidingProtocol.swift */; };
 /* End PBXBuildFile section */
 
@@ -200,6 +202,7 @@
 		60BB928727C29CC40081D232 /* ExpectationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpectationType.swift; sourceTree = "<group>"; };
 		60BB928A27C29CDB0081D232 /* ActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionType.swift; sourceTree = "<group>"; };
 		60BB928D27C3BE140081D232 /* WhileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileMessage.swift; sourceTree = "<group>"; };
+		60C1FFC32A8211720009728E /* WebViewElementTuple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewElementTuple.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,6 +304,7 @@
 				6046DAE22A6D6CF200DEC00F /* WebExpectation.swift */,
 				6046DAE62A6D6D1700DEC00F /* WebExpectationDelegateProtocol.swift */,
 				6046DAE42A6D6D0000DEC00F /* WebExpectationType.swift */,
+				60C1FFC32A8211720009728E /* WebViewElementTuple.swift */,
 			);
 			name = Expectation;
 			sourceTree = "<group>";
@@ -605,6 +609,7 @@
 				60BB928827C29CC40081D232 /* ExpectationType.swift in Sources */,
 				60BB925427BD08C70081D232 /* Action.swift in Sources */,
 				6046DADE2A6D6CD000DEC00F /* WebActionDelegateProtocol.swift in Sources */,
+				60C1FFC42A8211720009728E /* WebViewElementTuple.swift in Sources */,
 				60BB926327BD338F0081D232 /* AnyEncodable.swift in Sources */,
 				6046DADC2A6D6CAF00DEC00F /* WebAction+name.swift in Sources */,
 				6046DADA2A6D6C9F00DEC00F /* WebAction.swift in Sources */,
@@ -631,6 +636,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607E33672A6FE3A600ED9B57 /* WebExpectation.swift in Sources */,
+				60C1FFC52A8211C70009728E /* WebViewElementTuple.swift in Sources */,
 				607E33682A6FE3A600ED9B57 /* WebExpectationDelegateProtocol.swift in Sources */,
 				607E33692A6FE3A600ED9B57 /* WebExpectationType.swift in Sources */,
 				607E33A22A7141ED00ED9B57 /* InvokeHandlerWebExpectationSpec.swift in Sources */,

@@ -12,23 +12,33 @@ class WebExpectationDelegate: WebExpectationDelegateProtocol {
   func expect(
     _ expectation: DetoxInvokeHandler.WebExpectation,
     isTruthy: Bool,
-    on element: AnyHashable
+    on element: AnyHashable?
   ) throws {
-    guard let element = element as? XCUIElement else {
-      expectLog("element is not XCUIElement: \(element)")
-      fatalError("element is not XCUIElement")
-    }
+    let element = element as? XCUIElement
+    let elementDescription = element != nil ? element!.cleanIdentifier : "none"
 
     expectLog(
-      "expect element `\(String(describing: element.cleanIdentifier))` " +
-      "\(isTruthy ? "" : "not ")\(expectation)"
+      "expect element `\(elementDescription)` to \(isTruthy ? "" : "not ")\(expectation)"
     )
 
     switch expectation {
       case .toHaveText(let text):
+        guard let element = element else {
+          fatalError("element does not exist")
+        }
+
         try element.assertLabel(equals: text, isTruthy: isTruthy)
 
       case .toExist:
+        if element == nil && !isTruthy {
+          // If the element is nil and we expect it to not exist, then we're good.
+          return
+        }
+
+        guard let element = element else {
+          fatalError("element is not XCUIElement")
+        }
+
         try element.assertExists(isTruthy: isTruthy)
     }
   }

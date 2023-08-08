@@ -11,10 +11,10 @@ public enum WebPredicateType: String, Codable, Hashable {
   case id = "id"
 
   /// Class-name predicate, expects the element's class name to equal the specified `value`.
-  case className = "className"
+  case className = "class"
 
   /// CSS selector predicate, expects the element's CSS selector to equal the specified `value`.
-  case cssSelector = "cssSelector"
+  case cssSelector = "css"
 
   /// Name predicate, expects the element's name to equal the specified `value`.
   case name = "name"

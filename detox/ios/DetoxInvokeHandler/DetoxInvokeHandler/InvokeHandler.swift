@@ -93,22 +93,30 @@ public class InvokeHandler {
     }
 
     let webViewElement = try findWebViewElement(from: parsedMessage)
+    guard let element = webViewElement.element else {
+      throw Error.noWebElementAtIndex(
+        index: parsedMessage.webAtIndex ?? 0,
+        elementsCount: webViewElement.matchedWebViewElements,
+        predicate: parsedMessage.webPredicate,
+        webViewPredicate: parsedMessage.predicate
+      )
+    }
 
     switch webActionType {
       case .getText:
-        return try webActionDelegate.getText(of: webViewElement.element)
+        return try webActionDelegate.getText(of: element)
 
       case .getCurrentUrl:
-        return try webActionDelegate.getCurrentUrl(of: webViewElement.element)
+        return try webActionDelegate.getCurrentUrl(of: element)
 
       case .getTitle:
-        return try webActionDelegate.getTitle(of: webViewElement.element)
+        return try webActionDelegate.getTitle(of: element)
 
       default:
         let webAction = WebAction.make(from: webActionType, params: parsedMessage.params)
         try webActionDelegate.act(
           action: webAction,
-          on: webViewElement.element,
+          on: element,
           host: webViewElement.webView
         )
     }
@@ -118,7 +126,7 @@ public class InvokeHandler {
 
   private func findWebViewElement(
     from parsedMessage: Message
-  ) throws -> (webView: AnyHashable, element: AnyHashable) {
+  ) throws -> WebViewElementTuple {
     let predicate = parsedMessage.predicate
     let matchedWebViews = try findWebViews(by: predicate)
     guard let webView = try getElement(from: matchedWebViews, at: parsedMessage.atIndex) else {
@@ -130,19 +138,12 @@ public class InvokeHandler {
     }
 
     let matchedWebViewElements = try findWebViewElements(webView, by: parsedMessage.webPredicate)
-    guard let webViewElement = try getElement(
+    let webViewElement = try getElement(
       from: matchedWebViewElements,
       at: parsedMessage.webAtIndex
-    ) else {
-      throw Error.noWebElementAtIndex(
-        index: parsedMessage.webAtIndex ?? 0,
-        elementsCount: matchedWebViewElements.count,
-        predicate: parsedMessage.webPredicate,
-        webViewPredicate: parsedMessage.predicate
-      )
-    }
+    )
 
-    return (webView, webViewElement)
+    return (webView, webViewElement, matchedWebViewElements.count)
   }
 
   private func findWebViews(by predicate: ElementPredicate?) throws -> [AnyHashable] {

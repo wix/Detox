@@ -12,7 +12,7 @@ extension InvokeHandler {
     /// No web element at specified index.
     case noWebElementAtIndex(
       index: Int,
-      elementsCount: Int,
+      elementsCount: Int = 0,
       predicate: WebPredicate?,
       webViewPredicate: ElementPredicate?
     )
