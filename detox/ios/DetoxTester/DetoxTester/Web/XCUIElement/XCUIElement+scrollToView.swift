@@ -15,10 +15,10 @@ extension XCUIElement {
   ) throws {
     /// Directions are ordered by priority.
     for direction in [
-      SwipeDirection.down,
-      SwipeDirection.right,
+      SwipeDirection.up,
       SwipeDirection.left,
-      SwipeDirection.up
+      SwipeDirection.down,
+      SwipeDirection.right
     ] {
       var lastPNG = screenshotData(testCase: testCase)
       var swipeCount = 0

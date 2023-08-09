@@ -75,6 +75,24 @@ extension XCUIElement {
     )
   }
 
+  /// Asserts whether the element label matches the given RegExp `pattern`.
+  func assertLabel(matches pattern: String, isTruthy: Bool) throws {
+    let selfLabel = accessibilityLabel ?? label
+    let matches = NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: selfLabel)
+
+    matcherLog("element label `\(selfLabel)` \(matches ? "matches" : "does not match") " +
+               "the expected pattern (\(pattern)), " +
+               "and is expected to \(isTruthy ? "match" : "not match")", type: .debug)
+
+    try assertProperty(
+      "label",
+      expected: isTruthy,
+      actual: matches,
+      expectedValue: pattern,
+      actualValue: selfLabel
+    )
+  }
+
   /// Asserts whether the element value describes a boolean value that equals the expected value.
   func assertToggleValue(equals value: Bool, isTruthy: Bool) throws {
     try assertValue(equals: String(describing: value), isTruthy: isTruthy)
@@ -106,9 +124,9 @@ fileprivate extension XCUIElement {
   ) throws {
     if actual != expected {
       let message = "element \(propertyName) \(actualValue.map { "\($0) " } ?? "")" +
-        "\(actual ? "matches" : "does not match") the expected value " +
-        "(\(expectedValue.map { "\($0) " } ?? "")), " +
-        "but was expected to \(expected ? "match" : "not match")"
+      "\(actual ? "matches" : "does not match") the expected value " +
+      "(\(expectedValue.map { "\($0) " } ?? "")), " +
+      "but was expected to \(expected ? "match" : "not match")"
       expectLog(message, type: .error)
 
       throw generateExpectationFailedError(
@@ -120,8 +138,8 @@ fileprivate extension XCUIElement {
     }
 
     let message = "element \(propertyName) \(actualValue.map { "\($0) " } ?? "")" +
-      "\(actual ? "matches" : "does not match") the expected value " +
-      "(\(expectedValue.map { "\($0) " } ?? "")), as expected"
+    "\(actual ? "matches" : "does not match") the expected value " +
+    "(\(expectedValue.map { "\($0) " } ?? "")), as expected"
     expectLog(message)
   }
 }

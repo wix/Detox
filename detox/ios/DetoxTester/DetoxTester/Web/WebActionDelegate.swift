@@ -66,7 +66,7 @@ class WebActionDelegate: WebActionDelegateProtocol {
         try element.focusKeyboard()
 
       case .runScript, .runScriptWithArgs:
-        fatalError("`runScript` is not supported")
+        throw Error.actionNotSupported(action: "runScript")
 
       case .getText, .getCurrentUrl, .getTitle:
         fatalError("should not get here, this is a getter action!")
@@ -82,8 +82,7 @@ class WebActionDelegate: WebActionDelegateProtocol {
   }
 
   func getCurrentUrl(of element: AnyHashable) throws -> AnyCodable {
-    fatalError("`getCurrentUrl` is not supported on iOS")
-    // TODO: white-box handler...
+    throw Error.actionNotSupported(action: "getCurrentURL")
   }
 
   func getTitle(of element: AnyHashable) throws -> AnyCodable {

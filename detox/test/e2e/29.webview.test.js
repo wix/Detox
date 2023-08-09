@@ -111,49 +111,51 @@ describe('WebView', () => {
     });
   });
 
-  it('should set input and change text', async () => {
-    // Verify initial value
-    const para = web.element(by.web.id('testingPar'));
-    await expect(para).toHaveText('Message');
+  describe('Actions', () => {
+    it('should set input and change text', async () => {
+      // Verify initial value
+      const para = web.element(by.web.id('testingPar'));
+      await expect(para).toHaveText('Message');
 
-    const textInput = await web.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText(MOCK_TEXT);
+      const textInput = await web.element(by.web.id('textInput'));
+      await textInput.scrollToView();
+      await textInput.tap();
+      await textInput.typeText(MOCK_TEXT);
 
-    await web.element(by.web.id('changeTextBtn')).tap();
-    // Verify text updated
-    await expect(para).toHaveText(MOCK_TEXT);
-  });
+      await web.element(by.web.id('changeTextBtn')).tap();
+      // Verify text updated
+      await expect(para).toHaveText(MOCK_TEXT);
+    });
 
-  it('should header get text and verify its value', async () => {
-    const text = await web.element(by.web.id('testingh1')).getText();
+    it('should header get text and verify its value', async () => {
+      const text = await web.element(by.web.id('testingh1')).getText();
 
-    const textInput = await web.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText(text);
+      const textInput = await web.element(by.web.id('textInput'));
+      await textInput.scrollToView();
+      await textInput.tap();
+      await textInput.typeText(text);
 
-    await web.element(by.web.id('changeTextBtn')).tap();
+      await web.element(by.web.id('changeTextBtn')).tap();
 
-    // Verify text is the title text
-    await expect(web.element(by.web.id('testingPar'))).toHaveText(text);
+      // Verify text is the title text
+      await expect(web.element(by.web.id('testingPar'))).toHaveText(text);
 
-  });
+    });
 
-  it('should replace text', async () => {
-    const textInput = await web.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText('first text');
+    it('should replace text', async () => {
+      const textInput = await web.element(by.web.id('textInput'));
+      await textInput.scrollToView();
+      await textInput.tap();
+      await textInput.typeText('first text');
 
-    await web.element(by.web.id('changeTextBtn')).tap();
-    await expect(web.element(by.web.id('testingPar'))).toHaveText('first text');
+      await web.element(by.web.id('changeTextBtn')).tap();
+      await expect(web.element(by.web.id('testingPar'))).toHaveText('first text');
 
-    await textInput.replaceText(MOCK_TEXT);
-    await web.element(by.web.id('changeTextBtn')).tap();
+      await textInput.replaceText(MOCK_TEXT);
+      await web.element(by.web.id('changeTextBtn')).tap();
 
-    // Verify param value is the latest changed text
-    await expect(web.element(by.web.id('testingPar'))).toHaveText(MOCK_TEXT);
+      // Verify param value is the latest changed text
+      await expect(web.element(by.web.id('testingPar'))).toHaveText(MOCK_TEXT);
+    });
   });
 });
