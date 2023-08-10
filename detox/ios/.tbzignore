@@ -9,8 +9,6 @@ SocketRocket/Tests
 SocketRocket/TestSupport
 DetoxSync/ExampleRNApp
 DetoxSync/ExampleApp
-ModuleCache
-SourcePackages
+*.noindex*
 Logs
-DetoxTester/DetoxTesterApp
-Build/Intermediates
+SourcePackages
