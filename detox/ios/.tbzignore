@@ -7,8 +7,9 @@ SocketRocket/TestChat
 SocketRocket/TestChatServer
 SocketRocket/Tests
 SocketRocket/TestSupport
-DetoxSync/ExampleRNApp
+DetoxSync/ExampleAppRN
 DetoxSync/ExampleApp
+DetoxSync/DetoxSyncTests
 *.noindex*
 Logs
 SourcePackages
