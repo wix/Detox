@@ -71,8 +71,7 @@ describe('WebView', () => {
     });
   });
 
-  describe('ContentEditable', () => {
-
+  describe(':android: ContentEditable', () => {
     it('should replace text by selecting all text', async () => {
         const editable = await web.element(by.web.className('public-DraftEditor-content'));
         const text = await editable.getText();
@@ -139,10 +138,9 @@ describe('WebView', () => {
 
       // Verify text is the title text
       await expect(web.element(by.web.id('testingPar'))).toHaveText(text);
-
     });
 
-    it('should replace text', async () => {
+    it(':android: should replace text', async () => {
       const textInput = await web.element(by.web.id('textInput'));
       await textInput.scrollToView();
       await textInput.tap();

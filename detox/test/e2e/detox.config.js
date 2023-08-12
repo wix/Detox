@@ -14,7 +14,7 @@ const config = {
 
   testRunner: {
     args: {
-      $0: 'nyc jest',
+      $0: 'nyc jest --detectOpenHandles',
       config: 'e2e/jest.config.js',
       _: ['e2e/']
     },

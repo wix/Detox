@@ -42,21 +42,19 @@ In the example above:
 
 Web view matchers are used to find elements within a web view:
 
-- [`by.web.id(id)`] (**Android only**)
-- [`by.web.className(className)`] (**Android only**)
-- [`by.web.cssSelector(cssSelector)`] (**Android only**)
-- [`by.web.name(name)`] (**Android only**)
-- [`by.web.xpath(xpath)`] (**Android only**)
-- [`by.web.href(href)`] (**Android only**)
-- [`by.web.hrefContains(hrefContains)`] (**Android only**)
-- [`by.web.tag(tag)`] (**Android only**)
+- [`by.web.id(id)`]
+- [`by.web.className(className)`]
+- [`by.web.cssSelector(cssSelector)`]
+- [`by.web.name(name)`]
+- [`by.web.xpath(xpath)`]
+- [`by.web.href(href)`]
+- [`by.web.hrefContains(hrefContains)`]
+- [`by.web.tag(tag)`]
 - [`by.web.label(label)`] (**iOS only**)
 - [`by.web.value(value)`] (**iOS only**)
 - [`atIndex(index)`]
 
 ### `by.web.id(id)`
-
-**Android only**
 
 Match elements with the specified accessibility identifier.
 
@@ -66,8 +64,6 @@ web.element(by.web.id('identifier'));
 
 ### `by.web.className(className)`
 
-**Android only**
-
 Match elements with the specified CSS class name.
 
 ```js
@@ -75,8 +71,6 @@ web.element(by.web.className('className'));
 ```
 
 ### `by.web.cssSelector(cssSelector)`
-
-**Android only**
 
 Match elements with the specified CSS selector.
 
@@ -86,8 +80,6 @@ web.element(by.web.cssSelector('#cssSelector'));
 
 ### `by.web.name(name)`
 
-**Android only**
-
 Match elements with the specified name.
 
 ```js
@@ -95,8 +87,6 @@ web.element(by.web.name('name'));
 ```
 
 ### `by.web.xpath(xpath)`
-
-**Android only**
 
 Match elements with the specified XPath.
 
@@ -106,8 +96,6 @@ web.element(by.web.xpath('//*[@id="testingh1-1"]'));
 
 ### `by.web.href(href)`
 
-**Android only**
-
 Match elements with the specified `href`.
 
 ```js
@@ -115,8 +103,6 @@ web.element(by.web.href('https://wix.com'));
 ```
 
 ### `by.web.hrefContains(href)`
-
-**Android only**
 
 Match elements that contain the specified `href`.
 
@@ -126,8 +112,6 @@ web.element(by.web.hrefContains('wix'));
 
 ### `by.web.tag(tag)`
 
-**Android only**
-
 Match elements with the specified tag.
 
 ```js
@@ -136,8 +120,6 @@ web.element(by.web.tag('h1'));
 
 ### `by.web.label(label)`
 
-**iOS only**
-
 Match elements with the specified label.
 
 ```js
@@ -145,8 +127,6 @@ web.element(by.web.label('label'));
 ```
 
 ### `by.web.value(value)`
-
-**iOS only**
 
 Match elements with the specified value.
 
