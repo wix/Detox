@@ -4,7 +4,6 @@ describe('Emulator launcher', () => {
   const adbName = 'mock-emulator:1234';
 
   let retry;
-  let eventEmitter;
   let emulatorExec;
   let adb;
   let launchEmulatorProcess;
@@ -20,9 +19,6 @@ describe('Emulator launcher', () => {
     adb = new ADB();
     adb.isBootComplete.mockReturnValue(true);
 
-    const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
-
     const { EmulatorExec } = jest.genMockFromModule('../../../../common/drivers/android/emulator/exec/EmulatorExec');
     emulatorExec = new EmulatorExec();
 
@@ -33,17 +29,8 @@ describe('Emulator launcher', () => {
     uut = new EmulatorLauncher({
       adb,
       emulatorExec,
-      eventEmitter,
     });
   });
-
-  const expectDeviceBootEvent = (coldBoot) =>
-    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
-      coldBoot,
-      deviceId: adbName,
-      type: avdName,
-    });
-  const expectNoDeviceBootEvent = () => expect(eventEmitter.emit).not.toHaveBeenCalled();
 
   describe('launch', () => {
     const givenDeviceBootCompleted = () => adb.isBootComplete.mockResolvedValue(true);
@@ -138,28 +125,12 @@ describe('Emulator launcher', () => {
           expect.any(Function)
         );
       });
-
-      it('should emit boot event with coldBoot=true', async () => {
-        givenDeviceBootCompleted();
-        await uut.launch(avdName, adbName, isRunning);
-        expectDeviceBootEvent(true);
-      });
-
-      it('should not emit boot event for an already-running emulator (implicit call-order check)', async () => {
-        givenDeviceBootCheckError();
-
-        try {
-          await uut.launch(avdName, adbName, isRunning);
-        } catch (e) {}
-        expectNoDeviceBootEvent(true);
-      });
     });
 
     describe('given an emulator that *is* already running', () => {
       const isRunning = true;
 
       it('should not launch emulator', async () => {
-
         await uut.launch(avdName, adbName, isRunning);
         expect(launchEmulatorProcess).not.toHaveBeenCalled();
       });
@@ -169,12 +140,6 @@ describe('Emulator launcher', () => {
 
         await uut.launch(avdName, adbName, isRunning);
         expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
-      });
-
-      it('should emit boot event with coldBoot=false', async () => {
-        givenDeviceBootCompleted();
-        await uut.launch(avdName, adbName, isRunning);
-        expectDeviceBootEvent(false);
       });
     });
   });
@@ -208,11 +173,6 @@ describe('Emulator launcher', () => {
       it('should wait until the device cannot be found', async () => {
         expect(adb.getState).toHaveBeenCalledTimes(3);
       });
-
-      it('should emit associated events', async () => {
-        expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: avdName });
-        expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: avdName });
-      });
     });
 
     describe('if shutdown does not go well', () => {
@@ -223,12 +183,6 @@ describe('Emulator launcher', () => {
 
       it('should keep polling the emulator status until it is "none"', async () => {
         expect(adb.getState).toHaveBeenCalledTimes(5);
-      });
-
-      it('should not emit shutdownDevice prematurely', async () => {
-        expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-        expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', expect.any(Object));
-        expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
       });
     });
   });

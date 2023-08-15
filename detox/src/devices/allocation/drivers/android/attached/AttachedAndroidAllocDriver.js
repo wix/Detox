@@ -7,14 +7,12 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
    * @param adb { ADB }
    * @param deviceRegistry { DeviceRegistry }
    * @param freeDeviceFinder { FreeDeviceFinder }
-   * @param attachedAndroidLauncher { AttachedAndroidLauncher }
    */
-  constructor({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher }) {
+  constructor({ adb, deviceRegistry, freeDeviceFinder }) {
     super();
     this._adb = adb;
     this._deviceRegistry = deviceRegistry;
     this._freeDeviceFinder = freeDeviceFinder;
-    this._attachedAndroidLauncher = attachedAndroidLauncher;
   }
 
   /**
@@ -38,7 +36,6 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     // TODO Also disable native animations?
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
-    await this._attachedAndroidLauncher.notifyLaunchCompleted(adbName);
   }
 
   /**

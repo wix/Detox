@@ -10,7 +10,6 @@ describe('Allocation driver for attached Android devices', () => {
   let adb;
   let deviceRegistry;
   let freeDeviceFinder;
-  let attachedAndroidLauncher;
   beforeEach(() => {
     const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
@@ -20,9 +19,6 @@ describe('Allocation driver for attached Android devices', () => {
 
     const FreeDeviceFinder = jest.genMockFromModule('../../../../common/drivers/android/tools/FreeDeviceFinder');
     freeDeviceFinder = new FreeDeviceFinder();
-
-    const AttachedAndroidLauncher = jest.genMockFromModule('./AttachedAndroidLauncher');
-    attachedAndroidLauncher = new AttachedAndroidLauncher();
   });
 
   let allocDriver;
@@ -32,7 +28,6 @@ describe('Allocation driver for attached Android devices', () => {
       adb,
       deviceRegistry,
       freeDeviceFinder,
-      attachedAndroidLauncher,
     });
   });
 
@@ -86,11 +81,6 @@ describe('Allocation driver for attached Android devices', () => {
       it('should unlock the screen using ADB', async () => {
         await allocDriver.postAllocate({ adbName });
         expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
-      });
-
-      it('should report boot-event via launcher', async () => {
-        await allocDriver.postAllocate({ adbName });
-        expect(attachedAndroidLauncher.notifyLaunchCompleted).toHaveBeenCalledWith(adbName);
       });
     });
   });

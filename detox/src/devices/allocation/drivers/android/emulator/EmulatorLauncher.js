@@ -3,16 +3,14 @@ const { DetoxRuntimeError } = require('../../../../../errors');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const retry = require('../../../../../utils/retry');
 const traceMethods = require('../../../../../utils/traceMethods');
-const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 const { LaunchCommand } = require('../../../../common/drivers/android/emulator/exec/EmulatorExec');
 
 const { launchEmulatorProcess } = require('./launchEmulatorProcess');
 
 const isUnknownEmulatorError = (err) => (err.message || '').includes('failed with code null');
 
-class EmulatorLauncher extends DeviceLauncher {
-  constructor({ adb, emulatorExec, eventEmitter }) {
-    super(eventEmitter);
+class EmulatorLauncher {
+  constructor({ adb, emulatorExec }) {
     this._adb = adb;
     this._emulatorExec = emulatorExec;
     traceMethods(log, this, ['_awaitEmulatorBoot']);
@@ -39,11 +37,9 @@ class EmulatorLauncher extends DeviceLauncher {
       }, () => this._launchEmulator(avdName, launchCommand, adbName));
     }
     await this._awaitEmulatorBoot(adbName);
-    await this._notifyBootEvent(adbName, avdName, !isRunning);
   }
 
   async shutdown(adbName) {
-    await this._notifyPreShutdown(adbName);
     await this._adb.emuKill(adbName);
     await retry({
       retries: 5,
@@ -57,7 +53,6 @@ class EmulatorLauncher extends DeviceLauncher {
         });
       }
     });
-    await this._notifyShutdownCompleted(adbName);
   }
 
   _launchEmulator(emulatorName, launchCommand, adbName) {

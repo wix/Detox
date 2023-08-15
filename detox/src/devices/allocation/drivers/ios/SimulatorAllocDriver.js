@@ -2,6 +2,7 @@
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const log = require('../../../../utils/logger').child({ cat: 'device' });
 const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
 const AllocationDriverBase = require('../AllocationDriverBase');
 
@@ -83,11 +84,26 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     if (_.isEmpty(free)) {
       const prototypeDevice = taken[0];
       udid = this._applesimutils.create(prototypeDevice);
+      await this._runScreenshotWorkaround(udid);
     } else {
       udid = free[0].udid;
     }
 
     return udid;
+  }
+
+  // TODO: move to the allocation driver
+  async _runScreenshotWorkaround(udid) {
+    await this.appleSimUtils.takeScreenshot(udid, '/dev/null').catch(() => {
+      log.debug({}, `
+          NOTE: For an unknown yet reason, taking the first screenshot is apt
+          to fail when booting iOS Simulator in a hidden window mode (or on CI).
+          Detox applies a workaround by taking a dummy screenshot to ensure
+          that the future ones are going to work fine. This screenshot is not
+          saved anywhere, and the error above is suppressed for all log levels
+          except for "debug" and "trace."
+        `.trim());
+    });
   }
 
   async _groupDevicesByStatus(deviceQuery) {

@@ -36,18 +36,8 @@ describe('Genymotion-Cloud instance launcher', () => {
   const givenInstanceQueryResult = (instance) => instanceLookupService.getInstance.mockResolvedValue(instance);
   const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
   const givenInstanceConnectResult = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
-  const givenInstanceConnectError = () => instanceLifecycleService.adbConnectInstance.mockRejectedValue(new Error());
-
-  const expectDeviceBootEvent = (instance, coldBoot) =>
-    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
-      coldBoot,
-      deviceId: instance.adbName,
-      type: recipeName,
-    });
-  const expectNoDeviceBootEvent = () => expect(eventEmitter.emit).not.toHaveBeenCalled();
 
   let retry;
-  let eventEmitter;
   let deviceCleanupRegistry;
   let instanceLookupService;
   let instanceLifecycleService;
@@ -57,9 +47,6 @@ describe('Genymotion-Cloud instance launcher', () => {
     jest.mock('../../../../../utils/retry');
     retry = require('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
-
-    const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
 
     const InstanceLifecycleService = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
@@ -77,7 +64,6 @@ describe('Genymotion-Cloud instance launcher', () => {
       instanceLifecycleService,
       instanceLookupService,
       deviceCleanupRegistry,
-      eventEmitter
     });
   });
 
@@ -183,39 +169,6 @@ describe('Genymotion-Cloud instance launcher', () => {
 
       expect(instanceLifecycleService.adbConnectInstance).not.toHaveBeenCalled();
     });
-
-    it('should emit boot event for a reused instance', async () => {
-      const isNew = true;
-      const instance = aFullyConnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance, isNew);
-
-      expectDeviceBootEvent(instance, true);
-    });
-
-    it('should emit boot event for a newly allocated instance', async () => {
-      const isNew = false;
-      const instance = aFullyConnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance, isNew);
-
-      expectDeviceBootEvent(instance, false);
-    });
-
-    it('should not emit boot event if adb-connect fails (implicit call-order check)', async () => {
-      const instance = aDisconnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectError();
-
-      try {
-        await uut.launch(instance, false);
-      } catch (e) {}
-      expectNoDeviceBootEvent();
-    });
   });
 
   describe('Shutdown', () => {
@@ -236,23 +189,6 @@ describe('Genymotion-Cloud instance launcher', () => {
       const instance = anInstance();
       await uut.shutdown(instance);
       expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
-    });
-
-    it('should emit associated events', async () => {
-      const instance = anInstance();
-      await uut.shutdown(instance);
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.uuid });
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.uuid });
-    });
-
-    it('should not emit shutdownDevice prematurely', async () => {
-      givenAnInstanceDeletionError();
-
-      const instance = anInstance();
-      await expect(uut.shutdown(instance)).rejects.toThrowError();
-      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
     });
   });
 });

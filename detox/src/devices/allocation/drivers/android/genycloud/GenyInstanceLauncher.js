@@ -1,12 +1,9 @@
 // @ts-nocheck
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const retry = require('../../../../../utils/retry');
-const DeviceLauncher = require('../../../../common/drivers/DeviceLauncher');
 
-class GenyInstanceLauncher extends DeviceLauncher {
-  constructor({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter }) {
-    super(eventEmitter);
-
+class GenyInstanceLauncher {
+  constructor({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry }) {
     this._instanceLifecycleService = instanceLifecycleService;
     this._instanceLookupService = instanceLookupService;
     this._deviceCleanupRegistry = deviceCleanupRegistry;
@@ -28,17 +25,14 @@ class GenyInstanceLauncher extends DeviceLauncher {
     }
     instance = await this._waitForInstanceBoot(instance);
     instance = await this._adbConnectIfNeeded(instance);
-    await this._notifyBootEvent(instance.adbName, instance.recipeName, isNew);
     return instance;
   }
 
   async shutdown(instance) {
     const { uuid } = instance;
 
-    await this._notifyPreShutdown(uuid);
     await this._instanceLifecycleService.deleteInstance(uuid);
     await this._deviceCleanupRegistry.disposeDevice(uuid);
-    await this._notifyShutdownCompleted(uuid);
   }
 
   async _waitForInstanceBoot(instance) {

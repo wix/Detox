@@ -97,22 +97,6 @@ class ArtifactPlugin {
   }
 
   /**
-   * Hook that is supposed to be called from device.boot()
-   *
-   * @protected
-   * @async
-   * @param {Object} event - Device boot event object
-   * @param {string} event.deviceId - Current deviceId
-   * @param {boolean} event.coldBoot - true, if the device gets turned on from the shutdown state.
-   * @return {Promise<void>} - when done
-   */
-  async onBootDevice(event) {
-    Object.assign(this.context, {
-      deviceId: event.deviceId,
-    });
-  }
-
-  /**
    * Hook that is supposed to be called before app is terminated
    *
    * @protected
@@ -298,7 +282,6 @@ class ArtifactPlugin {
     this.disable('it was terminated by SIGINT or SIGTERM');
 
     this.onTerminate = _.noop;
-    this.onBootDevice = _.noop;
     this.onBeforeShutdownDevice = _.noop;
     this.onShutdownDevice = _.noop;
     this.onBeforeTerminateApp = _.noop;

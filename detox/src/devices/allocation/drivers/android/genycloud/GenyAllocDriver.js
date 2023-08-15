@@ -1,7 +1,11 @@
 const { DetoxRuntimeError } = require('../../../../../errors');
 const Timer = require('../../../../../utils/Timer');
+const logger = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
+// const symbols = require('../../../../../realms/symbols');
+// const DeviceRegistry = require('../../../../DeviceRegistry');
+// const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
 
 class GenyAllocDriver extends AllocationDriverBase {
 
@@ -76,6 +80,100 @@ class GenyAllocDriver extends AllocationDriverBase {
       });
     }
   }
+}
+
+const GENYCLOUD_TEARDOWN = {
+  event: 'GENYCLOUD_TEARDOWN',
+};
+
+class GenyGlobalLifecycleHandler {
+  constructor({ deviceCleanupRegistry, instanceLifecycleService }) {
+    /** @private */
+    this._deviceCleanupRegistry = deviceCleanupRegistry;
+    /** @private */
+    this._instanceLifecycleService = instanceLifecycleService;
+  }
+
+  // TODO: distribute this logic to the drivers
+  async globalInit() {
+    // if (!this._behaviorConfig.init.keepLockFile) {
+    //   return;
+    // }
+    //
+    // const DeviceRegistry = require('../devices/DeviceRegistry');
+    //
+    // const deviceType = this[symbols.config].device.type;
+    //
+    // switch (deviceType) {
+    //   case 'ios.none':
+    //   case 'ios.simulator':
+    //     await DeviceRegistry.forIOS().reset();
+    //     break;
+    //   case 'android.attached':
+    //   case 'android.emulator':
+    //   case 'android.genycloud':
+    //     await DeviceRegistry.forAndroid().reset();
+    //     break;
+    // }
+    //
+    // if (deviceType === 'android.genycloud') {
+    //   const GenyDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+    //   await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
+    // }
+  }
+
+  emergencyCleanup() {
+    const { rawDevices } = this._deviceCleanupRegistry.readRegisteredDevicesUNSAFE();
+    const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
+    if (instanceHandles.length) {
+      reportGlobalCleanupSummary(instanceHandles);
+    }
+  }
+
+  async globalCleanup() {
+    const { rawDevices } = await this._deviceCleanupRegistry.readRegisteredDevices();
+    const instanceHandles = rawDevicesToInstanceHandles(rawDevices);
+    if (instanceHandles.length) {
+      await doSafeCleanup(this._instanceLifecycleService, instanceHandles);
+    }
+  }
+}
+
+async function doSafeCleanup(instanceLifecycleService, instanceHandles) {
+  logger.info(GENYCLOUD_TEARDOWN, 'Initiating Genymotion SaaS instances teardown...');
+
+  const deletionLeaks = [];
+  const killPromises = instanceHandles.map((instanceHandle) =>
+    instanceLifecycleService.deleteInstance(instanceHandle.uuid)
+      .catch((error) => deletionLeaks.push({ ...instanceHandle, error })));
+
+  await Promise.all(killPromises);
+  reportGlobalCleanupSummary(deletionLeaks);
+}
+
+function reportGlobalCleanupSummary(deletionLeaks) {
+  if (deletionLeaks.length) {
+    logger.warn(GENYCLOUD_TEARDOWN, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
+
+    deletionLeaks.forEach(({ uuid, name, error }) => {
+      logger.warn(GENYCLOUD_TEARDOWN, [
+        `Instance ${name} (${uuid})${error ? `: ${error}` : ''}`,
+        `    Kill it by visiting https://cloud.geny.io/instance/${uuid}, or by running:`,
+        `    gmsaas instances stop ${uuid}`,
+      ].join('\n'));
+    });
+
+    logger.info(GENYCLOUD_TEARDOWN, 'Instances teardown completed with warnings');
+  } else {
+    logger.info(GENYCLOUD_TEARDOWN, 'Instances teardown completed successfully');
+  }
+}
+
+function rawDevicesToInstanceHandles(rawDevices) {
+  return rawDevices.map((rawDevice) => ({
+    uuid: rawDevice.id,
+    name: rawDevice.data.name,
+  }));
 }
 
 module.exports = GenyAllocDriver;

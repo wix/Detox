@@ -33,7 +33,6 @@ class DetoxWorker {
       onError: this._onEmitError.bind(this),
     });
 
-
     /** @type {DetoxInternals.RuntimeConfig['apps']} */
     this._appsConfig = null;
     /** @type {DetoxInternals.RuntimeConfig['artifacts']} */
@@ -115,14 +114,13 @@ class DetoxWorker {
     const {
       // @ts-ignore
       envValidatorFactory,
-      deviceAllocatorFactory,
       // @ts-ignore
       artifactsManagerFactory,
       // @ts-ignore
       matchersFactory,
       // @ts-ignore
       runtimeDeviceFactory,
-    } = environmentFactory.createFactories(this._deviceConfig);
+    } = environmentFactory.createFactories(deviceConfig);
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
@@ -135,10 +133,9 @@ class DetoxWorker {
     };
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
-    this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
-    this._deviceCookie = yield this._deviceAllocator.allocate(this._deviceConfig);
-
-    yield this._deviceAllocator.postAllocate(this._deviceCookie);
+    // TODO: emit before bootDevice
+    this._deviceCookie = yield this._context[symbols.allocateDevice]();
+    // TODO: emit after bootDevice
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -207,8 +204,9 @@ class DetoxWorker {
     }
 
     if (this._deviceCookie) {
-      const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
-      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+      // TODO: emit before device shutdown
+      await this._context[symbols.deallocateDevice](this._deviceCookie);
+      // TODO: emit after device shutdown
     }
 
     this._deviceAllocator = null;

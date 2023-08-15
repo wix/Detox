@@ -2,7 +2,7 @@
 const DeviceAllocatorFactory = require('./base');
 
 class AndroidEmulator extends DeviceAllocatorFactory {
-  _createDriver({ eventEmitter }) {
+  _createDriver() {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const emulatorExec = serviceLocator.emulator.exec;
@@ -21,7 +21,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
 
     const EmulatorLauncher = require('../drivers/android/emulator/EmulatorLauncher');
-    const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec, eventEmitter });
+    const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec });
 
     const EmulatorAllocationHelper = require('../drivers/android/emulator/EmulatorAllocationHelper');
     const allocationHelper = new EmulatorAllocationHelper(deviceRegistry, freeEmulatorFinder);
@@ -38,7 +38,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
 }
 
 class AndroidAttached extends DeviceAllocatorFactory {
-  _createDriver({ eventEmitter }) {
+  _createDriver() {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const deviceRegistry = serviceLocator.deviceRegistry;
@@ -46,16 +46,13 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const FreeDeviceFinder = require('../../common/drivers/android/tools/FreeDeviceFinder');
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
 
-    const AttachedAndroidLauncher = require('../drivers/android/attached/AttachedAndroidLauncher');
-    const attachedAndroidLauncher = new AttachedAndroidLauncher(eventEmitter);
-
     const AttachedAndroidAllocDriver = require('../drivers/android/attached/AttachedAndroidAllocDriver');
-    return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher });
+    return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder });
   }
 }
 
 class Genycloud extends DeviceAllocatorFactory {
-  _createDriver({ eventEmitter }) {
+  _createDriver() {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const exec = serviceLocator.genycloud.exec;
@@ -82,7 +79,7 @@ class Genycloud extends DeviceAllocatorFactory {
 
     const InstanceLauncher = require('../drivers/android/genycloud/GenyInstanceLauncher');
     const GenyAllocDriver = require('../drivers/android/genycloud/GenyAllocDriver');
-    const instanceLauncher = new InstanceLauncher({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry, eventEmitter });
+    const instanceLauncher = new InstanceLauncher({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry });
     return new GenyAllocDriver({
       adb,
       recipeQuerying,

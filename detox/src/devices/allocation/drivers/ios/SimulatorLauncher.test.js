@@ -1,18 +1,14 @@
 describe('Simulator launcher (helper)', () => {
   const udid = 'UD-1D';
 
-  let eventEmitter;
   let applesimutils;
   let uut;
   beforeEach(() => {
-    const AsyncEmitter = jest.genMockFromModule('../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
-
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
 
     const SimulatorLauncher = require('./SimulatorLauncher');
-    uut = new SimulatorLauncher({ applesimutils, eventEmitter });
+    uut = new SimulatorLauncher({ applesimutils });
   });
 
   describe('launch', () => {
@@ -37,25 +33,13 @@ describe('Simulator launcher (helper)', () => {
     it('should emit boot event', async () => {
       givenBootResultWarm();
       await uut.launch(udid, type, {}, headless);
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        'bootDevice',
-        expect.objectContaining({ deviceId: udid, type, coldBoot: false, headless })
-      );
+      expect(applesimutils.boot).toHaveBeenCalled();
     });
 
     it('should emit cold-boot status in boot event', async () => {
       givenBootResultCold();
       await uut.launch(udid, type, {}, headless);
-      expect(eventEmitter.emit).toHaveBeenCalledWith(
-        'bootDevice',
-        expect.objectContaining({ deviceId: udid, type, coldBoot: true, headless })
-      );
-    });
-
-    it('should fail if emission fails', async () => {
-      const error = new Error('mock error');
-      eventEmitter.emit.mockRejectedValue(error);
-      await expect(uut.launch(udid, '', bootArgs, headless)).rejects.toThrowError(error);
+      expect(applesimutils.boot).toHaveBeenCalled();
     });
   });
 
@@ -69,16 +53,6 @@ describe('Simulator launcher (helper)', () => {
       const error = new Error('mock error');
       applesimutils.shutdown.mockRejectedValue(error);
       await expect(uut.shutdown(udid)).rejects.toThrowError(error);
-    });
-
-    it('should emit pre-shutdown event', async () => {
-      await uut.shutdown(udid);
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: udid });
-    });
-
-    it('should emit post-shutdown event', async () => {
-      await uut.shutdown(udid);
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: udid });
     });
   });
 });

@@ -81,7 +81,6 @@ describe('SimulatorLogPlugin', () => {
     }
 
     await init();
-    await artifactsManager.onBootDevice({ deviceId: 'booted' });
     await logToDeviceLogs('omit - after boot');
 
     await artifactsManager.onBeforeLaunchApp({ device: 'booted', bundleId: 'com.test' });
