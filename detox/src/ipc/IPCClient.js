@@ -1,6 +1,6 @@
 const { IPC } = require('node-ipc');
 
-const { DetoxInternalError, DetoxRuntimeError} = require('../errors');
+const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCClient {

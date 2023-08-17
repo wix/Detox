@@ -3,12 +3,12 @@ const Timer = require('../../../../../utils/Timer');
 const logger = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
+const retry = require("../../../../../utils/retry");
 // const symbols = require('../../../../../realms/symbols');
 // const DeviceRegistry = require('../../../../DeviceRegistry');
 // const GenyDeviceRegistryFactory = require('./GenyDeviceRegistryFactory');
 
 class GenyAllocDriver extends AllocationDriverBase {
-
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
@@ -24,6 +24,8 @@ class GenyAllocDriver extends AllocationDriverBase {
     this._instanceLauncher = instanceLauncher;
     this._instanceAllocationHelper = allocationHelper;
     this._launchInfo = {};
+    this._busyInstances = new Set();
+    this._freeInstances = new Set();
   }
 
   /**
@@ -33,9 +35,18 @@ class GenyAllocDriver extends AllocationDriverBase {
   async allocate(deviceConfig) {
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
-    this._assertRecipe(deviceQuery, recipe);
+    this._assertRecipeIsDefined(deviceQuery, recipe);
 
-    const { instance, isNew } = await this._instanceAllocationHelper.allocateDevice(recipe);
+    for (const instance of this._freeInstances) {
+      const recipeMatches = instance.recipe.uuid === recipe.uuid;
+      if (recipeMatches) {
+        this._freeInstances.delete(instance);
+        this._busyInstances.add(instance);
+        return new GenycloudEmulatorCookie(instance);
+      }
+    }
+
+    const instance = await this._instanceLifecycleService.createInstance(recipe.uuid);
     this._launchInfo[instance.uuid] = { isNew };
     return new GenycloudEmulatorCookie(instance);
   }
@@ -57,6 +68,33 @@ class GenyAllocDriver extends AllocationDriverBase {
     });
   }
 
+  async _waitForInstanceBoot(instance) {
+    if (instance.isOnline()) {
+      return instance;
+    }
+
+    const options = {
+      backoff: 'none',
+      retries: 25,
+      interval: 5000,
+      initialSleep: 45000,
+    };
+
+    return await retry(options, async () => {
+      const _instance = await this._instanceLookupService.getInstance(instance.uuid);
+      if (!_instance.isOnline()) {
+        throw new DetoxRuntimeError(`Timeout waiting for instance ${instance.uuid} to be ready`);
+      }
+      return _instance;
+    });
+  }
+
+  async _adbConnectIfNeeded(instance) {
+    if (!instance.isAdbConnected()) {
+      instance = await this._instanceLifecycleService.adbConnectInstance(instance.uuid);
+    }
+    return instance;
+  }
   /**
    * @param cookie { GenycloudEmulatorCookie }
    * @param options { DeallocOptions }
@@ -72,7 +110,7 @@ class GenyAllocDriver extends AllocationDriverBase {
     }
   }
 
-  _assertRecipe(deviceQuery, recipe) {
+  _assertRecipeIsDefined(deviceQuery, recipe) {
     if (!recipe) {
       throw new DetoxRuntimeError({
         message: `No Genymotion-Cloud template found to match the configured lookup query: ${JSON.stringify(deviceQuery)}`,

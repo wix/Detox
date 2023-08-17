@@ -92,8 +92,8 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     return udid;
   }
 
-  // TODO: move to the allocation driver
   async _runScreenshotWorkaround(udid) {
+    // TODO: check if artifact plugins are enabled
     await this.appleSimUtils.takeScreenshot(udid, '/dev/null').catch(() => {
       log.debug({}, `
           NOTE: For an unknown yet reason, taking the first screenshot is apt

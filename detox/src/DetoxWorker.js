@@ -145,7 +145,7 @@ class DetoxWorker {
         sessionConfig,
       });
 
-    yield this._artifactsManager.onBootDevice({
+    yield this._eventEmitter.emit('bootDevice', {
       deviceId: this.device.id,
     });
 
@@ -209,8 +209,8 @@ class DetoxWorker {
       await this._context[symbols.deallocateDevice](this._deviceCookie);
     }
 
-    this._deviceAllocator = null;
     this._deviceCookie = null;
+    this._deviceAllocator = null;
     this.device = null;
   }
 

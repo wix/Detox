@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["es2018"],
+    "lib": [
+      "es2018",
+    ],
     "target": "ES2018",
     "allowJs": true,
     "checkJs": true,

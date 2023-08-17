@@ -89,7 +89,7 @@ class IPCServer {
     }
   }
 
-  async onAllocateDevice(_payload, socket) {
+  async onAllocateDevice(_payload, socket = null) {
     try {
       const deviceCookie = await this._callbacks.onAllocateDevice();
       this._ipc.server.emit(socket, 'allocateDeviceDone', { deviceCookie });

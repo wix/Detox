@@ -1,13 +1,16 @@
-const Instance = require('./dto/GenyInstance');
+const Instance = require('./GenyInstance');
+const internals = () => require('../../../../../../internals');
 
 class GenyInstanceLifecycleService {
-  constructor(genyCloudExec, instanceNaming) {
+  constructor(genyCloudExec) {
+    this.counter = 0;
     this.genyCloudExec = genyCloudExec;
-    this.instanceNaming = instanceNaming;
   }
 
   async createInstance(recipeUUID) {
-    const result = await this.genyCloudExec.startInstance(recipeUUID, this.instanceNaming.generateName());
+    const { session } = internals();
+    const instanceName = `Detox.${session.id}.${++this.counter}`;
+    const result = await this.genyCloudExec.startInstance(recipeUUID, instanceName);
     return new Instance(result.instance);
   }
 

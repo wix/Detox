@@ -7,12 +7,6 @@
  */
 
 class AllocationDriverBase {
-
-  /**
-   * @param {object} options
-   */
-  constructor(options) {}
-
   /**
    * @return {Promise<void>}
    */
@@ -40,7 +34,7 @@ class AllocationDriverBase {
   /**
    * @return {Promise<void>}
    */
-  async cleanup() {
+  async cleanup(options) {
 
   }
 }

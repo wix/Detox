@@ -3,9 +3,9 @@ class SimulatorLauncher {
     this._applesimutils = applesimutils;
   }
 
-  // TODO: think if we can report about cold/hot boot
   async launch(udid, type, bootArgs, headless) {
-    await this._applesimutils.boot(udid, bootArgs, headless);
+    const coldBoot = await this._applesimutils.boot(udid, bootArgs, headless);
+    return coldBoot;
   }
 
   async shutdown(udid) {

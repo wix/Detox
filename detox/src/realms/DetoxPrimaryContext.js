@@ -154,9 +154,8 @@ class DetoxPrimaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.allocateDevice]() {
-    const deviceCookie = await this[_deviceAllocator].allocateDevice();
-    await this._deviceAllocator.postAllocate(deviceCookie);
-    // TODO: shall we install the apps here?
+    const { device } = await this[symbols.resolveConfig]();
+    return this[_deviceAllocator].allocateDevice(device);
   }
 
   /** @override */
@@ -172,9 +171,9 @@ class DetoxPrimaryContext extends DetoxContext {
       }
     } finally {
       if (this[_deviceAllocator]) {
-        // const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
-        // await this._deviceAllocator.free(this._deviceCookie, { shutdown });
-        await this[_deviceAllocator].cleanup();
+        const { behavior } = await this[symbols.resolveConfig]();
+        const shutdown = behavior.cleanup.shutdownDevice;
+        await this[_deviceAllocator].cleanup({ shutdown });
         this[_deviceAllocator] = null;
       }
 
