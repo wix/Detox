@@ -2,7 +2,7 @@
 const DeviceAllocatorFactory = require('./base');
 
 class AndroidEmulator extends DeviceAllocatorFactory {
-  _createDriver() {
+  _createDriver(deps) {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const emulatorExec = serviceLocator.emulator.exec;
@@ -33,12 +33,13 @@ class AndroidEmulator extends DeviceAllocatorFactory {
       emulatorVersionResolver,
       emulatorLauncher,
       allocationHelper,
+      ...deps,
     });
   }
 }
 
 class AndroidAttached extends DeviceAllocatorFactory {
-  _createDriver() {
+  _createDriver(deps) {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const deviceRegistry = serviceLocator.deviceRegistry;
@@ -47,12 +48,12 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
 
     const AttachedAndroidAllocDriver = require('../drivers/android/attached/AttachedAndroidAllocDriver');
-    return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder });
+    return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder, ...deps });
   }
 }
 
 class Genycloud extends DeviceAllocatorFactory {
-  _createDriver() {
+  _createDriver(deps) {
     const serviceLocator = require('../../../servicelocator/android');
     const adb = serviceLocator.adb;
     const exec = serviceLocator.genycloud.exec;
@@ -85,6 +86,7 @@ class Genycloud extends DeviceAllocatorFactory {
       recipeQuerying,
       allocationHelper,
       instanceLauncher,
+      ...deps,
     });
   }
 }

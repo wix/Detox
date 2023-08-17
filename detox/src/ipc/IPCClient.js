@@ -1,6 +1,6 @@
 const { IPC } = require('node-ipc');
 
-const { DetoxInternalError } = require('../errors');
+const { DetoxInternalError, DetoxRuntimeError} = require('../errors');
 const { serializeObjectWithError } = require('../utils/errorUtils');
 
 class IPCClient {
@@ -58,6 +58,28 @@ class IPCClient {
   async registerWorker(workerId) {
     const sessionState = await this._emit('registerWorker', { workerId });
     this._sessionState.patch(sessionState);
+  }
+
+  /**
+   * @returns {Promise<DeviceCookie>}
+   */
+  async allocateDevice() {
+    const { deviceCookie, error } = await this._emit('allocateDevice', {});
+    if (error) {
+      throw new DetoxRuntimeError({ message: error.message });
+    }
+
+    return deviceCookie;
+  }
+
+  /**
+   * @param {DeviceCookie} deviceCookie
+   */
+  async deallocateDevice(deviceCookie) {
+    const { error } = await this._emit('deallocateDevice', { deviceCookie });
+    if (error) {
+      throw new DetoxRuntimeError({ message: error.message });
+    }
   }
 
   /**

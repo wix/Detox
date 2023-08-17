@@ -2,9 +2,6 @@
 const { sleepSomeTime, sleepALittle } = require('./stubSleeps');
 
 class StubDeviceAllocationDriver {
-  constructor() {
-  }
-
   async allocate() {
     const deviceId = `StubDevice#${process.env.JEST_WORKER_ID}`;
 

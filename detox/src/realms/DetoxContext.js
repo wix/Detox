@@ -161,6 +161,19 @@ class DetoxContext {
 
   /**
    * @abstract
+   * @returns {Promise<DeviceCookie>}
+   */
+  async [symbols.allocateDevice]() { return null; }
+
+  /**
+   * @abstract
+   * @param deviceCookie
+   * @returns {Promise<void>}
+   */
+  async [symbols.deallocateDevice](deviceCookie) {}
+
+  /**
+   * @abstract
    */
   async [symbols.cleanup]() {}
   //#endregion

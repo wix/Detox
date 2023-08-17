@@ -55,6 +55,25 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   /** @override */
+  async [symbols.allocateDevice]() {
+    if (this[_ipcClient]) {
+      const deviceCookie = await this[_ipcClient].allocateDevice();
+      return deviceCookie;
+    } else {
+      throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
+    }
+  }
+
+  /** @override */
+  async [symbols.deallocateDevice](deviceCookie) {
+    if (this[_ipcClient]) {
+      await this[_ipcClient].deallocateDevice(deviceCookie);
+    } else {
+      throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
+    }
+  }
+
+  /** @override */
   async [symbols.cleanup]() {
     try {
       if (this[$worker]) {

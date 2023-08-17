@@ -16,6 +16,7 @@ const IosDriver = require('./IosDriver');
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
  * @property simulatorLauncher { SimulatorLauncher }
  * @property applesimutils { AppleSimUtils }
+ * @property eventEmitter { AsyncEmitter }
  */
 
 /**
@@ -40,6 +41,7 @@ class SimulatorDriver extends IosDriver {
     this._deviceName = `${udid} (${this._type})`;
     this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
+    this._eventEmitter = deps.eventEmitter;
   }
 
   getExternalId() {
@@ -150,9 +152,12 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings() {
+    await this._eventEmitter.emit('beforeShutdownDevice', { deviceId: this.udid });
     await this._simulatorLauncher.shutdown(this.udid);
+    await this._eventEmitter.emit('shutdownDevice', { deviceId: this.udid });
     await this._applesimutils.resetContentAndSettings(this.udid);
     await this._simulatorLauncher.launch(this.udid, this._type, this._bootArgs, this._headless);
+    await this._eventEmitter.emit('bootDevice', { deviceId: this.udid });
   }
 
   getLogsPaths() {

@@ -96,6 +96,10 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
       logger: this[symbols.logger],
+      callbacks: {
+        onAllocateDevice: this[symbols.allocateDevice].bind(this),
+        onDeallocateDevice: this[symbols.deallocateDevice].bind(this),
+      },
     });
 
     await this[_ipcServer].init();
@@ -103,8 +107,8 @@ class DetoxPrimaryContext extends DetoxContext {
     const environmentFactory = require('../environmentFactory');
 
     const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
-    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({});
-    await this[_deviceAllocator].globalInit(); // TODO: implement globalInit
+    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({ detoxConfig });
+    await this[_deviceAllocator].init();
 
     // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
@@ -148,16 +152,16 @@ class DetoxPrimaryContext extends DetoxContext {
     await super[symbols.installWorker]({ ...opts, workerId });
   }
 
+  /** @override */
   async [symbols.allocateDevice]() {
-    // TODO:
-    // const deviceCookie = await this._deviceAllocator.allocateDevice();
-    // await this._deviceAllocator.postAllocate(this._deviceCookie);
+    const deviceCookie = await this[_deviceAllocator].allocateDevice();
+    await this._deviceAllocator.postAllocate(deviceCookie);
+    // TODO: shall we install the apps here?
   }
 
-  async [symbols.deallocateDevice]() {
-    // TODO:
-    // const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
-    // await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+  /** @override */
+  async [symbols.deallocateDevice](deviceCookie) {
+    await this[_deviceAllocator].deallocateDevice(deviceCookie);
   }
 
   /** @override */
@@ -168,7 +172,9 @@ class DetoxPrimaryContext extends DetoxContext {
       }
     } finally {
       if (this[_deviceAllocator]) {
-        await this[_deviceAllocator].globalCleanup();
+        // const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
+        // await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+        await this[_deviceAllocator].cleanup();
         this[_deviceAllocator] = null;
       }
 
