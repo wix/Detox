@@ -171,6 +171,18 @@ describe('ArtifactPlugin', () => {
       });
     });
 
+    it('should update context on .onBootDevice', async () => {
+      await expect(plugin.onBootDevice({
+        deviceId: 'testDeviceId',
+        coldBoot: true
+      }));
+
+      expect(plugin.context).toEqual({
+        deviceId: 'testDeviceId',
+        shouldNotBeDeletedFromContext: 'extraProperty',
+      });
+    });
+
     it('should not update context on .onBeforeShutdownDevice', async () => {
       await expect(plugin.onBeforeShutdownDevice({
         deviceId: 'testDeviceId'
@@ -264,6 +276,7 @@ describe('ArtifactPlugin', () => {
       it('should replace the other lifecycle hooks with the same noop function', async () => {
         await plugin.onTerminate();
 
+        expect(plugin.onBootDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onShutdownDevice).toBe(plugin.onTerminate);
         expect(plugin.onBeforeLaunchApp).toBe(plugin.onTerminate);

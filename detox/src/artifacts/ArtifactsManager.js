@@ -29,6 +29,7 @@ class ArtifactsManager extends EventEmitter {
       'onBeforeShutdownDevice',
       'onBeforeTerminateApp',
       'onBeforeUninstallApp',
+      'onBootDevice',
       'onCreateExternalArtifact',
       'onHookFailure',
       'onLaunchApp',
@@ -123,6 +124,7 @@ class ArtifactsManager extends EventEmitter {
   }
 
   subscribeToDeviceEvents(deviceEmitter) {
+    deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
     deviceEmitter.on('beforeShutdownDevice', this.onBeforeShutdownDevice.bind(this));
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));
@@ -132,6 +134,10 @@ class ArtifactsManager extends EventEmitter {
     deviceEmitter.on('beforeTerminateApp', this.onBeforeTerminateApp.bind(this));
     deviceEmitter.on('terminateApp', this.onTerminateApp.bind(this));
     deviceEmitter.on('createExternalArtifact', this.onCreateExternalArtifact.bind(this));
+  }
+
+  async onBootDevice(deviceInfo) {
+    await this._callPlugins('plain', 'onBootDevice', deviceInfo);
   }
 
   async onBeforeLaunchApp(appLaunchInfo) {

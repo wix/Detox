@@ -88,10 +88,6 @@ class PluginAllocationCookie {
 }
 
 class PluginDeviceAllocationDriver {
-  constructor(deps) {
-    this.emitter = deps.eventEmitter;
-  }
-
   async allocate(deviceConfig) {
     console.log('TODO Allocate an actual device here', deviceConfig.device);
     return new PluginAllocationCookie('device ID');
@@ -99,11 +95,6 @@ class PluginDeviceAllocationDriver {
 
   async free(cookie, { shutdown }) {
     console.log('TODO: Free up device and resources, here');
-
-    if (shutdown) {
-      await this.emitter.emit('beforeShutdownDevice', { deviceId: id });
-      await this.emitter.emit('shutdownDevice', { deviceId: id });
-    }
   }
 }
 

@@ -120,7 +120,7 @@ class DetoxWorker {
       matchersFactory,
       // @ts-ignore
       runtimeDeviceFactory,
-    } = environmentFactory.createFactories(deviceConfig);
+    } = environmentFactory.createFactories(this._deviceConfig);
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
@@ -133,9 +133,7 @@ class DetoxWorker {
     };
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
-    // TODO: emit before bootDevice
     this._deviceCookie = yield this._context[symbols.allocateDevice]();
-    // TODO: emit after bootDevice
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -146,6 +144,10 @@ class DetoxWorker {
         deviceConfig: this._deviceConfig,
         sessionConfig,
       });
+
+    yield this._artifactsManager.onBootDevice({
+      deviceId: this.device.id,
+    });
 
     const matchers = matchersFactory.createMatchers({
       invocationManager,
@@ -204,9 +206,7 @@ class DetoxWorker {
     }
 
     if (this._deviceCookie) {
-      // TODO: emit before device shutdown
       await this._context[symbols.deallocateDevice](this._deviceCookie);
-      // TODO: emit after device shutdown
     }
 
     this._deviceAllocator = null;
