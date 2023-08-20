@@ -1517,7 +1517,7 @@ declare global {
              * @param text to type
              * @param isContentEditable whether its a ContentEditable element, default is false.
              */
-            typeText(text: string, isContentEditable: boolean): Promise<void>;
+            typeText(text: string, isContentEditable?: boolean): Promise<void>;
 
             /**
              * At the moment not working on content-editable
