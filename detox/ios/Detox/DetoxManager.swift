@@ -533,17 +533,27 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 				log.info("evaluating JS script: \(script) on web-view \(webView.debugDescription)")
 
-				webView.evaluateJavaScript(script, completionHandler: { (result, error) in
-					var params: [String: String] = [:]
-					params["result"] = result as? String
-					params["error"] = error?.localizedDescription
+				var observation: NSKeyValueObservation?
+				observation = webView.observe(
+					\.isLoading,
+					options: [.new, .old, .initial]
+				) { [weak self] (object, change) in
+					if change.newValue == false {
+						observation?.invalidate()
 
-					self.safeSend(
-						action: "didEvaluateJavaScript",
-						params: params,
-						messageId: messageId
-					)
-				})
+						webView.evaluateJavaScript(script, completionHandler: { (result, error) in
+							var params: [String: String] = [:]
+							params["result"] = result as? String
+							params["error"] = error?.localizedDescription
+
+							self?.safeSend(
+								action: "didEvaluateJavaScript",
+								params: params,
+								messageId: messageId
+							)
+						})
+					}
+				}
 
 			case "longPressAndDrag":
 				let elementIdentifier = params["elementID"] as! String
