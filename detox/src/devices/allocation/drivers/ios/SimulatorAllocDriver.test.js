@@ -1,3 +1,5 @@
+jest.mock('../../../cookies/IosSimulatorCookie');
+
 // @ts-nocheck
 describe('Allocation driver for iOS simulators', () => {
 
@@ -8,6 +10,7 @@ describe('Allocation driver for iOS simulators', () => {
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
     applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock')['--list']);
+    jest.spyOn(applesimutils, 'takeScreenshot').mockResolvedValue('mocked-screenshot-path');
 
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
@@ -25,7 +28,6 @@ describe('Allocation driver for iOS simulators', () => {
 
   describe('allocation', () => {
     beforeEach(() => {
-      jest.mock('../../../cookies/IosSimulatorCookie');
 
       givenNoUsedSimulators();
     });
@@ -98,6 +100,7 @@ describe('Allocation driver for iOS simulators', () => {
       expect(applesimutils.create).toHaveBeenCalledWith(specUsed);
       expect(result.constructor.name).toEqual('IosSimulatorCookie');
       expect(IosSimulatorCookie).toHaveBeenCalledWith(udidNew);
+      expect(applesimutils.takeScreenshot).toHaveBeenCalledWith(udidNew, '/dev/null');
     });
 
     it('should reuse a matching device', async () => {

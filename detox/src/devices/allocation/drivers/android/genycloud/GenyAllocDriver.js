@@ -26,6 +26,10 @@ class GenyAllocDriver extends AllocationDriverBase {
     this._launchInfo = {};
   }
 
+  async init() {
+    // TODO: implement
+  }
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}
@@ -59,7 +63,7 @@ class GenyAllocDriver extends AllocationDriverBase {
 
   /**
    * @param cookie { GenycloudEmulatorCookie }
-   * @param options { DeallocOptions }
+   * @param options { Partial<import('../../AllocationDriverBase').DeallocOptions> }
    * @return {Promise<void>}
    */
   async free(cookie, options = {}) {
@@ -70,6 +74,14 @@ class GenyAllocDriver extends AllocationDriverBase {
     if (options.shutdown) {
       await this._instanceLauncher.shutdown(instance);
     }
+  }
+
+  async cleanup() {
+    // TODO: implement
+  }
+
+  emergencyCleanup() {
+    // TODO: implement
   }
 
   _assertRecipe(deviceQuery, recipe) {

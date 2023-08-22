@@ -36,15 +36,6 @@ function createFactories(deviceConfig) {
   return _getExternalModuleFactories(deviceConfig);
 }
 
-function createGlobalLifecycleHandler(deviceConfig) {
-  if (deviceConfig.type === 'android.genycloud') {
-    const FactoryClass = require('./devices/lifecycle/factories/GenyGlobalLifecycleHandlerFactory');
-    const factory = new FactoryClass();
-    return factory.createHandler();
-  }
-  return null;
-}
-
 function _getFactoryClasses(deviceConfig) {
   let envValidatorFactoryClass;
   let artifactsManagerFactoryClass;
@@ -115,5 +106,4 @@ function _getExternalModuleFactories(deviceConfig) {
 module.exports = {
   validateConfig,
   createFactories,
-  createGlobalLifecycleHandler,
 };

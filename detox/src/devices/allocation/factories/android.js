@@ -59,16 +59,16 @@ class Genycloud extends DeviceAllocatorFactory {
     const deviceRegistry = serviceLocator.genycloud.runtimeDeviceRegistry;
     const deviceCleanupRegistry = serviceLocator.genycloud.cleanupDeviceRegistry;
 
-    const InstanceNaming = require('../../common/drivers/android/genycloud/services/GenyInstanceNaming');
+    const InstanceNaming = require('../drivers/android/genycloud/services/GenyInstanceNaming');
     const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
 
-    const RecipesService = require('../../common/drivers/android/genycloud/services/GenyRecipesService');
+    const RecipesService = require('../drivers/android/genycloud/services/GenyRecipesService');
     const recipeService = new RecipesService(exec);
 
-    const InstanceLookupService = require('../../common/drivers/android/genycloud/services/GenyInstanceLookupService');
+    const InstanceLookupService = require('../drivers/android/genycloud/services/GenyInstanceLookupService');
     const instanceLookupService = new InstanceLookupService(exec, instanceNaming, deviceRegistry);
 
-    const InstanceLifecycleService = require('../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = require('../drivers/android/genycloud/services/GenyInstanceLifecycleService');
     const instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
 
     const RecipeQuerying = require('../drivers/android/genycloud/GenyRecipeQuerying');
@@ -80,6 +80,7 @@ class Genycloud extends DeviceAllocatorFactory {
     const InstanceLauncher = require('../drivers/android/genycloud/GenyInstanceLauncher');
     const GenyAllocDriver = require('../drivers/android/genycloud/GenyAllocDriver');
     const instanceLauncher = new InstanceLauncher({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry });
+
     return new GenyAllocDriver({
       adb,
       recipeQuerying,

@@ -94,7 +94,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
 
   // TODO: move to the allocation driver
   async _runScreenshotWorkaround(udid) {
-    await this.appleSimUtils.takeScreenshot(udid, '/dev/null').catch(() => {
+    await this._applesimutils.takeScreenshot(udid, '/dev/null').catch(() => {
       log.debug({}, `
           NOTE: For an unknown yet reason, taking the first screenshot is apt
           to fail when booting iOS Simulator in a hidden window mode (or on CI).

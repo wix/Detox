@@ -7,6 +7,8 @@
  */
 
 class AllocationDriverBase {
+  async init() {}
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<DeviceCookie>}
@@ -25,6 +27,10 @@ class AllocationDriverBase {
    * @return {Promise<void>}
    */
   async free(cookie, options) {}
+
+  async cleanup() {}
+
+  emergencyCleanup() {}
 }
 
 module.exports = AllocationDriverBase;

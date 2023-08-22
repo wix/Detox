@@ -104,7 +104,9 @@ class DetoxPrimaryContext extends DetoxContext {
 
     const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
     this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({});
-    await this[_deviceAllocator].globalInit(); // TODO: implement globalInit
+    if (typeof this[_deviceAllocator].init === 'function') {
+      await this[_deviceAllocator].init();
+    }
 
     // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
@@ -168,7 +170,10 @@ class DetoxPrimaryContext extends DetoxContext {
       }
     } finally {
       if (this[_deviceAllocator]) {
-        await this[_deviceAllocator].globalCleanup();
+        if (typeof this[_deviceAllocator].cleanup === 'function') {
+          await this[_deviceAllocator].cleanup();
+        }
+
         this[_deviceAllocator] = null;
       }
 
@@ -204,7 +209,9 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     if (this[_deviceAllocator]) {
-      this[_deviceAllocator].emergencyCleanup();
+      if (typeof this[_deviceAllocator].emergencyCleanup === 'function') {
+        this[_deviceAllocator].emergencyCleanup();
+      }
       this[_deviceAllocator] = null;
     }
 
