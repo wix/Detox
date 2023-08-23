@@ -9,15 +9,11 @@ import com.facebook.react.bridge.ReactContext;
 
 import org.joor.Reflect;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-public class BridgeIdlingResource extends DetoxBaseIdlingResource implements NotThreadSafeBridgeIdleDebugListener {
-    private static final String LOG_TAG = "DetoxIR.Bridge";
+public class BridgeIdlingResourceRN71 extends BridgeIdlingResource implements NotThreadSafeBridgeIdleDebugListener {
+    private static final String LOG_TAG = "Detox.BridgeIR";
 
     private static final long IDLE_POLL_INTERVAL = 20L;
 
@@ -32,7 +28,7 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
     private final AtomicBoolean idleNow = new AtomicBoolean(true);
     private int idleThreshold = 0;
 
-    public BridgeIdlingResource(ReactContext reactContext) {
+    BridgeIdlingResourceRN71(ReactContext reactContext) {
         this.reactContext = reactContext;
         this.reactContext.getCatalystInstance().addBridgeIdleDebugListener(this);
 
@@ -45,23 +41,6 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
     public void onDetach() {
         idleStatePollingThread.quit();
         this.reactContext.getCatalystInstance().removeBridgeIdleDebugListener(this);
-    }
-
-    @Override
-    public String getName() {
-        return BridgeIdlingResource.class.getName();
-    }
-
-    @NonNull
-    @Override
-    public String getDebugName() {
-        return "bridge";
-    }
-
-    @Nullable
-    @Override
-    public Map<String, Object> getBusyHint() {
-        return null;
     }
 
     @Override

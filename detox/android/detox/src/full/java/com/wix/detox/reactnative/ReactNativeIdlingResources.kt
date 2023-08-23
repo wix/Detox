@@ -135,7 +135,7 @@ class ReactNativeIdlingResources constructor(
     }
 
     private fun setupCustomRNIdlingResources() {
-        rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
+        rnBridgeIdlingResource = BridgeIdlingResource.instance(reactContext)
         timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
         uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
         animIdlingResource = AnimatedModuleIdlingResource(reactContext)
