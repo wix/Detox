@@ -293,8 +293,10 @@ class DoubleExpectation : Expectation {
 	}
 	
 	override func evaluate(with element: Element) -> Bool {
-		return NSPredicate { view, _ -> Bool in
-			self.valueToTest(from: element).isAlmostEqual(to: self.value, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
+		return NSPredicate { evaluatedElement, _ -> Bool in
+			guard let evaluatedElement = evaluatedElement as? Element else { return false }
+			let valueToTest = self.valueToTest(from: evaluatedElement)
+			return valueToTest.isAlmostEqual(to: self.value, tolerance: self.tolerance ?? Double.ulpOfOne.squareRoot())
 		}.evaluate(with: element)
 	}
 }
