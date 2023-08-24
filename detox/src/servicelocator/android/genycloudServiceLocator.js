@@ -1,10 +1,6 @@
-const GenyDeviceRegistryFactory = require('../../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-
 class GenycloudServiceLocator {
   constructor() {
     this._exec = null;
-    this.runtimeDeviceRegistry = GenyDeviceRegistryFactory.forRuntime();
-    this.cleanupDeviceRegistry = GenyDeviceRegistryFactory.forGlobalShutdown();
   }
 
   // Note: important to keep lazy because of implicit validations that are sensitive (inside environment, in particular).

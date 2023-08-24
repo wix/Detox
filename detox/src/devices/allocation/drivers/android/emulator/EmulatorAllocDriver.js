@@ -89,3 +89,31 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 }
 
 module.exports = EmulatorAllocDriver;
+
+// TODO: distribute this logic to the drivers
+// async globalInit() {
+// if (!this._behaviorConfig.init.keepLockFile) {
+//   return;
+// }
+//
+// const DeviceRegistry = require('../devices/DeviceRegistry');
+//
+// const deviceType = this[symbols.config].device.type;
+//
+// switch (deviceType) {
+//   case 'ios.none':
+//   case 'ios.simulator':
+//     await DeviceRegistry.forIOS().reset();
+//     break;
+//   case 'android.attached':
+//   case 'android.emulator':
+//   case 'android.genycloud':
+//     await DeviceRegistry.forAndroid().reset();
+//     break;
+// }
+//
+// if (deviceType === 'android.genycloud') {
+//   const GenyDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
+//   await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
+// }
+// }

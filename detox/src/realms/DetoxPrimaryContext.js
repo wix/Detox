@@ -103,10 +103,11 @@ class DetoxPrimaryContext extends DetoxContext {
     const environmentFactory = require('../environmentFactory');
 
     const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
-    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({});
-    if (typeof this[_deviceAllocator].init === 'function') {
-      await this[_deviceAllocator].init();
-    }
+    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({
+      detoxConfig
+    });
+
+    await this[_deviceAllocator].init();
 
     // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
@@ -151,15 +152,14 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   async [symbols.allocateDevice]() {
-    // TODO:
-    // const deviceCookie = await this._deviceAllocator.allocateDevice();
-    // await this._deviceAllocator.postAllocate(this._deviceCookie);
+    const { device } = this[$sessionState].detoxConfig;
+    const deviceCookie = await this[_deviceAllocator].allocate(device);
+    await this[_deviceAllocator].postAllocate(deviceCookie);
+    return deviceCookie;
   }
 
-  async [symbols.deallocateDevice]() {
-    // TODO:
-    // const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
-    // await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+  async [symbols.deallocateDevice](cookie) {
+    await this[_deviceAllocator].free(cookie);
   }
 
   /** @override */
@@ -170,10 +170,7 @@ class DetoxPrimaryContext extends DetoxContext {
       }
     } finally {
       if (this[_deviceAllocator]) {
-        if (typeof this[_deviceAllocator].cleanup === 'function') {
-          await this[_deviceAllocator].cleanup();
-        }
-
+        await this[_deviceAllocator].cleanup();
         this[_deviceAllocator] = null;
       }
 
@@ -209,9 +206,7 @@ class DetoxPrimaryContext extends DetoxContext {
     }
 
     if (this[_deviceAllocator]) {
-      if (typeof this[_deviceAllocator].emergencyCleanup === 'function') {
-        this[_deviceAllocator].emergencyCleanup();
-      }
+      this[_deviceAllocator].emergencyCleanup();
       this[_deviceAllocator] = null;
     }
 

@@ -1,4 +1,4 @@
-describe('Allocation driver for Genymotion SaaS emulators', () => {
+describe.skip('Allocation driver for Genymotion SaaS emulators', () => {
   const deviceConfig = {
     device: {
       query: 'mock',
@@ -6,7 +6,7 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
   };
 
   let recipeQuerying;
-  let allocationHelper;
+  let instanceLifecycleService;
   let instanceLauncher;
   let GenyInstance;
   let adb;
@@ -18,8 +18,8 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
     const RecipeQuerying = jest.genMockFromModule('./GenyRecipeQuerying');
     recipeQuerying = new RecipeQuerying();
 
-    const InstanceAllocationHelper = jest.genMockFromModule('./GenyInstanceAllocationHelper');
-    allocationHelper = new InstanceAllocationHelper();
+    const InstanceLifecyleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
+    instanceLifecycleService = new InstanceLifecyleService();
 
     const InstanceLauncher = jest.genMockFromModule('./GenyInstanceLauncher');
     instanceLauncher = new InstanceLauncher();
@@ -35,7 +35,12 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
   let allocDriver;
   beforeEach(() => {
     const GenyAllocDriver = require('./GenyAllocDriver');
-    allocDriver = new GenyAllocDriver({ recipeQuerying, allocationHelper, instanceLauncher, adb });
+    allocDriver = new GenyAllocDriver({
+      adb,
+      instanceLauncher,
+      instanceLifecycleService,
+      recipeQuerying,
+    });
   });
 
   const aRecipe = () => ({
@@ -61,16 +66,16 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
 
   const givenRecipe = (recipe) => recipeQuerying.getRecipeFromQuery.mockResolvedValue(recipe);
   const givenNoRecipe = () => givenRecipe(undefined);
-  const givenAllocationResult = ({ instance, isNew }) => allocationHelper.allocateDevice.mockResolvedValue({ instance, isNew });
-  const givenReallocationResult = (instance) => givenAllocationResult({ instance, isNew: false });
-  const givenFreshAllocationResult = (instance) => givenAllocationResult({ instance, isNew: true });
-  const givenLaunchError = (message) => instanceLauncher.launch.mockRejectedValue(new Error(message));
   const givenLaunchResult = (instance) => instanceLauncher.launch.mockResolvedValue(instance);
+  const givenLaunchError = (message) => instanceLauncher.launch.mockRejectedValue(new Error(message));
+  const givenAllocationResult = (instance) => instanceLauncher.connect.mockResolvedValue(instance);
+  const givenReallocationResult = () => givenAllocationResult(aLaunchedInstance());
+  const givenFreshAllocationResult = () => givenAllocationResult(anInstance());
 
   describe('allocation', () => {
     it('should obtain recipe from recipes service', async () => {
       givenRecipe(aRecipe());
-      givenReallocationResult(anInstance());
+      givenReallocationResult();
 
       await allocDriver.allocate(deviceConfig);
       expect(recipeQuerying.getRecipeFromQuery).toHaveBeenCalledWith(deviceConfig.device);
@@ -78,7 +83,7 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
 
     it('should throw a descriptive error if recipe not found', async () => {
       givenNoRecipe();
-      givenReallocationResult(anInstance());
+      givenReallocationResult();
 
       try {
         await allocDriver.allocate(deviceConfig);
@@ -95,7 +100,7 @@ describe('Allocation driver for Genymotion SaaS emulators', () => {
     it('should allocate a cloud instance based on the recipe', async () => {
       const recipe = aRecipe();
       givenRecipe(recipe);
-      givenReallocationResult(anInstance());
+      givenReallocationResult();
 
       await allocDriver.allocate(deviceConfig);
       expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);

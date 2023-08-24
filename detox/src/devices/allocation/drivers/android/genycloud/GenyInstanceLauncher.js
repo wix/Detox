@@ -1,38 +1,50 @@
-// @ts-nocheck
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
+const logger = require('../../../../../utils/logger').child({ cat: 'device' });
 const retry = require('../../../../../utils/retry');
 
+const GenyInstance = require('./services/dto/GenyInstance');
+
+const events = {
+  CREATE_DEVICE: { event: 'CREATE_DEVICE' },
+};
+
 class GenyInstanceLauncher {
-  constructor({ instanceLifecycleService, instanceLookupService, deviceCleanupRegistry }) {
+  constructor({ genyCloudExec, instanceLifecycleService }) {
+    this._genyCloudExec = genyCloudExec;
     this._instanceLifecycleService = instanceLifecycleService;
-    this._instanceLookupService = instanceLookupService;
-    this._deviceCleanupRegistry = deviceCleanupRegistry;
   }
 
   /**
-   * Note:
-   * In the context of Genymotion-cloud (as opposed to local emulators), emulators are
-   * not launched per-se, as with local emulators. Rather, we just need to sync-up with
-   * them and connect, if needed.
-   *
-   * @param instance {GenyInstance} The freshly allocated cloud-instance.
-   * @param isNew { boolean }
+   * @param {import('./services/dto/GenyRecipe')} recipe
    * @returns {Promise<GenyInstance>}
    */
-  async launch(instance, isNew = true) {
-    if (isNew) {
-      await this._deviceCleanupRegistry.allocateDevice(instance.uuid, { name: instance.name });
-    }
-    instance = await this._waitForInstanceBoot(instance);
-    instance = await this._adbConnectIfNeeded(instance);
+  async launch(recipe) {
+    logger.debug(events.CREATE_DEVICE, `Trying to create a device based on "${recipe}"`);
+    const instance = await this._instanceLifecycleService.createInstance(recipe.uuid);
+    const { name, uuid } = instance;
+    logger.info(events.CREATE_DEVICE, `Allocating Genymotion Cloud instance ${name} for testing. To access it via a browser, go to: https://cloud.geny.io/instance/${uuid}`);
+
     return instance;
   }
 
+  /**
+   * @param {GenyInstance} instance The freshly allocated cloud-instance.
+   * @returns {Promise<GenyInstance>}
+   */
+  async connect(instance) {
+    const bootedInstance = await this._waitForInstanceBoot(instance);
+    const connectedInstance = await this._adbConnectIfNeeded(bootedInstance);
+
+    return connectedInstance;
+  }
+
+  /**
+   * @param {import('./services/dto/GenyInstance')} instance The freshly allocated cloud-instance.
+   */
   async shutdown(instance) {
     const { uuid } = instance;
 
     await this._instanceLifecycleService.deleteInstance(uuid);
-    await this._deviceCleanupRegistry.disposeDevice(uuid);
   }
 
   async _waitForInstanceBoot(instance) {
@@ -48,11 +60,13 @@ class GenyInstanceLauncher {
     };
 
     return await retry(options, async () => {
-      const _instance = await this._instanceLookupService.getInstance(instance.uuid);
-      if (!_instance.isOnline()) {
+      const { instance: _instance } = await this._genyCloudExec.getInstance(instance.uuid);
+      const anInstance = new GenyInstance(_instance);
+
+      if (!anInstance.isOnline()) {
         throw new DetoxRuntimeError(`Timeout waiting for instance ${instance.uuid} to be ready`);
       }
-      return _instance;
+      return anInstance;
     });
   }
 
