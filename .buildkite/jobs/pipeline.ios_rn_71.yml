@@ -1,7 +1,6 @@
   - label: ":ios::detox: RN .71 + iOS: Tests app"
     command:
       - "nvm install"
-      - "./scripts/ci.ios.sh"
     env:
       REACT_NATIVE_VERSION: 0.71.10
     artifact_paths:
