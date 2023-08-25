@@ -7,6 +7,7 @@ const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
 const { getCurrentCommand } = require('../utils/argparse');
+const log = require('../utils/logger').child({ cat: 'device' });
 const uuid = require('../utils/uuid');
 
 const DetoxContext = require('./DetoxContext');
@@ -79,7 +80,6 @@ class DetoxPrimaryContext extends DetoxContext {
     const detoxConfig = await this[symbols.resolveConfig](opts);
 
     const {
-      behavior: behaviorConfig,
       device: deviceConfig,
       logger: loggerConfig,
       session: sessionConfig
@@ -154,8 +154,18 @@ class DetoxPrimaryContext extends DetoxContext {
   async [symbols.allocateDevice]() {
     const { device } = this[$sessionState].detoxConfig;
     const deviceCookie = await this[_deviceAllocator].allocate(device);
-    await this[_deviceAllocator].postAllocate(deviceCookie);
-    return deviceCookie;
+
+    try {
+      return await this[_deviceAllocator].postAllocate(deviceCookie);
+    } catch (e) {
+      try {
+        await this[_deviceAllocator].free(deviceCookie, { shutdown: true });
+      } catch (e2) {
+        log.error({ event: 'DEVICE_ALLOCATOR', err: e2 }, `Failed to free ${deviceCookie} after a failed allocation`);
+      }
+
+      throw e;
+    }
   }
 
   async [symbols.deallocateDevice](cookie) {

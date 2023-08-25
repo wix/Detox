@@ -1,4 +1,5 @@
 // @ts-nocheck
+const detectConcurrentDetox = require('../../../../../utils/detectConcurrentDetox');
 const AttachedAndroidDeviceCookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -15,13 +16,19 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     this._freeDeviceFinder = freeDeviceFinder;
   }
 
+  async init() {
+    if (!detectConcurrentDetox()) {
+      await this._deviceRegistry.reset();
+    }
+  }
+
   /**
    * @param deviceConfig
    * @return {Promise<AndroidDeviceCookie>}
    */
   async allocate(deviceConfig) {
     const adbNamePattern = deviceConfig.device.adbName;
-    const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
+    const adbName = await this._deviceRegistry.registerDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
     return new AttachedAndroidDeviceCookie(adbName);
   }
@@ -44,7 +51,7 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
    */
   async free(cookie) {
     const { adbName } = cookie;
-    await this._deviceRegistry.disposeDevice(adbName);
+    await this._deviceRegistry.unregisterDevice(adbName);
   }
 }
 

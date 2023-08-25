@@ -1,6 +1,8 @@
-// @ts-nocheck
 const _ = require('lodash');
 
+const Deferred = require('../../../../../utils/Deferred');
+const detectConcurrentDetox = require('../../../../../utils/detectConcurrentDetox');
+const log = require('../../../../../utils/logger').child({ __filename });
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -8,20 +10,47 @@ const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 
 class EmulatorAllocDriver extends AllocationDriverBase {
   /**
-   * @param adb { ADB }
-   * @param avdValidator { AVDValidator }
-   * @param emulatorVersionResolver { EmulatorVersionResolver }
-   * @param emulatorLauncher { EmulatorLauncher }
-   * @param allocationHelper { EmulatorAllocationHelper }
+   * @param {object} options
+   * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
+   * @param {import('./AVDValidator')} options.avdValidator
+   * @param {DetoxInternals.RuntimeConfig} options.detoxConfig
+   * @param {import('../../../DeviceRegistry')} options.deviceRegistry
+   * @param {import('./FreeEmulatorFinder')} options.freeDeviceFinder
+   * @param {import('./FreePortFinder')} options.freePortFinder
+   * @param {import('./EmulatorLauncher')} options.emulatorLauncher
+   * @param {import('./EmulatorVersionResolver')} options.emulatorVersionResolver
    */
-  constructor({ adb, avdValidator, emulatorVersionResolver, emulatorLauncher, allocationHelper }) {
+  constructor({
+    adb,
+    avdValidator,
+    detoxConfig,
+    deviceRegistry,
+    freeDeviceFinder,
+    freePortFinder,
+    emulatorVersionResolver,
+    emulatorLauncher
+  }) {
     super();
+
+    /** @type {Deferred} */
+    this._deferredAllocation = Deferred.resolved(null);
+    /** @type {Promise<string> | null} */
+    this._pendingAllocation = null;
+
     this._adb = adb;
     this._avdValidator = avdValidator;
+    this._deviceRegistry = deviceRegistry;
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
-    this._allocationHelper = allocationHelper;
-    this._launchInfo = {};
+    this._freeDeviceFinder = freeDeviceFinder;
+    this._freePortFinder = freePortFinder;
+    this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
+  }
+
+  async init() {
+    if (!detectConcurrentDetox()) {
+      await this._deviceRegistry.reset();
+    }
   }
 
   /**
@@ -29,55 +58,112 @@ class EmulatorAllocDriver extends AllocationDriverBase {
    * @returns {Promise<AndroidEmulatorCookie>}
    */
   async allocate(deviceConfig) {
+    await this._pendingAllocation.catch(() => { /* ignore previous errors */ });
+    this._deferredAllocation = new Deferred();
+    this._pendingAllocation = this._deviceRegistry.registerDevice(() => this._deferredAllocation.promise);
+
+    try {
+      return await this._doAllocate(deviceConfig);
+    } catch (e) {
+      this._deferredAllocation.reject(e);
+      throw e;
+    }
+  }
+
+  /**
+   * @param deviceConfig
+   * @returns {Promise<AndroidEmulatorCookie>}
+   */
+  async _doAllocate(deviceConfig) {
     const avdName = deviceConfig.device.avdName;
 
     await this._avdValidator.validate(avdName, deviceConfig.headless);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
-    const allocResult = await this._allocationHelper.allocateDevice(avdName);
-    const { adbName } = allocResult;
+    let adbName = await this._freeDeviceFinder.findFreeDevice(avdName);
+    if (!adbName) {
+      const port = await this._freePortFinder.findFreePort();
+      adbName = `emulator-${port}`;
 
-    this._launchInfo[adbName] = {
-      avdName,
-      isRunning: allocResult.isRunning,
-      launchOptions: {
+      await this._emulatorLauncher.launch({
         bootArgs: deviceConfig.bootArgs,
         gpuMode: deviceConfig.gpuMode,
         headless: deviceConfig.headless,
         readonly: deviceConfig.readonly,
-        port: allocResult.placeholderPort,
-      },
-    };
+        avdName,
+        adbName,
+        port,
+      });
+    }
 
     return new AndroidEmulatorCookie(adbName);
+  }
+
+  /**
+    * @param {AndroidEmulatorCookie} deviceCookie
+    */
+  async postAllocate(deviceCookie) {
+    try {
+      await this._doPostAllocate(deviceCookie);
+      this._deferredAllocation.resolve(deviceCookie.adbName);
+    } catch (e) {
+      this._deferredAllocation.reject(e);
+      throw e;
+    }
   }
 
   /**
    * @param {AndroidEmulatorCookie} deviceCookie
    * @returns {Promise<void>}
    */
-  async postAllocate(deviceCookie) {
+  async _doPostAllocate(deviceCookie) {
     const { adbName } = deviceCookie;
-    const { avdName, isRunning, launchOptions } = this._launchInfo[adbName];
 
-    await this._emulatorLauncher.launch(avdName, adbName, isRunning, launchOptions);
+    await this._emulatorLauncher.awaitEmulatorBoot(adbName);
     await this._adb.apiLevel(adbName);
     await this._adb.disableAndroidAnimations(adbName);
     await this._adb.unlockScreen(adbName);
   }
 
   /**
-   * @param cookie { AndroidEmulatorCookie }
-   * @param options { DeallocOptions }
-   * @return { Promise<void> }
+   * @param cookie {AndroidEmulatorCookie}
+   * @param options {Partial<import('../../AllocationDriverBase').DeallocOptions>}
+   * @return {Promise<void>}
    */
   async free(cookie, options = {}) {
     const { adbName } = cookie;
 
-    await this._allocationHelper.deallocateDevice(adbName);
-
     if (options.shutdown) {
+      await this._doShutdown(adbName);
+    }
+
+    await this._deviceRegistry.unregisterDevice(adbName);
+  }
+
+  async cleanup() {
+    if (!this._shouldShutdown || detectConcurrentDetox()) {
+      return;
+    }
+
+    await this._deviceRegistry.unregisterDevice(async () => {
+      const { devices } = await this._adb.devices();
+      const allocatedEmulators = this._deviceRegistry.getRegisteredDevicesSync().getIds();
+      const actualEmulators = devices.map((device) => device.adbName);
+      const emulatorsToShutdown = _.intersection(allocatedEmulators, actualEmulators);
+      const shutdownPromises = emulatorsToShutdown.map((adbName) => this._doShutdown(adbName));
+      await Promise.all(shutdownPromises);
+    });
+  }
+
+  /**
+   * @param {string} adbName
+   * @return {Promise<void>}
+   */
+  async _doShutdown(adbName) {
+    try {
       await this._emulatorLauncher.shutdown(adbName);
+    } catch (err) {
+      log.warn({ event: 'DEVICE_ALLOCATOR', err }, `Failed to shutdown emulator ${adbName}`);
     }
   }
 
@@ -89,31 +175,3 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 }
 
 module.exports = EmulatorAllocDriver;
-
-// TODO: distribute this logic to the drivers
-// async globalInit() {
-// if (!this._behaviorConfig.init.keepLockFile) {
-//   return;
-// }
-//
-// const DeviceRegistry = require('../devices/DeviceRegistry');
-//
-// const deviceType = this[symbols.config].device.type;
-//
-// switch (deviceType) {
-//   case 'ios.none':
-//   case 'ios.simulator':
-//     await DeviceRegistry.forIOS().reset();
-//     break;
-//   case 'android.attached':
-//   case 'android.emulator':
-//   case 'android.genycloud':
-//     await DeviceRegistry.forAndroid().reset();
-//     break;
-// }
-//
-// if (deviceType === 'android.genycloud') {
-//   const GenyDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-//   await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
-// }
-// }

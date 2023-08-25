@@ -13,30 +13,41 @@ class EmulatorLauncher {
   constructor({ adb, emulatorExec }) {
     this._adb = adb;
     this._emulatorExec = emulatorExec;
-    traceMethods(log, this, ['_awaitEmulatorBoot']);
+    traceMethods(log, this, ['awaitEmulatorBoot']);
   }
 
   /**
-   * @param avdName { String }
-   * @param adbName { String }
-   * @param isRunning { Boolean }
-   * @param options { Object }
-   * @param options.port { Number | undefined }
-   * @param options.bootArgs { String | undefined }
-   * @param options.gpuMode { String | undefined }
-   * @param options.headless { Boolean }
-   * @param options.readonly { Boolean }
+   * @param {object} options
+   * @param {string} options.avdName
+   * @param {string} options.adbName
+   * @param {number} options.port
+   * @param {string | undefined} options.bootArgs
+   * @param {string | undefined} options.gpuMode
+   * @param {boolean} options.headless
+   * @param {boolean} options.readonly
    */
-  async launch(avdName, adbName, isRunning, options = { port: undefined }) {
-    if (!isRunning) {
-      const launchCommand = new LaunchCommand(avdName, options);
-      await retry({
-        retries: 2,
-        interval: 100,
-        conditionFn: isUnknownEmulatorError,
-      }, () => this._launchEmulator(avdName, launchCommand, adbName));
-    }
-    await this._awaitEmulatorBoot(adbName);
+  async launch(options) {
+    const launchCommand = new LaunchCommand(options);
+    await retry({
+      retries: 2,
+      interval: 100,
+      conditionFn: isUnknownEmulatorError,
+    }, () => launchEmulatorProcess(this._emulatorExec, this._adb, launchCommand));
+  }
+
+  /**
+   * @param {string} adbName
+   */
+  async awaitEmulatorBoot(adbName) {
+    await retry({ retries: 240, interval: 2500, shouldUnref: true }, async () => {
+      const isBootComplete = await this._adb.isBootComplete(adbName);
+
+      if (!isBootComplete) {
+        throw new DetoxRuntimeError({
+          message: `Waited for ${adbName} to complete booting for too long!`,
+        });
+      }
+    });
   }
 
   async shutdown(adbName) {
@@ -50,22 +61,6 @@ class EmulatorLauncher {
         throw new DetoxRuntimeError({
           message: `Failed to shut down the emulator ${adbName}`,
           hint: `Try terminating manually all processes named "qemu-system-x86_64"`,
-        });
-      }
-    });
-  }
-
-  _launchEmulator(emulatorName, launchCommand, adbName) {
-    return launchEmulatorProcess(emulatorName, this._emulatorExec, launchCommand, this._adb, adbName);
-  }
-
-  async _awaitEmulatorBoot(adbName) {
-    await retry({ retries: 240, interval: 2500, shouldUnref: true }, async () => {
-      const isBootComplete = await this._adb.isBootComplete(adbName);
-
-      if (!isBootComplete) {
-        throw new DetoxRuntimeError({
-          message: `Waited for ${adbName} to complete booting for too long!`,
         });
       }
     });

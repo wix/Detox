@@ -47,9 +47,9 @@ describe('DetoxPrimaryContext', () => {
 
   /** @type {jest.Mocked<import('../devices/allocation/drivers/AllocationDriverBase')>} */
   let deviceAllocator;
-  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
+  /** @type {jest.Mocked<import('../devices/allocation/DeviceRegistry')>} */
   let deviceRegistryIOS;
-  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
+  /** @type {jest.Mocked<import('../devices/allocation/DeviceRegistry')>} */
   let deviceRegistryAndroid;
   /** @type {jest.Mock<import('../server/DetoxServer')>} */
   let DetoxServer;

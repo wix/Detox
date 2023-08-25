@@ -23,16 +23,13 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const EmulatorLauncher = require('../drivers/android/emulator/EmulatorLauncher');
     const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec });
 
-    const EmulatorAllocationHelper = require('../drivers/android/emulator/EmulatorAllocationHelper');
-    const allocationHelper = new EmulatorAllocationHelper(deviceRegistry, freeEmulatorFinder);
-
     const EmulatorAllocDriver = require('../drivers/android/emulator/EmulatorAllocDriver');
     return new EmulatorAllocDriver({
       adb,
       avdValidator,
       emulatorVersionResolver,
       emulatorLauncher,
-      allocationHelper,
+      freeEmulatorFinder,
     });
   }
 }
@@ -43,7 +40,7 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const adb = serviceLocator.adb;
     const deviceRegistry = serviceLocator.deviceRegistry;
 
-    const FreeDeviceFinder = require('../../common/drivers/android/tools/FreeDeviceFinder');
+    const FreeDeviceFinder = require('../drivers/android/FreeDeviceFinder');
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
 
     const AttachedAndroidAllocDriver = require('../drivers/android/attached/AttachedAndroidAllocDriver');

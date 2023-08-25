@@ -4,8 +4,6 @@ if (process.platform === 'win32') {
 }
 
 jest.mock('../src/logger/DetoxLogger');
-jest.mock('../src/devices/DeviceRegistry');
-jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('./utils/jestInternals');
 
 const cp = require('child_process');
@@ -26,8 +24,6 @@ describe('CLI', () => {
   let _temporaryFiles;
   let detoxConfig;
   let detoxConfigPath;
-  let DeviceRegistry;
-  let GenyDeviceRegistryFactory;
   let jestInternals;
 
   let mockExecutable;
@@ -80,11 +76,6 @@ describe('CLI', () => {
     });
 
     logger = () => require('../src/logger/DetoxLogger').instances[0];
-    DeviceRegistry = require('../src/devices/DeviceRegistry');
-    DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
-    DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
-    GenyDeviceRegistryFactory = require('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-    GenyDeviceRegistryFactory.forGlobalShutdown.mockImplementation(() => new DeviceRegistry());
   });
 
   afterEach(async () => {

@@ -1,82 +1,84 @@
+const { DetoxInternalError } = require('../../../../../errors');
+
 class GenyRegistry {
   constructor() {
-    /** @type {Map<import('./services/dto/GenyInstance'), import('./services/dto/GenyRecipe')>} */
-    this._availableInstances = new Map();
-    /** @type {Set<import('./services/dto/GenyInstance')>} */
-    this._busyInstances = new Set();
+    /** @type {Map<string, import('./services/dto/GenyRecipe')>} */
+    this._recipes = new Map();
+    /** @type {Map<string, import('./services/dto/GenyInstance')>} */
+    this._freeInstances = new Map();
+    /** @type {Map<string, import('./services/dto/GenyInstance')>} */
+    this._busyInstances = new Map();
+    /** @type {Set<string>} */
+    this._newInstances = new Set();
   }
 
   getInstances() {
-    return [...this._availableInstances.keys()];
+    return [...this._freeInstances.values(), ...this._busyInstances.values()];
   }
 
-  isBusy(instance, strict = false) {
-    return strict
-      ? this._busyInstances.has(instance)
-      : this.isBusy(this.findInstance(instance), true);
-  }
-
+  /**
+   * @param {import('./services/dto/GenyInstance')} instance
+   * @param {import('./services/dto/GenyRecipe')} recipe
+   */
   addInstance(instance, recipe) {
-    this._availableInstances.set(instance, recipe);
-    this._busyInstances.add(instance);
+    this._recipes.set(instance.uuid, recipe);
+    this._busyInstances.set(instance.uuid, instance);
+    this._newInstances.add(instance.uuid);
   }
 
-  updateInstance(oldInstance, newInstance) {
-    if (oldInstance !== newInstance) {
-      if (this._availableInstances.has(oldInstance)) {
-        this._availableInstances.set(newInstance, this._availableInstances.get(oldInstance));
-        this._availableInstances.delete(oldInstance);
-      }
+  /** @param {import('./services/dto/GenyInstance')} instance */
+  pollNewInstance(instance) {
+    const result = this._newInstances.has(instance.uuid);
+    this._newInstances.delete(instance.uuid);
+    return result;
+  }
 
-      if (this._busyInstances.delete(oldInstance)) {
-        this._busyInstances.add(newInstance);
-      }
+  /** @param {import('./services/dto/GenyInstance')} instance */
+  updateInstance(instance) {
+    if (this._freeInstances.has(instance.uuid)) {
+      this._freeInstances.set(instance.uuid, instance);
     }
 
-    return newInstance;
-  }
-
-  removeInstance(instance, strict = false) {
-    if (strict) {
-      this._availableInstances.delete(instance);
-      this._busyInstances.delete(instance);
-    } else {
-      const anInstance = this.findInstance(instance);
-      this.removeInstance(anInstance, true);
+    if (this._busyInstances.has(instance.uuid)) {
+       this._busyInstances.set(instance.uuid, instance);
     }
   }
 
-  busyInstance(instance, strict = false) {
-    if (strict) {
-      this._busyInstances.add(instance);
-    } else {
-      const anInstance = this.findInstance(instance);
-      this.busyInstance(anInstance, true);
-    }
+  /** @param {import('./services/dto/GenyInstance')} instance */
+  removeInstance(instance) {
+    this._freeInstances.delete(instance.uuid);
+    this._busyInstances.delete(instance.uuid);
+    this._newInstances.delete(instance.uuid);
+    this._recipes.delete(instance.uuid);
   }
 
-  freeInstance(instance, strict = false) {
-    if (strict) {
-      this._busyInstances.delete(instance);
-    } else {
-      const anInstance = this.findInstance(instance);
-      this.freeInstance(anInstance, true);
+  /** @param {import('./services/dto/GenyInstance')} instance */
+  markAsBusy(instance) {
+    if (!this._recipes.has(instance.uuid)) {
+      throw new DetoxInternalError(`Cannot mark an unknown instance ${instance.uuid} as busy`);
     }
+
+    this._busyInstances.set(instance.uuid, instance);
+    this._freeInstances.delete(instance.uuid);
+    return instance;
   }
 
-  findInstance(instance) {
-    for (const anInstance of this._availableInstances.keys()) {
-      if (anInstance.uuid === instance.uuid) {
-        return anInstance;
-      }
+  /** @param {import('./services/dto/GenyInstance')} instance */
+  markAsFree(instance) {
+    if (!this._busyInstances.has(instance.uuid)) {
+      throw new DetoxInternalError(`Cannot mark an unknown instance ${instance.uuid} as free`);
     }
+
+    this._freeInstances.set(instance.uuid, instance);
+    this._busyInstances.delete(instance.uuid);
+    return instance;
   }
 
-  getFreeInstance(recipe) {
-    for (const [anInstance, aRecipe] of this._availableInstances) {
-      if (recipe.uuid === aRecipe.uuid && !this._busyInstances.has(anInstance)) {
-        this._busyInstances.add(anInstance);
-        return anInstance;
+  findFreeInstance(recipe) {
+    for (const instance of this._freeInstances.values()) {
+      const aRecipe = this._recipes.get(instance.uuid);
+      if (recipe.uuid === aRecipe.uuid) {
+        return this.markAsBusy(instance);
       }
     }
   }

@@ -1,6 +1,6 @@
 const { DetoxRuntimeError } = require('../../../../../errors');
 const Timer = require('../../../../../utils/Timer');
-const logger = require('../../../../../utils/logger').child({ cat: 'device' });
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenycloudEmulatorCookie = require('../../../../cookies/GenycloudEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -42,43 +42,33 @@ class GenyAllocDriver extends AllocationDriverBase {
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    let instance = this._genyRegistry.getFreeInstance(recipe);
-    const isNew = !instance;
-    if (isNew) {
+    let instance = this._genyRegistry.findFreeInstance(recipe);
+    if (!instance) {
       instance = await this._instanceLauncher.launch(recipe);
-      this._genyRegistry.addInstance(instance);
+      this._genyRegistry.addInstance(instance, recipe);
     }
 
-    try {
-      const connectedInstance = await this._instanceLauncher.connect(instance);
-      instance = this._genyRegistry.updateInstance(instance, connectedInstance);
-
-      if (isNew) {
-        await this._postCreate(instance);
-      }
-
-      return new GenycloudEmulatorCookie(instance);
-    } catch (e) {
-      try {
-        await this.free(new GenycloudEmulatorCookie(instance), { shutdown: true });
-      } finally {
-        // eslint-disable-next-line no-unsafe-finally
-        throw e;
-      }
-    }
+    return new GenycloudEmulatorCookie(instance);
   }
 
   /**
-   * @param {import('./services/dto/GenyInstance')} instance
+   * @param {GenycloudEmulatorCookie} cookie
    */
-  async _postCreate(instance) {
-    const { adbName } = instance;
+  async postAllocate(cookie) {
+    const instance = await this._instanceLauncher.connect(cookie.instance);
+    this._genyRegistry.updateInstance(instance);
 
-    await Timer.run(20000, 'waiting for device to respond', async () => {
-      await this._adb.disableAndroidAnimations(adbName);
-      await this._adb.setWiFiToggle(adbName, true);
-      await this._adb.apiLevel(adbName);
-    });
+    if (this._genyRegistry.pollNewInstance(instance)) {
+      const { adbName } = instance;
+
+      await Timer.run(20000, 'waiting for device to respond', async () => {
+        await this._adb.disableAndroidAnimations(adbName);
+        await this._adb.setWiFiToggle(adbName, true);
+        await this._adb.apiLevel(adbName);
+      });
+    }
+
+    return new GenycloudEmulatorCookie(instance);
   }
 
   /**
@@ -91,16 +81,16 @@ class GenyAllocDriver extends AllocationDriverBase {
       this._genyRegistry.removeInstance(cookie.instance);
       await this._instanceLauncher.shutdown(cookie.instance);
     } else {
-      this._genyRegistry.freeInstance(cookie.instance);
+      this._genyRegistry.markAsFree(cookie.instance);
     }
   }
 
   async cleanup() {
-    logger.info(events.GENYCLOUD_TEARDOWN, 'Initiating Genymotion SaaS instances teardown...');
+    log.info(events.GENYCLOUD_TEARDOWN, 'Initiating Genymotion SaaS instances teardown...');
 
     const killPromises = this._genyRegistry.getInstances().map((instance) => {
-      this._genyRegistry.busyInstance(instance, true);
-      const onSuccess = () => this._genyRegistry.removeInstance(instance, true);
+      this._genyRegistry.markAsBusy(instance);
+      const onSuccess = () => this._genyRegistry.removeInstance(instance);
       const onError = (error) => ({ ...instance, error });
       return this._instanceLauncher.shutdown(instance).then(onSuccess, onError);
     });
@@ -125,19 +115,19 @@ class GenyAllocDriver extends AllocationDriverBase {
 
   _reportGlobalCleanupSummary(deletionLeaks) {
     if (deletionLeaks.length) {
-      logger.warn(events.GENYCLOUD_TEARDOWN, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
+      log.warn(events.GENYCLOUD_TEARDOWN, 'WARNING! Detected a Genymotion SaaS instance leakage, for the following instances:');
 
       deletionLeaks.forEach(({ uuid, name, error }) => {
-        logger.warn(events.GENYCLOUD_TEARDOWN, [
+        log.warn(events.GENYCLOUD_TEARDOWN, [
           `Instance ${name} (${uuid})${error ? `: ${error}` : ''}`,
           `    Kill it by visiting https://cloud.geny.io/instance/${uuid}, or by running:`,
           `    gmsaas instances stop ${uuid}`,
         ].join('\n'));
       });
 
-      logger.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed with warnings');
+      log.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed with warnings');
     } else {
-      logger.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed successfully');
+      log.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed successfully');
     }
   }
 }

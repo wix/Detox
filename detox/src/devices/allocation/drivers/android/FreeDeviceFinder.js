@@ -1,6 +1,7 @@
-const log = require('../../../../../utils/logger').child({ cat: 'device' });
+const detectConcurrentDetox = require('../../../../utils/detectConcurrentDetox');
+const log = require('../../../../utils/logger').child({ cat: 'device' });
 
-const DEVICE_LOOKUP_LOG_EVT = 'DEVICE_LOOKUP';
+const DEVICE_LOOKUP = { event: 'DEVICE_LOOKUP' };
 
 class FreeDeviceFinder {
   constructor(adb, deviceRegistry) {
@@ -26,23 +27,23 @@ class FreeDeviceFinder {
 
     const isTaken = this.deviceRegistry.includes(adbName);
     if (isTaken) {
-      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is already taken, skipping...`);
+      log.debug(DEVICE_LOOKUP, `Device ${adbName} is already taken, skipping...`);
       return false;
     }
 
     const isOffline = candidate.status === 'offline';
     if (isOffline) {
-      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} is offline, skipping...`);
+      log.debug(DEVICE_LOOKUP, `Device ${adbName} is offline, skipping...`);
       return false;
     }
 
     const isMatching = await this._isDeviceMatching(candidate, deviceQuery);
     if (!isMatching) {
-      log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Device ${adbName} does not match "${deviceQuery}"`);
+      log.debug(DEVICE_LOOKUP, `Device ${adbName} does not match "${deviceQuery}"`);
       return false;
     }
 
-    log.debug({ event: DEVICE_LOOKUP_LOG_EVT }, `Found a matching & free device ${candidate.adbName}`);
+    log.debug(DEVICE_LOOKUP, `Found a matching & free device ${candidate.adbName}`);
     return true;
   }
 

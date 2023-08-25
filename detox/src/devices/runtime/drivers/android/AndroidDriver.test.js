@@ -595,7 +595,7 @@ describe('Android driver', () => {
 
 
     jest.mock('../../../DeviceRegistry');
-    DeviceRegistryClass = require('../../../DeviceRegistry');
+    DeviceRegistryClass = require('../../../allocation/DeviceRegistry');
     const createRegistry = jest.fn(() => new DeviceRegistryClass());
     DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
   };

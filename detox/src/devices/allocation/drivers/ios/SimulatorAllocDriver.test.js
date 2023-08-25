@@ -9,7 +9,7 @@ describe('Allocation driver for iOS simulators', () => {
   beforeEach(() => {
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
-    applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock')['--list']);
+    applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock.json')['--list']);
     jest.spyOn(applesimutils, 'takeScreenshot').mockResolvedValue('mocked-screenshot-path');
 
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');

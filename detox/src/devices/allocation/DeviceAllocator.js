@@ -1,5 +1,5 @@
 // @ts-nocheck
-const log = require('../../utils/logger').child({ cat: 'device' });
+const log = require('../../utils/logger').child({ cat: 'device', event: 'DEVICE_ALLOCATOR' });
 const traceMethods = require('../../utils/traceMethods');
 
 class DeviceAllocator {
@@ -8,7 +8,7 @@ class DeviceAllocator {
    */
   constructor(allocationDriver) {
     this._driver = allocationDriver;
-    traceMethods(log, this, ['init', 'allocate', 'postAllocate', 'free', 'cleanup', 'emergencyCleanup']);
+    traceMethods(log, this, ['init', 'cleanup', 'emergencyCleanup']);
   }
 
   /**
@@ -24,18 +24,26 @@ class DeviceAllocator {
    * @param deviceConfig { Object }
    * @returns {Promise<DeviceCookie>}
    */
-  allocate(deviceConfig) {
-    return this._driver.allocate(deviceConfig);
+  async allocate(deviceConfig) {
+    return await log.trace.complete({ data: deviceConfig, id: Math.random() }, 'allocate', async () => {
+      const cookie = await this._driver.allocate(deviceConfig);
+      log.debug(`settled on ${cookie}`);
+      return cookie;
+    });
   }
 
   /**
    * @param {DeviceCookie} deviceCookie
-   * @returns {Promise<unknown>}
+   * @returns {Promise<DeviceCookie>}
    */
-  postAllocate(deviceCookie) {
-    return typeof this._driver.postAllocate === 'function'
-      ? this._driver.postAllocate(deviceCookie)
-      : Promise.resolve();
+  async postAllocate(deviceCookie) {
+    return await log.trace.complete({ data: deviceCookie, id: Math.random() }, `post-allocate: ${deviceCookie}`, async () => {
+      const updatedCookie = typeof this._driver.postAllocate === 'function'
+        ? await this._driver.postAllocate(deviceCookie)
+        : undefined;
+
+      return updatedCookie || deviceCookie;
+    });
   }
 
   /**
@@ -43,26 +51,28 @@ class DeviceAllocator {
    * @param options { DeallocOptions }
    * @returns {Promise<void>}
    */
-  free(cookie, options) {
-    return this._driver.free(cookie, options);
+  async free(cookie, options) {
+    return await log.trace.complete({ data: options, id: Math.random() }, `free: ${cookie}`, async () => {
+      await this._driver.free(cookie, options);
+    });
   }
 
   /**
    * @returns {Promise<void>}
    */
-  cleanup() {
-    return typeof this._driver.cleanup === 'function'
-      ? this._driver.cleanup()
-      : Promise.resolve();
+  async cleanup() {
+    if (typeof this._driver.cleanup === 'function') {
+      await this._driver.cleanup();
+    }
   }
 
   /**
    * @returns {void}
    */
   emergencyCleanup() {
-    return typeof this._driver.emergencyCleanup === 'function'
-      ? this._driver.emergencyCleanup()
-      : undefined;
+    if (typeof this._driver.emergencyCleanup === 'function') {
+      this._driver.emergencyCleanup();
+    }
   }
 }
 

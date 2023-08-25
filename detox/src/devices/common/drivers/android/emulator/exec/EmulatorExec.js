@@ -32,18 +32,29 @@ class QueryVersionCommand extends ExecCommand {
 }
 
 class LaunchCommand extends ExecCommand {
-  constructor(emulatorName, options) {
+  constructor(avdName, options) {
     super();
     this._options = options;
-    this._args = this._getEmulatorArgs(emulatorName);
-    this.port = options.port;
+    this._args = this._getEmulatorArgs(avdName);
+  }
+
+  get adbName() {
+    return this._options.adbName;
+  }
+
+  get avdName() {
+    return this._options.avdName;
+  }
+
+  get port() {
+    return this._options.port;
   }
 
   _getArgs() {
     return this._args;
   }
 
-  _getEmulatorArgs(emulatorName) {
+  _getEmulatorArgs(avdName) {
     const {
       bootArgs,
       gpuMode = this._getDefaultGPUMode(),
@@ -64,7 +75,7 @@ class LaunchCommand extends ExecCommand {
       port ? '-port' : '',
       port ? `${port}` : '',
       ...deviceBootArgs,
-      `@${emulatorName}`
+      `@${avdName}`
     ]);
 
     return emulatorArgs;

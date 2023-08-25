@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const tempfile = require('tempfile');
 
-const environment = require('../utils/environment');
+const environment = require('../../utils/environment');
 
 const deviceId = 'emulator-5554';
 const deviceId2 = 'emulator-5556';
@@ -190,7 +190,7 @@ describe('DeviceRegistry', () => {
 
     beforeEach(() => {
       jest.doMock('../utils/ExclusiveLockfile');
-      ExclusiveLockFile = require('../utils/ExclusiveLockfile');
+      ExclusiveLockFile = require('../../utils/ExclusiveLockfile');
       DeviceRegistry = require('./DeviceRegistry');
     });
 

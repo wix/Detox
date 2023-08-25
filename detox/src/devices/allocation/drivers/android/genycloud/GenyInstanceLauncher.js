@@ -54,9 +54,10 @@ class GenyInstanceLauncher {
 
     const options = {
       backoff: 'none',
-      retries: 25,
+      retries: 20,
       interval: 5000,
       initialSleep: 45000,
+      shouldUnref: true,
     };
 
     return await retry(options, async () => {
@@ -66,6 +67,7 @@ class GenyInstanceLauncher {
       if (!anInstance.isOnline()) {
         throw new DetoxRuntimeError(`Timeout waiting for instance ${instance.uuid} to be ready`);
       }
+
       return anInstance;
     });
   }

@@ -19,6 +19,7 @@ function which(executable, path) {
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
+const DETOX_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'global-context.json');
 const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
 const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
 const GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'genycloud-cleanup.lock');
@@ -195,6 +196,10 @@ function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
 }
 
+function getDetoxLockFilePath() {
+  return DETOX_LOCK_FILE_PATH;
+}
+
 function getDeviceLockFilePathIOS() {
   return DEVICE_LOCK_FILE_PATH_IOS;
 }
@@ -229,6 +234,7 @@ module.exports = {
   getAndroidSDKPath,
   getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
+  getDetoxLockFilePath,
   getDeviceLockFilePathIOS,
   getDeviceLockFilePathAndroid,
   getGenyCloudGlobalCleanupFilePath,
