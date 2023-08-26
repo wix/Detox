@@ -2,7 +2,7 @@
 const DeviceAllocatorFactory = require('./base');
 
 class IosSimulator extends DeviceAllocatorFactory {
-  _createDriver({ detoxSession, eventEmitter }) {
+  _createDriver({ detoxConfig, detoxSession, eventEmitter }) {
     const AppleSimUtils = require('../../../devices/common/drivers/ios/tools/AppleSimUtils');
     const applesimutils = new AppleSimUtils();
 
@@ -13,7 +13,7 @@ class IosSimulator extends DeviceAllocatorFactory {
     const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
 
     const SimulatorAllocDriver = require('../drivers/ios/SimulatorAllocDriver');
-    return new SimulatorAllocDriver({ deviceRegistry, applesimutils, simulatorLauncher });
+    return new SimulatorAllocDriver({ detoxConfig, deviceRegistry, applesimutils, simulatorLauncher });
   }
 }
 

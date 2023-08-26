@@ -1,4 +1,3 @@
-// @ts-nocheck
 const ExclusiveLockfile = require('../../utils/ExclusiveLockfile');
 const { getDeviceRegistryPath } = require('../../utils/environment');
 const safeAsync = require('../../utils/safeAsync');
@@ -31,6 +30,10 @@ class DeviceRegistry {
     });
   }
 
+  get lockFilePath() {
+    return this._lockfilePath;
+  }
+
   /**
    * Safety method to ensure that there are no remains of previously crashed Detox sessions.
    */
@@ -43,7 +46,6 @@ class DeviceRegistry {
 
   /***
    * @param {string|Function} getDeviceId
-   * @param {*?} data
    * @returns {Promise<string>}
    */
   async registerDevice(getDeviceId) {
@@ -58,7 +60,6 @@ class DeviceRegistry {
 
   /***
    * @param {string|Function} getDeviceId
-   * @param {*?} data
    * @returns {Promise<string>}
    */
   async releaseDevice(getDeviceId) {
@@ -88,7 +89,7 @@ class DeviceRegistry {
     await this._lockfile.exclusively(async () => {
       const allDevices = this._getRegisteredDevices();
       const sessionDevices = allDevices.filter(device => device.sessionId === this._sessionId);
-      for (const id of sessionDevices.ids) {
+      for (const id of sessionDevices.getIds()) {
         allDevices.delete(id);
       }
       this._lockfile.write([...allDevices]);

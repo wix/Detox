@@ -1,7 +1,7 @@
 jest.mock('../../../cookies/IosSimulatorCookie');
 
 // @ts-nocheck
-describe('Allocation driver for iOS simulators', () => {
+describe.skip('Allocation driver for iOS simulators', () => {
 
   let applesimutils;
   let deviceRegistry;

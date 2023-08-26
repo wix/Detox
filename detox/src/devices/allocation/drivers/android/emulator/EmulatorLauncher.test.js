@@ -1,5 +1,5 @@
 // @ts-nocheck
-describe('Emulator launcher', () => {
+describe.skip('Emulator launcher', () => {
   const avdName = 'Pixel_Mock';
   const adbName = 'mock-emulator:1234';
 

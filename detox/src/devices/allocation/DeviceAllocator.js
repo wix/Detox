@@ -52,7 +52,7 @@ class DeviceAllocator {
    * @returns {Promise<void>}
    */
   async free(cookie, options) {
-    return await log.trace.complete({ data: options, id: Math.random() }, `free: ${cookie}`, async () => {
+    await log.trace.complete({ data: options, id: Math.random() }, `free: ${cookie}`, async () => {
       await this._driver.free(cookie, options);
     });
   }

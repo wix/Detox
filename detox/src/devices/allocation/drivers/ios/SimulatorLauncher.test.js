@@ -8,7 +8,12 @@ describe('Simulator launcher (helper)', () => {
     applesimutils = new AppleSimUtils();
 
     const SimulatorLauncher = require('./SimulatorLauncher');
-    uut = new SimulatorLauncher({ applesimutils });
+    const AsyncEmitter = require('../../../../utils/AsyncEmitter');
+    const eventEmitter = new AsyncEmitter({
+      events: ['beforeShutdownDevice', 'shutdownDevice'],
+      onError: (e) => { throw e; },
+    });
+    uut = new SimulatorLauncher({ applesimutils, eventEmitter });
   });
 
   describe('launch', () => {

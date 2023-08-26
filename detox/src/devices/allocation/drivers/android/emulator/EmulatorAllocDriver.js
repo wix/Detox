@@ -40,6 +40,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     this._adb = adb;
     this._avdValidator = avdValidator;
     this._deviceRegistry = deviceRegistry;
+    debugger;
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
     this._freeDeviceFinder = freeDeviceFinder;

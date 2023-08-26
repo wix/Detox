@@ -9,7 +9,7 @@ describe('iOS simulator test environment validator', () => {
   let environment;
   let uut;
   beforeEach(() => {
-    jest.mock('../../utils/environment');
+    jest.mock('../../../utils/environment');
     environment = require('../../../utils/environment');
     environment.getFrameworkPath.mockResolvedValue(DETOX_FRAMEWORK_PATH);
 

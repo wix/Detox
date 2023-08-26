@@ -1,213 +1,114 @@
 const fs = require('fs-extra');
 const tempfile = require('tempfile');
 
-const environment = require('../../utils/environment');
-
-const deviceId = 'emulator-5554';
-const deviceId2 = 'emulator-5556';
-const mockData = { mock: 'data' };
+const DeviceRegistry = require('./DeviceRegistry');  // Adjust the path to your actual file
 
 describe('DeviceRegistry', () => {
-  let DeviceRegistry;
+  const session1 = 'session1';
 
-  describe('instance', () => {
-    let lockfilePath;
-    let registry;
+  let lockfilePath;
+  let registry;
 
-    beforeEach(() => {
-      lockfilePath = tempfile('.test');
-      DeviceRegistry = require('./DeviceRegistry');
-      registry = new DeviceRegistry({ lockfilePath });
-    });
-
-    afterEach(async () => {
-      await fs.remove(lockfilePath);
-    });
-
-    async function allocateDevice(deviceId, data) {
-      return registry.allocateDevice(() => deviceId, data);
-    }
-
-    async function checkDeviceRegisteredAndDispose(deviceId) {
-      return registry.disposeDevice(async () => {
-        expect(registry.includes(deviceId)).toBe(true);
-        return deviceId;
-      });
-    }
-
-    async function disposeDevice(deviceHandle) {
-      return registry.disposeDevice(() => deviceHandle);
-    }
-
-    async function expectDeviceNotRegistered(deviceId) {
-      return registry.allocateDevice(async () => {
-        expect(registry.includes(deviceId)).toBe(false);
-        throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e; });
-    }
-
-    function expectIncludedInDevicesList(deviceId) {
-      return registry.allocateDevice(() => {
-        const registeredDevices = registry.getRegisteredDevices();
-        expect(registeredDevices.includes(deviceId)).toEqual(true);
-
-        throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e; });
-    }
-
-    function expectDevicesListEquals(rawDevices) {
-      return registry.allocateDevice(() => {
-        const registeredDevices = registry.getRegisteredDevices();
-        expect(registeredDevices.rawDevices).toStrictEqual(rawDevices);
-
-        throw new Error('ignored'); // So it wouldn't really allocate anything
-      }).catch((e) => { if (e.message !== 'ignored') throw e; });
-    }
-
-    async function expectIncludedInReadDevicesList(deviceId) {
-      const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.includes(deviceId)).toEqual(true);
-    }
-
-    async function expectReadDevicesListEquals(rawDeviceHandles) {
-      const registeredDevices = await registry.readRegisteredDevices();
-      expect(registeredDevices.rawDevices).toEqual(rawDeviceHandles);
-    }
-
-    async function expectIncludedInUnsafeDevicesList(deviceHandle) {
-      const registeredDevices = await registry.readRegisteredDevicesUNSAFE();
-      expect(registeredDevices.includes(deviceHandle)).toEqual(true);
-    }
-
-    async function expectedUnsafeDevicesListEquals(rawDeviceHandles) {
-      const registeredDevices = await registry.readRegisteredDevicesUNSAFE();
-      expect(registeredDevices.rawDevices).toEqual(rawDeviceHandles);
-    }
-
-    const assertForbiddenOutOfContextRegistryQuery = () =>
-      expect(() => registry.includes('whatever')).toThrowError();
-
-    const assertForbiddenOutOfContextDeviceListQuery = () =>
-      expect(() => registry.getRegisteredDevices()).toThrowError();
-
-    it('should be able to tell whether a device is registered - for query and disposal', async () => {
-      await allocateDevice(deviceId);
-      await checkDeviceRegisteredAndDispose(deviceId);
-      await expectDeviceNotRegistered(deviceId);
-    });
-
-    it('should be able to tell whether a device is registered, even with custom data associated with it', async () => {
-      await allocateDevice(deviceId, { mock: 'data' });
-      await checkDeviceRegisteredAndDispose(deviceId);
-      await expectDeviceNotRegistered(deviceId);
-    });
-
-    it('should throw on attempt of checking whether a device is registered outside of allocation/disposal context', async () => {
-      assertForbiddenOutOfContextRegistryQuery();
-
-      await allocateDevice(deviceId);
-      assertForbiddenOutOfContextRegistryQuery();
-    });
-
-    it('should be able to in-context get a valid list of registered devices, and query its content', async () => {
-      await allocateDevice(deviceId);
-      await allocateDevice(deviceId2, { mock: 'data' });
-      await expectIncludedInDevicesList(deviceId);
-      await expectIncludedInDevicesList(deviceId2);
-    });
-
-    it('should be able to in-context-get a valid list of registered devices as a raw objects array, also containing custom data', async () => {
-      const expectedDevicesList = [
-        { id: deviceId, },
-        { id: deviceId2, data: mockData, },
-      ];
-
-      await allocateDevice(deviceId);
-      await allocateDevice(deviceId2, mockData);
-      await expectDevicesListEquals(expectedDevicesList);
-    });
-
-    it('should throw on an attempt of in-context getting registered devices list when outside of allocation/disposal context', async () => {
-      assertForbiddenOutOfContextDeviceListQuery();
-
-      await allocateDevice(deviceId);
-      assertForbiddenOutOfContextDeviceListQuery();
-    });
-
-    it('should be able to out-of-context read a valid list of registered devices and query its content', async () => {
-      await allocateDevice(deviceId);
-      await allocateDevice(deviceId2, { mock: 'data' });
-      await expectIncludedInReadDevicesList(deviceId);
-      await expectIncludedInReadDevicesList(deviceId2);
-    });
-
-    it('should be able to out-of-context-read a valid list of registered devices as a raw objects array, also containing custom data', async () => {
-      const expectedDevicesList = [
-        { id: deviceId, },
-        { id: deviceId2, data: mockData, },
-      ];
-
-      await allocateDevice(deviceId);
-      await allocateDevice(deviceId2, mockData);
-      await expectReadDevicesListEquals(expectedDevicesList);
-    });
-
-    it('should allow for UNSAFE (non-concurrent) reading of registered devices list, even outside of allocation/disposal context', async () => {
-      const expectedDevicesList = [
-        { id: deviceId, },
-        { id: deviceId2, data: mockData, },
-      ];
-
-      await allocateDevice(deviceId);
-      await allocateDevice(deviceId2, mockData);
-
-      await expectIncludedInUnsafeDevicesList(deviceId);
-      await expectIncludedInUnsafeDevicesList(deviceId2);
-      await expectedUnsafeDevicesListEquals(expectedDevicesList);
-    });
-
-    it('should not fail when there were no actual device to dispose', async () => {
-      await expect(disposeDevice(undefined)).resolves.not.toThrowError();
-    });
-
-    describe('.reset() method', () => {
-      it('should create a lock file with an empty array if it does not exist', async () => {
-        expect(fs.existsSync(lockfilePath)).toBe(false);
-        await registry.reset();
-        expect(await fs.readFile(lockfilePath, 'utf8')).toBe('[]');
-      });
-
-      it('should overwrite a lock file contents with an empty array if it exists', async () => {
-        await fs.writeFile(lockfilePath, '{ something }');
-        await registry.reset();
-        expect(await fs.readFile(lockfilePath, 'utf8')).toBe('[]');
-      });
+  beforeEach(() => {
+    lockfilePath = tempfile('.test');
+    registry = new DeviceRegistry({
+      lockfilePath,
+      sessionId: session1,
     });
   });
 
-  describe('instantiation methods', () => {
-    let ExclusiveLockFile;
+  afterEach(async () => {
+    await fs.remove(lockfilePath);
+  });
+
+  it('should be initialized correctly', async () => {
+    expect(registry.lockFilePath).toBe(lockfilePath);
+    const sessionDevices = await registry.readSessionDevices();
+    expect([...sessionDevices]).toEqual([]);
+  });
+
+  it('should register a device', async () => {
+    const deviceId = 'device1';
+    const registeredDeviceId = await registry.registerDevice(() => deviceId);
+    expect(registeredDeviceId).toBe(deviceId); // Check if it returns the registered deviceId
+
+    const sessionDevices = await registry.readSessionDevices();
+    expect(sessionDevices.getIds()).toEqual([deviceId]);
+  });
+
+  it('should unregister a device', async () => {
+    const deviceId = 'device1';
+    await registry.registerDevice(() => deviceId);
+    await registry.unregisterDevice(() => deviceId);
+    const sessionDevices = await registry.readSessionDevices();
+    expect(sessionDevices.getIds()).toEqual([]);
+  });
+
+  it('should reset the device registry', async () => {
+    await registry.registerDevice(() => 'device1');
+    await registry.reset();
+    const devices = await registry.readSessionDevices();
+    expect(devices.getIds()).toEqual([]);
+  });
+
+  describe('when there are multiple sessions', () => {
+    const session2 = 'session2';
+    let registry2;
 
     beforeEach(() => {
-      jest.doMock('../utils/ExclusiveLockfile');
-      ExclusiveLockFile = require('../../utils/ExclusiveLockfile');
-      DeviceRegistry = require('./DeviceRegistry');
+      registry2 = new DeviceRegistry({
+        lockfilePath,
+        sessionId: session2,
+      });
     });
 
-    it('should expose method for iOS-lock-based method', () => {
-      expect(DeviceRegistry.forIOS()).toBeInstanceOf(DeviceRegistry);
-      expect(ExclusiveLockFile).toHaveBeenCalledWith(
-        environment.getDeviceLockFilePathIOS(),
-        expect.anything(),
-      );
+    it('should not see devices from other sessions', async () => {
+      await registry.registerDevice(() => 'device1');
+      await registry2.registerDevice(() => 'device2');
+      const devices1 = await registry.readSessionDevices();
+      const devices2 = await registry2.readSessionDevices();
+      expect(devices1.getIds()).toEqual(['device1']);
+      expect(devices2.getIds()).toEqual(['device2']);
     });
 
-    it('should expose method for Android-lock-based method', () => {
-      expect(DeviceRegistry.forAndroid()).toBeInstanceOf(DeviceRegistry);
-      expect(ExclusiveLockFile).toHaveBeenCalledWith(
-        environment.getDeviceLockFilePathAndroid(),
-        expect.anything(),
-      );
+    it('should see taken devices from all sessions', async () => {
+      expect.assertions(2);
+
+      await registry.registerDevice(() => 'device1');
+      await registry.registerDevice(() => 'device2');
+      await registry.releaseDevice(() => 'device1');
+
+      await registry2.registerDevice(() => 'device3');
+      await registry2.registerDevice(() => 'device4');
+      await registry2.releaseDevice(() => 'device3');
+
+      let taken1, taken2;
+      await registry.releaseDevice(() => {
+        taken1 = registry.getTakenDevicesSync();
+        expect(taken1.getIds().sort()).toEqual(['device2', 'device3', 'device4']);
+      });
+
+      await registry2.releaseDevice(() => {
+        taken2 = registry2.getTakenDevicesSync();
+        expect(taken2.getIds().sort()).toEqual(['device1', 'device2', 'device4']);
+      });
+    });
+
+    it('should unregister only from the current session', async () => {
+      expect.assertions(2);
+
+      await registry.registerDevice(() => 'device1');
+      await registry.registerDevice(() => 'device2');
+      await registry2.registerDevice(() => 'device3');
+      await registry2.registerDevice(() => 'device4');
+
+      await registry.unregisterSessionDevices();
+      const devices1 = await registry.readSessionDevices();
+      const devices2 = await registry2.readSessionDevices();
+
+      expect(devices1.getIds()).toEqual([]);
+      expect(devices2.getIds()).toEqual(['device3', 'device4']);
     });
   });
 });
+

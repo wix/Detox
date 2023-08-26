@@ -1,7 +1,7 @@
 // @ts-nocheck
 const semver = require('semver');
 
-const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const { DetoxRuntimeError } = require('../../../errors');
 const environment = require('../../../utils/environment');
 const EnvironmentValidatorBase = require('../EnvironmentValidatorBase');
 

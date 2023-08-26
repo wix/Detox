@@ -551,8 +551,8 @@ describe('DetoxWorker', () => {
   });
 
   function mockEnvironmentFactories() {
-    const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
-    const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').External;
+    const EnvValidator = jest.genMockFromModule('./devices/validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.genMockFromModule('./devices/validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);

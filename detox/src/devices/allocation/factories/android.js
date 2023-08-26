@@ -2,11 +2,12 @@
 const DeviceAllocatorFactory = require('./base');
 
 class AndroidEmulator extends DeviceAllocatorFactory {
-  _createDriver() {
+  _createDriver({ detoxSession, detoxConfig }) {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const emulatorExec = serviceLocator.emulator.exec;
-    const deviceRegistry = serviceLocator.deviceRegistry;
+    const DeviceRegistry = require('../../allocation/DeviceRegistry');
+    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.sessionId });
 
     const AVDsResolver = require('../drivers/android/emulator/AVDsResolver');
     const avdsResolver = new AVDsResolver(emulatorExec);
@@ -27,6 +28,8 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     return new EmulatorAllocDriver({
       adb,
       avdValidator,
+      detoxConfig,
+      deviceRegistry,
       emulatorVersionResolver,
       emulatorLauncher,
       freeEmulatorFinder,
@@ -35,10 +38,11 @@ class AndroidEmulator extends DeviceAllocatorFactory {
 }
 
 class AndroidAttached extends DeviceAllocatorFactory {
-  _createDriver() {
+  _createDriver({ detoxSession, detoxConfig }) {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
-    const deviceRegistry = serviceLocator.deviceRegistry;
+    const DeviceRegistry = require('../../allocation/DeviceRegistry');
+    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.sessionId });
 
     const FreeDeviceFinder = require('../drivers/android/FreeDeviceFinder');
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
