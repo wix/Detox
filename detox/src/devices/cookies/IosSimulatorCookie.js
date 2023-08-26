@@ -5,6 +5,10 @@ class IosSimulatorCookie extends IosCookie {
     super();
     this.udid = udid;
   }
+
+  toString() {
+    return this.udid;
+  }
 }
 
 module.exports = IosSimulatorCookie;

@@ -58,14 +58,11 @@ class Genycloud extends DeviceAllocatorFactory {
     const adb = serviceLocator.adb;
     const exec = serviceLocator.genycloud.exec;
 
-    const InstanceNaming = require('../drivers/android/genycloud/services/GenyInstanceNaming');
-    const instanceNaming = new InstanceNaming(); // TODO should consider a permissive impl for debug/dev mode. Maybe even a custom arg in package.json (Detox > ... > genycloud > sharedAccount: false)
-
     const RecipesService = require('../drivers/android/genycloud/services/GenyRecipesService');
     const recipeService = new RecipesService(exec);
 
     const InstanceLifecycleService = require('../drivers/android/genycloud/services/GenyInstanceLifecycleService');
-    const instanceLifecycleService = new InstanceLifecycleService(exec, instanceNaming);
+    const instanceLifecycleService = new InstanceLifecycleService(exec);
 
     const RecipeQuerying = require('../drivers/android/genycloud/GenyRecipeQuerying');
     const recipeQuerying = new RecipeQuerying(recipeService);

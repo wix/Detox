@@ -1,23 +1,22 @@
 const Instance = require('./dto/GenyInstance');
 
 class GenyInstanceLifecycleService {
-  constructor(genyCloudExec, instanceNaming) {
-    this.genyCloudExec = genyCloudExec;
-    this.instanceNaming = instanceNaming;
+  constructor(genyCloudExec) {
+    this._genyCloudExec = genyCloudExec;
   }
 
-  async createInstance(recipeUUID) {
-    const result = await this.genyCloudExec.startInstance(recipeUUID, this.instanceNaming.generateName());
+  async createInstance(recipeUUID, instanceName) {
+    const result = await this._genyCloudExec.startInstance(recipeUUID, instanceName);
     return new Instance(result.instance);
   }
 
   async adbConnectInstance(instanceUUID) {
-    const result = (await this.genyCloudExec.adbConnect(instanceUUID));
+    const result = (await this._genyCloudExec.adbConnect(instanceUUID));
     return new Instance(result.instance);
   }
 
   async deleteInstance(instanceUUID) {
-    const result = await this.genyCloudExec.stopInstance(instanceUUID);
+    const result = await this._genyCloudExec.stopInstance(instanceUUID);
     return new Instance(result.instance);
   }
 }

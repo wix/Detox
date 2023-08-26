@@ -16,11 +16,12 @@ class GenyInstanceLauncher {
 
   /**
    * @param {import('./services/dto/GenyRecipe')} recipe
+   * @param {string} instanceName
    * @returns {Promise<GenyInstance>}
    */
-  async launch(recipe) {
+  async launch(recipe, instanceName) {
     logger.debug(events.CREATE_DEVICE, `Trying to create a device based on "${recipe}"`);
-    const instance = await this._instanceLifecycleService.createInstance(recipe.uuid);
+    const instance = await this._instanceLifecycleService.createInstance(recipe.uuid, instanceName);
     const { name, uuid } = instance;
     logger.info(events.CREATE_DEVICE, `Allocating Genymotion Cloud instance ${name} for testing. To access it via a browser, go to: https://cloud.geny.io/instance/${uuid}`);
 

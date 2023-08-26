@@ -1,6 +1,7 @@
   - label: ":android::detox: RN .70 + Android: Tests app"
     command:
       - "nvm install"
+      - "./scripts/ci.android.sh"
     env:
       REACT_NATIVE_VERSION: 0.70.7
       DETOX_DISABLE_POD_INSTALL: true

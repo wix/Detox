@@ -9,38 +9,32 @@ describe('Genymotion-Cloud instance-lifecycle service', () => {
   });
 
   let exec;
-  let instanceNaming;
   let uut;
+
   beforeEach(() => {
     const GenyCloudExec = jest.genMockFromModule('../exec/GenyCloudExec');
     exec = new GenyCloudExec();
 
-    const GenyInstanceNaming = jest.genMockFromModule('./GenyInstanceNaming');
-    instanceNaming = new GenyInstanceNaming();
-
     const GenyInstanceLifecycleService = require('./GenyInstanceLifecycleService');
-    uut = new GenyInstanceLifecycleService(exec, instanceNaming);
+    uut = new GenyInstanceLifecycleService(exec);
   });
 
   describe('device instance creation', () => {
-    const givenInstanceBirthName = (name) => instanceNaming.generateName.mockReturnValue(name);
     const givenResultedInstance = (instance) => exec.startInstance.mockResolvedValue({ instance });
 
     it('should exec instance creation according to recipe', async () => {
       const instance = anInstance();
-      givenInstanceBirthName(instance.name);
       givenResultedInstance(instance);
 
-      await uut.createInstance(instance.recipe.uuid);
+      await uut.createInstance(instance.recipe.uuid, instance.name);
       expect(exec.startInstance).toHaveBeenCalledWith(instance.recipe.uuid, instance.name);
     });
 
     it('should return the newly created instance', async () => {
       const instance = anInstance();
-      givenInstanceBirthName(instance.name);
       givenResultedInstance(instance);
 
-      const result = await uut.createInstance(instance.recipe.name);
+      const result = await uut.createInstance(instance.recipe.name, instance.name);
       expect(result).toBeDefined();
       expect(result.uuid).toEqual(instance.uuid);
       expect(result.name).toEqual(instance.name);

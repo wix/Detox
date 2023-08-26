@@ -14,23 +14,26 @@ class GenyAllocDriver extends AllocationDriverBase {
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
+   * @param {DetoxInternals.SessionState} options.detoxSession
+   * @param {import('./GenyRegistry')} options.genyRegistry
    * @param {import('./GenyInstanceLauncher')} options.instanceLauncher
-   * @param {import('./services/GenyInstanceLifecycleService')} options.instanceLifecycleService
    * @param {import('./GenyRecipeQuerying')} options.recipeQuerying
    */
   constructor({
     adb,
+    detoxSession,
+    genyRegistry = new GenyRegistry(),
     instanceLauncher,
-    instanceLifecycleService,
-    recipeQuerying
+    recipeQuerying,
   }) {
     super();
 
     this._adb = adb;
+    this._detoxSessionId = detoxSession.id;
+    this._genyRegistry = genyRegistry;
     this._instanceLauncher = instanceLauncher;
-    this._instanceLifecycleService = instanceLifecycleService;
     this._recipeQuerying = recipeQuerying;
-    this._genyRegistry = new GenyRegistry();
+    this._instanceCounter = 0;
   }
 
   /**
@@ -44,7 +47,8 @@ class GenyAllocDriver extends AllocationDriverBase {
 
     let instance = this._genyRegistry.findFreeInstance(recipe);
     if (!instance) {
-      instance = await this._instanceLauncher.launch(recipe);
+      const instanceName = `Detox.${this._detoxSessionId}.${this._instanceCounter++}`;
+      instance = await this._instanceLauncher.launch(recipe, instanceName);
       this._genyRegistry.addInstance(instance, recipe);
     }
 
