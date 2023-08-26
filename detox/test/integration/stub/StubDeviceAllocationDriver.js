@@ -5,7 +5,7 @@ class StubDeviceAllocationDriver {
   counter = 0;
 
   async allocate() {
-    const deviceId = `StubDevice#${this.counter++}`;
+    const deviceId = `StubDevice#${++this.counter}`;
 
     await sleepSomeTime();
     return new StubCookie(deviceId);
