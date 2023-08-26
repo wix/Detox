@@ -72,21 +72,20 @@ class SimulatorAllocDriver extends AllocationDriverBase {
 
     if (options.shutdown) {
       await this._doShutdown(udid);
+      await this._deviceRegistry.unregisterDevice(udid);
+    } else {
+      await this._deviceRegistry.releaseDevice(udid);
     }
-
-    await this._deviceRegistry.unregisterDevice(udid);
   }
 
   async cleanup() {
-    if (!this._shouldShutdown || detectConcurrentDetox()) {
-      return;
+    if (this._shouldShutdown) {
+      const sessionDevices = await this._deviceRegistry.readSessionDevices();
+      const shutdownPromises = sessionDevices.getIds().map((udid) => this._doShutdown(udid));
+      await Promise.all(shutdownPromises);
     }
 
-    await this._deviceRegistry.unregisterDevice(async () => {
-      const allDevices = this._deviceRegistry.getRegisteredDevicesSync().getIds();
-      const shutdownPromises = allDevices.map((udid) => this._doShutdown(udid));
-      await Promise.all(shutdownPromises);
-    });
+    await this._deviceRegistry.unregisterSessionDevices();
   }
 
   /**
@@ -143,7 +142,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
    */
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
-    const takenDevices = this._deviceRegistry.getBusyDevicesSync();
+    const takenDevices = this._deviceRegistry.getTakenDevicesSync();
 
     const { taken, free }  = _.groupBy(searchResults, ({ udid }) => {
       return takenDevices.includes(udid) ? 'taken' : 'free';

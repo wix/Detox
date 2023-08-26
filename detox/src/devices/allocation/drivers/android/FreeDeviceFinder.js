@@ -1,4 +1,3 @@
-const detectConcurrentDetox = require('../../../../utils/detectConcurrentDetox');
 const log = require('../../../../utils/logger').child({ cat: 'device' });
 
 const DEVICE_LOOKUP = { event: 'DEVICE_LOOKUP' };
@@ -11,8 +10,9 @@ class FreeDeviceFinder {
 
   async findFreeDevice(deviceQuery) {
     const { devices } = await this.adb.devices();
+    const takenDevices = this.deviceRegistry.getTakenDevicesSync();
     for (const candidate of devices) {
-      if (await this._isDeviceFreeAndMatching(candidate, deviceQuery)) {
+      if (await this._isDeviceFreeAndMatching(takenDevices, candidate, deviceQuery)) {
         return candidate.adbName;
       }
     }
@@ -20,12 +20,12 @@ class FreeDeviceFinder {
   }
 
   /**
-   * @protected
+   * @private
    */
-  async _isDeviceFreeAndMatching(candidate, deviceQuery) {
+  async _isDeviceFreeAndMatching(takenDevices, candidate, deviceQuery) {
     const { adbName } = candidate;
 
-    const isTaken = this.deviceRegistry.includes(adbName);
+    const isTaken = takenDevices.includes(adbName);
     if (isTaken) {
       log.debug(DEVICE_LOOKUP, `Device ${adbName} is already taken, skipping...`);
       return false;

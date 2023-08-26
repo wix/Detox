@@ -7,6 +7,10 @@ class DeviceListReadonly {
     this._indices = new Map(devices.map(DeviceListReadonly._getId));
   }
 
+  concat(other) {
+    return new DeviceListReadonly([...this, ...other]);
+  }
+
   getIds() {
     return [...this._indices.keys()];
   }

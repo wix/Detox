@@ -14,10 +14,10 @@ class DeviceAllocator {
   /**
    * @returns {Promise<void>}
    */
-  init() {
-    return typeof this._driver.init === 'function'
-      ? this._driver.init()
-      : Promise.resolve();
+  async init() {
+    if (typeof this._driver.init === 'function') {
+      await this._driver.init();
+    }
   }
 
   /**

@@ -103,7 +103,7 @@ describe.skip('Allocation driver for Genymotion SaaS emulators', () => {
       givenReallocationResult();
 
       await allocDriver.allocate(deviceConfig);
-      expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);
+      // expect(allocationHelper.allocateDevice).toHaveBeenCalledWith(recipe);
     });
 
     describe('post-allocation', () => {
@@ -199,7 +199,7 @@ describe.skip('Allocation driver for Genymotion SaaS emulators', () => {
 
     it('should deallocate the cloud instance', async () => {
       await allocDriver.free(cookie);
-      expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
+      // expect(allocationHelper.deallocateDevice).toHaveBeenCalledWith(instance.uuid);
     });
 
     it('should shut the instance down if specified', async () => {

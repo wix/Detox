@@ -52,10 +52,6 @@ describe('Allocation driver for Google emulators', () => {
     jest.mock('./EmulatorLauncher');
     const EmulatorLauncher = require('./EmulatorLauncher');
     emulatorLauncher = new EmulatorLauncher();
-
-    jest.mock('./EmulatorAllocationHelper');
-    const EmulatorAllocationHelper = require('./EmulatorAllocationHelper');
-    allocationHelper = new EmulatorAllocationHelper();
   });
 
   let allocDriver;
@@ -66,7 +62,6 @@ describe('Allocation driver for Google emulators', () => {
       avdValidator,
       emulatorVersionResolver,
       emulatorLauncher,
-      allocationHelper,
     });
   });
 

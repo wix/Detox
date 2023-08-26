@@ -9,7 +9,7 @@ describe('Genymotion-cloud test environment validator', () => {
   beforeEach(() => {
     jest.mock('../../utils/environment');
 
-    const environment = require('../../utils/environment');
+    const environment = require('../../../utils/environment');
     environment.getGmsaasPath.mockReturnValue(MOCK_GMSAAS_PATH);
 
     const GenyExec = jest.genMockFromModule('../../devices/allocation/drivers/android/genycloud/exec/GenyCloudExec');

@@ -3,7 +3,7 @@ const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryAndroid extends RuntimeDeviceFactory {
   _createDriverDependencies(commonDeps) {
-    const serviceLocator = require('../../../servicelocator/android');
+    const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const aapt = serviceLocator.aapt;
     const apkValidator = serviceLocator.apkValidator;

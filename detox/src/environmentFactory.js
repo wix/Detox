@@ -2,9 +2,9 @@
 const artifactsManagerFactories = require('./artifacts/factories');
 const deviceAllocationFactories = require('./devices/allocation/factories');
 const runtimeDeviceFactories = require('./devices/runtime/factories');
+const envValidationFactories = require('./devices/validation/factories');
 const matchersFactories = require('./matchers/factories');
 const resolveModuleFromPath = require('./utils/resolveModuleFromPath');
-const envValidationFactories = require('./validation/factories');
 
 function validateConfig(deviceConfig) {
   const classes = _getFactoryClasses(deviceConfig);

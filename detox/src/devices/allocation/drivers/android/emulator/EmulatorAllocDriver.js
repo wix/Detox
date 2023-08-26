@@ -135,24 +135,23 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
     if (options.shutdown) {
       await this._doShutdown(adbName);
+      await this._deviceRegistry.unregisterDevice(adbName);
+    } else {
+      await this._deviceRegistry.releaseDevice(adbName);
     }
-
-    await this._deviceRegistry.unregisterDevice(adbName);
   }
 
   async cleanup() {
-    if (!this._shouldShutdown || detectConcurrentDetox()) {
-      return;
-    }
-
-    await this._deviceRegistry.unregisterDevice(async () => {
+    if (this._shouldShutdown) {
       const { devices } = await this._adb.devices();
-      const allocatedEmulators = this._deviceRegistry.getRegisteredDevicesSync().getIds();
       const actualEmulators = devices.map((device) => device.adbName);
-      const emulatorsToShutdown = _.intersection(allocatedEmulators, actualEmulators);
+      const sessionDevices = await this._deviceRegistry.readSessionDevices();
+      const emulatorsToShutdown = _.intersection(sessionDevices.getIds(), actualEmulators);
       const shutdownPromises = emulatorsToShutdown.map((adbName) => this._doShutdown(adbName));
       await Promise.all(shutdownPromises);
-    });
+    }
+
+    await this._deviceRegistry.unregisterSessionDevices();
   }
 
   /**

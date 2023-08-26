@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const environment = require('../../utils/environment');
+const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
+const environment = require('../../../utils/environment');
 const EnvironmentValidatorBase = require('../EnvironmentValidatorBase');
 
 class IosSimulatorEnvValidator extends EnvironmentValidatorBase {

@@ -3,7 +3,7 @@ const DeviceAllocatorFactory = require('./base');
 
 class AndroidEmulator extends DeviceAllocatorFactory {
   _createDriver() {
-    const serviceLocator = require('../../../servicelocator/android');
+    const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const emulatorExec = serviceLocator.emulator.exec;
     const deviceRegistry = serviceLocator.deviceRegistry;
@@ -36,7 +36,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
 
 class AndroidAttached extends DeviceAllocatorFactory {
   _createDriver() {
-    const serviceLocator = require('../../../servicelocator/android');
+    const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const deviceRegistry = serviceLocator.deviceRegistry;
 
@@ -50,7 +50,7 @@ class AndroidAttached extends DeviceAllocatorFactory {
 
 class Genycloud extends DeviceAllocatorFactory {
   _createDriver(deps) {
-    const serviceLocator = require('../../../servicelocator/android');
+    const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const exec = serviceLocator.genycloud.exec;
 

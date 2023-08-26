@@ -1,6 +1,7 @@
 class SimulatorLauncher {
-  constructor({ applesimutils }) {
+  constructor({ applesimutils, eventEmitter }) {
     this._applesimutils = applesimutils;
+    this._eventEmitter = eventEmitter;
   }
 
   async launch(udid, type, bootArgs, headless) {
@@ -9,7 +10,9 @@ class SimulatorLauncher {
   }
 
   async shutdown(udid) {
+    await this._eventEmitter.emit('beforeShutdownDevice', { deviceId: udid });
     await this._applesimutils.shutdown(udid);
+    await this._eventEmitter.emit('shutdownDevice', { deviceId: udid });
   }
 }
 

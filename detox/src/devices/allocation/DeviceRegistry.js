@@ -1,7 +1,6 @@
 // @ts-nocheck
-const fs = require('fs-extra');
-
 const ExclusiveLockfile = require('../../utils/ExclusiveLockfile');
+const { getDeviceRegistryPath } = require('../../utils/environment');
 const safeAsync = require('../../utils/safeAsync');
 
 const DeviceList = require('./DeviceList');
@@ -11,42 +10,35 @@ const readOptions = {
 };
 
 class DeviceRegistry {
-  constructor({ lockfilePath }) {
+  constructor({ lockfilePath = getDeviceRegistryPath(), sessionId = '' } = {}) {
     /***
      * @private
      * @type {string}
      */
     this._lockfilePath = lockfilePath;
-
+    /***
+     * @private
+     * @type {string}
+     */
+    this._sessionId = sessionId;
     /***
      * @protected
      * @type {ExclusiveLockfile}
      */
-    this._lockfile = new ExclusiveLockfile(lockfilePath, {
+    this._lockfile = new ExclusiveLockfile(this._lockfilePath, {
       getInitialState: this._getInitialLockFileState.bind(this),
       readOptions,
     });
   }
 
+  /**
+   * Safety method to ensure that there are no remains of previously crashed Detox sessions.
+   */
   async reset() {
     await this._lockfile.exclusively(() => {
       const empty = this._getInitialLockFileState();
       this._lockfile.write(empty);
     });
-  }
-
-  /***
-   * @returns {DeviceListReadonly}
-   */
-  getRegisteredDevicesSync() {
-    return this._getRegisteredDevices().filter(Boolean);
-  }
-
-  /***
-   * @returns {DeviceListReadonly}
-   */
-  getBusyDevicesSync() {
-    return this._getRegisteredDevices().filter(device => device.busy);
   }
 
   /***
@@ -58,7 +50,7 @@ class DeviceRegistry {
     return this._lockfile.exclusively(async () => {
       const deviceId = await safeAsync(getDeviceId);
       if (deviceId) {
-        this._upsertDevice(deviceId, { busy: true });
+        this._upsertDevice(deviceId, { busy: true, sessionId: this._sessionId });
       }
       return deviceId;
     });
@@ -73,7 +65,7 @@ class DeviceRegistry {
     return this._lockfile.exclusively(async () => {
       const deviceId = await safeAsync(getDeviceId);
       if (deviceId) {
-        this._upsertDevice(deviceId, { busy: false });
+        this._upsertDevice(deviceId, { busy: false, sessionId: this._sessionId });
       }
       return deviceId;
     });
@@ -92,34 +84,30 @@ class DeviceRegistry {
     });
   }
 
-  /***
-   * @param {string} deviceId
-   * @returns {boolean}
-   */
-  includes(deviceId) {
-    const devices = this._lockfile.read();
-    const devicesList = new DeviceList(devices);
-    return devicesList.includes(deviceId);
-  }
-
-  /***
-   * @returns {DeviceList}
-   */
-  async readRegisteredDevices() {
-    let result = null;
-    await this._lockfile.exclusively(() => {
-      result = this._getRegisteredDevices();
+  async unregisterSessionDevices() {
+    await this._lockfile.exclusively(async () => {
+      const allDevices = this._getRegisteredDevices();
+      const sessionDevices = allDevices.filter(device => device.sessionId === this._sessionId);
+      for (const id of sessionDevices.ids) {
+        allDevices.delete(id);
+      }
+      this._lockfile.write([...allDevices]);
     });
-    return result;
   }
 
-  /***
-   * @returns {DeviceList}
-   */
-  readRegisteredDevicesUNSAFE() {
-    const contents = fs.readFileSync(this._lockfilePath, readOptions);
-    const devices = JSON.parse(contents);
-    return new DeviceList(devices);
+  async readSessionDevices() {
+    let devices;
+    await this._lockfile.exclusively(() => {
+      devices = this._getSessionDevicesSync();
+    });
+    return devices;
+  }
+
+  getTakenDevicesSync() {
+    const allDevices = this._getRegisteredDevices();
+    const busyDevices = allDevices.filter(device => device.busy);
+    const externalDevices = allDevices.filter(device => device.sessionId !== this._sessionId);
+    return busyDevices.concat(externalDevices);
   }
 
   /***
@@ -154,6 +142,12 @@ class DeviceRegistry {
   _getRegisteredDevices() {
     const devices = this._lockfile.read();
     return new DeviceList(devices);
+  }
+
+  _getSessionDevicesSync() {
+    const devices = this._getRegisteredDevices();
+    const sessionDevices = devices.filter(device => device.sessionId === this._sessionId);
+    return sessionDevices;
   }
 }
 

@@ -32,10 +32,10 @@ class QueryVersionCommand extends ExecCommand {
 }
 
 class LaunchCommand extends ExecCommand {
-  constructor(avdName, options) {
+  constructor(options) {
     super();
     this._options = options;
-    this._args = this._getEmulatorArgs(avdName);
+    this._args = this._getEmulatorArgs();
   }
 
   get adbName() {
@@ -54,8 +54,9 @@ class LaunchCommand extends ExecCommand {
     return this._args;
   }
 
-  _getEmulatorArgs(avdName) {
+  _getEmulatorArgs() {
     const {
+      avdName,
       bootArgs,
       gpuMode = this._getDefaultGPUMode(),
       headless,

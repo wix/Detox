@@ -19,7 +19,6 @@ class DetoxWorker {
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
       events: [
-        'bootDevice',
         'beforeShutdownDevice',
         'shutdownDevice',
         'beforeTerminateApp',
@@ -133,9 +132,7 @@ class DetoxWorker {
     };
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
-    // TODO: emit before bootDevice
     this._deviceCookie = yield this._context[symbols.allocateDevice]();
-    // TODO: emit after bootDevice
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -204,9 +201,7 @@ class DetoxWorker {
     }
 
     if (this._deviceCookie) {
-      // TODO: emit before device shutdown
       await this._context[symbols.deallocateDevice](this._deviceCookie);
-      // TODO: emit after device shutdown
     }
 
     this._deviceAllocator = null;

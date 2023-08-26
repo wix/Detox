@@ -27,7 +27,6 @@ detox <command> [options]
 | [build-framework-cache]   | **MacOS only.** Builds Detox.framework to \~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions.                 |
 | [clean-framework-cache]   | **MacOS only.** Deletes all compiled framework binaries from \~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'. |
 | [rebuild-framework-cache] | **MacOS only.** Rebuilds the Detox cache.                                                                                                                     |
-| [reset-lock-file]         | Resets all Detox lock files. Useful when you need to run multiple `detox test … --keepLockFile` commands in parallel.                                         |
 | [run-server]              | Starts a standalone Detox server.                                                                                                                             |
 
 ## Options

@@ -1,4 +1,4 @@
-const { EmulatorExec } = require('../../devices/common/drivers/android/emulator/exec/EmulatorExec');
+const { EmulatorExec } = require('../../common/drivers/android/emulator/exec/EmulatorExec');
 
 class EmulatorServiceLocator {
   constructor() {
