@@ -10,9 +10,15 @@ class SimulatorLauncher {
   }
 
   async shutdown(udid) {
-    await this._eventEmitter.emit('beforeShutdownDevice', { deviceId: udid });
+    if (this._eventEmitter) {
+      await this._eventEmitter.emit('beforeShutdownDevice', { deviceId: udid });
+    }
+
     await this._applesimutils.shutdown(udid);
-    await this._eventEmitter.emit('shutdownDevice', { deviceId: udid });
+
+    if (this._eventEmitter) {
+      await this._eventEmitter.emit('shutdownDevice', { deviceId: udid });
+    }
   }
 }
 

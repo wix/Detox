@@ -151,6 +151,8 @@ class DetoxWorker {
     });
     Object.assign(this, matchers);
 
+    this._artifactsManager.onBootDevice({ deviceId: this.device.id });
+
     if (behaviorConfig.init.exposeGlobals) {
       const injectedGlobals = {
         ...matchers,
