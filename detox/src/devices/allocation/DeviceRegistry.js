@@ -1,4 +1,5 @@
 const ExclusiveLockfile = require('../../utils/ExclusiveLockfile');
+const PIDService = require('../../utils/PIDService');
 const { getDeviceRegistryPath } = require('../../utils/environment');
 const safeAsync = require('../../utils/safeAsync');
 
@@ -9,7 +10,11 @@ const readOptions = {
 };
 
 class DeviceRegistry {
-  constructor({ lockfilePath = getDeviceRegistryPath(), sessionId = '' } = {}) {
+  constructor({
+    lockfilePath = getDeviceRegistryPath(),
+    sessionId = '',
+    pidService = new PIDService(),
+  } = {}) {
     /***
      * @private
      * @type {string}
@@ -20,6 +25,10 @@ class DeviceRegistry {
      * @type {string}
      */
     this._sessionId = sessionId;
+    /***
+     * @private
+     */
+    this._pidService = pidService;
     /***
      * @protected
      * @type {ExclusiveLockfile}
@@ -52,7 +61,11 @@ class DeviceRegistry {
     return this._lockfile.exclusively(async () => {
       const deviceId = await safeAsync(getDeviceId);
       if (deviceId) {
-        this._upsertDevice(deviceId, { busy: true, sessionId: this._sessionId });
+        this._upsertDevice(deviceId, {
+          busy: true,
+          sessionId: this._sessionId,
+          pid: this._pidService.getPid(),
+        });
       }
       return deviceId;
     });
@@ -66,7 +79,11 @@ class DeviceRegistry {
     return this._lockfile.exclusively(async () => {
       const deviceId = await safeAsync(getDeviceId);
       if (deviceId) {
-        this._upsertDevice(deviceId, { busy: false, sessionId: this._sessionId });
+        this._upsertDevice(deviceId, {
+          busy: false,
+          sessionId: this._sessionId,
+          pid: this._pidService.getPid(),
+        });
       }
       return deviceId;
     });
@@ -90,6 +107,20 @@ class DeviceRegistry {
       const allDevices = this._getRegisteredDevices();
       const sessionDevices = allDevices.filter(device => device.sessionId === this._sessionId);
       for (const id of sessionDevices.getIds()) {
+        allDevices.delete(id);
+      }
+      this._lockfile.write([...allDevices]);
+    });
+  }
+
+  async unregisterZombieDevices() {
+    await this._lockfile.exclusively(async () => {
+      const allDevices = this._getRegisteredDevices();
+      const zombieDevices = allDevices.filter(device => {
+        return device.sessionId !== this._sessionId && !this._pidService.isAlive(device.pid);
+      });
+
+      for (const id of zombieDevices.getIds()) {
         allDevices.delete(id);
       }
       this._lockfile.write([...allDevices]);

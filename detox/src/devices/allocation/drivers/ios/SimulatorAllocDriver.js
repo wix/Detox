@@ -2,8 +2,7 @@
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const detectConcurrentDetox = require('../../../../utils/detectConcurrentDetox');
-const log = require('../../../../utils/logger').child({ cat: 'device' });
+const log = require('../../../../utils/logger').child({ cat: 'device,device-allocation' });
 const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
 const AllocationDriverBase = require('../AllocationDriverBase');
 
@@ -27,9 +26,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
   }
 
   async init() {
-    if (!detectConcurrentDetox()) {
-      await this._deviceRegistry.reset();
-    }
+    await this._deviceRegistry.unregisterZombieDevices();
   }
 
   /**
@@ -97,7 +94,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     try {
       await this._simulatorLauncher.shutdown(udid);
     } catch (err) {
-      log.warn({ event: 'DEVICE_ALLOCATOR', err }, `Failed to shutdown simulator ${udid}`);
+      log.warn({ err }, `Failed to shutdown simulator ${udid}`);
     }
   }
 
@@ -119,7 +116,6 @@ class SimulatorAllocDriver extends AllocationDriverBase {
       udid = free[0].udid;
     }
 
-    this._allocatedSimulators.add(udid);
     return udid;
   }
 

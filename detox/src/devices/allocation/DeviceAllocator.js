@@ -1,5 +1,5 @@
 // @ts-nocheck
-const log = require('../../utils/logger').child({ cat: 'device', event: 'DEVICE_ALLOCATOR' });
+const log = require('../../utils/logger').child({ cat: 'device,device-allocation' });
 const traceMethods = require('../../utils/traceMethods');
 
 class DeviceAllocator {
@@ -27,7 +27,7 @@ class DeviceAllocator {
   async allocate(deviceConfig) {
     return await log.trace.complete({ data: deviceConfig, id: Math.random() }, 'allocate', async () => {
       const cookie = await this._driver.allocate(deviceConfig);
-      log.debug(`settled on ${cookie}`);
+      log.debug({ event: undefined }, `settled on ${cookie}`);
       return cookie;
     });
   }
@@ -48,10 +48,10 @@ class DeviceAllocator {
 
   /**
    * @param cookie { DeviceCookie }
-   * @param options { DeallocOptions }
+   * @param options { Partial<DeallocOptions> }
    * @returns {Promise<void>}
    */
-  async free(cookie, options) {
+  async free(cookie, options = {}) {
     await log.trace.complete({ data: options, id: Math.random() }, `free: ${cookie}`, async () => {
       await this._driver.free(cookie, options);
     });

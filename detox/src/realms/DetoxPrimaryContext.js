@@ -95,6 +95,10 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
       logger: this[symbols.logger],
+      callbacks: {
+        onAllocateDevice: this[symbols.allocateDevice].bind(this),
+        onDeallocateDevice: this[symbols.deallocateDevice].bind(this),
+      },
     });
 
     await this[_ipcServer].init();
@@ -151,6 +155,7 @@ class DetoxPrimaryContext extends DetoxContext {
     await super[symbols.installWorker]({ ...opts, workerId });
   }
 
+  /** @override */
   async [symbols.allocateDevice]() {
     const { device } = this[$sessionState].detoxConfig;
     const deviceCookie = await this[_deviceAllocator].allocate(device);
@@ -161,13 +166,14 @@ class DetoxPrimaryContext extends DetoxContext {
       try {
         await this[_deviceAllocator].free(deviceCookie, { shutdown: true });
       } catch (e2) {
-        this[symbols.logger].error({ cat: 'device', event: 'DEVICE_ALLOCATOR', err: e2 }, `Failed to free ${deviceCookie} after a failed allocation`);
+        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to free ${deviceCookie} after a failed allocation`);
       }
 
       throw e;
     }
   }
 
+  /** @override */
   async [symbols.deallocateDevice](cookie) {
     await this[_deviceAllocator].free(cookie);
   }

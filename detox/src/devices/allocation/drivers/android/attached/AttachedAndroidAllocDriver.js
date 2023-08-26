@@ -1,5 +1,4 @@
 // @ts-nocheck
-const detectConcurrentDetox = require('../../../../../utils/detectConcurrentDetox');
 const AttachedAndroidDeviceCookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -17,9 +16,7 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
   }
 
   async init() {
-    if (!detectConcurrentDetox()) {
-      await this._deviceRegistry.reset();
-    }
+    await this._deviceRegistry.unregisterZombieDevices();
   }
 
   /**

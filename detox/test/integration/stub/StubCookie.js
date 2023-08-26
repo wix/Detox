@@ -9,6 +9,10 @@ class StubCookie extends DeviceCookie {
   get platform() {
     return 'stub';
   }
+
+  toString() {
+    return this.id;
+  }
 }
 
 module.exports = StubCookie;

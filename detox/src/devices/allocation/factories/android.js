@@ -7,7 +7,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const adb = serviceLocator.adb;
     const emulatorExec = serviceLocator.emulator.exec;
     const DeviceRegistry = require('../../allocation/DeviceRegistry');
-    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.sessionId });
+    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.id });
 
     const AVDsResolver = require('../drivers/android/emulator/AVDsResolver');
     const avdsResolver = new AVDsResolver(emulatorExec);
@@ -42,7 +42,7 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const DeviceRegistry = require('../../allocation/DeviceRegistry');
-    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.sessionId });
+    const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.id });
 
     const FreeDeviceFinder = require('../drivers/android/FreeDeviceFinder');
     const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);

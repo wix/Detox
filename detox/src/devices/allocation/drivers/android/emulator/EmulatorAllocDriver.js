@@ -1,8 +1,7 @@
 const _ = require('lodash');
 
 const Deferred = require('../../../../../utils/Deferred');
-const detectConcurrentDetox = require('../../../../../utils/detectConcurrentDetox');
-const log = require('../../../../../utils/logger').child({ __filename });
+const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -40,7 +39,6 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     this._adb = adb;
     this._avdValidator = avdValidator;
     this._deviceRegistry = deviceRegistry;
-    debugger;
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
     this._freeDeviceFinder = freeDeviceFinder;
@@ -49,9 +47,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
   }
 
   async init() {
-    if (!detectConcurrentDetox()) {
-      await this._deviceRegistry.reset();
-    }
+    await this._deviceRegistry.unregisterZombieDevices();
   }
 
   /**
@@ -163,7 +159,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     try {
       await this._emulatorLauncher.shutdown(adbName);
     } catch (err) {
-      log.warn({ event: 'DEVICE_ALLOCATOR', err }, `Failed to shutdown emulator ${adbName}`);
+      log.warn({ err }, `Failed to shutdown emulator ${adbName}`);
     }
   }
 
