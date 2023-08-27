@@ -97,6 +97,6 @@ describe('Genymotion-Cloud Instance DTO', () => {
 
   it('should override toString()', () => {
     const instance = new Instance(connectedRawInstance);
-    expect(`${instance}`).toEqual(`GenyCloud:${instance.name} (${instance.uuid} ${instance.adbName})`);
+    expect(`${instance}`).toEqual(`${instance.name} (${instance.uuid}/${instance.adbName})`);
   });
 });

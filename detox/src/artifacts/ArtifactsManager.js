@@ -124,6 +124,7 @@ class ArtifactsManager extends EventEmitter {
   }
 
   subscribeToDeviceEvents(deviceEmitter) {
+    deviceEmitter.on('bootDevice', this.onBootDevice.bind(this));
     deviceEmitter.on('beforeShutdownDevice', this.onBeforeShutdownDevice.bind(this));
     deviceEmitter.on('shutdownDevice', this.onShutdownDevice.bind(this));
     deviceEmitter.on('beforeLaunchApp', this.onBeforeLaunchApp.bind(this));

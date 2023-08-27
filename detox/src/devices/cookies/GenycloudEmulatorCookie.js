@@ -6,18 +6,12 @@ class GenycloudEmulatorCookie extends AndroidDeviceCookie {
    * @param instance { GenyInstance }
    */
   constructor(instance) {
-    super();
+    super(instance.adb.name);
     this.instance = instance;
   }
 
-  get adbName() {
-    return this.instance.adbName;
-  }
-
-  set adbName(value) {}
-
   toString() {
-    return `${this.instance.uuid} (${this.instance.adbName})`;
+    return `${this.instance}`;
   }
 }
 

@@ -53,24 +53,30 @@ class GenyRegistry {
   }
 
   /** @param {import('./services/dto/GenyInstance')} instance */
-  markAsBusy(instance) {
-    if (!this._recipes.has(instance.uuid)) {
-      throw new DetoxInternalError(`Cannot mark an unknown instance ${instance.uuid} as busy`);
+  markAsBusy({ uuid }) {
+    if (this._busyInstances.has(uuid)) {
+      return;
     }
 
-    this._busyInstances.set(instance.uuid, instance);
-    this._freeInstances.delete(instance.uuid);
+    const instance = this._freeInstances.get(uuid);
+    if (!instance) {
+      throw new DetoxInternalError(`Cannot mark an unknown instance ${uuid} as busy`);
+    }
+
+    this._busyInstances.set(uuid, instance);
+    this._freeInstances.delete(uuid);
     return instance;
   }
 
   /** @param {import('./services/dto/GenyInstance')} instance */
-  markAsFree(instance) {
-    if (!this._busyInstances.has(instance.uuid)) {
-      throw new DetoxInternalError(`Cannot mark an unknown instance ${instance.uuid} as free`);
+  markAsFree({ uuid }) {
+    const instance = this._busyInstances.get(uuid);
+    if (!instance) {
+      throw new DetoxInternalError(`Cannot mark an unknown instance ${uuid} as free`);
     }
 
-    this._freeInstances.set(instance.uuid, instance);
-    this._busyInstances.delete(instance.uuid);
+    this._busyInstances.delete(uuid);
+    this._freeInstances.set(uuid, instance);
     return instance;
   }
 

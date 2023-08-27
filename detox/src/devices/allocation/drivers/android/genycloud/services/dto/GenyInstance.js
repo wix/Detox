@@ -59,7 +59,12 @@ class GenyInstance {
   }
 
   toString() {
-    return `GenyCloud:${this.name} (${this.uuid} ${this.adbName})`;
+    const description = [
+      this.uuid,
+      this.adbName
+    ].filter(Boolean).join('/');
+
+    return `${this.name} (${description})`;
   }
 }
 

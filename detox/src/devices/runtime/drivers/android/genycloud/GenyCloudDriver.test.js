@@ -3,6 +3,7 @@ describe('Genymotion-cloud driver', () => {
     uuid: 'mock-instance-uuid',
     name: 'mock-instance-name',
     adbName: 'mock-instance-adb-name',
+    adb: { name: 'mock-instance-adb-name' },
     toString: () => 'mock-instance-toString()',
   });
 
@@ -71,7 +72,7 @@ describe('Genymotion-cloud driver', () => {
     });
 
     it('should return the instance description as the external ID', () => {
-      expect(uut.getDeviceName()).toEqual(instance.toString());
+      expect(uut.getDeviceName()).toEqual(instance.name);
     });
 
     describe('app installation', () => {

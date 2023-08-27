@@ -17,12 +17,12 @@ class GenyCloudDriver extends AndroidDriver {
    * @param props { GenycloudDriverProps }
    */
   constructor(deps, { instance }) {
-    super(deps, { adbName: instance.adbName });
+    super(deps, { adbName: instance.adb.name });
     this.instance = instance;
   }
 
   getDeviceName() {
-    return this.instance.toString();
+    return this.instance.name;
   }
 
   async setLocation(lat, lon) {

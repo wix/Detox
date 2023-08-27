@@ -19,6 +19,7 @@ class DetoxWorker {
     this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
       events: [
+        'bootDevice',
         'beforeShutdownDevice',
         'shutdownDevice',
         'beforeTerminateApp',
@@ -151,7 +152,7 @@ class DetoxWorker {
     });
     Object.assign(this, matchers);
 
-    this._artifactsManager.onBootDevice({ deviceId: this.device.id });
+    yield this._eventEmitter.emit('bootDevice', { deviceId: this.device.id });
 
     if (behaviorConfig.init.exposeGlobals) {
       const injectedGlobals = {

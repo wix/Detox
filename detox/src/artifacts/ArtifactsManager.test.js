@@ -534,6 +534,7 @@ describe('ArtifactsManager', () => {
     });
 
     it.each([
+      ['bootDevice'],
       ['beforeShutdownDevice'],
       ['shutdownDevice'],
       ['beforeLaunchApp'],
