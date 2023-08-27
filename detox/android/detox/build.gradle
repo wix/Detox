@@ -140,7 +140,7 @@ dependencies {
 // Unit-testing deps.
 dependencies {
     testImplementation "${_rnNativeArtifact}"
-    testImplementation 'org.json:json:20140107'
+    testImplementation 'org.json:json:20230227'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'
