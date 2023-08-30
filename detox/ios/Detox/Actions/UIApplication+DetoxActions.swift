@@ -11,10 +11,16 @@ import UIKit
 extension UIApplication {
 	@available(iOS 16.0, *)
 	class func dtx_setOrientation(_ mask: UIInterfaceOrientationMask) {
-		let windowScene = UIWindow.dtx_keyWindowScene() as? UIWindowScene
-		windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
-
 		let keyWindow = UIWindow.dtx_keyWindow
-		keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+		let rootViewController = keyWindow?.rootViewController
+
+		if rootViewController?.supportedInterfaceOrientations.contains(mask) != true {
+			return
+		}
+
+		let windowScene = UIWindow.dtx_keyWindowScene() as? UIWindowScene
+
+		windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: mask))
+		rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
 	}
 }
