@@ -79,12 +79,6 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
     const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
-    const pid2 = await this._applesimutils.getPid(udid, bundleId);
-    if (Number.isFinite(pid) && Number.isNaN(pid2)) {
-      throw new DetoxRuntimeError({
-        message: `The application "${bundleId}" has crashed immediately after launch.`,
-      });
-    }
 
     return pid;
   }
