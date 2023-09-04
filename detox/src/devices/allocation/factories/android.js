@@ -21,6 +21,9 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const FreeEmulatorFinder = require('../drivers/android/emulator/FreeEmulatorFinder');
     const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
 
+    const FreePortFinder = require('../drivers/android/emulator/FreePortFinder');
+    const freePortFinder = new FreePortFinder();
+
     const EmulatorLauncher = require('../drivers/android/emulator/EmulatorLauncher');
     const emulatorLauncher = new EmulatorLauncher({ adb, emulatorExec });
 
@@ -32,7 +35,8 @@ class AndroidEmulator extends DeviceAllocatorFactory {
       deviceRegistry,
       emulatorVersionResolver,
       emulatorLauncher,
-      freeEmulatorFinder,
+      freeDeviceFinder: freeEmulatorFinder,
+      freePortFinder,
     });
   }
 }

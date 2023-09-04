@@ -33,8 +33,8 @@ class EmulatorAllocDriver extends AllocationDriverBase {
 
     /** @type {Deferred} */
     this._deferredAllocation = Deferred.resolved(null);
-    /** @type {Promise<string> | null} */
-    this._pendingAllocation = null;
+    /** @type {Promise<unknown>} */
+    this._pendingAllocation = Promise.resolve();
 
     this._adb = adb;
     this._avdValidator = avdValidator;
