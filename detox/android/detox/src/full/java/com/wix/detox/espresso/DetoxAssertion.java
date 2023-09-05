@@ -24,42 +24,57 @@ import static org.hamcrest.Matchers.not;
 
 public class DetoxAssertion {
 
+    private static final double NANOSECONDS_IN_A_SECOND = 1_000_000_000.0;
+
     private DetoxAssertion() {
-        // static class
+        // This is a utility class and shouldn't be instantiated.
     }
 
-    public static ViewInteraction assertMatcher(ViewInteraction i, Matcher<View> m) {
-        return i.check(matches(m));
+    /**
+     * Asserts the given matcher for the provided view interaction.
+     */
+    public static ViewInteraction assertMatcher(ViewInteraction viewInteraction, Matcher<View> viewMatcher) {
+        return viewInteraction.check(matches(viewMatcher));
     }
 
-    public static ViewInteraction assertNotVisible(ViewInteraction i) {
-        ViewInteraction ret;
+    /**
+     * Asserts that the given view interaction is not visible.
+     */
+    public static ViewInteraction assertNotVisible(ViewInteraction viewInteraction) {
+        ViewInteraction result;
         try {
-            ret = i.check(doesNotExist());
-            return ret;
+            result = viewInteraction.check(doesNotExist());
+            return result;
         } catch (AssertionFailedError e) {
-            ret = i.check(matches(not(isDisplayed())));
-            return ret;
+            result = viewInteraction.check(matches(not(isDisplayed())));
+            return result;
         }
     }
 
-    public static ViewInteraction assertNotExists(ViewInteraction i) {
-        return i.check(doesNotExist());
+    /**
+     * Asserts that the given view interaction does not exist.
+     */
+    public static ViewInteraction assertNotExists(ViewInteraction viewInteraction) {
+        return viewInteraction.check(doesNotExist());
     }
 
-    public static void waitForAssertMatcher(final ViewInteraction i, final Matcher<View> m, double timeoutSeconds) {
-        final long originTime = System.nanoTime();
+    /**
+     * Waits until the provided matcher matches the view interaction or a timeout occurs.
+     */
+    public static void waitForAssertMatcher(final ViewInteraction viewInteraction, final Matcher<View> viewMatcher, double timeoutSeconds) {
+        final long startTime = System.nanoTime();
 
         while (true) {
             long currentTime = System.nanoTime();
-            long elapsed = currentTime - originTime;
-            double seconds = (double) elapsed / 1000000000.0;
-            if (seconds >= timeoutSeconds) {
-                throw new DetoxRuntimeException("" + timeoutSeconds + "sec timeout expired without matching of given matcher: " + m);
+            long elapsedTime = currentTime - startTime;
+            double elapsedSeconds = (double) elapsedTime / NANOSECONDS_IN_A_SECOND;
+            if (elapsedSeconds >= timeoutSeconds) {
+                throw new DetoxRuntimeException(
+                    "" + timeoutSeconds + "sec timeout expired without matching of given matcher: " + viewMatcher);
             }
 
             try {
-                i.check(matches(m));
+                viewInteraction.check(matches(viewMatcher));
                 break;
             } catch (AssertionFailedError err) {
                 UiAutomatorHelper.espressoSync(20);
@@ -67,21 +82,25 @@ public class DetoxAssertion {
         }
     }
 
+    /**
+     * Continually asserts the provided matcher until a search action returns a matching view or a
+     * `StaleActionException` error is thrown.
+     */
     public static void waitForAssertMatcherWithSearchAction(
-            final ViewInteraction i,
-            final Matcher<View> vm,
-            final ViewAction searchAction,
-            final Matcher<View> searchMatcher) {
-
+        final ViewInteraction viewInteraction,
+        final Matcher<View> viewMatcher,
+        final ViewAction searchAction,
+        final Matcher<View> searchMatcher
+    ) {
         while (true) {
             try {
-                assertMatcher(i, vm);
+                assertMatcher(viewInteraction, viewMatcher);
                 break;
             } catch (AssertionFailedError err) {
                 try {
                     onView(searchMatcher).perform(searchAction);
                 } catch (StaleActionException exStaleAction) {
-                    assertMatcher(i, vm);
+                    assertMatcher(viewInteraction, viewMatcher);
                     break;
                 }
             }
