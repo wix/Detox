@@ -31,7 +31,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
 
-    public static Object perform(ViewInteraction interaction, ViewAction action) {
+    public static Object perform(Matcher<View> matcher, ViewAction action) {
+        ViewInteraction interaction = onView(matcher);
         interaction.perform(action);
 
         if (action instanceof ViewActionWithResult) {

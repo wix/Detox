@@ -25,9 +25,9 @@ class Interaction {
 }
 
 class ActionInteraction extends Interaction {
-  constructor(invocationManager, element, action, traceDescription) {
+  constructor(invocationManager, matcher, action, traceDescription) {
     super(invocationManager, traceDescription);
-    this._call = EspressoDetoxApi.perform(call(element._call), action._call);
+    this._call = EspressoDetoxApi.perform(matcher, action._call);
     // TODO: move this.execute() here from the caller
   }
 }
@@ -48,7 +48,6 @@ class WaitForInteraction extends Interaction {
     super(invocationManager, expectTraceDescription);
     this._element = element;
     this._assertionMatcher = assertionMatcher;
-    this._element._selectElementWithMatcher(this._element._originalMatcher);
   }
 
   async withTimeout(timeout) {

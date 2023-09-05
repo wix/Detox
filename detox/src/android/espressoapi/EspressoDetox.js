@@ -5,9 +5,16 @@
 */
 
 
+function sanitize_matcher(matcher) {
+  if (!matcher._call) {
+    return matcher;
+  }
 
+  const originalMatcher = typeof matcher._call === 'function' ? matcher._call() : matcher._call;
+  return originalMatcher.type ? originalMatcher.value : originalMatcher;
+} 
 class EspressoDetox {
-  static perform(interaction, action) {
+  static perform(matcher, action) {
     return {
       target: {
         type: "Class",
@@ -16,7 +23,7 @@ class EspressoDetox {
       method: "perform",
       args: [{
         type: "Invocation",
-        value: interaction
+        value: sanitize_matcher(matcher)
       }, action]
     };
   }
