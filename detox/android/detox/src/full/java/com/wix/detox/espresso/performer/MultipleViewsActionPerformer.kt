@@ -34,12 +34,10 @@ class MultipleViewsActionPerformer(
             }
         }
 
-        return if (results.isEmpty()) {
-            null
-        } else if (results.size == 1) {
-            results.first()
-        } else {
-            mapOf("elements" to results)
+        return when {
+            results.isEmpty() -> null
+            results.size == 1 -> results.first()
+            else -> mapOf("elements" to results)
         }
     }
 }
