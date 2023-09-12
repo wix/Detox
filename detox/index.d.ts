@@ -1430,8 +1430,9 @@ declare global {
             takeScreenshot(name: string): Promise<string>;
 
             /**
-             * Gets the native (OS-dependent) attributes of the element.
-             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             * Retrieves the OS-dependent attributes of an element.
+             * If there are multiple matches, it returns an array of attributes for all matched elements.
+             * For detailed information, refer to {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
              *
              * @example
              * test('Get the attributes for my text element', async () => {
@@ -1445,7 +1446,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[] } | { elements: AndroidElementAttributes[] } >;
         }
 
         interface WebExpect<R = Promise<void>> {

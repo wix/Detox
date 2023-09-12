@@ -158,8 +158,7 @@ class NativeElement {
   async getAttributes() {
     const action = new actions.GetAttributes();
     const traceDescription = actionDescription.getAttributes();
-    const result = await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
-    return JSON.parse(result);
+    return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
   async adjustSliderToPosition(newPosition) {
