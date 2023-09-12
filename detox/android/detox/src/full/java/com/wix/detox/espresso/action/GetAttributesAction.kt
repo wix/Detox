@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
+import com.wix.detox.espresso.MultipleViewsAction
 import com.wix.detox.espresso.common.SliderHelper
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.hamcrest.Matcher
@@ -17,26 +18,25 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.notNullValue
 import org.json.JSONObject
 
-class GetAttributesAction() : ViewActionWithResult<String?> {
+class GetAttributesAction() : ViewActionWithResult<JSONObject?>, MultipleViewsAction {
     private val commonAttributes = CommonAttributes()
     private val textViewAttributes = TextViewAttributes()
     private val checkBoxAttributes = CheckBoxAttributes()
     private val progressBarAttributes = ProgressBarAttributes()
     private val sliderAttributes = SliderAttributes()
-    private var result: String = ""
+    private var result: JSONObject? = null
 
     override fun perform(uiController: UiController?, view: View?) {
         view!!
 
         val json = JSONObject()
-
         commonAttributes.get(json, view)
         textViewAttributes.get(json, view)
         checkBoxAttributes.get(json, view)
         progressBarAttributes.get(json, view)
         sliderAttributes.get(json, view)
 
-        result = json.toString()
+        result = json
     }
 
     override fun getResult() = result

@@ -93,12 +93,17 @@ describe("Test", () => {
 
         beforeEach(async () => {
             const attributes = await element(by.id("element")).getAttributes();
+
             if ('elements' in attributes) {
-                commonAttributes = iosAttributes = attributes.elements[0];
+                if ('activationPoint' in attributes.elements[0]) {
+                    commonAttributes = iosAttributes = attributes.elements[0] as Detox.IosElementAttributes;
+                } else {
+                    commonAttributes = androidAttributes = attributes.elements[0] as Detox.AndroidElementAttributes;
+                }
             } else if ('activationPoint' in attributes) {
-                commonAttributes = iosAttributes = attributes;
+                commonAttributes = iosAttributes = attributes as Detox.IosElementAttributes;
             } else {
-                commonAttributes = androidAttributes = attributes;
+                commonAttributes = androidAttributes = attributes as Detox.AndroidElementAttributes;
             }
         });
 

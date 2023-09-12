@@ -305,7 +305,7 @@ describe('AndroidExpect', () => {
           text: 'hello',
           value: 1,
         };
-        mockExecutor.executeResult = Promise.resolve(JSON.stringify(execResult));
+        mockExecutor.executeResult = Promise.resolve(execResult);
         const result = await e.element(e.by.id('UniqueId005')).getAttributes();
         expect(result).toEqual(execResult);
       });
