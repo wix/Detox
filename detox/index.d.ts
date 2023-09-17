@@ -790,6 +790,46 @@ declare global {
             setLocation(lat: number, lon: number): Promise<void>;
 
             /**
+             * (iOS only) Override simulator’s status bar.
+             * @platform iOS
+             * @param {config} config status bar configuration.
+             * @example
+             * await device.setStatusBar({
+             *   time: "12:34",
+             *   // Set the date or time to a fixed value.
+             *   // If the string is a valid ISO date string it will also set the date on relevant devices.
+             *   dataNetwork: "wifi",
+             *   // If specified must be one of 'wifi', '3g', '4g', 'lte', 'lte-a', or 'lte+'.
+             *   wifiMode: "failed",
+             *   // If specified must be one of 'searching', 'failed', or 'active'.
+             *   wifiBars: "2",
+             *   // If specified must be 0-3.
+             *   cellularMode: "searching",
+             *   // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
+             *   cellularBars: "3",
+             *   // If specified must be 0-4.
+             *   batteryState: "charging",
+             *   // If specified must be one of 'charging', 'charged', or 'discharging'.
+             *   batteryLevel: "50",
+             *   // If specified must be 0-100.
+             *  });
+             */
+            setStatusBar(config: {
+              time?: string,
+              dataNetwork?: "wifi" | '3g'| '4g'| 'lte'| 'lte-a' | "lte+",
+              wifiMode?: "searching" |"failed" | "active",
+              wifiBars?: "0" | "1" | "2" | "3",
+              cellularMode?: "notSupported" | "searching" | "failed" | "active",
+              cellularBars?: "0" | "1" | "2" | "3" | "4",
+              batteryState?: "charging" | "charged" | "discharging",
+              /**
+                * In order to generate this type run: 
+                * Array(101).fill(0).map((_, i) => `"${i}"`).join(" | ")
+              */
+              batteryLevel?:  "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47" | "48" | "49" | "50" | "51" | "52" | "53" | "54" | "55" | "56" | "57" | "58" | "59" | "60" | "61" | "62" | "63" | "64" | "65" | "66" | "67" | "68" | "69" | "70" | "71" | "72" | "73" | "74" | "75" | "76" | "77" | "78" | "79" | "80" | "81" | "82" | "83" | "84" | "85" | "86" | "87" | "88" | "89" | "90" | "91" | "92" | "93" | "94" | "95" | "96" | "97" | "98" | "99" | "100",
+            }): Promise<void>;
+
+            /**
              * Disable network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
