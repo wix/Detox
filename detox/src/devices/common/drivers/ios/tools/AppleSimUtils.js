@@ -455,6 +455,8 @@ class AppleSimUtils {
         overrides.push(`--cellularMode "${flags.cellularMode}"`);
       if (flags.cellularBars)
         overrides.push(`--cellularBars "${flags.cellularBars}"`);
+      if (flags.operatorName)
+        overrides.push(`--operatorName "${flags.operatorName}"`);
       if (flags.batteryState)
         overrides.push(`--batteryState "${flags.batteryState}"`);
       if (flags.batteryLevel)
