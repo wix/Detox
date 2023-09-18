@@ -27,6 +27,7 @@ describe("Test", () => {
             wifiBars: "2",
             cellularMode: "searching",
             cellularBars: "3",
+            operatorName: "A1",
             batteryState: "charging",
             batteryLevel: "50",
         });
