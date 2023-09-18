@@ -19,6 +19,18 @@ describe("Test", () => {
     beforeAll(async () => {
         await device.reloadReactNative();
 
+        await device.setStatusBar({ time: "12:34" });
+        await device.setStatusBar({
+            time: "12:34",
+            dataNetwork: "wifi",
+            wifiMode: "failed",
+            wifiBars: "2",
+            cellularMode: "searching",
+            cellularBars: "3",
+            batteryState: "charging",
+            batteryLevel: "50",
+        });
+
         const artifactsPaths: string[] = [
             await device.takeScreenshot("test screenshot"),
             await device.captureViewHierarchy(),
