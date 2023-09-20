@@ -1,12 +1,24 @@
+const data = Symbol('data');
+
 class GenyRecipe {
   constructor(rawRecipe) {
-    this.uuid = rawRecipe.uuid;
-    this.name = rawRecipe.name || 'Anonymous GMSaaS Recipe';
-    this._description = (rawRecipe.name ? `${this.name} (${this.uuid})` : `Recipe of ${this.uuid}`);
+    this[data] = rawRecipe;
+  }
+
+  get uuid() {
+    return this[data].uuid;
+  }
+
+  get name() {
+    return this[data].name || 'Anonymous GMSaaS Recipe';
   }
 
   toString() {
-    return this._description;
+    return this[data].name ? `${this.name} (${this.uuid})` : `Recipe of ${this.uuid}`;
+  }
+
+  toJSON() {
+    return this[data];
   }
 }
 

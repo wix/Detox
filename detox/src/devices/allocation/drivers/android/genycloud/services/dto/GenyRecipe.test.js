@@ -34,4 +34,9 @@ describe('Genymotion-Cloud Recipe DTO', () => {
     });
     expect(recipe.toString()).toEqual('Recipe of mock-uuid');
   });
+
+  it('should implement toJSON()', () => {
+    const recipe = new Recipe(rawRecipe);
+    expect(recipe.toJSON()).toBe(rawRecipe);
+  });
 });

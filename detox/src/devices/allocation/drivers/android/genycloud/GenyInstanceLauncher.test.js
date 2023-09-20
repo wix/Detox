@@ -1,51 +1,47 @@
+const GenyInstance = require('./services/dto/GenyInstance');
+
 // @ts-nocheck
 describe('Genymotion-Cloud instance launcher', () => {
   const recipeName = 'mock-recipe-name';
 
-  const anInstance = () => {
-    const instance = new GenyInstance();
-    instance.uuid = 'mock-instance-uuid';
-    instance.name = 'mock-instance-name';
-    instance.recipeName = recipeName;
-    instance.toString = () => 'mock-instance-toString()';
-    return instance;
-  };
+  const anInstance = (overrides) => new GenyInstance({
+    uuid: 'mock-instance-uuid',
+    name: 'mock-instance-name',
+    adb_serial: '0.0.0.0',
+    adb_serial_port: 0,
+    state: 'OFFLINE',
+    recipe: {
+      name: recipeName,
+    },
+    ...overrides,
+  });
 
-  const anOfflineInstance = () => {
-    const instance = anInstance();
-    instance.isAdbConnected.mockReturnValue(false);
-    instance.isOnline.mockReturnValue(false);
-    instance.adbName = '0.0.0.0';
-    return instance;
-  };
-
-  const anOnlineInstance = () => {
-    const instance = anOfflineInstance();
-    instance.isOnline.mockReturnValue(true);
-    return instance;
-  };
-
+  const anOfflineInstance = () => anInstance({ state: 'OFFLINE' });
+  const anOnlineInstance = () => anInstance({ state: 'ONLINE' });
   const aDisconnectedInstance = anOnlineInstance;
-  const aFullyConnectedInstance = () => {
-    const instance = anOnlineInstance();
-    instance.isAdbConnected.mockReturnValue(true);
-    instance.adbName = 'localhost:1234';
-    return instance;
-  };
+  const aFullyConnectedInstance = () => anInstance({
+    adb_serial: 'localhost:1234',
+    adb_serial_port: 1234,
+    state: 'ONLINE',
+  });
 
-  const givenInstanceQueryResult = (instance) => genyCloudExec.getInstance.mockResolvedValue({ instance });
+  const givenInstanceGetResult = (instance) => genyCloudExec.getInstance.mockResolvedValue({ instance: instance.toJSON() });
+  const givenInstanceCreateResult = (instance) => instanceLifecycleService.createInstance.mockResolvedValue(instance);
   const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
   const givenInstanceConnectResult = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
 
-  let retry;
   let genyCloudExec;
   let instanceLifecycleService;
-  let GenyInstance;
   let uut;
+  let retry;
+  let logger;
 
   beforeEach(() => {
+    jest.mock('../../../../../utils/logger');
+    logger = jest.requireMock('../../../../../utils/logger');
+
     jest.mock('../../../../../utils/retry');
-    retry = require('../../../../../utils/retry');
+    retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
     const InstanceLifecycleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
@@ -54,12 +50,10 @@ describe('Genymotion-Cloud instance launcher', () => {
     const GenyCloudExec = jest.genMockFromModule('./exec/GenyCloudExec');
     genyCloudExec = new GenyCloudExec();
 
-    GenyInstance = jest.genMockFromModule('./services/dto/GenyInstance');
-
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');
     uut = new GenyInstanceLauncher({
+      genyCloudExec,
       instanceLifecycleService,
-      instanceLookupService: genyCloudExec,
     });
   });
 
@@ -67,10 +61,10 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should create an unconnected instance', async () => {
       const recipe = {};
       const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
+      givenInstanceCreateResult(instance);
       givenInstanceConnectResult(instance);
 
-      await expect(uut.launch(recipe)).resolves.toEqual(instance);
+      await expect(uut.launch(recipe, instance.name)).resolves.toEqual(instance);
     });
   });
 
@@ -78,7 +72,7 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should wait for the cloud instance to become online', async () => {
       const instance = anOfflineInstance();
       const instanceOnline = anOnlineInstance();
-      givenInstanceQueryResult(instanceOnline);
+      givenInstanceGetResult(instanceOnline);
       givenInstanceConnectResult(instanceOnline);
 
       retry.mockImplementationOnce(async (options, func) => {
@@ -94,7 +88,7 @@ describe('Genymotion-Cloud instance launcher', () => {
 
     it('should not wait for cloud instance to become online if already online', async () => {
       const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
+      givenInstanceCreateResult(instance);
       givenInstanceConnectResult(instance);
 
       const result = await uut.connect(instance);
@@ -105,7 +99,7 @@ describe('Genymotion-Cloud instance launcher', () => {
 
     it('should fail if instance never becomes online', async () => {
       const instanceOffline = anOfflineInstance();
-      givenInstanceQueryResult(instanceOffline);
+      givenInstanceGetResult(instanceOffline);
       givenInstanceConnectResult(instanceOffline);
 
       await expect(uut.connect(instanceOffline))
@@ -118,11 +112,11 @@ describe('Genymotion-Cloud instance launcher', () => {
         initialSleep: 45000,
         backoff: 'none',
         interval: 5000,
-        retries: 25,
+        retries: 20,
       };
       const instance = anOfflineInstance();
       const instanceOnline = anOnlineInstance();
-      givenInstanceQueryResult(instanceOnline);
+      givenInstanceGetResult(instanceOnline);
       givenInstanceConnectResult(instanceOnline);
 
       await uut.connect(instance);
@@ -132,7 +126,7 @@ describe('Genymotion-Cloud instance launcher', () => {
     it('should adb-connect to instance if disconnected', async () => {
       const disconnectedInstance = aDisconnectedInstance();
       const connectedInstance = aFullyConnectedInstance();
-      givenInstanceQueryResult(disconnectedInstance);
+      givenInstanceCreateResult(disconnectedInstance);
       givenInstanceConnectResult(connectedInstance);
 
       const result = await uut.connect(disconnectedInstance);
@@ -142,7 +136,7 @@ describe('Genymotion-Cloud instance launcher', () => {
 
     it('should not connect a connected instance', async () => {
       const connectedInstance = aFullyConnectedInstance();
-      givenInstanceQueryResult(connectedInstance);
+      givenInstanceCreateResult(connectedInstance);
       givenInstanceConnectResult(connectedInstance);
 
       await uut.connect(connectedInstance);
@@ -154,7 +148,7 @@ describe('Genymotion-Cloud instance launcher', () => {
   describe('Shutdown', () => {
     it('should delete the associated instance', async () => {
       const instance = anInstance();
-      await uut.shutdown(instance);
+      await uut.shutdown(instance.uuid);
       expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(instance.uuid);
     });
 
@@ -162,7 +156,7 @@ describe('Genymotion-Cloud instance launcher', () => {
       givenAnInstanceDeletionError();
 
       const instance = anInstance();
-      await expect(uut.shutdown(instance)).rejects.toThrowError();
+      await expect(uut.shutdown(instance.uuid)).rejects.toThrowError();
     });
 
     it('should remove the instance from the cleanup registry', async () => {
