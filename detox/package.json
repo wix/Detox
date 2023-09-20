@@ -137,9 +137,9 @@
       "src/artifacts/log",
       "src/artifacts/screenshot",
       "src/artifacts/video",
-      "src/devices/allocation/drivers/AllocationDriverBase.js",
       "src/devices/allocation/drivers/android/emulator/launchEmulatorProcess.js",
       "src/devices/allocation/drivers/android/emulator/patchAvdSkinConfig.js",
+      "src/devices/allocation/.*AllocDriver.js",
       "src/devices/allocation/drivers/ios",
       "src/devices/allocation/factories",
       "src/devices/allocation/factories/drivers",
@@ -154,10 +154,9 @@
       "src/devices/runtime/drivers/ios",
       "src/devices/runtime/factories",
       "src/devices/runtime/factories/drivers",
+      "src/devices/validation/EnvironmentValidatorBase.js",
+      "src/devices/validation/factories",
       "src/matchers/factories",
-      "src/validation/EnvironmentValidatorBase.js",
-      "src/validation/factories",
-      "src/validation/ios/IosSimulatorEnvValidator",
       "src/utils/appdatapath.js",
       "src/utils/debug.js",
       "src/utils/environment.js",
@@ -196,10 +195,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 50,
-        "branches": 50,
-        "functions": 50,
-        "lines": 50
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
       }
     }
   },

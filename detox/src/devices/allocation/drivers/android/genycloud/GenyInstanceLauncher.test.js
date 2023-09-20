@@ -1,6 +1,5 @@
 const GenyInstance = require('./services/dto/GenyInstance');
 
-// @ts-nocheck
 describe('Genymotion-Cloud instance launcher', () => {
   const recipeName = 'mock-recipe-name';
 

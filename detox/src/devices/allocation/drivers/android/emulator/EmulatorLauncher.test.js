@@ -1,5 +1,4 @@
-// @ts-nocheck
-describe.skip('Emulator launcher', () => {
+describe('Emulator launcher', () => {
   const avdName = 'Pixel_Mock';
   const adbName = 'mock-emulator:1234';
 
@@ -8,11 +7,12 @@ describe.skip('Emulator launcher', () => {
   let adb;
   let launchEmulatorProcess;
   let uut;
+
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
 
     jest.mock('../../../../../utils/retry');
-    retry = require('../../../../../utils/retry');
+    retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
     const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
@@ -33,114 +33,101 @@ describe.skip('Emulator launcher', () => {
   });
 
   describe('launch', () => {
-    const givenDeviceBootCompleted = () => adb.isBootComplete.mockResolvedValue(true);
-    const givenDeviceBootIncomplete = () => adb.isBootComplete.mockResolvedValue(false);
-    const givenDeviceBootCheckError = () => adb.isBootComplete.mockRejectedValue(new Error());
-
-    describe('given an emulator that is not currently running', () => {
-      const isRunning = false;
-
-      it('should launch the specified emulator in a separate process', async () => {
-        await uut.launch(avdName, adbName, isRunning);
-        expect(launchEmulatorProcess).toHaveBeenCalledWith(avdName, emulatorExec, expect.anything(), adb, adbName);
-      });
-
-      it('should launch using a specific emulator port, if provided', async () => {
-        const port = 1234;
-        await uut.launch(avdName, adbName, isRunning, { port });
-
-        const mockedCall = launchEmulatorProcess.mock.calls[0];
-        const commandArg = mockedCall[2];
-        expect(commandArg.port).toEqual(port);
-      });
-
-      it('should retry emulator process launching with custom args', async () => {
-        const expectedRetryOptions = {
-          retries: 2,
-          interval: 100,
-        };
-
-        await uut.launch(avdName, adbName, isRunning);
-
-        expect(retry).toHaveBeenCalledWith(
-          expect.objectContaining(expectedRetryOptions),
-          expect.any(Function),
-        );
-      });
-
-      it('should retry emulator process launching with a conditional to check whether error was specified through binary as unknown', async () => {
-        const messageUnknownError = 'failed with code null';
-
-        await uut.launch(avdName, adbName, isRunning);
-
-        const mockedCallToRetry = retry.mock.calls[0];
-        const callOptions = mockedCallToRetry[0];
-        expect(callOptions.conditionFn).toBeDefined();
-
-        expect(callOptions.conditionFn(new Error(messageUnknownError))).toEqual(true);
-        expect(callOptions.conditionFn(new Error('other error message'))).toEqual(false);
-        expect(callOptions.conditionFn(new Error())).toEqual(false);
-      });
-
-      it('should poll for boot completion', async () => {
-        givenDeviceBootCompleted();
-
-        retry
-          .mockImplementationOnce((options, func) => func())
-          .mockImplementationOnce(async (options, func) => {
-            expect(adb.isBootComplete).not.toHaveBeenCalled();
-            await func();
-            expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
-          });
-
-        await uut.launch(avdName, adbName, isRunning);
-        expect(retry).toHaveBeenCalledTimes(2);
-      });
-
-      it('should throw if boot completion check returns negative', async () => {
-        givenDeviceBootIncomplete();
-
-        try {
-          await uut.launch(avdName, adbName, isRunning);
-        } catch (e) {
-          expect(e.constructor.name).toEqual('DetoxRuntimeError');
-          expect(e.toString()).toContain(`Waited for ${adbName} to complete booting for too long!`);
-          return;
-        }
-        throw new Error('Expected an error');
-      });
-
-      it('should call retry for boot completion - with decent options', async () => {
-        const expectedRetryOptions = {
-          retries: 240,
-          interval: 2500,
-        };
-
-        givenDeviceBootCompleted();
-
-        await uut.launch(avdName, adbName, isRunning);
-
-        expect(retry).toHaveBeenCalledWith(
-          expect.objectContaining(expectedRetryOptions),
-          expect.any(Function)
-        );
-      });
+    it('should launch the specified emulator in a separate process', async () => {
+      await uut.launch({ avdName, adbName });
+      expect(launchEmulatorProcess).toHaveBeenCalledWith(emulatorExec, adb, expect.objectContaining({
+        avdName,
+        adbName,
+      }));
     });
 
-    describe('given an emulator that *is* already running', () => {
-      const isRunning = true;
+    it('should launch using a specific emulator port, if provided', async () => {
+      const port = 1234;
+      await uut.launch({ avdName, adbName, port });
 
-      it('should not launch emulator', async () => {
-        await uut.launch(avdName, adbName, isRunning);
-        expect(launchEmulatorProcess).not.toHaveBeenCalled();
-      });
+      const [[,,command]] = launchEmulatorProcess.mock.calls;
+      expect(command.port).toEqual(port);
+    });
 
-      it('should poll for boot completion even if emulator is already running', async () => {
-        const isRunning = true;
+    it('should retry emulator process launching with custom args', async () => {
+      const expectedRetryOptions = {
+        retries: 2,
+        interval: 100,
+      };
 
-        await uut.launch(avdName, adbName, isRunning);
-        expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
-      });
+      await uut.launch({ avdName, adbName });
+
+      expect(retry).toHaveBeenCalledWith(
+        expect.objectContaining(expectedRetryOptions),
+        expect.any(Function),
+      );
+    });
+
+    it('should retry emulator process launching with a conditional to check whether error was specified through binary as unknown', async () => {
+      const messageUnknownError = 'failed with code null';
+
+      await uut.launch({ avdName, adbName });
+
+      const mockedCallToRetry = retry.mock.calls[0];
+      const callOptions = mockedCallToRetry[0];
+      expect(callOptions.conditionFn).toBeDefined();
+
+      expect(callOptions.conditionFn(new Error(messageUnknownError))).toEqual(true);
+      expect(callOptions.conditionFn(new Error('other error message'))).toEqual(false);
+      expect(callOptions.conditionFn(new Error())).toEqual(false);
+    });
+  });
+
+  describe('awaitEmulatorBoot', () => {
+    const givenDeviceBootCompleted = () => adb.isBootComplete.mockResolvedValue(true);
+    const givenDeviceBootIncomplete = () => adb.isBootComplete.mockResolvedValue(false);
+
+    it('should poll for boot completion', async () => {
+      expect.assertions(2);
+      givenDeviceBootCompleted();
+
+      retry
+        .mockImplementationOnce(async (options, func) => {
+          expect(adb.isBootComplete).not.toHaveBeenCalled();
+          await func();
+          expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
+        });
+
+      await uut.awaitEmulatorBoot(adbName);
+    });
+
+    it('should throw if boot completion check returns negative', async () => {
+      givenDeviceBootIncomplete();
+
+      try {
+        await uut.awaitEmulatorBoot(adbName);
+      } catch (e) {
+        expect(e.constructor.name).toEqual('DetoxRuntimeError');
+        expect(e.toString()).toContain(`Waited for ${adbName} to complete booting for too long!`);
+        return;
+      }
+      throw new Error('Expected an error');
+    });
+
+    it('should call retry for boot completion - with decent options', async () => {
+      const expectedRetryOptions = {
+        retries: 240,
+        interval: 2500,
+      };
+
+      givenDeviceBootCompleted();
+
+      await uut.awaitEmulatorBoot(adbName);
+
+      expect(retry).toHaveBeenCalledWith(
+        expect.objectContaining(expectedRetryOptions),
+        expect.any(Function)
+      );
+    });
+
+    it('should poll for boot completion even if emulator is already running', async () => {
+      await uut.awaitEmulatorBoot(adbName);
+      expect(adb.isBootComplete).toHaveBeenCalledWith(adbName);
     });
   });
 
