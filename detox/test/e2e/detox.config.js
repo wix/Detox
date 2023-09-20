@@ -114,6 +114,13 @@ const config = {
       },
     },
 
+    'android.attached': {
+      type: 'android.attached',
+      device: {
+        adbName: '.*'
+      },
+    },
+
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {

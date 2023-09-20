@@ -249,7 +249,7 @@ class DetoxLogger {
   _complete(level, maybeContext, maybeMessage, maybeAction) {
     const action = typeof maybeContext !== 'string' ? maybeAction : maybeMessage;
     const args = maybeAction === action ? [maybeContext, maybeMessage] : [maybeContext];
-    const { context, msg } = this._parseArgs(null, args);
+    const { context, msg } = this._parseArgs({ ph: 'B' }, args);
     const end = (ctx) => this[level].end({
       id: context.id,
       cat: context.cat,
@@ -257,7 +257,7 @@ class DetoxLogger {
     });
 
     let result;
-    this._beginInternal(level, { ...context, ph: 'B' }, msg);
+    this._beginInternal(level, context, msg);
     try {
       result = typeof action === 'function'
         ? action()

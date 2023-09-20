@@ -54,5 +54,5 @@
     "shell-utils": "1.x.x",
     "unified": "^10.1.0"
   },
-  "version": "20.12.1"
+  "version": "20.12.0-smoke.0"
 }

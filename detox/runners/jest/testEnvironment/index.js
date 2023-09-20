@@ -70,6 +70,7 @@ class DetoxCircusEnvironment extends NodeEnvironment {
     await this.initDetox();
   }
 
+  // @ts-expect-error TS2425
   async handleTestEvent(event, state) {
     this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
 

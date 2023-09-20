@@ -16,15 +16,14 @@ const symbols = require('./symbols');
 const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
 
 //#region Private symbols
-const _globalLifecycleHandler = Symbol('globalLifecycleHandler');
 const _ipcServer = Symbol('ipcServer');
-const _resetLockFile = Symbol('resetLockFile');
 const _wss = Symbol('wss');
 const _dirty = Symbol('dirty');
 const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
 const _logFinalError = Symbol('logFinalError');
+const _deviceAllocator = Symbol('deviceAllocator');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -33,7 +32,8 @@ class DetoxPrimaryContext extends DetoxContext {
 
     this[_dirty] = false;
     this[_wss] = null;
-    this[_globalLifecycleHandler] = null;
+    this[_deviceAllocator] = null;
+
     /** Path to file where the initial session object is serialized */
     this[_sessionFile] = '';
     /**
@@ -79,7 +79,6 @@ class DetoxPrimaryContext extends DetoxContext {
     const detoxConfig = await this[symbols.resolveConfig](opts);
 
     const {
-      behavior: behaviorConfig,
       device: deviceConfig,
       logger: loggerConfig,
       session: sessionConfig
@@ -96,20 +95,23 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
       logger: this[symbols.logger],
+      callbacks: {
+        onAllocateDevice: this[symbols.allocateDevice].bind(this),
+        onDeallocateDevice: this[symbols.deallocateDevice].bind(this),
+      },
     });
 
     await this[_ipcServer].init();
 
     const environmentFactory = require('../environmentFactory');
-    this[_globalLifecycleHandler] = await environmentFactory.createGlobalLifecycleHandler(deviceConfig);
 
-    if (this[_globalLifecycleHandler]) {
-      await this[_globalLifecycleHandler].globalInit();
-    }
+    const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
+    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({
+      detoxConfig,
+      detoxSession: this[$sessionState],
+    });
 
-    if (!behaviorConfig.init.keepLockFile) {
-      await this[_resetLockFile]();
-    }
+    await this[_deviceAllocator].init();
 
     // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
@@ -154,15 +156,38 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   /** @override */
+  async [symbols.allocateDevice]() {
+    const { device } = this[$sessionState].detoxConfig;
+    const deviceCookie = await this[_deviceAllocator].allocate(device);
+
+    try {
+      return await this[_deviceAllocator].postAllocate(deviceCookie);
+    } catch (e) {
+      try {
+        await this[_deviceAllocator].free(deviceCookie, { shutdown: true });
+      } catch (e2) {
+        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to free ${deviceCookie.name || deviceCookie.id} after a failed allocation`);
+      }
+
+      throw e;
+    }
+  }
+
+  /** @override */
+  async [symbols.deallocateDevice](cookie) {
+    await this[_deviceAllocator].free(cookie);
+  }
+
+  /** @override */
   async [symbols.cleanup]() {
     try {
       if (this[$worker]) {
         await this[symbols.uninstallWorker]();
       }
     } finally {
-      if (this[_globalLifecycleHandler]) {
-        await this[_globalLifecycleHandler].globalCleanup();
-        this[_globalLifecycleHandler] = null;
+      if (this[_deviceAllocator]) {
+        await this[_deviceAllocator].cleanup();
+        this[_deviceAllocator] = null;
       }
 
       if (this[_wss]) {
@@ -196,9 +221,9 @@ class DetoxPrimaryContext extends DetoxContext {
       return;
     }
 
-    if (this[_globalLifecycleHandler]) {
-      this[_globalLifecycleHandler].emergencyCleanup();
-      this[_globalLifecycleHandler] = null;
+    if (this[_deviceAllocator]) {
+      this[_deviceAllocator].emergencyCleanup();
+      this[_deviceAllocator] = null;
     }
 
     if (this[_wss]) {
@@ -239,31 +264,6 @@ class DetoxPrimaryContext extends DetoxContext {
       id: uuid.UUID(),
       detoxIPCServer: `primary-${process.pid}`,
     });
-  }
-  //#endregion
-
-  //#region Private members
-  async[_resetLockFile]() {
-    const DeviceRegistry = require('../devices/DeviceRegistry');
-
-    const deviceType = this[symbols.config].device.type;
-
-    switch (deviceType) {
-      case 'ios.none':
-      case 'ios.simulator':
-        await DeviceRegistry.forIOS().reset();
-        break;
-      case 'android.attached':
-      case 'android.emulator':
-      case 'android.genycloud':
-        await DeviceRegistry.forAndroid().reset();
-        break;
-    }
-
-    if (deviceType === 'android.genycloud') {
-      const GenyDeviceRegistryFactory = require('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-      await GenyDeviceRegistryFactory.forGlobalShutdown().reset();
-    }
   }
   //#endregion
 }

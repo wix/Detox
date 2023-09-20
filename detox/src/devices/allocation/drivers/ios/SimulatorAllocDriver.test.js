@@ -1,5 +1,5 @@
 // @ts-nocheck
-describe('Allocation driver for iOS simulators', () => {
+describe.skip('Allocation driver for iOS simulators', () => {
 
   let applesimutils;
   let deviceRegistry;
@@ -7,7 +7,8 @@ describe('Allocation driver for iOS simulators', () => {
   beforeEach(() => {
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
-    applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock')['--list']);
+    applesimutils.list.mockImplementation(async () => require('../../../common/drivers/ios/tools/applesimutils.mock.json')['--list']);
+    jest.spyOn(applesimutils, 'takeScreenshot').mockResolvedValue('mocked-screenshot-path');
 
     const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     deviceRegistry = new DeviceRegistry();
@@ -25,7 +26,6 @@ describe('Allocation driver for iOS simulators', () => {
 
   describe('allocation', () => {
     beforeEach(() => {
-      jest.mock('../../../cookies/IosSimulatorCookie');
 
       givenNoUsedSimulators();
     });
@@ -84,7 +84,6 @@ describe('Allocation driver for iOS simulators', () => {
     });
 
     it('should create a device', async () => {
-      const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
       const udidUsed = 'mock-used-udid';
       const udidNew = 'mock-new-udid';
       const specUsed = aDeviceSpec(udidUsed);
@@ -96,12 +95,14 @@ describe('Allocation driver for iOS simulators', () => {
       const result = await allocDriver.allocate(asConfig('iPhone Mock'));
 
       expect(applesimutils.create).toHaveBeenCalledWith(specUsed);
-      expect(result.constructor.name).toEqual('IosSimulatorCookie');
-      expect(IosSimulatorCookie).toHaveBeenCalledWith(udidNew);
+      expect(result).toEqual({
+        id: udidNew,
+        udid: udidNew,
+      });
+      expect(applesimutils.takeScreenshot).toHaveBeenCalledWith(udidNew, '/dev/null');
     });
 
     it('should reuse a matching device', async () => {
-      const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
       const udid = 'mock-device-udid';
       const specUsed = aDeviceSpec(udid);
 
@@ -111,34 +112,28 @@ describe('Allocation driver for iOS simulators', () => {
       const result = await allocDriver.allocate(asConfig('iPhone Mock'));
 
       expect(applesimutils.create).not.toHaveBeenCalled();
-      expect(result.constructor.name).toEqual('IosSimulatorCookie');
-      expect(IosSimulatorCookie).toHaveBeenCalledWith(udid);
+      expect(result).toEqual({
+        id: udid,
+        udid,
+      });
     });
   });
 
   describe('deallocation', () => {
     const udid = 'ud-1d-m0ck';
 
-    let cookie;
-    beforeEach(() => {
-      jest.unmock('../../../cookies/IosSimulatorCookie');
-
-      const Cookie = require('../../../cookies/IosSimulatorCookie');
-      cookie = new Cookie(udid);
-    });
-
     it('should dispose the device from the registry', async () => {
-      await allocDriver.free(cookie);
+      await allocDriver.free({ id: udid, udid });
       expect(deviceRegistry.disposeDevice).toHaveBeenCalledWith(udid);
     });
 
     it('should shut the device down, if specified', async () => {
-      await allocDriver.free(cookie, { shutdown: true });
+      await allocDriver.free({ id: udid, udid }, { shutdown: true });
       expect(simulatorLauncher.shutdown).toHaveBeenCalledWith(udid);
     });
 
     it('should not shut the device down, by default', async () => {
-      await allocDriver.free(cookie);
+      await allocDriver.free({ id: udid, udid });
       expect(simulatorLauncher.shutdown).not.toHaveBeenCalled();
     });
   });

@@ -20,6 +20,7 @@ describe('DetoxWorker', () => {
   const eventEmitter = () => AsyncEmitter.mock.instances[0];
   eventEmitter.errorCallback = () => AsyncEmitter.mock.calls[0][0].onError;
 
+  let symbols;
   let detoxConfig;
   let detoxContext;
 
@@ -77,8 +78,13 @@ describe('DetoxWorker', () => {
     AsyncEmitter = require('./utils/AsyncEmitter');
 
     Detox = require('./DetoxWorker');
-    const symbols = require('./realms/symbols');
-    detoxContext = { log: logger, [symbols.config]: detoxConfig };
+    symbols = require('./realms/symbols');
+    detoxContext = {
+      log: logger,
+      [symbols.config]: detoxConfig,
+      [symbols.allocateDevice]: jest.fn().mockResolvedValue(fakeCookie),
+      [symbols.deallocateDevice]: jest.fn(),
+    };
   });
 
   describe('when DetoxWorker#init() is called', () => {
@@ -127,7 +133,7 @@ describe('DetoxWorker', () => {
         expect(envValidator.validate).toHaveBeenCalled());
 
       it('should allocate a device', () => {
-        expect(deviceAllocator.allocate).toHaveBeenCalledWith(detoxConfig.device);
+        expect(detoxContext[symbols.allocateDevice]).toHaveBeenCalledWith();
       });
 
       it('should create a runtime-device based on the allocation result (cookie)', () =>
@@ -278,7 +284,7 @@ describe('DetoxWorker', () => {
 
     describe('and allocation fails', () => {
       it('should fail with an error', async () => {
-        deviceAllocator.allocate.mockRejectedValue(new Error('Mock validation failure'));
+        detoxContext[symbols.allocateDevice].mockRejectedValue(new Error('Mock validation failure'));
         await expect(init).rejects.toThrowError('Mock validation failure');
       });
     });
@@ -415,7 +421,7 @@ describe('DetoxWorker', () => {
 
       describe('allocates the device', () => {
         beforeEach(() => {
-          deviceAllocator.allocate.mockReturnValue(deferred.promise);
+          detoxContext[symbols.allocateDevice].mockReturnValue(deferred.promise);
         });
 
         beforeEach(startInit);
@@ -498,8 +504,8 @@ describe('DetoxWorker', () => {
         it(`should call runtimeDevice._cleanup()`, () =>
           expect(runtimeDevice._cleanup).toHaveBeenCalled());
 
-        it(`should not shutdown the device`, () =>
-          expect(deviceAllocator.free).toHaveBeenCalledWith(fakeCookie, { shutdown: false }));
+        it(`should free the device`, () =>
+          expect(detoxContext[symbols.deallocateDevice]).toHaveBeenCalledWith(fakeCookie));
 
         it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
           expect(artifactsManager.onBeforeCleanup).toHaveBeenCalled());
@@ -509,27 +515,6 @@ describe('DetoxWorker', () => {
 
         it(`should clean up the exposed globals`, () =>
           expect(global).not.toHaveProperty('device'));
-      });
-    });
-
-    describe('when behavior.cleanup.shutdownDevice = true', () => {
-      beforeEach(async () => {
-        detoxConfig.behavior.cleanup.shutdownDevice = true;
-        detox = await new Detox(detoxContext).init();
-      });
-
-      it(`should shut the device down on detox.cleanup()`, async () => {
-        await detox.cleanup();
-        expect(deviceAllocator.free).toHaveBeenCalledWith(fakeCookie, { shutdown: true });
-      });
-
-      describe('if the device has not been allocated', () => {
-        beforeEach(() => detox.cleanup());
-
-        it(`should omit the shutdown`, async () => {
-          await detox.cleanup();
-          expect(deviceAllocator.free).toHaveBeenCalledTimes(1);
-        });
       });
     });
 
@@ -566,8 +551,8 @@ describe('DetoxWorker', () => {
   });
 
   function mockEnvironmentFactories() {
-    const EnvValidator = jest.genMockFromModule('./validation/EnvironmentValidatorBase');
-    const EnvValidatorFactory = jest.genMockFromModule('./validation/factories').External;
+    const EnvValidator = jest.genMockFromModule('./devices/validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.genMockFromModule('./devices/validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);

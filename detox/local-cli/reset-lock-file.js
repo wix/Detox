@@ -1,16 +1,12 @@
 const { log } = require('../internals');
-const DeviceRegistry = require('../src/devices/DeviceRegistry');
-const { getDetoxLibraryRootPath } = require('../src/utils/environment');
-
+const DeviceRegistry = require('../src/devices/allocation/DeviceRegistry');
 
 module.exports.command = 'reset-lock-file';
-module.exports.desc = 'Resets all Detox lock files. Useful when you need to run multiple `detox test` commands in parallel with --keepLockFile.';
+module.exports.desc = 'Resets all Detox lock files. Useful when you need to clean up leftover locks from a crashed Detox instance.';
 
 module.exports.handler = async function resetLockFile() {
-  await Promise.all([
-    DeviceRegistry.forIOS().reset(),
-    DeviceRegistry.forAndroid().reset(),
-  ]);
+  const registry = new DeviceRegistry();
+  await registry.reset();
 
-  log.info(`Cleaned lock files from: ${getDetoxLibraryRootPath()}`);
+  log.info(`Cleaned lock file at: ${registry.lockFilePath}`);
 };
