@@ -84,31 +84,16 @@ class IPCServer {
     }
   }
 
-  onConductEarlyTeardown(_data, socket = null) {
-    return new Promise((resolve) => {
-      this._sessionState.unsafe_earlyTeardown = true;
+  onConductEarlyTeardown(_data = null, socket = null) {
+    // Note that we don't save `unsafe_earlyTeardown` in the primary session state
+    // because it's transient and needed only to make the workers quit early.
+    const newState = { unsafe_earlyTeardown: true };
 
-      if (socket) {
-        this._ipc.server.broadcast('sessionStateUpdate', {
-          unsafe_earlyTeardown: true,
-        });
+    if (socket) {
+      this._ipc.server.emit(socket, 'conductEarlyTeardownDone', newState);
+    }
 
-        let workersCount = this._workers.size;
-        this._ipc.server.on('socket.disconnected', () => {
-          workersCount--;
-
-          if (workersCount === 0) {
-            if (socket) {
-              this._ipc.server.emit(socket, 'reportEarlyTeardownDone', {});
-            }
-
-            resolve();
-          }
-        });
-      } else {
-        resolve();
-      }
-    });
+    this._ipc.server.broadcast('sessionStateUpdate', newState);
   }
 
   onReportTestResults({ testResults }, socket = null) {

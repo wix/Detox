@@ -4,17 +4,21 @@ const JestVerboseReporter = require(resolveFrom(process.cwd(), '@jest/reporters'
 /** @type {new (globalConfig: any) => import('@jest/reporters').SummaryReporter} */
 const SummaryReporter = require(resolveFrom(process.cwd(), '@jest/reporters')).SummaryReporter;
 
-const { config, reportTestResults, unsafe_conductEarlyTeardown } = require('../../../internals');
+const { config, reportTestResults, unsafe_conductEarlyTeardown, cleanup } = require('../../../internals');
+const Deferred = require('../../../src/utils/Deferred');
 
 class DetoxReporter extends JestVerboseReporter {
   constructor(globalConfig) {
     super(globalConfig);
-    /** @type {import('@jest/reporters').SummaryReporter | null} */
-    this._summaryReporter = this._initSummaryReporter();
+
+    /** @type {Deferred | null} */
+    this._lastRunComplete = null;
+    /** @type {Set<string>} */
+    this._pendingTestFiles = new Set();
     /** @type {Promise<any> | null} */
     this._runCompletePromise = null;
-    /** @type {[Set<import('@jest/reporters').TestContext>, import('@jest/reporters').AggregatedResult]} */
-    this._lastResults = [null, null];
+    /** @type {import('@jest/reporters').SummaryReporter | null} */
+    this._summaryReporter = this._initSummaryReporter();
   }
 
   onRunStart(aggregatedResults, options) {
@@ -25,43 +29,99 @@ class DetoxReporter extends JestVerboseReporter {
     }
   }
 
+  onTestFileStart(test) {
+    this._pendingTestFiles.add(test.path);
+
+    // @ts-ignore Precaution in case Jest migrates to the new signature
+    if (typeof super.onTestFileStart === 'function') {
+      // @ts-ignore
+      super.onTestFileStart(test);
+    } else {
+      super.onTestStart(test);
+    }
+  }
+
+  onTestFileResult(test, testResult, aggregatedResult) {
+    this._pendingTestFiles.delete(test.path);
+
+    // @ts-ignore Precaution in case Jest migrates to the new signature
+    if (typeof super.onTestFileResult === 'function') {
+      // @ts-ignore
+      super.onTestFileResult(test, testResult, aggregatedResult);
+    } else {
+      super.onTestResult(test, testResult, aggregatedResult);
+    }
+
+    if (this._lastRunComplete && this._pendingTestFiles.size === 0) {
+      this._lastRunComplete.resolve(aggregatedResult);
+    }
+  }
+
   /**
-   * @param {Set<import('@jest/reporters').TestContext>} contexts
-   * @param {import('@jest/reporters').AggregatedResult} results
+   * @param {Set<import('@jest/reporters').TestContext>} testContexts
+   * @param {import('@jest/reporters').AggregatedResult} aggregatedResult
    * @returns {Promise<any> | null}
    */
-  // @ts-ignore
-  onRunComplete(contexts, results) {
-    // Both `_lastResults` and `_runCompletePromise` are used to prevent
-    // a bug in Jest, where `onRunComplete` is called multiple times when
-    // Jest runs with `--bail` and multiple workers, and `onRunComplete`
-    // is implemented as an asynchronous long-running operation.
-    this._lastResults = [contexts, results];
+  // @ts-ignore We need to use the complete signature, not the one from the base class
+  onRunComplete(testContexts, aggregatedResult) {
     if (!this._runCompletePromise) {
-      // @ts-expect-error TS2554: Expected 0 arguments, but got 2.
-      super.onRunComplete(...this._lastResults);
-      this._runCompletePromise = this._onRunComplete();
+      // Both `_lastRunComplete` and `_runCompletePromise` are used to prevent
+      // a bug in Jest, where `onRunComplete` is called multiple times when
+      // Jest runs with `--bail` and multiple workers, and `onRunComplete`
+      // is implemented as an asynchronous long-running operation.
+      this._lastRunComplete = this._pendingTestFiles.size === 0
+        ? Deferred.resolved(aggregatedResult)
+        : new Deferred();
+
+      this._runCompletePromise = this._onRunComplete(testContexts, aggregatedResult).catch(err => {
+        console.error(err);
+        throw err;
+      });
     }
 
     return this._runCompletePromise;
   }
 
-  async _onRunComplete() {
-    if (this._shouldConductEarlyTeardown()) {
+  /**
+   * @param {Set<import('@jest/reporters').TestContext>} testContexts
+   * @param {import('@jest/reporters').AggregatedResult} aggregatedResult
+   * @returns {Promise<any> | null}
+   */
+  async _onRunComplete(testContexts, { numFailedTests }) {
+    const bail = this._globalConfig.bail;
+    const earlyTeardown = bail > 0 && numFailedTests >= bail;
+    if (earlyTeardown) {
       await unsafe_conductEarlyTeardown();
     }
 
-    let results = this._lastResults[1];
+    const aggregatedResult = await this._lastRunComplete.promise;
+    const lostTests = aggregatedResult.numTotalTestSuites - aggregatedResult.testResults.length;
 
-    await reportTestResults(results.testResults.map(r => ({
+    // @ts-expect-error TS2554
+    super.onRunComplete(testContexts, aggregatedResult);
+
+    if (earlyTeardown && lostTests > 0 && config.testRunner.retries > 0) {
+      console.warn(
+        'Jest aborted the test execution before all scheduled test files have been reported.\n' +
+        'This brings us to a dilemma: retry the whole test run, or retry only known failed test files.\n' +
+        'Both options are bad in their own way, this is why we have decided to not support this edge case.\n' +
+        'If you want to retry the whole test run, please disable Jest\'s --bail option.'
+      );
+    }
+
+    await reportTestResults(aggregatedResult.testResults.map(r => ({
       success: !r.failureMessage,
       testFilePath: r.testFilePath,
       testExecError: r.testExecError,
-      isPermanentFailure: this._isPermanentFailure(r),
+      isPermanentFailure: lostTests > 0 || this._isPermanentFailure(r),
     })));
 
     if (this._summaryReporter) {
-      this._summaryReporter.onRunComplete(...this._lastResults);
+      this._summaryReporter.onRunComplete(testContexts, aggregatedResult);
+    }
+
+    if (earlyTeardown) {
+      await cleanup();
     }
   }
 
@@ -88,17 +148,6 @@ class DetoxReporter extends JestVerboseReporter {
     }
 
     return testResult.testResults.some(r => r.status === 'failed' && r.invocations > 1);
-  }
-
-  /**
-   * @returns {boolean}
-   * @private
-   */
-  _shouldConductEarlyTeardown() {
-    const bail = this._globalConfig.bail;
-    const numFailedTests = this._lastResults[1].numFailedTests;
-
-    return bail > 0 && numFailedTests > 0 && bail === numFailedTests;
   }
 }
 
