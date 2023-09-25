@@ -1,10 +1,11 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.4'
+platform :ios, '13.0'
 
 target 'example' do
   config = use_native_modules!
+
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
@@ -13,15 +14,26 @@ target 'example' do
   )
 
   post_install do |installer|
-      if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
-        react_native_post_install(installer)
-      else
-        react_native_post_install(
-          installer,
-            # Set `mac_catalyst_enabled` to `true` in order to apply patches
-            # necessary for Mac Catalyst builds
-            :mac_catalyst_enabled => false
-        )
+    __apply_update_deployment_target_workaround(installer)
+
+     react_native_post_install(
+       installer,
+       # Set `mac_catalyst_enabled` to `true` in order to apply patches
+       # necessary for Mac Catalyst builds
+       :mac_catalyst_enabled => false
+     )
+  end
+end
+
+def __apply_update_deployment_target_workaround(installer)
+  # This is a workaround for updating the deployment target of pod targets to the minimal supported version.
+  # See StackOverflow: https://stackoverflow.com/questions/72729591/fbreactnativespec-h-error-after-upgrading-from-0-68-x-to-0-69-0/75915794#75915794
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] < '12.4'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
       end
+    end
   end
 end

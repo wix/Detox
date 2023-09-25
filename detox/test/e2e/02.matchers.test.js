@@ -6,13 +6,33 @@ describe('Matchers', () => {
     await element(by.text('Matchers')).tap();
   });
 
+  it('should match elements by text', async () => {
+    await element(by.label('Label')).tap();
+    await expect(element(by.text("Label Working!!!"))).toBeVisible();
+  });
+
+  it('should match elements by regex text', async () => {
+    await element(by.label('Label')).tap();
+    await expect(element(by.text(/^[a-z]* working!+$/i))).toBeVisible();
+  });
+
   it('should match elements by (accessibility) label', async () => {
     await element(by.label('Label')).tap();
-    await expect(element(by.text('Label Working!!!'))).toBeVisible();
+    await expect(element(by.label('Label Working!!!'))).toBeVisible();
+  });
+
+  it('should match elements by regex (accessibility) label', async () => {
+    await element(by.label('Label')).tap();
+    await expect(element(by.label(/^[a-z]* working!+$/i))).toBeVisible();
   });
 
   it('should match elements by (accessibility) id', async () => {
     await element(by.id('UniqueId345')).tap();
+    await expect(element(by.text('ID Working!!!'))).toBeVisible();
+  });
+
+  it('should match elements by regex (accessibility) id', async () => {
+    await element(by.id(/UniqueId\d{3}/)).tap();
     await expect(element(by.text('ID Working!!!'))).toBeVisible();
   });
 

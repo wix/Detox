@@ -1,3 +1,5 @@
+const { androidBaseAppConfig } = require('./detox.config-android');
+
 const launchArgs = {
   app: 'le',
   goo: 'gle?',
@@ -67,51 +69,28 @@ const config = {
     },
 
     'android.debug': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('debug'),
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
       start: 'react-native start',
       reversePorts: [8081],
     },
 
     'android.debug.withArgs': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('debug'),
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: ':',
-      reversePorts: [8081],
-      launchArgs,
-    },
-
-    'android.fromSource': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
-      build: 'cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..',
-      reversePorts: [8081],
-    },
-
-    'android.fromSource.withArgs': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: ':',
       reversePorts: [8081],
       launchArgs,
     },
 
     'android.release': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('release'),
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
-      build: 'cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..',
     },
 
     'android.release.withArgs': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('release'),
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
       build: ':',
       launchArgs,
     },
@@ -191,10 +170,6 @@ const config = {
     'android.emu.debug': {
       device: 'android.emulator',
       apps: ['android.debug', 'android.debug.withArgs'],
-    },
-    'android.emu.debug.fromSource': {
-      device: 'android.emulator',
-      apps: ['android.fromSource', 'android.fromSource.withArgs'],
     },
     'android.emu.release': {
       device: 'android.emulator',

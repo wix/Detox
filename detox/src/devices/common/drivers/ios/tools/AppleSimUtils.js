@@ -297,7 +297,7 @@ class AppleSimUtils {
       // want to make sure it isn't now.
       if (err.code === 3 &&
           (err.stderr.includes(`the app is not currently running`) ||
-           err.stderr.includes(`The operation couldn’t be completed. found nothing to terminate`))) {
+           err.stderr.includes(`found nothing to terminate`))) {
         return;
       }
 
@@ -455,6 +455,8 @@ class AppleSimUtils {
         overrides.push(`--cellularMode "${flags.cellularMode}"`);
       if (flags.cellularBars)
         overrides.push(`--cellularBars "${flags.cellularBars}"`);
+      if (flags.operatorName)
+        overrides.push(`--operatorName "${flags.operatorName}"`);
       if (flags.batteryState)
         overrides.push(`--batteryState "${flags.batteryState}"`);
       if (flags.batteryLevel)

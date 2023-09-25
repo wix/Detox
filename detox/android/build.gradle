@@ -1,11 +1,13 @@
 buildscript {
+    apply from: './rninfo.gradle'
+
     ext {
         isOfficialDetoxLib = true
-        kotlinVersion = '1.6.10' // Aligned with RN .69's version bump
+        kotlinVersion = '1.6.21'
         dokkaVersion = '1.6.0'
-        buildToolsVersion = '31.0.0'
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
 
         if (System.properties['os.arch'] == "aarch64") {
@@ -19,11 +21,14 @@ buildscript {
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
-        mavenCentral()
         google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.1'
+        if (!rnInfo.isRN71OrNewer) {
+            classpath "com.facebook.react:react-native-gradle-plugin"
+        }
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
@@ -34,11 +39,16 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
-        mavenCentral()
         google()
-        maven {
-            url "$projectDir/../../node_modules/react-native/android"
+        mavenCentral()
+        mavenLocal()
+
+        // In RN's below 71, the native code comes from within node_modules/ rather
+        // than from maven-central.
+        if (!rnInfo.isRN71OrNewer) {
+            maven {
+                url "$projectDir/../../node_modules/react-native/android"
+            }
         }
     }
 }

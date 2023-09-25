@@ -1,35 +1,44 @@
 buildscript {
-    apply from: './rninfo.gradle'
+    apply from: '../../android/rninfo.gradle'
 
     def androidGradlePluginVersion =
-            rnInfo.isRN70OrHigher ? '7.2.1'
-            : rnInfo.isRN69OrHigher ? '7.1.1'
-            : rnInfo.isRN68OrHigher ? '7.0.4'
-            : rnInfo.isRN66OrHigher ? '4.2.2'
-            : '4.1.0'
+        rnInfo.isRN71OrHigher ? '7.3.1' :
+        rnInfo.isRN70OrHigher ? '7.2.1' :
+        rnInfo.isRN69OrHigher ? '7.1.1' :
+                                '7.0.4'
 
     println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
 
     ext {
         isOfficialDetoxApp = true
         kotlinVersion = '1.6.21'
-        buildToolsVersion = '31.0.0'
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        buildToolsVersion = '33.0.0'
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         minSdkVersion = 21
-        appCompatVersion = (rnInfo.isRN68OrHigher ? '1.4.2' : '1.3.0')
+        appCompatVersion = '1.4.2'
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
     repositories {
         google()
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath 'de.undercouch:gradle-download-task:5.0.1'
+
+        // In RN .71, they've switched to the gradle plugin they've uploaded to maven-central
+        if (rnInfo.isRN71OrHigher) {
+            classpath 'com.facebook.react:react-native-gradle-plugin'
+        }
+
+        // Gradle task downloader seems to come built-in in newer versions of RN/Gradle
+        if (!rnInfo.isRN71OrHigher) {
+            classpath 'de.undercouch:gradle-download-task:5.0.1'
+        }
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
@@ -40,20 +49,23 @@ buildscript {
 
 allprojects {
     repositories {
-        maven {
-            url "$rootDir/../../node_modules/react-native/android"
-        }
-        maven {
-            url("$rootDir/../node_modules/jsc-android/dist")
-        }
-        mavenCentral {
-            // We don't want to fetch react-native from Maven Central as there are
-            // older versions over there.
-            content {
-                excludeGroup "com.facebook.react"
+        // In RN below 71, we want RN and hermes/js-core native code to come from node_modules/ rather
+        // than from maven-central, because there are also older versions over there.
+        if (rnInfo.isRN71OrHigher) {
+            google()
+            mavenCentral()
+        } else {
+            maven {
+                url "$rootDir/../../node_modules/react-native/android"
+            }
+            google()
+            mavenCentral() {
+                content {
+                    excludeGroup 'com.facebook.react'
+                }
             }
         }
-        google()
+
         mavenLocal()
     }
 }

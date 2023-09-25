@@ -3,7 +3,7 @@
 UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
 trap "$UPLOAD_ARTIFACT" EXIT
 
-source $(dirname "$0")/ci.sh 'noGenerate'
+source $(dirname "$0")/ci.sh
 
 mkdir -p coverage
 

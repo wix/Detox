@@ -1,16 +1,15 @@
 <!-- markdownlint-configure-file { "first-line-h1": 0 } -->
 
+Detox was built from the ground up to support "classic" React Native projects.
+
 :::info Note
 
-Mind that Detox works, at least officially, with the following React Native versions:
+While Detox should work out of the box with almost any React Native version from the past few minor releases, official support is provided for React Native versions `0.70.x` and `0.71.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
 
-| iOS             | Android                                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 0.68.x - 0.70.7 | 0.68.x - 0.70.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) |
+Newer versions, as well as React Native's "New Architecture", may work with Detox, but have not been tested out yet by the Detox team.
 
-Newer versions, as well as React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page), are most likely supported, but have not been tested out yet.
-Please [submit an issue](https://github.com/wix/Detox/issues/new/choose) if you find specific problems with more recent React Native versions.
+Although we do not officially support older React Native versions, we do our best to keep Detox compatible with them.
 
-For support for React Native 0.71.x, please track [this issue](https://github.com/wix/Detox/issues/3884).
+Also, in case of a problem with an unsupported version of React Native, please [submit an issue](https://github.com/wix/Detox/issues/new/choose) or write us in our [Discord server](https://discord.gg/CkD5QKheF5) and we will do our best to help out.
 
 :::

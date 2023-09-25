@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply from: '../rninfo.gradle'
 
 def _kotlinMinVersion = '1.2.0'
 def _materialMinVersion = '1.2.1'
@@ -11,6 +12,13 @@ def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion 
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : _kotlinMinVersion
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
+
+// RN native code comes from either maven-central (in which case, need the *exact* version),
+// or otherwise from node_modules/, where the version is already aligned, by definition.
+// noinspection GradleDynamicVersion
+def _rnNativeArtifact = rnInfo.isRN71OrHigher
+        ? "com.facebook.react:react-android:${rnInfo.version}"
+            : 'com.facebook.react:react-native:+'
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -78,8 +86,8 @@ android {
 // Fundamental deps.
 dependencies {
     implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinMinVersion"
-    //noinspection GradleDynamicVersion
-    compileOnly 'com.facebook.react:react-native:+'
+
+    compileOnly "${_rnNativeArtifact}"
 }
 
 // androidx.test deps.
@@ -131,9 +139,8 @@ dependencies {
 
 // Unit-testing deps.
 dependencies {
-    //noinspection GradleDynamicVersion
-    testImplementation 'com.facebook.react:react-native:+'
-    testImplementation 'org.json:json:20140107'
+    testImplementation "${_rnNativeArtifact}"
+    testImplementation 'org.json:json:20230227'
 
 // https://github.com/spekframework/spek/issues/232#issuecomment-610732158
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'

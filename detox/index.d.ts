@@ -624,6 +624,10 @@ declare global {
             get(): object;
         }
 
+        type DigitWithoutZero = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+        type Digit = 0 | DigitWithoutZero;
+        type BatteryLevel = `${Digit}` | `${DigitWithoutZero}${Digit}` | "100";
+
         interface Device {
             /**
              * Holds the environment-unique ID of the device, namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS -
@@ -788,6 +792,45 @@ declare global {
              * @example await device.setLocation(32.0853, 34.7818);
              */
             setLocation(lat: number, lon: number): Promise<void>;
+
+            /**
+             * (iOS only) Override simulator’s status bar.
+             * @platform iOS
+             * @param {config} config status bar configuration.
+             * @example
+             * await device.setStatusBar({
+             *   time: "12:34",
+             *   // Set the date or time to a fixed value.
+             *   // If the string is a valid ISO date string it will also set the date on relevant devices.
+             *   dataNetwork: "wifi",
+             *   // If specified must be one of 'hide', 'wifi', '3g', '4g', 'lte', 'lte-a', 'lte+', '5g', '5g+', '5g-uwb', or '5g-uc'.
+             *   wifiMode: "failed",
+             *   // If specified must be one of 'searching', 'failed', or 'active'.
+             *   wifiBars: "2",
+             *   // If specified must be 0-3.
+             *   cellularMode: "searching",
+             *   // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
+             *   cellularBars: "3",
+             *   // If specified must be 0-4.
+             *   operatorName: "A1",
+             *   // Set the cellular operator/carrier name. Use '' for the empty string.
+             *   batteryState: "charging",
+             *   // If specified must be one of 'charging', 'charged', or 'discharging'.
+             *   batteryLevel: "50",
+             *   // If specified must be 0-100.
+             *  });
+             */
+            setStatusBar(config: {
+              time?: string,
+              dataNetwork?: "hide" | "wifi" | "3g" | "4g" | "lte" | "lte-a" | "lte+" | "5g" | "5g+" | "5g-uwb" | "5g-uc",
+              wifiMode?: "searching" |"failed" | "active",
+              wifiBars?: "0" | "1" | "2" | "3",
+              cellularMode?: "notSupported" | "searching" | "failed" | "active",
+              cellularBars?: "0" | "1" | "2" | "3" | "4",
+              operatorName?: string;
+              batteryState?: "charging" | "charged" | "discharging",
+              batteryLevel?: BatteryLevel,
+            }): Promise<void>;
 
             /**
              * Disable network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
@@ -971,20 +1014,25 @@ declare global {
              * <TouchableOpacity testID={'tap_me'}>
              * // Then match with by.id:
              * await element(by.id('tap_me'));
+             * await element(by.id(/^tap_[a-z]+$/));
              */
-            id(id: string): NativeMatcher;
+            id(id: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
-             * @example await element(by.text('Tap Me'));
+             * @example
+             * await element(by.text('Tap Me'));
+             * await element(by.text(/^Tap .*$/));
              */
-            text(text: string): NativeMatcher;
+            text(text: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
-             * @example await element(by.label('Welcome'));
+             * @example
+             * await element(by.label('Welcome'));
+             * await element(by.label(/[a-z]+/i));
              */
-            label(label: string): NativeMatcher;
+            label(label: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by native view type.
@@ -1425,8 +1473,9 @@ declare global {
             takeScreenshot(name: string): Promise<string>;
 
             /**
-             * Gets the native (OS-dependent) attributes of the element.
-             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             * Retrieves the OS-dependent attributes of an element.
+             * If there are multiple matches, it returns an array of attributes for all matched elements.
+             * For detailed information, refer to {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
              *
              * @example
              * test('Get the attributes for my text element', async () => {
@@ -1440,7 +1489,7 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[] } | { elements: AndroidElementAttributes[] } >;
         }
 
         interface WebExpect<R = Promise<void>> {

@@ -14,10 +14,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast;
 import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
-import static androidx.test.espresso.matcher.ViewMatchers.withTagValue;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withTagValue;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withContentDescription;
+import static com.wix.detox.espresso.matcher.ViewMatchers.withText;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
@@ -40,25 +40,25 @@ public class DetoxMatcher {
         // static class
     }
 
-    public static Matcher<View> matcherForText(String text) {
+    public static Matcher<View> matcherForText(String text, boolean isRegex) {
         // return anyOf(withText(text), withContentDescription(text));
-        return allOf(withText(text), withEffectiveVisibility(Visibility.VISIBLE));
+        return allOf(withText(text, isRegex), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
-    public static Matcher<View> matcherForAccessibilityLabel(String label) {
-        return allOf(withAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
+    public static Matcher<View> matcherForAccessibilityLabel(String label, boolean isRegex) {
+        return allOf(withAccessibilityLabel(label, isRegex), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
-    public static Matcher<View> matcherForShallowAccessibilityLabel(String label) {
-        return allOf(withShallowAccessibilityLabel(label), withEffectiveVisibility(Visibility.VISIBLE));
+    public static Matcher<View> matcherForShallowAccessibilityLabel(String label, boolean isRegex) {
+        return allOf(withShallowAccessibilityLabel(label, isRegex), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForContentDescription(String contentDescription) {
-        return allOf(withContentDescription(contentDescription), withEffectiveVisibility(Visibility.VISIBLE));
+        return allOf(withContentDescription(contentDescription, false), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
-    public static Matcher<View> matcherForTestId(String testId) {
-        return allOf(withTagValue(is((Object) testId)), withEffectiveVisibility(Visibility.VISIBLE));
+    public static Matcher<View> matcherForTestId(String testId, boolean isRegex) {
+        return allOf(withTagValue(testId, isRegex), withEffectiveVisibility(Visibility.VISIBLE));
     }
 
     public static Matcher<View> matcherForToggleable(boolean value) {
