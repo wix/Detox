@@ -12,7 +12,7 @@ describe('jest --bail tests', () => {
   });
 
   test.each([
-    `detox test -c stub --config integration/e2e/config.js --bail --runInBand flaky passing-simple`,
+    `detox test -c stub --config integration/e2e/config.js --bail --runInBand --retries 0 flaky passing-simple`,
     `cross-env DETOX_CONFIGURATION=stub jest --config integration/e2e/config.js --maxWorkers 4 flaky passing`,
   ])('should fail: %s', async (cmd) => {
     console.log(`Running: ${cmd}`);
