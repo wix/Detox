@@ -273,6 +273,27 @@ describe('IPC', () => {
         });
       });
 
+      describe('conductEarlyTeardown', () => {
+        it('should broadcast early teardown in all connected clients', async () => {
+          expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
+          expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
+
+          await ipcClient1.conductEarlyTeardown();
+          expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
+          await sleep(10); // broadcasting might happen with a delay
+          expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
+        });
+
+        it('should broadcast early teardown in all connected clients (from server)', async () => {
+          expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
+          expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
+          await ipcServer.onConductEarlyTeardown();
+          await sleep(10); // broadcasting might happen with a delay
+          expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
+          expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
+        });
+      });
+
       describe('registerWorker', () => {
         it('should register worker', async () => {
           await ipcClient1.registerWorker('foo');

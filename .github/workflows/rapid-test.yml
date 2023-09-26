@@ -4,15 +4,15 @@ on:
   push:
     branches: [master]
     paths:
-        - '.github/workflows/rapid-test.yml'
-        - 'detox/**'
-        - 'generation/**'
+      - '.github/workflows/rapid-test.yml'
+      - 'detox/**'
+      - 'generation/**'
   pull_request:
     branches: [master]
     paths:
-        - '.github/workflows/rapid-test.yml'
-        - 'detox/**'
-        - 'generation/**'
+      - '.github/workflows/rapid-test.yml'
+      - 'detox/**'
+      - 'generation/**'
 
 jobs:
 
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version-file: '.nvmrc'
       - name: Bootstrap Lerna
         run: npx lerna@3 bootstrap --no-ci
         env:
@@ -49,21 +49,21 @@ jobs:
         working-directory: generation
 
   windows:
-      name: Windows
-      runs-on: windows-latest
-      steps:
-          - uses: actions/checkout@v3
-          - uses: actions/setup-node@v3
-            with:
-                node-version: 14
-          - name: Bootstrap Lerna (Light)
-            run: npx lerna@3 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
-            env:
-                DETOX_DISABLE_POD_INSTALL: true
-                DETOX_DISABLE_POSTINSTALL: true
-          - name: Unit tests
-            run: npm run unit -- --coverageThreshold "{}"
-            working-directory: detox
-          - name: Integration tests
-            run: npm run integration
-            working-directory: detox/test
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+      - name: Bootstrap Lerna (Light)
+        run: npx lerna@3 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
+        env:
+          DETOX_DISABLE_POD_INSTALL: true
+          DETOX_DISABLE_POSTINSTALL: true
+      - name: Unit tests
+        run: npm run unit -- --coverageThreshold "{}"
+        working-directory: detox
+      - name: Integration tests
+        run: npm run integration
+        working-directory: detox/test

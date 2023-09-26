@@ -72,6 +72,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   // @ts-expect-error TS2425
   async handleTestEvent(event, state) {
+    if (detox.session.unsafe_earlyTeardown) {
+      throw new Error('Detox halted test execution due to an early teardown request');
+    }
+
     this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
 
     if (SYNC_CIRCUS_EVENTS.has(event.name)) {

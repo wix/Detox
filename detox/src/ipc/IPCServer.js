@@ -42,6 +42,7 @@ class IPCServer {
     await new Promise((resolve) => {
       // TODO: handle reject
       this._ipc.serve(() => resolve());
+      this._ipc.server.on('conductEarlyTeardown', this.onConductEarlyTeardown.bind(this));
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
       this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
       this._ipc.server.on('reportTestResults', this.onReportTestResults.bind(this));
@@ -87,6 +88,18 @@ class IPCServer {
     if (shouldBroadcast) {
       this._ipc.server.broadcast('sessionStateUpdate', { workersCount });
     }
+  }
+
+  onConductEarlyTeardown(_data = null, socket = null) {
+    // Note that we don't save `unsafe_earlyTeardown` in the primary session state
+    // because it's transient and needed only to make the workers quit early.
+    const newState = { unsafe_earlyTeardown: true };
+
+    if (socket) {
+      this._ipc.server.emit(socket, 'conductEarlyTeardownDone', newState);
+    }
+
+    this._ipc.server.broadcast('sessionStateUpdate', newState);
   }
 
   async onAllocateDevice(_payload, socket) {

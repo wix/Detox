@@ -86,6 +86,11 @@ class IPCClient {
     this._sessionState.patch(sessionState);
   }
 
+  async conductEarlyTeardown() {
+    const sessionState = await this._emit('conductEarlyTeardown', {});
+    this._sessionState.patch(sessionState);
+  }
+
   async _connectToServer() {
     const serverId = this.serverId;
 
