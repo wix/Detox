@@ -101,6 +101,8 @@ class DetoxContext {
   });
   /** @abstract */
   [symbols.reportTestResults](_testResults) {}
+  /** @abstract */
+  [symbols.conductEarlyTeardown]() {}
   /**
    * @abstract
    * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
