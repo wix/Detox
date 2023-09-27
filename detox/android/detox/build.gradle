@@ -126,9 +126,6 @@ dependencies {
 
 // Third-party/extension deps.
 dependencies {
-    implementation("com.google.android.material:material:$_materialMinVersion") {
-        because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
-    }
     implementation('org.apache.commons:commons-lang3:3.7') {
         because 'Needed by invoke. Warning: Upgrading to newer versions is not seamless.'
     }
@@ -150,6 +147,10 @@ dependencies {
     testImplementation 'org.apache.commons:commons-io:1.3.2'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
     testImplementation 'org.robolectric:robolectric:4.4'
+
+    testImplementation("com.google.android.material:material:$_materialMinVersion") {
+        because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
+    }
 }
 
 // Spek (https://spekframework.org/setup-android)
