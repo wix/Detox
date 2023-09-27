@@ -7,7 +7,6 @@ import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.test.espresso.UiController
-import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.MultipleViewsAction
 import com.wix.detox.espresso.common.ReactSliderHelper
@@ -19,7 +18,7 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.notNullValue
 import org.json.JSONObject
 
-interface AttributeExtractor {
+private interface AttributeExtractor {
     fun extractAttributes(json: JSONObject, view: View)
 }
 
@@ -156,8 +155,8 @@ private class ProgressBarAttributes : AttributeExtractor {
 
 private class MaterialSliderAttributes : AttributeExtractor {
     override fun extractAttributes(json: JSONObject, view: View) {
-        MaterialSliderHelper(view).getValueIfSlider()?.run {
-            json.put("value", this)
+        MaterialSliderHelper(view).getValueIfSlider()?.let {
+            json.put("value", it)
         }
     }
 }
