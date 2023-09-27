@@ -9,8 +9,9 @@ private const val CLASS_MATERIAL_SLIDER = "com.google.android.material.slider.Sl
 open class MaterialSliderHelper(protected val view: View) {
     fun getValueIfSlider(): Double? {
         if (!isSlider()) {
-            null
+            return null
         }
+
         return getValue()
     }
 
