@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import com.wix.detox.espresso.common.SliderHelper
+import com.wix.detox.espresso.common.ReactSliderHelper
 import org.hamcrest.*
 import org.hamcrest.Matchers.*
 import kotlin.math.abs
@@ -60,7 +60,7 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
         }
 
         override fun matchesSafely(view: AppCompatSeekBar): Boolean {
-            val sliderHelper = SliderHelper.create(view)
+            val sliderHelper = ReactSliderHelper.create(view)
             val progressPct = sliderHelper.getCurrentProgressPct()
             return (abs(progressPct - expectedValuePct) <= tolerance)
         }

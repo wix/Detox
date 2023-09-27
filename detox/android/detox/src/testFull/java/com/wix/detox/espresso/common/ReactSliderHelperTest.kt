@@ -15,14 +15,14 @@ import org.robolectric.RobolectricTestRunner
  * to avoid having to install the community slider under node_modules just for this.
  */
 @RunWith(RobolectricTestRunner::class)
-class SliderHelperTest {
+class ReactSliderHelperTest {
     lateinit var slider: ReactSlider
-    lateinit var uut: SliderHelper
+    lateinit var uut: ReactSliderHelper
 
     @Before
     fun setup() {
         slider = mock()
-        uut = SliderHelper.create(slider)
+        uut = ReactSliderHelper.create(slider)
     }
 
     private fun givenNativeProgressTraits(current: Int, max: Int) {
