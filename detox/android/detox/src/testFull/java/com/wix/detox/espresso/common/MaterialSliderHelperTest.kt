@@ -19,7 +19,7 @@ class MaterialSliderHelperTest {
 
         val uut = MaterialSliderHelper(slider)
 
-        assertThat(uut.getValueIfSlider()).isEqualTo(0.2)
+        assertThat(uut.getValueIfSlider()).isEqualTo(0.2f)
     }
 
     @Test

@@ -7,7 +7,7 @@ import org.joor.Reflect
 private const val CLASS_MATERIAL_SLIDER = "com.google.android.material.slider.Slider"
 
 open class MaterialSliderHelper(protected val view: View) {
-    fun getValueIfSlider(): Double? {
+    fun getValueIfSlider(): Float? {
         if (!isSlider()) {
             return null
         }
@@ -17,5 +17,5 @@ open class MaterialSliderHelper(protected val view: View) {
 
     private fun isSlider() = ReflectUtils.isAssignableFrom(view, CLASS_MATERIAL_SLIDER)
 
-    private fun getValue() = Reflect.on(view).call("getValue").get() as Double
+    private fun getValue() = Reflect.on(view).call("getValue").get() as Float
 }
