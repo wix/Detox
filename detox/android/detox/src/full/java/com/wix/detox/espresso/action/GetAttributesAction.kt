@@ -10,7 +10,8 @@ import androidx.test.espresso.UiController
 import com.google.android.material.slider.Slider
 import com.wix.detox.espresso.ViewActionWithResult
 import com.wix.detox.espresso.MultipleViewsAction
-import com.wix.detox.espresso.common.SliderHelper
+import com.wix.detox.espresso.common.ReactSliderHelper
+import com.wix.detox.espresso.common.MaterialSliderHelper
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -18,23 +19,25 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.notNullValue
 import org.json.JSONObject
 
+interface AttributeExtractor {
+    fun extractAttributes(json: JSONObject, view: View)
+}
+
 class GetAttributesAction() : ViewActionWithResult<JSONObject?>, MultipleViewsAction {
-    private val commonAttributes = CommonAttributes()
-    private val textViewAttributes = TextViewAttributes()
-    private val checkBoxAttributes = CheckBoxAttributes()
-    private val progressBarAttributes = ProgressBarAttributes()
-    private val sliderAttributes = SliderAttributes()
+    private val attributeExtractors = listOf(
+        CommonAttributes(),
+        TextViewAttributes(),
+        CheckBoxAttributes(),
+        ProgressBarAttributes(),
+        MaterialSliderAttributes()
+    )
     private var result: JSONObject? = null
 
     override fun perform(uiController: UiController?, view: View?) {
         view!!
 
         val json = JSONObject()
-        commonAttributes.get(json, view)
-        textViewAttributes.get(json, view)
-        checkBoxAttributes.get(json, view)
-        progressBarAttributes.get(json, view)
-        sliderAttributes.get(json, view)
+        attributeExtractors.forEach { it.extractAttributes(json, view) }
 
         result = json
     }
@@ -44,8 +47,8 @@ class GetAttributesAction() : ViewActionWithResult<JSONObject?>, MultipleViewsAc
     override fun getConstraints(): Matcher<View> = allOf(notNullValue(), Matchers.isA(View::class.java))
 }
 
-private class CommonAttributes {
-    fun get(json: JSONObject, view: View) {
+private class CommonAttributes : AttributeExtractor {
+    override fun extractAttributes(json: JSONObject, view: View) {
         getId(json, view)
         getVisibility(json, view)
         getAccessibilityLabel(json, view)
@@ -89,8 +92,8 @@ private class CommonAttributes {
     }
 }
 
-private class TextViewAttributes {
-    fun get(json: JSONObject, view: View) {
+private class TextViewAttributes : AttributeExtractor {
+    override fun extractAttributes(json: JSONObject, view: View) {
         if (view is TextView) {
             getText(json, view)
             getLength(json, view)
@@ -118,8 +121,8 @@ private class TextViewAttributes {
             }
 }
 
-private class CheckBoxAttributes {
-    fun get(json: JSONObject, view: View) {
+private class CheckBoxAttributes : AttributeExtractor {
+    override fun extractAttributes(json: JSONObject, view: View) {
         if (view is CheckBox) {
             getCheckboxValue(json, view)
         }
@@ -133,31 +136,28 @@ private class CheckBoxAttributes {
  * Note: this applies also to [androidx.appcompat.widget.AppCompatSeekBar], which
  * is anything RN-slider-ish.
  */
-private class ProgressBarAttributes {
-    fun get(json: JSONObject, view: View) {
+private class ProgressBarAttributes : AttributeExtractor {
+    override fun extractAttributes(json: JSONObject, view: View) {
         if (view is ProgressBar) {
-            SliderHelper.maybeCreate(view)?.let {
-                getRNSliderValue(json, it)
+            ReactSliderHelper.maybeCreate(view)?.let {
+                getReactSliderValue(json, it)
             } ?:
                 getProgressBarValue(json, view)
         }
     }
 
-    private fun getRNSliderValue(rootObject: JSONObject, sliderHelper: SliderHelper) {
-        rootObject.put("value", sliderHelper.getCurrentProgressPct())
+    private fun getReactSliderValue(rootObject: JSONObject, reactSliderHelper: ReactSliderHelper) {
+        rootObject.put("value", reactSliderHelper.getCurrentProgressPct())
     }
 
     private fun getProgressBarValue(rootObject: JSONObject, view: ProgressBar) =
             rootObject.put("value", view.progress)
 }
 
-private class SliderAttributes {
-    fun get(json: JSONObject, view: View) {
-        if (view is Slider) {
-            getSliderValue(json, view)
+private class MaterialSliderAttributes : AttributeExtractor {
+    override fun extractAttributes(json: JSONObject, view: View) {
+        MaterialSliderHelper(view).getValueIfSlider()?.run {
+            json.put("value", this)
         }
     }
-
-    private fun getSliderValue(rootObject: JSONObject, view: Slider) =
-        rootObject.put("value", view.value)
 }

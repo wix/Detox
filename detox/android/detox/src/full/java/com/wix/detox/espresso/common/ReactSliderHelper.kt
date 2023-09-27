@@ -11,8 +11,9 @@ import org.joor.Reflect
 
 private const val CLASS_REACT_SLIDER_LEGACY = "com.facebook.react.views.slider.ReactSlider"
 private const val CLASS_REACT_SLIDER_COMMUNITY = "com.reactnativecommunity.slider.ReactSlider"
+private const val CLASS_REACT_SLIDER_COMMUNITY_MANAGER = "com.reactnativecommunity.slider.ReactSliderManager"
 
-abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
+abstract class ReactSliderHelper(protected val slider: AppCompatSeekBar) {
     fun getCurrentProgressPct(): Double {
         val nativeProgress = slider.progress.toDouble()
         val nativeMax = slider.max
@@ -46,7 +47,7 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
                 ?: throw DetoxIllegalStateException("Cannot handle this type of a seek-bar view (Class ${view.javaClass.canonicalName}). " +
                         "Only React Native sliders are currently supported.")
 
-        fun maybeCreate(view: View): SliderHelper? =
+        fun maybeCreate(view: View): ReactSliderHelper? =
             when {
                 ReflectUtils.isAssignableFrom(view, CLASS_REACT_SLIDER_LEGACY)
                    -> LegacySliderHelper(view as ReactSlider)
@@ -58,7 +59,7 @@ abstract class SliderHelper(protected val slider: AppCompatSeekBar) {
     }
 }
 
-private class LegacySliderHelper(slider: ReactSlider): SliderHelper(slider) {
+private class LegacySliderHelper(slider: ReactSlider): ReactSliderHelper(slider) {
     override fun setProgressJS(valueJS: Double) {
         val reactSliderManager = com.facebook.react.views.slider.ReactSliderManager()
         reactSliderManager.updateProperties(slider as ReactSlider, buildStyles("value", valueJS))
@@ -67,9 +68,9 @@ private class LegacySliderHelper(slider: ReactSlider): SliderHelper(slider) {
     private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
 }
 
-private class CommunitySliderHelper(slider: AppCompatSeekBar): SliderHelper(slider) {
+private class CommunitySliderHelper(slider: AppCompatSeekBar): ReactSliderHelper(slider) {
     override fun setProgressJS(valueJS: Double) {
-        val reactSliderManager = Class.forName("com.reactnativecommunity.slider.ReactSliderManager").newInstance()
+        val reactSliderManager = Class.forName(CLASS_REACT_SLIDER_COMMUNITY_MANAGER).newInstance()
         Reflect.on(reactSliderManager).call("setValue", slider, valueJS)
     }
 }
