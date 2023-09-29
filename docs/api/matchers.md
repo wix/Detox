@@ -141,7 +141,7 @@ element(by.text('Product')).atIndex(2);
 For supported matchers ([`id`](#byidid), [`label`](#bylabellabel), [`text`](#bytexttext)), you can also utilize regex (Regular Expressions) alongside certain flags. Here's a table with the supported flags:
 
 | Flag | Name          | Modification                                                                                                                                             |
-|------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `i`  | Ignore Casing | Makes the expression search case-insensitively.                                                                                                          |
 | `s`  | Dot All       | Makes the wild character `.` match newlines as well.                                                                                                     |
 | `m`  | Multiline     | Makes the boundary characters (`^` and `$`) match the beginning and ending of every single line instead of the beginning and ending of the whole string. |
