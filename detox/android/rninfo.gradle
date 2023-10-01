@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-def rnVersion = getRNVersion()
+def rnVersion = getRNVersion(project.rootDir)
 def rnMajorVer = getMajorVersion(rnVersion)
 println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
 
@@ -12,9 +12,9 @@ project.ext.rnInfo = [
     isRN71OrHigher: rnMajorVer >= 71,
 ]
 
-private static def getRNVersion() {
+private static def getRNVersion(workingDir) {
     def jsonSlurper = new JsonSlurper()
-    Map<String, Object> packageJSON  = jsonSlurper.parse(new File('../node_modules/react-native/package.json'))
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File("$workingDir/../node_modules/react-native/package.json"))
     String rnVersion = packageJSON.get('version')
     return rnVersion
 }
