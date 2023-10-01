@@ -82,9 +82,8 @@ export default class ActionsScreen extends Component {
           <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
-        >
-          <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
+        <TouchableOpacity testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' onPress={this.onLongTimeout.bind(this)}>
+          <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Tap Me For Long Timeout</Text>
         </TouchableOpacity>
 
         <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 10}}>
@@ -128,8 +127,8 @@ export default class ActionsScreen extends Component {
         />
 
         <View style={{ height: 20, borderColor: '#c0c0c0', borderWidth: 1, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
-          <TouchableOpacity onPress={this.onToggleScrollViewVisibility.bind(this)}>
-            <Text testID='toggleScrollOverlays' style={{ color: 'blue' }}>Toggle scroll overlays</Text>
+          <TouchableOpacity testID='toggleScrollOverlays' onPress={this.onToggleScrollViewVisibility.bind(this)}>
+            <Text style={{ color: 'blue' }}>Toggle scroll overlays</Text>
           </TouchableOpacity>
         </View>
 

@@ -48,9 +48,11 @@ export default class WaitForScreen extends Component {
         </View>
 
         {!this.state.toggle ? false :
-          <Text testID='changeExistenceByToggle' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>
-            I am being exist / removed 2 sec after click
-          </Text>
+          <TouchableOpacity testID='changeExistenceByToggle'>
+            <Text style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>
+              I am being exist / removed 2 sec after click
+            </Text>
+          </TouchableOpacity>
         }
 
         <TextInput

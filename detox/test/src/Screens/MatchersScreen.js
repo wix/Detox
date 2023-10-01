@@ -46,12 +46,13 @@ export default class MatchersScreen extends Component {
           </View>
         </View>
 
-        <View style={{flexDirection: 'row', marginBottom: 20}}>
-          <Text testID='ProductId000' style={{margin: 10}}>Product</Text>
-          <Text testID='ProductId001' style={{margin: 10}}>Product</Text>
-          <Text testID='ProductId002' style={{margin: 10}}>Product</Text>
-          <Text testID='ProductId003' style={{margin: 10}}>Product</Text>
-        </View>
+        {<View style={{ flexDirection: 'row', marginBottom: 20 }}>
+          {Array.from({ length: 4 }, (_, i) => (
+            <View key={i} testID={`ProductId00${i}`} style={{ margin: 10 }}>
+              <Text>Product</Text>
+            </View>
+          ))}
+        </View>}
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'First button pressed')}>
           <Text style={{color: 'brown', marginBottom: 20}}>Index</Text>
