@@ -40,7 +40,7 @@ function asError(error) {
   return isError(error) ? error : new Error(error);
 }
 
-function serializeObjectWithError(obj, errorKey) {
+function serializeObjectWithError(obj, errorKey = 'error') {
   if (obj[errorKey] instanceof Error) {
     return { ...obj, [errorKey]: serializeError(obj[errorKey]) };
   }
@@ -48,7 +48,7 @@ function serializeObjectWithError(obj, errorKey) {
   return obj;
 }
 
-function deserializeObjectWithError(obj, errorKey) {
+function deserializeObjectWithError(obj, errorKey = 'error') {
   if (typeof obj[errorKey] === 'object' && !(obj[errorKey] instanceof Error)) {
     return { ...obj, [errorKey]: deserializeError(obj[errorKey]) };
   }

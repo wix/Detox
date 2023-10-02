@@ -4,10 +4,10 @@ const _ = require('lodash');
 
 const unitLogger = require('../../../../../utils/logger').child({ cat: 'device' });
 
-function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand, adb, adbName) {
+function launchEmulatorProcess(emulatorExec, adb, emulatorLaunchCommand) {
   let childProcessOutput;
   const portName = emulatorLaunchCommand.port ? `-${emulatorLaunchCommand.port}` : '';
-  const tempLog = `./${emulatorName}${portName}.log`;
+  const tempLog = `./${emulatorLaunchCommand.avdName}${portName}.log`;
   const stdout = fs.openSync(tempLog, 'a');
   const stderr = fs.openSync(tempLog, 'a');
 
@@ -31,7 +31,7 @@ function launchEmulatorProcess(emulatorName, emulatorExec, emulatorLaunchCommand
 
   log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 
-  adb.waitForDevice(adbName).then(() => childProcessPromise._cpResolve());
+  adb.waitForDevice(emulatorLaunchCommand.adbName).then(() => childProcessPromise._cpResolve());
 
   return childProcessPromise.then(() => true).catch((err) => {
     detach();

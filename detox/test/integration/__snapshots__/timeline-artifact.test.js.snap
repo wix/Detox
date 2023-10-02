@@ -480,7 +480,7 @@ Detox CLI is going to restart the test runner with those files...
       "v": 0,
     },
     "cat": "lifecycle",
-    "name": "flaky.test.js is assigned to Stub #StubDevice#1",
+    "name": "flaky.test.js is assigned to Stub #StubDevice#2",
     "ph": "i",
     "pid": 2,
     "tid": 3,

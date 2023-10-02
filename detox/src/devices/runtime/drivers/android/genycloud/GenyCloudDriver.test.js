@@ -1,17 +1,23 @@
 describe('Genymotion-cloud driver', () => {
-  const anInstance = () => ({
-    uuid: 'mock-instance-uuid',
+  const aCookie = () => ({
+    id: 'mock-instance-uuid',
     name: 'mock-instance-name',
     adbName: 'mock-instance-adb-name',
-    toString: () => 'mock-instance-toString()',
   });
 
+  /** @type {jest.Mocked<*>} */
   let aapt;
+  /** @type {jest.Mocked<*>} */
   let eventEmitter;
+  /** @type {jest.Mocked<*>} */
   let invocationManager;
+  /** @type {jest.Mocked<*>} */
   let appInstallHelper;
+  /** @type {jest.Mocked<*>} */
   let apkValidator;
+  /** @type {jest.Mocked<*>} */
   let instrumentation;
+  /** @type {jest.Mocked<*>} */
   let detoxGenymotionManager;
 
   beforeEach(() => {
@@ -33,27 +39,25 @@ describe('Genymotion-cloud driver', () => {
     jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');
 
     jest.mock('../../../../common/drivers/android/tools/AppInstallHelper');
-    const AppInstallHelper = require('../../../../common/drivers/android/tools/AppInstallHelper');
+    const AppInstallHelper = jest.requireMock('../../../../common/drivers/android/tools/AppInstallHelper');
     appInstallHelper = new AppInstallHelper();
 
     jest.mock('../../../../common/drivers/android/tools/ApkValidator');
-    const ApkValidator = require('../../../../common/drivers/android/tools/ApkValidator');
+    const ApkValidator = jest.requireMock('../../../../common/drivers/android/tools/ApkValidator');
     apkValidator = new ApkValidator();
 
     jest.mock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
-    const Instrumentation = require('../../../../common/drivers/android/tools/MonitoredInstrumentation');
+    const Instrumentation = jest.requireMock('../../../../common/drivers/android/tools/MonitoredInstrumentation');
     instrumentation = new Instrumentation();
 
     jest.mock('../../../../../android/espressoapi/DetoxGenymotionManager');
-    detoxGenymotionManager = require('../../../../../android/espressoapi/DetoxGenymotionManager');
+    detoxGenymotionManager = jest.requireMock('../../../../../android/espressoapi/DetoxGenymotionManager');
   });
 
   describe('instance scope', () => {
-    let instance;
     let GenyCloudDriver;
     let uut;
     beforeEach(() => {
-      instance = anInstance();
       GenyCloudDriver = require('./GenyCloudDriver');
       uut = new GenyCloudDriver({
         aapt,
@@ -63,15 +67,15 @@ describe('Genymotion-cloud driver', () => {
         client: {},
         appInstallHelper,
         instrumentation,
-      }, { instance });
+      }, aCookie());
     });
 
     it('should return the adb-name as the external ID', () => {
-      expect(uut.getExternalId()).toEqual(instance.adbName);
+      expect(uut.getExternalId()).toEqual(aCookie().adbName);
     });
 
     it('should return the instance description as the external ID', () => {
-      expect(uut.getDeviceName()).toEqual(instance.toString());
+      expect(uut.getDeviceName()).toEqual(aCookie().name);
     });
 
     describe('app installation', () => {
@@ -86,7 +90,7 @@ describe('Genymotion-cloud driver', () => {
           .mockReturnValueOnce('testbin-install-path');
 
         await uut.installApp('bin-path', 'testbin-path');
-        expect(appInstallHelper.install).toHaveBeenCalledWith(instance.adbName, 'bin-install-path', 'testbin-install-path');
+        expect(appInstallHelper.install).toHaveBeenCalledWith(aCookie().adbName, 'bin-install-path', 'testbin-install-path');
       });
     });
 

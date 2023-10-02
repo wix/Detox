@@ -81,12 +81,6 @@ class PluginApp {
   }
 }
 
-class PluginAllocationCookie {
-  constructor(id) {
-    this.id = id;
-  }
-}
-
 class PluginDeviceAllocationDriver {
   constructor(deps) {
     this.emitter = deps.eventEmitter;
@@ -94,7 +88,7 @@ class PluginDeviceAllocationDriver {
 
   async allocate(deviceConfig) {
     console.log('TODO Allocate an actual device here', deviceConfig.device);
-    return new PluginAllocationCookie('device ID');
+    return { id: 'device ID' };
   }
 
   async free(cookie, { shutdown }) {

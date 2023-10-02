@@ -1,13 +1,12 @@
-// @ts-nocheck
 describe('Device allocator', () => {
-
   let allocDriver;
-  /** @type DeviceAllocator */
+
+  /** @type {import('./DeviceAllocator')} */
   let deviceAllocator;
+
   beforeEach(() => {
     allocDriver = {
       allocate: jest.fn(),
-      postAllocate: jest.fn(),
       free: jest.fn(),
     };
 
@@ -15,41 +14,100 @@ describe('Device allocator', () => {
     deviceAllocator = new DeviceAllocator(allocDriver);
   });
 
-  it('should allocate via driver', async () => {
-    const query = 'mock query';
-    const device = {
-      mock: 'device',
-    };
+  describe('#init()', function() {
+    test('should not init if the driver does not implement this function', async () => {
+      delete allocDriver.init;
+      await expect(deviceAllocator.init()).resolves.not.toThrow();
+    });
 
-    allocDriver.allocate.mockResolvedValue(device);
-
-    const result = await deviceAllocator.allocate(query);
-    expect(result).toEqual(device);
-    expect(allocDriver.allocate).toHaveBeenCalledWith(query);
+    test('should init via driver', async () => {
+      allocDriver.init = jest.fn();
+      await deviceAllocator.init();
+      expect(allocDriver.init).toHaveBeenCalled();
+    });
   });
 
-  it('should post-allocate via driver', async () => {
-    const cookie = {};
+  describe('#allocate()', function() {
+    test('should allocate via driver', async () => {
+      const cookie = { id: 'mock', };
+      const deviceConfig = {
+        type: 'some-device-type',
+        device: 'some query',
+      };
 
-    const result = await deviceAllocator.postAllocate(cookie);
-    expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+      allocDriver.allocate.mockResolvedValue(cookie);
+
+      const result = await deviceAllocator.allocate(deviceConfig);
+
+      expect(result).toEqual(cookie);
+      expect(allocDriver.allocate).toHaveBeenCalledWith(deviceConfig);
+    });
   });
 
-  it('should not post-allocate if the driver does not implement this function', async () => {
-    delete allocDriver.postAllocate;
-    await expect(deviceAllocator.postAllocate({})).resolves.not.toThrow();
+  describe('#postAllocate()', function() {
+    test('should post-allocate via driver', async () => {
+      const cookie = { id: 'mock' };
+
+      allocDriver.postAllocate = jest.fn();
+      await expect(deviceAllocator.postAllocate(cookie)).resolves.toBe(cookie);
+      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+    });
+
+    test('should replace the cookie if the driver returns a new one', async () => {
+      const cookie = { id: 'mock' };
+      const newCookie = { id: 'new mock' };
+
+      allocDriver.postAllocate = jest.fn().mockResolvedValue(newCookie);
+      await expect(deviceAllocator.postAllocate(cookie)).resolves.toBe(newCookie);
+      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+    });
+
+    test('should not post-allocate if the driver does not implement this function', async () => {
+      delete allocDriver.postAllocate;
+      await expect(deviceAllocator.postAllocate({ id: 'mock' })).resolves.not.toThrow();
+    });
   });
 
-  it('should deallocate via driver', async () => {
-    const cookie = { cookie: 'mock' };
-    const options = { shutdown: true };
-    const device = {
-      mock: 'device',
-    };
+  describe('#free()', function() {
+    test('should deallocate via driver', async () => {
+      const cookie = { id: 'mock' };
+      const options = { shutdown: true };
+      const device = {
+        mock: 'device',
+      };
 
-    allocDriver.free.mockResolvedValue(device);
+      allocDriver.free.mockResolvedValue(device);
 
-    await deviceAllocator.free(cookie, options);
-    expect(allocDriver.free).toHaveBeenCalledWith(cookie, options);
+      await deviceAllocator.free(cookie, options);
+      expect(allocDriver.free).toHaveBeenCalledWith(cookie, options);
+      await deviceAllocator.free(cookie); // no options
+      expect(allocDriver.free).toHaveBeenCalledWith(cookie, {});
+    });
+  });
+
+  describe('#cleanup()', function() {
+    test('should not cleanup if the driver does not implement this function', async () => {
+      delete allocDriver.cleanup;
+      await expect(deviceAllocator.cleanup()).resolves.not.toThrow();
+    });
+
+    test('should cleanup via driver', async () => {
+      allocDriver.cleanup = jest.fn();
+      await deviceAllocator.cleanup();
+      expect(allocDriver.cleanup).toHaveBeenCalled();
+    });
+  });
+
+  describe('#emergencyCleanup()', function() {
+    test('should not emergencyCleanup if the driver does not implement this function', () => {
+      delete allocDriver.emergencyCleanup;
+      expect(() => deviceAllocator.emergencyCleanup()).not.toThrow();
+    });
+
+    test('should emergencyCleanup via driver', () => {
+      allocDriver.emergencyCleanup = jest.fn();
+      deviceAllocator.emergencyCleanup();
+      expect(allocDriver.emergencyCleanup).toHaveBeenCalled();
+    });
   });
 });

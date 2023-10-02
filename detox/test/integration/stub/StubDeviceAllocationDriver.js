@@ -1,17 +1,13 @@
- const StubCookie = require('./StubCookie');
 const { sleepSomeTime, sleepALittle } = require('./stubSleeps');
 
 class StubDeviceAllocationDriver {
-  constructor({ eventEmitter }) {
-    this._emitter = eventEmitter;
-  }
+  counter = 0;
 
   async allocate() {
-    const deviceId = `StubDevice#${process.env.JEST_WORKER_ID}`;
+    const deviceId = `StubDevice#${++this.counter}`;
 
     await sleepSomeTime();
-    await this._emitter.emit('bootDevice', { coldBoot: false, deviceId, type: 'stub' });
-    return new StubCookie(deviceId);
+    return { id: deviceId };
   }
 
   async free(cookie, { shutdown }) {

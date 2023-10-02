@@ -1,20 +1,24 @@
-const DeviceLauncher = require('../../../common/drivers/DeviceLauncher');
-
-class SimulatorLauncher extends DeviceLauncher {
+class SimulatorLauncher {
   constructor({ applesimutils, eventEmitter }) {
-    super(eventEmitter);
     this._applesimutils = applesimutils;
+    this._eventEmitter = eventEmitter;
   }
 
   async launch(udid, type, bootArgs, headless) {
     const coldBoot = await this._applesimutils.boot(udid, bootArgs, headless);
-    await this._notifyBootEvent(udid, type, coldBoot, headless);
+    return coldBoot;
   }
 
   async shutdown(udid) {
-    await this._notifyPreShutdown(udid);
+    if (this._eventEmitter) {
+      await this._eventEmitter.emit('beforeShutdownDevice', { deviceId: udid });
+    }
+
     await this._applesimutils.shutdown(udid);
-    await this._notifyShutdownCompleted(udid);
+
+    if (this._eventEmitter) {
+      await this._eventEmitter.emit('shutdownDevice', { deviceId: udid });
+    }
   }
 }
 

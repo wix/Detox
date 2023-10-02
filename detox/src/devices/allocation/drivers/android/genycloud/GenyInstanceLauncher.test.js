@@ -1,148 +1,107 @@
-// @ts-nocheck
+const GenyInstance = require('./services/dto/GenyInstance');
+
 describe('Genymotion-Cloud instance launcher', () => {
   const recipeName = 'mock-recipe-name';
 
-  const anInstance = () => {
-    const instance = new GenyInstance();
-    instance.uuid = 'mock-instance-uuid';
-    instance.name = 'mock-instance-name';
-    instance.recipeName = recipeName;
-    instance.toString = () => 'mock-instance-toString()';
-    return instance;
-  };
+  const anInstance = (overrides) => new GenyInstance({
+    uuid: 'mock-instance-uuid',
+    name: 'mock-instance-name',
+    adb_serial: '0.0.0.0',
+    adb_serial_port: 0,
+    state: 'OFFLINE',
+    recipe: {
+      name: recipeName,
+    },
+    ...overrides,
+  });
 
-  const anOfflineInstance = () => {
-    const instance = anInstance();
-    instance.isAdbConnected.mockReturnValue(false);
-    instance.isOnline.mockReturnValue(false);
-    instance.adbName = '0.0.0.0';
-    return instance;
-  };
-
-  const anOnlineInstance = () => {
-    const instance = anOfflineInstance();
-    instance.isOnline.mockReturnValue(true);
-    return instance;
-  };
-
+  const anOfflineInstance = () => anInstance({ state: 'OFFLINE' });
+  const anOnlineInstance = () => anInstance({ state: 'ONLINE' });
   const aDisconnectedInstance = anOnlineInstance;
-  const aFullyConnectedInstance = () => {
-    const instance = anOnlineInstance();
-    instance.isAdbConnected.mockReturnValue(true);
-    instance.adbName = 'localhost:1234';
-    return instance;
-  };
+  const aFullyConnectedInstance = () => anInstance({
+    adb_serial: 'localhost:1234',
+    adb_serial_port: 1234,
+    state: 'ONLINE',
+  });
 
-  const givenInstanceQueryResult = (instance) => instanceLookupService.getInstance.mockResolvedValue(instance);
+  const givenInstanceGetResult = (instance) => genyCloudExec.getInstance.mockResolvedValue({ instance: instance.toJSON() });
+  const givenInstanceCreateResult = (instance) => instanceLifecycleService.createInstance.mockResolvedValue(instance);
   const givenAnInstanceDeletionError = () => instanceLifecycleService.deleteInstance.mockRejectedValue(new Error());
   const givenInstanceConnectResult = (instance) => instanceLifecycleService.adbConnectInstance.mockResolvedValue(instance);
-  const givenInstanceConnectError = () => instanceLifecycleService.adbConnectInstance.mockRejectedValue(new Error());
 
-  const expectDeviceBootEvent = (instance, coldBoot) =>
-    expect(eventEmitter.emit).toHaveBeenCalledWith('bootDevice', {
-      coldBoot,
-      deviceId: instance.adbName,
-      type: recipeName,
-    });
-  const expectNoDeviceBootEvent = () => expect(eventEmitter.emit).not.toHaveBeenCalled();
-
-  let retry;
-  let eventEmitter;
-  let deviceCleanupRegistry;
-  let instanceLookupService;
+  let genyCloudExec;
   let instanceLifecycleService;
-  let GenyInstance;
   let uut;
+  let retry;
+  let logger;
+
   beforeEach(() => {
+    jest.mock('../../../../../utils/logger');
+    logger = jest.requireMock('../../../../../utils/logger');
+
     jest.mock('../../../../../utils/retry');
-    retry = require('../../../../../utils/retry');
+    retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const AsyncEmitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
-    eventEmitter = new AsyncEmitter();
-
-    const InstanceLifecycleService = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    const InstanceLookupService = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/GenyInstanceLookupService');
-    instanceLookupService = new InstanceLookupService();
-
-    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
-    deviceCleanupRegistry = new DeviceRegistry();
-
-    GenyInstance = jest.genMockFromModule('../../../../common/drivers/android/genycloud/services/dto/GenyInstance');
+    const GenyCloudExec = jest.genMockFromModule('./exec/GenyCloudExec');
+    genyCloudExec = new GenyCloudExec();
 
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');
     uut = new GenyInstanceLauncher({
+      genyCloudExec,
       instanceLifecycleService,
-      instanceLookupService,
-      deviceCleanupRegistry,
-      eventEmitter
     });
   });
 
-  describe('Launch', () => {
-    it('should register a *fresh* instance in cleanup registry', async () => {
+  describe('launch', () => {
+    it('should create an unconnected instance', async () => {
+      const recipe = {};
       const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
+      givenInstanceCreateResult(instance);
       givenInstanceConnectResult(instance);
 
-      await uut.launch(instance, true);
-      expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith(instance.uuid, { name: instance.name });
+      await expect(uut.launch(recipe, instance.name)).resolves.toEqual(instance);
     });
+  });
 
-    it('should not register instance in cleanup registry if not a fresh instance', async () => {
-      const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance, false);
-      expect(deviceCleanupRegistry.allocateDevice).not.toHaveBeenCalled();
-    });
-
-    it('should register instance in cleanup registry by default', async () => {
-      const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance);
-      expect(deviceCleanupRegistry.allocateDevice).toHaveBeenCalledWith(instance.uuid, { name: instance.name });
-    });
-
+  describe('connect', () => {
     it('should wait for the cloud instance to become online', async () => {
       const instance = anOfflineInstance();
       const instanceOnline = anOnlineInstance();
-      givenInstanceQueryResult(instanceOnline);
+      givenInstanceGetResult(instanceOnline);
       givenInstanceConnectResult(instanceOnline);
 
       retry.mockImplementationOnce(async (options, func) => {
         const instance = await func();
-        expect(instanceLookupService.getInstance).toHaveBeenCalledWith(instance.uuid);
+        expect(genyCloudExec.getInstance).toHaveBeenCalledWith(instance.uuid);
         return instance;
       });
 
-      const result = await uut.launch(instance);
+      const result = await uut.connect(instance);
       expect(result).toEqual(instanceOnline);
       expect(retry).toHaveBeenCalled();
     });
 
     it('should not wait for cloud instance to become online if already online', async () => {
       const instance = anOnlineInstance();
-      givenInstanceQueryResult(instance);
+      givenInstanceCreateResult(instance);
       givenInstanceConnectResult(instance);
 
-      const result = await uut.launch(instance);
-      expect(instanceLookupService.getInstance).not.toHaveBeenCalled();
+      const result = await uut.connect(instance);
+      expect(genyCloudExec.getInstance).not.toHaveBeenCalled();
       expect(retry).not.toHaveBeenCalled();
       expect(result).toEqual(instance);
     });
 
     it('should fail if instance never becomes online', async () => {
       const instanceOffline = anOfflineInstance();
-      givenInstanceQueryResult(instanceOffline);
+      givenInstanceGetResult(instanceOffline);
       givenInstanceConnectResult(instanceOffline);
 
-      await expect(uut.launch(instanceOffline))
+      await expect(uut.connect(instanceOffline))
         .rejects
         .toThrowError(`Timeout waiting for instance ${instanceOffline.uuid} to be ready`);
     });
@@ -152,76 +111,43 @@ describe('Genymotion-Cloud instance launcher', () => {
         initialSleep: 45000,
         backoff: 'none',
         interval: 5000,
-        retries: 25,
+        retries: 20,
       };
       const instance = anOfflineInstance();
       const instanceOnline = anOnlineInstance();
-      givenInstanceQueryResult(instanceOnline);
+      givenInstanceGetResult(instanceOnline);
       givenInstanceConnectResult(instanceOnline);
 
-      await uut.launch(instance);
+      await uut.connect(instance);
       expect(retry).toHaveBeenCalledWith(expect.objectContaining(expectedRetryArgs), expect.any(Function));
     });
 
     it('should adb-connect to instance if disconnected', async () => {
       const disconnectedInstance = aDisconnectedInstance();
       const connectedInstance = aFullyConnectedInstance();
-      givenInstanceQueryResult(disconnectedInstance);
+      givenInstanceCreateResult(disconnectedInstance);
       givenInstanceConnectResult(connectedInstance);
 
-      const result = await uut.launch(disconnectedInstance);
+      const result = await uut.connect(disconnectedInstance);
       expect(instanceLifecycleService.adbConnectInstance).toHaveBeenCalledWith(disconnectedInstance.uuid);
       expect(result).toEqual(connectedInstance);
     });
 
     it('should not connect a connected instance', async () => {
       const connectedInstance = aFullyConnectedInstance();
-      givenInstanceQueryResult(connectedInstance);
+      givenInstanceCreateResult(connectedInstance);
       givenInstanceConnectResult(connectedInstance);
 
-      await uut.launch(connectedInstance);
+      await uut.connect(connectedInstance);
 
       expect(instanceLifecycleService.adbConnectInstance).not.toHaveBeenCalled();
-    });
-
-    it('should emit boot event for a reused instance', async () => {
-      const isNew = true;
-      const instance = aFullyConnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance, isNew);
-
-      expectDeviceBootEvent(instance, true);
-    });
-
-    it('should emit boot event for a newly allocated instance', async () => {
-      const isNew = false;
-      const instance = aFullyConnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectResult(instance);
-
-      await uut.launch(instance, isNew);
-
-      expectDeviceBootEvent(instance, false);
-    });
-
-    it('should not emit boot event if adb-connect fails (implicit call-order check)', async () => {
-      const instance = aDisconnectedInstance();
-      givenInstanceQueryResult(instance);
-      givenInstanceConnectError();
-
-      try {
-        await uut.launch(instance, false);
-      } catch (e) {}
-      expectNoDeviceBootEvent();
     });
   });
 
   describe('Shutdown', () => {
     it('should delete the associated instance', async () => {
       const instance = anInstance();
-      await uut.shutdown(instance);
+      await uut.shutdown(instance.uuid);
       expect(instanceLifecycleService.deleteInstance).toHaveBeenCalledWith(instance.uuid);
     });
 
@@ -229,30 +155,12 @@ describe('Genymotion-Cloud instance launcher', () => {
       givenAnInstanceDeletionError();
 
       const instance = anInstance();
-      await expect(uut.shutdown(instance)).rejects.toThrowError();
+      await expect(uut.shutdown(instance.uuid)).rejects.toThrowError();
     });
 
     it('should remove the instance from the cleanup registry', async () => {
       const instance = anInstance();
       await uut.shutdown(instance);
-      expect(deviceCleanupRegistry.disposeDevice).toHaveBeenCalledWith(instance.uuid);
-    });
-
-    it('should emit associated events', async () => {
-      const instance = anInstance();
-      await uut.shutdown(instance);
-
-      expect(eventEmitter.emit).toHaveBeenCalledWith('beforeShutdownDevice', { deviceId: instance.uuid });
-      expect(eventEmitter.emit).toHaveBeenCalledWith('shutdownDevice', { deviceId: instance.uuid });
-    });
-
-    it('should not emit shutdownDevice prematurely', async () => {
-      givenAnInstanceDeletionError();
-
-      const instance = anInstance();
-      await expect(uut.shutdown(instance)).rejects.toThrowError();
-      expect(eventEmitter.emit).toHaveBeenCalledTimes(1);
-      expect(eventEmitter.emit).not.toHaveBeenCalledWith('shutdownDevice', expect.any(Object));
     });
   });
 });

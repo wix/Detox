@@ -32,6 +32,7 @@ function composeLoggerConfig(opts) {
       if (!config) return acc;
       const { options } = config;
       return _.merge(acc, {
+        // @ts-ignore-line
         options: typeof options === 'function' ? options(acc) : options
       });
     },
