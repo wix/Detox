@@ -173,7 +173,7 @@ function _allowNetworkPermissionsXCUITest() {
     childProcess.stdin.pause();
     childProcess.kill('SIGTERM');
 
-  }, 30000);
+  }, 30000).unref();
 }
 
 async function _waitForTestTargetServerToStart(testTargetServerPort, cpPromise) {
