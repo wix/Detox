@@ -1,7 +1,16 @@
+require('wtfnode').init();
+
 const { DetoxCircusEnvironment } = require('detox/runners/jest');
 const { worker } = require('detox/internals')
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
+  async teardown() {
+    setInterval(() => {
+      require('wtfnode').dump();
+    }, 5000).unref();
+    await super.teardown();
+  }
+
   async setup() {
     await super.setup();
 
