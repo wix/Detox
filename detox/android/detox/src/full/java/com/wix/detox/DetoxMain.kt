@@ -13,7 +13,6 @@ import com.wix.detox.adapters.server.OutboundServerAdapter
 import com.wix.detox.adapters.server.QueryStatusActionHandler
 import com.wix.detox.adapters.server.ReactNativeReloadActionHandler
 import com.wix.detox.adapters.server.ReadyActionHandler
-import com.wix.detox.adapters.server.ScarceActionHandler
 import com.wix.detox.espresso.UiControllerSpy
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.ReactNativeExtension
@@ -36,18 +35,16 @@ object DetoxMain {
         actionsDispatcher.join()
     }
 
-    private fun doInit(
-        activityLaunchHelper: ActivityLaunchHelper,
-        externalAdapter: DetoxServerAdapter,
-        rnHostHolder: Context
-    ) {
-        externalAdapter.connect()
-
+    private fun doInit(externalAdapter: DetoxServerAdapter) {
         initCrashHandler(externalAdapter)
         initANRListener(externalAdapter)
-
         initEspresso()
         initReactNative()
+
+        externalAdapter.connect()
+    }
+
+    private fun onConnected(activityLaunchHelper: ActivityLaunchHelper, rnHostHolder: Context) {
         launchApp(rnHostHolder, activityLaunchHelper)
     }
 
@@ -63,15 +60,21 @@ object DetoxMain {
         with(actionsDispatcher) {
             val rnReloadHandler = ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade)
 
-            associateActionHandler(INIT_ACTION, object : DetoxActionHandler {
+            associateActionHandler(INIT_ACTION, object: DetoxActionHandler {
                 override fun handle(params: String, messageId: Long) =
                     synchronized(this@DetoxMain) {
-                        this@DetoxMain.doInit(activityLaunchHelper, serverAdapter, rnHostHolder)
+                        this@DetoxMain.doInit(serverAdapter)
                     }
             })
             associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
 
-            associateActionHandler("loginSuccess", ScarceActionHandler())
+            associateActionHandler("loginSuccess", object: DetoxActionHandler {
+                override fun handle(params: String, messageId: Long) {
+                    synchronized(this@DetoxMain) {
+                        this@DetoxMain.onConnected(activityLaunchHelper, rnHostHolder)
+                    }
+                }
+            })
             associateActionHandler("reactNativeReload", object: DetoxActionHandler {
                 override fun handle(params: String, messageId: Long) =
                     synchronized(this@DetoxMain) {
