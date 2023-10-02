@@ -133,7 +133,7 @@ describe('Actions', () => {
     await expect(element(by.text('Return Working!!!'))).toBeVisible();
   });
 
-  it.only('should clear text in an element', async () => {
+  it('should clear text in an element', async () => {
     if (device.getPlatform() === 'ios') {
       //Add a complex string on iOS to ensure clear works as expected.
       const typedText = 'Clear this אֱבּג';
@@ -200,7 +200,7 @@ describe('Actions', () => {
     await expect(element(by.text('HText1'))).toBeVisible(1);
   });
 
-  it.only('should not wait for long timeout (>1.5s)', async () => {
+  it('should not wait for long timeout (>1.5s)', async () => {
     await element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames')).tap();
     await expect(element(by.id('WhyDoAllTheTestIDsHaveTheseStrangeNames'))).toBeVisible();
   });
@@ -212,7 +212,7 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  it.only('should adjust legacy slider and assert its value', async () => {
+  it('should adjust legacy slider and assert its value', async () => {
     const reactSliderId = 'legacySliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
     await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
@@ -225,7 +225,7 @@ describe('Actions', () => {
     }
   });
 
-  it.only('should adjust slider and assert its value', async () => {
+  it('should adjust slider and assert its value', async () => {
     const reactSliderId = 'sliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
     await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
@@ -238,7 +238,7 @@ describe('Actions', () => {
     }
   });
 
-  it.only('should expect text fields to be focused after tap but not before', async () => {
+  it('should expect text fields to be focused after tap but not before', async () => {
     const textField1 = element(by.id('UniqueId005'));
     const textField2 = element(by.id('UniqueId006'));
 
