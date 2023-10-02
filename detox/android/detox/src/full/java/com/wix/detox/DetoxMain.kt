@@ -1,6 +1,7 @@
 package com.wix.detox
 
 import android.content.Context
+import android.util.Log
 import com.wix.detox.adapters.server.CleanupActionHandler
 import com.wix.detox.adapters.server.DetoxActionHandler
 import com.wix.detox.adapters.server.DetoxActionsDispatcher
@@ -10,9 +11,11 @@ import com.wix.detox.adapters.server.InstrumentsEventsActionsHandler
 import com.wix.detox.adapters.server.InstrumentsRecordingStateActionHandler
 import com.wix.detox.adapters.server.InvokeActionHandler
 import com.wix.detox.adapters.server.OutboundServerAdapter
+import com.wix.detox.adapters.server.PrematureReadyHandler
 import com.wix.detox.adapters.server.QueryStatusActionHandler
 import com.wix.detox.adapters.server.ReactNativeReloadActionHandler
 import com.wix.detox.adapters.server.ReadyActionHandler
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.espresso.UiControllerSpy
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.ReactNativeExtension
@@ -58,6 +61,7 @@ object DetoxMain {
     private fun initActionHandlers(activityLaunchHelper: ActivityLaunchHelper, actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
         // Primary actions
         with(actionsDispatcher) {
+            var prematureIsReadyHandler: PrematureReadyHandler? = PrematureReadyHandler()
             val rnReloadHandler = ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade)
 
             associateActionHandler(INIT_ACTION, object: DetoxActionHandler {
@@ -66,13 +70,20 @@ object DetoxMain {
                         this@DetoxMain.doInit(serverAdapter)
                     }
             })
-//            associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
+            associateActionHandler(IS_READY_ACTION, prematureIsReadyHandler!!)
 
             associateActionHandler("loginSuccess", object: DetoxActionHandler {
                 override fun handle(params: String, messageId: Long) {
                     synchronized(this@DetoxMain) {
                         this@DetoxMain.onConnected(activityLaunchHelper, rnHostHolder)
                         associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
+
+                        prematureIsReadyHandler?.let {
+                            if (it.isActionPending) {
+                                actionsDispatcher.dispatchAction(IS_READY_ACTION, it.params!!, it.messageId!!)
+                            }
+                            prematureIsReadyHandler = null
+                        }
                     }
                 }
             })
@@ -128,6 +139,7 @@ object DetoxMain {
     }
 
     private fun launchApp(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
+        Log.i(DetoxLog.LOG_TAG, "Launching the tested activity!")
         activityLaunchHelper.launchActivityUnderTest()
         ReactNativeExtension.waitForRNBootstrap(rnHostHolder)
     }
