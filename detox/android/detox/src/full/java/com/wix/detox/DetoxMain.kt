@@ -66,12 +66,13 @@ object DetoxMain {
                         this@DetoxMain.doInit(serverAdapter)
                     }
             })
-            associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
+//            associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
 
             associateActionHandler("loginSuccess", object: DetoxActionHandler {
                 override fun handle(params: String, messageId: Long) {
                     synchronized(this@DetoxMain) {
                         this@DetoxMain.onConnected(activityLaunchHelper, rnHostHolder)
+                        associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
                     }
                 }
             })
