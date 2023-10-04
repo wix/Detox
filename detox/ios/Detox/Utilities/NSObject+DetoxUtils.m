@@ -72,7 +72,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return relativePoint;
 	}
-	
+
 	CGPoint screenPoint = CGPointMake(self.accessibilityFrame.origin.x + relativePoint.x, self.accessibilityFrame.origin.y + relativePoint.y);
 	return [self.dtx_view.window.screen.coordinateSpace convertPoint:screenPoint toCoordinateSpace:self.dtx_view.coordinateSpace];
 }
@@ -83,7 +83,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return (id)self;
 	}
-	
+
 	return self.dtx_viewContainer;
 }
 
@@ -97,7 +97,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return [self.dtx_container dtx_view];
 	}
-	
+
 	return nil;
 }
 
@@ -121,7 +121,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return [(UIView*)self bounds];
 	}
-	
+
 	UIView* view = self.dtx_view;
 	return [view.window.screen.coordinateSpace convertRect:self.accessibilityFrame toCoordinateSpace:view.coordinateSpace];
 }
@@ -145,7 +145,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong __nullable * __nullable)error {
+											error:(NSError* __strong __nullable * __nullable)error {
 	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
@@ -154,7 +154,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent {
-  [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
+	[self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
 }
 
 - (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
@@ -174,8 +174,8 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 }
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
-						error:(NSError* __strong __nullable * __nullable)error {
-  return YES;
+												error:(NSError* __strong __nullable * __nullable)error {
+	return YES;
 }
 
 - (void)dtx_assertHittable {}
@@ -184,19 +184,28 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (NSString *)dtx_text
 {
-	id rv = [self _dtx_text];
-	if(rv == nil || [rv isKindOfClass:NSString.class])
+	id text = [self _dtx_text];
+	if([text isKindOfClass:NSString.class])
 	{
-		return rv;
+		return text;
 	}
-	
-	if([rv isKindOfClass:NSAttributedString.class])
+
+	if([text isKindOfClass:NSAttributedString.class])
 	{
-		return [(NSAttributedString*)rv string];
+		return [(NSAttributedString*)text string];
 	}
-	
-	//Unsupported
-	return nil;
+
+	NSString *aggregatedText = @"";
+	for (UIView* subview in self.dtx_view.subviews) {
+		NSString* subviewText = subview.dtx_text;
+
+		if(subviewText != nil && subviewText.length > 0) {
+			aggregatedText = aggregatedText.length > 0 ?
+					[NSString stringWithFormat:@"%@ %@", aggregatedText, subviewText] : subviewText;
+		}
+	}
+
+	return aggregatedText.length > 0 ? aggregatedText : nil;
 }
 
 - (NSString *)dtx_placeholder
@@ -206,12 +215,12 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		return rv;
 	}
-	
+
 	if([rv isKindOfClass:NSAttributedString.class])
 	{
 		return [(NSAttributedString*)rv string];
 	}
-	
+
 	//Unsupported
 	return nil;
 }
@@ -255,9 +264,9 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 - (NSDictionary<NSString *,id> *)dtx_attributes
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
+
 	rv[@"className"] = NSStringFromClass(self.class);
-	
+
 	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"dtx_placeholder"]];
 	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 		if([obj isKindOfClass:NSNull.class])
@@ -290,12 +299,12 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 			rv[key] = obj;
 		}
 	}];
-	
+
 	rv[@"enabled"] = @(self.dtx_isEnabled);
-	
+
 	rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
 	rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
-	
+
 	if([self isKindOfClass:UIView.class])
 	{
 		UIView* view = (id)self;
@@ -308,34 +317,34 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	{
 		rv[@"isAccessibilityElement"] = @(self.isAccessibilityElement);
 	}
-	
+
 	CGPoint accessibilityActivationPoint = self.dtx_accessibilityActivationPoint;
 	CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
 	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
 	CGRect accessibilityFrame = self.dtx_accessibilityFrame;
 	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.x - CGRectGetMinX(accessibilityFrame)) / CGRectGetWidth(accessibilityFrame), CGRectGetHeight(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)));
-	
+
 	rv[@"hittable"] = @(self.dtx_isHittable);
 	rv[@"visible"] = @(self.dtx_isVisible);
-	
+
 	if([self isKindOfClass:UIScrollView.class])
 	{
 		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
 		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
 		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
 	}
-	
+
 	if([self isKindOfClass:UISlider.class])
 	{
 		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
 	}
-	
+
 	if([self isKindOfClass:UIDatePicker.class])
 	{
 		UIDatePicker* dp = (id)self;
 		rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
 		NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
-		
+
 		NSMutableDictionary* dateComponents = [NSMutableDictionary new];
 		dateComponents[@"era"] = @(dc.era);
 		dateComponents[@"year"] = @(dc.year);
@@ -350,29 +359,29 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 		dateComponents[@"weekOfMonth"] = @(dc.weekOfMonth);
 		dateComponents[@"weekOfYear"] = @(dc.weekOfYear);
 		dateComponents[@"leapMonth"] = @(dc.leapMonth);
-		
+
 		rv[@"dateComponents"] = dateComponents;
 	}
-	
+
 	return rv;
 }
 
 + (NSDictionary<NSString*, id> *)dtx_genericElementDebugAttributes
 {
 	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
+
 	rv[@"viewHierarchy"] = [[UIWindow dtx_keyWindowScene] dtx_recursiveDescription];
-	
+
 	NSMutableArray* windowDescriptions = [NSMutableArray new];
-	
-	UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;	
+
+	UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;
 	auto windows = [UIWindow dtx_allWindowsForScene:scene];
 	[windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[windowDescriptions addObject:[obj dtx_shortDescription]];
 	}];
-	
+
 	rv[@"windows"] = windowDescriptions;
-	
+
 	return rv;
 }
 
@@ -380,10 +389,10 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 {
 	NSMutableDictionary<NSString *, id> *rv = [NSMutableDictionary new];
 	[rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
-	
+
 	rv[@"elementAttributes"] = [self dtx_attributes];
 	rv[@"viewDescription"] = self.description;
-	
+
 	return rv;
 }
 

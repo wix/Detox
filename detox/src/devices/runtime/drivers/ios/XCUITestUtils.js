@@ -1,7 +1,6 @@
 const { exec } = require('child-process-promise');
 const osascript = require('node-osascript');
 
-const { execWithRetriesAndLogs } = require('../../../../utils/childProcess');
 const log = require('../../../../utils/logger').child({ cat: 'device,xcuitest' });
 
 async function launchXCUITest(
@@ -56,7 +55,7 @@ async function _runLaunchCommand(
   ).then(r => {
     log.info(`[XCUITest] XCUITest runner execution finished`);
   }).catch(e => {
-    log.error(`[XCUITest] xcodebuild error has occurred during XCUITest execution:\n${e}`);
+    log.debug(`[XCUITest] XCUITest runner execution finished with message:\n${e}`);
   });
 
   // Get firewall global state (Firewall socketfilterfw):
@@ -67,7 +66,12 @@ async function _runLaunchCommand(
   }
 
   const isServerUp = await _waitForTestTargetServerToStart(testTargetServerPort, spawnedProcess);
-  log.debug(`[XCUITest] Finished waiting for test target server to start, server is up: ${isServerUp}`);
+  if (!isServerUp) {
+    throw new Error(`[XCUITest] Test runner is not up after 90 seconds, aborting`);
+  } else {
+    const childProcess = spawnedProcess.childProcess;
+    log.debug(`[XCUITest] Test runner is up and running, PID: ${childProcess.pid}`);
+  }
 }
 
 function runXCUITest(
@@ -102,7 +106,6 @@ function runXCUITest(
 
   const options = {
     maxBuffer: 1024 * 1024 * 10, // 10MB
-    retries: 1,
   };
 
   const command = `${env.TEST_RUNNER_IS_DETOX_ACTIVE ? Object.keys(env).map(key => `${key}=${env[key]}`).join(' ') : ''} ${xcodebuildBinary} ${flags.map(flag => flag.includes(' ') ? `"${flag}"` : flag).join(' ')}`;
@@ -119,7 +122,15 @@ function runXCUITest(
     }
   }
 
-  return execWithRetriesAndLogs(command, options);
+  const result = exec(command, options);
+
+  result.childProcess.stderr.on('data', (data) => {
+    if (data.includes('Testing started completed')) {
+      result.childProcess.kill('SIGTERM');
+    }
+  });
+
+  return result;
 }
 
 function _runCommandInTerminal(command, options) {
@@ -145,7 +156,7 @@ function _runCommandInTerminal(command, options) {
         end tell
     `;
 
-  return execWithRetriesAndLogs(`osascript -e '${appleScript}'`, options);
+  return exec(`osascript -e '${appleScript}'`, options);
 }
 
 function _allowNetworkPermissionsXCUITest() {

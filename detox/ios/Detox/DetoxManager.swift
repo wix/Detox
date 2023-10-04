@@ -536,7 +536,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				var observation: NSKeyValueObservation?
 				observation = webView.observe(
 					\.isLoading,
-					options: [.new, .old, .initial]
+					 options: [.new, .old, .initial]
 				) { [weak self] (object, change) in
 					if change.newValue == false {
 						observation?.invalidate()
@@ -637,10 +637,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			case "verifyText":
 				let targetIdentifier = params["elementID"] as! String
 				let targetFrame = params["elementFrame"] as! [NSNumber]
-
 				let text = params["text"] as! String
 
 				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
+
+				log.error("element: \(targetElement), element text: \(targetElement.dtx_text)")
 
 				self.safeSend(
 					action: "didVerifyText",

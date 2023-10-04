@@ -213,12 +213,12 @@ describe('AndroidExpect', () => {
         await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
         await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 100, y: 200 });
         await e.element(e.by.label('Tap Me')).longPress();
-        await e.element(e.by.id('UniqueId819')).multiTap(3);
+        await e.element(e.by.id('tapsCounter')).multiTap(3);
       });
 
       it('should not tap and long-press given bad args', async () => {
         await [null, undefined, 0, -1, 'NaN'].forEach(item => {
-          jestExpect(() => e.element(e.by.id('UniqueId819')).multiTap(item)).rejects.toThrow();
+          jestExpect(() => e.element(e.by.id('tapsCounter')).multiTap(item)).rejects.toThrow();
         });
       });
 

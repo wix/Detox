@@ -87,9 +87,8 @@ export default class ActionsScreen extends Component {
         </TouchableOpacity>
 
         <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 10}}>
-          <TouchableOpacity onPress={this.onMultiTapPress.bind(this)}>
-            <Text style={{ color: 'blue', textAlign: 'center' }}
-              testID='UniqueId819'>Taps: {this.state.numTaps}</Text>
+          <TouchableOpacity testID='tapsCounter' onPress={this.onMultiTapPress.bind(this)}>
+            <Text style={{ color: 'blue', textAlign: 'center' }}>Taps: {this.state.numTaps}</Text>
           </TouchableOpacity>
 
           {isAndroid && this.renderInlineSeparator()}

@@ -27,10 +27,10 @@ describe('Artifacts', () => {
     });
 
     it('should take screenshots inside test', async () => {
-      await element(by.id('UniqueId819')).tap();
+      await element(by.id('tapsCounter')).tap();
       await device.takeScreenshot('taps - 1').then(printPNGDimensions);
 
-      await element(by.id('UniqueId819')).tap();
+      await element(by.id('tapsCounter')).tap();
       await device.takeScreenshot('taps - 2').then(printPNGDimensions);
     });
 

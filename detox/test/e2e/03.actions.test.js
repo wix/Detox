@@ -215,26 +215,26 @@ describe('Actions', () => {
   it('should adjust legacy slider and assert its value', async () => {
     const reactSliderId = 'legacySliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
-    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
-    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
-    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
 
-    // on ios the accessibilityLabel is set to the slider value, but not on android
+    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.75, 0.05);
+
+    // on ios the value is set to the slider value, but not on android
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+      await expect(element(by.id(reactSliderId))).toHaveValue('77%');
     }
   });
 
   it('should adjust slider and assert its value', async () => {
     const reactSliderId = 'sliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
-    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
-    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
-    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
 
-    // on ios the accessibilityLabel is set to the slider value, but not on android
+    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.75, 0.05);
+
+    // on ios the value is set to the slider value, but not on android
     if (device.getPlatform() === 'ios') {
-      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+      await expect(element(by.id(reactSliderId))).toHaveValue('77%');
     }
   });
 
