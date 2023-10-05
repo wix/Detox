@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 
-class LaunchIntentsFactory {
+internal class LaunchIntentsFactory {
 
     /**
      * Constructs an intent tightly associated with a specific activity.
