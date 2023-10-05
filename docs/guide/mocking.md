@@ -133,7 +133,7 @@ The suggested static mocking techniques are a part of the React Native world its
 
 ## Dynamic Mocking with Backdoor API
 
-In scenarios where static mocking is not sufficiently flexible, Detox's [Backdoor API](../api/device.md#backdoor) presents a strategy for **dynamic mocking** during test runtime.
+In scenarios where static mocking is not sufficiently flexible, Detox's [Backdoor API](../api/device.md#devicebackdoormessage) presents a strategy for **dynamic mocking** during test runtime.
 This allows tests to instruct the app to modify its internal state without interacting with the UI, thereby providing additional control over the app's behavior during test execution.
 
 :::info Before you continue
