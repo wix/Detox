@@ -142,8 +142,6 @@ The dynamic mocking is an extension of the static mocking approach, so make sure
 
 :::
 
-### Example
-
 Imagine you have a time service in your app, responsible for providing the current time:
 
 ```js title=src/services/TimeService.js
@@ -201,8 +199,16 @@ await device.backdoor({
 This way, you can test your app's behavior in the past or future, without having to wait for the actual time to pass.
 
 Summarizing the above, the **Backdoor API** enables your tests to directly "speak" to your app, altering its state without UI interaction.
-Provided that your app is designed with testability in mind, this can be a powerful tool for testing edge cases that are otherwise hard to reproduce,
-like changing the internal clock, simulating network conditions, GPS locations, handling simplified authentication, and more.
-Use it wisely, and...
 
-Happy Detoxing!
+Provided that your app is designed with testability in mind, this can be a powerful tool for testing cases where native tools fall short:
+changing the internal clock, simulating network conditions, geolocation, quick authentication, and more.
+
+:::tip
+
+Make sure your `detoxBackdoor` event listeners don't throw unhandled exceptions, as this might turn into another
+source of confusion. In devRelease mode your app will crash, and Detox will be the bearer of the bad news, although
+it has nothing to do with the actual problem.
+
+:::
+
+Use it wisely, and... happy Detoxing!

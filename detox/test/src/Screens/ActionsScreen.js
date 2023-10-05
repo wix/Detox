@@ -54,12 +54,17 @@ export default class ActionsScreen extends Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
-    RNEmitter.addListener('detoxBackdoor', ({ action, text }) => {
-      if (action === 'greet') {
-        this.setState({ greeting: text });
-      }
-    });
   }
+
+  componentWillUnmount() {
+    this.onBackdoor.remove();
+  }
+
+  onBackdoor = RNEmitter.addListener('detoxBackdoor', ({ action, text }) => {
+    if (action === 'greet') {
+      this.setState({ greeting: text });
+    }
+  });
 
   render() {
     if (this.state.greeting) return this.renderAfterButton();
