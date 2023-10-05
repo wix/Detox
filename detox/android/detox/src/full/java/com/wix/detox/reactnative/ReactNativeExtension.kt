@@ -14,6 +14,32 @@ private const val LOG_TAG = "DetoxRNExt"
 object ReactNativeExtension {
     private var rnIdlingResources: ReactNativeIdlingResources? = null
 
+    fun initIfNeeded() {
+        if (!ReactNativeInfo.isReactNativeApp()) {
+            return
+        }
+
+        ReactMarkersLogger.attach()
+    }
+
+    /**
+     * Wait for React-Native to finish loading (i.e. make RN context available).
+     *
+     * @param applicationContext The app context, implicitly assumed to be a [ReactApplication] instance.
+     */
+    fun waitForRNBootstrap(applicationContext: Context) {
+        if (!ReactNativeInfo.isReactNativeApp()) {
+            return
+        }
+
+        (applicationContext as ReactApplication).let {
+            val reactContext = awaitNewReactNativeContext(it, null)
+
+            enableOrDisableSynchronization(reactContext)
+            hackRN50WaitForReady()
+        }
+    }
+
     /**
      * Reloads the React Native context and thus all javascript code.
      *
@@ -40,26 +66,7 @@ object ReactNativeExtension {
             val reactContext = awaitNewReactNativeContext(it, previousReactContext)
 
             enableOrDisableSynchronization(reactContext, networkSyncEnabled)
-            hackRN50OrHigherWaitForReady()
-        }
-    }
-
-    /**
-     * Wait for React-Native to finish loading (i.e. make RN context available).
-     *
-     * @param applicationContext The app context, implicitly assumed to be a [ReactApplication] instance.
-     */
-    @JvmStatic
-    fun waitForRNBootstrap(applicationContext: Context) {
-        if (!ReactNativeInfo.isReactNativeApp()) {
-            return
-        }
-
-        (applicationContext as ReactApplication).let {
-            val reactContext = awaitNewReactNativeContext(it, null)
-
-            enableOrDisableSynchronization(reactContext)
-            hackRN50OrHigherWaitForReady()
+            hackRN50WaitForReady()
         }
     }
 
@@ -145,7 +152,7 @@ object ReactNativeExtension {
         }
     }
 
-    private fun hackRN50OrHigherWaitForReady() {
+    private fun hackRN50WaitForReady() {
         if (ReactNativeInfo.rnVersion().minor in 50..62) {
             try {
                 //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
