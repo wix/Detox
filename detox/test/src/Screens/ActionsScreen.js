@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import {
-  Text,
   BackHandler,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  RefreshControl,
-  Platform,
+  DeviceEventEmitter,
   Dimensions,
+  NativeAppEventEmitter,
+  Platform,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
   Slider as LegacySlider,
   SafeAreaView,
   requireNativeComponent,
@@ -31,6 +33,9 @@ const styles = StyleSheet.create({
 
 const isIos = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
+const RNEmitter = isIos
+  ? NativeAppEventEmitter
+  : DeviceEventEmitter;
 
 export default class ActionsScreen extends Component {
 
@@ -49,6 +54,11 @@ export default class ActionsScreen extends Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+    RNEmitter.addListener('detoxBackdoor', ({ action, text }) => {
+      if (action === 'greet') {
+        this.setState({ greeting: text });
+      }
+    });
   }
 
   render() {

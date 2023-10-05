@@ -26,6 +26,11 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
+  it('should be able to send backdoor commands', async () => {
+    await device.backdoor({ action: 'greet', text: 'Arbitrary Text' });
+    await expect(element(by.text('Arbitrary Text!!!'))).toBeVisible();
+  });
+
   it.each([
     'activate',
     'magicTap',
