@@ -898,6 +898,13 @@ declare global {
             takeScreenshot(name: string): Promise<string>;
 
             /**
+             * Sends a backdoor message to the app being tested.
+             * For more information, see {@link https://wix.github.io/Detox/docs/guide/mocking}
+             * and {@link https://wix.github.io/Detox/docs/api/device#devicebackdoormessage}
+             */
+            backdoor(message: object): Promise<void>;
+
+            /**
              * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application
              * to a temporary folder and schedules putting it to the artifacts folder upon the completion of
              * the current test. The file can be opened later in Xcode 12.0 and above.
@@ -984,12 +991,6 @@ declare global {
              * This is a no-op when running on iOS.
              */
             unreverseTcpPort(port: number): Promise<void>;
-
-            /**
-             * Sends a backdoor message to the app being tested.
-             * For more information, see {@link https://wix.github.io/Detox/docs/guide/backdoors}.
-             */
-            backdoor(message: object): Promise<void>;
         }
 
         /**
