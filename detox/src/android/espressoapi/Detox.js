@@ -58,6 +58,17 @@ class Detox {
     };
   }
 
+  static extractInitialIntent() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "extractInitialIntent",
+      args: []
+    };
+  }
+
   static getAppContext() {
     return {
       target: {
