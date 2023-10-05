@@ -326,7 +326,7 @@ class Backdoor extends Action {
   }
 
   get isAtomic() {
-    return false;
+    return true;
   }
 
   get timeout() {
