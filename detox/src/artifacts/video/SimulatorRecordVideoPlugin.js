@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 
 const { interruptProcess } = require('../../utils/childProcess');
-const log = require('../../utils/logger').child({ __filename });
+const log = require('../../utils/logger').child({ cat: 'artifacts-plugin,artifact' });
 const Artifact = require('../templates/artifact/Artifact');
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const temporaryPath = require('../utils/temporaryPath');

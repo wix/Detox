@@ -77,7 +77,7 @@ class MonitoredInstrumentation {
         'while it was waiting for "ready" message (over WebSocket) ' +
         'from the instrumentation process.',
       debugInfo: this.instrumentationStackTrace
-        ? `Native stacktrace dump: ${this.instrumentationStackTrace}`
+        ? `Native stacktrace dump:\n${this.instrumentationStackTrace}`
         : '',
     });
   }

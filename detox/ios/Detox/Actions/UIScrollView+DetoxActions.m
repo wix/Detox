@@ -289,7 +289,10 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	}
 	
 	CGPoint startPoint = CGPointMake(safeAreaToScroll.origin.x + safeAreaToScroll.size.width * normalizedStartingPoint.x, safeAreaToScroll.origin.y + safeAreaToScroll.size.height * normalizedStartingPoint.y);
-	
+
+	CGPoint viewPoint = [self convertPoint:startPoint fromView:self.window];
+	[self dtx_assertScrollableAtPoint:viewPoint];
+
 	NSUInteger successfullyAppliedScrolls = 0;
 	while (offset.x != 0.0 || offset.y != 0.0)
 	{
@@ -305,7 +308,16 @@ if(isnan(normalizedStartingPoint.main) || normalizedStartingPoint.main < 0 || no
 	DTXViewAssert(strict == NO || successfullyAppliedScrolls > 0, self.dtx_elementDebugAttributes, @"Unable to scroll %@ in “%@”", _DTXScrollDirectionDescriptionWithOffset(offset), self.dtx_shortDescription);
 	
 	self.dtx_disableDecelerationForScroll = NO;
-//	self.bounces = oldBounces;
+}
+
+- (void)dtx_assertScrollableAtPoint:(CGPoint)startPoint {
+  NSError *error;
+  DTXAssert([self dtx_isHittableAtPoint:startPoint error:&error],
+			@"View is not scrollable at the given start point. Start point (view coordinates): %@" \
+			"\n- Full error: %@\n----\nMore about scroll action API here: " \
+			"https://wix.github.io/Detox/docs/api/actions-on-element/" \
+			"#scrolloffset-direction-startpositionx-startpositiony",
+			NSStringFromCGPoint(startPoint), error.localizedDescription);
 }
 
 @end

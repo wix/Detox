@@ -76,7 +76,7 @@ The tester has not received a response within 5000ms timeout to the message:
 `;
 
 exports[`AsyncWebSocket .send() when opened should log an error if the incoming message was completely unexpected 1`] = `
-"Unexpected error on an attempt to handle the response received over the web socket.
+[DetoxRuntimeError: Unexpected error on an attempt to handle the response received over the web socket.
 
 HINT: Examine the inner error:
 
@@ -84,7 +84,7 @@ Unexpected message received over the web socket: somethingElse
 
 The payload was:
 
-{\\"type\\":\\"somethingElse\\"}"
+{"type":"somethingElse"}]
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `

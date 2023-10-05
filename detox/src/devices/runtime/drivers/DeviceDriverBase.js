@@ -4,7 +4,7 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-const log = require('../../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ cat: 'device' });
 
 /**
  * @typedef DeviceDriverDeps

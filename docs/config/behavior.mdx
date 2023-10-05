@@ -1,0 +1,75 @@
+import Location from './partials/_location.mdx';
+
+# Behavior
+
+If you need to tweak the flow of `detox.init()` or `detox.cleanup()` steps,
+you have a few options to change. These are the default behavior values:
+
+## Location
+
+<Location sectionName="behavior" />
+
+## Default values
+
+```json
+{
+  "behavior": {
+    "init": {
+      "reinstallApp": true,
+      "exposeGlobals": true,
+    },
+    "launchApp": "auto",
+    "cleanup": {
+      "shutdownDevice": false
+    }
+  }
+}
+```
+
+## Properties
+
+### `behavior.init.reinstallApp` \[boolean]
+
+Default: `true`.
+
+When _true_, Detox will uninstall and install the app upon the initialization.
+
+Setting it to _false_ forces the tests to use the previously installed app on the device,
+provided you have installed it beforehand [explicitly](../api/device.md#deviceinstallapp) or manually.
+
+### `behavior.init.exposeGlobals` \[boolean]
+
+Default: `true`.
+
+When _true_, it forces Detox to expose `device`, `expect`, `element`, `by` and `waitFor`
+as global variables.
+
+When _false_, you should import them explicitly instead:
+
+```js
+const { by, device, expect, element } = require('detox');
+```
+
+or, in TypeScript:
+
+```js
+import { by, device, expect, element } from 'detox';
+```
+
+### `behavior.launchApp` \[enum]
+
+Default: `auto`.
+
+Possible values: `auto`, `manual`.
+
+When set to `manual`, Detox won't be launching your app automatically. Instead, it will
+be waiting until you launch it manually from IDE and press any key to resume the test
+execution. This is useful when you want to [debug the native codebase](../introduction/debugging.mdx) when running Detox tests.
+
+Also, setting it to `manual` resets `behavior.reinstallApp` to _false_.
+
+### `behavior.cleanup.shutdownDevice` \[boolean]
+
+Default: `false`.
+
+When set to _true_, Detox will shut down the device after the tests finish.

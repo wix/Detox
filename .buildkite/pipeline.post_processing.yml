@@ -1,0 +1,8 @@
+  - wait: ~
+    continue_on_failure: true
+  - label: "Post-processing: Test coverage"
+    command:
+      - "nvm install"
+      - "mkdir -p aggregated-coverage"
+      - "buildkite-agent artifact download '**/*.lcov' aggregated-coverage"
+      - "bash scripts/aggregate_coverage.sh"

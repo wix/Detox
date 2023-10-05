@@ -3,8 +3,14 @@ package com.example;
 import android.content.Intent;
 
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
 
 public class MainActivity extends ReactActivity {
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
 
     /**
      * Returns the name of the main component registered from JavaScript.
@@ -15,9 +21,9 @@ public class MainActivity extends ReactActivity {
         return "example";
     }
 
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
+    public static class MainActivityDelegate extends ReactActivityDelegate {
+        public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+            super(activity, mainComponentName);
+        }
     }
 }

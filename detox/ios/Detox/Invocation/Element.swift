@@ -167,6 +167,14 @@ class Element : NSObject {
 	func replaceText(_ text: String) {
 		view.dtx_replaceText(text)
 	}
+
+	func performAccessibilityAction(_ actionName: String) {
+		guard let action = view.accessibilityCustomActions?.first(where: { $0.name == actionName }) else {
+			dtx_fatalError("Accessibility custom action with name “\(actionName)” not found for view “\(view.dtx_shortDescription)”", viewDescription: debugAttributes)
+		}
+
+		action.target?.performSelector(onMainThread: action.selector, with: action, waitUntilDone: true)
+	}
 	
 	func adjust(toDate date: Date) {
 		if let view = view as? UIDatePicker {
@@ -213,13 +221,7 @@ class Element : NSObject {
 	}
 	
 	func isHittable() throws -> Bool {
-		var error: NSError? = nil
-		let rv = view.dtx_isHittable(at: view.dtx_accessibilityActivationPointInViewCoordinateSpace, error: &error)
-		if let error = error {
-			throw error
-		}
-		
-		return rv
+		return view.dtx_isHittable
 	}
 	
 	func takeScreenshot(fileName: String?) -> [String : Any] {

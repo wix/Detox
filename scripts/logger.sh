@@ -1,20 +1,21 @@
 #!/bin/bash -e
 
-lightCyan='\033[1;36m'
+set +x
+
 green='\033[0;32m'
+yellow='\033[33m'
 nocolor='\033[0m'
 
 run_f () {
   cmd="${1}"
-  name=${cmd//[ ]/_}
 
-  echo "travis_fold:start:$name"
-  echo -e "${lightCyan} $cmd ${nocolor}"
+  echo -e "--- \"Running command ${yellow}${cmd}${nocolor}\""
   SECONDS=0
 
+  set -x
   ($cmd)
 
+  set +x
   duration=$SECONDS
-  echo "travis_fold:end:$name"
-  echo -e "${green}\t --> $(($duration / 60)) minutes and $(($duration % 60)) seconds ${nocolor}\n"
+  echo -e "${green}\t--> ${cmd} done in $(($duration / 60)) minutes and $(($duration % 60)) seconds ${nocolor}\n"
 }

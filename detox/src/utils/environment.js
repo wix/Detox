@@ -19,9 +19,8 @@ function which(executable, path) {
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
-const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
-const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
-const GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'genycloud-cleanup.lock');
+const DETOX_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'global-context.json');
+const DEVICE_REGISTRY_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.json');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
 
 function getAndroidSDKPath() {
@@ -78,7 +77,7 @@ function getAndroidEmulatorPath() {
     return legacyPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, 'emulator/emulator');
+  throwSdkBinIntegrityError(sdkRoot, 'emulator/emulator');
 }
 
 async function getAaptPath() {
@@ -88,23 +87,33 @@ async function getAaptPath() {
   }
 
   const latestBuildTools = await getLatestBuildToolsPath(sdkRoot);
-  const defaultPath = latestBuildTools && which('aapt', latestBuildTools);
+  if (!latestBuildTools) {
+    throwSdkIntegrityError('Failed to find the "aapt" tool under the Android SDK: No build-tools are installed!');
+  }
+
+  const defaultPath = which('aapt', latestBuildTools);
   if (defaultPath) {
     return defaultPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, `${latestBuildTools}/aapt`);
+  throwSdkToolPathError(`${latestBuildTools}/aapt`);
 }
 
 async function getLatestBuildToolsPath(sdkRoot) {
-  if (!sdkRoot) return '';
+  if (!sdkRoot) {
+    return '';
+  }
 
   const buildToolsDir = path.join(sdkRoot, 'build-tools');
-  if (!fs.existsSync(buildToolsDir)) return '';
+  if (!fs.existsSync(buildToolsDir)) {
+    return '';
+  }
 
   const buildToolsVersions = await fsext.getDirectories(buildToolsDir);
   const latestBuildToolsVersion = _.last(buildToolsVersions);
-  if (!latestBuildToolsVersion) return '';
+  if (!latestBuildToolsVersion) {
+    return '';
+  }
 
   return path.join(buildToolsDir, latestBuildToolsVersion);
 }
@@ -120,7 +129,7 @@ function getAdbPath() {
     return defaultPath;
   }
 
-  throwSdkIntegrityError(sdkRoot, 'platform-tools/adb');
+  throwSdkBinIntegrityError(sdkRoot, 'platform-tools/adb');
 }
 
 function getGmsaasPath() {
@@ -142,15 +151,20 @@ function throwMissingAvdError(avdName, avdPath, avdIniPath) {
   );
 }
 
-function throwSdkIntegrityError(sdkRoot, relativeExecutablePath) {
-  const executablePath = path.join(sdkRoot, relativeExecutablePath);
-  const name = path.basename(executablePath);
-  const dir = path.dirname(executablePath);
+function throwSdkBinIntegrityError(sdkRoot, relativeBinPath) {
+  const executablePath = path.join(sdkRoot, relativeBinPath);
+  throwSdkToolPathError(executablePath);
+}
 
-  throw new DetoxRuntimeError(
-    `There was no "${name}" executable file in directory: ${dir}.\n` +
-    `Check integrity of your Android SDK.`
-  );
+function throwSdkToolPathError(sdkToolPath) {
+  const name = path.basename(sdkToolPath);
+  const dir = path.dirname(sdkToolPath);
+
+  throwSdkIntegrityError(`There was no "${name}" executable file in directory: ${dir}`);
+}
+
+function throwSdkIntegrityError(errMessage) {
+  throw new DetoxRuntimeError(`${errMessage}\nCheck the integrity of your Android SDK.`);
 }
 
 function throwMissingGmsaasError() {
@@ -180,17 +194,12 @@ function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
 }
 
-function getDeviceLockFilePathIOS() {
-  return DEVICE_LOCK_FILE_PATH_IOS;
+function getDetoxLockFilePath() {
+  return DETOX_LOCK_FILE_PATH;
 }
 
-// TODO This can probably be merged with IOS' by now
-function getDeviceLockFilePathAndroid() {
-  return DEVICE_LOCK_FILE_PATH_ANDROID;
-}
-
-function getGenyCloudGlobalCleanupFilePath() {
-  return GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH;
+function getDeviceRegistryPath() {
+  return DEVICE_REGISTRY_PATH;
 }
 
 function getLastFailedTestsPath() {
@@ -214,9 +223,8 @@ module.exports = {
   getAndroidSDKPath,
   getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
-  getDeviceLockFilePathIOS,
-  getDeviceLockFilePathAndroid,
-  getGenyCloudGlobalCleanupFilePath,
+  getDetoxLockFilePath,
+  getDeviceRegistryPath,
   getLastFailedTestsPath,
   getHomeDir,
 };

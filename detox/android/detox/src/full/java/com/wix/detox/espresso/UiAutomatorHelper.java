@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.Choreographer;
 
 import com.wix.detox.common.UIThread;
-import com.wix.detox.espresso.common.utils.UiControllerUtils;
+import com.wix.detox.espresso.action.common.utils.UiControllerUtils;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;

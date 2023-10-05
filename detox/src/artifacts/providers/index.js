@@ -4,7 +4,7 @@ class ArtifactPluginsProvider {
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/android');
+    const serviceLocator = require('../../devices/servicelocator/android');
     const adb = serviceLocator.adb;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
 
@@ -12,25 +12,21 @@ class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
     const ADBLogcatPlugin = require('../log/android/ADBLogcatPlugin');
     const ADBScreencapPlugin = require('../screenshot/ADBScreencapPlugin');
     const ADBScreenrecorderPlugin = require('../video/ADBScreenrecorderPlugin');
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
 
     return {
       instruments: (api) => new AndroidInstrumentsPlugin({ api, adb, client, devicePathBuilder }),
       log: (api) => new ADBLogcatPlugin({ api, adb, devicePathBuilder }),
       screenshot: (api) => new ADBScreencapPlugin({ api, adb, devicePathBuilder }),
       video: (api) => new ADBScreenrecorderPlugin({ api, adb, devicePathBuilder }),
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
     };
   }
 }
 
 class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const TimelineArtifactPlugin = require('../timeline/TimelineArtifactPlugin');
     const IosUIHierarchyPlugin = require('../uiHierarchy/IosUIHierarchyPlugin');
 
     return {
-      timeline: (api) => new TimelineArtifactPlugin({ api }),
       uiHierarchy: (api) => new IosUIHierarchyPlugin({ api, client }),
     };
   }
@@ -38,8 +34,8 @@ class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
 
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/ios');
-    const appleSimUtils = serviceLocator.appleSimUtils;
+    const AppleSimUtils = require('../../devices/common/drivers/ios/tools/AppleSimUtils');
+    const appleSimUtils = new AppleSimUtils();
 
     const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
     const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');

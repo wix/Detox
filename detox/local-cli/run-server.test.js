@@ -1,5 +1,6 @@
-// @ts-nocheck
 jest.mock('../src/utils/logger');
+
+const { callCli } = require('../__tests__/helpers');
 
 describe('run-server', () => {
   it('starts the server', async () => {

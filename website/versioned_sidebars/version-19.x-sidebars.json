@@ -1,0 +1,74 @@
+{
+  "tutorialSidebar": [
+    {
+      "type": "category",
+      "label": "Introduction",
+      "items": [
+        "introduction/getting-started",
+        "ios-dev-env",
+        "android-dev-env",
+        "ios",
+        "android",
+        "writing-first-test",
+        "how-detox-works",
+        "design-principles",
+        "workflows"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "API Reference",
+      "items": [
+        "detox-cli",
+        "config/overview",
+        "detox-object-api",
+        "device-object-api",
+        "test-lifecycle",
+        "matchers",
+        "actions-on-element",
+        "expect",
+        "launch-args",
+        "mocking-open-with-url",
+        "mocking-user-notifications",
+        "mocking-user-activity",
+        "artifacts",
+        "screenshots"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Troubleshooting",
+      "items": [
+        "troubleshooting",
+        "building-the-app",
+        "running-tests",
+        "synchronization",
+        "flakiness"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Guides",
+      "items": [
+        "running-locally",
+        "developing-while-writing-tests",
+        "running-on-ci",
+        "debugging-in-xcode",
+        "debugging-in-android-studio",
+        "mocking",
+        "migration",
+        "jest",
+        "mocha",
+        "parallel-test-execution",
+        "third-party-drivers",
+        "expo",
+        "uninstalling"
+      ]
+    },
+    {
+      "type": "doc",
+      "label": "Contributing",
+      "id": "contributing"
+    }
+  ]
+}

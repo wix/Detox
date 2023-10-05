@@ -27,20 +27,19 @@ describe('callsites', () => {
     const callStackDumpFromWrapperFn = (endFrame) => callsites.getStackDump(endFrame);
     const callStackDumpFromTwoWrapperFn = (endFrame) => callStackDumpFromWrapperFn(endFrame);
 
-    const expectedTopFrameRegExp = /^ {4}at callStackDumpFromWrapperFn \(src[\\/]utils[\\/]callsites\.test\.js:[0-9][0-9]?:[0-9][0-9]?\)/;
-    const expected2ndLineRegExp = /^ {4}at callStackDumpFromTwoWrapperFn \(src[\\/]utils[\\/]callsites\.test\.js:[0-9][0-9]?:[0-9][0-9]?\)/;
+    const expectedTopFrameRegExp = /^ {4}at (?:Object\.)?callStackDumpFromWrapperFn \(src[\\/]utils[\\/]callsites\.test\.js:[0-9][0-9]?:[0-9][0-9]?\)/;
+    const expected2ndLineRegExp = /^ {4}at (?:Object\.)?callStackDumpFromTwoWrapperFn \(src[\\/]utils[\\/]callsites\.test\.js:[0-9][0-9]?:[0-9][0-9]?\)/;
 
     it('should return a valid, multi-line, stack-dump string', () => {
-      const stackdump = callStackDumpFromTwoWrapperFn();
+      const [,line1,line2] = callStackDumpFromTwoWrapperFn().split('\n');
 
-      expect(stackdump).toEqual(expect.stringMatching(expectedTopFrameRegExp));
-      expect(stackdump).toEqual(expect.stringMatching(new RegExp(expected2ndLineRegExp, 'm')));
+      expect(line1).toEqual(expect.stringMatching(expectedTopFrameRegExp));
+      expect(line2).toEqual(expect.stringMatching(expected2ndLineRegExp));
     });
 
     it('should slice according to end-frame arg', () => {
-      const _expectedTopLineRegExp = expected2ndLineRegExp;
-      const stackdump = callStackDumpFromTwoWrapperFn(1);
-      expect(stackdump).toEqual(expect.stringMatching(_expectedTopLineRegExp));
+      const [,line1] = callStackDumpFromTwoWrapperFn(1).split('\n');
+      expect(line1).toEqual(expect.stringMatching(expected2ndLineRegExp));
     });
   });
 

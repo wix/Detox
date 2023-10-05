@@ -8,22 +8,19 @@ const composeAppsConfig = require('./composeAppsConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
+const composeLoggerConfig = require('./composeLoggerConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
 const composeSessionConfig = require('./composeSessionConfig');
 const loadExternalConfig = require('./loadExternalConfig');
 const selectConfiguration = require('./selectConfiguration');
 
-const hooks = {
-  UNSAFE_configReady: [],
-};
-
 async function composeDetoxConfig({
   cwd = process.cwd(),
-  argv,
-  override,
-  userParams,
+  argv = undefined,
+  testRunnerArgv = undefined,
+  errorComposer = new DetoxConfigErrorComposer(),
+  override = undefined,
 }) {
-  const errorComposer = new DetoxConfigErrorComposer();
   const cliConfig = collectCliConfig({ argv });
   const findupResult = await loadExternalConfig({
     errorComposer,
@@ -45,11 +42,6 @@ async function composeDetoxConfig({
 
   const { configurations } = globalConfig;
 
-  const runnerConfig = composeRunnerConfig({
-    globalConfig,
-    cliConfig,
-  });
-
   const configurationName = selectConfiguration({
     errorComposer,
     globalConfig,
@@ -57,6 +49,18 @@ async function composeDetoxConfig({
   });
 
   const localConfig = configurations[configurationName];
+
+  if (localConfig['type']) {
+    throw errorComposer.configurationShouldNotUseLegacyFormat();
+  }
+
+  const runnerConfig = composeRunnerConfig({
+    globalConfig,
+    localConfig,
+    cliConfig,
+    testRunnerArgv,
+    errorComposer,
+  });
 
   const deviceConfig = composeDeviceConfig({
     errorComposer,
@@ -84,7 +88,12 @@ async function composeDetoxConfig({
   const behaviorConfig = composeBehaviorConfig({
     globalConfig,
     localConfig,
-    userParams,
+    cliConfig,
+  });
+
+  const loggerConfig = composeLoggerConfig({
+    globalConfig,
+    localConfig,
     cliConfig,
   });
 
@@ -96,29 +105,26 @@ async function composeDetoxConfig({
   });
 
   const result = {
-    appsConfig,
-    artifactsConfig,
-    behaviorConfig,
-    cliConfig,
     configurationName,
-    deviceConfig,
-    errorComposer,
-    runnerConfig,
-    sessionConfig,
+
+    apps: appsConfig,
+    artifacts: artifactsConfig,
+    behavior: behaviorConfig,
+    cli: cliConfig,
+    device: deviceConfig,
+    logger: loggerConfig,
+    testRunner: runnerConfig,
+    session: sessionConfig,
   };
 
-  for (const fn of hooks.UNSAFE_configReady) {
-    await fn({ ...result, argv });
-  }
+  Object.defineProperty(result, 'errorComposer', {
+    enumerable: false,
+    value: errorComposer,
+  });
 
   return result;
 }
 
-function hook(event, listener) {
-  hooks[event].push(listener);
-}
-
 module.exports = {
   composeDetoxConfig,
-  hook,
 };

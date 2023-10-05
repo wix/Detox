@@ -1,6 +1,10 @@
 {
-  "setupFilesAfterEnv": ["./init.js"],
-  "testRunner": "jasmine2",
-  "reporters": ["detox/runners/jest/streamlineReporter"],
+  "maxWorkers": 1,
+  "globalSetup": "detox/runners/jest/globalSetup",
+  "globalTeardown": "detox/runners/jest/globalTeardown",
+  "testEnvironment": "detox/runners/jest/testEnvironment",
+  "testTimeout": 120000,
+  "testMatch": ["<rootDir>/*.test.js"],
+  "reporters": ["detox/runners/jest/reporter"],
   "verbose": true
 }

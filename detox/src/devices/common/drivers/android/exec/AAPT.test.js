@@ -18,7 +18,7 @@ describe('AAPT', () => {
   let aapt;
   beforeEach(() => {
     jest.mock('../../../../../utils/environment');
-    environment = require('../../../../../utils/environment');
+    environment = jest.requireMock('../../../../../utils/environment');
     environment.getAaptPath.mockResolvedValue(mockAAPTPath);
 
     jest.mock('../../../../../utils/childProcess');
@@ -26,7 +26,7 @@ describe('AAPT', () => {
     givenAAPTResult('');
 
     jest.mock('../../../../../utils/pipeCommands');
-    escape = require('../../../../../utils/pipeCommands').escape.inQuotedString;
+    escape = jest.requireMock('../../../../../utils/pipeCommands').escape.inQuotedString;
     escape.mockImplementation(mockEscapeFunc);
 
     const AAPT = require('./AAPT');

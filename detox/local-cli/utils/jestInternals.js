@@ -2,9 +2,13 @@
 const Module = require('module');
 const path = require('path');
 
+const _ = require('lodash');
 const resolveFrom = require('resolve-from');
+const semver = require('semver');
 
-const DetoxRuntimeError = require('../../src/errors/DetoxRuntimeError');
+const { DetoxRuntimeError } = require('../../src/errors');
+
+const { extractKnownKeys } = require('./yargsUtils');
 
 const getNodeModulePaths = (dir) => Module._nodeModulePaths(dir);
 
@@ -47,7 +51,9 @@ function resolveJestCliArgs() {
 
   try {
     const jestCliManifest = resolveJestDependency(jestLocation, 'jest-cli/package.json');
-    const argsJsFile = path.join(path.dirname(jestCliManifest), 'build/cli/args.js');
+    const jestCliVersion = require(jestCliManifest).version;
+    const argsJsFilePath = semver.gt(jestCliVersion, '29.1.2') ? 'build/args.js' : 'build/cli/args.js';
+    const argsJsFile = path.join(path.dirname(jestCliManifest), argsJsFilePath);
 
     return require(argsJsFile);
   } catch (e) {
@@ -65,7 +71,15 @@ async function readJestConfig(argv) {
   return readConfig(argv, process.cwd(), false);
 }
 
+function getJestBooleanArgs() {
+  return _(resolveJestCliArgs())
+    .thru(args => args.options)
+    .pickBy(({ type }) => type === 'boolean')
+    .thru(extractKnownKeys)
+    .value();
+}
+
 module.exports = {
-  resolveJestCliArgs,
+  getJestBooleanArgs,
   readJestConfig,
 };

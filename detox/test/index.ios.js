@@ -1,14 +1,12 @@
+import { LogBox, AppRegistry } from 'react-native';
+
 import example from './src/app';
 
-import {
-  AppRegistry
-} from 'react-native';
+import registerEarlyCrashIfNeeded from './registerEarlyCrashIfNeeded';
 
-class exampleIos extends example {
-  async componentDidMount() {
-    super.componentDidMount();
-  }
-}
+class exampleIos extends example {}
 
-console.disableYellowBox = true;
+registerEarlyCrashIfNeeded();
+
+LogBox.ignoreAllLogs();
 AppRegistry.registerComponent('example', () => exampleIos);

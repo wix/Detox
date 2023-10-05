@@ -1,0 +1,15 @@
+{
+  "name": "oldschema",
+  "version": "1.0.0",
+  "dependencies": {
+  },
+  "detox": {
+    "configurations": {
+      "single": {
+        "type": "ios.simulator",
+        "device": "iPhone 12",
+        "binaryPath": "/some/path/to.app"
+      }
+    }
+  }
+}

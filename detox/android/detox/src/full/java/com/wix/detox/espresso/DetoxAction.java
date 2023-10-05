@@ -1,10 +1,11 @@
 package com.wix.detox.espresso;
 
 import android.view.View;
+import android.os.Build;
 
-import com.facebook.react.views.slider.ReactSliderManager;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
+import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.RNClickAction;
@@ -20,6 +21,11 @@ import com.wix.detox.espresso.scroll.ScrollHelper;
 import com.wix.detox.espresso.scroll.SwipeHelper;
 
 import org.hamcrest.Matcher;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -27,10 +33,12 @@ import androidx.test.espresso.action.CoordinatesProvider;
 import androidx.test.espresso.action.GeneralClickAction;
 import androidx.test.espresso.action.GeneralLocation;
 import androidx.test.espresso.action.Press;
+import androidx.test.espresso.contrib.PickerActions;
 
 import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+
 import static org.hamcrest.Matchers.allOf;
 
 
@@ -40,6 +48,8 @@ import static org.hamcrest.Matchers.allOf;
 
 public class DetoxAction {
     private static final String LOG_TAG = "detox";
+    private static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private static final String ISO8601_FORMAT_NO_TZ = "yyyy-MM-dd'T'HH:mm:ss";
 
     private DetoxAction() {
         // static class
@@ -150,9 +160,21 @@ public class DetoxAction {
         return new ScrollToIndexAction(index);
     }
 
+    public static ViewAction setDatePickerDate(String dateString, String formatString) throws ParseException {
+        Date date;
+        if (formatString.equals("ISO8601")) {
+            date = parseDateISO8601(dateString);
+        } else {
+            date = new SimpleDateFormat(formatString).parse(dateString);
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return PickerActions.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+    }
+
     public static ViewAction adjustSliderToPosition(final double newPosition) {
-        ReactSliderManager reactSliderManager = new ReactSliderManager();
-        return new AdjustSliderToPositionAction(newPosition, reactSliderManager);
+        return new AdjustSliderToPositionAction(newPosition);
     }
 
     public static ViewAction takeViewScreenshot() {
@@ -180,5 +202,17 @@ public class DetoxAction {
                 return (result == null ? null : result.asBase64String());
             }
         };
+    }
+
+    public static ViewAction accessibilityAction(final String actionName) {
+        return new RNDetoxAccessibilityAction(actionName);
+    }
+
+    private static Date parseDateISO8601(String dateString) throws ParseException {
+        try {
+            return new SimpleDateFormat(ISO8601_FORMAT).parse(dateString);
+        } catch (ParseException e) {
+            return new SimpleDateFormat(ISO8601_FORMAT_NO_TZ).parse(dateString);
+        }
     }
 }

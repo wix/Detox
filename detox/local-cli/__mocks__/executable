@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+
+const DETOX_REGEXP = /^DETOX_(?!DISABLE_POD_INSTALL|DISABLE_POSTINSTALL)/;
+
+function main() {
+    const [, ...argv] = process.argv;
+    const env = Object.keys(process.env)
+        .filter(k => DETOX_REGEXP.test(k.toUpperCase()))
+        .reduce((acc, key) => {
+            acc[key] = process.env[key];
+            return acc;
+        }, {});
+
+    const output = JSON.stringify({ env, argv }) + '\n';
+
+    if (process.env.CLI_TEST_STDOUT) {
+        fs.appendFileSync(process.env.CLI_TEST_STDOUT, output);
+    } else {
+        process.stdout.write(output);
+    }
+
+    if (process.env.CLI_EXIT_CODE) {
+        process.exit(+process.env.CLI_EXIT_CODE);
+    } else {
+        process.exit(0);
+    }
+}
+
+if (process.env.CLI_SLEEP > 0) {
+    setTimeout(main, +process.env.CLI_SLEEP);
+} else {
+    main();
+}

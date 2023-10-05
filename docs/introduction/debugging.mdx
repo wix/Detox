@@ -1,0 +1,187 @@
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CompilingIOS from './partials/_debugging-native-code-compliing-ios.mdx';
+import CompilingAndroid from './partials/_debugging-native-code-compliing-android.mdx';
+import ConfigIOS from './partials/_debugging-native-code-config-ios.mdx';
+import ConfigAndroid from './partials/_debugging-native-code-config-android.mdx';
+import RunIos from './partials/_debugging-native-code-run-ios.mdx';
+import RunAndroid from './partials/_debugging-native-code-run-android.mdx';
+import TroubleshootingAndroid from './partials/_debugging-native-code-troubleshooting-android.mdx';
+
+# How to Debug
+
+## Detox Tests
+
+If you need to walk through your Detox tests step by step, add a `debugger` statement
+inside your test to mark a starting point, e.g.:
+
+```diff title="e2e/starter.test.js"
+ describe('Example', () => {
+   beforeAll(async () => {
+     await device.launchApp();
++    debugger;
+   });
+```
+
+Now run Detox with that specific test and `--inspect-brk` flag, e.g.:
+
+```bash
+detox test --inspect-brk -c android.emu.debug e2e/starter.test.js
+```
+
+Assuming you're using Jest, you'll see something like:
+
+```plain text
+DETOX_CONFIGURATION="android.emu.debug" node --inspect-brk ./node_modules/.bin/jest --config e2e/jest.config.js --runInBand e2e/starter.test.js
+Debugger listening on ws://127.0.0.1:9229/3dedd03b-8896-4ab8-a0a8-1b647abb9c98
+For help, see: https://nodejs.org/en/docs/inspector
+```
+
+:::info
+
+To learn more about debugging with `--inspect-brk`, refer to
+[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/)
+on the official Node.js website. This tutorial suggests using Google Chrome for debugging,
+but you can also use an IDE to connect to the debugger.
+
+:::
+
+Open `Google Chrome` and go to `chrome://inspect` tab, where you'll see `./node_modules/.bin/jest` as a remote
+target waiting until you click `inspect` to attach to it.
+
+![](../img/inspect-brk.png)
+
+Happy debugging!
+
+## JavaScript application code
+
+Use debug configurations of your app that rely on React Native Packager running on port 8081 (or another):
+
+* `ios.sim.debug`
+* `android.emu.debug`
+
+For the rest of details, please refer to [React Native – Debugging](https://reactnative.dev/docs/debugging).
+
+## Native application code
+
+### Setting Detox up as a compiling dependency
+
+:::info Note
+
+This step is optional. It is intended for investigating weird crashes or when contributing to Detox itself.
+
+:::
+
+<Tabs groupId="mobileOs">
+  <TabItem value="iOS" label="iOS" default>
+    <CompilingIOS />
+  </TabItem>
+  <TabItem value="Android" label="Android">
+    <CompilingAndroid />
+  </TabItem>
+</Tabs>
+
+### Add a "manual" configuration to your Detox config
+
+<Tabs groupId="mobileOs">
+  <TabItem value="iOS" label="iOS" default>
+    <ConfigIOS />
+  </TabItem>
+  <TabItem value="Android" label="Android">
+    <ConfigAndroid />
+  </TabItem>
+</Tabs>
+
+While the `behavior` section is a **mandatory** thing to include, there are a few more optional
+parameters to disable various side effects and make life easier when debugging:
+
+```diff
+ {
+   …
+   "configurations": {
+     "<your configuration>": {
+       …
+       "behavior": {
+         "launchApp": "manual"
+       },
++      "session": {
++        "autoStart": true,
++        "debugSynchronization": 0,
++        "server": "ws://localhost:8099",
++        "sessionId": "test"
++      },
++      "testRunner": {
++        "args": {
++          "testTimeout": 999999
++        }
++      }
++      "artifacts": false
+     },
+   }
+ }
+```
+
+- Using a preconfigured `session` with an autostarting server removes the legwork of copying and
+pasting values to the instrumentation runner launch arguments dialog every time before any launch
+from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
+are randomly generated for every new test session.
+
+- The `debugSynchronization: 0` override matters only if you have a global `session` config
+with `debugSynchronization` set to a positive integer value. Otherwise, it is not needed. The point
+is to disable regular app polling requests during debugging, since that only can hinder the debugging.
+
+- If you are using Jest as a test runner, you might want to prolong the test timeout via forwarding
+`--testTimeout 999999` to it.
+
+- Setting `artifacts: false` override also matters only if you have a global `artifacts` config.
+The motivation is to disable irrelevant taxing activities on the device such as capturing logs
+screenshots, videos and so on. If your investigation addresses a specific artifact plugin glitch
+on the native side, then just disable all the non-relevant plugins. See
+[Configuration > Artifacts](../config/artifacts.mdx) document for the reference.
+
+### Run a specific test
+
+Usually, you would want to focus on a specific test suite to save time, e.g.:
+
+<Tabs groupId="mobileOs">
+  <TabItem value="iOS" label="iOS">
+    <CodeBlock language="sh">
+      detox test -c ios.manual e2e/someSuite.test.js
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="Android" label="Android">
+    <CodeBlock language="sh">
+      detox test -c android.manual e2e/someSuite.test.js
+    </CodeBlock>
+  </TabItem>
+</Tabs>
+
+:::caution
+
+Don't use multiple workers, e.g. `-w, --maxWorkers` for Jest, if you set `session.sessionId` to a constant value.
+
+:::
+
+Afterwards, you should see your test suite starting as usual until it reaches the app launch, where
+Detox stops instead and prompts you to launch the app from the IDE:
+
+<Tabs groupId="mobileOs">
+  <TabItem value="iOS" label="iOS">
+    <RunIos />
+  </TabItem>
+  <TabItem value="Android" label="Android">
+    <RunAndroid />
+  </TabItem>
+</Tabs>
+
+### Troubleshooting
+
+<Tabs groupId="mobileOs">
+  <TabItem value="iOS" label="iOS">
+    <>There are no known issues at the moment. Check out <b>Android</b> tab if you need some.</>
+  </TabItem>
+  <TabItem value="Android" label="Android">
+    <TroubleshootingAndroid />
+  </TabItem>
+</Tabs>

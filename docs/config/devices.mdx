@@ -1,0 +1,89 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import Location from './partials/_location-dictionaries.mdx';
+
+# Devices
+
+The format of Detox config allows you to define inside it multiple device configs in a key-value manner, i.e.:
+
+## Location
+
+<Location sectionName="devices" propertyName="device" />
+
+## Examples
+
+<Tabs groupId="deviceType">
+  <TabItem value="ios.simulator" default>
+
+```json
+{
+  "type": "ios.simulator",
+  "device": {
+    // one of these or a combination of them
+    "id": "D53474CF-7DD1-4673-8517-E75DAD6C34D6",
+    "type": "iPhone 11 Pro",
+    "name": "MySim",
+    "os": "iOS 13.0"
+  },
+}
+```
+
+  </TabItem>
+  <TabItem value="android.emulator">
+
+```json
+{
+  "type": "android.emulator",
+  "device": {
+    "avdName": "Pixel_2_API_29"
+  },
+  "utilBinaryPaths": [
+    "optional-property-with/path/to/test-butler-or-anything-else.apk"
+  ]
+}
+```
+
+  </TabItem>
+  <TabItem value="android.attached">
+
+```json
+{
+  "type": "android.attached",
+  "device": {
+    "adbName": "YOGAA1BBB412"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="android.genycloud">
+
+```json
+{
+  "type": "android.genycloud",
+  "device": {
+    // one of these:
+    "recipeUUID": "11111111-2222-3333-4444-555555555555"
+    "recipeName": "MyRecipeName",
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Properties
+
+A device config can have the following params:
+
+| Configuration Params | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`               | _**Required.** String Literal_. Mandatory property to discern device types: `ios.simulator`, `android.emulator`, `android.attached`, `android.genycloud` etc.                                                                                                                                                                                                                                                                                                                                       |
+| `device`             | _**Required.** Object._ Device query, e.g. `{ "byType": "iPhone 11 Pro" }` for iOS simulator, `{ "avdName": "Pixel_2_API_29" }` for Android emulator or `{ "adbName": "<pattern>" }` for attached Android device with name matching the regex.                                                                                                                                                                                                                                                      |
+| `bootArgs`           | _Optional. String. Supported by `ios.simulator` and `android.emulator` only._ <br/> Supply an extra _String_ of arguments to `xcrun simctl boot ...` or `emulator -verbose ... @AVD_Name`.                                                                                                                                                                                                                                                                                                          |
+| `forceAdbInstall`    | _Optional. Boolean. Supported for Android devices only._ <br/> A _Boolean_ value, `false` by default. When set to `true`, it tells `device.installApp()` to use `adb install`. Otherwise, it would use the combination of `adb push <app.apk>` and `adb shell pm install`.                                                                                                                                                                                                                          |
+| `utilBinaryPaths`    | _Optional. Array of strings. Supported for Android devices only._ <br/> An array of relative paths of _utility_ app (APK) binary-files to preinstall on the tested devices - once before the test execution begins.<br/>**Note**: these are not affected by various install-lifecycle events, such as launching an app with `device.launchApp({delete: true})`, which reinstalls the app. A good example of why this might come in handy is [Test Butler](https://github.com/linkedin/test-butler). |
+| `gpuMode`            | _Optional. String Literal (<code>auto \| host \| swiftshader\_indirect \| angle\_indirect \| guest</code>). Supported by `android.emulator` only._ <br/> A fixed **string** , which tells [in which GPU mode](https://developer.android.com/studio/run/emulator-acceleration#command-gpu) the emulator should be booted.                                                                                                                                                                            |
+| `headless`           | _Optional. Boolean._ `false` by default. When set to `true`, it tells Detox to boot an Android emulator with `-no-window` option, or to not open the iOS Simulator app when running with Android or iOS respectively.                                                                                                                                                                                                                                                                               |
+| `readonly`           | _Optional. Boolean. Supported by `android.emulator` only._ <br/>  `false` by default. When set to `true`, it forces Detox to boot even a single emulator with `-read-only` option.<br/>**Note**: when used with multiple workers, this setting has no effect — emulators will be booted always with `-read-only`.                                                                                                                                                                                   |

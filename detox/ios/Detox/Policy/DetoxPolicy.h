@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (class, nonatomic, readonly) NSUInteger defaultPercentThresholdForVisibility;
 @property (class, nonatomic, readonly) NSUInteger consecutiveTouchPointsWithSameContentOffsetThreshold;
 
-+ (NSString*)percentDescriptionForValue:(CGFloat)value;
++ (NSString*)percentDescriptionForPercent:(CGFloat)percent;
 
 @end
 

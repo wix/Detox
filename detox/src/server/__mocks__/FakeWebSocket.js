@@ -1,5 +1,6 @@
 class FakeWebSocket {
-  constructor({ remotePort }) {
+  constructor({ localPort, remotePort }) {
+    this._localPort = localPort;
     this._remotePort = remotePort;
     this._events = {};
 
@@ -50,6 +51,10 @@ class FakeWebSocket {
 class FakeNetworkSocket {
   constructor(owner) {
     this._owner = owner;
+  }
+
+  get localPort() {
+    return this._owner._localPort;
   }
 
   get remotePort() {

@@ -4,7 +4,7 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-const log = require('../src/utils/logger').child({ __filename });
+const log = require('../src/utils/logger').child({ cat: 'cli' });
 
 module.exports.command = 'rebuild-framework-cache';
 module.exports.desc = 'Rebuilds a cached Detox framework for the current environment in ~/Library/Detox. The cached framework is unique for each combination of Xcode and Detox version. (macOS only)';

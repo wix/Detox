@@ -1,0 +1,38 @@
+// GitHub
+.footer-gh-footer {
+  background: url(@site/static/img/showcase/gh-footer-light.svg) no-repeat;
+  content: 'Footer';
+  display: inline-flexbox;
+  padding-left: 30px;
+  color: var(--ifm-footer-link-color);
+}
+
+[data-theme='dark'] .footer-gh-footer {
+  background: url(@site/static/img/showcase/gh-footer-dark.svg) no-repeat;
+}
+
+// Twitter
+.footer-twitter-footer {
+  background: url(@site/static/img/showcase/twitter-footer-light.svg) no-repeat;
+  content: 'Footer';
+  display: inline-flexbox;
+  padding-left: 30px;
+  color: var(--ifm-footer-link-color);
+}
+
+[data-theme='dark'] .footer-twitter-footer {
+  background: url(@site/static/img/showcase/twitter-footer-dark.svg) no-repeat;
+}
+
+// Discord
+.footer-discord-footer {
+  background: url(@site/static/img/showcase/discord-footer-light.svg) no-repeat;
+  content: 'Footer';
+  display: inline-flexbox;
+  padding-left: 30px;
+  color: var(--ifm-footer-link-color);
+}
+
+[data-theme='dark'] .footer-discord-footer {
+  background: url(@site/static/img/showcase/discord-footer-dark.svg) no-repeat;
+}

@@ -1,0 +1,18 @@
+.container {
+  padding: 80px 20px 60px 20px;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 60px;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+}

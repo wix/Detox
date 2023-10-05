@@ -1,0 +1,48 @@
+<!-- markdownlint-configure-file { "no-trailing-punctuation": 0 } -->
+
+import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
+
+Open your Detox config and replace `YOUR_APP` placeholder with the actual app name, e.g.:
+
+<FlavorizedCodeBlock
+  language="diff"
+  title={'.detoxrc.js'}
+  header={'   apps: {\n'}
+  flavors={['Debug', 'Release']}
+>
+  {(conf) => `\
+     'ios.${conf.toLowerCase()}': {
+       type: 'ios.app',
+-      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/YOUR_APP.app',
++      binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
+-      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
++      build: 'xcodebuild -workspace ios/example.xcworkspace -scheme example -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
+     },`}
+</FlavorizedCodeBlock>
+
+:::info
+
+If your app uses [CocoaPods] (all modern React Native projects do since `0.60.0`), make sure
+to run `pod install` in your `ios/` folder before building with Detox.
+
+If your project doesn't use the pods, then you won't have any `YourApp.xcworkspace` in your iOS project directory.
+You should search instead for something like `YourApp.xcodeproj` there, and adjust your build command accordingly:
+
+<FlavorizedCodeBlock
+  language="diff"
+  header={'   apps: {\n'}
+  flavors={['Debug', 'Release']}
+>
+  {(conf) => `\
+     'ios.${conf.toLowerCase()}': {
+       type: 'ios.app',
+       binaryPath: 'ios/build/Build/Products/${conf}-iphonesimulator/example.app',
+-      build: 'xcodebuild -workspace ios/YOUR_APP.xcworkspace -scheme YOUR_APP -configuration ${conf} -sdk iphonesimulator -derivedDataPath ios/build'
++      build: 'xcodebuild -project ios/example.xcodeproj -scheme example -sdk -configuration ${conf} iphonesimulator -derivedDataPath ios/build'
+     },`}
+</FlavorizedCodeBlock>
+
+:::
+
+[cocoapods]: https://cocoapods.org/
+

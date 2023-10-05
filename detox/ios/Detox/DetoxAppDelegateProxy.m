@@ -51,7 +51,7 @@ static DTXTouchVisualizerWindow* _touchVisualizerWindow;
 
 static BOOL _disableTouchIndicator;
 
-static NSURL* _launchUserNotificationDataURL()
+static NSURL* _launchUserNotificationDataURL(void)
 {
 	NSString* userNotificationDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserNotificationDataURL"];
 	
@@ -63,7 +63,7 @@ static NSURL* _launchUserNotificationDataURL()
 	return [NSURL fileURLWithPath:userNotificationDataPath];
 }
 
-static NSURL* _launchUserActivityDataURL()
+static NSURL* _launchUserActivityDataURL(void)
 {
 	NSString* userActivityDataPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"detoxUserActivityDataURL"];
 	

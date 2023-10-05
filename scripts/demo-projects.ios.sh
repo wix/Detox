@@ -1,24 +1,22 @@
 #!/bin/bash -e
 
-source $(dirname "$0")/demo-projects.sh
+UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
+trap "$UPLOAD_ARTIFACT" EXIT
 
-#This solves a bug in brew
-HOMEBREW_NO_AUTO_UPDATE=1 brew untap wix/brew
-HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
-HOMEBREW_NO_AUTO_UPDATE=1 brew cask reinstall detox-instruments
+SCRIPTS_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-#This must be built first as all other demo apps use this binary.
+source $SCRIPTS_PATH/demo-projects.sh
+
+# This must be built first as all other demo apps use this binary.
 pushd examples/demo-react-native
-run_f "detox build -c ios.sim.release"
-run_f "detox test -c ios.sim.release"
-DETOX_EXPOSE_GLOBALS=0 run_f "detox test -c ios.sim.release"
+  pushd ios
+    run_f "pod install"
+  popd
+
+  run_f "npm run build:ios-debug"
+  run_f "npm run test:ios-debug"
+
+  # Run tests with bloated JS bundle:
+  source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh ios
 popd
 
-pushd examples/demo-react-native-jest
-run_f "npm run test:ios-release-ci"
-DETOX_EXPOSE_GLOBALS=0 run_f "npm run test:ios-release-ci"
-popd
-
-pushd examples/demo-react-native-detox-instruments
-run_f "detox test -c ios.sim.release --record-performance all"
-popd

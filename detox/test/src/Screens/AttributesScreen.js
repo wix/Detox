@@ -5,10 +5,11 @@ import {
   View,
   TextInput,
   ScrollView,
-  Slider, // TODO: migrate to callstack/react-native-slider
+  Slider as LegacySlider,
   DatePickerIOS // TODO: migrate to @react-native-community/datetimepicker
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
+import Slider from '@react-native-community/slider';
 
 export default class AttributesScreen extends Component {
   constructor(props) {
@@ -35,6 +36,10 @@ export default class AttributesScreen extends Component {
           </ScrollView>
         </View>
         <Text testID={'textViewId'} accessibilityLabel={'TextView'}>TextView</Text>
+        <View testID={'textGroupRoot'} marginLeft={20} >
+          <Text accessibilityLabel={'InnerText1'}>Some inner text</Text>
+          <Text accessibilityLabel={'InnerText2'}>Some more inner text</Text>
+        </View>
         <CheckBox
           disabled={false}
           testID={'checkboxId'}
@@ -53,6 +58,7 @@ export default class AttributesScreen extends Component {
           style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}
           autoFocus={false}
         />
+        <LegacySlider testID={'legacySliderId'} value={0.5} />
         <Slider testID={'sliderId'} value={0.5} />
       </View>
     );

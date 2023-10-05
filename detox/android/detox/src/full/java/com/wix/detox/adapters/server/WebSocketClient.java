@@ -2,6 +2,8 @@ package com.wix.detox.adapters.server;
 
 import android.util.Log;
 
+import com.wix.detox.common.DetoxErrors;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,7 +86,7 @@ public class WebSocketClient {
                 wsEventsHandler.onAction(type, params.toString(), messageId);
             }
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Detox Error: receiveAction decode - " + e.toString());
+            throw new DetoxErrors.DetoxIllegalArgumentException(e);
         }
     }
 

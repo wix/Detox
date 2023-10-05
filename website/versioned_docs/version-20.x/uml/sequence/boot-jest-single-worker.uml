@@ -1,0 +1,29 @@
+@startuml
+
+actor User
+boundary "Jest (main)" as Jest0
+participant "DetoxPrimaryContext" as Pri
+participant "DetoxCircusEnvironment" as Env
+
+User -> Jest0 : jest --runInBand
+activate Jest0
+Jest0 -> Pri: require('detox')
+activate Pri
+Jest0 -> Pri: resolveConfig()
+Jest0 -> Pri: init()
+loop every test file
+  Jest0 -> Env: new()
+  activate Env
+  Jest0 -> Env: setup()
+  Env -> Pri: installWorker()
+  Jest0 -> Env: run test file
+  Jest0 -> Env: teardown()
+  Env -> Pri: uninstallWorker()
+  deactivate Env
+  Jest0 --> Pri: reportTestResults()
+end loop
+Jest0 -> Pri: cleanup()
+deactivate Pri
+deactivate Jest0
+
+@enduml

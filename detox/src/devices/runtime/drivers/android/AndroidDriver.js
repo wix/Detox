@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
 const path = require('path');
 const URL = require('url').URL;
@@ -18,7 +19,7 @@ const sleep = require('../../../../utils/sleep');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
-const log = logger.child({ __filename });
+const log = logger.child({ cat: 'device' });
 
 /**
  * @typedef AndroidDriverProps
@@ -31,7 +32,7 @@ const log = logger.child({ __filename });
  * @property adb { ADB }
  * @property aapt { AAPT }
  * @property apkValidator { ApkValidator }
- * @property fileXfer { FileXfer }
+ * @property fileTransfer { FileTransfer }
  * @property appInstallHelper { AppInstallHelper }
  * @property appUninstallHelper { AppUninstallHelper }
  * @property devicePathBuilder { AndroidDevicePathBuilder }
@@ -51,7 +52,7 @@ class AndroidDriver extends DeviceDriverBase {
     this.aapt = deps.aapt;
     this.apkValidator = deps.apkValidator;
     this.invocationManager = deps.invocationManager;
-    this.fileXfer = deps.fileXfer;
+    this.fileTransfer = deps.fileTransfer;
     this.appInstallHelper = deps.appInstallHelper;
     this.appUninstallHelper = deps.appUninstallHelper;
     this.devicePathBuilder = deps.devicePathBuilder;
@@ -148,17 +149,25 @@ class AndroidDriver extends DeviceDriverBase {
 
   async waitUntilReady() {
       try {
-        await Promise.race([super.waitUntilReady(), this.instrumentation.waitForCrash()]);
+        await Promise.race([
+          super.waitUntilReady(),
+          this.instrumentation.waitForCrash()
+        ]);
+      } catch (e) {
+        log.warn({ error: e }, 'An error occurred while waiting for the app to become ready. Waiting for disconnection...');
+        await this.client.waitUntilDisconnected();
+        log.warn('The app disconnected.');
+        throw e;
       } finally {
         this.instrumentation.abortWaitForCrash();
       }
   }
 
-  async pressBack() { // eslint-disable-line no-unused-vars
+  async pressBack() {
     await this.uiDevice.pressBack();
   }
 
-  async sendToHome(params) { // eslint-disable-line no-unused-vars
+  async sendToHome(params) {
     await this.uiDevice.pressHome();
   }
 
@@ -323,8 +332,8 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async _sendNotificationDataToDevice(dataFileLocalPath, adbName) {
-    await this.fileXfer.prepareDestinationDir(adbName);
-    return await this.fileXfer.send(adbName, dataFileLocalPath, 'notification.json');
+    await this.fileTransfer.prepareDestinationDir(adbName);
+    return await this.fileTransfer.send(adbName, dataFileLocalPath, 'notification.json');
   }
 
   _startActivityWithUrl(url) {

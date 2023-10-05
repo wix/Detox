@@ -1,5 +1,7 @@
 <!-- markdownlint-configure-file { "first-line-heading": 0 } -->
 
+[![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://stand-with-ukraine.pp.ua)
+
 <p align="center">
   <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
 </p>
@@ -10,11 +12,11 @@
 <b>Gray box end-to-end testing and automation library for mobile apps.</b>
 </p>
 <p align="center">
-<img alt="Demo" src="http://i.imgur.com/eoaDEYp.gif"/>
+<img alt="Demo" src="docs/img/Detox.gif"/>
 </p>
 <h1></h1>
 
-<img src="https://user-images.githubusercontent.com/1962469/89655670-1c235c80-d8d3-11ea-9320-0f865767ef5d.png" alt="" height=24 width=1> [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![Build Status](https://img.shields.io/jenkins/s/http/jenkins-oss.wixpress.com:8080/job/multi-detox-master.svg)](https://jenkins-oss.wixpress.com/job/multi-detox-master/) [![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master) [![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://wix.github.io/Detox/docs/contributing) [![Twitter Follow](https://img.shields.io/twitter/follow/detoxe2e?label=Follow\&style=social)](https://twitter.com/detoxe2e)
+<img src="https://user-images.githubusercontent.com/1962469/89655670-1c235c80-d8d3-11ea-9320-0f865767ef5d.png" alt="" height=24 width=1> [![NPM Version](https://img.shields.io/npm/v/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![NPM Downloads](https://img.shields.io/npm/dm/detox.svg?style=flat)](https://www.npmjs.com/package/detox) [![Build status](https://badge.buildkite.com/39afde30a964a6763de9753762bc80264ba141e1c1f41fc878.svg)](https://buildkite.com/wix-mobile-oss/detox) [![Coverage Status](https://coveralls.io/repos/github/wix/Detox/badge.svg?branch=master)](https://coveralls.io/github/wix/Detox?branch=master) [![Detox is released under the MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PR's welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://wix.github.io/Detox/docs/contributing) [![Discord](https://img.shields.io/discord/957617863550697482?color=%235865F2\&label=discord)](https://discord.gg/CkD5QKheF5) [![Twitter Follow](https://img.shields.io/twitter/follow/detoxe2e?label=Follow\&style=social)](https://twitter.com/detoxe2e)
 
 ## What Does a Detox Test Look Like?
 
@@ -22,18 +24,16 @@ This is a test for a login screen, it runs on a device/simulator like an actual 
 
 ```js
 describe('Login flow', () => {
-    
   it('should login successfully', async () => {
     await device.reloadReactNative();
-    
+
     await element(by.id('email')).typeText('john@example.com');
     await element(by.id('password')).typeText('123456');
     await element(by.text('Login')).tap();
-      
+
     await expect(element(by.text('Welcome'))).toBeVisible();
     await expect(element(by.id('email'))).toNotExist();
   });
-  
 });
 ```
 
@@ -45,32 +45,28 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-- **Cross Platform:** Write cross-platform tests in JavaScript. Currently supports iOS and Android.
-- **Runs on Devices** (not yet supported on iOS): Gain confidence to ship by testing your app on a device/simulator just like a real user.
+- **Cross Platform:** Write end-to-end tests in JavaScript for React Native apps (Android & iOS).
+- **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 - **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
-- **Made For CI:** Execute your E2E tests on CI platforms like Travis without grief.
-- **Test Runner Independent:** Use Jest, Mocha, AVA, or any other JavaScript test runner you like (spoiler: we have our favorite).
-- **Debuggable:** Modern `async`-`await` API allows breakpoints in asynchronous tests to work as expected.
+- **Made For CI:** Execute your E2E tests on CI platforms like Travis CI, Circle CI or Jenkins without grief.
+- **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
+- **Test Runner Agnostic:** Detox provides a set of APIs to use with any test runner without it. It comes with [Jest](https://jestjs.io) integration out of the box.
 
-## Supported Versions
+## Supported React Native Versions
 
-### Environment
+Detox was built from the ground up to support React Native projects.
 
-- **OS**: macOS 10.15 (Catalina) or higher
-- **Xcode**: 11.0 or higher
-  - **iOS Simulator Runtime**: iOS 13.0 or higher
+While Detox should work out of the box with almost any React Native version of the latest minor releases, official support is provided for React Native versions `0.70.x` and `0.71.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
 
-### React Native
+Newer versions, as well as React Native's "New Architecture", may work with Detox, but have not been tested out yet by the Detox team.
 
-Detox is built from the ground up to support React Native projects as well as pure native ones.
+Although we do not officially support older React Native versions, we do our best to keep Detox compatible with them.
 
-The following React Native versions have been tested:
+Also, in case of a problem with an unsupported version of React Native, please [submit an issue](https://github.com/wix/Detox/issues/new/choose) or write us in our [Discord server](https://discord.gg/CkD5QKheF5) and we will do our best to help out.
 
-| iOS                                                                                            | Android                                                                                                            |
-|------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| ≤0.66.x                                                                                        | ≥0.64, ≤0.66 - Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) \* |
+### Known Issues with React Native
 
-Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
+- Visibility edge-case on Android: see this [RN issue](https://github.com/facebook/react-native/issues/23870).
 
 ## Get Started with Detox
 
@@ -82,7 +78,7 @@ Explore further about using Detox from our new **[website](https://wix.github.io
 
 ## Core Principles
 
-We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the  principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/introduction/design-principles).
+We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/articles/design-principles).
 
 ## Contributing to Detox
 

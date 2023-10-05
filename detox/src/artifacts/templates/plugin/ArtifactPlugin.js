@@ -1,9 +1,9 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 // @ts-nocheck
-/* eslint-disable no-unused-vars */
 
 const _ = require('lodash');
 
-const log = require('../../../utils/logger').child({ __filename });
+const log = require('../../../utils/logger').child({ cat: 'artifacts-plugin,artifacts' });
 
 /***
  * Almost non-opinionated building block for any artifact type

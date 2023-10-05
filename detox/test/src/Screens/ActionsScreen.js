@@ -9,11 +9,12 @@ import {
   Platform,
   Dimensions,
   StyleSheet,
-  Slider,
+  Slider as LegacySlider,
   SafeAreaView,
   requireNativeComponent,
 } from 'react-native';
 import TextInput from '../Views/TextInput';
+import Slider from '@react-native-community/slider';
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
 const SluggishTapsText = requireNativeComponent('DetoxSluggishTapsTextView');
@@ -59,6 +60,17 @@ export default class ActionsScreen extends Component {
 
         <TouchableOpacity onPress={this.onButtonPress.bind(this, 'Tap Working')}
           onLongPress={this.onButtonPress.bind(this, 'Long Press Working')}
+          testID="View7991"
+          accessibilityActions={[
+            { name: 'activate', label: 'activate' },
+            { name: 'increment', label: 'increment' },
+            { name: 'decrement', label: 'decrement' },
+            { name: 'magicTap', label: 'magicTap' },
+            { name: 'escape', label: 'escape' },
+            { name: 'longpress', label: 'longpress' },
+            { name: 'custom', label: 'custom' }
+          ]}
+          onAccessibilityAction={({ nativeEvent: { actionName }}) => this.onButtonPress(`Accessibility Action ${actionName} Working`)}
         >
           <Text style={{ color: 'blue', marginTop: isIos? 40 : 0, marginBottom: 10, textAlign: 'center' }}>Tap Me</Text>
         </TouchableOpacity>
@@ -160,6 +172,10 @@ export default class ActionsScreen extends Component {
             <RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.onRefresh.bind(this)} title="Loading..." />
           }>
           </ScrollView>
+        </View>
+
+        <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
+          <LegacySlider testID='legacySliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0}/>
         </View>
 
         <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>

@@ -1,0 +1,96 @@
+import Location from './partials/_location.mdx';
+
+# Logger
+
+The `logger` section controls how the printed logs are going to look like in your terminal window.
+
+![](../img/log-example.png)
+
+## Location
+
+<Location sectionName="logger" />
+
+## Properties
+
+## `logger.level` \[enum\]
+
+Default: `info`.
+
+Possible values in the descending severity order: `fatal`, `error`, `warn`, `info`, `debug`, `trace`.
+
+* Use `info` by default.
+* Use `error` or `warn` when you want to make the output as silent as possible.
+* Use `debug` to control what generally is happening under the hood.
+* Use `trace` when troubleshooting specific issues.
+
+Please note that the log level has no effect on the [generated log files](artifacts.mdx) and their content – it filters only the messages printed to your terminal.
+
+:::info
+
+The verbosity of the logs can be influenced by the [`session.debugSynchronization`](session.mdx#sessiondebugsynchronization-number) setting in your Detox configuration. Enabled by default, this setting helps track the reasons preventing your current actions from completing by identifying what the app is still busy with. It produces logs like this:
+
+```
+15:13:07.309 detox[17005] i The app is busy with the following tasks:
+• There are 10 work items pending on the dispatch queue: "Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)".
+...
+```
+
+If you want to disable or decrease how often session logs are saved, change the `session.debugSynchronization` value to `0` (to turn off logs) or increase it to `60000` (to lower the frequency of logs). For a deeper understanding of this setting's purpose, refer to the [How Detox Works](../articles/how-detox-works.md#how-detox-automatically-synchronizes-with-your-app) article.
+
+:::
+
+---
+
+## `logger.overrideConsole` \[boolean\]
+
+Default: `true`.
+
+When enabled, hijacks all the console methods (console.log, console.warn, etc) so that the messages
+printed via them are formatted and saved as Detox logs.
+
+## `logger.options` [BunyanDebugStreamOptions]
+
+Default: varies according to the `logger.level`.
+
+Since Detox is using [bunyan-debug-stream](https://github.com/jwalton/bunyan-debug-stream) for printing logs,
+we decided just to expose all its options for sake of simplicity of customization:
+
+```typescript
+export interface BunyanDebugStreamOptions {
+    colors?: { [key: number]: string | string[] } | false | null;
+    forceColor?: boolean;
+    basepath?: string;
+    basepathReplacement?: string;
+    showProcess?: boolean;
+    showDate?: boolean | ((time: Date, entry: any) => string);
+    showPrefixes?: boolean | ((prefixes: string[]) => string);
+    processName?: string;
+    maxExceptionLines?: number | 'auto';
+    stringifiers?: { [key: string]: Stringifier | null };
+    prefixers?: { [key: string]: Stringifier | null };
+    indent?: string;
+    showLoggerName?: boolean;
+    showPid?: boolean;
+    showLevel?: boolean;
+    showMetadata?: boolean;
+}
+```
+
+There's one caveat inside `logger.options`, however – all the custom functions **must not** use closures! That's
+because they get `eval()`-ed every time the test runner spawns a new child worker process. In other words:
+
+```js
+const dontDoThis = date => date.toISOString();
+
+module.exports = {
+  logger: {
+    level: 'debug',
+    options: {
+      // showDate: (date) => dontDoThis(date),
+// highlight-next-line
+      showDate: (date) => date.toISOString(), /* do this instead */
+    },
+  },
+  // ...
+};
+```

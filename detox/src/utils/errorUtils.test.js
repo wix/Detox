@@ -6,10 +6,14 @@ describe('sliceErrorStack(error, fromIndex)', () => {
   it('should clean up error stack by N first lines containing at:', () => {
     function innerFunction() { throw new Error('Source Error'); }
     function outerFunction() { innerFunction(); }
+    function attemptFunction() {
+      try { outerFunction(); } catch (e) { return e; }
+    }
+
     const slicer = at => (_line) => --at < 0;
-    const error0 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(0));
-    const error2 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(1));
-    const error3 = errorUtils.filterErrorStack(_.attempt(outerFunction), slicer(2));
+    const error0 = errorUtils.filterErrorStack(attemptFunction(), slicer(1));
+    const error2 = errorUtils.filterErrorStack(attemptFunction(), slicer(2));
+    const error3 = errorUtils.filterErrorStack(attemptFunction(), slicer(3));
     expect(error0.stack).toMatch(/at innerFunction/);
     expect(error0.stack).toMatch(/at outerFunction/);
     expect(error2.stack).not.toMatch(/at innerFunction/);
@@ -28,18 +32,44 @@ describe('sliceErrorStack(error, fromIndex)', () => {
 });
 
 describe('replaceErrorStack(source, target)', () => {
-  it('should replace error stack in the target error using the source error', () => {
-    function sourceFunction() { throw new Error('Source Error'); }
-    function targetFunction() { throw new Error('Target Error'); }
+
+  function sourceFunction() { throw new Error('Source Error message'); }
+  function targetFunction() { throw new Error('Target Error message'); }
+  function targetFunction2() { throw new Error(); }
+
+  it('should return the target error', () => {
     const source = _.attempt(sourceFunction);
     const target = _.attempt(targetFunction);
-    expect(target.stack).toMatch(/Target Error/);
-    expect(target.stack).toMatch(/at targetFunction/);
-    expect(target.stack).not.toMatch(/at sourceFunction/);
     expect(errorUtils.replaceErrorStack(source, target)).toBe(target);
-    expect(target.stack).toMatch(/Target Error/);
+  });
+
+  it('should replace error stack in the target error using the source error', () => {
+    const source = _.attempt(sourceFunction);
+    const target = _.attempt(targetFunction);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.stack).toMatch(/Target Error message/);
     expect(target.stack).toMatch(/at sourceFunction/);
     expect(target.stack).not.toMatch(/at targetFunction/);
+  });
+
+  it('should replace error stack in a target error missing a message', () => {
+    const source = _.attempt(sourceFunction);
+    const target = _.attempt(targetFunction2);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.message).toBe('');
+    expect(target.stack).toMatch(/at sourceFunction/);
+    expect(target.stack).not.toMatch(/at targetFunction2/);
+  });
+
+  it('should not trim down stack-frames from a (native) stack-trace reported as the message', () => {
+    const nativeStacktrace = 'Target native error:\n  at native.stack.Class.method()';
+    const source = _.attempt(sourceFunction);
+    const target = new Error(nativeStacktrace);
+
+    errorUtils.replaceErrorStack(source, target);
+    expect(target.stack).toMatch(nativeStacktrace);
   });
 
   it('should not ruin already malformed errors', () => {
@@ -72,5 +102,25 @@ describe('asError(err)', () => {
     const err = 'non-Error';
     expect(errorUtils.asError(err)).toBeInstanceOf(Error);
     expect(errorUtils.asError(err).message).toBe(err);
+  });
+});
+
+describe('serializeObjectWithError(obj, errorKey)', () => {
+  it('should passthrough a non-error object', () => {
+    const obj = { some: 'value' };
+    expect(errorUtils.serializeObjectWithError(obj, 'error')).toBe(obj);
+  });
+
+  it('should serialize an error object', () => {
+    const obj = { some: 'value', error: new Error('error message') };
+
+    const serialized = errorUtils.serializeObjectWithError(obj, 'error');
+    expect(serialized.error).not.toBeInstanceOf(Error);
+
+    const deserialized = errorUtils.deserializeObjectWithError(serialized, 'error');
+    expect(deserialized.error).toBeInstanceOf(Error);
+
+    expect(deserialized.error).toEqual(obj.error);
+    expect(errorUtils.deserializeObjectWithError(obj, 'error')).toBe(obj);
   });
 });

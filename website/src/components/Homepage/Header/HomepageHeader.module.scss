@@ -1,0 +1,60 @@
+.heroBanner {
+  height: 725px;
+  width: 100%;
+  padding: 4rem 0;
+  color: white;
+  overflow: hidden;
+  background: rgb(21, 33, 107);
+  background-image: url(@site/static/img/homepage/hero-image.jpg);
+  background-position-x: center;
+  background-position-y: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+html[data-theme='dark'] {
+  --ifm-background-color: #202429;
+  --ifm-background-surface-color: #202429;
+  --ifm-footer-background-color: #202429;
+}
+
+.heroBanner h1 {
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 120px;
+  line-height: 150px;
+  margin-left: -10px;
+}
+
+.heroBanner h2 {
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 20px;
+  height: 60px;
+  margin-bottom: 30px;
+  max-width: 450px;
+}
+
+.buttons {
+  display: flex;
+  text-shadow: none;
+  width: 251px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+.buttons a {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 35px;
+}
+
+@media only screen and (max-width: 600px) {
+  .buttons a {
+    font-size: 14px;
+  }
+}

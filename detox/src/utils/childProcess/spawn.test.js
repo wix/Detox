@@ -1,4 +1,7 @@
 // @ts-nocheck
+
+jest.retryTimes(2);
+
 describe('Spawn utils', () => {
 
   describe('spawning', () => {

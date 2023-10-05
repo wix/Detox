@@ -4,29 +4,22 @@ const _ = require('lodash');
 /**
  * @param {*} cliConfig
  * @param {Detox.DetoxConfig} globalConfig
- * @param {Detox.DetoxConfigurationOverrides} localConfig
- * @param {Detox.DetoxInitOptions} userParams
+ * @param {Detox.DetoxConfiguration} localConfig
  */
 function composeBehaviorConfig({
   cliConfig,
   globalConfig,
   localConfig,
-  userParams
 }) {
   return _.chain({})
     .defaultsDeep(
       {
         init: {
+          keepLockFile: cliConfig.keepLockFile ? true : undefined,
           reinstallApp: cliConfig.reuse ? false : undefined,
         },
         cleanup: {
           shutdownDevice: cliConfig.cleanup ? true : undefined,
-        },
-      },
-      userParams && {
-        init: {
-          exposeGlobals: userParams.initGlobals,
-          reinstallApp: negateDefined(userParams.reuse),
         },
       },
       localConfig.behavior,
@@ -34,6 +27,7 @@ function composeBehaviorConfig({
       {
         init: {
           exposeGlobals: true,
+          keepLockFile: false,
           reinstallApp: undefined,
         },
         launchApp: 'auto',
@@ -48,10 +42,6 @@ function composeBehaviorConfig({
       }
     })
     .value();
-}
-
-function negateDefined(x) {
-  return x !== undefined ? !x : undefined;
 }
 
 module.exports = composeBehaviorConfig;

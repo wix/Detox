@@ -7,7 +7,7 @@ FakeClient.setInfiniteConnect = () => {
     client.deferred = new Deferred();
     client.connect.mockReturnValue(client.deferred.promise);
     client.cleanup.mockImplementation(() => {
-      client.deferred.reject('Fake error: aborted connection');
+      client.deferred.reject(new Error('Fake error: aborted connection'));
     });
 
     return client;

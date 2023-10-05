@@ -4,7 +4,9 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
+import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -31,11 +33,11 @@ class GetAttributesActionTest {
     private fun givenNoViewTag() = givenViewTag(null)
     private fun givenVisibility(value: Int) { whenever(view.visibility).doReturn(value) }
     private fun givenVisibilityRectAvailability(value: Boolean) { whenever(view.getLocalVisibleRect(any())).doReturn(value) }
-    private fun givenContentDescription(value: String) { whenever(view.contentDescription).doReturn(value) }
+    private fun givenAccessibilityLabel(value: String) { whenever(view.getAccessibilityLabel()).doReturn(value) }
 
     private fun perform(v: View = view): JSONObject {
         uut.perform(null, v)
-        return JSONObject(uut.getResult())
+        return uut.getResult()!!
     }
 
     @Test
@@ -109,16 +111,16 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return label according to content-description`() {
-        val contentDescription = "content-description-mock"
-        givenContentDescription(contentDescription)
+    fun `should return label according to accessibilityLabel extension`() {
+        val accessibilityLabel = "label-mock"
+        givenAccessibilityLabel(accessibilityLabel)
 
         val resultJson = perform()
-        assertThat(resultJson.opt("label")).isEqualTo(contentDescription)
+        assertThat(resultJson.opt("label")).isEqualTo(accessibilityLabel)
     }
 
     @Test
-    fun `should not return label if content description no set`() {
+    fun `should not return label if accessibility label is not available`() {
         val resultJson = perform()
         assertThat(resultJson.opt("label")).isNull()
     }
@@ -133,10 +135,10 @@ class GetAttributesActionTest {
         }
 
         val resultJson = perform()
-        assertThat(resultJson.opt("alpha")).isEqualTo(0.42)
+        assertThat(resultJson.opt("alpha")).isEqualTo(0.42f)
         assertThat(resultJson.opt("width")).isEqualTo(123)
         assertThat(resultJson.opt("height")).isEqualTo(456)
-        assertThat(resultJson.opt("elevation")).isEqualTo(0.314)
+        assertThat(resultJson.opt("elevation")).isEqualTo(0.314f)
     }
 
     @Test
@@ -179,7 +181,7 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return ProgressBar (or SeekBar) "progress" via value attribute`() {
+    fun `should return raw ProgressBar or SeekBar 'progress' via value attribute`() {
         val progressBar: ProgressBar = mock {
             on { progress } doReturn 42
         }
@@ -189,13 +191,25 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return Slider state through value attribute`() {
+    fun `should return RN-Slider via value attribute`() {
+        val progressBar: ReactSlider = mock {
+            on { max } doReturn 100
+            on { progress } doReturn 50
+        }
+
+        val resultJson = perform(progressBar)
+        assertThat(resultJson.opt("value")).isEqualTo(0.5)
+    }
+
+    @Test
+    fun `should return material-Slider state through value attribute`() {
         val slider: Slider = mock {
             on { value } doReturn 0.42f
         }
 
         val resultJson = perform(slider)
-        assertThat(resultJson.opt("value")).isEqualTo(0.42)
+        android.util.Log.i("TESTS", "should return material-Slider state through value attribute: "+ resultJson)
+        assertThat(resultJson.opt("value")).isEqualTo(0.42f)
     }
 
     @Test
@@ -208,7 +222,7 @@ class GetAttributesActionTest {
 
         val resultJson = perform(textView)
         assertThat(resultJson.opt("text")).isEqualTo("mock-text")
-        assertThat(resultJson.opt("textSize")).isEqualTo(24)
+        assertThat(resultJson.opt("textSize")).isEqualTo(24f)
         assertThat(resultJson.opt("length")).isEqualTo(111)
     }
 
@@ -225,7 +239,7 @@ class GetAttributesActionTest {
     }
 
     @Test
-    fun `should return text hint via "placeholder" attribute, if applicable`() {
+    fun `should return text hint via 'placeholder' attribute, if applicable`() {
         val textViewWithHint: TextView = mock {
             on { hint } doReturn "hint-text-mock"
         }

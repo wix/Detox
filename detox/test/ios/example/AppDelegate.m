@@ -1,6 +1,17 @@
 #import "AppDelegate.h"
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+
+#if RCT_NEW_ARCH_ENABLED
+#import <React/CoreModulesPlugins.h>
+#import <React/RCTCxxBridgeDelegate.h>
+#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+#import <React/RCTSurfacePresenter.h>
+#import <React/RCTSurfacePresenterBridgeAdapter.h>
+#import <ReactCommon/RCTTurboModuleManager.h>
+#import <React/config/ReactNativeConfig.h>
+#endif
+
 #import "DragDropTableViewController.h"
 #import "CustomKeyboardViewController.h"
 @import CoreSpotlight;
@@ -108,9 +119,19 @@ RCT_EXPORT_MODULE();
 
 @implementation DetoxApp @end
 
+#if RCT_NEW_ARCH_ENABLED
+@interface AppDelegate () <UNUserNotificationCenterDelegate, RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate> {
+	RCTTurboModuleManager *_turboModuleManager;
+	RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
+	std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
+	facebook::react::ContextContainer::Shared _contextContainer;
+}
+@end
+#else
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 
 @end
+#endif
 
 @implementation AppDelegate
 {
@@ -140,12 +161,22 @@ RCT_EXPORT_MODULE();
 														moduleName:@"example"
 												 initialProperties:nil
 													 launchOptions:opts];
+
+#if RCT_NEW_ARCH_ENABLED
+	_contextContainer = std::make_shared<facebook::react::ContextContainer const>();
+	_reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
+	_contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
+	_bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
+	rootView.bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+#endif
+
 	rootView.backgroundColor = UIColor.whiteColor;
 	
 	self.window = [[AnnoyingWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 	self.window.isAccessibilityElement = YES;
 	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
 	rootViewController.bridge = rootView.bridge;
+
 	rootViewController.view = rootView;
 	self.window.rootViewController = rootViewController;
 	[self.window makeKeyAndVisible];
@@ -300,5 +331,42 @@ RCT_EXPORT_MODULE();
 	
 	__dtx_external_logger("DidBecomeActive");
 }
+
+#if RCT_NEW_ARCH_ENABLED
+
+#pragma mark -
+#pragma mark - RCTCxxBridgeDelegate
+#pragma mark -
+
+- (std::unique_ptr<facebook::react::JSExecutorFactory>)jsExecutorFactoryForBridge:(RCTBridge *)bridge {
+	_turboModuleManager = [[RCTTurboModuleManager alloc] initWithBridge:bridge
+															   delegate:self
+															  jsInvoker:bridge.jsCallInvoker];
+  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager);
+}
+
+#pragma mark -
+#pragma mark RCTTurboModuleManagerDelegate
+#pragma mark -
+
+- (Class)getModuleClassFromName:(const char *)name {
+  return RCTCoreModulesClassProvider(name);
+}
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+    jsInvoker:(std::shared_ptr<facebook::react::CallInvoker>)jsInvoker {
+  return nullptr;
+}
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const std::string &)name
+    initParams:(const facebook::react::ObjCTurboModule::InitParams &)params {
+  return nullptr;
+}
+
+- (id<RCTTurboModule>)getModuleInstanceFromClass:(Class)moduleClass {
+  return RCTAppSetupDefaultModuleFromClass(moduleClass);
+}
+
+#endif
 
 @end

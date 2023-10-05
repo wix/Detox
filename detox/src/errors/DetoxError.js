@@ -8,8 +8,16 @@ class DetoxError extends Error {
     this.name = 'DetoxError';
   }
 
+  format() {
+    return this.message;
+  }
+
   static get reportIssue() {
     return 'Please report this issue on our GitHub tracker:\nhttps://github.com/wix/Detox/issues';
+  }
+
+  static get reportIssueIfJest() {
+    return `If you are using Detox with Jest according to the latest guide, ${_.lowerFirst(this.reportIssue)}`;
   }
 
   static inspectObj(obj, options) {
@@ -28,7 +36,7 @@ class DetoxError extends Error {
    */
   static format(err, inspectOptions = { depth: 1 }) {
     if (err instanceof DetoxError) {
-      return err.message;
+      return err.format();
     }
 
     if (_.isError(err) && /^Command failed:/.test(err.message)) {

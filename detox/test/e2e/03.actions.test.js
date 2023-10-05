@@ -26,6 +26,21 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
+  it.each([
+    'activate',
+    'magicTap',
+    'escape',
+    'increment',
+    'decrement',
+    'longpress',
+    'custom',
+  ])('should perform %s accessibilityAction', async (actionName) => {
+    await element(by.id('View7991')).performAccessibilityAction(actionName);
+    await expect(
+      element(by.text(`Accessibility Action ${actionName} Working!!!`)),
+    ).toBeVisible();
+  });
+
   describe('multi-tapping', () => {
     it('should multi tap on an element', async () => {
       await driver.tapsElement.multiTap();
@@ -97,12 +112,11 @@ describe('Actions', () => {
     let failed = false;
     try {
       await element(by.id('NoTextInputInside')).typeText(typedText);
-    }
-    catch(ex) {
+    } catch (ex) {
       failed = true;
     }
 
-    if(failed === false) {
+    if (failed === false) {
       throw new Error('Test should have thrown an error, but did not');
     }
   });
@@ -120,7 +134,7 @@ describe('Actions', () => {
   });
 
   it('should clear text in an element', async () => {
-    if(device.getPlatform() === 'ios') {
+    if (device.getPlatform() === 'ios') {
       //Add a complex string on iOS to ensure clear works as expected.
       const typedText = 'Clear this אֱבּג';
       await element(by.id('UniqueId005')).replaceText(typedText);
@@ -145,7 +159,7 @@ describe('Actions', () => {
     await element(by.id('ScrollView161')).swipe('up');
 
     if (device.getPlatform() === 'ios') {
-      // TODO: investigate why this assertion fails on Android
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
       await expect(element(by.text('Text1'))).not.toBeVisible();
     }
 
@@ -155,19 +169,35 @@ describe('Actions', () => {
 
   it('should swipe horizontally', async () => {
     await expect(element(by.text('HText1'))).toBeVisible();
+
     await element(by.id('ScrollViewH')).swipe('left');
     await expect(element(by.text('HText1'))).not.toBeVisible();
+
     await element(by.id('ScrollViewH')).swipe('right');
     await expect(element(by.text('HText1'))).toBeVisible();
   });
 
-  it('should swipe by offset from specified positions', async () => {
+  it('should swipe vertically by offset from specified positions', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
 
     await element(by.id('ScrollView161')).swipe('up', 'slow', NaN, 0.9, 0.95);
+    if (device.getPlatform() === 'ios') {
+      // This won't work in Android, see related issue: https://github.com/facebook/react-native/issues/23870
+      await expect(element(by.text('Text1'))).not.toBeVisible(1);
+    }
+
     await element(by.id('ScrollView161')).swipe('down', 'fast', NaN, 0.1, 0.05);
+    await expect(element(by.text('Text1'))).toBeVisible(1);
+  });
+
+  it('should swipe horizontally by offset from specified positions ', async () => {
+    await element(by.id('toggleScrollOverlays')).tap();
+
     await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.25, 0.85, 0.75);
+    await expect(element(by.text('HText1'))).not.toBeVisible(1);
+
     await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.25, 0.15, 0.25);
+    await expect(element(by.text('HText1'))).toBeVisible(1);
   });
 
   it('should not wait for long timeout (>1.5s)', async () => {
@@ -180,6 +210,19 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).not.toBeVisible();
     await element(by.id('PinchableScrollView')).pinch(0.75, 'slow');
     await expect(element(by.id('UniqueId007'))).toBeVisible();
+  });
+
+  it('should adjust legacy slider and assert its value', async () => {
+    const reactSliderId = 'legacySliderWithASimpleID';
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
+    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
+    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
+    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
+
+    // on ios the accessibilityLabel is set to the slider value, but not on android
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
+    }
   });
 
   it('should adjust slider and assert its value', async () => {

@@ -1,3 +1,0 @@
---recursive
---timeout 300000
---file e2e/init.js

@@ -1,13 +1,16 @@
-import example from './src/app';
-// import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue'
-// MessageQueue.spy(true);
-
 import {
   AppRegistry,
 } from 'react-native';
 
-class exampleAndroid extends example {
+import example from './src/app';
 
+import registerEarlyCrashIfNeeded from './registerEarlyCrashIfNeeded';
+
+class exampleAndroid extends example {
+  async componentDidMount() {
+    await super.componentDidMount();
+    registerEarlyCrashIfNeeded();
+  }
 }
 
 AppRegistry.registerComponent('example', () => exampleAndroid);

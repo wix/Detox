@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: debug 1`] = `
+"00:00:00.000 detox[PID] i  BLUE SCREEN OF DEATH
+00:00:00.000 detox[PID] i  An error occurred:
+  error: Error: Some test error details
+  origin: module1
+00:00:00.000 detox[PID] i  An err (alias) occurred:
+  error: Error: Some test err details
+  origin: module2
+00:00:00.000 detox[PID] i  Another error occurred:
+  error: Error: Error as context
+00:00:00.000 detox[PID] i  Warning message!
+  stack: at index.js:30:73
+  origin: some-module/index.js
+00:00:00.000 detox[PID] i custom-category:MESSAGE A message with a payload
+  data: {
+    \\"foo\\": \\"bar\\"
+  }
+00:00:00.000 detox[PID] i custom-category One more message with a payload
+  data: raw string data"
+`;
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: error 1`] = `
+"00:00:00.000 detox[PID] i BLUE SCREEN OF DEATH
+00:00:00.000 detox[PID] i An error occurred:
+  error: Error: Some test error details
+00:00:00.000 detox[PID] i An err (alias) occurred:
+  error: Error: Some test err details
+00:00:00.000 detox[PID] i Another error occurred:
+  error: Error: Error as context"
+`;
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: fatal 1`] = `"00:00:00.000 detox[PID] i BLUE SCREEN OF DEATH"`;
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: info 1`] = `
+"00:00:00.000 detox[PID] i BLUE SCREEN OF DEATH
+00:00:00.000 detox[PID] i An error occurred:
+  error: Error: Some test error details
+00:00:00.000 detox[PID] i An err (alias) occurred:
+  error: Error: Some test err details
+00:00:00.000 detox[PID] i Another error occurred:
+  error: Error: Error as context
+00:00:00.000 detox[PID] i Warning message!"
+`;
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: trace 1`] = `
+"00:00:00.000 detox[PID] i  BLUE SCREEN OF DEATH
+00:00:00.000 detox[PID] i  An error occurred:
+  error: Error: Some test error details
+  origin: module1
+00:00:00.000 detox[PID] i  An err (alias) occurred:
+  error: Error: Some test err details
+  origin: module2
+00:00:00.000 detox[PID] i  Another error occurred:
+  error: Error: Error as context
+00:00:00.000 detox[PID] i  Warning message!
+  stack: at index.js:30:73
+  origin: some-module/index.js
+00:00:00.000 detox[PID] i custom-category:MESSAGE A message with a payload
+  data: {
+    \\"foo\\": \\"bar\\"
+  }
+00:00:00.000 detox[PID] i custom-category One more message with a payload
+  data: raw string data
+00:00:00.000 detox[PID] i custom-category:MESSAGE Trace message
+00:00:00.000 detox[PID] i  someMethodCall
+  args: (\\"stringArgument\\", {\\"prop\\":\\"value\\"})"
+`;
+
+exports[`DetoxLogger - main functionality - should format messages according to the log level: warn 1`] = `
+"00:00:00.000 detox[PID] i BLUE SCREEN OF DEATH
+00:00:00.000 detox[PID] i An error occurred:
+  error: Error: Some test error details
+00:00:00.000 detox[PID] i An err (alias) occurred:
+  error: Error: Some test err details
+00:00:00.000 detox[PID] i Another error occurred:
+  error: Error: Error as context
+00:00:00.000 detox[PID] i Warning message!"
+`;
+
+exports[`DetoxLogger - main functionality - should log begin/end duration events 1`] = `
+"00:00:00.000 detox[PID] INFO:  B duration@thread1 Activity 1 start
+00:00:00.000 detox[PID] ERROR: B duration@thread2 Activity 2
+00:00:00.000 detox[PID] DEBUG: E duration@thread1 Activity 1 start
+00:00:00.000 detox[PID] WARN:  E duration@thread2 Activity 2
+00:00:00.000 detox[PID] FATAL: E duration@thread2 <no begin message>"
+`;
+
+exports[`DetoxLogger - main functionality - should log complete duration events 1`] = `
+"00:00:00.000 detox[PID] B  Info duration
+00:00:00.000 detox[PID] E  Info duration
+00:00:00.000 detox[PID] B  Warn duration
+00:00:00.000 detox[PID] E  Warn duration
+00:00:00.000 detox[PID] B  Debug duration
+00:00:00.000 detox[PID] E  Debug duration
+00:00:00.000 detox[PID] B  Trace duration
+00:00:00.000 detox[PID] E  Trace duration
+00:00:00.000 detox[PID] B  Fatal (pending)
+00:00:00.000 detox[PID] B  Error duration (sync)
+00:00:00.000 detox[PID] E  Error duration (sync)
+  error: Error: Oops (sync)!
+00:00:00.000 detox[PID] B  Error duration (async)
+00:00:00.000 detox[PID] E  Error duration (async)
+  error: Error: Oops (async)!"
+`;
+
+exports[`DetoxLogger - main functionality - should log end duration events correctly for different categories 1`] = `
+"00:00:00.000 detox[PID] B cat1 Activity 1 start
+00:00:00.000 detox[PID] B cat2 Activity 2 start
+00:00:00.000 detox[PID] E cat1 Activity 1 start
+00:00:00.000 detox[PID] E cat2 Activity 2 start"
+`;

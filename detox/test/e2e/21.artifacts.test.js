@@ -6,7 +6,7 @@ const { PNG } = require('pngjs');
 const {
   assertArtifactExists,
   assertDirExists,
-  waitUntilArtifactsManagerIsIdle,
+  waitUntilArtifactsManagerIsIdle
 } = require('./utils/artifactUtils');
 
 describe('Artifacts', () => {
@@ -104,12 +104,12 @@ describe('Artifacts', () => {
 
     describe('edge uninstall case', () => {
       it('should capture hierarchy regardless', async () => {
-          try {
-            await element(by.id('nonExistentId')).tap();
-            fail('should have failed');
-          } catch (e) {
-            await device.uninstallApp();
-          }
+        try {
+          await element(by.id('nonExistentId')).tap();
+          fail('should have failed');
+        } catch (e) {
+          await device.uninstallApp();
+        }
       });
 
       afterAll(async () => {
@@ -120,6 +120,29 @@ describe('Artifacts', () => {
       afterAll(async () => {
         await device.installApp();
       });
+    });
+  });
+
+  describe('device log creation', () => {
+    beforeAll(async () => {
+      await device.launchApp();
+    });
+
+    it('should create device log for calling terminate', async () => {
+      await device.terminateApp();
+    });
+
+    it('should create device log for non-running app', async () => {});
+
+    it('should create device log for calling launch app', async () => {
+      await device.launchApp();
+    });
+
+    afterAll(async () => {
+      await waitUntilArtifactsManagerIsIdle();
+      assertArtifactExists('✓ Artifacts device log creation should create device log for non-running app/device.log');
+      assertArtifactExists('✓ Artifacts device log creation should create device log for calling terminate/device.log');
+      assertArtifactExists('✓ Artifacts device log creation should create device log for calling launch app/device.log');
     });
   });
 });

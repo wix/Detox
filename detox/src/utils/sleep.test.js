@@ -4,6 +4,7 @@ describe('sleep', () => {
 
   beforeEach(() => {
     setTimeoutMock = jest.spyOn(global, 'setTimeout')
+      // @ts-ignore
       .mockImplementation((callback) => {
         callback();
         return ({ unref: jest.fn() });

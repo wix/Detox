@@ -4,6 +4,7 @@ describe('expectTwo API Coverage', () => {
 
   beforeEach(() => {
     const IosExpect = require('./expectTwo');
+
     e = new IosExpect({
       invocationManager: new MockExecutor(),
     });
@@ -149,10 +150,13 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).atIndex(1).tap();
       await e.element(e.by.id('someId')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.element(e.by.id('slider')).adjustSliderToPosition(0.5);
+      await e.element(e.by.id('someId')).performAccessibilityAction('activate');
     });
 
     it(`interactions with wrong parameters should throw`, async () => {
-      await expectToThrow(() => e.element(e.by.id('someId')).multiTap('NaN'));
+      await [null, undefined, 0, -1, 'NaN'].forEach(item => {
+        expectToThrow(() => e.element(e.by.id('someId')).multiTap(item));
+      });
       await expectToThrow(() => e.element(e.by.id('someId')).typeText(0));
       await expectToThrow(() => e.element(e.by.id('someId')).replaceText(3));
 
@@ -200,6 +204,8 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.by.id('matcherNotElement')));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag('notANumber', 0.5, 0.5, e.element(e.by.id('targetElement'))));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, 'slow', 'notANumber'));
+
+      await expectToThrow(() => e.element(e.by.id('someId')).performAccessibilityAction());
     });
 
   });
@@ -220,6 +226,8 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveLabel('value');
       await e.waitFor(e.element(e.by.id('id'))).toHaveValue('value');
       await e.waitFor(e.element(e.by.id('id'))).toNotHaveValue('value');
+      await e.waitFor(e.element(e.by.id('id'))).toBeFocused().withTimeout(0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeNotFocused().withTimeout(0);
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
@@ -239,6 +247,7 @@ describe('expectTwo API Coverage', () => {
       // await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).clearText());
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'notADirection', 0, 0));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scrollTo('notADirection'));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).performAccessibilityAction());
     });
 
     it(`waitFor....whileElement() actions`, async () => {
@@ -264,6 +273,7 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).pinchWithAngle('outward', 'fast', 0);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).pinch(1, 'fast', 0);
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).performAccessibilityAction('activate');
     });
 
     it(`waitFor (element) with non-elements should throw`, async () => {

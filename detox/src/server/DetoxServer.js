@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 
 const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 const Deferred = require('../utils/Deferred');
-const log = require('../utils/logger').child({ __filename });
+const log = require('../utils/logger').child({ cat: 'ws-server,ws' });
 
 const DetoxSessionManager = require('./DetoxSessionManager');
 
@@ -40,18 +40,16 @@ class DetoxServer {
     await this._startListening();
 
     const level = this._options.standalone ? 'info' : 'debug';
-    log[level]({ event: 'WSS_CREATE' }, `Detox server listening on localhost:${this.port}...`);
+    log[level](`Detox server listening on localhost:${this.port}...`);
   }
 
   async close() {
     try {
       await this._closeWithTimeout(10000);
-      log.debug({ event: 'WSS_CLOSE' }, 'Detox server has been closed gracefully');
-    } catch (e) {
-      log.warn({ event: 'ERROR' },
-        `Detox server has been closed abruptly! See the error details below:\n`
-        + DetoxRuntimeError.format(e) + '\n'
-        + DetoxRuntimeError.reportIssue
+      log.debug('Detox server has been closed gracefully');
+    } catch (err) {
+      log.warn({ err },
+        `Detox server has been closed abruptly! See the error details below:`
       );
     }
   }
@@ -90,8 +88,7 @@ class DetoxServer {
     } else if (this._closing) {
       this._closing.reject(err);
     } else {
-      const formattedError = DetoxRuntimeError.format(err);
-      log.error('Detox server has got an unhandled error:\n' + formattedError);
+      log.error({ err }, 'Detox server has got an unhandled error:');
     }
   }
 

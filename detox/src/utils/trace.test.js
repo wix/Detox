@@ -1,128 +1,50 @@
+jest.mock('../logger/DetoxLogger');
+
 describe('Trace util', () => {
-  const timestampProviderFn = () => 1234;
+  let trace;
+  let traceCall;
+  // @ts-ignore
+  const logger = () => require('../logger/DetoxLogger').instances[0];
 
-  let Trace;
-  let uut;
   beforeEach(() => {
-    Trace = require('./trace').Trace;
-    uut = new Trace();
-    uut.init(timestampProviderFn);
+    ({ trace, traceCall } = require('../..'));
   });
 
-  it('should produce an empty events list upon creation', () => {
-    expect(new Trace().events).toEqual([]);
-  });
-
-  it('should produce an init event at init time', () => {
-    expect(uut.events).toEqual([{
-      type: 'init',
-      ts: 1234,
-    }]);
-  });
-
-  it('should produce a section-start event', () => {
-    const section = {
-      name: 'section-name',
+  it('startSection -> logger.trace.begin(...)', () => {
+    const event = {
+      msg: 'event-name',
       args: { arg1: 'val1' },
     };
 
-    uut.startSection(section.name, section.args);
-    expect(uut.events[1]).toEqual({
-      type: 'start',
-      ts: 1234,
-      ...section,
-    });
+    trace.startSection(event.msg, event.args);
+    expect(logger().trace.begin).toHaveBeenCalledWith(
+      event.args,
+      event.msg
+    );
+
+    trace.startSection(event.msg);
+    expect(logger().trace.begin).toHaveBeenCalledWith(
+      event.msg
+    );
   });
 
-  it('should produce a section-end event', () => {
+  it('endSection -> logger.trace.end(...)', () => {
     const section = {
-      name: 'section-name',
+      msg: 'section-name',
       args: { arg1: 'val1' },
     };
 
-    uut.startSection(section.name, section.args);
-    uut.endSection(section.name, section.args);
-    expect(uut.events[2]).toEqual({
-      type: 'end',
-      ts: 1234,
-      ...section,
-    });
+    trace.endSection(section.msg, section.args);
+    expect(logger().trace.end).toHaveBeenCalledWith(section.args);
+
+    trace.endSection(section.msg);
+    expect(logger().trace.end).toHaveBeenCalledWith();
   });
 
-  it('should be able to reset', () => {
-    const section = {
-      name: 'section-name',
-      args: { arg1: 'val1' },
-    };
+  it('should trace a successful function', async () => {
+    const functionCall = () => 42;
 
-    uut.startSection(section.name, section.args);
-    uut.endSection(section.name, section.args);
-    uut.reset();
-    expect(uut.events).toEqual([{
-      type: 'init',
-      ts: 1234,
-    }]);
-  });
-
-  it('should export an instance', () => {
-    const { trace } = require('./trace');
-    trace.init();
-    trace.startSection('section1', {});
-    trace.endSection('section1', {});
-    trace.reset();
-  });
-
-  describe('trace-call function', () => {
-    const { trace, traceCall } = require('./trace');
-    const sectionName = 'section-name';
-    const startEventTraits = {
-      type: 'start',
-      name: sectionName,
-    };
-    const successEndEventTraits = {
-      type: 'end',
-      name: sectionName,
-      args: {
-        success: true,
-      },
-    };
-    const aFailEndEventTraits = (error) => ({
-      type: 'end',
-      name: 'section-name',
-      args: {
-        success: false,
-        error: error.toString(),
-      },
-    });
-
-    afterEach(() => {
-      trace.reset();
-    });
-
-    it('should trace a successful function', async () => {
-      const functionCall = () => Promise.resolve(42);
-
-      trace.init();
-      const result = await traceCall(sectionName, functionCall);
-      expect(trace.events).toEqual([
-        expect.any(Object),
-        expect.objectContaining(startEventTraits),
-        expect.objectContaining(successEndEventTraits),
-      ]);
-      expect(result).toEqual(42);
-    });
-
-    it('should trace a failed function call', async () => {
-      const error = new Error('error mock');
-      const functionCall = () => Promise.reject(error);
-
-      trace.init();
-      await expect(traceCall(sectionName, functionCall)).rejects.toThrowError(error);
-      expect(trace.events).toEqual([
-        expect.any(Object),
-        expect.objectContaining(startEventTraits),
-        expect.objectContaining(aFailEndEventTraits(error)),
-      ]);
-    });
+    expect(traceCall('42-call', functionCall)).toBe(42);
+    expect(logger().trace.complete).toHaveBeenCalledWith({}, '42-call', functionCall);
   });
 });

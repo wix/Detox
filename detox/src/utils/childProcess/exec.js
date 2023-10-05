@@ -3,7 +3,7 @@ const { exec } = require('child-process-promise');
 const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const rootLogger = require('../logger').child({ __filename });
+const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-exec'] });
 const retry = require('../retry');
 
 const execsCounter = require('./opsCounter');

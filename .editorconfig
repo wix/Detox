@@ -1,0 +1,35 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+trim_trailing_whitespace = true
+
+[{*.ats,*.cts,*.mts,*.ts}]
+indent_size = 2
+tab_width = 2
+
+[detox/index.d.ts]
+indent_size = 4
+tab_width = 4
+
+[{*.cjs,*.js,*.mjs}]
+indent_size = 2
+tab_width = 2
+
+[{*.md,*.mdx}]
+indent_size = 2
+tab_width = 2
+
+[{*.yaml,*.yml}]
+indent_size = 2
+tab_width = 2
+
+[{*.css,*.scss,*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
+indent_size = 2
+tab_width = 2

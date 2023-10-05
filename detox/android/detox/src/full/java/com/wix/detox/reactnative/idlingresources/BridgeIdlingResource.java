@@ -5,11 +5,11 @@ import android.util.Log;
 import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener;
 import com.facebook.react.bridge.ReactContext;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by simonracz on 01/06/2017.
@@ -42,10 +42,16 @@ public class BridgeIdlingResource extends DetoxBaseIdlingResource implements Not
         return BridgeIdlingResource.class.getName();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public IdlingResourceDescription getDescription() {
-        return new IdlingResourceDescription.Builder().name("bridge").build();
+    public String getDebugName() {
+        return "bridge";
+    }
+
+    @Nullable
+    @Override
+    public Map<String, Object> getBusyHint() {
+        return null;
     }
 
     @Override

@@ -1,0 +1,43 @@
+1. Add in your Android project settings:
+
+    ```diff title="android/settings.gradle"
+    +include ':detox'
+    +project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
+    ```
+
+1. In your _root_ build script register `google()` as a repository lookup point in all projects:
+
+    ```diff title="android/build.gradle"
+     allprojects {
+         repositories {
+             // ...
+    +        google()
+         }
+     }
+    ```
+
+    If `allprojects` section doesn't exist, then add it.
+
+1. In your app’s build script, add to `dependencies` section:
+
+    ```diff title="android/app/build.gradle"
+     dependencies {
+         // ...
+    +    androidTestImplementation(project(path: ":detox"))
+     }
+    ```
+
+1. Stay in that file, just scroll down and add to the `defaultConfig` subsection:
+
+    ```diff title="android/app/build.gradle"
+     android {
+       // ...
+
+       defaultConfig {
+           // ...
+    +      testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
+    +      testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    +      missingDimensionStrategy 'detox', 'full'
+       }
+     }
+    ```

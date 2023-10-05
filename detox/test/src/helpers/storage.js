@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SET_AND_GET_ITERATIONS = 50;
 const GLOBAL_ITERATIONS = 4;

@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`file migration should work for: jest-circus/environment 1`] = `
+"[DEPRECATION] Detox detected an attempt to require a module from an outdated location, please change in your project:
+- detox/runners/jest-circus/environment
++ detox/runners/jest/testEnvironment
+"
+`;
+
+exports[`file migration should work for: jest-circus/index 1`] = `
+"[DEPRECATION] Detox detected an attempt to require a module from an outdated location, please change in your project:
+- detox/runners/jest-circus
++ detox/runners/jest
+"
+`;
+
+exports[`file migration should work for: jest-circus/reporter 1`] = `
+"[DEPRECATION] Detox detected an attempt to require a module from an outdated location, please change in your project:
+- detox/runners/jest-circus/reporter
++ detox/runners/jest/reporter
+"
+`;

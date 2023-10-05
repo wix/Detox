@@ -1,0 +1,41 @@
+# Investigating Failures
+
+There are a few tricks and tools that can help you to understand the reason for test failures, even before you resort to debugging.
+
+## Using Detox test artifacts
+
+Artifacts are very powerful tool to understand your test failure, you can easily make a screenshot, video or even hierarchy of your app under test,
+e.g.:
+
+```sh
+detox test -c <configuration> --take-screenshots failing --record-videos failing
+```
+
+Learn more about [configuration](../config/artifacts.mdx) of Detox test artifacts and available [CLI options](../cli/test.md).
+
+## Switch to verbose log levels
+
+You can get detailed information about the test execution if you use `debug` or `trace` log level:
+
+```sh
+detox test -c <configuration> -l trace
+```
+
+:::tip
+
+In most cases we recommend using `debug` log level to understand the failed test better.
+
+:::
+
+## Missing elements
+
+If your tests are failing due to non-existent or invisible elements, you can [inspect the native view hierarchy](test-id.mdx#find-your-testid) to understand better the failure reason.
+
+## More recipes
+
+See [Dealing With Problems With Running Tests](../troubleshooting/running-tests.md) guide for more recipes.
+
+## Debugging
+
+If debugging still seems a viable option, please follow our [debugging guide](../introduction/debugging.mdx).
+

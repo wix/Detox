@@ -1,13 +1,18 @@
 apply plugin: 'com.android.application'
-apply from: '../rninfo.gradle'
+apply from: '../../../android/rninfo.gradle'
 
-//project.ext.react = [:]
-project.ext.react = [
-    enableHermes: rnInfo.isRN60OrHigher
-]
-apply from: '../../node_modules/react-native/react.gradle'
+if (rnInfo.isRN71OrHigher) {
+    apply plugin: 'com.facebook.react'
+} else {
+    project.ext.react = [
+        enableHermes: true
+    ]
+    apply from: '../../node_modules/react-native/react.gradle'
+}
 
 android {
+    namespace 'com.example'
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -22,7 +27,7 @@ android {
         versionCode 1
         versionName '1.0'
         ndk {
-            abiFilters 'armeabi-v7a', 'x86', 'x86_64'
+            abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
         }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
@@ -41,7 +46,7 @@ android {
             reset()
             enable false
             universalApk false  // If true, also generate a universal APK
-            include 'armeabi-v7a', 'x86', 'x86_64'
+            include 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
         }
     }
     signingConfigs {
@@ -61,12 +66,12 @@ android {
         }
     }
     productFlavors {
-        flavorDimensions 'compileRNFromSource'
-        fromSource {
-            dimension 'compileRNFromSource'
+        flavorDimensions 'reactNativeVersion'
+        rnDefault {
+            dimension 'reactNativeVersion'
         }
-        fromBin {
-            dimension 'compileRNFromSource'
+        rnLegacy { // For RN < 71
+            dimension 'reactNativeVersion'
         }
     }
     packagingOptions {
@@ -81,36 +86,31 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-
-    fromSourceImplementation(project(path: ':ReactAndroid'))
-
+    // The version of react-native is set by the React Native Gradle Plugin
+    rnDefaultImplementation('com.facebook.react:react-android')
     // noinspection GradleDynamicVersion
-    fromBinImplementation('com.facebook.react:react-native:+')
+    rnLegacyImplementation('com.facebook.react:react-native:+')
 
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation project(path: ':@react-native-community_slider')
     implementation project(':AsyncStorage')
     implementation project(':react-native-webview')
     implementation project(':react-native-community-checkbox')
     implementation project(':react-native-community-geolocation')
+    implementation project(':react-native-datetimepicker')
+    implementation project(':react-native-launcharguments')
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
 
-if (rnInfo.isRN60OrHigher) {
-    // refs: https://react-native-community.github.io/upgrade-helper/?from=0.59.9&to=0.60.6
-    //       https://react-native-community.github.io/upgrade-helper/?from=0.60.6&to=0.61.4
-    dependencies {
-        def enableHermes = project.ext.react.get('enableHermes', false)
-        if (enableHermes) {
-            def hermesModuleName = rnInfo.isRN61OrHigher ? 'hermes-engine' : 'hermesvm'
-            def hermesPath = "../../node_modules/$hermesModuleName/android/"
-            debugImplementation files(hermesPath + 'hermes-debug.aar')
-            releaseImplementation files(hermesPath + 'hermes-release.aar')
-        } else {
-            implementation 'org.webkit:android-jsc:+'
-        }
+// Apply Hermes as our JS engine
+dependencies {
+    rnDefaultImplementation('com.facebook.react:hermes-android')
+    // noinspection GradleDynamicVersion
+    rnLegacyImplementation('com.facebook.react:hermes-engine:+') {
+        exclude group: 'com.facebook.fbjni'
     }
 }
 

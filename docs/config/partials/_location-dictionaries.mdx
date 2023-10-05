@@ -1,0 +1,37 @@
+import CodeBlock from '@theme/CodeBlock';
+
+<p>
+  You can define the {props.propertyName} config in two
+  ways: <i>aliased</i> and <i>inlined</i> (per a configuration):
+</p>
+
+<CodeBlock title=".detoxrc.js" language="javascript">
+  {[
+    '/** @type {Detox.DetoxConfig} */',
+    'module.exports = {',
+    `  ${props.sectionName}: {`,
+    '// highlight-start',
+    `    ${props.propertyName}Key: {`,
+    `      /* … ${props.propertyName} config … */`,
+    '    }',
+    '// highlight-end',
+    '  },',
+    '  /* … */',
+    '  configurations: {',
+    `    'example.aliased': {`,
+    '      /* … */',
+    '// highlight-next-line',
+    `      ${props.propertyName}: '${props.propertyName}Key', // (1)`,
+    '    },',
+    `    'example.inlined': {`,
+    '      /* … */',
+    '// highlight-start',
+    `      ${props.propertyName}: { // (2)`,
+    `        /* … ${props.propertyName} config … */`,
+    '      },',
+    '// highlight-end',
+    '    },',
+    '  },',
+    '};',
+  ].join('\n')}
+</CodeBlock>

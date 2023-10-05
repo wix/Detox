@@ -1,0 +1,28 @@
+name: 'Support Requests'
+
+on:
+  issues:
+    types: [labeled, unlabeled, reopened]
+
+permissions:
+  issues: write
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dessant/support-requests@v2
+        with:
+          support-label: 'type: question/stack overflow'
+          issue-comment: >
+            This issue appears to be a general usage or support question.
+
+            In order to get help, please either ask a question on Stack Overflow with the [`detox`](https://stackoverflow.com/questions/tagged/detox) tag,
+            or simply join our [Discord](https://discord.com/invite/CkD5QKheF5).
+
+            **Feel free to post your Stack Overflow question here for more visibility!**
+
+            For more information about our policy on issues, refer to [this discussion](https://github.com/wix/Detox/issues/1305).
+          close-issue: true
+          lock-issue: false
+          issue-lock-reason: 'resolved'

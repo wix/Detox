@@ -2,7 +2,6 @@ package com.wix.detox.reactnative.idlingresources.timers
 
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
-import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 import org.assertj.core.api.Assertions
 import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
@@ -41,6 +40,10 @@ object TimersIdlingResourceSpec : Spek({
             getChoreographerCallback().doFrame(0L)
         }
 
+        it("should return a debug-name") {
+            Assertions.assertThat(uut().getDebugName()).isEqualTo("timers")
+        }
+
         it("should be idle if strategy says so") {
             givenIdleStrategy()
             Assertions.assertThat(uut().isIdleNow).isTrue()
@@ -49,11 +52,6 @@ object TimersIdlingResourceSpec : Spek({
         it("should be busy if strategy says so") {
             givenBusyStrategy()
             Assertions.assertThat(uut().isIdleNow).isFalse()
-
-            val expectedDescription = IdlingResourceDescription.Builder()
-                .name("timers")
-                .build()
-            Assertions.assertThat(uut().getDescription()).isEqualTo(expectedDescription)
         }
 
         it("should transition to idle if found idle by strategy") {

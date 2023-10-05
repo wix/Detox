@@ -1,0 +1,32 @@
+import CodeBlock from '@theme/CodeBlock';
+
+<p>
+  You can define the <code>{props.sectionName}</code> config section in two
+  ways: <i>globally</i> and <i>locally</i> (per a configuration):
+</p>
+
+<CodeBlock title=".detoxrc.js" language="javascript">
+  {[
+    '/** @type {Detox.DetoxConfig} */',
+    'module.exports = {',
+    '// highlight-start',
+    `  ${props.sectionName}: {`,
+    '    /* global section */',
+    '  },',
+    '// highlight-end',
+    '  devices: { /* … */ },',
+    '  apps: { /* … */ },',
+    '  configurations: {',
+    `    'ios.sim.debug': {`,
+    `      device: 'iphone',`,
+    `      app: 'ios.debug',`,
+    '// highlight-start',
+    `      ${props.sectionName}: {`,
+    '        /* local (per-configuration) section */',
+    '      },',
+    '// highlight-end',
+    '    },',
+    '  },',
+    '};',
+  ].join('\n')}
+</CodeBlock>

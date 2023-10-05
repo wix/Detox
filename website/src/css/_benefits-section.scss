@@ -1,0 +1,24 @@
+.benefits-header {
+  font-family: 'Nunito Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 70px;
+  color: #131419;
+  margin-top: 125px;
+  margin-bottom: 125px;
+}
+
+[data-theme='dark'] .benefits-header {
+  color: #ffffff;
+}
+
+.social-buttons {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.flex-jc-fe {
+  display: flex;
+  justify-content: flex-end;
+}

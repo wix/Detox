@@ -8,16 +8,6 @@ function assertType<T>(value: T) { return value; }
 
 describe("Test", () => {
     beforeAll(async () => {
-        // Deprecated { permanent: boolean } API
-        device.appLaunchArgs.modify({ ourMockServerPort: 9999 }, { permanent: true });
-        await device.selectApp('app1');
-        device.appLaunchArgs.get({ permanent: true }); // {  ourMockServerPort: 9999 }
-        await device.selectApp('app2');
-        device.appLaunchArgs.modify({ appMockServerPort: 4001 });
-        device.appLaunchArgs.get(); // { appMockServerPort: 4001, ourMockServerPort: 9999 }
-    });
-
-    beforeAll(async () => {
         device.appLaunchArgs.shared.modify({ ourMockServerPort: 9999 });
         await device.selectApp('app1');
         device.appLaunchArgs.shared.get(); // { ourMockServerPort: 9999 }
@@ -28,6 +18,19 @@ describe("Test", () => {
 
     beforeAll(async () => {
         await device.reloadReactNative();
+
+        await device.setStatusBar({ time: "12:34" });
+        await device.setStatusBar({
+            time: "12:34",
+            dataNetwork: "wifi",
+            wifiMode: "failed",
+            wifiBars: "2",
+            cellularMode: "searching",
+            cellularBars: "3",
+            operatorName: "A1",
+            batteryState: "charging",
+            batteryLevel: "50",
+        });
 
         const artifactsPaths: string[] = [
             await device.takeScreenshot("test screenshot"),
@@ -41,7 +44,6 @@ describe("Test", () => {
     afterAll(async () => {
         device.appLaunchArgs.reset();
         device.appLaunchArgs.shared.reset();
-        device.appLaunchArgs.reset({ permanent: true });
     });
 
     afterAll(async () => {
@@ -104,12 +106,17 @@ describe("Test", () => {
 
         beforeEach(async () => {
             const attributes = await element(by.id("element")).getAttributes();
+
             if ('elements' in attributes) {
-                commonAttributes = iosAttributes = attributes.elements[0];
+                if ('activationPoint' in attributes.elements[0]) {
+                    commonAttributes = iosAttributes = attributes.elements[0] as Detox.IosElementAttributes;
+                } else {
+                    commonAttributes = androidAttributes = attributes.elements[0] as Detox.AndroidElementAttributes;
+                }
             } else if ('activationPoint' in attributes) {
-                commonAttributes = iosAttributes = attributes;
+                commonAttributes = iosAttributes = attributes as Detox.IosElementAttributes;
             } else {
-                commonAttributes = androidAttributes = attributes;
+                commonAttributes = androidAttributes = attributes as Detox.AndroidElementAttributes;
             }
         });
 

@@ -5,9 +5,9 @@ const _ = require('lodash');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { joinArgs } = require('../../../../../utils/argparse');
-const environment = require('../../../../../utils/environment');
 const childProcess = require('../../../../../utils/childProcess');
-const log = require('../../../../../utils/logger').child({ __filename });
+const environment = require('../../../../../utils/environment');
+const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const { quote } = require('../../../../../utils/shellQuote');
 
 class AppleSimUtils {
@@ -42,20 +42,27 @@ class AppleSimUtils {
   /***
    * Boots the simulator if it is not booted already.
    *
-   * @param {String} udid - device id
-   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state
+   * @param {String} udid iOS Simulator UDID.
+   * @param {String} deviceBootArgs simctl boot command arguments.
+   * @param {Boolean} headless If false, opens the Simulator app after the Simulator has booted.
+   * @returns {Promise<boolean>} true, if device has been booted up from the shutdown state.
    */
-  async boot(udid, deviceBootArgs = '') {
+  async boot(udid, deviceBootArgs = '', headless = false) {
     const isBooted = await this.isBooted(udid);
 
-    if (!isBooted) {
-      const statusLogs = { trying: `Booting device ${udid}...` };
-      await this._execSimctl({ cmd: `boot ${udid} ${deviceBootArgs}`, statusLogs, retries: 10 });
-      await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
-      return true;
+    if (isBooted) {
+      return false;
     }
 
-    return false;
+    const statusLogs = { trying: `Booting device ${udid}...` };
+    await this._execSimctl({ cmd: `boot ${udid} ${deviceBootArgs}`, statusLogs, retries: 10 });
+    await this._execSimctl({ cmd: `bootstatus ${udid}`, retries: 1 });
+
+    if (!headless) {
+      await this._openSimulatorApp(udid);
+    }
+
+    return true;
   }
 
   async isBooted(udid) {
@@ -70,6 +77,24 @@ class AppleSimUtils {
     }
 
     return device;
+  }
+
+  async _openSimulatorApp(udid) {
+    try {
+      await childProcess.execWithRetriesAndLogs(`open -a Simulator --args -CurrentDeviceUDID ${udid}`, { retries: 0 });
+    } catch (error) {
+      this._logUnableToOpenSimulator();
+    }
+  }
+
+  _logUnableToOpenSimulator() {
+    log.warn(
+      `Unable to open the Simulator app. Please make sure you have Xcode and iOS Simulator installed ` +
+      `(https://developer.apple.com/xcode/). In case you already have the latest Xcode version installed, ` +
+      `try run the command: \`sudo xcode-select -s /Applications/Xcode.app\`. If you are running tests from CI, ` +
+      `we recommend running them with "--headless" device configuration (see: ` +
+      `https://wix.github.io/Detox/docs/cli/test/#options).`
+    );
   }
 
   /***
@@ -132,6 +157,30 @@ class AppleSimUtils {
   }
 
   async sendToHome(udid) {
+    if (await this._isSpringBoardInaccessible(udid)) {
+      // SpringBoard is not directly accessible by Simctl on iOS 16.0 and above, therefore we launch and terminate the
+      // Settings app instead. This sends the currently open app to the background and brings the home screen to the
+      // foreground.
+      await this._launchAndTerminateSettings(udid);
+      return;
+    }
+
+    await this._launchSpringBoard(udid);
+  }
+
+  async _isSpringBoardInaccessible(udid) {
+    const device = await this._findDeviceByUDID(udid);
+    const majorIOSVersion = parseInt(device.os.version.split('.')[0]);
+    return majorIOSVersion >= 16;
+  }
+
+  async _launchAndTerminateSettings(udid) {
+    const bundleId = 'com.apple.Preferences';
+    await this._execSimctl({ cmd: `launch ${udid} ${bundleId}`, retries: 10 });
+    await this._execSimctl({ cmd: `terminate ${udid} ${bundleId}`, retries: 10 });
+  }
+
+  async _launchSpringBoard(udid) {
     await this._execSimctl({ cmd: `launch ${udid} com.apple.springboard`, retries: 10 });
   }
 
@@ -204,18 +253,15 @@ class AppleSimUtils {
     const args = ['simctl', 'spawn', udid, 'log', 'stream'];
 
     if (level) {
-      args.push('--level');
-      args.push(level);
+      args.push('--level', level);
     }
 
     if (style) {
-      args.push('--style');
-      args.push(style);
+      args.push('--style', style);
     }
 
     if (processImagePath) {
-      args.push('--predicate');
-      args.push(`processImagePath beginsWith "${processImagePath}"`);
+      args.push('--predicate', `processImagePath beginsWith "${processImagePath}"`);
     }
 
     const promise = childProcess.spawnAndLog('/usr/bin/xcrun', args, {
@@ -249,11 +295,13 @@ class AppleSimUtils {
       // ```
       // This workaround is done to ignore the error above, as we do not care if the app was running before, we just
       // want to make sure it isn't now.
-      if (err.code === 3 && err.stderr.includes(`the app is not currently running`)) {
-        return
+      if (err.code === 3 &&
+          (err.stderr.includes(`the app is not currently running`) ||
+           err.stderr.includes(`found nothing to terminate`))) {
+        return;
       }
 
-      throw err
+      throw err;
     }
   }
 
@@ -294,8 +342,7 @@ class AppleSimUtils {
   recordVideo(udid, destination, options = {}) {
     const args = ['simctl', 'io', udid, 'recordVideo', destination];
     if (options.codec) {
-      args.push('--codec');
-      args.push(options.codec);
+      args.push('--codec', options.codec);
     }
 
     return childProcess.spawnAndLog('/usr/bin/xcrun', args, {
@@ -408,6 +455,8 @@ class AppleSimUtils {
         overrides.push(`--cellularMode "${flags.cellularMode}"`);
       if (flags.cellularBars)
         overrides.push(`--cellularBars "${flags.cellularBars}"`);
+      if (flags.operatorName)
+        overrides.push(`--operatorName "${flags.operatorName}"`);
       if (flags.batteryState)
         overrides.push(`--batteryState "${flags.batteryState}"`);
       if (flags.batteryLevel)

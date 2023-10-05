@@ -5,7 +5,6 @@ public interface DetoxErrors {
         public DetoxRuntimeException(Throwable cause) {
             super(cause);
         }
-
         public DetoxRuntimeException(String message) {
             super(message);
         }
@@ -30,6 +29,10 @@ public interface DetoxErrors {
     class DetoxIllegalArgumentException extends DetoxRuntimeException {
         public DetoxIllegalArgumentException(String message) {
             super(message);
+        }
+
+        public DetoxIllegalArgumentException(Throwable cause) {
+            super(cause);
         }
     }
 }

@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)dtx_enumerateAllWindowsUsingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block;
 + (void)dtx_enumerateKeyWindowSceneWindowsUsingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block;
 + (void)dtx_enumerateWindowsInScene:(nullable UIWindowScene*)scene usingBlock:(void (NS_NOESCAPE ^)(UIWindow* obj, NSUInteger idx, BOOL *stop))block;
++ (nullable UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point;
 
 @end
 

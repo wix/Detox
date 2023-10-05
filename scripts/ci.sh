@@ -10,4 +10,3 @@ fi
 
 run_f "lerna bootstrap --no-ci"
 run_f "lerna run build"
-run_f "lerna run test"

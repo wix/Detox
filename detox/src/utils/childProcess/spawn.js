@@ -2,7 +2,7 @@
 const { spawn } = require('child-process-promise');
 const _ = require('lodash');
 
-const rootLogger = require('../logger').child({ __filename });
+const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-spawn'] });
 const { escape } = require('../pipeCommands');
 const retry = require('../retry');
 

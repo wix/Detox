@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "args": "none" }] */
 const RuntimeDevice = require('../RuntimeDevice');
 
 class RuntimeDeviceFactory {
@@ -7,8 +8,8 @@ class RuntimeDeviceFactory {
     return new RuntimeDevice({ ...commonDeps, ...configs }, runtimeDriver);
   }
 
-  _createDriverDependencies(commonDeps) { } // eslint-disable-line no-unused-vars
-  _createDriver(deviceCookie, deps, configs) {} // eslint-disable-line no-unused-vars
+  _createDriverDependencies(commonDeps) { }
+  _createDriver(deviceCookie, deps, configs) {}
 }
 
 module.exports = RuntimeDeviceFactory;

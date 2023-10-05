@@ -1,3 +1,5 @@
+const Deferred = require('../../../../utils/Deferred');
+
 // @ts-nocheck
 describe('Android driver', () => {
   const adbName = 'device-adb-name';
@@ -15,7 +17,7 @@ describe('Android driver', () => {
   let adb;
   let aapt;
   let apkValidator;
-  let fileXfer;
+  let fileTransfer;
   let appInstallHelper;
   let appUninstallHelper;
   let instrumentation;
@@ -34,7 +36,7 @@ describe('Android driver', () => {
       adb,
       aapt,
       apkValidator,
-      fileXfer,
+      fileTransfer,
       appInstallHelper,
       appUninstallHelper,
       instrumentation,
@@ -211,21 +213,21 @@ describe('Android driver', () => {
     describe('in app launch (with dedicated arg)', () => {
       it('should prepare the device for receiving notification data file', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
+        expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
       });
 
       it('should transfer the notification data file to the device', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileXfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+        expect(fileTransfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
       });
 
       it('should not send the data if device prep fails', async () => {
-        fileXfer.prepareDestinationDir.mockRejectedValue(new Error());
+        fileTransfer.prepareDestinationDir.mockRejectedValue(new Error());
         await expect(uut.launchApp(bundleId, notificationArgs, '')).rejects.toThrowError();
       });
 
       it('should launch instrumentation with a modified notification data URL arg', async () => {
-        fileXfer.send.mockReturnValue(mockNotificationDataTargetPath);
+        fileTransfer.send.mockReturnValue(mockNotificationDataTargetPath);
 
         await uut.launchApp(bundleId, notificationArgs, '');
 
@@ -250,8 +252,8 @@ describe('Android driver', () => {
         it('should pre-transfer notification data to device', async () => {
           await spec.applyFn();
 
-          expect(fileXfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
-          expect(fileXfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+          expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
+          expect(fileTransfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
         });
 
         it('should start the app with notification data using invocation-manager', async () => {
@@ -275,7 +277,7 @@ describe('Android driver', () => {
         await uut.launchApp(bundleId, {}, '');
         await uut.deliverPayload(notificationArgsDelayed);
 
-        expect(fileXfer.send).not.toHaveBeenCalled();
+        expect(fileTransfer.send).not.toHaveBeenCalled();
       });
 
       it('should not start the app using invocation-manager', async () => {
@@ -295,25 +297,49 @@ describe('Android driver', () => {
     }, 2000);
 
     it('should fail if instrumentation async\'ly-dies prematurely while waiting for device-ready resolution', async () => {
-      const crashError = new Error('mock instrumentation crash error');
-      let waitForCrashReject = () => {};
-      instrumentation.waitForCrash.mockImplementation(() => {
-        return new Promise((__, reject) => {
-          waitForCrashReject = reject;
-        });
-      });
+      const instrumentationError = new Error('mock instrumentation crash error');
+      const waitForCrash = new Deferred();
+      instrumentation.waitForCrash.mockReturnValue(waitForCrash.promise);
 
       await uut.launchApp(bundleId, {}, '');
 
-      const clientWaitResolve = mockDeviceReadyPromise();
+      const clientWait = new Deferred();
+      client.waitUntilReady.mockReturnValue(clientWait.promise);
+
       const promise = uut.waitUntilReady();
-      setTimeout(() => waitForCrashReject(crashError), 1);
+      setTimeout(waitForCrash.reject, 1, instrumentationError);
 
       try {
-        await expect(promise).rejects.toThrowError(crashError);
+        await expect(promise).rejects.toThrowError(instrumentationError);
       } finally {
-        clientWaitResolve();
+        clientWait.resolve();
+      }
+    }, 2000);
 
+    it('should fail with client error if instrumentation dies because of client terminating the app', async () => {
+      const instrumentationError = new Error('mock instrumentation crash error');
+      const clientCrashError = new Error('mock client crash error');
+
+      const clientWait = new Deferred();
+      const clientDisconnect = new Deferred();
+      const waitForCrash = new Deferred();
+
+      client.waitUntilReady.mockReturnValue(clientWait.promise);
+      client.waitUntilDisconnected.mockReturnValue(clientDisconnect.promise);
+      instrumentation.waitForCrash.mockReturnValue(waitForCrash.promise);
+
+      waitForCrash.promise.catch(() => setTimeout(clientWait.reject, 1));
+      clientWait.promise.catch(() => setTimeout(clientDisconnect.reject, 2, clientCrashError));
+
+      await uut.launchApp(bundleId, {}, '');
+
+      const promise = uut.waitUntilReady();
+      setTimeout(waitForCrash.reject, 1, instrumentationError);
+
+      try {
+        await expect(promise).rejects.toThrowError(clientCrashError);
+      } finally {
+        clientWait.resolve();
       }
     }, 2000);
 
@@ -335,12 +361,6 @@ describe('Android driver', () => {
         expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
       }
     });
-
-    const mockDeviceReadyPromise = () => {
-      let clientResolve;
-      client.waitUntilReady.mockReturnValue(new Promise((resolve) => clientResolve = resolve));
-      return clientResolve;
-    };
   });
 
   describe('App installation', () => {
@@ -517,6 +537,7 @@ describe('Android driver', () => {
     client = {
       serverUrl: `ws://localhost:${detoxServerPort}`,
       waitUntilReady: jest.fn(),
+      waitUntilDisconnected: jest.fn().mockResolvedValue(),
     };
 
     eventEmitter = {
@@ -538,7 +559,7 @@ describe('Android driver', () => {
     mockInstrumentationDead();
 
     jest.mock('../../../common/drivers/android/exec/ADB');
-    const ADB = require('../../../common/drivers/android/exec/ADB');
+    const ADB = jest.requireMock('../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.adbBin = 'ADB binary mock';
     adb.spawnInstrumentation.mockReturnValue({
@@ -559,10 +580,10 @@ describe('Android driver', () => {
     const ApkValidator = require('../../../common/drivers/android/tools/ApkValidator');
     apkValidator = new ApkValidator();
 
-    jest.mock('../../../common/drivers/android/tools/TempFileXfer');
-    const FileXfer = require('../../../common/drivers/android/tools/TempFileXfer');
-    fileXfer = new FileXfer();
-    fileXfer.send.mockResolvedValue(mockNotificationDataTargetPath);
+    jest.mock('../../../common/drivers/android/tools/FileTransfer');
+    const FileTransfer = jest.requireMock('../../../common/drivers/android/tools/FileTransfer');
+    fileTransfer = new FileTransfer();
+    fileTransfer.send.mockResolvedValue(mockNotificationDataTargetPath);
 
     jest.mock('../../../common/drivers/android/tools/AppInstallHelper');
     const AppInstallHelper = require('../../../common/drivers/android/tools/AppInstallHelper');
@@ -573,10 +594,8 @@ describe('Android driver', () => {
     appUninstallHelper = new AppUninstallHelper();
 
 
-    jest.mock('../../../DeviceRegistry');
-    DeviceRegistryClass = require('../../../DeviceRegistry');
-    const createRegistry = jest.fn(() => new DeviceRegistryClass());
-    DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
+    jest.mock('../../../allocation/DeviceRegistry');
+    DeviceRegistryClass = require('../../../allocation/DeviceRegistry');
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;

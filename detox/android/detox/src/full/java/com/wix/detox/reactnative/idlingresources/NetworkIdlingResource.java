@@ -5,16 +5,17 @@ import android.view.Choreographer;
 
 import com.facebook.react.bridge.ReactContext;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 
@@ -67,42 +68,18 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
         return NetworkIdlingResource.class.getName();
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public IdlingResourceDescription getDescription() {
-        return new IdlingResourceDescription.Builder()
-                .name("network")
-                .addDescription("urls", new ArrayList<>(busyResources))
-                .build();
+    public String getDebugName() {
+        return "network";
     }
 
+    @Nullable
     @Override
-    protected boolean checkIdle() {
-        boolean idle = true;
-        busyResources.clear();
-        List<Call> calls = dispatcher.runningCalls();
-        for (Call call : calls) {
-            idle = false;
-            String url = call.request().url().toString();
-            for (Pattern pattern : blacklist) {
-                if (pattern.matcher(url).matches()) {
-                    idle = true;
-                    break;
-                }
-            }
-            if (!idle) {
-                busyResources.add(call.request().url().toString());
-            }
-        }
-        if (!idle) {
-            Choreographer.getInstance().postFrameCallback(this);
-            Log.i(LOG_TAG, "Network is busy");
-        } else {
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
-        }
-        return idle;
+    public synchronized Map<String, Object> getBusyHint() {
+        return new HashMap<String, Object>() {{
+            put("urls", new ArrayList<>(busyResources));
+        }};
     }
 
     @Override
@@ -117,9 +94,41 @@ public class NetworkIdlingResource extends DetoxBaseIdlingResource implements Ch
     }
 
     @Override
+    protected synchronized boolean checkIdle() {
+        busyResources.clear();
+
+        List<Call> calls = dispatcher.runningCalls();
+        for (Call call: calls) {
+            final String url = call.request().url().toString();
+
+            if (!isUrlBlacklisted(url)) {
+                busyResources.add(url);
+            }
+        }
+
+        if (!busyResources.isEmpty()) {
+            Log.i(LOG_TAG, "Network is busy, with " + busyResources.size() + " in-flight calls");
+            Choreographer.getInstance().postFrameCallback(this);
+            return false;
+        }
+
+        notifyIdle();
+        return true;
+    }
+
+    @Override
     protected void notifyIdle() {
         if (callback != null) {
             callback.onTransitionToIdle();
         }
+    }
+
+    private boolean isUrlBlacklisted(String url) {
+        for (Pattern pattern: blacklist) {
+            if (pattern.matcher(url).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

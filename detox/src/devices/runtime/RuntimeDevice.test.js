@@ -11,17 +11,12 @@ describe('Device', () => {
   let errorComposer;
   let emitter;
   let RuntimeDevice;
-  let argparse;
   let Client;
   let client;
   let driverMock;
 
   beforeEach(async () => {
     jest.mock('../../utils/logger');
-    jest.mock('../../utils/trace');
-
-    jest.mock('../../utils/argparse');
-    argparse = require('../../utils/argparse');
 
     jest.mock('./drivers/DeviceDriverBase');
     DeviceDriverBase = require('./drivers/DeviceDriverBase');
@@ -135,7 +130,7 @@ describe('Device', () => {
 
   async function aValidDevice(overrides) {
     const device = aValidUnpreparedDevice(overrides);
-    await device._prepare();
+    await device.selectApp('default');
     return device;
   }
 
@@ -163,7 +158,6 @@ describe('Device', () => {
 
   it('should return the device ID, as provided by acquireFreeDevice', async () => {
     const device = await aValidUnpreparedDevice();
-    await device._prepare();
 
     driverMock.driver.getExternalId.mockReturnValue('mockExternalId');
     expect(device.id).toEqual('mockExternalId');
@@ -177,12 +171,7 @@ describe('Device', () => {
     describe('when there is a single app', () => {
       beforeEach(async () => {
         device = await aValidUnpreparedDevice();
-        jest.spyOn(device, 'selectApp');
-        await device._prepare();
-      });
-
-      it(`should select the default app upon prepare()`, async () => {
-        expect(device.selectApp).toHaveBeenCalledWith('default');
+        await device.selectApp('default');
       });
 
       it(`should function as usual when the app is selected`, async () => {
@@ -220,12 +209,6 @@ describe('Device', () => {
 
         jest.spyOn(device, 'selectApp');
         driverMock.driver.getBundleIdFromBinary.mockReturnValue('com.app1');
-
-        await device._prepare();
-      });
-
-      it(`should not select the app at all`, async () => {
-        expect(device.selectApp).not.toHaveBeenCalled();
       });
 
       it(`upon select, it should infer bundleId if it is missing`, async () => {
@@ -263,7 +246,6 @@ describe('Device', () => {
         });
 
         jest.spyOn(device, 'selectApp');
-        await device._prepare();
       });
 
       it(`should not select the app at all`, async () => {
@@ -376,7 +358,6 @@ describe('Device', () => {
     it(`(relaunch) with delete=false when reuse is enabled should not uninstall and install`, async () => {
       const expectedArgs = expectedDriverArgs;
       const device = await aValidDevice();
-      argparse.getArgValue.mockReturnValue(true);
 
       await device.relaunchApp();
 
@@ -465,7 +446,6 @@ describe('Device', () => {
 
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp({ newInstance: false });
 
@@ -477,7 +457,6 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp({ url: 'url://me' });
 
@@ -492,7 +471,6 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
-      await device._prepare();
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
@@ -505,7 +483,6 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValue(processId);
 
-      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -520,7 +497,6 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -535,7 +511,6 @@ describe('Device', () => {
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
       device.deviceDriver.createPayloadFile = () => 'url';
 
-      await device._prepare();
       await device.launchApp({ newInstance: true });
       await device.launchApp(launchParams);
 
@@ -550,7 +525,6 @@ describe('Device', () => {
       const device = await aValidDevice();
       device.deviceDriver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(newProcessId);
 
-      await device._prepare();
       await device.launchApp(launchParams);
 
       expect(driverMock.driver.deliverPayload).not.toHaveBeenCalled();
@@ -562,8 +536,6 @@ describe('Device', () => {
       driverMock.driver.launchApp.mockReturnValueOnce(processId).mockReturnValueOnce(processId);
 
       const device = await aValidDevice();
-
-      await device._prepare();
 
       try {
         await device.launchApp(launchParams);
@@ -681,6 +653,18 @@ describe('Device', () => {
       const device = await aValidDevice();
       await device.installApp();
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._currentApp.binaryPath, device._currentApp.testBinaryPath);
+      expect(driverMock.driver.reverseTcpPort).not.toHaveBeenCalled();
+    });
+
+    it(`with reversePorts, it should reverse the ports`, async () => {
+      const device = await aValidDevice({
+        appsConfig: {
+          default: { reversePorts: [3000] },
+        },
+      });
+
+      await device.installApp();
+      expect(driverMock.driver.reverseTcpPort).toHaveBeenCalledWith(3000);
     });
   });
 

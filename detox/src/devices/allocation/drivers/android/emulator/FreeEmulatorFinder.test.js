@@ -1,14 +1,21 @@
-const { emulator5556, localhost5555, mockAvdName } = require('../../../../common/drivers/android/tools/__mocks__/handles');
+const DeviceList = require('../../../DeviceList');
+const { emulator5556, localhost5555, mockAvdName } = require('../__mocks__/handles');
 
 describe('FreeEmulatorFinder', () => {
   const mockAdb = { devices: jest.fn() };
 
+  /** @type {DeviceList} */
+  let fakeDeviceList;
+  /** @type {jest.Mocked<import('../../../DeviceRegistry')>} */
   let mockDeviceRegistry;
   let uut;
+
   beforeEach(() => {
-    const DeviceRegistry = jest.genMockFromModule('../../../../DeviceRegistry');
+    fakeDeviceList = new DeviceList();
+
+    const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
-    mockDeviceRegistry.includes.mockReturnValue(false);
+    mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 
     const FreeEmulatorFinder = require('./FreeEmulatorFinder');
     uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry);

@@ -1,9 +1,8 @@
 package com.wix.detox.adapters.server
 
-import androidx.test.espresso.IdlingResource
 import com.wix.detox.TestEngineFacade
-import com.wix.detox.reactnative.idlingresources.DescriptiveIdlingResource
-import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
+import com.wix.detox.inquiry.DetoxBusyResource
+import com.wix.detox.inquiry.DetoxBusyResourceDescription
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -31,103 +30,45 @@ object QueryStatusActionHandlerSpec : Spek({
             }
         }
 
-        fun queryStatusHandler() = QueryStatusActionHandler(outboundServerAdapter, testEngineFacade)
+        fun uut() = QueryStatusActionHandler(outboundServerAdapter, testEngineFacade)
 
-        it("should return idle app status") {
-            queryStatusHandler().handle(params, messageId)
-            val expectedData =  mapOf("status" to mapOf("app_status" to "idle"))
-            verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
+        describe("given an idle app") {
+            it("should send an idle status indication") {
+                val expectedData =  mapOf("status" to mapOf("app_status" to "idle"))
+
+                uut().handle(params, messageId)
+                verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
+            }
         }
 
-        fun createMockedDescriptiveResource(description: IdlingResourceDescription):
-                DescriptiveIdlingResource {
-            val resource: DescriptiveIdlingResource = mock()
-            whenever(resource.getDescription()).thenReturn(description)
-            return resource
-        }
+        describe("given a busy app") {
+            fun aBusyResourceDescription(description: Map<String, Any>): DetoxBusyResourceDescription =
+                mock {
+                    on { json() }.thenReturn(description)
+                }
 
-        it("should return busy app status with descriptive resource") {
-            val fakeDescription = IdlingResourceDescription.Builder()
-                .name("foo")
-                .addDescription("bar", "baz")
-                .addDescription("qux", "quux")
-                .build()
+            fun aBusyResource(identifier: String): DetoxBusyResource {
+                val mockedDescription = aBusyResourceDescription(mapOf("mock" to identifier))
+                return mock {
+                    on { getDescription() }.thenReturn(mockedDescription)
+                }
+            }
 
-            val busyResources: List<IdlingResource> = listOf(
-                createMockedDescriptiveResource(fakeDescription)
-            )
-            whenever(testEngineFacade.getBusyIdlingResources()).thenReturn(busyResources)
-
-            queryStatusHandler().handle(params, messageId)
-
-            val expectedBusyResourceDescription = listOf(
-                mapOf("name" to "foo", "description" to mapOf("bar" to "baz", "qux" to "quux"))
-            )
-            val expectedData =  mapOf("status" to mapOf("app_status" to "busy", "busy_resources" to expectedBusyResourceDescription))
-            verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
-        }
-
-        abstract class LooperIdlingResource: IdlingResource {}
-
-        fun createMockedLooperIdlingResource(resourceName: String): LooperIdlingResource {
-            val resource: LooperIdlingResource = mock()
-            whenever(resource.name).thenReturn(resourceName)
-            return resource
-        }
-
-        it("should return busy app status with looper resources") {
-            val busyResources: List<IdlingResource> = listOf(
-                createMockedLooperIdlingResource("mqt_js"),
-                createMockedLooperIdlingResource("mqt_native"),
-                createMockedLooperIdlingResource("unmapped")
-            )
-            whenever(testEngineFacade.getBusyIdlingResources()).thenReturn(busyResources)
-
-            queryStatusHandler().handle(params, messageId)
-
-            val expectedBusyResourceDescription = listOf(
-                mapOf(
-                    "name" to "looper",
-                    "description" to mapOf(
-                        "thread" to "\"mqt_js\" (JS Thread)",
-                        "execution_type" to "JavaScript code"
+            it("should send a descriptive busy-status indication") {
+                val busyResource = aBusyResource("some-resource")
+                val busyResource2 = aBusyResource("yet-another-resource")
+                val expectedData =  mapOf<String, Any>("status" to mapOf(
+                    "app_status" to "busy",
+                    "busy_resources" to listOf(
+                        mapOf("mock" to "some-resource"),
+                        mapOf("mock" to "yet-another-resource"),
                     )
-                ),
-                mapOf(
-                    "name" to "looper",
-                    "description" to mapOf(
-                        "thread" to "\"mqt_native\" (Native Modules Thread)",
-                        "execution_type" to "native module calls"
-                    )
-                ),
-                mapOf(
-                    "name" to "looper",
-                    "description" to mapOf("thread" to "\"unmapped\"")
-                )
-            )
-            val expectedData =  mapOf("status" to mapOf("app_status" to "busy", "busy_resources" to expectedBusyResourceDescription))
-            verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
+                ))
+                whenever(testEngineFacade.getAllBusyResources()).thenReturn(listOf(busyResource, busyResource2))
+
+                uut().handle(params, messageId)
+                verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
+            }
         }
-
-        fun createMockedIdlingResource(name: String): IdlingResource {
-            val resource: IdlingResource = mock()
-            whenever(resource.name).thenReturn(name)
-            return resource
-        }
-
-        it("should return busy app status with unknown resource") {
-            val busyResources: List<IdlingResource> = listOf(
-                createMockedIdlingResource( "quux")
-            )
-            whenever(testEngineFacade.getBusyIdlingResources()).thenReturn(busyResources)
-
-            queryStatusHandler().handle(params, messageId)
-
-            val expectedBusyResourceDescription = listOf(
-                mapOf("name" to "unknown", "description" to mapOf("identifier" to "quux"))
-            )
-            val expectedData =  mapOf("status" to mapOf("app_status" to "busy", "busy_resources" to expectedBusyResourceDescription))
-            verify(outboundServerAdapter).sendMessage(eq("currentStatusResult"), eq(expectedData), eq(messageId))
-        }
-    }
+   }
 })

@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, weak) UIViewController* dtx_containingViewController;
 - (UIImage*)dtx_imageFromView;
+- (BOOL)isVisibleAroundPoint:(CGPoint)point;
 
 @end
 

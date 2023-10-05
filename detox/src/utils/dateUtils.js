@@ -10,6 +10,11 @@ function shortFormat(date) {
   return `${HH}:${MM}:${ss}.${milli}`;
 }
 
+function removeMilliseconds(isoDate) {
+  return isoDate.replace(/(T\d\d:\d\d:\d\d)(\.\d\d\d)/, '$1');
+}
+
 module.exports = {
   shortFormat,
+  removeMilliseconds,
 };

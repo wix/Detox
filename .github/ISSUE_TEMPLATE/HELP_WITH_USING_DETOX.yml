@@ -1,5 +1,5 @@
-name: I Need Help with Detox
-description: Ask a general how-to question
+name: "🛟 I Need Help - Approach the Maintainers"
+description: Ask a general how-to question. We recommend asking for help on Discord / Stack-Overflow, first!
 labels: ["user: need help"]
 body:
   - type: markdown
@@ -16,10 +16,10 @@ body:
     id: environment
     attributes:
       label: Your environment
-      description: "Note: the test-runner is set in your detox configuration file (e.g. package.json, detox.config)."
+      description: "Note: the test runner is set in your detox configuration file (e.g. package.json, detox.config)."
       value: "Detox version:
       \nReact Native version:
       \nNode version:
       \nDevice model:
       \nOS:
-      \nTest-runner (select one): jest-circus / jest+jasmine / mocha / other"
+      \nTest-runner (select one): jest / other"

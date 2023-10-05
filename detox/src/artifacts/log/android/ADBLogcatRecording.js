@@ -1,6 +1,5 @@
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
 const { interruptProcess } = require('../../../utils/childProcess');
-const log = require('../../../utils/logger').child({ __filename });
 const retry = require('../../../utils/retry');
 const sleep = require('../../../utils/sleep');
 const Artifact = require('../../templates/artifact/Artifact');
@@ -26,26 +25,18 @@ class ADBLogcatRecording extends Artifact {
     this._waitUntilLogFileIsCreated = null;
   }
 
-  get hasRecordedFile() {
-    return !!this._waitUntilLogFileIsCreated;
-  }
-
   async doStart() {
     const pid = this.pid.get();
 
-    if (pid > 0) {
-      this.processPromise = this.adb.logcat(this.deviceId, {
-        file: this.pathToLogOnDevice,
-        time: this.since.get(),
-        pid,
-      });
+    this.processPromise = this.adb.logcat(this.deviceId, {
+      file: this.pathToLogOnDevice,
+      time: this.since.get(),
+      pid: pid > 0 ? pid : 0,
+    });
 
-      this._waitUntilLogFileIsCreated = sleep(300).then(() => {
-        return retry(() => this._assertLogIsCreated());
-      });
-    } else {
-      log.debug('Ignoring a command to start recording, because PID of the app is missing');
-    }
+    this._waitUntilLogFileIsCreated = sleep(300).then(() => {
+      return retry(() => this._assertLogIsCreated());
+    });
   }
 
   async doStop() {
@@ -61,20 +52,12 @@ class ADBLogcatRecording extends Artifact {
   }
 
   async doSave(artifactPath) {
-    if (this.hasRecordedFile) {
-      await this.adb.pull(this.deviceId, this.pathToLogOnDevice, artifactPath);
-      await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
-    } else {
-      log.debug(`Skipping saving artifact because the recording has not started: ${artifactPath}`);
-    }
+    await this.adb.pull(this.deviceId, this.pathToLogOnDevice, artifactPath);
+    await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
   async doDiscard() {
-    if (this.hasRecordedFile) {
-      await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
-    } else {
-      log.debug(`Skipping discarding artifact due to a not started recording: ${this.pathToLogOnDevice}`);
-    }
+    await this.adb.rm(this.deviceId, this.pathToLogOnDevice);
   }
 
   async _assertLogIsCreated() {

@@ -1,0 +1,62 @@
+name: "🐞 Bug Report - Other"
+description: Report a non-platform-specific bug to help us improve Detox
+labels: ["type: bug 🐞", "status: triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: What was the expected behaviour?
+      description: A clear and concise description of what was expected to happen.
+  - type: markdown
+    attributes:
+      value: "***If the bug occurred while running tests, please re-consider opening a platform-specific bug (iOS or Android), [here](https://github.com/wix/Detox/issues/new/choose). If this is not relevant for a specific platform, please fill in the following fields.***"
+  - type: checkboxes
+    id: tested-last-detox
+    attributes:
+      label: Was it tested on latest Detox?
+      description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox, see our [releases](https://github.com/wix/Detox/releases).
+      options:
+        - label: I have tested this issue on the latest Detox release and it still reproduces.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Help us reproduce this issue!
+      description: "Provide the steps necessary to reproduce the issue. If you are seeing a regression, try to provide the last known version where the issue did not reproduce.\n\n
+      In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go [DetoxTemplate project](https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / E2E tests). For complete information, please review the guidelines there."
+  - type: textarea
+    id: environment
+    attributes:
+      label: In what environment did this happen?
+      description: "Note: the test runner is Jest by default, unless overridden via testRunner property in your detox configuration file (e.g. package.json, detox.config)."
+      value: "Detox version:
+      \nReact Native version:
+      \nHas Fabric (React Native's new rendering system) enabled: (yes/no)
+      \nNode version:
+      \nTest-runner (select one): jest / other"
+  - type: textarea
+    id: detox-logs
+    attributes:
+      label: Detox logs
+      description: Please run your tests using the `--loglevel trace` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).
+      value: "<details><summary>Detox logs</summary>\n\n```\npaste logs here!\n```\n\n</details>"
+  - type: textarea
+    id: device-logs
+    attributes:
+      label: Device logs
+      description: Please run your tests using the `--record-logs all` argument. See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).
+      value: "<details><summary>Device logs</summary>\n\n```\npaste logs here!\n```\n\n</details>"
+  - type: textarea
+    id: test-artifacts
+    attributes:
+      label: More data, please!
+      description: Please provide any other relevant test artifacts (Screenshots, Videos..). See [artifacts documentation](https://wix.github.io/Detox/docs/api/artifacts).

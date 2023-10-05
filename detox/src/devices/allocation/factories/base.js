@@ -16,7 +16,7 @@ class DeviceAllocatorFactory {
    * @returns { AllocationDriverBase }
    * @private
    */
-  _createDriver(deps) {} // eslint-disable-line no-unused-vars
+  _createDriver(deps) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 module.exports = DeviceAllocatorFactory;

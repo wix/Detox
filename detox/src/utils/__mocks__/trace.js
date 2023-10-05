@@ -1,14 +1,10 @@
-class FakeTrace {
-  constructor() {
-    this.init = jest.fn();
-    this.startSection = jest.fn();
-    this.endSection = jest.fn();
-    this.events = [];
-  }
-}
-const traceCall = jest.fn().mockImplementation((_, fn) => fn());
-
 module.exports = {
-  trace: new FakeTrace(),
-  traceCall,
+  trace: {
+    startSection: jest.fn(),
+    endSection: jest.fn(),
+    invocationCall: jest.fn().mockImplementation((_1, _2, promise) => promise),
+  },
+  traceCall: jest.fn().mockImplementation((_, fn) => {
+    return typeof fn === 'function' ? fn() : fn;
+  }),
 };

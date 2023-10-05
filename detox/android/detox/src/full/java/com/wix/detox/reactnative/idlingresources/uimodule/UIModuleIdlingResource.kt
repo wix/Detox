@@ -6,7 +6,6 @@ import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
-import com.wix.detox.reactnative.idlingresources.IdlingResourceDescription
 import org.joor.ReflectException
 
 /**
@@ -21,11 +20,10 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
     private var callback: ResourceCallback? = null
 
     override fun getName(): String = UIModuleIdlingResource::class.java.name
-    override fun getDescription() =
-            IdlingResourceDescription.Builder()
-                .name("ui")
-                .addDescription("reason", "UI rendering activity")
-                .build()
+    override fun getDebugName(): String = " ui"
+    override fun getBusyHint(): Map<String, Any> {
+        return mapOf("reason" to "UI rendering activity")
+    }
 
     override fun checkIdle(): Boolean {
         try {

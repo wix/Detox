@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   NativeModules
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import getStringByLength from '../helpers/buffers';
 import * as storageHelper from '../helpers/storage';
 

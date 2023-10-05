@@ -32,8 +32,10 @@ function assertArtifactExists(pattern) {
 }
 
 async function waitUntilArtifactsManagerIsIdle() {
-  if (typeof detox !== 'undefined') {
-    await detox.__waitUntilArtifactsManagerIsIdle__();
+  if (typeof __waitUntilArtifactsManagerIsIdle__ !== 'undefined') {
+    await __waitUntilArtifactsManagerIsIdle__();
+  } else {
+    console.warn('!!! waitUntilArtifactsManagerIsIdle NOT FOUND !!!');
   }
 }
 

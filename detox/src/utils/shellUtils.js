@@ -1,6 +1,17 @@
+const SPACE = ' ';
 const BACK_SLASH = '\\';
+const FORWARD_SLASH = '/';
 const SINGLE_QUOTE = "'";
 const DOUBLE_QUOTE = '"';
+
+function escapeSpacesCMD(str) {
+  return str.includes(' ') ? `"${str}"` : str;
+}
+
+const BACK_SLASH_SPACE = BACK_SLASH + SPACE;
+function escapeSpacesShell(str) {
+  return str.replace(/ /g, BACK_SLASH_SPACE);
+}
 
 const ESCAPED_DOUBLE_QUOTE = BACK_SLASH + DOUBLE_QUOTE;
 function escapeInDoubleQuotedString(fragment) {
@@ -54,6 +65,14 @@ function autoEscapeCmd(str) {
   return escapeWithDoubleQuotedString(str);
 }
 
+function useForwardSlashesCMD(str) {
+  return str.split(BACK_SLASH).join(FORWARD_SLASH);
+}
+
+function useForwardSlashesShell(str) {
+  return str; // already POSIX, so no-op
+}
+
 const hasUnsafeChars = isRunningInCMDEXE()
   /* istanbul ignore next */ ? hasUnsafeCMDChars
   /* istanbul ignore next */ : hasUnsafeShellChars;
@@ -62,12 +81,24 @@ const autoEscape = isRunningInCMDEXE()
   /* istanbul ignore next */ ? autoEscapeCmd
   /* istanbul ignore next */ : autoEscapeShell;
 
+const escapeSpaces = isRunningInCMDEXE()
+  /* istanbul ignore next */ ? escapeSpacesCMD
+  /* istanbul ignore next */ : escapeSpacesShell;
+
+const usePosixSlashes = isRunningInCMDEXE()
+  /* istanbul ignore next */ ? useForwardSlashesCMD
+  /* istanbul ignore next */ : useForwardSlashesShell;
+
 module.exports = {
   escapeInDoubleQuotedString,
   escapeInDoubleQuotedRegexp,
   escapeWithSingleQuotedString,
   escapeWithDoubleQuotedString,
   isRunningInCMDEXE,
+  escapeSpaces: Object.assign(escapeSpaces, {
+    cmd: escapeSpacesCMD,
+    shell: escapeSpacesShell,
+  }),
   hasUnsafeChars: Object.assign(hasUnsafeChars, {
     cmd: hasUnsafeCMDChars,
     shell: hasUnsafeShellChars,
@@ -75,5 +106,9 @@ module.exports = {
   autoEscape: Object.assign(autoEscape, {
     cmd: autoEscapeCmd,
     shell: autoEscapeShell,
+  }),
+  useForwardSlashes: Object.assign(usePosixSlashes, {
+    cmd: useForwardSlashesCMD,
+    shell: useForwardSlashesShell,
   }),
 };

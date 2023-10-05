@@ -1,0 +1,27 @@
+name: Reproduction Required
+on:
+    issues:
+        types:
+            - labeled
+jobs:
+    add-comment:
+        if: contains(github.event.label.name, 'reproduction required')
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+        steps:
+            - name: Add comment
+              uses: peter-evans/create-or-update-comment@v2
+              with:
+                  issue-number: ${{ github.event.issue.number }}
+                  body: |
+                      Hello! We appreciate you bringing this issue to our attention.
+
+                      To assist our collaborators or contributors in identifying and resolving the problem,
+                      it would be helpful if you could provide a minimal reproduction of the issue.
+
+                      We recommend using our React Native template,
+                      which can be found at https://github.com/wix-incubator/detoxtemplate,
+                      but any minimal reproduction project would be appreciated.
+
+                      Your help is greatly appreciated. Thank you for your support!

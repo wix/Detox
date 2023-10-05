@@ -1,15 +1,12 @@
 {
   "name": "demo-react-native-detox-instruments",
-  "version": "19.5.1",
+  "version": "20.13.0",
   "private": true,
   "scripts": {},
   "devDependencies": {
-    "detox": "^19.5.1",
-    "mocha": "6.x.x"
+    "detox": "^20.13.0"
   },
   "detox": {
-    "test-runner": "mocha",
-    "runner-config": "e2e/mocha.opts",
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
