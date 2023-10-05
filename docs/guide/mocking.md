@@ -1,4 +1,8 @@
-# Mocking
+---
+id: mocking
+---
+
+# Mocking Guide
 
 :::info
 
@@ -35,18 +39,14 @@ Let's start with the quicker way.
 
 1. Pick a module that you are going to mock, e.g.:
 
-   ```js file=src/config.js
-   // src/config.js
-
+   ```js title=src/config.js
    export const SERVER_URL = 'https://production.mycompany.name/api';
    export const FETCH_TIMEOUT = 60000;
    ```
 
-1. Create a mock module alongside, with an arbitrary extension (e.g. `.mock.js`):
+1. Create a mock module alongside, with an arbitrary extension (e.g. `.e2e.js`):
 
-   ```js file=src/config.js
-   // src/config.mock.js
-
+   ```js title=src/config.e2e.js
    export * from './config.js';
 
    // override the url from the original file:
@@ -56,42 +56,48 @@ Let's start with the quicker way.
 1. Stop your _Metro bundler_ if it has been already running, and run it again with the corresponding file extension override, e.g.:
 
    ```bash
-   npx react-native start --sourceExts mock.js,js,json,ts,tsx
+   npx react-native start --sourceExts e2e.js,js,json,ts,tsx
    ```
 
-   This command is already enough to start your application in an altered mode, and you can start running your tests. Now, if some module imports `./src/config`, you tell _Metro bundler_ to prefer `./src/config.mock.js` over the plain `./src/config.js`, which means the consumer gets the mocked implementation.
+   This command is already enough to start your application in an altered mode, and you can start running your tests. Now, if some module imports `./src/config`, you tell _Metro bundler_ to prefer `./src/config.e2e.js` over the plain `./src/config.js`, which means the consumer gets the mocked implementation.
 
-> CAVEAT: whichever file extension you might take for the mock files – make sure you don’t accidentally "pick up" unforeseen file overrides from `node_modules/**/*.your-extension.js`!
-> _Metro bundler_ does not limit itself to your project files only – applying those `--sourceExts` also affects the resolution of the `node_modules` content!
+:::caution Caveat
+
+Whichever file extension you might take for the mock files – make sure you don’t accidentally "pick up" unforeseen file overrides from `node_modules/**/*.your-extension.js`!
+_Metro bundler_ does not limit itself to your project files only – applying those `--sourceExts` also affects the resolution of the `node_modules` content!
+
+:::
 
 ## Configuring Metro bundler
 
 While the mentioned way is good enough for the **debug mode**, it falls short for the **release builds**. The problem is that the `--sourceExts` argument is supported only by `react-native start` command. Hence, you’d need a CLI-independent way to configure your Metro bundler, and that is patching your project's `metro.config.js`:
 
-```diff title="metro.config.js"
- /**
-  * Metro configuration for React Native
-  * https://github.com/facebook/react-native
-  *
-  * @format
-  */
-+const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts;
+```js title="metro.config.js"
+/**
+ * Metro configuration for React Native
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts;
 
- module.exports = {
-+  resolver: {
-+    sourceExts: process.env.MY_APP_MODE === 'mocked'
-+        ? ['mock.js', ...defaultSourceExts]
-+        : defaultSourceExts,
-+  },
-   transformer: {
-     getTransformOptions: async () => ({
-       transform: {
-         experimentalImportSupport: false,
-         inlineRequires: true,
-       },
-     }),
-   },
- };
+module.exports = {
+// highlight-start
+  resolver: {
+    sourceExts: process.env.MY_APP_MODE === 'mocked'
+        ? ['e2e.js', ...defaultSourceExts]
+        : defaultSourceExts,
+  },
+// highlight-end
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
+  },
+};
 ```
 
 This way, we are enforcing a custom convention that if the Metro bundler finds the `MY_APP_MODE=mocked` environment variable, it should apply our `sourceExts` override instead of the default values.
@@ -119,10 +125,84 @@ xcodebuild -workspace ... -configuration release -scheme ...
 
 Please note that preparing React Native apps for the release mode requires groundwork for both [iOS](https://reactnative.dev/docs/publishing-to-app-store) and [Android](https://reactnative.dev/docs/signed-apk-android), which is out of scope of this current article.
 
-As you might have noticed, this tutorial has no direct connection to Detox itself, which is a correct observation.
-The suggested mocking techniques are a part of the React Native world itself, so please consult the further resources:
+As you might have noticed, until now, this tutorial had no direct connection to Detox itself, and that's a correct observation.
+The suggested static mocking techniques are a part of the React Native world itself, so please consult the further resources if you need more information:
 
 - <https://facebook.github.io/metro/>
 - <https://github.com/react-native-community/cli/blob/master/docs/commands.md>
+
+## Dynamic Mocking with Backdoor API
+
+In scenarios where static mocking is not sufficiently flexible, Detox's [Backdoor API](../api/device.md#backdoor) presents a strategy for **dynamic mocking** during test runtime.
+This allows tests to instruct the app to modify its internal state without interacting with the UI, thereby providing additional control over the app's behavior during test execution.
+
+:::info Before you continue
+
+The dynamic mocking is an extension of the static mocking approach, so make sure your **read the previous section**, as it provides the necessary background.
+
+:::
+
+### Example
+
+Imagine you have a time service in your app, responsible for providing the current time:
+
+```js title=src/services/TimeService.js
+export class TimeService {
+    now() {
+        return Date.now();
+    }
+}
+```
+
+Now, for testing purposes, we can create a mocked counterpart that allows its internal time to be set dynamically:
+
+```js title=src/services/TimeService.e2e.js
+import {DeviceEventEmitter, NativeAppEventEmitter, Platform} from 'react-native';
+
+const RNEmitter = Platform.OS === "ios" ? NativeAppEventEmitter : DeviceEventEmitter;
+
+export class FakeTimeService {
+    #now = Date.now();
+
+    constructor() {
+        RNEmitter.addListener("detoxBackdoor", ({ action, time }) => {
+            if (action === "set-mock-time") {
+                this.#now = time;
+            }
+        });
+    }
+
+    now() {
+        return this.#now;
+    }
+}
+```
+
+In the mock implementation, `TimeService.e2e.js`, we're listening for `detoxBackdoor` events and, when received, we adjust the internal `#now` value if the `action` is `"set-mock-time"`.
+
+:::danger Security Notice
+
+Avoid using `detoxBackdoor` listener in your production code, as it might expose a security vulnerability.
+
+Leave these listeners to **mock files only**, and make sure they are excluded from the public release builds.
+Backdoor API is a **testing tool**, and it should be isolated to test environments only.
+
+:::
+
+During your Detox test, you can now utilize the Backdoor API to send a signal to modify this internal state dynamically:
+
+```js
+await device.backdoor({
+  action: "set-mock-time",
+  time: 1672531199000,
+});
+```
+
+This way, you can test your app's behavior in the past or future, without having to wait for the actual time to pass.
+
+Summarizing the above, the **Backdoor API** enables your tests to directly "speak" to your app, altering its state without UI interaction.
+Provided that your app is designed with testability in mind, this can be a powerful tool for testing edge cases that are otherwise hard to reproduce,
+like changing the internal clock, simulating network conditions, GPS locations, handling simplified authentication, and more.
+Use it wisely, and...
 
 Happy Detoxing!

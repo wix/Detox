@@ -377,9 +377,46 @@ if (device.getPlatform() === 'ios') {
 
 Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](../guide/taking-screenshots.md).
 
-### `device.captureViewHierarchy([name])`
+### `device.backdoor(message)`
 
-**iOS Only.** Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
+:::tip
+
+Learn how to use Backdoor API in our [Mocking Guide](../guide/mocking.md#dynamic-mocking-with-backdoor-api).
+
+:::
+
+Send a backdoor message (any serializable object) to the app being tested, e.g.:
+
+```js
+await device.backdoor({
+  // the property names are up to you
+  action: 'my-testing-action',
+  arg1: 'value1',
+  arg2: 2
+});
+```
+
+On the application side, you have to implement a handler for the backdoor message, e.g.:
+
+```js
+import {
+  DeviceEventEmitter,
+  NativeAppEventEmitter,
+  Platform
+} from 'react-native';
+
+const RNEmitter = Platform.OS === "ios"
+  ? NativeAppEventEmitter
+  : DeviceEventEmitter;
+
+RNEmitter.addListener("detoxBackdoor", (msg) => {
+  /* ... */
+});
+```
+
+### `device.captureViewHierarchy([name])` **iOS Only**
+
+Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
 currently opened application to a temporary folder and schedules putting it to
 the artifacts' folder upon the completion of the current test. The file can be
 opened later in Xcode 12.0 and above.
