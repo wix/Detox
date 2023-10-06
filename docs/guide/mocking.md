@@ -188,6 +188,7 @@ In the mock implementation, `TimeService.e2e.js`, we're listening for `detoxBack
 - **Bidirectional flow:** Not supported yet, but planned for the future. Every action handler will be able to return a value back to the caller, which is why the limitation is in place.
 
 - **Strict Mode (Default=On):** This throws errors upon accidental overwrites of handlers, or firing unknown backdoor actions. Although not recommended, you can disable this behavior by setting:
+
   ```js
   detoxBackdoor.strict = false;
   ```

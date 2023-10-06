@@ -385,7 +385,6 @@ Learn how to use Backdoor API in our [Mocking Guide](../guide/mocking.md#dynamic
 
 :::
 
-
 Sends a backdoor message to the app being tested.
 The message should be an object with `action` property and any other custom data.
 
