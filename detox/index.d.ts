@@ -899,10 +899,11 @@ declare global {
 
             /**
              * Sends a backdoor message to the app being tested.
+             * The message should be an object with `action` property and any other custom data.
              * For more information, see {@link https://wix.github.io/Detox/docs/guide/mocking}
              * and {@link https://wix.github.io/Detox/docs/api/device#devicebackdoormessage}
              */
-            backdoor(message: object): Promise<void>;
+            backdoor(message: { action: string; [key: string]: any }): Promise<void>;
 
             /**
              * (iOS only) Saves a view hierarchy snapshot (*.viewhierarchy) of the currently opened application

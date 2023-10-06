@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import {
   BackHandler,
-  DeviceEventEmitter,
   Dimensions,
-  NativeAppEventEmitter,
   Platform,
   RefreshControl,
   ScrollView,
@@ -15,6 +13,7 @@ import {
   SafeAreaView,
   requireNativeComponent,
 } from 'react-native';
+// import { detoxBackdoor } from 'detox/react-native';
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
 
@@ -33,9 +32,6 @@ const styles = StyleSheet.create({
 
 const isIos = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
-const RNEmitter = isIos
-  ? NativeAppEventEmitter
-  : DeviceEventEmitter;
 
 export default class ActionsScreen extends Component {
 
@@ -54,17 +50,15 @@ export default class ActionsScreen extends Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+
+    // detoxBackdoor.setActionHandler('greet', ({ text }) => {
+    //   this.setState({ greeting: text });
+    // });
   }
 
   componentWillUnmount() {
-    this.onBackdoor.remove();
+    // detoxBackdoor.removeActionHandler('greet');
   }
-
-  onBackdoor = RNEmitter.addListener('detoxBackdoor', ({ action, text }) => {
-    if (action === 'greet') {
-      this.setState({ greeting: text });
-    }
-  });
 
   render() {
     if (this.state.greeting) return this.renderAfterButton();

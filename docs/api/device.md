@@ -385,12 +385,14 @@ Learn how to use Backdoor API in our [Mocking Guide](../guide/mocking.md#dynamic
 
 :::
 
-Send a backdoor message (any serializable object) to the app being tested, e.g.:
+
+Sends a backdoor message to the app being tested.
+The message should be an object with `action` property and any other custom data.
 
 ```js
 await device.backdoor({
-  // the property names are up to you
   action: 'my-testing-action',
+  // the rest is optional and arbitrary
   arg1: 'value1',
   arg2: 2
 });
@@ -399,20 +401,25 @@ await device.backdoor({
 On the application side, you have to implement a handler for the backdoor message, e.g.:
 
 ```js
-import {
-  DeviceEventEmitter,
-  NativeAppEventEmitter,
-  Platform
-} from 'react-native';
+import { detoxBackdoor } from 'detox/react-native';
 
-const RNEmitter = Platform.OS === "ios"
-  ? NativeAppEventEmitter
-  : DeviceEventEmitter;
-
-RNEmitter.addListener("detoxBackdoor", (msg) => {
-  /* ... */
+detoxBackdoor.setActionHandler('my-testing-action', ({ arg1, arg2 }) => {
+  // ...
 });
+
+// There can be only one handler per action, so you're advised to remove it when it's no longer needed
+detoxBackdoor.removeActionHandler('my-testing-action');
+
+// You can supress errors about overwriting existing handlers
+detoxBackdoor.strict = false;
+
+// You can set a global handler for all unhandled actions
+detoxBackdoor.onUnhandledAction = ({ action, ...params }) => {
+  // ...
+};
 ```
+
+Make sure your code using `detoxBackdoor` is not included in production builds.
 
 ### `device.captureViewHierarchy([name])` **iOS Only**
 

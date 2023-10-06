@@ -155,39 +155,48 @@ export class TimeService {
 Now, for testing purposes, we can create a mocked counterpart that allows its internal time to be set dynamically:
 
 ```js title=src/services/TimeService.e2e.js
-import {DeviceEventEmitter, NativeAppEventEmitter, Platform} from 'react-native';
-
-const RNEmitter = Platform.OS === "ios" ? NativeAppEventEmitter : DeviceEventEmitter;
+import { detoxBackdoor } from 'detox/react-native';
 
 export class FakeTimeService {
-    #now = Date.now();
+  #now = Date.now();
 
-    constructor() {
-        RNEmitter.addListener("detoxBackdoor", ({ action, time }) => {
-            if (action === "set-mock-time") {
-                this.#now = time;
-            }
-        });
-    }
+  constructor() {
+    detoxBackdoor.setActionHandler('set-mock-time', ({ time }) => this.setNow(time));
+  }
 
-    now() {
-        return this.#now;
-    }
+  // If you have a single instance through the app, you might not need this.
+  dispose() {
+    detoxBackdoor.removeActionHandler('set-mock-time');
+  }
+
+  setNow(time) {
+    this.#now = time;
+  }
+
+  now() {
+    return this.#now;
+  }
 }
 ```
 
-In the mock implementation, `TimeService.e2e.js`, we're listening for `detoxBackdoor` events and, when received, we adjust the internal `#now` value if the `action` is `"set-mock-time"`.
+In the mock implementation, `TimeService.e2e.js`, we're listening for `detoxBackdoor` actions with `set-mock-time` name and, when received, we adjust the internal `#now` value if the `action` is `"set-mock-time"`.
 
-:::danger Security Notice
+:::tip
 
-Avoid using `detoxBackdoor` listener in your production code, as it might expose a security vulnerability.
+- **One-at-a-Time:** Only a single action handler can be set per action name. Design your logic accordingly if you have multiple instances needing action handling.
 
-Leave these listeners to **mock files only**, and make sure they are excluded from the public release builds.
-Backdoor API is a **testing tool**, and it should be isolated to test environments only.
+- **Bidirectional flow:** Not supported yet, but planned for the future. Every action handler will be able to return a value back to the caller, which is why the limitation is in place.
+
+- **Strict Mode (Default=On):** This throws errors upon accidental overwrites of handlers, or firing unknown backdoor actions. Although not recommended, you can disable this behavior by setting:
+  ```js
+  detoxBackdoor.strict = false;
+  ```
+
+- **Handle with Care:** Ensure your handlers do not throw unhandled exceptions. At the moment, Detox won’t report them back seamlessly to the test runner. If your app crashes, especially in _devRelease_ mode – read the crash message with attention before pointing fingers at Detox! :slightly_smiling_face:
 
 :::
 
-During your Detox test, you can now utilize the Backdoor API to send a signal to modify this internal state dynamically:
+Now, when your app mocks are in place, you can open your Detox test file and instruct the app to use the mocked time service:
 
 ```js
 await device.backdoor({
@@ -196,19 +205,18 @@ await device.backdoor({
 });
 ```
 
-This way, you can test your app's behavior in the past or future, without having to wait for the actual time to pass.
+Summarizing the above, Backdoor API enables your tests to directly "speak" to your app, altering its state without UI interaction.
 
-Summarizing the above, the **Backdoor API** enables your tests to directly "speak" to your app, altering its state without UI interaction.
+:::danger Security Notice
 
-Provided that your app is designed with testability in mind, this can be a powerful tool for testing cases where native tools fall short:
-changing the internal clock, simulating network conditions, geolocation, quick authentication, and more.
+Avoid using `detoxBackdoor` in your production code, as it might expose a security vulnerability.
 
-:::tip
-
-Make sure your `detoxBackdoor` event listeners don't throw unhandled exceptions, as this might turn into another
-source of confusion. In devRelease mode your app will crash, and Detox will be the bearer of the bad news, although
-it has nothing to do with the actual problem.
+Leave these action handlers to **mock files only**, and make sure they are excluded from the public release builds.
+Backdoor API is a **testing tool**, and it should be isolated to test environments only.
 
 :::
+
+Provided that your app is designed with testability in mind, Backdoor API can be a powerful tool for testing cases where native tools fall short:
+changing the internal clock, simulating network conditions, geolocation, quick authentication, and more.
 
 Use it wisely, and... happy Detoxing!

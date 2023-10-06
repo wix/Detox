@@ -70,6 +70,7 @@ describe('Test', () => {
       .toBeVisible()
       .withTimeout(2000);
     await device.pressBack();
+    await device.backdoor({ action: 'someAction', anyArgument: 42 });
     await waitFor(element(by.text('Text5')))
       .toBeVisible()
       .whileElement(by.id('ScrollView630'))
