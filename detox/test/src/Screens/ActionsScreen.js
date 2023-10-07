@@ -51,13 +51,13 @@ export default class ActionsScreen extends Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
 
-    // detoxBackdoor.setActionHandler('greet', ({ text }) => {
+    // detoxBackdoor.registerActionHandler('greet', ({ text }) => {
     //   this.setState({ greeting: text });
     // });
   }
 
   componentWillUnmount() {
-    // detoxBackdoor.removeActionHandler('greet');
+    // detoxBackdoor.clearActionHandler('greet');
   }
 
   render() {

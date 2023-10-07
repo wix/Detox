@@ -400,21 +400,27 @@ await device.backdoor({
 On the application side, you have to implement a handler for the backdoor message, e.g.:
 
 ```js
-import { detoxBackdoor } from 'detox/react-native';
+import { detoxBackdoor } from 'detox/react-native'; // to be used only from React Native
 
-detoxBackdoor.setActionHandler('my-testing-action', ({ arg1, arg2 }) => {
+detoxBackdoor.registerActionHandler('my-testing-action', ({ arg1, arg2 }) => {
   // ...
 });
 
 // There can be only one handler per action, so you're advised to remove it when it's no longer needed
-detoxBackdoor.removeActionHandler('my-testing-action');
+detoxBackdoor.clearActionHandler('my-testing-action');
 
 // You can supress errors about overwriting existing handlers
 detoxBackdoor.strict = false;
 
-// You can set a global handler for all unhandled actions
+// If you want to have multiple listeners for the same action, you can use `registerActionListener` instead
+const listener = ({ arg1, arg2 }) => { /* Note that you can't return a value from a listener */ };
+detoxBackdoor.registerActionListener('my-testing-action', listener);
+// You can remove a listener the same way as a handler
+detoxBackdoor.removeActionListener('my-testing-action');
+
+// You can set a global handler for all actions without a handler and listeners
 detoxBackdoor.onUnhandledAction = ({ action, ...params }) => {
-  // ...
+  // By default, it throws an error or logs a warning (in non-strict mode)
 };
 ```
 

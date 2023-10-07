@@ -161,7 +161,7 @@ export class FakeTimeService {
   #now = Date.now();
 
   constructor() {
-    detoxBackdoor.setActionHandler('set-mock-time', ({ time }) => this.setNow(time));
+    detoxBackdoor.registerActionHandler('set-mock-time', ({ time }) => this.setNow(time));
   }
 
   // If you have a single instance through the app, you might not need this.
@@ -196,6 +196,16 @@ In the mock implementation, `TimeService.e2e.js`, we're listening for `detoxBack
 - **Handle with Care:** Ensure your handlers do not throw unhandled exceptions. At the moment, Detox won’t report them back seamlessly to the test runner. If your app crashes, especially in _devRelease_ mode – read the crash message with attention before pointing fingers at Detox! :slightly_smiling_face:
 
 :::
+
+If you still would like to have multiple listeners for the same action, you can use the `detoxBackdoor.addActionListener` method instead:
+
+```js
+const listener = ({ time }) => console.log(`Received time: ${time}`);
+detoxBackdoor.addActionListener('set-mock-time', listener);
+detoxBackdoor.removeActionListener('set-mock-time', listener);
+```
+
+The weaker side of action listeners is that they will never be able to return a value back to the caller by design.
 
 Now, when your app mocks are in place, you can open your Detox test file and instruct the app to use the mocked time service:
 

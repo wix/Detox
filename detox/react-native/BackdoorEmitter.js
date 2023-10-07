@@ -5,10 +5,7 @@ export class BackdoorEmitter {
     this._emitter = emitter;
     this._handlers = {};
     this._listeners = {};
-    this._subscription = this._emitter.addListener('detoxBackdoor', (event) => {
-      const listener = this._handlers[event.action] || this.onUnhandledAction;
-      listener(event);
-    });
+    this._subscription = this._emitter.addListener('detoxBackdoor', this._onBackdoorEvent);
   }
 
   /**
@@ -18,7 +15,7 @@ export class BackdoorEmitter {
   strict = true;
 
   /**
-   * Sets a handler for a backdoor action.
+   * Registers a handler for a backdoor action.
    * Note that there can only be one handler per action to avoid confusion,
    * because in future versions the handlers will be able to return a promise or a value.
    *
@@ -27,11 +24,11 @@ export class BackdoorEmitter {
    * @throws {Error} if a handler for this action has already been set
    * @throws {Error} if handler is not a function
    * @example
-   * detoxBackdoor.setActionHandler('displayText', ({ text }) => {
+   * detoxBackdoor.registerActionHandler('displayText', ({ text }) => {
    *  setText(text);
    * });
    */
-  setActionHandler(actionName, handler) {
+  registerActionHandler(actionName, handler) {
     if (typeof actionName !== 'string') {
       throw new Error('Detox backdoor action name must be a string');
     }
@@ -51,8 +48,61 @@ export class BackdoorEmitter {
    * Removes a handler for a backdoor action.
    * By default, unremoved handlers will prevent new handlers from being set.
    */
-  removeActionHandler(actionName) {
+  clearActionHandler(actionName) {
     delete this._handlers[actionName];
+  }
+
+  /**
+   * Adds a listener for a backdoor action.
+   * There can be multiple listeners per action, but you cannot return a value from a listener.
+   * @param {string} actionName
+   * @param {function} listener
+   * @throws {Error} if actionName is not a string
+   * @throws {Error} if listener is not a function
+   * @example
+   * detoxBackdoor.addActionListener('logMessage', ({ message }) => {
+   *   console.log(message);
+   * });
+   */
+  addActionListener(actionName, listener) {
+    if (typeof actionName !== 'string') {
+      throw new Error('Detox backdoor action name must be a string');
+    }
+
+    if (typeof listener !== 'function') {
+      throw new Error(`Detox backdoor listener for action "${actionName}" must be a function`);
+    }
+
+    if (!this._listeners[actionName]) {
+      this._listeners[actionName] = [];
+    }
+
+    this._listeners[actionName].push(listener);
+  }
+
+  /**
+   * Removes a listener for a backdoor action.
+   * @param {string} actionName
+   * @param {function} listener
+   * @throws {Error} if actionName is not a string
+   * @throws {Error} if listener is not a function
+   */
+  removeActionListener(actionName, listener) {
+    if (typeof actionName !== 'string') {
+      throw new Error('Detox backdoor action name must be a string');
+    }
+
+    if (typeof listener !== 'function') {
+      throw new Error(`Detox backdoor listener for action "${actionName}" must be a function`);
+    }
+
+    const listeners = this._listeners[actionName];
+    if (listeners) {
+      const index = listeners.indexOf(listener);
+      if (index !== -1) {
+        listeners.splice(index, 1);
+      }
+    }
   }
 
   /**
@@ -72,6 +122,23 @@ export class BackdoorEmitter {
       throw new Error(message);
     } else {
       console.warn(message);
+    }
+  };
+
+  /** @private */
+  _onBackdoorEvent = (event) => {
+    const listeners = this._listeners[event.action];
+    if (listeners) {
+      for (const listener of listeners) {
+        listener(event);
+      }
+    }
+
+    const handler = this._handlers[event.action];
+    if (handler) {
+      handler(event);
+    } else if (!listeners) {
+      this.onUnhandledAction(event);
     }
   };
 }
