@@ -412,9 +412,9 @@ detoxBackdoor.clearActionHandler('my-testing-action');
 // You can supress errors about overwriting existing handlers
 detoxBackdoor.strict = false;
 
-// If you want to have multiple listeners for the same action, you can use `registerActionListener` instead
+// If you want to have multiple listeners for the same action, you can use `addActionListener` instead
 const listener = ({ arg1, arg2 }) => { /* Note that you can't return a value from a listener */ };
-detoxBackdoor.registerActionListener('my-testing-action', listener);
+detoxBackdoor.addActionListener('my-testing-action', listener);
 // You can remove a listener the same way as a handler
 detoxBackdoor.removeActionListener('my-testing-action');
 
