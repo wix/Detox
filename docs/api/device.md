@@ -415,8 +415,8 @@ detoxBackdoor.strict = false;
 // If you want to have multiple listeners for the same action, you can use `addActionListener` instead
 const listener = ({ arg1, arg2 }) => { /* Note that you can't return a value from a listener */ };
 detoxBackdoor.addActionListener('my-testing-action', listener);
-// You can remove a listener the same way as a handler
-detoxBackdoor.removeActionListener('my-testing-action');
+// You can remove a listener in a similar way
+detoxBackdoor.removeActionListener('my-testing-action', listener);
 
 // You can set a global handler for all actions without a handler and listeners
 detoxBackdoor.onUnhandledAction = ({ action, ...params }) => {
