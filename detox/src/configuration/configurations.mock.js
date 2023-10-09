@@ -1,9 +1,3 @@
-const InstrumentsArtifactPlugin = require('../artifacts/instruments/InstrumentsArtifactPlugin');
-const LogArtifactPlugin = require('../artifacts/log/LogArtifactPlugin');
-const ScreenshotArtifactPlugin = require('../artifacts/screenshot/ScreenshotArtifactPlugin');
-const IosUIHierarchyPlugin = require('../artifacts/uiHierarchy/IosUIHierarchyPlugin');
-const VideoArtifactPlugin = require('../artifacts/video/VideoArtifactPlugin');
-
 const defaultArtifactsConfiguration = {
   rootDir: 'artifacts',
   pathBuilder: null,
@@ -29,25 +23,25 @@ const allArtifactsConfiguration = {
 };
 
 const pluginsDefaultsResolved = {
-  log: LogArtifactPlugin.parseConfig('none'),
-  screenshot: ScreenshotArtifactPlugin.parseConfig('manual'),
-  video: VideoArtifactPlugin.parseConfig('none'),
-  instruments: InstrumentsArtifactPlugin.parseConfig('none'),
-  uiHierarchy: IosUIHierarchyPlugin.parseConfig('disabled'),
+  log: 'none',
+  screenshot: 'manual',
+  video: 'none',
+  instruments: 'none',
+  uiHierarchy: 'disabled',
 };
 
 const pluginsFailingResolved = {
-  log: LogArtifactPlugin.parseConfig('failing'),
-  screenshot: ScreenshotArtifactPlugin.parseConfig('failing'),
-  video: VideoArtifactPlugin.parseConfig('failing'),
+  log: 'failing',
+  screenshot: 'failing',
+  video: 'failing',
 };
 
 const pluginsAllResolved = {
-  log: LogArtifactPlugin.parseConfig('all'),
-  screenshot: ScreenshotArtifactPlugin.parseConfig('all'),
-  video: VideoArtifactPlugin.parseConfig('all'),
-  instruments: InstrumentsArtifactPlugin.parseConfig('all'),
-  uiHierarchy: IosUIHierarchyPlugin.parseConfig('enabled'),
+  log: 'all',
+  screenshot: 'all',
+  video: 'all',
+  instruments: 'all',
+  uiHierarchy: 'enabled',
 };
 
 const appWithNoBinary = {

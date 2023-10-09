@@ -31,17 +31,7 @@ function assertArtifactExists(pattern) {
   }
 }
 
-async function waitUntilArtifactsManagerIsIdle() {
-  if (typeof __waitUntilArtifactsManagerIsIdle__ !== 'undefined') {
-    await __waitUntilArtifactsManagerIsIdle__();
-  } else {
-    console.warn('!!! waitUntilArtifactsManagerIsIdle NOT FOUND !!!');
-  }
-}
-
 module.exports = {
-  getLatestArtifactsDir,
   assertArtifactExists,
   assertDirExists,
-  waitUntilArtifactsManagerIsIdle,
 };

@@ -4,7 +4,7 @@ const path = require('path');
 const exec = require('child-process-promise').exec;
 const _ = require('lodash');
 
-const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
+const temporaryPath = require('../../../../utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../../utils/logger').child({ cat: 'device' });

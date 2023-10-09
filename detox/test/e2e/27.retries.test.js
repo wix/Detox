@@ -5,7 +5,6 @@ const jestExpect = require('expect').default;
 
 const {
   assertArtifactExists,
-  waitUntilArtifactsManagerIsIdle,
 } = require('./utils/artifactUtils');
 
 describe('jest.retryTimes() support', () => {
@@ -28,8 +27,6 @@ describe('jest.retryTimes() support', () => {
   });
 
   afterAll(async () => {
-    await waitUntilArtifactsManagerIsIdle();
-
     assertArtifactExists('✗ jest.retryTimes() support should fail twice and pass once');
     assertArtifactExists('✗ jest.retryTimes() support should fail twice and pass once (2)');
     assertArtifactExists('✓ jest.retryTimes() support should fail twice and pass once (3)');

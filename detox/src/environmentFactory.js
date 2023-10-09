@@ -1,5 +1,4 @@
 // @ts-nocheck
-const artifactsManagerFactories = require('./artifacts/factories');
 const deviceAllocationFactories = require('./devices/allocation/factories');
 const runtimeDeviceFactories = require('./devices/runtime/factories');
 const envValidationFactories = require('./devices/validation/factories');
@@ -27,7 +26,6 @@ function createFactories(deviceConfig) {
   if (classes) {
     return {
       envValidatorFactory: new classes.envValidatorFactoryClass(),
-      artifactsManagerFactory: new classes.artifactsManagerFactoryClass(),
       deviceAllocatorFactory: new classes.deviceAllocatorFactoryClass(),
       matchersFactory: new classes.matchersFactoryClass(),
       runtimeDeviceFactory: new classes.runtimeDeviceFactoryClass(),
@@ -38,7 +36,6 @@ function createFactories(deviceConfig) {
 
 function _getFactoryClasses(deviceConfig) {
   let envValidatorFactoryClass;
-  let artifactsManagerFactoryClass;
   let deviceAllocatorFactoryClass;
   let matchersFactoryClass;
   let runtimeDeviceFactoryClass;
@@ -47,7 +44,6 @@ function _getFactoryClasses(deviceConfig) {
     case 'android.emulator':
       envValidatorFactoryClass = envValidationFactories.Noop;
       deviceAllocatorFactoryClass = deviceAllocationFactories.AndroidEmulator;
-      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
       matchersFactoryClass = matchersFactories.Android;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.AndroidEmulator;
       break;
@@ -55,7 +51,6 @@ function _getFactoryClasses(deviceConfig) {
     case 'android.attached':
       envValidatorFactoryClass = envValidationFactories.Noop;
       deviceAllocatorFactoryClass = deviceAllocationFactories.AndroidAttached;
-      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
       matchersFactoryClass = matchersFactories.Android;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.AndroidAttached;
       break;
@@ -63,7 +58,6 @@ function _getFactoryClasses(deviceConfig) {
     case 'android.genycloud':
       envValidatorFactoryClass = envValidationFactories.Genycloud;
       deviceAllocatorFactoryClass = deviceAllocationFactories.Genycloud;
-      artifactsManagerFactoryClass = artifactsManagerFactories.Android;
       matchersFactoryClass = matchersFactories.Android;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.Genycloud;
       break;
@@ -71,7 +65,6 @@ function _getFactoryClasses(deviceConfig) {
     case 'ios.simulator':
       envValidatorFactoryClass = envValidationFactories.IosSimulator;
       deviceAllocatorFactoryClass = deviceAllocationFactories.IosSimulator;
-      artifactsManagerFactoryClass = artifactsManagerFactories.IosSimulator;
       matchersFactoryClass = matchersFactories.Ios;
       runtimeDeviceFactoryClass = runtimeDeviceFactories.IosSimulator;
       break;
@@ -83,7 +76,6 @@ function _getFactoryClasses(deviceConfig) {
 
   return {
     envValidatorFactoryClass,
-    artifactsManagerFactoryClass,
     deviceAllocatorFactoryClass,
     matchersFactoryClass,
     runtimeDeviceFactoryClass,
@@ -97,7 +89,6 @@ function _getExternalModuleFactories(deviceConfig) {
   return {
     envValidatorFactory: new envValidationFactories.External(module),
     deviceAllocatorFactory: new deviceAllocationFactories.External(module),
-    artifactsManagerFactory: new artifactsManagerFactories.External(module),
     matchersFactory: new matchersFactories.External(module, modulePath),
     runtimeDeviceFactory: new runtimeDeviceFactories.External(module, modulePath),
   };

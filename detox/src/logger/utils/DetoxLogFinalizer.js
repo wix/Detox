@@ -2,7 +2,7 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-const temporary = require('../../artifacts/utils/temporaryPath');
+const temporary = require('../../utils/temporaryPath');
 
 const { BunyanTransformer, ChromeTraceTransformer } = require('./streams');
 

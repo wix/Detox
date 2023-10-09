@@ -6,7 +6,6 @@ const { PNG } = require('pngjs');
 const {
   assertArtifactExists,
   assertDirExists,
-  waitUntilArtifactsManagerIsIdle
 } = require('./utils/artifactUtils');
 
 describe('Artifacts', () => {
@@ -49,8 +48,6 @@ describe('Artifacts', () => {
     });
 
     afterAll(async () => {
-      await waitUntilArtifactsManagerIsIdle();
-
       assertArtifactExists('Artifacts_before all.png');
       assertArtifactExists('✓ Artifacts screenshots should take screenshots inside test/taps - 1.png');
       assertArtifactExists('✓ Artifacts screenshots should take screenshots inside test/taps - 2.png');
@@ -92,7 +89,6 @@ describe('Artifacts', () => {
     });
 
     afterAll(async () => {
-      await waitUntilArtifactsManagerIsIdle();
       assertArtifactExists('before tests.viewhierarchy');
       assertArtifactExists('✓ Artifacts _ios_ View Hierarchy should capture anonymous view hierarchies upon manual request/capture.viewhierarchy');
       assertArtifactExists('✓ Artifacts _ios_ View Hierarchy should capture anonymous view hierarchies upon manual request/capture.viewhierarchy');
@@ -113,7 +109,6 @@ describe('Artifacts', () => {
       });
 
       afterAll(async () => {
-        await waitUntilArtifactsManagerIsIdle();
         assertArtifactExists('✓ Artifacts _ios_ View Hierarchy edge uninstall case should capture hierarchy regardless/ui3.viewhierarchy');
       });
 
@@ -139,7 +134,6 @@ describe('Artifacts', () => {
     });
 
     afterAll(async () => {
-      await waitUntilArtifactsManagerIsIdle();
       assertArtifactExists('✓ Artifacts device log creation should create device log for non-running app/device.log');
       assertArtifactExists('✓ Artifacts device log creation should create device log for calling terminate/device.log');
       assertArtifactExists('✓ Artifacts device log creation should create device log for calling launch app/device.log');

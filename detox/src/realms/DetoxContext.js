@@ -1,6 +1,6 @@
 const funpermaproxy = require('funpermaproxy');
 
-const temporary = require('../artifacts/utils/temporaryPath');
+const temporary = require('../utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const { DetoxLogger, DetoxLogFinalizer, installLegacyTracerInterface } = require('../logger');
 

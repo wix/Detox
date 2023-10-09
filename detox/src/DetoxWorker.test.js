@@ -1,5 +1,4 @@
 // @ts-nocheck
-const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 const Deferred = require('./utils/Deferred');
 
@@ -25,11 +24,9 @@ describe('DetoxWorker', () => {
   let detoxContext;
 
   let envValidatorFactory;
-  let artifactsManagerFactory;
   let deviceAllocatorFactory;
   let matchersFactory;
   let runtimeDeviceFactory;
-  let artifactsManager;
 
   let logger;
   let Client;
@@ -48,7 +45,6 @@ describe('DetoxWorker', () => {
     environmentFactory.createFactories.mockReturnValue({
       envValidatorFactory,
       deviceAllocatorFactory,
-      artifactsManagerFactory,
       matchersFactory,
       runtimeDeviceFactory,
     });
@@ -173,12 +169,6 @@ describe('DetoxWorker', () => {
       it('should expose matchers to global', () =>
         expect(global.globalMatcher).toBe(mockGlobalMatcher));
 
-      it('should create artifacts manager', () =>
-        expect(artifactsManagerFactory.createArtifactsManager).toHaveBeenCalledWith(detoxConfig.artifacts, expect.objectContaining({
-          client: client(),
-          eventEmitter: eventEmitter(),
-        })));
-
       it('should select and reinstall the app', () => {
         expect(runtimeDevice.selectApp).toHaveBeenCalledWith('default');
         expect(runtimeDevice.uninstallApp).toHaveBeenCalled();
@@ -287,83 +277,6 @@ describe('DetoxWorker', () => {
         detoxContext[symbols.allocateDevice].mockRejectedValue(new Error('Mock validation failure'));
         await expect(init).rejects.toThrowError('Mock validation failure');
       });
-    });
-  });
-
-  describe('when DetoxWorker#@onTestStart() is called', () => {
-    beforeEach(async () => {
-      detox = await new Detox(detoxContext).init();
-    });
-
-    it('should validate test summary object', async () => {
-      await expect(detox.onTestStart('Test')).rejects.toThrowError(
-        /Invalid test summary was passed/
-      );
-    });
-
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
-    });
-
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
-    });
-
-    describe('with a valid test summary', () => {
-      beforeEach(() => detox.onTestStart(testSummaries.running()));
-
-      it('should notify artifacts manager about "testStart', () =>
-        expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
-
-      it('should not relaunch app', async () => {
-        await detox.onTestStart(testSummaries.running());
-        expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
-      });
-
-      it('should not dump pending network requests', async () => {
-        await detox.onTestStart(testSummaries.running());
-        expect(client().dumpPendingRequests).not.toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('when DetoxWorker#@onTestDone() is called', () => {
-    beforeEach(async () => {
-      detox = await new Detox(detoxContext).init();
-      await detox.onTestStart(testSummaries.running());
-    });
-
-    it('should validate non-object test summary', () =>
-      expect(detox.onTestDone).rejects.toThrowError(/Invalid test summary was passed/));
-
-    it('should validate against invalid test summary status', () =>
-      expect(detox.onTestDone({})).rejects.toThrowError(/Invalid test summary status/));
-
-    describe('with a passing test summary', () => {
-      beforeEach(() => detox.onTestDone(testSummaries.passed()));
-
-      it('should notify artifacts manager about "testDone"', () =>
-        expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
-    });
-
-    describe('with a failed test summary (due to failed asseration)', () => {
-      beforeEach(() => detox.onTestDone(testSummaries.failed()));
-
-      it('should not dump pending network requests', () =>
-        expect(client().dumpPendingRequests).not.toHaveBeenCalled());
-    });
-
-    describe('with a failed test summary (due to a timeout)', () => {
-      beforeEach(() => detox.onTestDone(testSummaries.timedOut()));
-
-      it('should dump pending network requests', () =>
-        expect(client().dumpPendingRequests).toHaveBeenCalled());
     });
   });
 
@@ -507,12 +420,6 @@ describe('DetoxWorker', () => {
         it(`should free the device`, () =>
           expect(detoxContext[symbols.deallocateDevice]).toHaveBeenCalledWith(fakeCookie));
 
-        it(`should trigger artifactsManager.onBeforeCleanup()`, () =>
-          expect(artifactsManager.onBeforeCleanup).toHaveBeenCalled());
-
-        it(`should dump pending network requests`, () =>
-          expect(client().dumpPendingRequests).toHaveBeenCalled());
-
         it(`should clean up the exposed globals`, () =>
           expect(global).not.toHaveProperty('device'));
       });
@@ -532,36 +439,12 @@ describe('DetoxWorker', () => {
     });
   });
 
-  describe.each([
-    ['onRunDescribeStart', { name: 'testSuiteName' }],
-    ['onTestStart', testSummaries.running()],
-    ['onHookFailure', { error: new Error() }],
-    ['onTestFnFailure', { error: new Error() }],
-    ['onTestDone', testSummaries.passed()],
-    ['onRunDescribeFinish', { name: 'testSuiteName' }],
-  ])('when DetoxWorker#@%s(%j) is called', (method, arg) => {
-    beforeEach(async () => {
-      detox = await new Detox(detoxContext).init();
-    });
-
-    it(`should pass it through to artifactsManager.${method}()`, async () => {
-      await detox[method](arg);
-      expect(artifactsManager[method]).toHaveBeenCalledWith(arg);
-    });
-  });
-
   function mockEnvironmentFactories() {
     const EnvValidator = jest.genMockFromModule('./devices/validation/EnvironmentValidatorBase');
     const EnvValidatorFactory = jest.genMockFromModule('./devices/validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);
-
-    const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
-    const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').External;
-    artifactsManager = new ArtifactsManager();
-    artifactsManagerFactory = new ArtifactsManagerFactory();
-    artifactsManagerFactory.createArtifactsManager.mockReturnValue(artifactsManager);
 
     const MatchersFactory = jest.genMockFromModule('./matchers/factories/index').External;
     matchersFactory = new MatchersFactory();

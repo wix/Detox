@@ -8,12 +8,6 @@
  *   readonly allocateDevice: unique symbol;
  *   readonly deallocateDevice: unique symbol;
  *   readonly logger: unique symbol;
- *   readonly onHookFailure: unique symbol;
- *   readonly onRunDescribeFinish: unique symbol;
- *   readonly onRunDescribeStart: unique symbol;
- *   readonly onTestDone: unique symbol;
- *   readonly onTestFnFailure: unique symbol;
- *   readonly onTestStart: unique symbol;
  *   readonly conductEarlyTeardown: unique symbol;
  *   readonly reportTestResults: unique symbol;
  *   readonly resolveConfig: unique symbol;
@@ -24,15 +18,6 @@
  * }}
  */
 module.exports = {
-  //#region Lifecycle
-  onRunDescribeStart: Symbol('run_describe_start'),
-  onTestStart: Symbol('test_start'),
-  onHookFailure: Symbol('hook_failure'),
-  onTestFnFailure: Symbol('test_fn_failure'),
-  onTestDone: Symbol('test_done'),
-  onRunDescribeFinish: Symbol('run_describe_finish'),
-  //#endregion
-
   //#region IPC
   reportTestResults: Symbol('reportTestResults'),
   conductEarlyTeardown: Symbol('conductEarlyTeardown'),

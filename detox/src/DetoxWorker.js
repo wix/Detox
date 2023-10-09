@@ -16,7 +16,6 @@ class DetoxWorker {
     this._config = context[symbols.config];
     this._runtimeErrorComposer = new DetoxRuntimeErrorComposer(this._config);
     this._client = null;
-    this._artifactsManager = null;
     this._eventEmitter = new AsyncEmitter({
       events: [
         'bootDevice',
@@ -35,8 +34,6 @@ class DetoxWorker {
 
     /** @type {DetoxInternals.RuntimeConfig['apps']} */
     this._appsConfig = null;
-    /** @type {DetoxInternals.RuntimeConfig['artifacts']} */
-    this._artifactsConfig = null;
     /** @type {DetoxInternals.RuntimeConfig['behavior']} */
     this._behaviorConfig = null;
     /** @type {DetoxInternals.RuntimeConfig['device']} */
@@ -68,29 +65,19 @@ class DetoxWorker {
     this._reinstallAppsOnDevice = CAF(this._reinstallAppsOnDevice.bind(this));
     this._initToken = new CAF.cancelToken();
 
-    this._cafWrap([
-      'init',
-      'onRunDescribeStart',
-      'onTestStart',
-      'onHookFailure',
-      'onTestFnFailure',
-      'onTestDone',
-      'onRunDescribeFinish',
-    ]);
+    this._cafWrap('init');
   }
 
   /** @this {DetoxWorker} */
   init = function* (signal) {
     const {
       apps: appsConfig,
-      artifacts: artifactsConfig,
       behavior: behaviorConfig,
       device: deviceConfig,
       session: sessionConfig
     } = this._config;
 
     this._appsConfig = appsConfig;
-    this._artifactsConfig = artifactsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
     this._sessionConfig = sessionConfig;
@@ -114,8 +101,6 @@ class DetoxWorker {
       // @ts-ignore
       envValidatorFactory,
       // @ts-ignore
-      artifactsManagerFactory,
-      // @ts-ignore
       matchersFactory,
       // @ts-ignore
       runtimeDeviceFactory,
@@ -131,7 +116,6 @@ class DetoxWorker {
       runtimeErrorComposer: this._runtimeErrorComposer,
     };
 
-    this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
     this._deviceCookie = yield this._context[symbols.allocateDevice]();
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
@@ -186,13 +170,7 @@ class DetoxWorker {
       delete DetoxWorker.global[key];
     }
 
-    if (this._artifactsManager) {
-      await this._artifactsManager.onBeforeCleanup();
-      this._artifactsManager = null;
-    }
-
     if (this._client) {
-      this._client.dumpPendingRequests();
       await this._client.cleanup();
       this._client = null;
     }
@@ -214,44 +192,6 @@ class DetoxWorker {
     return this._context.log;
   }
 
-  onRunDescribeStart = function* (_signal, ...args) {
-    yield this._artifactsManager.onRunDescribeStart(...args);
-  };
-
-  onTestStart = function* (_signal, testSummary) {
-    this._validateTestSummary('beforeEach', testSummary);
-
-    yield this._dumpUnhandledErrorsIfAny({
-      pendingRequests: false,
-      testName: testSummary.fullName,
-    });
-
-    yield this._artifactsManager.onTestStart(testSummary);
-  };
-
-  onHookFailure = function* (_signal, ...args) {
-    yield this._artifactsManager.onHookFailure(...args);
-  };
-
-  onTestFnFailure = function* (_signal, ...args) {
-    yield this._artifactsManager.onTestFnFailure(...args);
-  };
-
-  onTestDone = function* (_signal, testSummary) {
-    this._validateTestSummary('afterEach', testSummary);
-
-    yield this._artifactsManager.onTestDone(testSummary);
-
-    yield this._dumpUnhandledErrorsIfAny({
-      pendingRequests: testSummary.timedOut,
-      testName: testSummary.fullName,
-    });
-  };
-
-  onRunDescribeFinish = function* (_signal, ...args) {
-    yield this._artifactsManager.onRunDescribeFinish(...args);
-  };
-
   *_reinstallAppsOnDevice(_signal) {
     const appNames = _(this._appsConfig)
       .map((config, key) => [key, `${config.binaryPath}:${config.testBinaryPath}`])
@@ -270,27 +210,6 @@ class DetoxWorker {
     }
   }
 
-  _validateTestSummary(methodName, testSummary) {
-    if (!_.isPlainObject(testSummary)) {
-      throw this._runtimeErrorComposer.invalidTestSummary(methodName, testSummary);
-    }
-
-    switch (testSummary.status) {
-      case 'running':
-      case 'passed':
-      case 'failed':
-        break;
-      default:
-        throw this._runtimeErrorComposer.invalidTestSummaryStatus(methodName, testSummary);
-    }
-  }
-
-  async _dumpUnhandledErrorsIfAny({ testName, pendingRequests }) {
-    if (pendingRequests) {
-      this._client.dumpPendingRequests({ testName });
-    }
-  }
-
   _onEmitError({ error, eventName, eventObj }) {
     this.log.error(
       { event: 'EMIT_ERROR', fn: eventName },
@@ -299,7 +218,7 @@ class DetoxWorker {
     );
   }
 
-  _cafWrap(methodNames) {
+  _cafWrap(...methodNames) {
     for (const methodName of methodNames) {
       const cafMethod = CAF(this[methodName].bind(this));
       this[methodName] = async (...args) => {
@@ -315,7 +234,6 @@ class DetoxWorker {
       };
     }
   }
-
 }
 
 /**
