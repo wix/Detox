@@ -1,4 +1,5 @@
 const path = require('path');
+const _ = require('lodash');
 const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
@@ -7,15 +8,33 @@ const maxWorkersMap = {
   'ios.simulator': 2,
 };
 
+
 module.exports = async () => {
   const config = await resolveConfig();
 
+  /** @type {import('jest-allure2-reporter').ReporterOptions} */
+  const jestAllure2ReporterOptions = {
+    overwrite: !process.env.CI,
+    testCase: {
+      labels: {
+        package: ({ filePath }) => filePath.slice(1).join('/'),
+        testMethod: ({ testCase }) => testCase.fullName,
+        tag: ['e2e', ...config.configurationName.split('.')],
+      },
+    },
+    environment: () => ({
+      'version.node': process.version,
+      'version.jest': require('jest/package.json').version,
+      ..._(process.env)
+        .pickBy((_1, key) => key.match(/detox/i))
+        .mapKeys((_1, key) => 'env.' + key)
+        .value()
+    }),
+  };
+
   const reporters = [
     '<rootDir>/runners/jest/reporter',
-    ['jest-allure2-reporter', {
-      getEnvironmentInfo: false,
-      overwriteResultsDir: !process.env.CI,
-    }]
+    ['jest-allure2-reporter', jestAllure2ReporterOptions],
   ];
 
   if (process.env.DISABLE_JUNIT_REPORTER !== '1') {
