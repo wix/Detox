@@ -8,10 +8,6 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  logger: {
-    level: process.env.CI ? 'debug' : undefined,
-  },
-
   testRunner: {
     args: {
       $0: 'nyc jest',
