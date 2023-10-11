@@ -1,3 +1,5 @@
+const { androidBaseAppConfig } = require('./detox.config-android');
+
 const launchArgs = {
   app: 'le',
   goo: 'gle?',
@@ -6,10 +8,6 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  logger: {
-    level: process.env.CI ? 'debug' : undefined,
-  },
-
   testRunner: {
     args: {
       $0: 'nyc jest',
@@ -55,6 +53,7 @@ const config = {
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      start: 'react-native start',
       bundleId: 'com.wix.detox-example',
     },
 
@@ -66,50 +65,28 @@ const config = {
     },
 
     'android.debug': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('debug'),
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: 'cd android && ./gradlew assembleFromBinDebug assembleFromBinDebugAndroidTest -DtestBuildType=debug && cd ..',
+      start: 'react-native start',
       reversePorts: [8081],
     },
 
     'android.debug.withArgs': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('debug'),
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/debug/app-fromBin-debug.apk',
-      build: ':',
-      reversePorts: [8081],
-      launchArgs,
-    },
-
-    'android.fromSource': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
-      build: 'cd android && ./gradlew assembleFromSourceDebug assembleFromSourceDebugAndroidTest -DtestBuildType=debug && cd ..',
-      reversePorts: [8081],
-    },
-
-    'android.fromSource.withArgs': {
-      type: 'android.apk',
-      name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromSource/debug/app-fromSource-debug.apk',
       build: ':',
       reversePorts: [8081],
       launchArgs,
     },
 
     'android.release': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('release'),
       name: 'example',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
-      build: 'cd android && ./gradlew assembleFromBinRelease assembleFromBinReleaseAndroidTest -DtestBuildType=release && cd ..',
     },
 
     'android.release.withArgs': {
-      type: 'android.apk',
+      ...androidBaseAppConfig('release'),
       name: 'exampleWithArgs',
-      binaryPath: 'android/app/build/outputs/apk/fromBin/release/app-fromBin-release.apk',
       build: ':',
       launchArgs,
     },
@@ -130,6 +107,13 @@ const config = {
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
+      },
+    },
+
+    'android.attached': {
+      type: 'android.attached',
+      device: {
+        adbName: '.*'
       },
     },
 
@@ -190,13 +174,13 @@ const config = {
       device: 'android.emulator',
       apps: ['android.debug', 'android.debug.withArgs'],
     },
-    'android.emu.debug.fromSource': {
-      device: 'android.emulator',
-      apps: ['android.fromSource', 'android.fromSource.withArgs'],
-    },
     'android.emu.release': {
       device: 'android.emulator',
       apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.genycloud.debug': {
+      device: 'android.genycloud.uuid',
+      apps: ['android.debug'],
     },
     'android.genycloud.release': {
       device: 'android.genycloud.uuid',

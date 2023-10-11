@@ -26,6 +26,12 @@ Match elements with the specified accessibility identifier. In React Native, thi
 element(by.id('tap_me'));
 ```
 
+Supports [regex matching](#regex-matching).
+
+```js
+element(by.id(/^tap_[a-z]+$/));
+```
+
 ### `by.label(label)`
 
 Match elements with the specified accessibility label (iOS) or content description (Android). In React Native, this corresponds to the value in the [`accessibilityLabel`](https://reactnative.dev/docs/accessibility#accessibilitylabel) prop.
@@ -34,12 +40,24 @@ Match elements with the specified accessibility label (iOS) or content descripti
 element(by.label('Welcome'));
 ```
 
+Supports [regex matching](#regex-matching).
+
+```js
+element(by.label(/[a-z]+/i));
+```
+
 ### `by.text(text)`
 
 Match elements with the specified text.
 
 ```js
 element(by.text('Tap Me'));
+```
+
+Supports [regex matching](#regex-matching).
+
+```js
+element(by.text(/^Tap .*$/));
 ```
 
 ### `by.type(className)`
@@ -116,4 +134,28 @@ On iOS, matched elements are sorted by their x and y axes.
 
 ```js
 element(by.text('Product')).atIndex(2);
+```
+
+## Regex matching
+
+For supported matchers ([`id`](#byidid), [`label`](#bylabellabel), [`text`](#bytexttext)), you can also utilize regex (Regular Expressions) alongside certain flags. Here's a table with the supported flags:
+
+| Flag | Name          | Modification                                                                                                                                             |
+| ---- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `i`  | Ignore Casing | Makes the expression search case-insensitively.                                                                                                          |
+| `s`  | Dot All       | Makes the wild character `.` match newlines as well.                                                                                                     |
+| `m`  | Multiline     | Makes the boundary characters (`^` and `$`) match the beginning and ending of every single line instead of the beginning and ending of the whole string. |
+
+:::caution Note
+
+Regular expression flags such as `g` (global) and `y` (sticky) that are not supported, as well as `u` (unicode) which is always implied, are ignored when parsing input.
+
+Pay attention that as of writing this note, Android supports lookbehind assertions in its regular expression implementation, while iOS does not. It's advisable to check the official platform-specific documentation for limitations.
+
+:::
+
+The following sample code snippet matches text starting with "Tap" followed by any number of alphabetic characters, case-insensitively:
+
+```js
+element(by.text(/Tap [A-Za-z]+/i));
 ```

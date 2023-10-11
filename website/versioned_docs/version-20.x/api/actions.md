@@ -26,6 +26,7 @@ Use [expectations](expect.md) to verify element states.
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
 - [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
+- [`.performAccessibilityAction()`](#performaccessibilityactionactionname)
 
 ### `tap(point)`
 
@@ -233,7 +234,7 @@ Sets the date-picker’s date to the specified date and time.
 `dateString`—The date to set. Should match the format provided by `dateFormat`.<br/>
 `dateFormat`—The format of `dateString`. Should be either [`'ISO8601'`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString), or an explicit date representation format, as supported by [`NSDateFormatter`] on iOS / [`DateTimeFormatter`] on Android (e.g. `'yyyy/MM/dd'`).
 
->_The recommended `dateFormat` is `ISO8601`._
+> _The recommended `dateFormat` is `ISO8601`._
 
 Examples:
 
@@ -277,7 +278,7 @@ Returns an object, representing various attributes of the element.
 Retrieved attributes are:
 
 - `text`: The text value of any textual element.
-- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android.
+- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android. Refer to the [`.toHaveLabel()` API](./expect.md#tohavelabellabel) in order to learn about caveats associated with this attribute in React Native apps.
 - `placeholder`: The placeholder text value of the element. Matches `hint` on android.
 - `enabled`: Whether the element is enabled for user interaction.
 - `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component’s test ID in React Native apps**.
@@ -330,6 +331,16 @@ Takes a screenshot of the matched element. For full details on taking screenshot
 
 `name`—the name of the screenshot
 
+### `performAccessibilityAction(actionName)`
+
+Triggers an [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
+
+`actionName`—the name of the accessibility action <br/>
+
+```js
+await element(by.id('scrollView')).performAccessibilityAction("activate");
+```
+
 ## Deprecated Methods
 
 - [`.tapAtPoint()`](#tapatpointpoint)
@@ -362,9 +373,15 @@ await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0)
 ```
 
 [`testID`]: ../guide/test-id.mdx
+
 [`by.type`]: ../api/matchers.md#bytypeclassname
+
 [`Date.prototype.toISOString()`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+
 [`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
+
 [`DateTimeFormatter`]: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
 [`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
+
 [PR datetimepicker#705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705

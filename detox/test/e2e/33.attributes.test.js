@@ -4,24 +4,23 @@ const expect = require('expect').default;
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
   let currentElement;
-  /** @type {Detox.ElementAttributes} */
+  /** @type {Detox.IosElementAttributes | Detox.AndroidElementAttributes} */
   let attributes;
-  /** @type {Detox.ElementAttributes[]} */
+  /** @type {Detox.IosElementAttributes[] | Detox.AndroidElementAttributes[]} */
   let attributesArray;
 
   /**
    * @param {Detox.NativeMatcher} matcher
    */
-  function useMatcher(matcher) {
-    return async () => {
-      currentElement = element(matcher);
-      const result = await currentElement.getAttributes();
-      if ('elements' in result) {
-        attributesArray = result.elements;
-      } else {
-        attributes = await result;
-      }
-    };
+  async function useMatcher(matcher) {
+    currentElement = element(matcher);
+    const result = await currentElement.getAttributes();
+
+    if ('elements' in result) {
+      attributesArray = result.elements;
+    } else {
+      attributes = result;
+    }
   }
 
   beforeAll(async () => {
@@ -30,7 +29,7 @@ describe('Attributes', () => {
   });
 
   describe('of a view', () => {
-    beforeAll(useMatcher(by.id('viewId')));
+    beforeAll(() => useMatcher(by.id('viewId')));
 
     it('should have the corresponding shape', () =>
       expect(attributes).toMatchObject({
@@ -60,7 +59,7 @@ describe('Attributes', () => {
   describe('of a text', () => {
     const EXPECTED_TEXT = 'TextView';
 
-    beforeAll(useMatcher(by.id('textViewId')));
+    beforeAll(() => useMatcher(by.id('textViewId')));
 
     it('should have the corresponding shape', () => {
       expect(attributes).toMatchObject({
@@ -89,9 +88,19 @@ describe('Attributes', () => {
     });
   });
 
+  describe('of a text group', () => {
+    const EXPECTED_TEXT = 'InnerText1 InnerText2';
+
+    beforeAll(() => useMatcher(by.id('textGroupRoot')));
+
+    it('should have a label based on text concatenation', () => {
+      expect(attributes).toMatchObject({ label: EXPECTED_TEXT });
+    });
+  });
+
   describe('of a text input', () => {
     describe('(blurred)', () => {
-      beforeAll(useMatcher(by.id('blurredTextInputId')));
+      beforeAll(() => useMatcher(by.id('blurredTextInputId')));
 
       it('should have the corresponding attributes', () => {
         expect(attributes).toMatchObject({
@@ -108,7 +117,7 @@ describe('Attributes', () => {
     });
 
     describe('(focused)', () => {
-      beforeAll(useMatcher(by.id('focusedTextInputId')));
+      beforeAll(() => useMatcher(by.id('focusedTextInputId')));
 
       it('should have the corresponding attributes', () => {
         expect(attributes).toMatchObject({
@@ -126,7 +135,7 @@ describe('Attributes', () => {
   });
 
   describe('of a checkbox', () => {
-    beforeAll(useMatcher(by.id('checkboxId')));
+    beforeAll(() => useMatcher(by.id('checkboxId')));
 
     it(':ios: should have a string .value', async () => {
       expect(await currentElement.getAttributes()).toMatchObject({
@@ -148,7 +157,7 @@ describe('Attributes', () => {
   });
 
   describe('of a legacy slider', () => {
-    beforeAll(useMatcher(by.id('legacySliderId')));
+    beforeAll(() => useMatcher(by.id('legacySliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
       expect(attributes).toMatchObject({ value: '50%', normalizedSliderPosition: 0.5 });
@@ -160,7 +169,7 @@ describe('Attributes', () => {
   });
 
   describe('of a slider', () => {
-    beforeAll(useMatcher(by.id('sliderId')));
+    beforeAll(() => useMatcher(by.id('sliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
       expect(attributes).toMatchObject({ value: '50%', normalizedSliderPosition: 0.5 });
@@ -172,7 +181,7 @@ describe('Attributes', () => {
   });
 
   describe('of a date picker', () => {
-    beforeAll(useMatcher(by.id('attrDatePicker')));
+    beforeAll(() => useMatcher(by.id('attrDatePicker')));
 
     it(':ios: should have Date .value', () => {
       expect(attributes).toMatchObject({
@@ -182,7 +191,7 @@ describe('Attributes', () => {
   });
 
   describe('of a scroll view', () => {
-    beforeAll(useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
+    beforeAll(() => useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
 
     it(':ios: should have offsets and insets', async () => {
       expect(attributes).toMatchObject({
@@ -194,41 +203,68 @@ describe('Attributes', () => {
   });
 
   describe('of multiple views', () => {
-    describe(':ios:', () => {
-      beforeAll(useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView'))));
+    it(':ios: should return an object with .elements array', async () => {
+      await useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView')));
 
-      it('should return an object with .elements array', async () => {
-        const viewShape = {
-          identifier: expect.any(String),
-          enabled: true,
-          visible: true,
-          activationPoint: shapes.Point2D(),
-          normalizedActivationPoint: shapes.Point2D(),
-          hittable: true,
-          frame: shapes.IosElementAttributeFrame(),
-          elementFrame: shapes.IosElementAttributeFrame(),
-          elementBounds: shapes.IosElementAttributeFrame(),
-          safeAreaInsets: shapes.IosElementAttributesInsets(),
-          elementSafeBounds: shapes.IosElementAttributeFrame(),
-          layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
-        };
+      const viewShape = {
+        identifier: expect.any(String),
+        enabled: true,
+        visible: true,
+        activationPoint: shapes.Point2D(),
+        normalizedActivationPoint: shapes.Point2D(),
+        hittable: true,
+        frame: shapes.IosElementAttributeFrame(),
+        elementFrame: shapes.IosElementAttributeFrame(),
+        elementBounds: shapes.IosElementAttributeFrame(),
+        safeAreaInsets: shapes.IosElementAttributesInsets(),
+        elementSafeBounds: shapes.IosElementAttributeFrame(),
+        layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
+      };
 
-        const innerViews = attributesArray.filter(a => a.identifier);
-        expect(innerViews.length).toBe(2);
-        expect(innerViews[0]).toMatchObject({ ...viewShape });
-        expect(innerViews[1]).toMatchObject({ ...viewShape });
-      });
+      const innerViews = attributesArray.filter(a => a.identifier);
+      expect(innerViews.length).toBe(2);
+      expect(innerViews[0]).toMatchObject({ ...viewShape });
+      expect(innerViews[1]).toMatchObject({ ...viewShape });
     });
 
-    describe(':android:', () => {
-      // TODO (@jonathanmos) : Can we decide something about it officially?
-      it('should throw an error (because it is not implemented)', async () => {
-        await expect(
-          element(
-            by.type('com.facebook.react.views.view.ReactViewGroup')
-              .withAncestor(by.id('attrScrollView'))
-          ).getAttributes()
-        ).rejects.toThrowError(/Problem views are marked with '.{4}MATCHES.{4}' below/m);
+    it(':android: should return an object with .elements array', async () => {
+      await useMatcher(by.type('com.facebook.react.views.view.ReactViewGroup').withAncestor(by.id('attrScrollView')));
+
+      expect(attributesArray.length).toBe(3);
+
+      const baseAttributes = {
+        visibility: 'visible',
+        visible: true,
+        alpha: 1,
+        elevation: 0,
+        focused: false,
+        enabled: true,
+      };
+
+      expect(attributesArray[0]).toMatchObject({
+        ...{
+          height: 394,
+          width: 1074,
+        },
+        ...baseAttributes
+      });
+
+      expect(attributesArray[1]).toMatchObject({
+        ...{
+          height: 197,
+          width: 262,
+          identifier: 'innerView1'
+        },
+        ...baseAttributes
+      });
+
+      expect(attributesArray[2]).toMatchObject({
+        ...{
+          height: 197,
+          width: 262,
+          identifier: 'innerView2'
+        },
+        ...baseAttributes
       });
     });
   });

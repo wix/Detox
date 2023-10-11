@@ -249,7 +249,7 @@ class DetoxLogger {
   _complete(level, maybeContext, maybeMessage, maybeAction) {
     const action = typeof maybeContext !== 'string' ? maybeAction : maybeMessage;
     const args = maybeAction === action ? [maybeContext, maybeMessage] : [maybeContext];
-    const { context, msg } = this._parseArgs(null, args);
+    const { context, msg } = this._parseArgs({ ph: 'B' }, args);
     const end = (ctx) => this[level].end({
       id: context.id,
       cat: context.cat,
@@ -257,7 +257,7 @@ class DetoxLogger {
     });
 
     let result;
-    this._beginInternal(level, { ...context, ph: 'B' }, msg);
+    this._beginInternal(level, context, msg);
     try {
       result = typeof action === 'function'
         ? action()
@@ -310,19 +310,19 @@ class DetoxLogger {
   /** @internal */
   static defaultOptions({ level }) {
     const ph = level === 'trace' || level === 'debug'
-      ? value => require('chalk').default.grey(value) + ' '
-      : value => require('chalk').default.grey(value);
+      ? value => require('chalk').grey(value) + ' '
+      : value => require('chalk').grey(value);
 
     const id = level === 'trace'
-      ? value => require('chalk').default.yellow(`@${value}`)
+      ? value => require('chalk').yellow(`@${value}`)
       : undefined;
 
     const cat = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').default.yellow(`${value}`.split(',', 1)[0])
+      ? (value) => require('chalk').yellow(`${value}`.split(',', 1)[0])
       : undefined;
 
     const event = level === 'trace' || level === 'debug'
-      ? (value) => require('chalk').default.grey(`:${value}`)
+      ? (value) => require('chalk').grey(`:${value}`)
       : undefined;
 
     const identity = x => x;

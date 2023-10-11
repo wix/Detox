@@ -12,7 +12,7 @@ const { isErrorAlreadyLogged } = require('./utils/cliErrorHandling');
 yargs
   .scriptName('detox')
   .parserConfiguration({
-    'boolean-negation': false,
+    'boolean-negation': true,
     'camel-case-expansion': false,
     'dot-notation': false,
     'duplicate-arguments-array': false,

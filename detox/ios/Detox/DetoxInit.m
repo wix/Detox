@@ -42,7 +42,7 @@ static DetoxSyncDebugger* _detoxSyncDebugger;
 #endif
 
 __attribute__((constructor))
-static void detoxConditionalInit()
+static void detoxConditionalInit(void)
 {
 	__DTXInstallCrashHandlersIfNeeded();
 	
@@ -67,10 +67,14 @@ static void detoxConditionalInit()
 		settings[@"enabled"] = @([syncEnabled boolValue]);
 	}
 	
-	NSArray *blacklistRegex = [options arrayForKey:@"detoxURLBlacklistRegex"];
+	NSString *blacklistRegex = [options stringForKey:@"detoxURLBlacklistRegex"];
 	if (blacklistRegex)
 	{
-		settings[@"blacklistURLs"] = blacklistRegex;
+	    NSCharacterSet* separatorOrUselessChars = [NSCharacterSet characterSetWithCharactersInString:@"()\", "];
+        NSArray* _blacklistArray = [blacklistRegex componentsSeparatedByCharactersInSet:separatorOrUselessChars];
+
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"length>1"];
+        settings[@"blacklistURLs"] = [_blacklistArray filteredArrayUsingPredicate:predicate];
 	}
 	
 	NSString* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];
@@ -84,4 +88,3 @@ static void detoxConditionalInit()
 	
 	[DTXDetoxManager.sharedManager startWithSynchronizationSettings:settings];
 }
-

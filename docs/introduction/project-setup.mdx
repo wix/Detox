@@ -149,6 +149,10 @@ patch or create if they are missing:
 
 Open your main build script and apply the suggested changes:
 
+:::note
+New Android projects won't have an `allprojects {}` section, so you will need to add it yourself.
+:::
+
 ```diff title="android/build.gradle"
  buildscript {
    ext {
@@ -171,14 +175,15 @@ Open your main build script and apply the suggested changes:
 
  allprojects {
    repositories {
-   …
-   google()
+     …
+     google()
 // highlight-start
-+  maven { // (4)
-+    url("$rootDir/../node_modules/detox/Detox-android")
-+  }
++    maven { // (4)
++      url("$rootDir/../node_modules/detox/Detox-android")
++    }
 // highlight-end
-   maven { url 'https://www.jitpack.io' }
+     maven { url 'https://www.jitpack.io' }
+   }
  }
 ```
 

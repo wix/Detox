@@ -18,6 +18,7 @@ class ADB {
 
   async devices() {
     const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high' });
+    /** @type {DeviceHandle[]} */
     const devices = _.chain(stdout)
       .trim()
       .split('\n')

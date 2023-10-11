@@ -4,8 +4,6 @@ if (process.platform === 'win32') {
 }
 
 jest.mock('../src/logger/DetoxLogger');
-jest.mock('../src/devices/DeviceRegistry');
-jest.mock('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
 jest.mock('./utils/jestInternals');
 
 const cp = require('child_process');
@@ -26,8 +24,6 @@ describe('CLI', () => {
   let _temporaryFiles;
   let detoxConfig;
   let detoxConfigPath;
-  let DeviceRegistry;
-  let GenyDeviceRegistryFactory;
   let jestInternals;
 
   let mockExecutable;
@@ -80,11 +76,6 @@ describe('CLI', () => {
     });
 
     logger = () => require('../src/logger/DetoxLogger').instances[0];
-    DeviceRegistry = require('../src/devices/DeviceRegistry');
-    DeviceRegistry.forAndroid.mockImplementation(() => new DeviceRegistry());
-    DeviceRegistry.forIOS.mockImplementation(() => new DeviceRegistry());
-    GenyDeviceRegistryFactory = require('../src/devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-    GenyDeviceRegistryFactory.forGlobalShutdown.mockImplementation(() => new DeviceRegistry());
   });
 
   afterEach(async () => {
@@ -167,6 +158,83 @@ describe('CLI', () => {
     await run(__loglevel, 'trace');
     expect(cliCall().env).toHaveProperty('DETOX_LOGLEVEL');
     expect(cliCall().fullCommand).toMatch(/ DETOX_LOGLEVEL="trace" /);
+  });
+
+  test('should run the start commands before the tests', async () => {
+    const startCmd = buildMockCommand({ ...mockExecutable.options });
+    singleConfig().apps.push({
+      name: 'app1',
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --app=1`,
+    }, {
+      name: 'app2',
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --app=2`,
+    });
+
+    await run();
+
+    expect([
+      cliCall(0).argv[1],
+      cliCall(1).argv[1],
+    ].sort()).toEqual(['--app=1', '--app=2']);
+    expect(cliCall(2).argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
+  });
+
+  test('should kill the start command after the tests', async () => {
+    const startCmd = buildMockCommand({ ...mockExecutable.options, sleep: 10000 });
+    singleConfig().apps.push({
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --some-start=command`,
+    });
+
+    await run();
+    expect(cliCall(0).argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
+    expect(cliCall(1)).toBe(null); // because the start command had been killed earlier than wrote the call details (10000ms)
+  }, 2000);
+
+  test('should not run tests if the start command fails', async () => {
+    const startCmd = buildMockCommand({ ...mockExecutable.options, exitCode: 1 });
+    singleConfig().apps.push({
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --some-start=command`,
+    });
+
+    await expect(run).rejects.toThrowError(/Command exited with code 1:.*--some-start=command/);
+    expect(cliCall(0).argv[1]).toBe('--some-start=command');
+    expect(cliCall(1)).toBe(null);
+  });
+
+  test('--start=force should run tests even though the start command fails', async () => {
+    const startCmd = buildMockCommand({ ...mockExecutable.options, exitCode: 1 });
+    singleConfig().apps.push({
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --some-start=command`,
+    });
+
+    await run('--start=force');
+    expect(cliCall(0).argv[1]).toBe('--some-start=command');
+    expect(cliCall(1).argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
+  });
+
+  test.each([
+    ['--no-start'],
+    ['--start=false'],
+  ])('%s should run tests without the start command', async (__start) => {
+    const startCmd = buildMockCommand({ ...mockExecutable.options, exitCode: 1 });
+    singleConfig().apps.push({
+      type: 'ios.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      start: `${startCmd.cmd} --some-start=command`,
+    });
+
+    await run(__start);
+    expect(cliCall(0).argv).toEqual([expect.stringContaining('executable'), '--config', 'e2e/config.json']);
   });
 
   test.each([['-R'], ['--retries']])('%s <value> should execute successful run once', async (__retries) => {

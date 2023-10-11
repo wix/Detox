@@ -4,17 +4,30 @@ import {
   View,
   ScrollView,
   Animated,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
 
 export default class WaitForScreen extends Component {
-
   constructor(props) {
     super(props);
+    this.textInputRef = React.createRef();
     this.state = {
-      clicked: false,
+      toggle: false,
       becomeVisibleLeft: new Animated.Value(-500)
     };
+  }
+
+  componentDidUpdate(prevProps, prevState, _) {
+    if (prevState.toggle === this.state.toggle) {
+      return;
+    }
+
+    if (this.state.toggle) {
+      this.textInputRef.current.focus();
+    } else {
+      this.textInputRef.current.blur();
+    }
   }
 
   render() {
@@ -34,16 +47,21 @@ export default class WaitForScreen extends Component {
           </ScrollView>
         </View>
 
-        {this.state.clicked ? false :
-         <Text testID='deletedFromHierarchyText' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>I am being removed 2 sec after click</Text>
+        {!this.state.toggle ? false :
+          <Text testID='changeExistenceByToggle' style={{marginBottom: 20, textAlign: 'center', color: 'red'}}>
+            I am being exist / removed 2 sec after click
+          </Text>
         }
 
-        {!this.state.clicked ? false :
-         <Text testID='createdAndVisibleText' style={{marginBottom: 20, textAlign: 'center'}}>I am being created 2 sec after click</Text>
-        }
+        <TextInput
+          testID='changeFocusByToggle'
+          style={{marginBottom: 20}}
+          value='I am focused / unfocused 2 sec after click'
+          ref={this.textInputRef}
+        />
 
         <TouchableOpacity onPress={this.onGoButtonPress.bind(this)}>
-          <Text testID='GoButton' style={{color: 'blue', textAlign: 'center'}}>Go</Text>
+          <Text testID='goButton' style={{color: 'blue', textAlign: 'center'}}>Go</Text>
         </TouchableOpacity>
 
       </View>
@@ -52,8 +70,10 @@ export default class WaitForScreen extends Component {
 
   onGoButtonPress() {
     setTimeout(() => {
+      let previousState = this.state.toggle;
+
       this.setState({
-        clicked: true
+        toggle: !previousState
       });
     }, 2000);
   }

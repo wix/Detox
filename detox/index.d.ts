@@ -331,6 +331,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             launchArgs?: Record<string, any>;
         }
 
@@ -339,6 +340,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             build?: string;
+            start?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
             /**
@@ -622,11 +624,14 @@ declare global {
             get(): object;
         }
 
+        type DigitWithoutZero = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+        type Digit = 0 | DigitWithoutZero;
+        type BatteryLevel = `${Digit}` | `${DigitWithoutZero}${Digit}` | "100";
+
         interface Device {
             /**
-             * Holds the environment-unique ID of the device - namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS,
+             * Holds the environment-unique ID of the device, namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS -
              * as used by simctl (e.g. AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE).
-             *
              */
             id: string;
             /**
@@ -789,7 +794,46 @@ declare global {
             setLocation(lat: number, lon: number): Promise<void>;
 
             /**
-             * Disable EarlGrey's network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
+             * (iOS only) Override simulator’s status bar.
+             * @platform iOS
+             * @param {config} config status bar configuration.
+             * @example
+             * await device.setStatusBar({
+             *   time: "12:34",
+             *   // Set the date or time to a fixed value.
+             *   // If the string is a valid ISO date string it will also set the date on relevant devices.
+             *   dataNetwork: "wifi",
+             *   // If specified must be one of 'hide', 'wifi', '3g', '4g', 'lte', 'lte-a', 'lte+', '5g', '5g+', '5g-uwb', or '5g-uc'.
+             *   wifiMode: "failed",
+             *   // If specified must be one of 'searching', 'failed', or 'active'.
+             *   wifiBars: "2",
+             *   // If specified must be 0-3.
+             *   cellularMode: "searching",
+             *   // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
+             *   cellularBars: "3",
+             *   // If specified must be 0-4.
+             *   operatorName: "A1",
+             *   // Set the cellular operator/carrier name. Use '' for the empty string.
+             *   batteryState: "charging",
+             *   // If specified must be one of 'charging', 'charged', or 'discharging'.
+             *   batteryLevel: "50",
+             *   // If specified must be 0-100.
+             *  });
+             */
+            setStatusBar(config: {
+              time?: string,
+              dataNetwork?: "hide" | "wifi" | "3g" | "4g" | "lte" | "lte-a" | "lte+" | "5g" | "5g+" | "5g-uwb" | "5g-uc",
+              wifiMode?: "searching" |"failed" | "active",
+              wifiBars?: "0" | "1" | "2" | "3",
+              cellularMode?: "notSupported" | "searching" | "failed" | "active",
+              cellularBars?: "0" | "1" | "2" | "3" | "4",
+              operatorName?: string;
+              batteryState?: "charging" | "charged" | "discharging",
+              batteryLevel?: BatteryLevel,
+            }): Promise<void>;
+
+            /**
+             * Disable network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
              */
@@ -970,20 +1014,25 @@ declare global {
              * <TouchableOpacity testID={'tap_me'}>
              * // Then match with by.id:
              * await element(by.id('tap_me'));
+             * await element(by.id(/^tap_[a-z]+$/));
              */
-            id(id: string): NativeMatcher;
+            id(id: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by text, useful for text fields, buttons.
-             * @example await element(by.text('Tap Me'));
+             * @example
+             * await element(by.text('Tap Me'));
+             * await element(by.text(/^Tap .*$/));
              */
-            text(text: string): NativeMatcher;
+            text(text: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by accessibilityLabel on iOS, or by contentDescription on Android.
-             * @example await element(by.label('Welcome'));
+             * @example
+             * await element(by.label('Welcome'));
+             * await element(by.label(/[a-z]+/i));
              */
-            label(label: string): NativeMatcher;
+            label(label: string | RegExp): NativeMatcher;
 
             /**
              * Find an element by native view type.
@@ -1120,39 +1169,39 @@ declare global {
              * expectation with a `not` expects the view's visible area to be smaller than N%.
              * @param pct optional integer ranging from 1 to 100, indicating how much percent of the view should be
              *  visible to the user to be accepted.
-             * @example await expect(element(by.id('UniqueId204'))).toBeVisible(35);
+             * @example await expect(element(by.id('mainTitle'))).toBeVisible(35);
              */
             toBeVisible(pct?: number): R;
 
             /**
              * Negate the expectation.
-             * @example await expect(element(by.id('UniqueId205'))).not.toBeVisible();
+             * @example await expect(element(by.id('cancelButton'))).not.toBeVisible();
              */
             not: this;
 
             /**
              * Expect the view to not be visible.
-             * @example await expect(element(by.id('UniqueId205'))).toBeNotVisible();
+             * @example await expect(element(by.id('cancelButton'))).toBeNotVisible();
              * @deprecated Use `.not.toBeVisible()` instead.
              */
             toBeNotVisible(): R;
 
             /**
              * Expect the view to exist in the UI hierarchy.
-             * @example await expect(element(by.id('UniqueId205'))).toExist();
+             * @example await expect(element(by.id('okButton'))).toExist();
              */
             toExist(): R;
 
             /**
              * Expect the view to not exist in the UI hierarchy.
-             * @example await expect(element(by.id('RandomJunk959'))).toNotExist();
+             * @example await expect(element(by.id('cancelButton'))).toNotExist();
              * @deprecated Use `.not.toExist()` instead.
              */
             toNotExist(): R;
 
             /**
              * Expect the view to be focused.
-             * @example await expect(element(by.id('loginInput'))).toBeFocused();
+             * @example await expect(element(by.id('emailInput'))).toBeFocused();
              */
             toBeFocused(): R;
 
@@ -1166,21 +1215,23 @@ declare global {
             /**
              * In React Native apps, expect UI component of type <Text> to have text.
              * In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
-             * @example await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+             * @example await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!);
              */
             toHaveText(text: string): R;
 
             /**
-             * It searches by accessibilityLabel on iOS, or by contentDescription on Android.
-             * In React Native it can be set for both platforms by defining an accessibilityLabel on the view.
-             * @example await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
+             * Expects a specific accessibilityLabel, as specified via the `accessibilityLabel` prop in React Native.
+             * On the native side (in both React Native and pure-native apps), that is equivalent to `accessibilityLabel`
+             * on iOS and contentDescription on Android. Refer to Detox's documentation in order to learn about caveats
+             * with accessibility-labels in React Native apps.
+             * @example await expect(element(by.id('submitButton'))).toHaveLabel('Submit');
              */
             toHaveLabel(label: string): R;
 
             /**
              * In React Native apps, expect UI component to have testID with that id.
              * In native iOS apps, expect UI element to have accessibilityIdentifier with that id.
-             * @example await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+             * @example await expect(element(by.text('Submit'))).toHaveId('submitButton');
              */
             toHaveId(id: string): R;
 
@@ -1193,7 +1244,7 @@ declare global {
 
             /**
              * Expect components like a Switch to have a value ('0' for off, '1' for on).
-             * @example await expect(element(by.id('UniqueId533'))).toHaveValue('0');
+             * @example await expect(element(by.id('temperatureDial'))).toHaveValue('25');
              */
             toHaveValue(value: any): R;
 
@@ -1210,7 +1261,7 @@ declare global {
             /**
              * This API polls using the given expectation continuously until the expectation is met. Use manual synchronization with waitFor only as a last resort.
              * NOTE: Every waitFor call must set a timeout using withTimeout(). Calling waitFor without setting a timeout will do nothing.
-             * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
+             * @example await waitFor(element(by.id('bigButton'))).toExist().withTimeout(2000);
              */
             (element: NativeElement): Expect<WaitFor>;
         }
@@ -1218,13 +1269,13 @@ declare global {
         interface WaitFor {
             /**
              * Waits for the condition to be met until the specified time (millis) have elapsed.
-             * @example await waitFor(element(by.id('UniqueId336'))).toExist().withTimeout(2000);
+             * @example await waitFor(element(by.id('bigButton'))).toExist().withTimeout(2000);
              */
             withTimeout(millis: number): Promise<void>;
 
             /**
              * Performs the action repeatedly on the element until an expectation is met
-             * @example await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
+             * @example await waitFor(element(by.text('Item #5'))).toBeVisible().whileElement(by.id('itemsList')).scroll(50, 'down');
              */
             whileElement(by: NativeMatcher): NativeElement & WaitFor;
 
@@ -1378,6 +1429,13 @@ declare global {
             setDatePickerDate(dateString: string, dateFormat: string): Promise<void>;
 
             /**
+             * Triggers a given [accessibility action]{@link https://reactnative.dev/docs/accessibility#accessibility-actions}.
+             * @param actionName - name of the accessibility action
+             * @example await element(by.id('view')).performAccessibilityAction('activate');
+             */
+            performAccessibilityAction(actionName: string): Promise<void>
+
+            /**
              * Pinches in the given direction with speed and angle. (iOS only)
              * @param angle value in radiant, default is `0`
              * @example
@@ -1415,8 +1473,9 @@ declare global {
             takeScreenshot(name: string): Promise<string>;
 
             /**
-             * Gets the native (OS-dependent) attributes of the element.
-             * For more information, see {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
+             * Retrieves the OS-dependent attributes of an element.
+             * If there are multiple matches, it returns an array of attributes for all matched elements.
+             * For detailed information, refer to {@link https://wix.github.io/Detox/docs/api/actions-on-element/#getattributes}
              *
              * @example
              * test('Get the attributes for my text element', async () => {
@@ -1430,13 +1489,13 @@ declare global {
              *    jestExpect(attributes.width).toHaveValue(100);
              * })
              */
-            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[]; }>;
+            getAttributes(): Promise<IosElementAttributes | AndroidElementAttributes | { elements: IosElementAttributes[] } | { elements: AndroidElementAttributes[] } >;
         }
 
         interface WebExpect<R = Promise<void>> {
             /**
              * Negate the expectation.
-             * @example await expect(web.element(by.web.id('UniqueId205'))).not.toExist();
+             * @example await expect(web.element(by.web.id('sessionTimeout'))).not.toExist();
              */
             not: this;
 
@@ -1444,13 +1503,13 @@ declare global {
              * Expect the element content to have the `text` supplied
              * @param text expected to be on the element content
              * @example
-             * await expect(web.element(by.web.id('UniqueId205'))).toHaveText('ExactText');
+             * await expect(web.element(by.web.id('checkoutButton'))).toHaveText('Proceed to check out');
              */
             toHaveText(text: string): R;
 
             /**
              * Expect the view to exist in the webview DOM tree.
-             * @example await expect(web.element(by.web.id('UniqueId205'))).toExist();
+             * @example await expect(web.element(by.web.id('submitButton'))).toExist();
              */
             toExist(): R;
         }
@@ -1649,7 +1708,9 @@ declare global {
              */
             text?: string;
             /**
-             * The label of the element. Matches accessibilityLabel for ios, and contentDescription for android.
+             * The label of the element. Largely matches accessibilityLabel for ios, and contentDescription for android.
+             * Refer to Detox's documentation (`toHaveLabel()` subsection) in order to learn about caveats associated with
+             * this property in React Native apps.
              */
             label?: string;
             /**

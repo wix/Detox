@@ -87,7 +87,7 @@ const ITEMS = [
 function YourScreen() {
   const renderItem = ({ item }) => (
 // highlight-next-line
-    <YourCustomComponent testID={'listItem'} lable={item.title} />
+    <YourCustomComponent testID={'listItem'} label={item.title} />
   );
 
   return (
@@ -110,7 +110,7 @@ Instead, you could generate a unique `testID` for every list item with the `inde
 
 ```jsx
   const renderItem = ({ item, index }) => (
-    <YourCustomComponent testID={`listItem.${index + 1}`} lable={item.title} />
+    <YourCustomComponent testID={`listItem.${index + 1}`} label={item.title} />
   );
 ```
 

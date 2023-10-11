@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "lib": ["es2018"],
-    "target": "ES2018",
+    "lib": ["es2022"],
+    "target": "ES2022",
     "allowJs": true,
     "checkJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true,
@@ -20,6 +20,8 @@
   ],
   "exclude": [
     "android",
+    "allure-report",
+    "allure-results",
     "coverage",
     "ios",
     "test"

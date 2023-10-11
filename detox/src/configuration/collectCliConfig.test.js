@@ -89,6 +89,7 @@ describe('collectCliConfig', () => {
     ...asBoolean(['readonlyEmu',          'DETOX_READ_ONLY_EMU',          null]),
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
+    ...asString( ['start',                'DETOX_START',                  'start']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {
       if (envName) env[envName] = input;

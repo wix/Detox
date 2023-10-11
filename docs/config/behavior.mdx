@@ -17,7 +17,6 @@ you have a few options to change. These are the default behavior values:
     "init": {
       "reinstallApp": true,
       "exposeGlobals": true,
-      "keepLockFile": false
     },
     "launchApp": "auto",
     "cleanup": {
@@ -57,35 +56,6 @@ or, in TypeScript:
 import { by, device, expect, element } from 'detox';
 ```
 
-### `behavior.init.keepLockFile` \[boolean]
-
-Default: `false`.
-
-When _false_, `detox test` command always deletes the shared lock file on start,
-assuming it had been left from the previous, already finished test session. The lock file
-contains information about busy and free devices and ensures no device can be used
-simultaneously by multiple test workers.
-
-Setting it to _true_ might be useful when if you need to run multiple `detox test` commands
-in parallel, e.g. test a few configurations at once with a simple Bash script:
-
-```bash
-detox reset-lock-file & \
-detox test -c iphone.release & \
-detox test -c ipad.release & \
-detox test -c android.phone.release & \
-detox test -c android.tablet.release & \
-wait;
-```
-
-:::caution Known issue
-
-You can't run multiple `detox test …` commands simultaneously with `android.genycloud` (Genymotion SaaS)
-devices due to [a known issue](https://github.com/wix/Detox/issues/3573). We'll get on this as soon as
-we can.
-
-:::
-
 ### `behavior.launchApp` \[enum]
 
 Default: `auto`.
@@ -103,11 +73,3 @@ Also, setting it to `manual` resets `behavior.reinstallApp` to _false_.
 Default: `false`.
 
 When set to _true_, Detox will shut down the device after the tests finish.
-
-:::caution Known issue
-
-Currently Detox shuts down the device after completing every test file, and that makes the test session unnecessarily long
-and inefficient. This is [a known issue](https://github.com/wix/Detox/issues/2894) and we plan to fix it as soon
-as we can.
-
-:::

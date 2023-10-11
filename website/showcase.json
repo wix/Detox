@@ -110,5 +110,12 @@
     "image": "img/showcase/currenxie.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.currenxiemobilereactnative",
     "linkApple": "https://apps.apple.com/us/app/currenxie-global-account/id1550022183"
+  },
+  {
+    "title": "Mercari: Your Marketplace",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/mercari.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.mercariapp.mercari",
+    "linkApple": "https://apps.apple.com/us/app/mercari-your-marketplace/id896130944"
   }
 ]

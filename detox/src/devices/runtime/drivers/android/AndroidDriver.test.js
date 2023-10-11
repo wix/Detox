@@ -594,10 +594,8 @@ describe('Android driver', () => {
     appUninstallHelper = new AppUninstallHelper();
 
 
-    jest.mock('../../../DeviceRegistry');
-    DeviceRegistryClass = require('../../../DeviceRegistry');
-    const createRegistry = jest.fn(() => new DeviceRegistryClass());
-    DeviceRegistryClass.forIOS = DeviceRegistryClass.forAndroid = createRegistry;
+    jest.mock('../../../allocation/DeviceRegistry');
+    DeviceRegistryClass = require('../../../allocation/DeviceRegistry');
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
