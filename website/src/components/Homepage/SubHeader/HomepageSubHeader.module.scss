@@ -1,6 +1,5 @@
 .subHeader {
   background-color: #171b20;
-  padding: 10px 0;
   color: #ffffff;
   font-family: 'Nunito Sans', sans-serif;
   font-style: normal;
@@ -8,26 +7,26 @@
   font-size: 24px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-height: 85px;
   width: 100%;
 }
 
-.subText {
-  padding-top: 5px;
+.subTextWrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .discordButton {
-  background-color: #7289da;
-  background-image: url(@site/static/img/homepage/join-us-white.svg);
-  background-repeat: no-repeat;
-  background-size: 76% 76%;
-  background-position: 50% 62%;
+  background-color: #718CD8;
+  background-image: url(@site/static/img/homepage/join-us-on-disc.svg);
   display: flex;
   align-items: center;
-  height: 30px;
-  width: 6rem;
-  border-radius: 0.3rem;
-  margin-right: 20px;
-  margin-top: 7px;
+  flex-shrink: 0;
+  height: 45px;
+  width: 141px;
+  border-radius: 10px;
   cursor: pointer;
   border-width: 0;
 }
@@ -38,22 +37,70 @@
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 
-.twitterFrame {
+.twitterButton {
+  background-color: #718CD8;
+  background-image: url(@site/static/img/homepage/follow-in-twitter.svg);
   display: flex;
   align-items: center;
-  padding-top: 8px;
-  padding-left: 5px;
+  flex-shrink: 0;
+  height: 45px;
+  width: 199px;
+  border-radius: 10px;
+  margin-right: 4px;
+  cursor: pointer;
+  border-width: 0;
 }
 
-.githubStar {
+.twitterCounter {
+  width: 119px;
+  height: 35px;
   display: flex;
   align-items: center;
-  padding: 0px;
-  padding-bottom: 7px;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: var(--primary-dark-a-4, #313439);
+  color: #FFF;
   font-size: 16px;
-  line-height: 22px;
-  border-radius: 4px;
-  height: 37px;
+  line-height: 25px;
+}
+
+.flexFrame {
+  display: flex;
+  align-items: center;
+  margin: 5px 25px 5px 0;
+
+}
+
+.githubButton {
+  background-image: url(@site/static/img/homepage/github.svg);
+  height: 45px;
+  width: 93px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+.githubCounter {
+  width: 57px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: var(--primary-dark-a-4, #313439);
+  color: #FFF;
+  font-size: 16px;
+  line-height: 25px;
+}
+
+.arrow {
+  background-image: url(@site/static/img/homepage/arrow.svg);
+  width: 6px;
+  height: 8px;
+  flex-shrink: 0;
 }
 
 @media screen and (max-width: 966px) {
@@ -62,10 +109,21 @@
   }
 }
 
-@media only screen and (max-width: 600px) {
-  .twitterFrame {
-    display: block;
-    width: 100%;
-    float: none;
+@media only screen and (max-width: 750px) {
+  .colWrapper {
+    justify-content: start;
+    flex-direction: column;
+  }
+
+  .flexFrame {
+    margin: 0 5px 5px 0;
+  }
+
+  .flexFrame:last-child {
+    margin-bottom: 29px;
+  }
+
+  .subTextWrapper {
+    margin-top: 24px;
   }
 }

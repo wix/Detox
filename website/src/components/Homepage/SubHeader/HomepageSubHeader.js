@@ -7,31 +7,30 @@ const HomepageSubHeader = () => {
       <div className="container">
         <div className="row">
           <div className="col col--4">
-            <div className={styles.subText}>
-              Follow us on <strong>social networks:</strong>
+            <div className={styles.subTextWrapper}>
+              <span>
+                Follow us on <strong>social networks:</strong>
+              </span>
             </div>
           </div>
-          <div className="col col--8 flex-jc-fe">
-            <a
-              className={styles.discordButton}
-              src="../../static/img/join-us-white.svg"
-              href="https://discord.gg/CkD5QKheF5"
-              target="_blank"></a>
-            <div className={styles.twitterFrame}>
-              <iframe
-                src="https://platform.twitter.com/widgets/follow_button.html?screen_name=detoxe2e&show_screen_name=false&show_count=true&size=l"
-                title="Follow Detox on Twitter"
-                width="200"
-                height="37"></iframe>
-              <iframe
-                className={styles.githubStar}
-                src="https://ghbtns.com/github-btn.html?user=wix&repo=detox&type=star&count=true&size=large"
-                frameBorder="0"
-                scrolling="0"
-                width="200"
-                height="37"
-                title="GitHub"
-              />
+          <div className={`col col--8 flex-jc-fe ${styles.colWrapper}`}>
+            <div className={styles.flexFrame}>
+              <a className={styles.discordButton} href="https://discord.gg/CkD5QKheF5" target="_blank"></a>
+            </div>
+            <div className={styles.flexFrame}>
+              <a className={styles.twitterButton} href="https://x.com/detoxe2e?s=20" target="_blank"></a>
+              <span className={styles.arrow}></span>
+              <a className={styles.twitterCounter} href="https://x.com/detoxe2e?s=20" target="_blank">
+                <span>486</span>
+                <span>&nbsp;followers</span>
+              </a>
+            </div>
+            <div className={styles.flexFrame}>
+              <a className={styles.githubButton} href="https://github.com/wix/detox" target="_blank"></a>
+              <span className={styles.arrow}></span>
+              <a className={styles.githubCounter} href="https://github.com/wix/detox/stargazers" target="_blank">
+                <span>10,598</span>
+              </a>
             </div>
           </div>
         </div>
