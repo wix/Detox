@@ -1,3 +1,5 @@
+const DEBUG = process.argv.includes('--reporters');
+
 /** @type{import('jest-allure2-reporter').ReporterOptions} */
 const jestAllure2ReporterOptions = {
   testCase: {
@@ -14,7 +16,7 @@ module.exports = {
   setupFiles: [
     '<rootDir>/__tests__/setupJest.js'
   ],
-  testEnvironment: 'jest-allure2-reporter/environment-node',
+  testEnvironment: DEBUG ? 'node' : 'jest-allure2-reporter/environment-node',
   testRunner: 'jest-circus/runner',
   roots: [
     'node_modules',
