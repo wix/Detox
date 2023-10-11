@@ -109,7 +109,7 @@
   }
 }
 
-@media only screen and (max-width: 750px) {
+@media screen and (max-width: 750px) {
   .colWrapper {
     justify-content: start;
     flex-direction: column;
@@ -119,11 +119,11 @@
     margin: 0 5px 5px 0;
   }
 
-  .flexFrame:last-child {
-    margin-bottom: 29px;
+  .subTextWrapper {
+    margin-bottom: 20px;
   }
 
-  .subTextWrapper {
-    margin-top: 24px;
+  .subHeader {
+    padding: 24px 0 29px 0;
   }
 }
