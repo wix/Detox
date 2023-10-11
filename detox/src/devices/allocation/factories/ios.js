@@ -9,11 +9,8 @@ class IosSimulator extends DeviceAllocatorFactory {
     const DeviceRegistry = require('../../../devices/allocation/DeviceRegistry');
     const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.id });
 
-    const SimulatorLauncher = require('../drivers/ios/SimulatorLauncher');
-    const simulatorLauncher = new SimulatorLauncher({ applesimutils, eventEmitter });
-
     const SimulatorAllocDriver = require('../drivers/ios/SimulatorAllocDriver');
-    return new SimulatorAllocDriver({ detoxConfig, deviceRegistry, applesimutils, simulatorLauncher });
+    return new SimulatorAllocDriver({ detoxConfig, deviceRegistry, applesimutils });
   }
 }
 
