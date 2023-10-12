@@ -46,8 +46,35 @@ class MotionEvents {
                 0)
     }
 
-    fun obtainUpEvent(downEvent: MotionEvent, eventTime: Long, x: Float, y: Float): MotionEvent
-            = MotionEvent.obtain(downEvent.downTime, eventTime, MotionEvent.ACTION_UP, x, y, 0)!!
+    fun obtainUpEvent(downEvent: MotionEvent, eventTime: Long, x: Float, y: Float): MotionEvent {
+        val pointerProperties = MotionEvent.PointerProperties().apply {
+          id = 0
+          toolType = MotionEvent.TOOL_TYPE_UNKNOWN
+        }
+        val pointerCoords = MotionEvent.PointerCoords().apply {
+          clear()
+          this.x = x
+          this.y = y
+          this.pressure = 0f
+          this.size = 1f
+        }
+        return MotionEvent.obtain(
+              downEvent.downTime,
+              eventTime,
+              MotionEvent.ACTION_UP,
+              1, // pointerCounts
+              arrayOf(pointerProperties),
+              arrayOf(pointerCoords),
+              0, // metaState
+              downEvent.buttonState,
+              downEvent.xPrecision,
+              downEvent.yPrecision,
+              0, // deviceId
+              0, // edgeFlags
+              downEvent.source,
+              0
+        )
+    }
 
     fun sendDownAsync(uiController: UiController, x: Float, y: Float, precision: FloatArray = PRECISION): MotionEvent {
         val downEvent = obtainDownEvent(x, y, precision, null)
