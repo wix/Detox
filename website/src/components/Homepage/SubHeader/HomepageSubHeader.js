@@ -5,15 +5,15 @@ const HomepageSubHeader = () => {
   return (
     <div className={styles.subHeader}>
       <div className="container">
-        <div className="row">
-          <div className="col col--4">
+        <div className={`row ${styles.row}`}>
+          <div className={`col col--4 ${styles.col4Wrapper}`}>
             <div className={styles.subTextWrapper}>
               <span>
                 Follow us on <strong>social networks:</strong>
               </span>
             </div>
           </div>
-          <div className={`col col--8 flex-jc-fe ${styles.colWrapper}`}>
+          <div className={`col col--8 flex-jc-fe ${styles.col8Wrapper}`}>
             <div className={styles.flexFrame}>
               <a className={styles.discordButton} href="https://discord.gg/CkD5QKheF5" target="_blank"></a>
             </div>

@@ -12,10 +12,16 @@
   width: 100%;
 }
 
+.col8Wrapper {
+  margin: 10px 0;
+}
+
 .subTextWrapper {
   height: 100%;
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
+  margin-right: 10px;
 }
 
 .discordButton {
@@ -38,7 +44,6 @@
 }
 
 .twitterButton {
-  background-color: #718CD8;
   background-image: url(@site/static/img/homepage/follow-in-twitter.svg);
   display: flex;
   align-items: center;
@@ -103,14 +108,8 @@
   flex-shrink: 0;
 }
 
-@media screen and (max-width: 966px) {
-  .heroBanner {
-    padding: 2rem;
-  }
-}
-
-@media screen and (max-width: 750px) {
-  .colWrapper {
+@media (max-width: 750px) {
+  .col8Wrapper {
     justify-content: start;
     flex-direction: column;
   }
@@ -119,11 +118,66 @@
     margin: 0 5px 5px 0;
   }
 
-  .subTextWrapper {
-    margin-bottom: 20px;
+  .subHeader {
+    padding: 26px 0 29px 0;
   }
+}
+
+@media (max-width: 500px) {
 
   .subHeader {
-    padding: 24px 0 29px 0;
+    padding: 20px 0 30px 24px;
+  }
+
+  .row {
+    flex-wrap: nowrap;
+  }
+
+  .col4Wrapper {
+    max-width: 154px;
+    padding: 0;
+  }
+
+  .col8Wrapper {
+    flex-direction: row;
+  }
+
+  .subTextWrapper {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .discordButton {
+    background-image: url(@site/static/img/homepage/mobile-discord.svg);
+    height: 45px;
+    width: 45px;
+    border-radius: 10px;
+    margin-right: 0;
+  }
+
+  .twitterButton {
+    background-image: url(@site/static/img/homepage/mobile-twitter.svg);
+    height: 45px;
+    width: 45px;
+    border-radius: 10px;
+    margin-right: 0;
+  }
+
+  .githubButton {
+    background-image: url(@site/static/img/homepage/mobile-github.svg);
+    height: 45px;
+    width: 45px;
+    border-radius: 10px;
+    margin-right: 0;
+  }
+
+  .twitterCounter,
+  .githubCounter,
+  .arrow {
+    display: none;
+  }
+
+  .flexFrame {
+    margin: 0 10px 0 0;
   }
 }
