@@ -5,23 +5,25 @@
   font-style: normal;
   font-weight: 300;
   font-size: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 85px;
   width: 100%;
+  min-height: 85px;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  padding: 0 var(--ifm-spacing-horizontal);
 }
 
-.col8Wrapper {
-  margin: 10px 0;
-}
-
-.subTextWrapper {
-  height: 100%;
+.callToAction {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
   margin-right: 10px;
+}
+
+.socialNetworks {
+  display: flex;
+  align-items: center;
+  margin: 5px 25px 5px 0;
 }
 
 .discordButton {
@@ -70,12 +72,7 @@
   line-height: 25px;
 }
 
-.flexFrame {
-  display: flex;
-  align-items: center;
-  margin: 5px 25px 5px 0;
 
-}
 
 .githubButton {
   background-image: url(@site/static/img/homepage/github.svg);
@@ -108,41 +105,14 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 750px) {
-  .col8Wrapper {
-    justify-content: start;
-    flex-direction: column;
-  }
 
-  .flexFrame {
-    margin: 0 5px 5px 0;
-  }
-
-  .subHeader {
-    padding: 26px 0 29px 0;
-  }
-}
-
-@media (max-width: 450px) {
+@media (max-width: 740px) {
 
   .subHeader {
     padding: 20px 0 20px 24px;
   }
 
-  .row {
-    flex-wrap: nowrap;
-  }
-
-  .col4Wrapper {
-    max-width: 154px;
-    padding: 0;
-  }
-
-  .col8Wrapper {
-    flex-direction: row;
-  }
-
-  .subTextWrapper {
+  .callToAction {
     font-size: 18px;
     line-height: 24px;
   }
@@ -152,7 +122,7 @@
     height: 45px;
     width: 45px;
     border-radius: 10px;
-    margin-right: 0;
+    margin-right: 10px;
   }
 
   .twitterButton {
@@ -160,7 +130,7 @@
     height: 45px;
     width: 45px;
     border-radius: 10px;
-    margin-right: 0;
+    margin-right: 10px;
   }
 
   .githubButton {
@@ -168,16 +138,11 @@
     height: 45px;
     width: 45px;
     border-radius: 10px;
-    margin-right: 0;
   }
 
   .twitterCounter,
   .githubCounter,
   .arrow {
     display: none;
-  }
-
-  .flexFrame {
-    margin: 0 10px 0 0;
   }
 }
