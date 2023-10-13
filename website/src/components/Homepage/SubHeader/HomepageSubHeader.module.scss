@@ -1,6 +1,6 @@
 .subHeader {
   background-color: #171b20;
-  color: #ffffff;
+  color: #fff;
   font-family: 'Nunito Sans', sans-serif;
   font-style: normal;
   font-weight: 300;
@@ -8,35 +8,33 @@
   width: 100%;
   min-height: 85px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
-  margin: 0 auto;
   padding: 0 var(--ifm-spacing-horizontal);
 }
 
 .callToAction {
+  color: var(--primary-dark-a-0, #FFF);
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
   margin-right: 10px;
+  flex-wrap: nowrap;
 }
 
 .socialNetworks {
   display: flex;
   align-items: center;
-  margin: 5px 25px 5px 0;
+  margin: 20px 0;
 }
 
 .discordButton {
   background-color: #718CD8;
   background-image: url(@site/static/img/homepage/join-us-on-disc.svg);
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
   height: 45px;
   width: 141px;
+  margin-right: 25px;
   border-radius: 10px;
   cursor: pointer;
-  border-width: 0;
 }
 
 .discordButton:hover {
@@ -46,25 +44,42 @@
 }
 
 .twitterButton {
-  background-image: url(@site/static/img/homepage/follow-in-twitter.svg);
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+  display: inline-block;
+  background-color: #1E9EEE;
   height: 45px;
   width: 199px;
   border-radius: 10px;
   margin-right: 4px;
   cursor: pointer;
-  border-width: 0;
+}
+
+.twitterLogo {
+  display: inline-block;
+  position: relative;
+  top: 8px;
+  left: 12px;
+  background-image: url(@site/static/img/homepage/twitter-logo.svg);
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+}
+
+.twitterButton span {
+  color: #FFF;
+  font-size: 16px;
+}
+
+.followText {
+  margin-left: 20px;
 }
 
 .twitterCounter {
   width: 119px;
   height: 35px;
+  margin-right: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   border-radius: 5px;
   background: var(--primary-dark-a-4, #313439);
   color: #FFF;
@@ -72,13 +87,10 @@
   line-height: 25px;
 }
 
-
-
 .githubButton {
   background-image: url(@site/static/img/homepage/github.svg);
   height: 45px;
   width: 93px;
-  flex-shrink: 0;
   border-radius: 10px;
   margin-right: 4px;
   cursor: pointer;
@@ -90,7 +102,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   border-radius: 5px;
   background: var(--primary-dark-a-4, #313439);
   color: #FFF;
@@ -102,20 +113,48 @@
   background-image: url(@site/static/img/homepage/arrow.svg);
   width: 6px;
   height: 8px;
-  flex-shrink: 0;
 }
 
+@media (max-width: 1100px) {
 
-@media (max-width: 740px) {
+  .discordButton {
+    margin-right: 20px;
+  }
+
+  .twitterButton {
+    margin-right: 20px;
+  }
+
+  .twitterCounter,
+  .githubCounter,
+  .arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+
+  .discordButton {
+    margin-right: 10px;
+  }
+
+  .twitterButton {
+    width: 110px;
+    margin-right: 10px;
+  }
+
+  .followLink {
+    display: none;
+  }
+}
+
+@media (max-width: 750px) {
 
   .subHeader {
-    padding: 20px 0 20px 24px;
+    padding: 10px 24px;
+    justify-content: space-around;
   }
 
-  .callToAction {
-    font-size: 18px;
-    line-height: 24px;
-  }
 
   .discordButton {
     background-image: url(@site/static/img/homepage/mobile-discord.svg);
@@ -133,16 +172,30 @@
     margin-right: 10px;
   }
 
+  .followText {
+    display: none;
+  }
+
   .githubButton {
     background-image: url(@site/static/img/homepage/mobile-github.svg);
     height: 45px;
     width: 45px;
     border-radius: 10px;
+    margin-right: 0;
   }
+}
 
-  .twitterCounter,
-  .githubCounter,
-  .arrow {
-    display: none;
+@media (max-width: 600px) {
+
+  .callToAction {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .callToAction {
+    max-width: 140px;
   }
 }
