@@ -1,6 +1,6 @@
 .subHeader {
   background-color: #171b20;
-  color: #fff;
+  color: var(--primary-dark-a-0, #FFF);
   font-family: 'Nunito Sans', sans-serif;
   font-style: normal;
   font-weight: 300;
@@ -49,7 +49,7 @@
   height: 45px;
   width: 199px;
   border-radius: 10px;
-  margin-right: 4px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
@@ -64,8 +64,9 @@
   height: 24px;
 }
 
-.twitterButton span {
-  color: #FFF;
+.followText,
+.followLink {
+  color: var(--primary-dark-a-0, #FFF);
   font-size: 16px;
 }
 
@@ -82,7 +83,7 @@
   justify-content: center;
   border-radius: 5px;
   background: var(--primary-dark-a-4, #313439);
-  color: #FFF;
+  color: var(--primary-dark-a-0, #FFF);
   font-size: 16px;
   line-height: 25px;
 }
@@ -92,7 +93,7 @@
   height: 45px;
   width: 93px;
   border-radius: 10px;
-  margin-right: 4px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
@@ -104,18 +105,29 @@
   justify-content: center;
   border-radius: 5px;
   background: var(--primary-dark-a-4, #313439);
-  color: #FFF;
+  color: var(--primary-dark-a-0, #FFF);
   font-size: 16px;
   line-height: 25px;
 }
 
-.arrow {
-  background-image: url(@site/static/img/homepage/arrow.svg);
-  width: 6px;
-  height: 8px;
+.twitterCounter,
+.githubCounter {
+  position: relative;
 }
 
-@media (max-width: 1100px) {
+.twitterCounter::before,
+.githubCounter::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 6px 4px 0;
+  border-color: transparent #23272F transparent transparent;
+}
+
+@media only screen and (max-width: 1100px) {
 
   .discordButton {
     margin-right: 20px;
@@ -126,16 +138,15 @@
   }
 
   .twitterCounter,
-  .githubCounter,
-  .arrow {
+  .githubCounter {
     display: none;
   }
 }
 
-@media (max-width: 860px) {
+@media only screen and (max-width: 870px) {
 
   .discordButton {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   .twitterButton {
@@ -148,11 +159,10 @@
   }
 }
 
-@media (max-width: 750px) {
+@media only screen and (max-width: 750px) {
 
   .subHeader {
-    padding: 10px 24px;
-    justify-content: space-around;
+    padding: 10px var(--ifm-spacing-horizontal);
   }
 
 
@@ -185,7 +195,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media only screen and (max-width: 600px) {
 
   .callToAction {
     font-size: 18px;
@@ -193,9 +203,11 @@
   }
 }
 
-@media (max-width: 480px) {
+@media only screen and (max-width: 480px) {
 
   .callToAction {
     max-width: 140px;
+    margin-top: 20px;
+    align-items: normal;
   }
 }

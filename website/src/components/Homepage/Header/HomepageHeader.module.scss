@@ -57,4 +57,11 @@ html[data-theme='dark'] {
   .buttons a {
     font-size: 14px;
   }
+
+  .heroBanner h1 {
+    color: var(--primary-dark-a-0, #FFF);
+    font-size: 72px;
+    line-height: normal;
+    letter-spacing: -3.6px;
+  }
 }
