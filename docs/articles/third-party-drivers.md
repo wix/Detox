@@ -102,6 +102,11 @@ class MyNewAllocationDriver {
     return new Cookie(id); // This is where a cookie is formed once for the entire process
   }
 
+  async postAllocate(cookie) {
+    // Optional method to handle operations after the device is allocated
+    // like waiting until the boot animation is finished, configuring the device, etc.
+  }
+
   async free(cookie, options) {
     // ...
   }

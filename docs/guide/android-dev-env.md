@@ -64,7 +64,7 @@ _<sup>\* Inspect the content of your `ANDROID_SDK_ROOT` and `ANDROID_HOME` envir
 
 ## Android (AOSP) Emulators
 
-Mobile-apps' automation needs an Android device to run on. If you haven’t already done so, you should  [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don’t go and install the default one: read through, first.
+Mobile-apps’ automation needs an Android device to run on. If you haven’t already done so, you should [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don’t go and install the default one: read through, first.
 
 We’ve long proven that for automation - which requires a stable and deterministic environment, Google’s emulators running with Google APIs simply don’t deliver what’s needed. Be it the preinstalled Google play-services - which tend to take up a lot of CPU, or even Google’s `gboard` Keyboard - which is full-featured but overly bloated: These encourage flakiness in tests, which we are desperate to avoid in automation.
 
@@ -81,7 +81,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
 1. Locate your 'Android home' folder - typically set in the `ANDROID_HOME` environment variable, or in its predecessor - `ANDROID_SDK_ROOT`. If `ANDROID_HOME` isn’t set, either set it yourself or run the following commands after `cd`-ing into the home folder.
 
 1. Preliminary: Upgrade your `emulator` executable to the latest version.
-   _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
+   _Note: It is OK if the emulator’s version is not aligned with the SDK or platform-tools’ version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
    ```sh
    $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install emulator
@@ -92,7 +92,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    In previous Android Studio versions, the SDK-Manager path was located at `$ANDROID_HOME/tools/bin/sdkmanager`.
    We highly recommend working with the latest version, however, in case you are working with an old version, and this command fails, try this path instead.
 
-   The command might also fail if the command-line tools aren't installed. To install the tools using Android Studio, click `Tools > SDK Manager` and select the `SDK Tools` tab. Ensure that `Android SDK Command-line Tools (latest)` is checked and applied.
+   The command might also fail if the command-line tools aren’t installed. To install the tools using Android Studio, click `Tools > SDK Manager` and select the `SDK Tools` tab. Ensure that `Android SDK Command-line Tools (latest)` is checked and applied.
 
    :::
 
@@ -115,7 +115,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    ```
 
    > - `Pixel_API_28_AOSP` is just a suggestion for a name. Any name can work here, even `Pixel_API_28` - but you might have to delete an existing non-AOSP emulator, first. In any case, the name used in Detox configuration (typically in `package.json`) should be identical to this one.
-   > - `-d pixel` will install an emulator with the specs of a Pixel-1 device. Other specs can be used.
+   > - `-d pixel` will install an emulator with the specs of a Pixel-1 device. Other specs can be used. Running `$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list devices` will list all available device specs.
    > - `--package` is the most important argument: be sure to use the same value as you did in part 2, above, with `;default;`.
    >
    > Run `avdmanager create --help` for the full list of options.
@@ -130,7 +130,7 @@ At this point, you should be able to launch the emulator from Android Studio, bu
 
 ### Installing from Android Studio
 
-We won’t go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog  (see `Target` column of the Virtual Device Configuration screen below):
+We won’t go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog (see `Target` column of the Virtual Device Configuration screen below):
 
 ![SDK manager in AS](../img/android/aosp-image-as.png)
 
@@ -140,7 +140,7 @@ Also, be sure to upgrade your emulator executable to the latest version: If it i
 
 ![Upgrade emulator in AS](../img/android/upgrade-emulator-as.png)
 
-**Note:** _It is OK if the emulator’s version is not aligned with the SDK or platform-tools' version you currently have installed (e.g. 30.x.x vs. SDK 29)_
+**Note:** _It is OK if the emulator’s version is not aligned with the SDK or platform-tools’ version you currently have installed (e.g. 30.x.x vs. SDK 29)_
 
 ## Emulator Quick-Boot
 
@@ -218,7 +218,7 @@ The library part can be easily achieved as explained there (i.e. by using Gradle
 
 #### Solution 1: Prebaked Images
 
-If you have control over the emulators' snapshots, simply download (see test-butler’s guide) and install the test-butler APK once (e.g. use `adb install -r -t path/to/test-butler-app.apk`), and save an updated version of the snapshot. This is the best solution.
+If you have control over the emulators’ snapshots, simply download (see test-butler’s guide) and install the test-butler APK once (e.g. use `adb install -r -t path/to/test-butler-app.apk`), and save an updated version of the snapshot. This is the best solution.
 
 > Note: you will have to reiterate this if you upgrade to a newer version of Test-Butler, in the future.
 
@@ -232,7 +232,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
     "emulator.oss": {
       "type": "android.emulator",
       "device": "...",
-      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"],
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"]
     }
   }
 }

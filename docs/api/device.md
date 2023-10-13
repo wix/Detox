@@ -220,12 +220,16 @@ await device.launchApp({
 
 #### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
 
-Launches the app with a URL blacklist to disable network synchronization on certain endpoints. Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+Launches the app with a URL blacklist to disable network synchronization on certain endpoints.
+Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
+
+> Note that due to the complexity of reg-exps and interoperability concerns, the implementation is fairly sensitive to the format of the string of urls.
+> Please do your best to follow the example below:
 
 ```js
 await device.launchApp({
   newInstance: true,
-  launchArgs: { detoxURLBlacklistRegex: ' \\("http://192.168.1.253:19001/onchange","https://e.crashlytics.com/spi/v2/events"\\)' },
+  launchArgs: { detoxURLBlacklistRegex: '\\("^http://192\.168\.1\.253:\\d{4}/.*","https://e\.crashlytics\.com/spi/v2/events"\\)' },
 });
 ```
 
@@ -439,7 +443,7 @@ await device.setStatusBar({
   // Set the date or time to a fixed value.
   // If the string is a valid ISO date string it will also set the date on relevant devices.
   dataNetwork: "wifi",
-  // If specified must be one of 'wifi', '3g', '4g', 'lte', 'lte-a', or 'lte+'.
+  // If specified must be one of 'hide', 'wifi', '3g', '4g', 'lte', 'lte-a', 'lte+', '5g', '5g+', '5g-uwb', or '5g-uc'.
   wifiMode: "failed",
   // If specified must be one of 'searching', 'failed', or 'active'.
   wifiBars: "2",
@@ -448,6 +452,8 @@ await device.setStatusBar({
   // If specified must be one of 'notSupported', 'searching', 'failed', or 'active'.
   cellularBars: "3",
   // If specified must be 0-4.
+  operatorName: "A1",
+  // Set the cellular operator/carrier name. Use '' for the empty string.
   batteryState: "charging",
   // If specified must be one of 'charging', 'charged', or 'discharging'.
   batteryLevel: "50",

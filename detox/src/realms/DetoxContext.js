@@ -101,6 +101,8 @@ class DetoxContext {
   });
   /** @abstract */
   [symbols.reportTestResults](_testResults) {}
+  /** @abstract */
+  [symbols.conductEarlyTeardown]() {}
   /**
    * @abstract
    * @param {Partial<DetoxInternals.DetoxInitOptions>} _opts
@@ -148,6 +150,12 @@ class DetoxContext {
     this[$worker].id = opts.workerId;
     await this[$worker].init();
   }
+
+  /** @abstract */
+  async [symbols.allocateDevice]() {}
+
+  /** @abstract */
+  async [symbols.deallocateDevice]() {}
 
   async [symbols.uninstallWorker]() {
     try {

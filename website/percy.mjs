@@ -39,7 +39,7 @@ class Server {
       this.childPromise.stdout.on('data', (data) => {
         if (`${data}`.startsWith('[SUCCESS] Serving')) {
           clearTimeout(handle);
-          resolve();
+          setTimeout(resolve, 2000);
         }
       });
     });
@@ -68,10 +68,18 @@ class Server {
   }
 }
 
+async function runPercySnapshot() {
+  const { stdout } = await $`percy snapshot snapshots.yml`;
+
+  const [, buildId] = stdout.match(/https:\/\/percy\.io\/[^\/]+\/[^\/]+\/builds\/(\d+)/m) || [];
+  return buildId || '';
+}
+
 const server = new Server();
 try {
   await server.start();
-  await $`percy snapshot snapshots.yml`
+  const buildId = await runPercySnapshot();
+  await $`percy build:wait --fail-on-changes --build ${buildId}`;
 } finally {
   await server.stop();
 }

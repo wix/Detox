@@ -56,8 +56,7 @@ describe('Crash Handling', () => {
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
     // of that into the shell, as we expect it to.
-    jestExpect(error.stack).toContain('Native stacktrace dump:\njava.lang.RuntimeException:');
-    jestExpect(error.stack).toContain('\tat android.app');
-    jestExpect(error.stack).toContain('Caused by: java.lang.IllegalStateException: This is an intentional crash!');
+    jestExpect(error.stack).toContain('Native stacktrace dump:\njava.lang.IllegalStateException: This is an intentional crash!');
+    jestExpect(error.stack).toContain('\tat com.example.CrashingActivity.onResume');
   }, 60000);
 });

@@ -28,8 +28,8 @@ Negating this expectation with a `not` expression expects the view’s visible a
 On iOS, visibility is defined by having the view, or one of its subviews, be topmost at the view’s activation point on screen.
 
 ```js
-await expect(element(by.id('UniqueId203'))).toBeVisible();
-await expect(element(by.id('UniqueId204'))).toBeVisible(35);
+await expect(element(by.id('subtitle'))).toBeVisible();
+await expect(element(by.id('mainTitle'))).toBeVisible(35);
 ```
 
 ### `toExist()`
@@ -37,7 +37,7 @@ await expect(element(by.id('UniqueId204'))).toBeVisible(35);
 Expects the element to exist within the app’s current UI hierarchy.
 
 ```js
-await expect(element(by.id('UniqueId205'))).toExist();
+await expect(element(by.id('okButton'))).toExist();
 ```
 
 ### `toBeFocused()`
@@ -45,7 +45,7 @@ await expect(element(by.id('UniqueId205'))).toExist();
 Expects the element to be the focused element.
 
 ```js
-await expect(element(by.id('textFieldId'))).toBeFocused();
+await expect(element(by.id('emailInput'))).toBeFocused();
 ```
 
 ### `toHaveText(text)`
@@ -53,7 +53,7 @@ await expect(element(by.id('textFieldId'))).toBeFocused();
 Expects the element to have the specified text.
 
 ```js
-await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
+await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!');
 ```
 
 ### `toHaveLabel(label)`
@@ -61,11 +61,23 @@ await expect(element(by.id('UniqueId204'))).toHaveText('I contain some text');
 Expects the element to have the specified label as its accessibility label (iOS) or content description (Android). In React Native, this corresponds to the value in the [`accessibilityLabel`](https://reactnative.dev/docs/accessibility#accessibilitylabel) prop.
 
 :::note
-Note that there is an inconsistency between the implementation for accessibility between Android and iOS. On iOS if a View has no `accessibilityLabel` explicitly defined, then it defaults to having a concatenation of the accessibilityLabels of the child Views. On Android, the same View would have no `accessibilityLabel` at all. See [this](https://github.com/facebook/react-native/issues/32826) issue for details.
+Note that in React Native apps, the `accessibilityLabel` is computed in a non-standard way, which happens to [differ between iOS and Android](https://github.com/facebook/react-native/issues/32826). Detox [bridges over that gap](https://github.com/wix/Detox/issues/3977) by artificially aligning Android to iOS.
+Effectively, that means that in React Native apps, performing accessibility-label based matching for elements **with no explicit label** suggests that the matching will be performed against a concatenation of labels from the child-elements, if applicable. For example:
+
+```js
+<View testID='title-root'>
+  <Text accessibilityLabel={'title'}>Goodbye!</Text>
+  <Text accessibilityLabel={'subtitle'}>Thanks for all the fish.</Text>
+</View>
+```
+
+In this case, where `title-root` has no accessibility label of its own, matching the label of `title-root` will be performed against the text: `title subtitle`.
+
+Also note that in iOS, `accessibilityLabel` for primitive elements such as text, automatically receives the text itself - even if the accessibilityLabel prop isn't explicitly specified.
 :::
 
 ```js
-await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
+await expect(element(by.id('submitButton'))).toHaveLabel('Submit');
 ```
 
 ### `toHaveId(id)`
@@ -73,7 +85,7 @@ await expect(element(by.id('UniqueId204'))).toHaveLabel('Done');
 Expects the element to have the specified accessibility identifier. In React Native, this corresponds to the value in the [`testID`](https://reactnative.dev/docs/view.html#testid) prop.
 
 ```js
-await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
+await expect(element(by.text('Submit'))).toHaveId('submitButton');
 ```
 
 ### `toHaveValue(value)`
@@ -81,7 +93,7 @@ await expect(element(by.text('I contain some text'))).toHaveId('UniqueId204');
 Expects the element to have the specified accessibility value. In React Native, this corresponds to the value in the [`accessibilityValue`](https://reactnative.dev/docs/view.html#accessibilityvalue) prop.
 
 ```js
-await expect(element(by.id('UniqueId533'))).toHaveValue('0');
+await expect(element(by.id('temperatureDial'))).toHaveValue('25');
 ```
 
 ### `toHaveSliderPosition(normalizedPosition, tolerance)`
@@ -109,7 +121,7 @@ Waits until the expectation is resolved for the specified amount of time. If tim
 `timeout`—the timeout to wait, in ms
 
 ```js
-await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
+await waitFor(element(by.id('bigButton'))).toBeVisible().withTimeout(2000);
 ```
 
 ## Properties
@@ -119,9 +131,9 @@ await waitFor(element(by.id('UniqueId204'))).toBeVisible().withTimeout(2000);
 Negates the expectation, e.g.:
 
 ```js
-await expect(element(by.id('UniqueId533'))).not.toBeVisible();
-await expect(element(by.id('UniqueId533'))).not.toExist();
-await expect(element(by.id('UniqueId533'))).not.toBeFocused();
-await expect(element(by.id('UniqueId533'))).not.toHaveText('');
-await expect(element(by.id('UniqueId533'))).not.toHaveValue('');
+await expect(element(by.id('tinyButton'))).not.toBeVisible();
+await expect(element(by.id('tinyButton'))).not.toExist();
+await expect(element(by.id('tinyButton'))).not.toBeFocused();
+await expect(element(by.id('tinyButton'))).not.toHaveText('');
+await expect(element(by.id('tinyButton'))).not.toHaveValue('');
 ```

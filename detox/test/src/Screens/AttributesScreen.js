@@ -36,6 +36,10 @@ export default class AttributesScreen extends Component {
           </ScrollView>
         </View>
         <Text testID={'textViewId'} accessibilityLabel={'TextView'}>TextView</Text>
+        <View testID={'textGroupRoot'} marginLeft={20} >
+          <Text accessibilityLabel={'InnerText1'}>Some inner text</Text>
+          <Text accessibilityLabel={'InnerText2'}>Some more inner text</Text>
+        </View>
         <CheckBox
           disabled={false}
           testID={'checkboxId'}

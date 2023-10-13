@@ -1,3 +1,5 @@
+@import '@site/src/css/fonts';
+
 .heroBanner {
   height: 420px;
   width: auto;
@@ -5,8 +7,6 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
   background-color: #12161b;
   background-image: url(@site/static/img/showcase/showcase-illustration.png);
   background-position-x: center;
@@ -14,20 +14,19 @@
   background-repeat: no-repeat;
   background-size: cover;
   border-bottom: 1px solid #202429;
-}
 
-.heroBanner h1 {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 58px;
-}
+  h1 {
+    @include h2;
+  }
 
-.heroBanner p {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 20px;
+  p {
+    @include t1;
+    font-weight: 300;
+  }
+
+  a {
+    @include t2;
+  }
 }
 
 .button {
@@ -46,36 +45,31 @@
   border: 1px solid #000000;
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   background: radial-gradient(100% 100% at 1.07% 0%, #7633e5 0%, #5d71e5 100%);
-}
 
-.button:focus {
-  outline: none;
-}
+  &:focus {
+    outline: none;
+  }
 
-.button .button--secondary {
-  background-color: #7633e5;
-  color: #ffffff;
-  width: 500px;
-}
+  &--secondary {
+    background-color: #7633e5;
+    color: #ffffff;
+    width: 500px;
+  }
 
-.button:hover {
-  background: #7633e5;
-  color: #ffffff;
-  text-decoration: none;
-}
+  &:hover {
+    background: #7633e5;
+    color: #ffffff;
+    text-decoration: none;
+  }
 
-.button a {
-  color: #ffffff;
-  text-decoration: none;
+  a {
+    color: #ffffff;
+    text-decoration: none;
 
-  /* T/T2 */
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 100px;
-  font-size: 16px;
-  line-height: 25px;
-  /* identical to box height, or 156% */
-  color: #ffffff;
+    @include t2;
+    /* identical to box height, or 156% */
+    color: #ffffff;
+  }
 }
 
 @media screen and (max-width: 966px) {

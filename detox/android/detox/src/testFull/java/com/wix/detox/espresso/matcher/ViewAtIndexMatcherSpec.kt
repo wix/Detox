@@ -3,7 +3,6 @@ package com.wix.detox.espresso.matcher
 import android.view.View
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -28,7 +27,7 @@ object ViewAtIndexMatcherSpec: Spek({
                 uut.describeTo(description)
                 verify(description).appendText("View at index #0, of those matching MATCHER(innerMatcher description)")
             }
-            
+
             it("should append a valid description for index≥0") {
                 val uut = ViewAtIndexMatcher(7, innerMatcher)
                 uut.describeTo(description)

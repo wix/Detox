@@ -1,0 +1,40 @@
+@import 'colors';
+
+:root {
+  @include define-detox-extra-colors();
+
+  &[data-theme] {
+    --ifm-color-primary: #048fc0;
+    --ifm-color-primary-dark: #253282;
+    --ifm-color-primary-darker: #161360;
+    --ifm-color-primary-darkest: #150a51;
+    --ifm-color-primary-light: var(--detox-color-p0);
+    --ifm-color-primary-lighter: var(--detox-color-p1);
+    --ifm-color-primary-lightest: var(--detox-color-p2);
+
+    --ifm-color-secondary-contrast-background: var(--detox-color-u4a);
+    --ifm-color-secondary-contrast-foreground: var(--detox-color-a0);
+    --ifm-color-secondary-dark: var(--detox-color-u0);
+    --ifm-color-danger-contrast-background: var(--detox-color-r4a);
+    --ifm-color-danger-dark: var(--detox-color-r0);
+    --ifm-color-warning-contrast-background: var(--detox-color-y4a);
+    --ifm-color-warning-dark: var(--detox-color-y0);
+    --ifm-color-success-contrast-background: var(--detox-color-e4a);
+    --ifm-color-success-dark: var(--detox-color-e0);
+    --ifm-color-info-contrast-background: var(--detox-color-b4a);
+    --ifm-color-info-dark: var(--detox-color-b0);
+
+    --ifm-code-font-size: 95%;
+  }
+
+  &[data-theme='light'] {
+    @include define-detox-light-colors();
+    --docusaurus-highlighted-code-line-bg: #d9e5f6;
+  }
+
+  &[data-theme='dark'] {
+    @include define-detox-dark-colors();
+    --docusaurus-highlighted-code-line-bg: #414458;
+    --ifm-background-color: var(--detox-color-a1);
+  }
+}

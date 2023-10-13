@@ -28,6 +28,11 @@ module.exports = {
     describe: 'Reuse existing installed app (do not delete + reinstall) for a faster run.',
     boolean: true,
   },
+  start: {
+    group: 'Execution:',
+    describe: 'Run app "start" scripts before running the tests. Use --no-start to disable that, and --start=force to ignore errors.',
+    default: true,
+  },
   u: {
     alias: 'cleanup',
     group: 'Execution:',

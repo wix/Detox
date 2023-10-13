@@ -45,32 +45,28 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-- **Cross Platform:** Write cross-platform end-to-end tests in JavaScript. Currently supports iOS and Android.
+- **Cross Platform:** Write end-to-end tests in JavaScript for React Native apps (Android & iOS).
 - **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 - **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
 - **Made For CI:** Execute your E2E tests on CI platforms like Travis CI, Circle CI or Jenkins without grief.
 - **Runs on Devices:** Gain confidence to ship by testing your app on a device/simulator just like a real user (not yet supported on iOS).
 - **Test Runner Agnostic:** Detox provides a set of APIs to use with any test runner without it. It comes with [Jest](https://jestjs.io) integration out of the box.
 
-## Supported Versions
+## Supported React Native Versions
 
-### Environment
+Detox was built from the ground up to support React Native projects.
 
-- **OS**: macOS 10.15 (Catalina) or higher; Ubuntu Linux 20.04 or higher; Windows 10 Version 1803 or higher
-- **Xcode**: 11.0 or higher
-  - **iOS Simulator Runtime**: iOS 13.0 or higher
+While Detox should work out of the box with almost any React Native version of the latest minor releases, official support is provided for React Native versions `0.70.x` and `0.71.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
 
-### React Native
+Newer versions, as well as React Native's "New Architecture", may work with Detox, but have not been tested out yet by the Detox team.
 
-Detox is built from the ground up to support React Native projects as well as pure native ones.
+Although we do not officially support older React Native versions, we do our best to keep Detox compatible with them.
 
-The following React Native versions have been tested:
+Also, in case of a problem with an unsupported version of React Native, please [submit an issue](https://github.com/wix/Detox/issues/new/choose) or write us in our [Discord server](https://discord.gg/CkD5QKheF5) and we will do our best to help out.
 
-| iOS             | Android                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 0.68.x - 0.69.7 | 0.68.x - 0.69.7 -<br/>Visibility edge-case: see this [RN issue](https://github.com/facebook/react-native/issues/23870) \* |
+### Known Issues with React Native
 
-Future versions are most likely supported, but have not been tested yet. Please open issues if you find specific issues with newer React Native versions.
+- Visibility edge-case on Android: see this [RN issue](https://github.com/facebook/react-native/issues/23870).
 
 ## Get Started with Detox
 
@@ -82,7 +78,7 @@ Explore further about using Detox from our new **[website](https://wix.github.io
 
 ## Core Principles
 
-We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/introduction/design-principles).
+We believe that the only way to address the core difficulties with mobile end-to-end testing is by rethinking some of the principles of the entire approach. See what Detox [does differently](https://wix.github.io/Detox/docs/articles/design-principles).
 
 ## Contributing to Detox
 

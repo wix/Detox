@@ -32,6 +32,7 @@ const sidebars = {
         'guide/investigating-test-failure',
         'guide/test-id',
         'guide/parallel-test-execution',
+        'guide/typescript',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
         'guide/mocking',
@@ -42,6 +43,7 @@ const sidebars = {
         'guide/developing-while-writing-tests',
         'guide/android-dev-env',
         'guide/proguard-configuration',
+        'guide/cucumber-js-integration',
         'guide/uninstalling',
       ]
     },
@@ -87,6 +89,7 @@ const sidebars = {
         'cli/overview',
         'cli/init',
         'cli/build',
+        'cli/start',
         'cli/test',
         'cli/recorder',
         'cli/build-framework-cache',

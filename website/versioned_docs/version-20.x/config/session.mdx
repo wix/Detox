@@ -78,8 +78,7 @@ If `false`, it is assumed that you will be running it independently via [`detox 
 
 Default: `10000`.
 
-Tells Detox how long to wait for the app to become idle until it starts querying it for more details.
-Detox will be printing the list of busy idling resources every time an action takes more than the specified period:
+Tells Detox how long (in milliseconds) to wait for the app to become idle until it starts querying it for more details.
 
 ```json
 {
@@ -89,4 +88,22 @@ Detox will be printing the list of busy idling resources every time an action ta
 }
 ```
 
+Detox will be printing the list of busy idling resources every time an action takes more than the specified period, e.g.:
+
+```plain text
+15:13:07.309 detox[17005] i The app is busy with the following tasks:
+• There are 10 work items pending on the dispatch queue: "Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)".
+• UI elements are busy:
+  - Layers pending animations: 96.
+  - Layers needs layout: 173.
+  - View needs layout: 74.
+  - View needs display: 98.
+  - Layers needs display: 90.
+• Run loop "Main Run Loop" is awake.
+```
+
 To disable this behavior (i.e. querying the app periodically), set the value to `0`.
+
+Seeing logs like these usually indicates certain issues in your application, as mentioned in the [Troubleshooting Guide](../troubleshooting/synchronization.md).
+
+For the most detailed information, refer to the DetoxSync (iOS) [Status Documentation](https://github.com/wix-incubator/DetoxSync/blob/master/StatusDocumentation.md).

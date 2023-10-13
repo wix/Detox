@@ -7,17 +7,32 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import com.wix.detox.espresso.common.SliderHelper
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
+import com.wix.detox.espresso.common.ReactSliderHelper
+import org.hamcrest.*
+import org.hamcrest.Matchers.*
 import kotlin.math.abs
+import org.hamcrest.CoreMatchers.`is`
 
 /*
  * An extension of [androidx.test.espresso.matcher.ViewMatchers].
  */
+fun <T> getRelevantMatcher(value: T, isRegex: Boolean): Matcher<T> =
+    if (isRegex) RegexMatcher(value.toString()) else `is`(value)
+
+fun withAccessibilityLabel(text: String, isRegex: Boolean): Matcher<View> =
+    WithAccessibilityLabelMatcher(getRelevantMatcher(text, isRegex))
+
+fun withShallowAccessibilityLabel(label: String, isRegex: Boolean): Matcher<View> =
+    anyOf(withContentDescription(label, isRegex), withText(label, isRegex))
+
+fun withText(text: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withText(getRelevantMatcher(text, isRegex))
+
+fun withContentDescription(label: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withContentDescription(getRelevantMatcher(label, isRegex))
+
+fun withTagValue(testId: String, isRegex: Boolean): Matcher<View> =
+    ViewMatchers.withTagValue(getRelevantMatcher<Any>(testId, isRegex))
 
 fun isOfClassName(className: String): Matcher<View> {
     try {
@@ -45,7 +60,7 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
         }
 
         override fun matchesSafely(view: AppCompatSeekBar): Boolean {
-            val sliderHelper = SliderHelper.create(view)
+            val sliderHelper = ReactSliderHelper.create(view)
             val progressPct = sliderHelper.getCurrentProgressPct()
             return (abs(progressPct - expectedValuePct) <= tolerance)
         }
