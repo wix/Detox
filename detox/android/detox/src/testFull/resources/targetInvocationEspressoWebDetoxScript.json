@@ -1,0 +1,47 @@
+{
+  "target":{
+    "type":"Invocation",
+    "value":{
+      "target":{
+        "type":"Invocation",
+        "value":{
+          "target":{
+            "type":"Class",
+            "value":"com.wix.detox.espresso.web.EspressoWebDetox"
+          },
+          "method":"getWebView",
+          "args":[
+
+          ]
+        }
+      },
+      "method":"element",
+      "args":[
+        {
+          "type":"Invocation",
+          "value":{
+            "target":{
+              "type":"Class",
+              "value":"com.wix.detox.espresso.web.DetoxWebAtomMatcher"
+            },
+            "method":"matcherForId",
+            "args":[
+              "textInput"
+            ]
+          }
+        },
+        {
+          "type":"Integer",
+          "value":0
+        }
+      ]
+    }
+  },
+  "method": "runScriptWithArgs",
+  "args": [
+    "function(el,arg1){}",
+    [
+      [{ "b": true, "n": 1, "s": "1" }]
+    ]
+  ]
+}
