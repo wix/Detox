@@ -1,8 +1,18 @@
+@media only screen and (max-width: 600px) {
+
+  .socialNetLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 39px;
+    justify-content: space-between;
+  }
+}
+
 // GitHub
 .footer-gh-footer {
   background: url(@site/static/img/showcase/gh-footer-light.svg) no-repeat;
   content: 'Footer';
-  display: inline-flexbox;
+  display: inline;
   padding-left: 30px;
   color: var(--ifm-footer-link-color);
 }
@@ -15,7 +25,7 @@
 .footer-twitter-footer {
   background: url(@site/static/img/showcase/twitter-footer-light.svg) no-repeat;
   content: 'Footer';
-  display: inline-flexbox;
+  display: inline;
   padding-left: 30px;
   color: var(--ifm-footer-link-color);
 }
@@ -28,7 +38,7 @@
 .footer-discord-footer {
   background: url(@site/static/img/showcase/discord-footer-light.svg) no-repeat;
   content: 'Footer';
-  display: inline-flexbox;
+  display: inline;
   padding-left: 30px;
   color: var(--ifm-footer-link-color);
 }
