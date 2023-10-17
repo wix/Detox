@@ -202,6 +202,7 @@ module.exports = function getGenerator({
     'id<GREYMatcher>',
     'GREYElementInteraction*',
     'String',
+    'ArrayList<Object>',
     'ArrayList<String>',
     'ViewAction'
   ];

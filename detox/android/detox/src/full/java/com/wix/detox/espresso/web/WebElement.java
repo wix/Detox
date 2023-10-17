@@ -62,12 +62,12 @@ public class WebElement {
         return getWebViewInteraction().withElement(get()).perform(DriverAtoms.getText()).get();
     }
 
-    public Evaluation runScript(String script) {
-        return getWebViewInteraction().withElement(get()).perform(new SimpleAtom(script)).get();
+    public Object runScript(String script) {
+        return getWebViewInteraction().withElement(get()).perform(new SimpleAtom(script)).get().getValue();
     }
 
-    public Evaluation runScriptWithArgs(String script, final ArrayList<Object> args) {
-        return getWebViewInteraction().withElement(get()).perform(Atoms.scriptWithArgs(script, args)).get();
+    public Object runScriptWithArgs(String script, final ArrayList<Object> args) {
+        return getWebViewInteraction().withElement(get()).perform(Atoms.scriptWithArgs(script, args)).get().getValue();
     }
 
     public String getCurrentUrl() {
