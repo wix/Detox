@@ -11,3 +11,44 @@
 .footer__link-item a {
   text-decoration: none;
 }
+
+@media only screen and (max-width: 600px) {
+
+  .socialNetLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 39px;
+    justify-content: space-between;
+  }
+}
+
+.footer-link {
+  display: inline;
+  padding-left: 30px;
+  background-repeat: no-repeat;
+  color: var(--ifm-footer-link-color);
+
+  &-github {
+    background-image: url(@site/static/img/showcase/gh-footer-light.svg);
+  }
+
+  [data-theme='dark'] &-github {
+    background-image: url(@site/static/img/showcase/gh-footer-dark.svg);
+  }
+
+  &-twitter {
+    background-image: url(@site/static/img/showcase/twitter-footer-light.svg);
+  }
+
+  [data-theme='dark'] &-twitter {
+    background-image: url(@site/static/img/showcase/twitter-footer-dark.svg);
+  }
+
+  &-discord {
+    background-image: url(@site/static/img/showcase/discord-footer-light.svg);
+  }
+
+  [data-theme='dark'] &-discord {
+    background-image: url(@site/static/img/showcase/discord-footer-dark.svg);
+  }
+}

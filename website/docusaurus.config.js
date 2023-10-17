@@ -147,21 +147,21 @@ const config = {
                 label: 'GitHub',
                 href: 'https://github.com/wix/Detox',
                 position: 'left',
-                className: 'footer-gh-footer',
+                className: 'footer-link footer-link-github',
                 favicon: '/static/img/showcase/gh-footer-light.svg'
               },
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/detoxe2e/',
                 position: 'left',
-                className: 'footer-twitter-footer',
+                className: 'footer-link footer-link-twitter',
                 favicon: '/static/img/showcase/twitter-footer-light.svg'
               },
               {
                 label: 'Discord',
                 href: 'https://discord.gg/CkD5QKheF5',
                 position: 'left',
-                className: 'footer-discord-footer',
+                className: 'footer-link footer-link-discord',
                 favicon: '/static/img/showcase/discord-footer-light.png'
               }
             ]
