@@ -29,6 +29,10 @@
   font: 300 16px/25px 'Nunito Sans', sans-serif;
 }
 
+@mixin t2b {
+  font: 600 16px/25px 'Nunito Sans', sans-serif;
+}
+
 @mixin t3 {
   font: 400 13px/20px 'Nunito Sans', sans-serif;
 }
