@@ -31,7 +31,7 @@ export default function FooterLinksMultiColumn({ columns }) {
   return (
     <div className="row footer__links">
       {columns.map((column, i) => (
-        <Column key={i} column={column} className={column.title === 'More' ? 'socialNetLinks' : ''} />
+        <Column key={i} column={column} className={column.title === 'More' ? 'footer__col_social-networks' : ''} />
       ))}
     </div>
   );

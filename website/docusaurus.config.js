@@ -142,21 +142,22 @@ const config = {
           },
           {
             title: 'More',
+            className: 'Example',
             items: [
               {
                 label: 'GitHub',
                 href: 'https://github.com/wix/Detox',
-                className: 'github'
+                className: 'footer__link-item_github'
               },
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/detoxe2e/',
-                className: 'twitter'
+                className: 'footer__link-item_twitter'
               },
               {
                 label: 'Discord',
                 href: 'https://discord.gg/CkD5QKheF5',
-                className: 'discord'
+                className: 'footer__link-item_discord'
               }
             ]
           }

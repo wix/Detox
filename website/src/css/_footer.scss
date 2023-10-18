@@ -1,18 +1,49 @@
-$footer-background-color: #FDFDFD;
-$footer-border-top-color: rgba(19, 20, 25, 0.15);
-$footer-shadow-color: rgba(0, 0, 0, 0.25);
-
 .footer {
-  background-color: $footer-background-color;
-  /* no global variable */
-  border-top: 1px solid $footer-border-top-color;
+  border-top: 1px solid rgba(19, 20, 25, 0.15);
   @include t2;
 }
 
 [data-theme='dark'] .footer {
-  background-color: var(--detox-color-a1, #12161B);
-  box-shadow: 0px 4px 4px 0px $footer-shadow-color;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   border-top: 1px solid var(--detox-color-a3, #202429);
+}
+
+.footer__title {
+  @include t2b;
+}
+
+.footer__col_social-networks {
+
+  .footer__link-item {
+    display: inline;
+    padding-left: 30px;
+    background-repeat: no-repeat;
+    gap: 0;
+  }
+}
+
+.footer__link-item_github {
+  background-image: url(@site/static/img/showcase/gh-footer-light.svg);
+}
+
+[data-theme='dark'] .footer__link-item_github {
+  background-image: url(@site/static/img/showcase/gh-footer-dark.svg);
+}
+
+.footer__link-item_twitter {
+  background-image: url(@site/static/img/showcase/twitter-footer-light.svg);
+}
+
+[data-theme='dark'] .footer__link-item_twitter {
+  background-image: url(@site/static/img/showcase/twitter-footer-dark.svg);
+}
+
+.footer__link-item_discord {
+  background-image: url(@site/static/img/showcase/discord-footer-light.svg);
+}
+
+[data-theme='dark'] .footer__link-item_discord {
+  background-image: url(@site/static/img/showcase/discord-footer-dark.svg);
 }
 
 @media only screen and (max-width: 600px) {
@@ -29,50 +60,11 @@ $footer-shadow-color: rgba(0, 0, 0, 0.25);
   }
 }
 
-.footer__title {
-  @include t2b;
-}
-
-
-.socialNetLinks {
-
-  .footer__link-item {
-    display: inline;
-    padding-left: 30px;
-    background-repeat: no-repeat;
-    gap: 0;
-  }
-}
-
 @media only screen and (min-width: 320px) and (max-width: 996px) {
-  .socialNetLinks {
+  .footer__col_social-networks {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     max-width: 375px;
   }
-}
-
-.github {
-  background-image: url(@site/static/img/showcase/gh-footer-light.svg);
-}
-
-[data-theme='dark'] .github {
-  background-image: url(@site/static/img/showcase/gh-footer-dark.svg);
-}
-
-.twitter {
-  background-image: url(@site/static/img/showcase/twitter-footer-light.svg);
-}
-
-[data-theme='dark'] .twitter {
-  background-image: url(@site/static/img/showcase/twitter-footer-dark.svg);
-}
-
-.discord {
-  background-image: url(@site/static/img/showcase/discord-footer-light.svg);
-}
-
-[data-theme='dark'] .discord {
-  background-image: url(@site/static/img/showcase/discord-footer-dark.svg);
 }
