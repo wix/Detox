@@ -40,24 +40,16 @@ $footer-shadow-color: rgba(0, 0, 0, 0.25);
     display: inline;
     padding-left: 30px;
     background-repeat: no-repeat;
+    gap: 0;
   }
 }
 
-@media only screen and (max-width: 600px) {
-
+@media only screen and (min-width: 374px) and (max-width: 996px) {
   .socialNetLinks {
     display: flex;
-    gap: 10px;
-    justify-content: space-between;
+    gap: 40px;
+    justify-content: flex-start;
     flex-wrap: wrap;
-  }
-}
-
-@media only screen and (max-width: 300px) {
-
-  .socialNetLinks {
-    flex-direction: column;
-    gap: 0;
   }
 }
 
