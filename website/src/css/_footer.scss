@@ -15,7 +15,7 @@ $footer-shadow-color: rgba(0, 0, 0, 0.25);
   border-top: 1px solid var(--detox-color-a3, #202429);
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 996px) {
   .footer__col {
     margin-bottom: calc(var(--ifm-spacing-vertical) * 2.8);
   }
