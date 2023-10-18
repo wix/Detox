@@ -44,12 +44,12 @@ $footer-shadow-color: rgba(0, 0, 0, 0.25);
   }
 }
 
-@media only screen and (min-width: 374px) and (max-width: 996px) {
+@media only screen and (min-width: 320px) and (max-width: 996px) {
   .socialNetLinks {
     display: flex;
-    gap: 40px;
-    justify-content: flex-start;
+    justify-content: space-between;
     flex-wrap: wrap;
+    max-width: 375px;
   }
 }
 
