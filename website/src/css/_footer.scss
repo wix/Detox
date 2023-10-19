@@ -53,7 +53,7 @@
   }
 
   @media only screen and (min-width: 320px) and (max-width: 996px) {
-    &__col_more > &__items {
+    &__col_more>&__items {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
@@ -66,7 +66,7 @@
       margin-bottom: calc(var(--ifm-spacing-vertical) * 2.8);
     }
 
-    &__col:last-child &__title {
+    &__col_more &__title {
       margin-bottom: 7px;
     }
 
@@ -75,4 +75,3 @@
     }
   }
 }
-
