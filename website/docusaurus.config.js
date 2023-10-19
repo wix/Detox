@@ -142,7 +142,6 @@ const config = {
           },
           {
             title: 'More',
-            className: 'Example',
             items: [
               {
                 label: 'GitHub',
