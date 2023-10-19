@@ -145,18 +145,15 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/wix/Detox',
-                className: 'footer__link-item_github'
+                href: 'https://github.com/wix/Detox'
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/detoxe2e/',
-                className: 'footer__link-item_twitter'
+                href: 'https://twitter.com/detoxe2e/'
               },
               {
                 label: 'Discord',
-                href: 'https://discord.gg/CkD5QKheF5',
-                className: 'footer__link-item_discord'
+                href: 'https://discord.gg/CkD5QKheF5'
               }
             ]
           }

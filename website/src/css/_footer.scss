@@ -1,70 +1,78 @@
 .footer {
-  border-top: 1px solid rgba(19, 20, 25, 0.15);
   @include t2;
-}
 
-[data-theme='dark'] .footer {
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  border-top: 1px solid var(--detox-color-a3, #202429);
-}
+  [data-theme='light'] & {
+    border-top: 1px solid rgba(19, 20, 25, 0.15);
+  }
 
-.footer__title {
-  @include t2b;
-}
+  [data-theme='dark'] & {
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border-top: 1px solid var(--detox-color-a3);
+  }
 
-.footer__col_social-networks {
+  &__title {
+    @include t2b;
+  }
 
-  .footer__link-item {
-    display: inline;
-    padding-left: 30px;
-    background-repeat: no-repeat;
-    gap: 0;
+  &__link-item {
+    .footer__col_more & {
+      display: inline;
+      padding-left: 30px;
+      background-repeat: no-repeat;
+    }
+
+    &_git-hub {
+      [data-theme='light'] & {
+        background-image: url(@site/static/img/showcase/gh-footer-light.svg);
+      }
+
+      [data-theme='dark'] & {
+        background-image: url(@site/static/img/showcase/gh-footer-dark.svg);
+      }
+    }
+
+    &_twitter {
+      [data-theme='light'] & {
+        background-image: url(@site/static/img/showcase/twitter-footer-light.svg);
+      }
+
+      [data-theme='dark'] & {
+        background-image: url(@site/static/img/showcase/twitter-footer-dark.svg);
+      }
+    }
+
+    &_discord {
+      [data-theme='light'] & {
+        background-image: url(@site/static/img/showcase/discord-footer-light.svg);
+      }
+
+      [data-theme='dark'] & {
+        background-image: url(@site/static/img/showcase/discord-footer-dark.svg);
+      }
+    }
+  }
+
+  @media only screen and (min-width: 320px) and (max-width: 996px) {
+    &__col_more > &__items {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      max-width: 325px;
+    }
+  }
+
+  @media only screen and (max-width: 996px) {
+    &__col {
+      margin-bottom: calc(var(--ifm-spacing-vertical) * 2.8);
+    }
+
+    &__col:last-child &__title {
+      margin-bottom: 7px;
+    }
+
+    &__link-item a {
+      margin-bottom: 12px;
+    }
   }
 }
 
-.footer__link-item_github {
-  background-image: url(@site/static/img/showcase/gh-footer-light.svg);
-}
-
-[data-theme='dark'] .footer__link-item_github {
-  background-image: url(@site/static/img/showcase/gh-footer-dark.svg);
-}
-
-.footer__link-item_twitter {
-  background-image: url(@site/static/img/showcase/twitter-footer-light.svg);
-}
-
-[data-theme='dark'] .footer__link-item_twitter {
-  background-image: url(@site/static/img/showcase/twitter-footer-dark.svg);
-}
-
-.footer__link-item_discord {
-  background-image: url(@site/static/img/showcase/discord-footer-light.svg);
-}
-
-[data-theme='dark'] .footer__link-item_discord {
-  background-image: url(@site/static/img/showcase/discord-footer-dark.svg);
-}
-
-@media only screen and (max-width: 996px) {
-  .footer__col {
-    margin-bottom: calc(var(--ifm-spacing-vertical) * 2.8);
-  }
-
-  .footer__col:last-child .footer__title {
-    margin-bottom: 7px;
-  }
-
-  .footer__link-item a {
-    margin-bottom: 12px;
-  }
-}
-
-@media only screen and (min-width: 320px) and (max-width: 996px) {
-  .footer__col_social-networks {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    max-width: 375px;
-  }
-}
