@@ -1,7 +1,9 @@
+@import '@site/src/css/fonts';
+
 .heroBanner {
   height: 725px;
   width: 100%;
-  padding: 4rem 0;
+  padding: 55px 10px;
   color: white;
   overflow: hidden;
   background: rgb(21, 33, 107);
@@ -10,31 +12,29 @@
   background-position-y: top;
   background-repeat: no-repeat;
   background-size: cover;
+
+  h1 {
+    @include h2;
+    color: var(--primary-dark-a-0, #FFF);
+    font-size: 120px;
+    line-height: normal;
+    letter-spacing: -6px;
+    margin-left: -10px;
+  }
+
+  h2 {
+    @include t1;
+    height: 60px;
+    margin-top: -30px;
+    margin-bottom: 30px;
+    max-width: 450px;
+  }
 }
 
 html[data-theme='dark'] {
   --ifm-background-color: #202429;
   --ifm-background-surface-color: #202429;
   --ifm-footer-background-color: #202429;
-}
-
-.heroBanner h1 {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 120px;
-  line-height: 150px;
-  margin-left: -10px;
-}
-
-.heroBanner h2 {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 20px;
-  height: 60px;
-  margin-bottom: 30px;
-  max-width: 450px;
 }
 
 .buttons {
