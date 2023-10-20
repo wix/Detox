@@ -21,6 +21,7 @@ def _rnNativeArtifact = rnInfo.isRN71OrHigher
             : 'com.facebook.react:react-native:+'
 
 android {
+    namespace "com.wix.detox"
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
 
