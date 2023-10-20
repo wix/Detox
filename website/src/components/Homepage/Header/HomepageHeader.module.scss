@@ -4,7 +4,6 @@
   --ifm-heading-color: #fff;
   --ifm-button-background-color: #fff;
   --ifm-color-gray-900: #12161B;
-  --ifm-button-border-width: 0;
 
   height: 725px;
   width: 100%;
@@ -45,15 +44,16 @@
       background-color: var(--ifm-button-background-color);
       min-width: 251px;
       padding: 12px 20px;
-      border: var(--ifm-button-border-width);
+      border: 0;
+      border-radius: 10px;
 
     }
   }
 
   @media only screen and (max-width: 768px) {
 
-    height: 450px;
-    padding: 32px 9px;
+    height: 456px;
+    padding: 38px 9px;
     background-position-x: left;
     background-position-y: center;
 
