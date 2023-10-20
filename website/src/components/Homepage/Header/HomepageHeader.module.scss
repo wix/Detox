@@ -1,21 +1,25 @@
 @import '@site/src/css/fonts';
 
 .heroBanner {
+  --ifm-heading-color: #fff;
+  --ifm-button-background-color: #fff;
+  --ifm-color-gray-900: #12161B;
+  --ifm-button-border-width: 0;
+
   height: 725px;
   width: 100%;
-  padding: 55px 10px;
-  color: white;
+  padding: 54px 10px;
+  color: var(--ifm-heading-color);
   overflow: hidden;
-  background: rgb(21, 33, 107);
   background-image: url(@site/static/img/homepage/hero-image.jpg);
   background-position-x: center;
   background-position-y: top;
   background-repeat: no-repeat;
   background-size: cover;
+  transition: height 0.3s ease;
 
   h1 {
     @include h2;
-    color: var(--primary-dark-a-0, #FFF);
     font-size: 120px;
     line-height: normal;
     letter-spacing: -6px;
@@ -24,44 +28,49 @@
 
   h2 {
     @include t1;
-    height: 60px;
-    margin-top: -30px;
-    margin-bottom: 30px;
     max-width: 450px;
-  }
-}
-
-html[data-theme='dark'] {
-  --ifm-background-color: #202429;
-  --ifm-background-surface-color: #202429;
-  --ifm-footer-background-color: #202429;
-}
-
-.buttons {
-  display: flex;
-  text-shadow: none;
-  width: 251px;
-  height: 50px;
-  border-radius: 10px;
-}
-
-.buttons a {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 300;
-  font-size: 16px;
-  font-style: normal;
-  line-height: 35px;
-}
-
-@media only screen and (max-width: 600px) {
-  .buttons a {
-    font-size: 14px;
+    min-height: 60px;
+    margin-top: -30px;
+    margin-bottom: 32px;
+    letter-spacing: 0.1px;
   }
 
-  .heroBanner h1 {
-    color: var(--primary-dark-a-0, #FFF);
-    font-size: 72px;
-    line-height: normal;
-    letter-spacing: -3.6px;
+  .buttons {
+    height: 50px;
+
+    a {
+      @include t2;
+      font-family: 'Poppins';
+      color: var(--ifm-color-gray-900);
+      background-color: var(--ifm-button-background-color);
+      min-width: 251px;
+      padding: 12px 20px;
+      border: var(--ifm-button-border-width);
+
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+
+    height: 450px;
+    padding: 32px 9px;
+    background-position-x: left;
+    background-position-y: center;
+
+    h1 {
+      font-size: 72px;
+      line-height: normal;
+      letter-spacing: -3.6px;
+      margin-left: -6px;
+    }
+
+    h2 {
+      margin-top: -22px;
+      margin-bottom: 21px;
+    }
+  }
+
+  @media only screen and (max-width: 520px) {
+    background-image: url(@site/static/img/homepage/hero-image-mobile.jpg);
   }
 }
