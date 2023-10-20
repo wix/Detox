@@ -21,7 +21,10 @@ def _rnNativeArtifact = rnInfo.isRN71OrHigher
             : 'com.facebook.react:react-native:+'
 
 android {
-    namespace "com.wix.detox"
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpVersion >= 7) {
+        namespace "com.wix.detox"
+    }
     compileSdkVersion _compileSdkVersion
     buildToolsVersion _buildToolsVersion
 
