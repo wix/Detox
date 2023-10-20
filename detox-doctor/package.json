@@ -1,0 +1,62 @@
+{
+  "name": "detox-doctor",
+  "version": "0.0.0",
+  "repository": {
+    "url": "git+https://github.com/wix-incubator/detox-doctor.git"
+  },
+  "files": [
+    "dist/**",
+    "src/**",
+    "!**/__*__",
+    "!**/*.test.*"
+  ],
+  "main": "./cli.js",
+  "bin": {
+    "detox-doctor": "./cli.js"
+  },
+  "scripts": {
+    "start": "ts-node src/index",
+    "lint": "eslint .",
+    "fix": "eslint . --fix",
+    "build": "tsc",
+    "test": "jest",
+    "test:ci": "jest --coverage"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.9",
+    "@types/fs-extra": "^9.0.13",
+    "@types/inquirer": "^9.0.3",
+    "@types/jest": "^29.5.5",
+    "@types/lodash": "^4.14.199",
+    "@types/node": "^14.18.63",
+    "@types/semver": "^7.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsdoc": "^39.9.1",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unicorn": "^47.0.0",
+    "jest": "^29.7.0",
+    "prettier": "^2.8.8",
+    "tempfile": "^3.0.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "debug": "^4.3.4",
+    "execa": "^5.1.1",
+    "fs-extra": "^9.1.0",
+    "globby": "^11.1.0",
+    "inquirer": "^8.2.6",
+    "lodash": "^4.17.21",
+    "semver": "^7.5.4",
+    "yargs": "^17.7.2"
+  }
+}

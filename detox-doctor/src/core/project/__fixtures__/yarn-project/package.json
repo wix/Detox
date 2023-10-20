@@ -1,0 +1,7 @@
+{
+  "name": "project-fixture-yarn-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash.noop": "^3.0.1"
+  }
+}

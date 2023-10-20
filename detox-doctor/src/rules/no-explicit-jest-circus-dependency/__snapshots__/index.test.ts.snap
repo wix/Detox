@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`no-explicit-jest-circus-dependency #check has circus 1`] = `
+{
+  "message": "Project should not have jest-circus as a dependency",
+  "status": "failure",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #check has no circus 1`] = `
+{
+  "message": undefined,
+  "status": "success",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #check no jest 1`] = `
+{
+  "message": undefined,
+  "status": "success",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #check no manifest 1`] = `
+{
+  "message": "Couldn't find package.json in your project.",
+  "status": "skipped",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #check non-semantic version 1`] = `
+{
+  "message": "The project is using non-semver version of jest: latest",
+  "status": "skipped",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #check old version 1`] = `
+{
+  "message": "The project is using jest@^26.6.0, which is not affected by this rule",
+  "status": "skipped",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #fix happy path 1`] = `
+{
+  "message": "Removed jest-circus@^27.2.5 from dependencies",
+  "status": "success",
+}
+`;
+
+exports[`no-explicit-jest-circus-dependency #fix unhappy path 1`] = `
+{
+  "message": "Failed to remove jest-circus@undefined from dependencies",
+  "status": "failure",
+}
+`;
