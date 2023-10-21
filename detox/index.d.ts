@@ -1571,19 +1571,22 @@ declare global {
             moveCursorToEnd(): Promise<void>;
 
             /**
-             * Running a script on the element
-             * @param script a method that accept the element as its first arg
-             * @example function foo(element) { console.log(element); }
+             * Running a JavaScript function on the element.
+             * The first argument to the function will be the element itself.
+             * The rest of the arguments will be forwarded to the JavaScript function as is.
+             *
+             * @param script a callback function in stringified form, or a plain function reference
+             * without closures, bindings etc. that will be converted to a string.
+             * @param args optional args to pass to the script
+             *
+             * @example
+             * await webElement.runScript('(el) => el.click()');
+             * await webElement.runScript(function setText(element, text) {
+             *   element.textContent = text;
+             * }, ['Custom Title']);
              */
-            runScript(script: string): Promise<any>;
-
-            /**
-             * Running a script on the element that accept args
-             * @param script a method that accept few args, and the element as the last arg.
-             * @param args a list of args to pass to the script
-             * @example function foo(a, b, c, element) { console.log(`${a}, ${b}, ${c}, ${element}`)}
-             */
-            runScriptWithArgs(script: string, args: any[]): Promise<any>;
+            runScript(script: string, args?: unknown[]): Promise<any>;
+            runScript<F>(script: (...args: any[]) => F, args?: unknown[]): Promise<F>;
 
             /**
              * Gets the current page url

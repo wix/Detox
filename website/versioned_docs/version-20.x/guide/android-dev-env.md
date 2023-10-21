@@ -64,7 +64,7 @@ _<sup>\* Inspect the content of your `ANDROID_SDK_ROOT` and `ANDROID_HOME` envir
 
 ## Android (AOSP) Emulators
 
-Mobile-apps’ automation needs an Android device to run on. If you haven’t already done so, you should  [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don’t go and install the default one: read through, first.
+Mobile-apps’ automation needs an Android device to run on. If you haven’t already done so, you should [set up an Emulator](https://developer.android.com/studio/run/emulator). But, wait - don’t go and install the default one: read through, first.
 
 We’ve long proven that for automation - which requires a stable and deterministic environment, Google’s emulators running with Google APIs simply don’t deliver what’s needed. Be it the preinstalled Google play-services - which tend to take up a lot of CPU, or even Google’s `gboard` Keyboard - which is full-featured but overly bloated: These encourage flakiness in tests, which we are desperate to avoid in automation.
 
@@ -115,7 +115,7 @@ While it’s possible to do this using Android Studio, we’ll focus on the comm
    ```
 
    > - `Pixel_API_28_AOSP` is just a suggestion for a name. Any name can work here, even `Pixel_API_28` - but you might have to delete an existing non-AOSP emulator, first. In any case, the name used in Detox configuration (typically in `package.json`) should be identical to this one.
-   > - `-d pixel` will install an emulator with the specs of a Pixel-1 device. Other specs can be used.
+   > - `-d pixel` will install an emulator with the specs of a Pixel-1 device. Other specs can be used. Running `$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list devices` will list all available device specs.
    > - `--package` is the most important argument: be sure to use the same value as you did in part 2, above, with `;default;`.
    >
    > Run `avdmanager create --help` for the full list of options.
@@ -130,7 +130,7 @@ At this point, you should be able to launch the emulator from Android Studio, bu
 
 ### Installing from Android Studio
 
-We won’t go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog  (see `Target` column of the Virtual Device Configuration screen below):
+We won’t go into all the details but once the proper image is installed using the `sdkmanager`, the option becomes available in the AVD creation dialog (see `Target` column of the Virtual Device Configuration screen below):
 
 ![SDK manager in AS](../img/android/aosp-image-as.png)
 
@@ -232,7 +232,7 @@ Assuming you have the APK available in the system, you can dynamically have Deto
     "emulator.oss": {
       "type": "android.emulator",
       "device": "...",
-      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"],
+      "utilBinaryPaths": ["relative/path/to/test-butler-app-2.2.1.apk"]
     }
   }
 }
