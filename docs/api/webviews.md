@@ -78,7 +78,7 @@ web.element(by.web.cssSelector('#cssSelector'));
 
 ### `by.web.name(name)`
 
-Match elements with the specified name.
+Match form input elements with the specified [`name` attribute][name].
 
 ```js
 web.element(by.web.name('name'));
@@ -358,6 +358,8 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`focus()`]: webviews.md#focus
 
 [`moveCursorToEnd()`]: webviews.md#movecursortoend
+
+[name]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#name
 
 [`runScript()`]: webviews.md#runscriptscript
 
