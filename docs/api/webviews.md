@@ -321,21 +321,21 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [web view expectations]: webviews.md#expectations
 
-[`by.web.id()`]: webviews.md#byidid
+[`by.web.id()`]: webviews.md#bywebidid
 
-[`by.web.className()`]: webviews.md#byclassnameclassname
+[`by.web.className()`]: webviews.md#bywebclassnameclassname
 
-[`by.web.cssSelector()`]: webviews.md#bycssselectorcssselector
+[`by.web.cssSelector()`]: webviews.md#bywebcssselectorcssselector
 
-[`by.web.name()`]: webviews.md#byname
+[`by.web.name()`]: webviews.md#bywebnamename
 
-[`by.web.xpath()`]: webviews.md#byxpathxpath
+[`by.web.xpath()`]: webviews.md#bywebxpathxpath
 
-[`by.web.href()`]: webviews.md#byhrefhref
+[`by.web.href()`]: webviews.md#bywebhrefhref
 
-[`by.web.hrefContains()`]: webviews.md#byhrefcontainshref
+[`by.web.hrefContains()`]: webviews.md#bywebhrefcontainshref
 
-[`by.web.tag()`]: webviews.md#bytagtag
+[`by.web.tag()`]: webviews.md#bywebtagtag
 
 [`atIndex()`]: webviews.md#atindexindex
 
