@@ -6,6 +6,7 @@
   padding: 54px 10px;
   overflow: hidden;
   background: url(@site/static/img/homepage/hero-image.jpg) center top / cover no-repeat;
+  position: relative;
 
   h1 {
     @include h2;
@@ -39,6 +40,18 @@
     border-radius: 10px;
   }
 
+  .testContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2000px;
+    width: 100%;
+    background-color: red;
+    opacity: 0.3;
+    overflow-y: auto;
+
+  }
+
   @media only screen and (max-width: 768px) {
 
     height: 456px;
@@ -60,6 +73,11 @@
   }
 
   @media only screen and (max-width: 520px) {
-    background-image: url(@site/static/img/homepage/hero-image-mobile.jpg);
+    background-image: url(@site/static/img/homepage/hero-image.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 0;
+    padding-top: 56.25%;
   }
 }
