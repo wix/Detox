@@ -1,21 +1,11 @@
 @import '@site/src/css/fonts';
 
 .heroBanner {
-  --ifm-heading-color: #fff;
-  --ifm-button-background-color: #fff;
-  --ifm-color-gray-900: #12161B;
-
   height: 725px;
   width: 100%;
   padding: 54px 10px;
-  color: var(--ifm-heading-color);
   overflow: hidden;
-  background-image: url(@site/static/img/homepage/hero-image.jpg);
-  background-position-x: center;
-  background-position-y: top;
-  background-repeat: no-repeat;
-  background-size: cover;
-  transition: height 0.3s ease;
+  background: url(@site/static/img/homepage/hero-image.jpg) center top / cover no-repeat;
 
   h1 {
     @include h2;
@@ -36,18 +26,17 @@
 
   .buttons {
     height: 50px;
+  }
 
-    a {
-      @include t2;
-      font-family: 'Poppins';
-      color: var(--ifm-color-gray-900);
-      background-color: var(--ifm-button-background-color);
-      min-width: 251px;
-      padding: 12px 20px;
-      border: 0;
-      border-radius: 10px;
-
-    }
+  .linkText {
+    @include t2;
+    font-family: 'Poppins';
+    color: var(--ifm-color-gray-900);
+    background-color: var(--ifm-button-background-color);
+    min-width: 251px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 10px;
   }
 
   @media only screen and (max-width: 768px) {
