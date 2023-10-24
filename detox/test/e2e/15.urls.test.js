@@ -8,7 +8,7 @@ describe('Open URLs', () => {
   });
 
   const withDefaultArgs = () => ({
-    url: 'detoxtesturlscheme://such-string',
+    url: 'detoxtesturlscheme://such-string?arg1=first&arg2=second',
     launchArgs: undefined,
   });
 
@@ -17,32 +17,23 @@ describe('Open URLs', () => {
     launchArgs: { detoxAndroidSingleInstanceActivity: true },
   });
 
-  [
-    {
-      platform: '',
-      ...withDefaultArgs(),
-    },
-    {
-      platform: 'android',
-      ...withSingleInstanceActivityArgs(),
-    }
-  ].forEach((testSpec) => {
-    const {platform, url, launchArgs} = testSpec;
-    const _platform = platform ? `:${platform}: ` : '';
-
-    it(`${_platform}device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
+  describe.each([
+    ['(default)', withDefaultArgs()],
+    [':android: (single activity)', withSingleInstanceActivityArgs()],
+  ])('%s', (_platform, {url, launchArgs}) => {
+    it(`device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
       await device.launchApp({newInstance: true, url, launchArgs});
       await expect(element(by.text(url))).toBeVisible();
     });
 
-    it(`${_platform}device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
+    it(`device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
       await expect(element(by.text(url))).not.toBeVisible();
       await device.openURL({url});
       await expect(element(by.text(url))).toBeVisible();
     });
 
-    it(`${_platform}device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
+    it(`device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
       await expect(element(by.text(url))).not.toBeVisible();
       await device.sendToHome();
