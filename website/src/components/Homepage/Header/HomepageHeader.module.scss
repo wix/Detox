@@ -2,15 +2,12 @@
 
 .heroBanner {
   width: 100%;
-  height: 725px;
+  height: calc(262px + 50vw);
+  min-height: 450px;
+  max-height: 725px;
   overflow: hidden;
   position: relative;
-  background: local url(@site/static/img/homepage/hero-image.jpg) top center / cover no-repeat;
-
-  @media only screen and (max-width: 768px) {
-    height: 450px;
-    background: local url(@site/static/img/homepage/hero-image.jpg) top 144px center / cover no-repeat;
-  }
+  background: local url(@site/static/img/homepage/hero-image.webp) center center / cover no-repeat;
 }
 
 .contentContainer {
@@ -20,18 +17,14 @@
   height: 100%;
 
   @media only screen and (max-width: 768px) {
-    padding: 38px 9px;
+    padding: 32px 9px;
   }
 }
 
 .backgroundContainer {
   width: 100%;
-  height: 1500px;
-  margin-top: -50vw;
-
-  @media only screen and (max-width: 768px) {
-    margin-top: -261vw;
-  }
+  height: calc(600px + 25vw);
+  max-height: 725px;
 }
 
 .title {
