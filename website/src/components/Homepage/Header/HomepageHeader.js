@@ -9,25 +9,22 @@ const HomepageHeader = () => {
 
   return (
     <header className={styles.heroBanner}>
-      <div className={styles.contentContainer}>
-        <div className="container">
-          <div className="row">
-            <div className="col">
-              <h1 className={styles.title}>{siteConfig.title}</h1>
-              <h2 className={styles.tagline}>{siteConfig.tagline}</h2>
-              <div className={styles.buttons}>
-                <Link
-                  className={clsx('button button--secondary button--lg', styles.linkText)}
-                  href="/docs/introduction/getting-started"
-                  target="_blank">
-                  Getting Started <strong>with Detox</strong>
-                </Link>
-              </div>
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <h1 className={styles.title}>{siteConfig.title}</h1>
+            <h2 className={styles.tagline}>{siteConfig.tagline}</h2>
+            <div className={styles.buttons}>
+              <Link
+                className={clsx('button button--secondary button--lg', styles.linkText)}
+                href="/docs/introduction/getting-started"
+                target="_blank">
+                Getting Started <strong>with Detox</strong>
+              </Link>
             </div>
           </div>
         </div>
       </div>
-      <div className={styles.backgroundContainer}></div>
     </header>
   );
 };

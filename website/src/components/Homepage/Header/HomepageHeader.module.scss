@@ -1,16 +1,9 @@
 @import '@site/src/css/fonts';
 
-.contentContainer {
-  padding: 54px 10px;
-
-  @media only screen and (max-width: 768px) {
-    padding: 32px 9px;
-  }
-}
-
 .heroBanner {
   width: 100%;
   height: calc(366px + 22vw);
+  padding: 54px 10px;
   min-height: 450px;
   max-height: 725px;
   overflow: hidden;
@@ -27,6 +20,10 @@
     background-position-x: -379px;
     background-position-y: -53px;
     background-size: 1100px;
+  }
+
+  @media only screen and (max-width: 870px) {
+    padding: 32px 9px;
   }
 
   @media only screen and (min-width: 1600px) {
@@ -76,7 +73,7 @@
   font-family: 'Poppins';
   color: var(--ifm-color-gray-900);
   background-color: var(--ifm-button-background-color);
-  min-width: 251px;
+  min-width: 250px;
   padding: 12px 20px;
   border: 0;
   border-radius: 10px;
