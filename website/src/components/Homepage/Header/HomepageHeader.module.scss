@@ -1,5 +1,13 @@
 @import '@site/src/css/fonts';
 
+.contentContainer {
+  padding: 54px 10px;
+
+  @media only screen and (max-width: 768px) {
+    padding: 32px 9px;
+  }
+}
+
 .heroBanner {
   width: 100%;
   height: calc(262px + 50vw);
