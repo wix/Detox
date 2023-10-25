@@ -7,24 +7,15 @@
   max-height: 725px;
   overflow: hidden;
   position: relative;
-  background: local url(@site/static/img/homepage/hero-image.webp) center center / cover no-repeat;
-}
+  background-attachment: local;
+  background-image: url(@site/static/img/homepage/hero-image.webp);
+  background-position-x: center; // calc(<a1>px + <b1>vw)
+  background-position-y: center; // calc(<a2>px + <b2>vw)
+  background-size: calc(3600px - 130vw); // calc(<a3>px + <b3>vw)
+  background-repeat: no-repeat;
 
-.contentContainer {
-  position: absolute;
-  padding: 54px 10px;
-  width: 100%;
-  height: 100%;
-
-  @media only screen and (max-width: 768px) {
-    padding: 32px 9px;
-  }
-}
-
-.backgroundContainer {
-  width: 100%;
-  height: calc(600px + 25vw);
-  max-height: 725px;
+  // Maybe you will need to add safety media queries to avoid empty space on the sides
+  // @media only screen and (min-width: 1600px) { background-size: cover; }
 }
 
 .title {
