@@ -9,22 +9,21 @@
   position: relative;
   background-attachment: local;
   background-image: url(@site/static/img/homepage/hero-image.webp);
-  background-position-x: center; // calc(<a1>px + <b1>vw)
-  background-position-y: center; // calc(<a2>px + <b2>vw)
-  background-size: calc(3600px - 130vw); // calc(<a3>px + <b3>vw)
+  background-position-x: calc(-495px + 31vw);
+  background-position-y: calc(19px - 19vw);
+  background-size: calc(947px + 41vw);
   background-repeat: no-repeat;
-
-  // Maybe you will need to add safety media queries to avoid empty space on the sides
-  @media only screen and (min-width: 1600px) {
-    background-position-x: -1px;
-    background-position-y: -290px;
-    background-size: 1600px;
-  }
 
   @media only screen and (max-width: 375px) {
     background-position-x: -379px;
     background-position-y: -53px;
     background-size: 1100px;
+  }
+
+  @media only screen and (min-width: 1600px) {
+    background-position-x: center;
+    background-position-y: bottom;
+    background-size: cover;
   }
 }
 
