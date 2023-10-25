@@ -15,7 +15,17 @@
   background-repeat: no-repeat;
 
   // Maybe you will need to add safety media queries to avoid empty space on the sides
-  // @media only screen and (min-width: 1600px) { background-size: cover; }
+  @media only screen and (min-width: 1600px) {
+    background-position-x: -1px;
+    background-position-y: -290px;
+    background-size: 1600px;
+  }
+
+  @media only screen and (max-width: 375px) {
+    background-position-x: -379px;
+    background-position-y: -53px;
+    background-size: 1100px;
+  }
 }
 
 .title {
