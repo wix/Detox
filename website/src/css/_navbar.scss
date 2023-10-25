@@ -22,6 +22,7 @@
   padding: 5px;
   font-weight: 300;
 }
+
 /*===========*/
 
 /* Restyle logo & hamburger button */
@@ -47,10 +48,10 @@
     border-radius: 10px;
     justify-content: center;
     align-items: center;
-  position: absolute;
-  margin-right: 0;
-  top: 15px;
-  right: 25px;
+    position: absolute;
+    margin-right: 0;
+    top: 15px;
+    right: 25px;
   }
 }
 
@@ -72,6 +73,7 @@
     border-radius: 10px;
     padding: 0 10px;
   }
+
   .DocSearch-Search-Icon {
     opacity: 0.6;
   }
@@ -86,10 +88,8 @@
     border-radius: 10px;
     padding: 0 10px;
   }
+
   .DocSearch-Search-Icon {
     opacity: 0.6;
   }
-}
-div.searchBox_node_modules-\@docusaurus-theme-classic-lib-theme-Navbar-Search-styles-module {
-  right: 80px;
 }
