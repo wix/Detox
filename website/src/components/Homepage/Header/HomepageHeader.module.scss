@@ -16,6 +16,7 @@
   overflow: hidden;
   position: relative;
   background-attachment: local;
+  background-color: #15216b;
   background-image: url(@site/static/img/homepage/hero-image.webp);
   background-position-x: calc(-495px + 31vw);
   background-position-y: calc(19px - 19vw);
@@ -42,7 +43,7 @@
   letter-spacing: -6px;
   margin-left: -10px;
 
-  @media only screen and (max-width: 768px) {
+  @media only screen and (max-width: 870px) {
     font-size: 72px;
     line-height: normal;
     letter-spacing: -3.6px;
@@ -59,7 +60,7 @@
   margin-bottom: 32px;
   letter-spacing: 0.1px;
 
-  @media only screen and (max-width: 768px) {
+  @media only screen and (max-width: 870px) {
     margin-top: -22px;
     margin-bottom: 21px;
   }
