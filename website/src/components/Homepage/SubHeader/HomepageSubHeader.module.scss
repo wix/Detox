@@ -1,3 +1,8 @@
+.subHeaderWrapper {
+  background-color: #171b20;
+  width: 100%;
+}
+
 .subHeader {
   background-color: #171b20;
   color: var(--primary-dark-a-0, #FFF);
@@ -6,11 +11,13 @@
   font-weight: 300;
   font-size: 24px;
   width: 100%;
+  max-width: 1600px;
   min-height: 85px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   padding: 0 var(--ifm-spacing-horizontal);
+  margin: 0 auto;
 }
 
 .callToAction {
@@ -22,12 +29,12 @@
 
   @media only screen and (max-width: 600px) {
     font-size: 18px;
-    line-height: 24px;
+    line-height: 25px;
   }
 
   @media only screen and (max-width: 480px) {
     max-width: 140px;
-    margin-top: 20px;
+    margin-top: 16px;
     align-items: normal;
   }
 }
