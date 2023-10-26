@@ -1,5 +1,9 @@
 @import '@site/src/css/fonts';
 
+.featuresContainer {
+  margin-bottom: 24px;
+}
+
 .benefitsHeader {
   @include h2;
   color: var(--ifm-heading-color);

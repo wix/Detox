@@ -36,7 +36,7 @@
   &[data-theme='light'] {
     @include define-detox-light-colors();
     --docusaurus-highlighted-code-line-bg: #d9e5f6;
-    --ifm-heading-color: #131419;
+    --ifm-heading-color: #12161B;
   }
 
   &[data-theme='dark'] {

@@ -1,23 +1,23 @@
 @import '@site/src/css/fonts';
 
-.features-gap {
+.featuresGap {
   margin-bottom: 89px;
   padding-left: 14px;
 }
 
-.feature-image {
+.featureImage {
   height: 60px;
   width: 60px;
   margin-bottom: 18px;
 }
 
-.feature-title {
+.featureTitle {
   @include h5;
   margin-bottom: 14px;
+  letter-spacing: -0.2px;
 }
 
-.feature-text {
+.featureText {
   @include t2;
   max-width: 250px;
-
 }
