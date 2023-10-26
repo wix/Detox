@@ -120,7 +120,7 @@ class WebViewElement {
       });
     }
 
-    throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof webMatcher}`);
   }
 }
 
