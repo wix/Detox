@@ -1,9 +1,23 @@
+@import '@site/src/css/fonts';
+
+.features-gap {
+  margin-bottom: 89px;
+  padding-left: 14px;
+}
+
 .feature-image {
   height: 60px;
   width: 60px;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
 }
 
-.features-gap {
-  margin-bottom: 100px;
+.feature-title {
+  @include h5;
+  margin-bottom: 14px;
+}
+
+.feature-text {
+  @include t2;
+  max-width: 250px;
+
 }

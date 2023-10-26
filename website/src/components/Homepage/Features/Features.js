@@ -6,8 +6,8 @@ const Features = ({ Svg, title, description }) => {
     <div className="col col--4 features-gap">
       <Svg className="feature-image" alt={title} />
       <div>
-        <h3>{title}</h3>
-        <p>{description}</p>
+        <h3 className="feature-title">{title}</h3>
+        <p className="feature-text">{description}</p>
       </div>
     </div>
   );
