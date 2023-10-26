@@ -22,6 +22,7 @@
   padding: 5px;
   font-weight: 300;
 }
+
 /*===========*/
 
 /* Restyle logo & hamburger button */
@@ -47,6 +48,10 @@
     border-radius: 10px;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    margin-right: 0;
+    top: 15px;
+    right: 25px;
   }
 }
 
@@ -68,6 +73,22 @@
     border-radius: 10px;
     padding: 0 10px;
   }
+
+  .DocSearch-Search-Icon {
+    opacity: 0.6;
+  }
+}
+
+/* Restyle search button */
+
+@media (max-width: 768px) {
+  button.DocSearch-Button {
+    background-color: var(--detox-color-a3);
+    height: 40px;
+    border-radius: 10px;
+    padding: 0 10px;
+  }
+
   .DocSearch-Search-Icon {
     opacity: 0.6;
   }

@@ -76,10 +76,7 @@ class WebElement {
     return {
       target: element,
       method: "runScriptWithArgs",
-      args: [script, {
-        type: "ArrayList<Object>",
-        value: args
-      }]
+      args: [script, args]
     };
   }
 

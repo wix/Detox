@@ -68,9 +68,9 @@ public class Invocation {
                 argument = args.get(i);
             } else if(args.get(i).getClass() == JSONArray.class) {
                 JSONArray jsonArray = (JSONArray) args.get(i);
-                List<String> list = new ArrayList<>();
+                List<Object> list = new ArrayList<>();
                 for (int j = 0; j < jsonArray.length(); j++) {
-                    list.add(jsonArray.getString(j));
+                    list.add(jsonArray.get(j));
                 }
                 argument = list;
             } else {

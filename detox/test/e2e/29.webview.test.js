@@ -8,6 +8,7 @@ describe(':ios: WebView', () => {
 });
 
 describe(':android: WebView', () => {
+  /** @type {Detox.WebViewElement} */
   let webview_1;
 
   beforeEach(async () => {
@@ -65,6 +66,37 @@ describe(':android: WebView', () => {
 
     it('expect to find element by tag name', async () => {
       await expect(webview_1.element(by.web.tag('mark'))).toExist();
+    });
+  });
+
+  describe('Script injection', () => {
+    it('should execute script', async () => {
+      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
+      await link.runScript(' \n (el) => { el.textContent = "Changed"; }');
+      await expect(link).toHaveText('Changed');
+    });
+
+    it('should throw error if script fails', async () => {
+      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
+
+      function throwError(_, msg = 'Simulated Error') {
+        throw new Error(msg);
+      }
+
+      await jestExpect(link.runScript(throwError)).rejects.toThrowError(/Simulated Error/);
+      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(/Custom Error/);
+    });
+
+    it('should evaluate a script with complex args', async () => {
+      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
+      const evaluationResult = await link.runScript(function (element, a, b, c, d) {
+        const newText = a[0] + b.a + c[0].b + d.c[0];
+        element.textContent = newText;
+        return a.concat({ ...b, ...c[0], ...d });
+      }.toString(), [['1'], {a: 8}, [{b: 4}], {c: [3]}]);
+      jestExpect(evaluationResult).toEqual(['1', { a: 8, b: 4, c: [3] }]);
+
+      await expect(link).toHaveText('1843');
     });
   });
 
