@@ -1,6 +1,8 @@
 @import '@site/src/css/fonts';
 
 .heroBanner {
+  --ifm-heading-color: #fff;
+
   width: 100%;
   height: calc(366px + 22vw);
   padding: 54px 10px;
