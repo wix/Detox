@@ -1,15 +1,9 @@
-.benefitsHeader {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 58px;
-  line-height: 70px;
-  color: #131419;
-  margin-top: 125px;
-  margin-bottom: 125px;
-  margin-left: -5px;
-}
+@import '@site/src/css/fonts';
 
-[data-theme='dark'] .benefitsHeader {
-  color: #ffffff;
+.benefitsHeader {
+  @include h2;
+  color: var(--ifm-heading-color);
+  margin-top: 135px;
+  margin-bottom: 105px;
+  margin-left: -5px;
 }
