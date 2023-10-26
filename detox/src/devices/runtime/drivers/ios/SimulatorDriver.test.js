@@ -9,7 +9,6 @@ describe('IOS simulator driver', () => {
   let client;
   let eventEmitter;
   let applesimutils;
-  let simulatorLauncher;
   let uut;
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
@@ -24,12 +23,9 @@ describe('IOS simulator driver', () => {
     const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
 
-    const SimulatorLauncher = jest.genMockFromModule('../../../allocation/drivers/ios/SimulatorLauncher');
-    simulatorLauncher = new SimulatorLauncher();
-
     const SimulatorDriver = require('./SimulatorDriver');
     uut = new SimulatorDriver(
-      { simulatorLauncher, applesimutils, client, eventEmitter },
+      { applesimutils, client, eventEmitter },
       { udid, type, bootArgs, headless }
     );
   });
@@ -74,7 +70,7 @@ describe('IOS simulator driver', () => {
   describe('.resetContentAndSettings', () => {
     it('should shut the device down', async () => {
       await uut.resetContentAndSettings();
-      expect(simulatorLauncher.shutdown).toHaveBeenCalledWith(udid);
+      expect(applesimutils.shutdown).toHaveBeenCalledWith(udid);
     });
 
     it('should reset via apple-sim-utils', async () => {
@@ -84,7 +80,7 @@ describe('IOS simulator driver', () => {
 
     it('should relaunch the simulator', async () => {
       await uut.resetContentAndSettings();
-      expect(simulatorLauncher.launch).toHaveBeenCalledWith(udid, type, bootArgs, true);
+      expect(applesimutils.boot).toHaveBeenCalledWith(udid, bootArgs, true);
     });
   });
 

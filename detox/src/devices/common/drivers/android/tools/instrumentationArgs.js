@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const { encodeBase64 } = require('../../../../../utils/encoding');
+const { autoEscape } = require('../../../../../utils/shellUtils');
 
 const reservedInstrumentationArgs = new Set(['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile']);
 const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.has(arg);
@@ -17,7 +18,8 @@ function prepareInstrumentationArgs(args) {
       valueEncoded = encodeBase64(valueAsString);
     }
 
-    result.push('-e', key, valueEncoded);
+    const valueEscaped = hasLegacyIssues(key) ? valueEncoded : autoEscape.shell(valueEncoded);
+    result.push('-e', key, valueEscaped);
     return result;
   }, []);
 
@@ -25,6 +27,10 @@ function prepareInstrumentationArgs(args) {
     args: preparedLaunchArgs,
     usedReservedArgs,
   };
+}
+
+function hasLegacyIssues(key) {
+  return key === 'detoxURLBlacklistRegex';
 }
 
 module.exports = {

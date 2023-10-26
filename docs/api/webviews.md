@@ -80,7 +80,7 @@ web.element(by.web.cssSelector('#cssSelector'));
 
 ### `by.web.name(name)`
 
-Match elements with the specified name.
+Match form input elements with the specified [`name` attribute][name].
 
 ```js
 web.element(by.web.name('name'));
@@ -118,7 +118,7 @@ Match elements with the specified tag.
 web.element(by.web.tag('h1'));
 ```
 
-### `by.web.label(label)`
+### `by.web.label(label)` **iOS only **
 
 Match elements with the specified label.
 
@@ -126,7 +126,7 @@ Match elements with the specified label.
 web.element(by.web.label('label'));
 ```
 
-### `by.web.value(value)`
+### `by.web.value(value)` **iOS only **
 
 Match elements with the specified value.
 
@@ -157,8 +157,7 @@ Web view actions are used to interact with elements within a web view:
 - [`scrollToView()`]
 - [`focus()`]
 - [`moveCursorToEnd()`]
-- [`runScript(script)`] (**Android only**)
-- [`runScriptWithArgs(script, args)`] (**Android only**)
+- [`runScript(script[, args])`] (**Android only**)
 - [`getCurrentUrl()`] (**Android only**)
 - [`getTitle()`] (**Android only**)
 
@@ -252,36 +251,27 @@ This action is currently supported for content-editable elements only.
 await web.element(by.web.id('identifier')).moveCursorToEnd();
 ```
 
-### `runScript(script)`
+### `runScript(script[, args])`
 
 **Android only**
 
 Run the specified script on the element.
-
 The script should be a string that contains a valid JavaScript function.
-It will be called with that element as the first argument.
+It will be called with that element as the first argument:
 
 ```js
 const webElement = web.element(by.web.id('identifier'));
-await webElement.runScript(`function foo(element) {
-  console.log(element);
-}`);
+await webElement.runScript('(el) => el.click()');
 ```
 
-### `runScriptWithArgs(script, ...args)`
+For convenience, you can pass a function instead of a string, but please note that this will not work if the function uses any variables from the outer scope:
 
-**Android only**
-
-Run the specified script on the element with extra arguments.
-
-The script should be a string that contains a valid JavaScript function.
-It will be called with the specified arguments and the element itself as the last argument.
+The script can accept additional arguments and return a value. Make sure the values are primitive types or serializable objects, as they will be converted to JSON and back:
 
 ```js
-const webElement = web.element(by.web.id('identifier'));
-await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
-  console.log(arg1, arg2, element);
-}`, "foo", 123);
+const text = await webElement.runScript(function get(element, property) {
+  return element[property];
+}, ['textContent']);
 ```
 
 ### `getCurrentUrl()`
@@ -396,9 +386,7 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [`moveCursorToEnd()`]: webviews.md#movecursortoend
 
-[`runScript(script)`]: webviews.md#runscriptscript
-
-[`runScriptWithArgs(script, args)`]: webviews.md#runscriptwithargsscript-args
+[`runScript(script[, args])`]: webviews.md#runscriptscriptargs
 
 [`getCurrentUrl()`]: webviews.md#getcurrenturl
 

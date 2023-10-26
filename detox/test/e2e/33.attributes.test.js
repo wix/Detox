@@ -228,15 +228,44 @@ describe('Attributes', () => {
       });
     });
 
-    describe(':android:', () => {
-      // TODO (@jonathanmos) : Can we decide something about it officially?
-      it('should throw an error (because it is not implemented)', async () => {
-        await expect(
-          element(
-            by.type('com.facebook.react.views.view.ReactViewGroup')
-              .withAncestor(by.id('attrScrollView'))
-          ).getAttributes()
-        ).rejects.toThrowError(/Problem views are marked with '.{4}MATCHES.{4}' below/m);
+    it(':android: should return an object with .elements array', async () => {
+      await useMatcher(by.type('com.facebook.react.views.view.ReactViewGroup').withAncestor(by.id('attrScrollView')));
+
+      expect(attributesArray.length).toBe(3);
+
+      const baseAttributes = {
+        visibility: 'visible',
+        visible: true,
+        alpha: 1,
+        elevation: 0,
+        focused: false,
+        enabled: true,
+      };
+
+      expect(attributesArray[0]).toMatchObject({
+        ...{
+          height: 394,
+          width: 1074,
+        },
+        ...baseAttributes
+      });
+
+      expect(attributesArray[1]).toMatchObject({
+        ...{
+          height: 197,
+          width: 262,
+          identifier: 'innerView1'
+        },
+        ...baseAttributes
+      });
+
+      expect(attributesArray[2]).toMatchObject({
+        ...{
+          height: 197,
+          width: 262,
+          identifier: 'innerView2'
+        },
+        ...baseAttributes
       });
     });
   });

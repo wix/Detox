@@ -317,6 +317,10 @@ If the value for a given attribute is null or cannot be otherwise computed, the 
 If the query matches multiple elements, the attributes of all matched elements is returned as an array of objects under the `elements` key.
 
 ```js
+// import jestExpect from 'expect';
+const jestExpect = require('expect').default;
+
+// ...
 const attributes = await element(by.text('Tap Me')).getAttributes();
 jestExpect(attributes.text).toBe('Tap Me');
 

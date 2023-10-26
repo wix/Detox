@@ -14,7 +14,7 @@ function sanitize_matcher(matcher) {
   return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } 
 class DetoxAssertion {
-  static assertMatcher(i, m) {
+  static assertMatcher(viewInteraction, viewMatcher) {
     return {
       target: {
         type: "Class",
@@ -23,15 +23,15 @@ class DetoxAssertion {
       method: "assertMatcher",
       args: [{
         type: "Invocation",
-        value: i
+        value: viewInteraction
       }, {
         type: "Invocation",
-        value: sanitize_matcher(m)
+        value: sanitize_matcher(viewMatcher)
       }]
     };
   }
 
-  static assertNotVisible(i) {
+  static assertNotVisible(viewInteraction) {
     return {
       target: {
         type: "Class",
@@ -40,12 +40,12 @@ class DetoxAssertion {
       method: "assertNotVisible",
       args: [{
         type: "Invocation",
-        value: i
+        value: viewInteraction
       }]
     };
   }
 
-  static assertNotExists(i) {
+  static assertNotExists(viewInteraction) {
     return {
       target: {
         type: "Class",
@@ -54,12 +54,12 @@ class DetoxAssertion {
       method: "assertNotExists",
       args: [{
         type: "Invocation",
-        value: i
+        value: viewInteraction
       }]
     };
   }
 
-  static waitForAssertMatcher(i, m, timeoutSeconds) {
+  static waitForAssertMatcher(viewInteraction, viewMatcher, timeoutSeconds) {
     if (typeof timeoutSeconds !== "number") throw new Error("timeoutSeconds should be a number, but got " + (timeoutSeconds + (" (" + (typeof timeoutSeconds + ")"))));
     return {
       target: {
@@ -69,10 +69,10 @@ class DetoxAssertion {
       method: "waitForAssertMatcher",
       args: [{
         type: "Invocation",
-        value: i
+        value: viewInteraction
       }, {
         type: "Invocation",
-        value: sanitize_matcher(m)
+        value: sanitize_matcher(viewMatcher)
       }, {
         type: "Double",
         value: timeoutSeconds
@@ -80,7 +80,8 @@ class DetoxAssertion {
     };
   }
 
-  static waitForAssertMatcherWithSearchAction(i, vm, searchAction, searchMatcher) {
+  static waitForAssertMatcherWithSearchAction(viewInteraction, viewMatcher, searchAction, searchMatcher
+  ) {
     return {
       target: {
         type: "Class",
@@ -89,13 +90,14 @@ class DetoxAssertion {
       method: "waitForAssertMatcherWithSearchAction",
       args: [{
         type: "Invocation",
-        value: i
+        value: viewInteraction
       }, {
         type: "Invocation",
-        value: sanitize_matcher(vm)
+        value: sanitize_matcher(viewMatcher)
       }, searchAction, {
         type: "Invocation",
-        value: sanitize_matcher(searchMatcher)
+        value: sanitize_matcher(searchMatcher
+        )
       }]
     };
   }

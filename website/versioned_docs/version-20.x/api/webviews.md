@@ -78,7 +78,7 @@ web.element(by.web.cssSelector('#cssSelector'));
 
 ### `by.web.name(name)`
 
-Match elements with the specified name.
+Match form input elements with the specified [`name` attribute][name].
 
 ```js
 web.element(by.web.name('name'));
@@ -234,32 +234,25 @@ This action is currently supported for content-editable elements only.
 await web.element(by.web.id('identifier')).moveCursorToEnd();
 ```
 
-### `runScript(script)`
+### `runScript(script[, args])`
 
 Run the specified script on the element.
-
 The script should be a string that contains a valid JavaScript function.
-It will be called with that element as the first argument.
+It will be called with that element as the first argument:
 
 ```js
 const webElement = web.element(by.web.id('identifier'));
-await webElement.runScript(`function foo(element) {
-  console.log(element);
-}`);
+await webElement.runScript('(el) => el.click()');
 ```
 
-### `runScriptWithArgs(script, ...args)`
+For convenience, you can pass a function instead of a string, but please note that this will not work if the function uses any variables from the outer scope:
 
-Run the specified script on the element with extra arguments.
-
-The script should be a string that contains a valid JavaScript function.
-It will be called with the specified arguments and the element itself as the last argument.
+The script can accept additional arguments and return a value. Make sure the values are primitive types or serializable objects, as they will be converted to JSON and back:
 
 ```js
-const webElement = web.element(by.web.id('identifier'));
-await webElement.runScriptWithArgs(`function foo(arg1, arg2, element) {
-  console.log(arg1, arg2, element);
-}`, "foo", 123);
+const text = await webElement.runScript(function get(element, property) {
+  return element[property];
+}, ['textContent']);
 ```
 
 ### `getCurrentUrl()`
@@ -328,21 +321,21 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [web view expectations]: webviews.md#expectations
 
-[`by.web.id()`]: webviews.md#byidid
+[`by.web.id()`]: webviews.md#bywebidid
 
-[`by.web.className()`]: webviews.md#byclassnameclassname
+[`by.web.className()`]: webviews.md#bywebclassnameclassname
 
-[`by.web.cssSelector()`]: webviews.md#bycssselectorcssselector
+[`by.web.cssSelector()`]: webviews.md#bywebcssselectorcssselector
 
-[`by.web.name()`]: webviews.md#byname
+[`by.web.name()`]: webviews.md#bywebnamename
 
-[`by.web.xpath()`]: webviews.md#byxpathxpath
+[`by.web.xpath()`]: webviews.md#bywebxpathxpath
 
-[`by.web.href()`]: webviews.md#byhrefhref
+[`by.web.href()`]: webviews.md#bywebhrefhref
 
-[`by.web.hrefContains()`]: webviews.md#byhrefcontainshref
+[`by.web.hrefContains()`]: webviews.md#bywebhrefcontainshref
 
-[`by.web.tag()`]: webviews.md#bytagtag
+[`by.web.tag()`]: webviews.md#bywebtagtag
 
 [`atIndex()`]: webviews.md#atindexindex
 
@@ -365,6 +358,8 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`focus()`]: webviews.md#focus
 
 [`moveCursorToEnd()`]: webviews.md#movecursortoend
+
+[name]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#name
 
 [`runScript()`]: webviews.md#runscriptscript
 

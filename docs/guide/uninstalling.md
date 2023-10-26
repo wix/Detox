@@ -24,9 +24,8 @@ detox clean-framework-cache
 
 On every test run, Detox rewrites a few temporary files in `DETOX_LIBRARY_ROOT_PATH`, i.e.:
 
-1. The respective iOS and Android lockfiles to tell apart the busy and the available devices for use with multiple workers:
-   - `device.registry.state.lock`
-   - `android-device.registry.state.lock`.
+1. `device.registry.json`, to tell apart the busy and the available devices for use with multiple workers.
+2. `global-context.json.lock`, to detect multiple concurrent instances of Detox.
 
 The location of `DETOX_LIBRARY_ROOT_PATH` may vary depending on the operating system:
 

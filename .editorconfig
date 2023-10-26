@@ -26,6 +26,10 @@ tab_width = 2
 indent_size = 2
 tab_width = 2
 
+[{*.yaml,*.yml}]
+indent_size = 2
+tab_width = 2
+
 [{*.css,*.scss,*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,bowerrc,jest.config}]
 indent_size = 2
 tab_width = 2

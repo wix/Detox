@@ -1,3 +1,4 @@
+*.d.ts
 /src/android/espressoapi/**/*.js
 /coverage
 /ios

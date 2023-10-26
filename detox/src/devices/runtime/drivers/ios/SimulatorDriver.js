@@ -17,7 +17,6 @@ const { launchXCUITest } = require('./XCUITestUtils');
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
- * @property simulatorLauncher { SimulatorLauncher }
  * @property applesimutils { AppleSimUtils }
  */
 
@@ -41,7 +40,6 @@ class SimulatorDriver extends IosDriver {
     this._bootArgs = bootArgs;
     this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
-    this._simulatorLauncher = deps.simulatorLauncher;
     this._applesimutils = deps.applesimutils;
     // TODO: allocate unique-per-worker available port.
     this._testTargetServerPort = 8997 + _.random(0, 1000);
@@ -190,9 +188,12 @@ class SimulatorDriver extends IosDriver {
   }
 
   async resetContentAndSettings() {
-    await this._simulatorLauncher.shutdown(this.udid);
+    await this.emitter.emit('beforeShutdownDevice', { deviceId: this.udid });
+    await this._applesimutils.shutdown(this.udid);
+    await this.emitter.emit('shutdownDevice', { deviceId: this.udid });
     await this._applesimutils.resetContentAndSettings(this.udid);
-    await this._simulatorLauncher.launch(this.udid, this._type, this._bootArgs, this._headless);
+    await this._applesimutils.boot(this.udid, this._bootArgs, this._headless);
+    await this.emitter.emit('bootDevice', { deviceId: this.udid });
   }
 
   getLogsPaths() {

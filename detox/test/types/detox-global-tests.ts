@@ -19,6 +19,19 @@ describe("Test", () => {
     beforeAll(async () => {
         await device.reloadReactNative();
 
+        await device.setStatusBar({ time: "12:34" });
+        await device.setStatusBar({
+            time: "12:34",
+            dataNetwork: "wifi",
+            wifiMode: "failed",
+            wifiBars: "2",
+            cellularMode: "searching",
+            cellularBars: "3",
+            operatorName: "A1",
+            batteryState: "charging",
+            batteryLevel: "50",
+        });
+
         const artifactsPaths: string[] = [
             await device.takeScreenshot("test screenshot"),
             await device.captureViewHierarchy(),
@@ -79,6 +92,12 @@ describe("Test", () => {
             .scroll(50, "down");
 
         await web.element(by.web.id("btnSave")).tap();
+        await web.element(by.web.id("btnSave")).runScript('(el) => el.click()');
+        const scriptResult = await web.element(by.web.id("btnSave")).runScript(function (el: any, text: string) {
+          el.textContent = text;
+          return text.length;
+        }, ['new button text']);
+        assertType<number>(scriptResult);
         await web.element(by.web.className("scroll-end")).atIndex(0).scrollToView();
 
         const webview = web(by.id("webview"));
@@ -93,12 +112,17 @@ describe("Test", () => {
 
         beforeEach(async () => {
             const attributes = await element(by.id("element")).getAttributes();
+
             if ('elements' in attributes) {
-                commonAttributes = iosAttributes = attributes.elements[0];
+                if ('activationPoint' in attributes.elements[0]) {
+                    commonAttributes = iosAttributes = attributes.elements[0] as Detox.IosElementAttributes;
+                } else {
+                    commonAttributes = androidAttributes = attributes.elements[0] as Detox.AndroidElementAttributes;
+                }
             } else if ('activationPoint' in attributes) {
-                commonAttributes = iosAttributes = attributes;
+                commonAttributes = iosAttributes = attributes as Detox.IosElementAttributes;
             } else {
-                commonAttributes = androidAttributes = attributes;
+                commonAttributes = androidAttributes = attributes as Detox.AndroidElementAttributes;
             }
         });
 

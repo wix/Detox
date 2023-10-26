@@ -5,6 +5,8 @@
  *   readonly getStatus: unique symbol;
  *   readonly init: unique symbol;
  *   readonly installWorker: unique symbol;
+ *   readonly allocateDevice: unique symbol;
+ *   readonly deallocateDevice: unique symbol;
  *   readonly logger: unique symbol;
  *   readonly onHookFailure: unique symbol;
  *   readonly onRunDescribeFinish: unique symbol;
@@ -12,6 +14,7 @@
  *   readonly onTestDone: unique symbol;
  *   readonly onTestFnFailure: unique symbol;
  *   readonly onTestStart: unique symbol;
+ *   readonly conductEarlyTeardown: unique symbol;
  *   readonly reportTestResults: unique symbol;
  *   readonly resolveConfig: unique symbol;
  *   readonly session: unique symbol;
@@ -32,6 +35,9 @@ module.exports = {
 
   //#region IPC
   reportTestResults: Symbol('reportTestResults'),
+  conductEarlyTeardown: Symbol('conductEarlyTeardown'),
+  allocateDevice: Symbol('allocateDevice'),
+  deallocateDevice: Symbol('deallocateDevice'),
   //#endregion
 
   //#region Main

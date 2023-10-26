@@ -4,7 +4,7 @@ class ArtifactPluginsProvider {
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/android');
+    const serviceLocator = require('../../devices/servicelocator/android');
     const adb = serviceLocator.adb;
     const devicePathBuilder = serviceLocator.devicePathBuilder;
 
@@ -34,8 +34,8 @@ class IosArtifactPluginsProvider extends ArtifactPluginsProvider {
 
 class IosSimulatorArtifactPluginsProvider extends IosArtifactPluginsProvider {
   declareArtifactPlugins({ client }) {
-    const serviceLocator = require('../../servicelocator/ios');
-    const appleSimUtils = serviceLocator.appleSimUtils;
+    const AppleSimUtils = require('../../devices/common/drivers/ios/tools/AppleSimUtils');
+    const appleSimUtils = new AppleSimUtils();
 
     const SimulatorInstrumentsPlugin = require('../instruments/ios/SimulatorInstrumentsPlugin');
     const SimulatorLogPlugin = require('../log/ios/SimulatorLogPlugin');

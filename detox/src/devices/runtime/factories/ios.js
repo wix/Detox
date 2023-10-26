@@ -2,15 +2,14 @@ const RuntimeDeviceFactory = require('./base');
 
 class RuntimeDriverFactoryIos extends RuntimeDeviceFactory {
   _createDriverDependencies(commonDeps) {
-    const serviceLocator = require('../../../servicelocator/ios');
-    const applesimutils = serviceLocator.appleSimUtils;
     const { eventEmitter } = commonDeps;
 
-    const SimulatorLauncher = require('../../allocation/drivers/ios/SimulatorLauncher');
+    const AppleSimUtils = require('../../../devices/common/drivers/ios/tools/AppleSimUtils');
+    const applesimutils = new AppleSimUtils();
+
     return {
       ...commonDeps,
       applesimutils,
-      simulatorLauncher: new SimulatorLauncher({ applesimutils, eventEmitter }),
     };
   }
 }

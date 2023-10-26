@@ -8,10 +8,6 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  logger: {
-    level: process.env.CI ? 'debug' : undefined,
-  },
-
   testRunner: {
     args: {
       $0: 'nyc jest --detectOpenHandles',
@@ -128,6 +124,13 @@ const config = {
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
+      },
+    },
+
+    'android.attached': {
+      type: 'android.attached',
+      device: {
+        adbName: '.*'
       },
     },
 

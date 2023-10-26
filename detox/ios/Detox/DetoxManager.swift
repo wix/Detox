@@ -292,7 +292,7 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 						} else {
 							return false
 						}
-					}
+						}
 
 					let array = UIView.dtx_findViewsInKeySceneWindows(passing: predicate) as! [UIView]
 					let mappedArray = array.compactMap { element in
@@ -444,15 +444,48 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
 				DTXSyncManager.enqueueMainQueueIdleClosure(closure)
 				return
+        case "setOrientation":
+            let orientationString = params["orientation"] as! String
+            let shouldSetToLandscape = orientationString == "landscape"
 
-			case "setDatePicker":
-				let targetIdentifier = params["elementID"] as! String
-				let targetFrame = params["elementFrame"] as! [NSNumber]
+            DTXSyncManager.enqueueMainQueueIdleClosure {
+                if #available(iOS 16.0, *) {
+                    UIApplication.dtx_setOrientation(shouldSetToLandscape ? .landscapeRight : .portrait)
 
-				let targetElement = findElement(
-					byIdentifier: targetIdentifier,
-					andFrame: targetFrame
-				) as! UIDatePicker
+                    DispatchQueue.global().async {
+                        // This is a workaround for a bug in iOS 16.0 and above to avoid reporting done
+                        //  before the orientation change is actually completed.
+                        Thread.sleep(forTimeInterval: 0.4)
+                        self.safeSend(action: done, messageId: messageId)
+                    }
+                } else {
+                    UIDevice.dtx_setOrientation(shouldSetToLandscape ? .landscapeRight : .portrait)
+                    self.safeSend(action: done, messageId: messageId)
+                }
+            }
+            return
+        case "setDatePicker":
+            let targetIdentifier = params["elementID"] as! String
+            let targetFrame = params["elementFrame"] as! [NSNumber]
+
+            let targetElement = findElement(
+                byIdentifier: targetIdentifier,
+                andFrame: targetFrame
+            ) as! UIDatePicker
+
+            let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
+            targetElement.dtx_adjust(to: .init(timeIntervalSince1970: timeIntervalSince1970))
+            // TODO: why is not the same??
+            //				targetElement.setDate(.init(timeIntervalSince1970: timeIntervalSince1970), animated: true)
+
+            self.safeSend(
+                action: "didSetDatePicker",
+                messageId: messageId
+            )
+
+		case "shakeDevice":
+			DTXSyncManager.enqueueMainQueueIdleClosure {
+				UIDevice.dtx_shake()
 
 				let timeIntervalSince1970 = (params["timeIntervalSince1970"] as! NSNumber).doubleValue
 				targetElement.dtx_adjust(to: .init(timeIntervalSince1970: timeIntervalSince1970))

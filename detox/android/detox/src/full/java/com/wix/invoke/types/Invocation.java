@@ -68,9 +68,9 @@ public class Invocation {
                 argument = args.get(i);
             } else if(args.get(i).getClass() == JSONArray.class) {
                 JSONArray jsonArray = (JSONArray) args.get(i);
-                List<String> list = new ArrayList<>();
+                List<Object> list = new ArrayList<>();
                 for (int j = 0; j < jsonArray.length(); j++) {
-                    list.add(jsonArray.getString(j));
+                    list.add(jsonArray.get(j));
                 }
                 argument = list;
             } else {
@@ -92,9 +92,9 @@ public class Invocation {
                     } else if (type.equals("boolean")) {
                         argument = jsonArgument.optBoolean("value");
                     } else if (type.equals("Invocation")) {
-                        argument = new Invocation(jsonArgument.optJSONObject("value"));                        
+                        argument = new Invocation(jsonArgument.optJSONObject("value"));
                     } else {
-                        throw new RuntimeException("Unhandled arg type" + type);
+                        throw new RuntimeException("Unhandled arg type " + type);
                     }
                 }
             }
@@ -105,6 +105,8 @@ public class Invocation {
     }
 
     public void setArgs(Object[] args) {
+        JsonParser parser = new JsonParser();
+
         for (int i = 0; i < args.length; i++) {
             Object argument = args[i];
             if (argument instanceof HashMap && !((HashMap) argument).isEmpty()) {
@@ -125,10 +127,9 @@ public class Invocation {
                 } else if (type.equals("boolean")) {
                     argument = ((Boolean) value).booleanValue();
                 } else if (type.equals("Invocation")) {
-                    JsonParser parser = new JsonParser();
                     argument = parser.parse((String)value);
                 } else {
-                    throw new RuntimeException("Unhandled arg type" + type);
+                    throw new RuntimeException("Unhandled arg type " + type);
                 }
 
                 args[i] = argument;
