@@ -7,13 +7,13 @@ import Features from './Features';
 const HomepageFeatures = () => {
   return (
     <section>
-      <div className={clsx('container', styles.featuresContainer)}>
+      <div className={clsx('container', styles.benefitsHeader)}>
         <div className="row">
           <div className="col">
-            <h1 className={styles.benefitsHeader}>Our benefits</h1>
+            <h1 className={styles.benefitsTitle}>Our benefits</h1>
           </div>
         </div>
-        <div className="row">
+        <div className={clsx('row', styles.benefitsContent)}>
           {FeatureList.map((props, idx) => (
             <Features key={idx} {...props} />
           ))}

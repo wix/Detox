@@ -1,8 +1,17 @@
 @import '@site/src/css/fonts';
 
 .featuresGap {
+  --ifm-col-width: calc(4 / 12 * 100%);
   margin-bottom: 89px;
   padding-left: 14px;
+
+  @media only screen and (max-width: 996px) {
+    --ifm-col-width: 50%;
+  }
+
+  @media only screen and (max-width: 500px) {
+    --ifm-col-width: 100%;
+  }
 }
 
 .featureImage {

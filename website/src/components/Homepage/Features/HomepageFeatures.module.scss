@@ -1,13 +1,15 @@
 @import '@site/src/css/fonts';
 
-.featuresContainer {
+.benefitsHeader {
   margin-bottom: 24px;
 }
 
-.benefitsHeader {
+.benefitsTitle {
   @include h2;
   color: var(--ifm-heading-color);
   margin-top: 135px;
   margin-bottom: 104px;
   margin-left: -5px;
 }
+
+.benefitsContent {}
