@@ -55,28 +55,27 @@ osx_image: xcode8.3
 
 branches:
   only:
-  - master
+    - master
 
 env:
   global:
-  - NODE_VERSION=stable
+    - NODE_VERSION=stable
 
 install:
-- brew tap wix/brew
-- brew install applesimutils
-- curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-- export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-- nvm install $NODE_VERSION
-- nvm use $NODE_VERSION
-- nvm alias default $NODE_VERSION
+  - brew tap wix/brew
+  - brew install applesimutils
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+  - export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
+  - nvm alias default $NODE_VERSION
 
-- npm install react-native-cli --global
-- npm install detox-cli --global
+  - npm install react-native-cli --global
+  - npm install detox-cli --global
 
 script:
-- detox build --configuration ios.sim.release
-- detox test --configuration ios.sim.release --cleanup
-
+  - detox build --configuration ios.sim.release
+  - detox test --configuration ios.sim.release --cleanup
 ```
 
 ### • Running Detox on [Bitrise](https://www.bitrise.io/)
@@ -92,65 +91,65 @@ Additionally, you can use a [webhook](https://devcenter.bitrise.io/en/apps/webho
 format_version: 1.1.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 trigger_map:
-- push_branch: "*"
-  workflow: tests
+  - push_branch: '*'
+    workflow: tests
 workflows:
   _tests_setup:
     steps:
-    - activate-ssh-key: {}
-    - git-clone:
-        inputs:
-        - clone_depth: ''
-        title: Git Clone Repo
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
+      - activate-ssh-key: {}
+      - git-clone:
+          inputs:
+            - clone_depth: ''
+          title: Git Clone Repo
+      - script:
+          inputs:
+            - content: |-
+                #!/bin/bash
 
-            npm cache verify
+                npm cache verify
 
-            npm install
-        title: Install NPM Packages
+                npm install
+          title: Install NPM Packages
     before_run:
     after_run:
   _detox_tests:
     before_run: []
     after_run: []
     steps:
-    - npm:
-        inputs:
-        - command: install -g detox-cli
-        title: Install Detox CLI
-    - npm:
-        inputs:
-        - command: install -g react-native-cli
-        title: Install React Native CLI
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
+      - npm:
+          inputs:
+            - command: install -g detox-cli
+          title: Install Detox CLI
+      - npm:
+          inputs:
+            - command: install -g react-native-cli
+          title: Install React Native CLI
+      - script:
+          inputs:
+            - content: |-
+                #!/bin/bash
 
-            brew tap wix/brew
-            brew install applesimutils
-        title: Install Detox Utils
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
+                brew tap wix/brew
+                brew install applesimutils
+          title: Install Detox Utils
+      - script:
+          inputs:
+            - content: |-
+                #!/bin/bash
 
-            detox build --configuration ios.sim.release
-        title: Detox - Build Release App
-    - script:
-        inputs:
-        - content: |-
-            #!/bin/bash
+                detox build --configuration ios.sim.release
+          title: Detox - Build Release App
+      - script:
+          inputs:
+            - content: |-
+                #!/bin/bash
 
-            detox test --configuration ios.sim.release --cleanup
-        title: Detox - Run E2E Tests
+                detox test --configuration ios.sim.release --cleanup
+          title: Detox - Run E2E Tests
   tests:
     before_run:
-    - _tests_setup
-    - _detox_tests
+      - _tests_setup
+      - _detox_tests
     after_run: []
 ```
 
@@ -172,9 +171,10 @@ detox_e2e:
     - mkdir -p /root/.android && touch /root/.android/repositories.cfg
     # The Dockerimage provides two paths for sdkmanager and avdmanager, which the defaults are from $ANDROID_HOME/cmdline-tools
     # That is not compatible with the one that Detox is using ($ANDROID_HOME/tools/bin)
-    - echo yes | $ANDROID_HOME/tools/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
+    - echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
+    - echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "emulator"
     # Nexus 6P, API 27, XXXHDPI
-    - echo no | $ANDROID_HOME/tools/bin/avdmanager --verbose create avd --force --name "Nexus6P" --package "system-images;android-27;default;x86_64" --sdcard 200M --device 11
+    - echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager --verbose create avd --force --name "Nexus6P" --package "system-images;android-27;default;x86_64" --sdcard 200M --device 11
     - adb start-server
   script:
     - npx detox build -c android.emu.release.ci
