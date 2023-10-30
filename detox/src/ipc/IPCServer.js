@@ -73,6 +73,7 @@ class IPCServer {
     this._ipc.server.emit(socket, 'registerContextDone', {
       testResults: this._sessionState.testResults,
       testSessionIndex: this._sessionState.testSessionIndex,
+      unsafe_earlyTeardown: this._sessionState.unsafe_earlyTeardown,
     });
   }
 
@@ -90,10 +91,11 @@ class IPCServer {
     }
   }
 
-  onConductEarlyTeardown(_data = null, socket = null) {
-    // Note that we don't save `unsafe_earlyTeardown` in the primary session state
-    // because it's transient and needed only to make the workers quit early.
+  onConductEarlyTeardown({ permanent }, socket = null) {
     const newState = { unsafe_earlyTeardown: true };
+    if (permanent) {
+      Object.assign(this._sessionState, newState);
+    }
 
     if (socket) {
       this._ipc.server.emit(socket, 'conductEarlyTeardownDone', newState);

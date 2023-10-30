@@ -86,8 +86,8 @@ class IPCClient {
     this._sessionState.patch(sessionState);
   }
 
-  async conductEarlyTeardown() {
-    const sessionState = await this._emit('conductEarlyTeardown', {});
+  async conductEarlyTeardown({ permanent }) {
+    const sessionState = await this._emit('conductEarlyTeardown', { permanent });
     this._sessionState.patch(sessionState);
   }
 
