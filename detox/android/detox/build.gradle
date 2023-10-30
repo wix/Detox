@@ -25,8 +25,8 @@ android {
     if (agpVersion >= 7) {
         namespace "com.wix.detox"
     }
-    compileSdkVersion _compileSdkVersion
-    buildToolsVersion _buildToolsVersion
+    compileSdk _compileSdkVersion
+    buildToolsVersion = _buildToolsVersion
 
     defaultConfig {
         minSdkVersion _minSdkVersion
@@ -37,7 +37,7 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
-    flavorDimensions 'detox'
+    flavorDimensions = ['detox']
     productFlavors {
         full {
             dimension 'detox'
@@ -52,7 +52,7 @@ android {
         unitTests.returnDefaultValues = true
         unitTests.all { t ->
             reports {
-                html.enabled true
+                html.required = true
             }
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
