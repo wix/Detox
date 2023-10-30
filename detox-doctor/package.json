@@ -30,6 +30,7 @@
     "@types/lodash": "^4.14.199",
     "@types/node": "^14.18.63",
     "@types/semver": "^7.5.3",
+    "@types/which": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.51.0",
@@ -57,6 +58,7 @@
     "inquirer": "^8.2.6",
     "lodash": "^4.17.21",
     "semver": "^7.5.4",
+    "which": "^4.0.0",
     "yargs": "^17.7.2"
   }
 }
