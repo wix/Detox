@@ -4,6 +4,7 @@
   background-color: #171b20;
   width: 100%;
   color: #fff;
+
 }
 
 .subHeader {
@@ -63,6 +64,7 @@
   display: inline-block;
   background-color: #1E9EEE;
   height: 45px;
+  line-height: 45px;
   width: 199px;
   border-radius: 10px;
   margin-right: 10px;
@@ -99,7 +101,6 @@
   border-radius: 5px;
   background: #313439;
   color: #fff;
-  @include t2;
 
   @media only screen and (max-width: 1100px) {
     display: none;
@@ -124,7 +125,6 @@
   border-radius: 5px;
   background: #313439;
   color: #fff;
-  @include t2;
 
   @media only screen and (max-width: 950px) {
     display: none;
