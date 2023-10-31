@@ -1,23 +1,18 @@
 .subHeaderWrapper {
   background-color: #171b20;
   width: 100%;
-}
-
-.subHeader {
-  background-color: #171b20;
   color: var(--primary-dark-a-0, #FFF);
   font-family: 'Nunito Sans', sans-serif;
   font-style: normal;
   font-weight: 300;
   font-size: 24px;
-  width: 100%;
-  max-width: 1600px;
+}
+
+.subHeader {
   min-height: 85px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 0 var(--ifm-spacing-horizontal);
-  margin: 0 auto;
+  justify-content: space-between;
 }
 
 .callToAction {
