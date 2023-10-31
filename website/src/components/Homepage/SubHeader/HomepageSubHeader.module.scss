@@ -4,6 +4,7 @@
   background-color: #171b20;
   width: 100%;
   color: #fff;
+  padding: 0 10px;
 
 }
 
@@ -12,7 +13,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 10px 24px !important;
+  padding: 0 14px;
 }
 
 .callToAction {
@@ -174,7 +175,7 @@
 
 @media only screen and (max-width: 750px) {
   .subHeader {
-    padding: 10px var(--ifm-spacing-horizontal);
+    padding: 10px 15px;
   }
 
   .discordButton,
