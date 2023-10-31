@@ -72,8 +72,7 @@
 
 .linkText {
   @include t2;
-
-  font-family: 'Poppins';
+  font-size: 17px;
   color: var(--ifm-color-gray-900);
   background-color: var(--ifm-button-background-color);
   min-width: 250px;

@@ -1,11 +1,9 @@
+@import '@site/src/css/fonts';
+
 .subHeaderWrapper {
   background-color: #171b20;
   width: 100%;
-  color: var(--primary-dark-a-0, #FFF);
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 24px;
+  color: #fff;
 }
 
 .subHeader {
@@ -13,10 +11,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding: 10px 24px !important;
 }
 
 .callToAction {
-  color: var(--primary-dark-a-0, #FFF);
+  @include h5;
+  font-weight: 300;
+  line-height: 35px;
+  color: #fff;
   display: flex;
   align-items: center;
   margin-right: 10px;
@@ -38,6 +40,7 @@
   display: flex;
   align-items: center;
   margin: 20px 0;
+  @include t2;
 }
 
 .discordButton {
@@ -79,8 +82,7 @@
 
 .twitterFollowText,
 .twitterFollowId {
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
+  color: #fff;
 }
 
 .twitterFollowText {
@@ -95,10 +97,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background: var(--primary-dark-a-4, #313439);
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
-  line-height: 25px;
+  background: #313439;
+  color: #fff;
+  @include t2;
 
   @media only screen and (max-width: 1100px) {
     display: none;
@@ -121,10 +122,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background: var(--primary-dark-a-4, #313439);
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
-  line-height: 25px;
+  background: #313439;
+  color: #fff;
+  @include t2;
 
   @media only screen and (max-width: 950px) {
     display: none;
