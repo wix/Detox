@@ -10,6 +10,11 @@
   margin-top: 135px;
   margin-bottom: 104px;
   margin-left: -5px;
-}
 
-.benefitsContent {}
+  @media only screen and (max-width: 500px) {
+    font-size: 40px;
+    margin-top: 47px;
+    margin-bottom: 30px;
+    margin-left: 8px;
+  }
+}
