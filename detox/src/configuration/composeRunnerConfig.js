@@ -32,6 +32,7 @@ function composeRunnerConfig(opts) {
       retries: 0,
       inspectBrk: inspectBrkHookDefault,
       forwardEnv: false,
+      detached: false,
       bail: false,
       jest: {
         setupTimeout: 300000,
@@ -56,8 +57,9 @@ function composeRunnerConfig(opts) {
 
   if (typeof merged.inspectBrk === 'function') {
     if (cliConfig.inspectBrk) {
-      merged.retries = 0;
+      merged.detached = false;
       merged.forwardEnv = true;
+      merged.retries = 0;
       merged.inspectBrk(merged);
     }
 

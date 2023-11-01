@@ -46,6 +46,7 @@ describe('composeRunnerConfig', () => {
       },
       retries: 0,
       bail: false,
+      detached: false,
       forwardEnv: false,
     });
   });
@@ -60,6 +61,7 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
+      detached: true,
       forwardEnv: true,
     };
 
@@ -77,6 +79,7 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
+      detached: true,
       forwardEnv: true,
     });
   });
@@ -92,6 +95,7 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
+      detached: true,
       forwardEnv: true,
     };
 
@@ -109,6 +113,7 @@ describe('composeRunnerConfig', () => {
       },
       bail: true,
       retries: 1,
+      detached: true,
       forwardEnv: true,
     });
   });
@@ -222,6 +227,7 @@ describe('composeRunnerConfig', () => {
         reportSpecs: true,
       },
       bail: true,
+      detached: true,
       retries: 1,
     };
 
@@ -236,6 +242,7 @@ describe('composeRunnerConfig', () => {
         reportSpecs: false,
       },
       bail: false,
+      detached: false,
       retries: 3,
     };
 
@@ -256,6 +263,7 @@ describe('composeRunnerConfig', () => {
         reportWorkerAssign: true,
       },
       bail: false,
+      detached: false,
       retries: 3,
       forwardEnv: false,
     });

@@ -236,6 +236,13 @@ declare global {
              */
             bail?: boolean;
             /**
+             * When true, tells `detox test` to spawn the test runner in a detached mode.
+             * This is useful in CI environments, where you want to intercept SIGINT and SIGTERM signals to gracefully shut down the test runner and the device.
+             * Instead of passing the kill signal to the child process (the test runner), Detox will send an emergency shutdown request to all the workers, and then it will wait for them to finish.
+             * @default false
+             */
+            detached?: boolean;
+            /**
              * Custom handler to process --inspect-brk CLI flag.
              * Use it when you rely on another test runner than Jest to mutate the config.
              */
