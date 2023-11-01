@@ -1,6 +1,8 @@
   - label: ":android::detox: RN .71 + Android: Tests app"
     command:
       - "nvm install"
+      - "npm install -g lerna@3.22.1"
+      - "lerna bootstrap --no-ci"
       - "node detox/demo.js"
     env:
       REACT_NATIVE_VERSION: 0.71.10

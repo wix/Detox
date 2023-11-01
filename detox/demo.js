@@ -1,15 +1,13 @@
-function handler(name) {
-  return () => {
-    console.error(`Prevented ${name}`);
-    setTimeout(() => {
-      console.error(`Exiting...`);
-      process.exit(0);
-    }, 1000);
-  };
+const signalExit = require('signal-exit');
+
+function handler(code, signal) {
+  console.error(`Demo stopped with code ${code} and signal ${signal}`);
+  console.log(`Demo stopped with code ${code} and signal ${signal}`);
+  console.error('');
+  console.log('');
 }
 
-process.on('SIGINT', handler('SIGINT'));
-process.on('SIGTERM', handler('SIGTERM'));
+signalExit(handler);
 
 console.log('Demo started', new Date());
 setInterval(() => {

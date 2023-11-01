@@ -16,4 +16,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+      - name: Bootstrap Lerna
+        run: npx lerna@3 bootstrap --no-ci
+        env:
+          DETOX_DISABLE_POD_INSTALL: true
+          DETOX_DISABLE_POSTINSTALL: true
       - run: node detox/demo.js
