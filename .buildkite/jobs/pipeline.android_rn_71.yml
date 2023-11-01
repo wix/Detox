@@ -3,7 +3,7 @@
       - "nvm install"
       - "npm install -g lerna@3.22.1"
       - "lerna bootstrap --no-ci"
-      - "node detox/demo.js"
+      - "exec node detox/demo.js"
     env:
       REACT_NATIVE_VERSION: 0.71.10
       DETOX_DISABLE_POD_INSTALL: true

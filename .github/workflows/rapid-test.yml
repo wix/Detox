@@ -21,4 +21,4 @@ jobs:
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
-      - run: node detox/demo.js
+      - run: exec node detox/demo.js
