@@ -2,12 +2,18 @@
 
 .benefitsHeader {
   margin-bottom: 24px;
+
+  @media only screen and (max-width: 1200px) {
+    --ifm-spacing-horizontal: 1.625rem;
+  }
 }
+
+.benefitsRow {}
 
 .benefitsTitle {
   @include h2;
   color: var(--ifm-heading-color);
-  margin-top: 135px;
+  margin-top: 136px;
   margin-bottom: 104px;
   margin-left: -5px;
 
@@ -15,6 +21,5 @@
     font-size: 40px;
     margin-top: 47px;
     margin-bottom: 30px;
-    margin-left: 8px;
   }
 }
