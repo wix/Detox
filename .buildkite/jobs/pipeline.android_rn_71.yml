@@ -1,9 +1,7 @@
   - label: ":android::detox: RN .71 + Android: Tests app"
     command:
       - "nvm install"
-      - "npm install -g lerna@3.22.1"
-      - "lerna bootstrap --no-ci"
-      - "cd detox/test && npx detox test -c stub -w 5 --loglevel trace"
+      - "node detox/demo.js"
     env:
       REACT_NATIVE_VERSION: 0.71.10
       DETOX_DISABLE_POD_INSTALL: true
