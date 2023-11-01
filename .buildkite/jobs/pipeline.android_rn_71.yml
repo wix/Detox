@@ -1,2 +1,3 @@
   - label: ":android::detox: RN .71 + Android: Tests app"
-    command: "detox/demo.sh"
+    command: "exec bash detox/demo.sh"
+    timeout_in_minutes: 2
