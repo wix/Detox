@@ -1,14 +1,2 @@
   - label: ":android::detox: RN .71 + Android: Tests app"
-    command:
-      - "nvm install"
-      - "npm install -g lerna@3.22.1"
-      - "lerna bootstrap --no-ci"
-      - "exec node detox/demo.js"
-    env:
-      REACT_NATIVE_VERSION: 0.71.10
-      DETOX_DISABLE_POD_INSTALL: true
-      DETOX_DISABLE_POSTINSTALL: true
-    artifact_paths:
-      - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/**/allure-report-*.html"
-      - "/Users/builder/work/artifacts*.tar.gz"
+    command: "detox/demo.sh"
