@@ -2,7 +2,7 @@
 
 .featuresGap {
   --ifm-col-width: calc(1 / 3 * 100%);
-  margin-bottom: 89px;
+  margin-bottom: 91px;
   padding-left: 14px;
 }
 
@@ -20,7 +20,7 @@
 
 .featureText {
   @include t2;
-  max-width: 250px;
+  max-width: 242px;
 }
 
 @media only screen and (max-width: 996px) {
