@@ -20,7 +20,7 @@
 
 .featureText {
   @include t2;
-  max-width: 242px;
+  max-width: 256px;
 }
 
 @media only screen and (max-width: 996px) {
@@ -48,6 +48,6 @@
   }
 
   .featureText {
-    max-width: 260px;
+    max-width: 290px;
   }
 }
