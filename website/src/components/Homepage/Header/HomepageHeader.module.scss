@@ -4,7 +4,7 @@
   --ifm-heading-color: #fff;
 
   width: 100%;
-  height: calc(366px + 22vw);
+  height: calc(357px + 23vw);
   padding-top: 54px;
   min-height: 450px;
   max-height: 725px;
@@ -24,7 +24,7 @@
     background-size: 1100px;
   }
 
-  @media only screen and (max-width: 870px) {
+  @media only screen and (max-width: 890px) {
     padding-top: 32px;
     padding-bottom: 32px;
   }
@@ -47,7 +47,7 @@
   letter-spacing: -6px;
   margin-left: -10px;
 
-  @media only screen and (max-width: 870px) {
+  @media only screen and (max-width: 890px) {
     font-size: 72px;
     line-height: normal;
     letter-spacing: -3.6px;
@@ -63,7 +63,7 @@
   margin-bottom: 32px;
   letter-spacing: 0.1px;
 
-  @media only screen and (max-width: 870px) {
+  @media only screen and (max-width: 890px) {
     margin-top: -22px;
     margin-bottom: 21px;
   }

@@ -9,7 +9,7 @@ const HomepageSubHeader = () => {
           <div className={clsx('col', styles.subHeader)}>
             <div className={styles.callToAction}>
               <span>
-                Follow us on <strong>social networks:</strong>
+                Follow&nbsp;us&nbsp;on <strong>social&nbsp;networks:</strong>
               </span>
             </div>
             <div className={styles.socialNetworks}>

@@ -13,7 +13,6 @@
 .subHeader {
   min-height: 85px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
 }
 
@@ -27,7 +26,7 @@
   margin-right: 10px;
   flex-wrap: nowrap;
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 570px) {
     font-size: 18px;
     line-height: 25px;
   }
@@ -36,6 +35,10 @@
     max-width: 140px;
     margin-top: 16px;
     align-items: normal;
+  }
+
+  @media only screen and (max-width: 370px) {
+    letter-spacing: -1px;
   }
 }
 
@@ -159,7 +162,7 @@
   }
 }
 
-@media only screen and (max-width: 870px) {
+@media only screen and (max-width: 890px) {
   .discordButton {
     margin-right: 10px;
   }
@@ -174,7 +177,7 @@
   }
 }
 
-@media only screen and (max-width: 760px) {
+@media only screen and (max-width: 780px) {
   .subHeader {
     padding-top: 10px;
     padding-bottom: 10px;
