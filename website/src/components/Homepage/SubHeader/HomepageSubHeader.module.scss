@@ -1,34 +1,44 @@
-.subHeader {
+@import '@site/src/css/fonts';
+
+.subHeaderWrapper {
   background-color: #171b20;
-  color: var(--primary-dark-a-0, #FFF);
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 24px;
   width: 100%;
+  color: #fff;
+
+  @media only screen and (max-width: 1200px) {
+    --ifm-spacing-horizontal: 1.625rem;
+  }
+}
+
+.subHeader {
   min-height: 85px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  padding: 0 var(--ifm-spacing-horizontal);
+  justify-content: space-between;
 }
 
 .callToAction {
-  color: var(--primary-dark-a-0, #FFF);
+  @include h5;
+  font-weight: 300;
+  line-height: 35px;
+  color: #fff;
   display: flex;
   align-items: center;
   margin-right: 10px;
   flex-wrap: nowrap;
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 570px) {
     font-size: 18px;
-    line-height: 24px;
+    line-height: 25px;
   }
 
   @media only screen and (max-width: 480px) {
     max-width: 140px;
-    margin-top: 20px;
+    margin-top: 16px;
     align-items: normal;
+  }
+
+  @media only screen and (max-width: 370px) {
+    letter-spacing: -1px;
   }
 }
 
@@ -36,6 +46,7 @@
   display: flex;
   align-items: center;
   margin: 20px 0;
+  @include t2;
 }
 
 .discordButton {
@@ -58,6 +69,7 @@
   display: inline-block;
   background-color: #1E9EEE;
   height: 45px;
+  line-height: 45px;
   width: 199px;
   border-radius: 10px;
   margin-right: 10px;
@@ -77,8 +89,7 @@
 
 .twitterFollowText,
 .twitterFollowId {
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
+  color: #fff;
 }
 
 .twitterFollowText {
@@ -93,10 +104,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background: var(--primary-dark-a-4, #313439);
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
-  line-height: 25px;
+  background: #313439;
+  color: #fff;
 
   @media only screen and (max-width: 1100px) {
     display: none;
@@ -119,10 +128,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background: var(--primary-dark-a-4, #313439);
-  color: var(--primary-dark-a-0, #FFF);
-  font-size: 16px;
-  line-height: 25px;
+  background: #313439;
+  color: #fff;
 
   @media only screen and (max-width: 950px) {
     display: none;
@@ -155,9 +162,9 @@
   }
 }
 
-@media only screen and (max-width: 870px) {
+@media only screen and (max-width: 890px) {
   .discordButton {
-    margin-right: 5px;
+    margin-right: 10px;
   }
 
   .twitterButton {
@@ -170,9 +177,11 @@
   }
 }
 
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 780px) {
   .subHeader {
-    padding: 10px var(--ifm-spacing-horizontal);
+    padding-top: 10px;
+    padding-bottom: 10px;
+
   }
 
   .discordButton,

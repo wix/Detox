@@ -1,15 +1,23 @@
+@import '@site/src/css/fonts';
+
 .benefitsHeader {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 58px;
-  line-height: 70px;
-  color: #131419;
-  margin-top: 125px;
-  margin-bottom: 125px;
-  margin-left: -5px;
+  margin-bottom: 24px;
+
+  @media only screen and (max-width: 1200px) {
+    --ifm-spacing-horizontal: 1.625rem;
+  }
 }
 
-[data-theme='dark'] .benefitsHeader {
-  color: #ffffff;
+.benefitsTitle {
+  @include h2;
+  color: var(--ifm-heading-color);
+  margin-top: 136px;
+  margin-bottom: 104px;
+  margin-left: -5px;
+
+  @media only screen and (max-width: 500px) {
+    font-size: 40px;
+    margin-top: 47px;
+    margin-bottom: 30px;
+  }
 }
