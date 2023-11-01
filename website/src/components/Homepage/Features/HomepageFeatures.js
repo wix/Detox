@@ -8,12 +8,12 @@ const HomepageFeatures = () => {
   return (
     <section>
       <div className={clsx('container', styles.benefitsHeader)}>
-        <div className={clsx('row', styles.benefitsRow)}>
+        <div className="row">
           <div className="col">
             <h1 className={styles.benefitsTitle}>Detox benefits</h1>
           </div>
         </div>
-        <div className={clsx('row', styles.benefitsRow)}>
+        <div className="row">
           {FeatureList.map((props, idx) => (
             <Features key={idx} {...props} />
           ))}
