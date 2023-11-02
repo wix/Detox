@@ -1,4 +1,5 @@
 .banner {
+  font-family: var(--font-nunito-sans);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,6 +17,15 @@
   color: #fff;
   text-decoration: none;
 }
+
+.uaFlag {
+  background-image: url(@site/static/img/homepage/flag_of_ukraine_with_waves.svg);
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 13px;
+  width: 18px;
+}
+
 
 .hashtag {
   color: #ffd600;
