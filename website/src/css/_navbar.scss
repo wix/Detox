@@ -1,9 +1,16 @@
+@import '@site/src/css/fonts';
+
 [data-theme='dark'] .navbar {
   background-color: #12161b;
 }
 
+.navbar__title {
+  @include t2b;
+  font-weight: 700;
+}
+
 .navbar__link {
-  margin-right: 10px;
+  margin-right: 20px;
   font-weight: 300;
 }
 
@@ -16,6 +23,10 @@
 .navbar__item {
   padding: 5px;
   font-weight: 300;
+}
+
+.navbar__brand {
+  margin-right: 58px;
 }
 
 [data-theme='dark'] .navbar__item {
@@ -38,7 +49,7 @@
 
   &__logo {
     height: 26px;
-    margin: 0 10px 0 8px;
+    margin: 0 10px 0 0;
   }
 
   &__toggle {
@@ -55,27 +66,20 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 996px) {
   .navbar__toggle {
-    position: absolute;
-    margin: 0;
-    top: 15px;
-    right: 25px;
+    display: none;
   }
 }
 
-/* Restyle search button */
 
 @media (max-width: 768px) {
-  button.DocSearch-Button {
-    background-color: var(--detox-color-a3);
-    height: 40px;
-    border-radius: 10px;
-    padding: 0 10px;
-  }
-
-  .DocSearch-Search-Icon {
-    opacity: 0.6;
+  .navbar__toggle {
+    display: inherit;
+    position: absolute;
+    margin: 0;
+    top: 10px;
+    right: 25px;
   }
 }
 
