@@ -33,9 +33,9 @@ class DetoxSecondaryContext extends DetoxContext {
     }
   }
 
-  [symbols.conductEarlyTeardown] = async () => {
+  [symbols.conductEarlyTeardown] = async (permanent = false) => {
     if (this[_ipcClient]) {
-      await this[_ipcClient].conductEarlyTeardown();
+      await this[_ipcClient].conductEarlyTeardown({ permanent });
     } else {
       throw new DetoxInternalError('Detected an attempt to report early teardown using a non-initialized context.');
     }

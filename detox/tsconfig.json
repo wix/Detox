@@ -15,6 +15,9 @@
   },
   "rootDir": ".",
   "include": [
+    "detox.d.ts",
+    "globals.d.ts",
+    "index.d.ts",
     "**/*.js",
     "**/*.ts"
   ],

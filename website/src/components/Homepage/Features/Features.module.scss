@@ -1,0 +1,52 @@
+@import '@site/src/css/fonts';
+
+.featuresGap {
+  --ifm-col-width: calc(1 / 3 * 100%);
+  margin-bottom: 91px;
+}
+
+.featureImage {
+  height: 60px;
+  width: 60px;
+  margin-bottom: 18px;
+}
+
+.featureTitle {
+  @include h5;
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+}
+
+.featureText {
+  @include t2;
+  max-width: 256px;
+}
+
+@media only screen and (max-width: 996px) {
+  .featuresGap {
+    --ifm-col-width: 50%;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .featuresGap {
+    --ifm-col-width: 100%;
+
+    margin-bottom: 29px;
+    padding-left: 25px;
+  }
+
+  .featureImage {
+    height: 45px;
+    width: 45px;
+    margin-bottom: 7px;
+  }
+
+  .featureTitle {
+    margin-bottom: 11px;
+  }
+
+  .featureText {
+    max-width: 290px;
+  }
+}

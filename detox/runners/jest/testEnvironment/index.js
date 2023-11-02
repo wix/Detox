@@ -73,7 +73,9 @@ class DetoxCircusEnvironment extends NodeEnvironment {
   // @ts-expect-error TS2425
   async handleTestEvent(event, state) {
     if (detox.session.unsafe_earlyTeardown) {
-      throw new Error('Detox halted test execution due to an early teardown request');
+      if (event.name === 'test_fn_start' || event.name === 'hook_start') {
+        throw new Error('Detox halted test execution due to an early teardown request');
+      }
     }
 
     this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
@@ -107,6 +109,10 @@ class DetoxCircusEnvironment extends NodeEnvironment {
    * @protected
    */
   async initDetox() {
+    if (detox.session.unsafe_earlyTeardown) {
+      throw new Error('Detox halted test execution due to an early teardown request');
+    }
+
     const opts = {
       global: this.global,
       workerId: `w${process.env.JEST_WORKER_ID}`,

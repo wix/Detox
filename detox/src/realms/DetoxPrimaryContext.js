@@ -51,9 +51,9 @@ class DetoxPrimaryContext extends DetoxContext {
     }
   }
 
-  [symbols.conductEarlyTeardown] = async () => {
+  [symbols.conductEarlyTeardown] = async (permanent = false) => {
     if (this[_ipcServer]) {
-      await this[_ipcServer].onConductEarlyTeardown();
+      await this[_ipcServer].onConductEarlyTeardown({ permanent });
     }
   };
 

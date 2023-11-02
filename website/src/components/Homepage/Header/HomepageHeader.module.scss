@@ -1,9 +1,11 @@
 @import '@site/src/css/fonts';
 
 .heroBanner {
+  --ifm-heading-color: #fff;
+
   width: 100%;
-  height: calc(366px + 22vw);
-  padding: 54px 10px;
+  height: calc(357px + 23vw);
+  padding-top: 54px;
   min-height: 450px;
   max-height: 725px;
   overflow: hidden;
@@ -22,8 +24,13 @@
     background-size: 1100px;
   }
 
-  @media only screen and (max-width: 870px) {
-    padding: 32px 9px;
+  @media only screen and (max-width: 890px) {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  @media only screen and (max-width: 1200px) {
+    --ifm-spacing-horizontal: 1.625rem;
   }
 
   @media only screen and (min-width: 1600px) {
@@ -40,7 +47,7 @@
   letter-spacing: -6px;
   margin-left: -10px;
 
-  @media only screen and (max-width: 870px) {
+  @media only screen and (max-width: 890px) {
     font-size: 72px;
     line-height: normal;
     letter-spacing: -3.6px;
@@ -50,14 +57,13 @@
 
 .tagline {
   @include t1;
-
   max-width: 450px;
   min-height: 60px;
   margin-top: -30px;
   margin-bottom: 32px;
   letter-spacing: 0.1px;
 
-  @media only screen and (max-width: 870px) {
+  @media only screen and (max-width: 890px) {
     margin-top: -22px;
     margin-bottom: 21px;
   }
@@ -69,8 +75,7 @@
 
 .linkText {
   @include t2;
-
-  font-family: 'Poppins';
+  font-size: 17px;
   color: var(--ifm-color-gray-900);
   background-color: var(--ifm-button-background-color);
   min-width: 250px;

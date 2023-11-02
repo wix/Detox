@@ -21,8 +21,12 @@ def _rnNativeArtifact = rnInfo.isRN71OrHigher
             : 'com.facebook.react:react-native:+'
 
 android {
-    compileSdkVersion _compileSdkVersion
-    buildToolsVersion _buildToolsVersion
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpVersion >= 7) {
+        namespace "com.wix.detox"
+    }
+    compileSdk _compileSdkVersion
+    buildToolsVersion = _buildToolsVersion
 
     defaultConfig {
         minSdkVersion _minSdkVersion
@@ -33,7 +37,7 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
-    flavorDimensions 'detox'
+    flavorDimensions = ['detox']
     productFlavors {
         full {
             dimension 'detox'
@@ -48,7 +52,7 @@ android {
         unitTests.returnDefaultValues = true
         unitTests.all { t ->
             reports {
-                html.enabled true
+                html.required = true
             }
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"

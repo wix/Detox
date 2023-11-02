@@ -12,6 +12,7 @@ const { escapeSpaces, useForwardSlashes } = require('../../src/utils/shellUtils'
 const sleep = require('../../src/utils/sleep');
 const AppStartCommand = require('../startCommand/AppStartCommand');
 const { markErrorAsLogged } = require('../utils/cliErrorHandling');
+const interruptListeners = require('../utils/interruptListeners');
 
 const TestRunnerError = require('./TestRunnerError');
 
@@ -28,10 +29,12 @@ class TestRunnerCommand {
     const appsConfig = opts.config.apps;
 
     this._argv = runnerConfig.args;
+    this._detached = runnerConfig.detached;
     this._retries = runnerConfig.retries;
     this._envHint = this._buildEnvHint(opts.env);
     this._startCommands = this._prepareStartCommands(appsConfig, cliConfig);
     this._envFwd = {};
+    this._terminating = false;
 
     if (runnerConfig.forwardEnv) {
       this._envFwd = this._buildEnvOverride(cliConfig, deviceConfig);
@@ -59,16 +62,20 @@ class TestRunnerCommand {
       } catch (e) {
         launchError = e;
 
+        if (this._terminating) {
+          runsLeft = 0;
+        }
+
         const failedTestFiles = detox.session.testResults.filter(r => !r.success);
 
         const { bail } = detox.config.testRunner;
         if (bail && failedTestFiles.some(r => r.isPermanentFailure)) {
-          throw e;
+          runsLeft = 0;
         }
 
         const testFilesToRetry = failedTestFiles.filter(r => !r.isPermanentFailure).map(r => r.testFilePath);
-        if (_.isEmpty(testFilesToRetry)) {
-          throw e;
+        if (testFilesToRetry.length === 0) {
+          runsLeft = 0;
         }
 
         if (--runsLeft > 0) {
@@ -143,6 +150,15 @@ class TestRunnerCommand {
     }, _.isUndefined);
   }
 
+  _onTerminate = () => {
+    if (this._terminating) {
+      return;
+    }
+
+    this._terminating = true;
+    return detox.unsafe_conductEarlyTeardown(true);
+  };
+
   async _spawnTestRunner() {
     const fullCommand = this._buildSpawnArguments().map(escapeSpaces);
     const fullCommandWithHint = printEnvironmentVariables(this._envHint) + fullCommand.join(' ');
@@ -153,6 +169,7 @@ class TestRunnerCommand {
       cp.spawn(fullCommand[0], fullCommand.slice(1), {
         shell: true,
         stdio: 'inherit',
+        detached: this._detached,
         env: _({})
           .assign(process.env)
           .assign(this._envFwd)
@@ -162,6 +179,8 @@ class TestRunnerCommand {
       })
         .on('error', /* istanbul ignore next */ (err) => reject(err))
         .on('exit', (code, signal) => {
+          interruptListeners.unsubscribe(this._onTerminate);
+
           if (code === 0) {
             log.trace.end({ success: true });
             resolve();
@@ -175,6 +194,10 @@ class TestRunnerCommand {
             reject(markErrorAsLogged(error));
           }
         });
+
+      if (this._detached) {
+        interruptListeners.subscribe(this._onTerminate);
+      }
     });
   }
 

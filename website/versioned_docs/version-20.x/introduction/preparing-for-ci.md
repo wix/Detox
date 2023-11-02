@@ -172,9 +172,9 @@ detox_e2e:
     - mkdir -p /root/.android && touch /root/.android/repositories.cfg
     # The Dockerimage provides two paths for sdkmanager and avdmanager, which the defaults are from $ANDROID_HOME/cmdline-tools
     # That is not compatible with the one that Detox is using ($ANDROID_HOME/tools/bin)
-    - echo yes | $ANDROID_HOME/tools/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64"
+    - echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --channel=0 --verbose "system-images;android-27;default;x86_64" "emulator"
     # Nexus 6P, API 27, XXXHDPI
-    - echo no | $ANDROID_HOME/tools/bin/avdmanager --verbose create avd --force --name "Nexus6P" --package "system-images;android-27;default;x86_64" --sdcard 200M --device 11
+    - echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager --verbose create avd --force --name "Nexus6P" --package "system-images;android-27;default;x86_64" --sdcard 200M --device 11
     - adb start-server
   script:
     - npx detox build -c android.emu.release.ci
