@@ -31,6 +31,8 @@
 
     --ifm-button-background-color: #fff;
     --ifm-color-gray-900: #12161B;
+
+    --ifm-font-family-base: 'Nunito Sans', sans-serif;
   }
 
   &[data-theme='light'] {
@@ -46,4 +48,9 @@
     --ifm-footer-background-color: var(--detox-color-a1);
     --ifm-heading-color: #fff;
   }
+}
+
+html {
+  -webkit-font-smoothing: initial;
+  text-rendering: initial;
 }
