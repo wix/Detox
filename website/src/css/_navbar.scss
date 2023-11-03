@@ -26,7 +26,7 @@
 }
 
 .navbar__brand {
-  margin-right: 58px;
+  margin-right: 30px;
 }
 
 [data-theme='dark'] .navbar__item {
@@ -84,6 +84,10 @@
 }
 
 /* Restyle search button */
+
+.DocSearch-Button {
+  font-family: inherit;
+}
 
 @media (max-width: 768px) {
   button.DocSearch-Button {
