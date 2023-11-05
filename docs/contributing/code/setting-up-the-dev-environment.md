@@ -32,19 +32,19 @@ lerna bootstrap
 
 ## Installing Common Dependencies
 
-#### React-Native CLI
+### React-Native CLI
 
 ```bash npm2yarn
 npm install react-native-cli --global
 ```
 
-#### Watchman
+### Watchman
 
 ```bash
 brew install watchman
 ```
 
-#### xcpretty
+### xcpretty
 
 ```bash
 gem install xcpretty
