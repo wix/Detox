@@ -10,13 +10,13 @@ Please complete our [Introduction](introduction/getting-started.mdx) guides befo
 
 ## Setting Up The Monorepo Management
 
-1. Install the monorepo management tool, `lerna`:
+Install the monorepo management tool, `lerna`:
 
 ```bash npm2yarn
 npm install lerna@3.x.x --global
 ```
 
-2. Clone the repository and navigate to the project directory:
+Clone the repository and navigate to the project directory:
 
 ```bash
 git clone git@github.com:wix/Detox.git
@@ -24,7 +24,7 @@ cd detox
 git submodule update --init --recursive
 ```
 
-3. From the project's root directory, install and link the internal projects:
+From the project's root directory, install and link the internal projects:
 
 ```bash
 lerna bootstrap
@@ -32,19 +32,19 @@ lerna bootstrap
 
 ## Installing Common Dependencies
 
-- React-Native CLI:
+#### React-Native CLI
 
 ```bash npm2yarn
 npm install react-native-cli --global
 ```
 
-- Watchman:
--
+#### Watchman
+
 ```bash
 brew install watchman
 ```
 
-- xcpretty:
+#### xcpretty
 
 ```bash
 gem install xcpretty

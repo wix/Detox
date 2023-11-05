@@ -13,7 +13,6 @@ Contact us on our [Discord Server] or open an issue on GitHub.
 - Fork the repository to your own GitHub account.
 - Create a new branch from the `master` branch for your work.
 
-
 ## Test Your Changes
 
 - **Unit Testing:** Write unit tests for your code, usually located within the same directory as the unit under test.
@@ -49,7 +48,6 @@ More details on good commit messages can be found [here](https://www.conventiona
 
 - Fill in the provided PR template fields on GitHub.
 - Provide a clear description of your changes and any necessary context.
-
 
 [Documentation Changes]: ../documentation.md
 [Discord Server]: https://discord.gg/CkD5QKheF5

@@ -1,11 +1,11 @@
+# Environment Setup
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 import IntroRN from './partials/_getting-started-rn.md';
 import IntroExpo from './partials/_getting-started-expo.md';
 import IntroOther from './partials/_getting-started-other.mdx';
-
-# Environment Setup
 
 The _Introduction section_ walks you through setting up Detox in your project, one step at a time.
 
@@ -31,7 +31,7 @@ Please select type of your mobile application before you start the tutorial:
 Your first step would be to complete the
 [📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup).
 
-![](../img/rn-env.png)
+![RN Env](../img/rn-env.png)
 
 <p>
     Open the link above and switch there to <b>React Native CLI Quickstart</b> tab to see
@@ -44,7 +44,7 @@ Your first step would be to complete the
     make sure you can create and run React Native apps on virtual testing devices.
 </p>
 
-![](../img/rn-env-done.png)
+![RN Env Done](../img/rn-env-done.png)
 
 ## Detox Prerequisites
 
