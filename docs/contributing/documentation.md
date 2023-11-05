@@ -1,10 +1,9 @@
----
-title: Documentation
----
+# Documentation Site
 
-# Enhancing Detox Documentation
+Contributions towards enhancing our documentation are highly valued in the Detox community.
+Clear, concise, and comprehensive documentation enables users to understand and utilize the project more effectively.
 
-Contributions towards enhancing our documentation are highly valued in the Detox community. Clear, concise, and comprehensive documentation enables users to understand and utilize the project more effectively. We appreciate all contributions, from correcting typos to creating new documentation pages.
+We appreciate all contributions, from correcting typos to creating new documentation pages.
 
 ## Getting Started
 

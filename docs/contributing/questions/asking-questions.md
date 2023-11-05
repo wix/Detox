@@ -4,7 +4,6 @@ Posting queries on public forums increases visibility and chances of getting an 
 
 In case you were able to resolve your issue, consider sharing your solution with the community. By doing so, you contribute to enhancing Detox for the entire community.
 
-
 ## Before Asking
 
 In case you're facing an issue, consider the following steps before posting a question:

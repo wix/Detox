@@ -1,8 +1,4 @@
----
-title: Feature Requests
----
-
-# Feature Requests and Feedback
+# Feedback and Suggestions
 
 Open dialogue and feedback, particularly feature requests, play an invaluable role in open-source communities like Detox. They provide insights into user preferences and requirements, aiding in the refinement and enhancement of the project.
 
@@ -23,7 +19,7 @@ Follow these tips to deliver clear, actionable feedback:
 
 When suggesting a new feature, remember to provide thorough information, such as examples, screenshots, and code snippets, to communicate your idea effectively.
 
-## Crafting Effective Feature Requests
+## Crafting Effective Feature Suggestions
 
 Just as in general feedback, make sure your feature request is:
 

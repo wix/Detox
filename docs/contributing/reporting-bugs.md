@@ -25,6 +25,5 @@ Creating a minimal code reproduction is crucial as it helps other contributors a
 
 :::
 
-
 [existing issues]: https://github.com/wix/Detox/issues
 [creating a bug report on GitHub]: https://github.com/wix/Detox/issues/new/choose

@@ -3,6 +3,7 @@
 Welcome to the code changes section! As a contributor, it's essential to understand the project's goals and adhere to its code of conduct. Before contributing, please review any existing issues related to your work, ensure your code is well-documented, and has adequate test coverage. It's also important that your code is compatible with the project's supported platforms and their versions.
 
 Our collaborative workflow is simple:
+
 1. **Identify an Issue:** If not exists already, create an issue for new features or bug reports, outlining your proposal or the identified problem.
 2. **Propose a Solution:** Open a pull request with a proposed solution to the issue. On complex issues, it's recommended to discuss your approach with the community and maintainers before submitting a PR.
 3. **Engage in Review:** A collaborator will review your pull request. Reviews from other contributors are also encouraged.
