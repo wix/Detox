@@ -119,13 +119,30 @@ const sidebars = {
     },
   ],
   contributeSidebar: [
+    'contributing',
     {
       type: 'category',
-      label: 'Contribute',
+      label: 'Questions & Answers',
       items: [
-        'contributing',
+        'contributing/questions/asking-questions',
+        'contributing/questions/answering-questions',
       ]
     },
+    'contributing/reporting-bugs',
+    'contributing/feature-requests',
+    {
+      type: 'category',
+      label: 'Code Changes',
+      items: [
+        'contributing/code/overview',
+        'contributing/code/setting-up-the-dev-environment',
+        'contributing/code/example-projects',
+        'contributing/code/submitting-pull-requests',
+        'contributing/code/reviewing-pull-requests',
+      ]
+    },
+    'contributing/documentation',
+    'contributing/code-of-conduct'
   ],
 };
 
