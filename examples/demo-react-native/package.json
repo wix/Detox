@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
+    "@shopify/react-native-skia": "^0.1.186",
     "react": "18.2.0",
     "react-native": "0.71.10",
     "tslib": "^2.0.3"

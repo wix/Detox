@@ -1,0 +1,53 @@
+name: e2e-ios
+on:
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
+      - 'ios'
+jobs:
+  build:
+    runs-on: macos-12
+    defaults:
+      run:
+        working-directory: ./examples/demo-react-native
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm' # cache packages, but not node_modules
+          # cache: 'npm' # cache packages, but not node_modules
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Cache Pods
+        uses: actions/cache@v3
+        id: podcache
+        with:
+          path: ios/Pods
+          key: pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Update Pods
+        run: |
+          gem update cocoapods xcodeproj
+          cd ios && pod install && cd ..
+
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
+      - run: npm run build:ios-release
+      - run: npm run test:ios-release -- --record-videos all --take-screenshots all --record-logs all
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: e2e-test-videos
+          path: ./artifacts/

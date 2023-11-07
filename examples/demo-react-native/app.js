@@ -12,6 +12,26 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
+import { Canvas, Circle, Group } from "@shopify/react-native-skia";
+
+export const HelloWorld = () => {
+  const size = 256;
+  const r = size * 0.33;
+  return (
+    <Canvas style={{ height: size, width: size }}>
+      <Group blendMode="multiply">
+        <Circle cx={r} cy={r} r={r} color="cyan" />
+        <Circle cx={size - r} cy={r} r={r} color="magenta" />
+        <Circle
+          cx={size/2}
+          cy={size - r}
+          r={r}
+          color="yellow"
+        />
+      </Group>
+    </Canvas>
+  );
+};
 
 class example extends Component {
   constructor(props) {
@@ -36,6 +56,7 @@ class example extends Component {
         <TouchableOpacity testID='goodbye_button' onPress={this.onButtonPress.bind(this, 'Goodbye, World')}>
           <Text style={{color: 'blue', marginTop: 50, marginBottom: 20}}>Say Goodbye</Text>
         </TouchableOpacity>
+        <HelloWorld />
       </View>
     );
   }
@@ -45,6 +66,7 @@ class example extends Component {
         <Text style={{fontSize: 25}}>
           {this.state.greeting}!!!
         </Text>
+        <HelloWorld />
       </View>
     );
   }
