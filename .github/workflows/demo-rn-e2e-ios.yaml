@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm' # cache packages, but not node_modules
-          # cache: 'npm' # cache packages, but not node_modules
+          cache-dependency-path: examples/demo-react-native/package-lock.json
 
       - name: Install Dependencies
         run: npm install
@@ -50,7 +50,7 @@ jobs:
       - run: npm run test:ios-release -- --record-videos all --take-screenshots all --record-logs all
 
       - uses: actions/upload-artifact@v3
-        if: failure()
+        # if: failure()
         with:
           name: e2e-test-videos
           path: ./artifacts/
