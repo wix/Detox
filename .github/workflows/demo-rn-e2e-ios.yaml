@@ -42,7 +42,7 @@ jobs:
           cd ios && pod install && cd ..
 
       - name: Activate react-native-skia-stub
-        run: patch -p1 < .github/workflows/stub.patch
+        run: patch -p1 < stub.patch
 
       - run: brew tap wix/brew
       - run: brew install applesimutils
