@@ -41,6 +41,9 @@ jobs:
           gem update cocoapods xcodeproj
           cd ios && pod install && cd ..
 
+      - name: Activate react-native-skia-stub
+        run: patch -p1 < .github/workflows/stub.patch
+
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: npm run build:ios-release

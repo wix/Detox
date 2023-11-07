@@ -1,0 +1,13 @@
+diff --git a/examples/demo-react-native/package.json b/examples/demo-react-native/package.json
+index fae8cc924..adc864c8e 100644
+--- a/examples/demo-react-native/package.json
++++ b/examples/demo-react-native/package.json
+@@ -39,5 +39,8 @@
+     "react-native-skia-stub": "github:limpbrains/react-native-skia-stub#c2cafde63c3893bf0ae762d559075328d514d6d7",
+     "ts-jest": "^29.0.3",
+     "typescript": "^4.8.4"
++  },
++  "react-native": {
++    "@shopify/react-native-skia": "react-native-skia-stub"
+   }
+ }
