@@ -16,7 +16,7 @@ For answers to common questions about this code of conduct, see the FAQ at
 :::
 
 Our community is dedicated to providing a safe and inclusive environment for all contributors.
-To ensure this, we have adopted the **[Contributor Covenant]*- code of conduct.
+To ensure this, we have adopted the **[Contributor Covenant]** code of conduct.
 This widely recognized and respected code of conduct sets clear guidelines for behavior, and it's easy for everyone to understand and follow.
 
 By participating in the Detox community, you agree to abide by the terms of this code of conduct.

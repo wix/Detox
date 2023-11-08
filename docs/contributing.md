@@ -1,10 +1,8 @@
 # Contributing to Detox
 
-## Call for Contributions
-
 Detox, an open-source project, greatly values community involvement. Whether you're a mobile developer, QA specialist, or an open source enthusiast, your contribution could significantly enhance the reliability, user experience, and development process of mobile applications.
 
-### Our Code of Conduct
+## Our Code of Conduct
 
 To ensure an inclusive, safe environment for all contributors, we adhere to the [Contributor Covenant code of conduct]. This well-recognized code provides clear guidelines for respectful behavior.
 

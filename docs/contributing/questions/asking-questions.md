@@ -10,7 +10,7 @@ In case you're facing an issue, consider the following steps before posting a qu
 
 - **Suspect a bug?** Refer to our [Reporting Bugs] guide to determine if you've encountered a Detox bug and how to report it.
 - **Search** for existing answers that may have addressed your question already. [Below](#where-to-ask), we've listed the right platforms to ask (and search) questions.
-- Review our **documentation** thoroughly for any related information. Use the search bar on the top bar to streamline your search.
+- Review our **documentation** thoroughly for any related information. Use <a href="#" onClick={() => document.querySelector('.DocSearch-Button').click()}>the search bar</a> in the top right corner to streamline your search.
 
 If an existing answer doesn't fully address your question, feel free to ask a follow-up in the same thread if comment-enabled or create a new question, linking back to the original one if possible.
 
@@ -18,7 +18,7 @@ If an existing answer doesn't fully address your question, feel free to ask a fo
 
 If you can't find an answer to your question, you can ask it in the following ways:
 
-- **Discord**: Join our dedicated Discord server [here][Discord] to seek community assistance.
+- **Discord**: Join our dedicated [Discord server][Discord] to seek community assistance.
 - **Stack Overflow**: Tag your question with ["Detox" on Stack Overflow] to reach the right audience.
 - **GitHub**: Raise an issue on our [Detox repository].
 

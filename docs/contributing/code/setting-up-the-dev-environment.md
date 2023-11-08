@@ -34,11 +34,15 @@ lerna bootstrap
 
 ### React-Native CLI
 
+[react-native-cli] is a command line interface for React Native.
+
 ```bash npm2yarn
 npm install react-native-cli --global
 ```
 
 ### Watchman
+
+[Watchman] is a tool by Facebook for watching changes in the filesystem.
 
 ```bash
 brew install watchman
@@ -46,10 +50,18 @@ brew install watchman
 
 ### xcpretty
 
+[xcpretty] is a fast and flexible formatter for xcodebuild.
+
 ```bash
 gem install xcpretty
 ```
 
 ## Building and Testing
 
-Refer to the scripts `scripts/ci.ios.sh` and `scripts/ci.android.sh` to understand the build and test process. Ensure these scripts pass before submitting a pull request.
+Refer to the scripts `scripts/ci.ios.sh` and `scripts/ci.android.sh` to understand the build and test process.
+
+Before submitting a pull request, please ensure at a minimum that your code adheres to our linting standards and that all unit tests run successfully without any errors.
+
+[react-native-cli]: https://www.npmjs.com/package/react-native-cli
+[Watchman]: https://facebook.github.io/watchman/
+[xcpretty]: https://github.com/xcpretty/xcpretty

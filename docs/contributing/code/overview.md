@@ -1,3 +1,7 @@
+---
+sidebar_label: Overview
+---
+
 # Code Changes Overview
 
 Welcome to the code changes section! As a contributor, it's essential to understand the project's goals and adhere to its code of conduct. Before contributing, please review any existing issues related to your work, ensure your code is well-documented, and has adequate test coverage. It's also important that your code is compatible with the project's supported platforms and their versions.

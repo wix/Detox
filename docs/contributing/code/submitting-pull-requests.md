@@ -37,9 +37,9 @@ Refer to the [Documentation Changes] page for guidelines.
 Write descriptive, meaningful commit messages that follow the **Conventional Commits** format, specifying the type of change, the scope, and a concise description. For example:
 
 ```plaintext
-fix(iOS): resolve crash on scrolling in iOS 17.0
-feat(Android): add new API for setting the device locale
-chore(tests): update unit tests for new utility function
+fix(ios): resolve crash on scrolling in iOS 17.0
+feat(android): add new API for setting the device locale
+test: update unit tests for new utility function
 ```
 
 More details on good commit messages can be found [here](https://www.conventionalcommits.org/en/v1.0.0/).
