@@ -9,7 +9,7 @@
   Detox
 </h1>
 <p align="center">
-<b>Gray box end-to-end testing and automation library for mobile apps.</b>
+<b>Gray box end-to-end testing and automation framework for mobile apps.</b>
 </p>
 <p align="center">
 <img alt="Demo" src="docs/img/Detox.gif"/>
