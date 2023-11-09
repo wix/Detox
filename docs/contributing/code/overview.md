@@ -17,4 +17,31 @@ We use [GitHub] for managing pull requests, conducting code reviews, and trackin
 
 The code review process is central to our collaboration. Every contribution must go through a review before merging to maintain the quality of our codebase. As a contributor, being willing to discuss your work, respond to feedback, and work with the community is key to improving the project and creating a positive environment for all contributors.
 
+## Repository Structure
+
+Our GitHub repository is a monorepo, which means it contains multiple Detox-related projects and packages.
+
+The main package is the Detox framework, which is the core of the project.
+It contains the native code for iOS and Android, as well as the JavaScript code.
+The other projects are the Detox CLI, the Detox test app, example apps, and the Detox documentation website.
+
+Here's a high-level overview of the repository structure:
+
+- 📁 **detox-cli** - The CLI for Detox (e.g., `detox init`, `detox test`, read more about our [CLI docs])
+- 📁 **detox** - The Detox framework
+  - 📁 **android** - The Android native code
+  - 📁 **ios** - The iOS native code, including its native submodules (e.g., DetoxSync)
+  - 📁 **test** - The Detox test app, a full-feature React Native app for testing end-to-end testing
+  - 📁 **local-cli** - Local CLI commands for Detox development (e.g., `detox rebuild-framework-cache`, which rebuilds the iOS framework)
+  - 📁 **runners** - The Detox runners, which are used to run the tests
+  - 📁 **scripts** - Scripts for building the framework for publishing
+  - 📁 **src** - The JavaScript source code of Detox
+- 📁 **website** - The documentation website of Detox (read more about our [documentation site docs])
+- 📁 **docs** - The documentation of Detox, written in Markdown and published on the website
+- 📁 **examples** - Example apps for Detox (for more information, check the [list of example projects])
+- 📁 **scripts** - Scripts for building and testing Detox
+
 [GitHub]: https://github.com/wix/Detox
+[documentation site docs]: ../documentation.md
+[list of example projects]: ./example-projects.md
+[CLI docs]: ../../cli/overview.md
