@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "jest": "^27.0.0",
-    "jest-allure2-reporter": "2.0.0-alpha.8",
+    "jest-allure2-reporter": "2.0.0-alpha.10",
     "lint-staged": "^6.0.0",
     "prettier": "^1.8.2"
   },
