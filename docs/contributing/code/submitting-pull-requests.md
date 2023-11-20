@@ -15,7 +15,7 @@ Contact us on our [Discord Server] or open an [issue on GitHub].
 
 ## Test Your Changes
 
-Being a testing framework, Detox is a highly self-tested project. Be sure to add/fix test coverage over your work, by running the various test flavors associated with your changes. You can review them, [here](./setting-up-the-dev-environment.md#building-and-testing).
+Being a testing framework, Detox is a highly self-tested project. Be sure to add/fix test coverage over your work, by running the various test flavors associated with your changes. You can review them, [here](./building-and-testing).
 
 ## Modify Documentation
 

@@ -136,6 +136,7 @@ const sidebars = {
       items: [
         'contributing/code/overview',
         'contributing/code/setting-up-the-dev-environment',
+        'contributing/code/building-and-testing',
         'contributing/code/example-projects',
         'contributing/code/submitting-pull-requests',
         'contributing/code/reviewing-pull-requests',
