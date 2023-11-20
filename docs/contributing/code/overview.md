@@ -29,13 +29,16 @@ Here's a high-level overview of the repository structure:
 
 - 📁 **detox-cli** - The CLI for Detox (e.g., `detox init`, `detox test`, read more about our [CLI docs])
 - 📁 **detox** - The Detox framework
-  - 📁 **android** - The Android native code
+  - 📁 **android** - The Android native code, alongside native unit tests
   - 📁 **ios** - The iOS native code, including its native submodules (e.g., DetoxSync)
-  - 📁 **test** - The Detox test app, a full-feature React Native app for testing end-to-end testing
+  - 📁 **test** - The Detox self-test app: A full-feature React Native app for end-to-end testing Detox itself
+    - 📁 **src** - The app's JavaScript code
+    - 📁 **e2e** - The Detox self-tests
+    - 📁 **integration** - Detox integration self-tests
   - 📁 **local-cli** - Local CLI commands for Detox development (e.g., `detox rebuild-framework-cache`, which rebuilds the iOS framework)
   - 📁 **runners** - The Detox runners, which are used to run the tests
   - 📁 **scripts** - Scripts for building the framework for publishing
-  - 📁 **src** - The JavaScript source code of Detox
+  - 📁 **src** - The JavaScript source code of Detox. The include bundled JavaScript unit tests
 - 📁 **website** - The documentation website of Detox (read more about our [documentation site docs])
 - 📁 **docs** - The documentation of Detox, written in Markdown and published on the website
 - 📁 **examples** - Example apps for Detox (for more information, check the [list of example projects])

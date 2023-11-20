@@ -40,7 +40,7 @@ We plan to launch a "Core Contributor" program for individuals who have signific
 [Answers]: contributing/questions/answering-questions.md
 [Bug Reports]: contributing/reporting-bugs.md
 [Feature Suggestions]: contributing/feature-requests.md
-[Code Submissions]: contributing/code/submitting-pull-requests.md
+[Code Contributions]: contributing/code/overview.md
 [Code Reviews]: contributing/code/reviewing-pull-requests.md
 [Documentation Enhancements]: contributing/documentation.md
 [Discord server]: https://discord.gg/CkD5QKheF5

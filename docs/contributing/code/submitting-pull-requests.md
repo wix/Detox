@@ -4,7 +4,7 @@
 
 Before creating a PR, it's recommended to consult with the Detox collaborators. Request a design review or assistance with planning the tests to ensure alignment with project goals.
 
-Contact us on our [Discord Server] or open an issue on GitHub.
+Contact us on our [Discord Server] or open an [issue on GitHub].
 
 :::
 
@@ -15,17 +15,7 @@ Contact us on our [Discord Server] or open an issue on GitHub.
 
 ## Test Your Changes
 
-- **Unit Testing:** Write unit tests for your code, usually located within the same directory as the unit under test.
-- **End-to-End (E2E) Testing:**
-  - Our E2E tests are located under the `detox/test/e2e` directory, with each test file named after the feature it tests. These tests are testing a real React Native app (`detox/test`).
-  - Running the test can be done using `detox build` and `detox test` commands, as described in the `package.json` of the project.
-- After changes to the native implementation of Detox (or `DetoxSync`), rebuild the framework before running the tests locally:
-
-```bash
-detox rebuild-framework-cache
-```
-
-- **Integration Testing:** Usually, integration tests are not required. If there are special cases, perform integration tests under `detox/test/integration`.
+Being a testing framework, Detox is a highly self-tested project. Be sure to add/fix test coverage over your work, by running the various test flavors associated with your changes. You can review them, [here](./setting-up-the-dev-environment.md#building-and-testing).
 
 ## Modify Documentation
 
@@ -51,3 +41,4 @@ More details on good commit messages can be found [here](https://www.conventiona
 
 [Documentation Changes]: ../documentation.md
 [Discord Server]: https://discord.gg/CkD5QKheF5
+[issue on GitHub]: https://github.com/wix/Detox/issues/new/choose
