@@ -14,7 +14,7 @@ All contributions, regardless of size, can help shape Detox. We welcome:
 - **[Answers]**: Assisting other Detox users by providing guidance or responses to their questions.
 - **[Bug Reports]**: Help us identify and resolve Detox issues.
 - **[Feature Suggestions]**: Your ideas for new features can help us improve Detox according to user needs.
-- **[Code Submissions]**: Directly contribute by fixing bugs, adding features, or improving our codebase.
+- **[Code Contributions]**: Directly contribute by fixing bugs, adding features, or improving our codebase.
 - **[Code Reviews]**: Help maintain the quality of our codebase by reviewing others' contributions.
 - **[Documentation Enhancements]**: Improve Detox documentation from user guides to API references.
 - **Content Creation**: Share your knowledge of Detox through blog posts, tutorials, videos, and more. We're always excited to share your content on our [Twitter account] and [Discord server].
