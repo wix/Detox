@@ -26,6 +26,7 @@ Under the `detox/` directory, run the following command to run the unit tests wi
 cd detox
 npm run unit
 ```
+
 The unit tests reside alongside the JavaScript code. Typically, they can also be easily run directly from within an IDE such as [WebStorm](https://www.jetbrains.com/webstorm/) or [vscode](https://code.visualstudio.com/), even in debug (i.e step-by-step execution) mode.
 
 ## Unit Tests - Android Native
@@ -36,6 +37,7 @@ We also have unit tests for our native code (Android only). They reside alongsid
 cd detox
 npm run unit:android-release
 ```
+
 The native unit tests can also be run in [Android Studio](https://developer.android.com/studio) (i.e. the IDE for Android apps development). Most tests can be run seamlessly using Android Studio's build-in support for unit-tests, but some require a plugin called [Spek](https://plugins.jetbrains.com/plugin/10915-spek-framework), which can be installed from within Android Studio itself - under the Plugins marketplace.
 
 ## iOS: Rebuilding the Framework
