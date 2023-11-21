@@ -106,6 +106,7 @@
 		60ED002A2992476D00BC6377 /* XCUIElement+cleanIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED00292992476D00BC6377 /* XCUIElement+cleanIdentifier.swift */; };
 		60ED002C2993B58B00BC6377 /* Executor+setOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */; };
 		60F3D47128322EF500732955 /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F3D47028322EF500732955 /* WebSocketServer.swift */; };
+		60F6E9302B0CDDD800C77306 /* XCUIElement+runScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F6E92F2B0CDDD800C77306 /* XCUIElement+runScript.swift */; };
 		60F96DD8296D75E60047B332 /* XCUIElement+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */; };
 		60F96DDB296D77120047B332 /* XCUIElementQuery+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */; };
 		60F96DDD296D9F050047B332 /* ActionDelegate+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */; };
@@ -281,6 +282,7 @@
 		60ED002B2993B58B00BC6377 /* Executor+setOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Executor+setOrientation.swift"; sourceTree = "<group>"; };
 		60ED26D227872220004213B5 /* DetoxTesterApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DetoxTesterApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60F3D47028322EF500732955 /* WebSocketServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketServer.swift; sourceTree = "<group>"; };
+		60F6E92F2B0CDDD800C77306 /* XCUIElement+runScript.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCUIElement+runScript.swift"; sourceTree = "<group>"; };
 		60F96DD7296D75E60047B332 /* XCUIElement+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Error.swift"; sourceTree = "<group>"; };
 		60F96DDA296D77120047B332 /* XCUIElementQuery+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElementQuery+Error.swift"; sourceTree = "<group>"; };
 		60F96DDC296D9F050047B332 /* ActionDelegate+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionDelegate+Error.swift"; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 			isa = PBXGroup;
 			children = (
 				60A9CBBF2A77940C006B453B /* XCUIElement+scrollToView.swift */,
+				60F6E92F2B0CDDD800C77306 /* XCUIElement+runScript.swift */,
 			);
 			path = XCUIElement;
 			sourceTree = "<group>";
@@ -974,6 +977,7 @@
 			files = (
 				605341A1280F010700C0405D /* TapTests.swift in Sources */,
 				60534156280C177300C0405D /* SwipeTests.swift in Sources */,
+				60F6E9302B0CDDD800C77306 /* XCUIElement+runScript.swift in Sources */,
 				603497B127F08E6600770EE0 /* Executor+reactNativeReload.swift in Sources */,
 				60C7F53027EA2078000D417A /* XCUIElement+tap.swift in Sources */,
 				607C901529ADFD14008FA6EA /* Executor+sendToHome.swift in Sources */,

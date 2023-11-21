@@ -12,9 +12,16 @@ class WebActionDelegate: WebActionDelegateProtocol {
   /// The application to perform actions on.
   let app: XCUIApplication
 
+  /// A handler for white-box requests.
+  let whiteBoxMessageHandler: WhiteBoxMessageHandler
+
   /// Creates a new web action delegate.
-  init(_ app: XCUIApplication) {
+  init(
+    _ app: XCUIApplication,
+    whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler
+  ) {
     self.app = app
+    self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }
 
   func act(
@@ -91,5 +98,26 @@ class WebActionDelegate: WebActionDelegateProtocol {
     }
 
     return AnyCodable(["title": element.title])
+  }
+
+  func runScript(
+    on element: AnyHashable,
+    host webView: AnyHashable,
+    script: String,
+    args: [String]
+  ) throws -> AnyCodable {
+    guard let element = element as? XCUIElement else {
+      fatalError("element is not XCUIElement")
+    }
+
+    guard let webView = webView as? XCUIElement else {
+      fatalError("webView is not XCUIElement")
+    }
+
+    let result = try element.runScript(
+      withHost: webView, script: script, args: args, whiteBoxMessageHandler: whiteBoxMessageHandler
+    )
+
+    return AnyCodable(result)
   }
 }

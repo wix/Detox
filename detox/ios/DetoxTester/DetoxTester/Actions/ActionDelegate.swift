@@ -13,7 +13,10 @@ class ActionDelegate: ActionDelegateProtocol {
 
   let whiteBoxMessageHandler: WhiteBoxMessageHandler
 
-  init(_ app: XCUIApplication, whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler) {
+  init(
+    _ app: XCUIApplication,
+    whiteBoxMessageHandler: @escaping WhiteBoxMessageHandler
+  ) {
     self.app = app
     self.whiteBoxMessageHandler = whiteBoxMessageHandler
   }

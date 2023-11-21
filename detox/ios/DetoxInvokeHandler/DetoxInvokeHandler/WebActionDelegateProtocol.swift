@@ -23,4 +23,12 @@ public protocol WebActionDelegateProtocol {
 
   /// Get the title of the web-view from the specified `element`.
   func getTitle(of element: AnyHashable) throws -> AnyCodable
+
+  /// Evaluate JavaScript code.
+  func runScript(
+    on element: AnyHashable,
+    host webView: AnyHashable,
+    script: String,
+    args: [String]
+  ) throws -> AnyCodable
 }

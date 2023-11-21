@@ -26,6 +26,10 @@ extension XCUIElement {
 
     /// Failed to scroll to an element (failed to find the element).
     case failedToScrollToElement(element: XCUIElement)
+
+    /// Failed to evaluate JS code on element.
+    case failedToEvaluateScript(
+      element: XCUIElement, host: XCUIElement, script: String, args: [String])
   }
 }
 
@@ -55,6 +59,15 @@ extension XCUIElement.Error: CustomStringConvertible {
       case .failedToScrollToElement(let element):
         return "Failed to scroll to element with identifier " +
         "`\(element.exists ? element.cleanIdentifier : element.debugDescription)`"
+
+      case .failedToEvaluateScript(
+        element: let element,
+        host: let host,
+        script: let script,
+        args: let args
+      ):
+        return "Failed to evaluate JS code on element: `\(element.debugDescription)`" +
+        " with hosting web-view: `\(host.debugDescription)`, script: `\(script)`, args: `\(args)`"
     }
   }
 }

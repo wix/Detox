@@ -126,6 +126,24 @@ public class InvokeHandler {
       case .getTitle:
         return try webActionDelegate.getTitle(of: element)
 
+      case .runScript:
+        guard case WebAction.runScript(script: let script) =
+                WebAction.make(from: .runScript, params: parsedMessage.params) else {
+          fatalError("could not run script")
+        }
+
+        return try webActionDelegate.runScript(
+          on: element, host: webViewElement.webView, script: script, args: [])
+
+      case .runScriptWithArgs:
+        guard case WebAction.runScriptWithArgs(script: let script, args: let args) =
+                WebAction.make(from: .runScript, params: parsedMessage.params) else {
+          fatalError("could not run script")
+        }
+
+        return try webActionDelegate.runScript(
+          on: element, host: webViewElement.webView, script: script, args: args)
+
       default:
         let webAction = WebAction.make(from: webActionType, params: parsedMessage.params)
         try webActionDelegate.act(

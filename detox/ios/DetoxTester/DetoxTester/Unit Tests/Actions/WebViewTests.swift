@@ -23,7 +23,7 @@ class WebViewTests: DTXTestCase {
       whiteBoxMessageHandler: { _ in return nil }
     )
 
-    webActionDelegate = WebActionDelegate(app)
+    webActionDelegate = WebActionDelegate(app, whiteBoxMessageHandler: { _ in return nil })
 
     matcher = ElementMatcher(app, whiteBoxMessageHandler: { _ in return nil })
 

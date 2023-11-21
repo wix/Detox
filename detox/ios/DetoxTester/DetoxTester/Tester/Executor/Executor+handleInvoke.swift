@@ -36,7 +36,7 @@ extension Executor {
     let handler = InvokeHandler(
       elementMatcher: ElementMatcher(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
       actionDelegate: ActionDelegate(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
-      webActionDelegate: WebActionDelegate(app),
+      webActionDelegate: WebActionDelegate(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
       expectationDelegate: ExpectationDelegate(app, whiteBoxMessageHandler: whiteBoxMessageHandler),
       webExpectationDelegate: WebExpectationDelegate()
     )
