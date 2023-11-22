@@ -140,7 +140,7 @@ patch or create if they are missing:
     * `android/build.gradle`
     * `android/app/build.gradle`
 * **Native test code:**
-    * `android/app/src/androidTest/java/com/<your.package>/DetoxTest.java`
+    * `android/app/src/androidTest/java/DetoxTest.java`
 * **Manifests:**
     * `android/app/src/main/AndroidManifest.xml`
     * `android/app/src/main/res/xml/network_security_config.xml`
@@ -252,7 +252,7 @@ which will be picked up by `testRunner` that you just added in the previous step
 Copy the snippet below to create a file under the following path (where `<your.package>` is your actual
 package name):
 
-```java title="android/app/src/androidTest/java/com/<your.package>/DetoxTest.java" showLineNumbers
+```java title="android/app/src/androidTest/java/DetoxTest.java" showLineNumbers
 // highlight-next-line
 package com.<your.package>; // (1)
 
