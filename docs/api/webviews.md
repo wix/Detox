@@ -140,7 +140,6 @@ Web view actions are used to interact with elements within a web view:
 - [`focus()`]
 - [`moveCursorToEnd()`]
 - [`runScript()`]
-- [`runScriptWithArgs()`]
 - [`getCurrentUrl()`]
 - [`getTitle()`]
 
@@ -361,9 +360,7 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [name]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#name
 
-[`runScript()`]: webviews.md#runscriptscript
-
-[`runScriptWithArgs()`]: webviews.md#runscriptwithargsscript-args
+[`runScript()`]: webviews.md#runscriptscript-args
 
 [`getCurrentUrl()`]: webviews.md#getcurrenturl
 
