@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
 
 @mixin h1 {
   font: 80px/96px 'Nunito Sans', sans-serif;
@@ -27,6 +26,10 @@
 
 @mixin t2 {
   font: 300 16px/25px 'Nunito Sans', sans-serif;
+}
+
+@mixin t2b {
+  font: 600 16px/25px 'Nunito Sans', sans-serif;
 }
 
 @mixin t3 {

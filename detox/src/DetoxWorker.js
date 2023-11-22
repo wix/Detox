@@ -33,7 +33,6 @@ class DetoxWorker {
       onError: this._onEmitError.bind(this),
     });
 
-
     /** @type {DetoxInternals.RuntimeConfig['apps']} */
     this._appsConfig = null;
     /** @type {DetoxInternals.RuntimeConfig['artifacts']} */
@@ -60,7 +59,6 @@ class DetoxWorker {
     /** @type {Detox.WebFacade} */
     this.web = null;
 
-    this._deviceAllocator = null;
     this._deviceCookie = null;
 
     this.trace = this._context.trace;
@@ -115,14 +113,13 @@ class DetoxWorker {
     const {
       // @ts-ignore
       envValidatorFactory,
-      deviceAllocatorFactory,
       // @ts-ignore
       artifactsManagerFactory,
       // @ts-ignore
       matchersFactory,
       // @ts-ignore
       runtimeDeviceFactory,
-    } = environmentFactory.createFactories(this._deviceConfig);
+    } = environmentFactory.createFactories(deviceConfig);
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
@@ -135,10 +132,7 @@ class DetoxWorker {
     };
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
-    this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
-    this._deviceCookie = yield this._deviceAllocator.allocate(this._deviceConfig);
-
-    yield this._deviceAllocator.postAllocate(this._deviceCookie);
+    this._deviceCookie = yield this._context[symbols.allocateDevice]();
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
@@ -156,6 +150,8 @@ class DetoxWorker {
       eventEmitter: this._eventEmitter,
     });
     Object.assign(this, matchers);
+
+    yield this._eventEmitter.emit('bootDevice', { deviceId: this.device.id });
 
     if (behaviorConfig.init.exposeGlobals) {
       const injectedGlobals = {
@@ -207,11 +203,9 @@ class DetoxWorker {
     }
 
     if (this._deviceCookie) {
-      const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
-      await this._deviceAllocator.free(this._deviceCookie, { shutdown });
+      await this._context[symbols.deallocateDevice](this._deviceCookie);
     }
 
-    this._deviceAllocator = null;
     this._deviceCookie = null;
     this.device = null;
   }

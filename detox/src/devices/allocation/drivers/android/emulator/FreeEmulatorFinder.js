@@ -1,4 +1,4 @@
-const FreeDeviceFinder = require('../../../../common/drivers/android/tools/FreeDeviceFinder');
+const FreeDeviceFinder = require('../FreeDeviceFinder');
 
 class FreeEmulatorFinder extends FreeDeviceFinder {
   /**

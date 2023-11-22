@@ -1,9 +1,16 @@
+@import '@site/src/css/fonts';
+
 [data-theme='dark'] .navbar {
   background-color: #12161b;
 }
 
+.navbar__title {
+  @include t2b;
+  font-weight: 700;
+}
+
 .navbar__link {
-  margin-right: 10px;
+  margin-right: 20px;
   font-weight: 300;
 }
 
@@ -18,16 +25,21 @@
   font-weight: 300;
 }
 
+.navbar__brand {
+  margin-right: 30px;
+}
+
 [data-theme='dark'] .navbar__item {
   padding: 5px;
   font-weight: 300;
 }
+
 /*===========*/
 
 /* Restyle logo & hamburger button */
 
 .navbar {
-  height: 70px;
+  height: 60px;
 
   &__items {
     &--right {
@@ -37,7 +49,7 @@
 
   &__logo {
     height: 26px;
-    margin: 0 10px 0 8px;
+    margin: 0 10px 0 0;
   }
 
   &__toggle {
@@ -47,19 +59,35 @@
     border-radius: 10px;
     justify-content: center;
     align-items: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar__toggle {
     position: absolute;
-    margin: 0;
+    margin-right: 0;
     top: 15px;
     right: 25px;
   }
 }
 
+@media (max-width: 996px) {
+  .navbar__toggle {
+    display: none;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .navbar__toggle {
+    display: inherit;
+    position: absolute;
+    margin: 0;
+    top: 10px;
+    right: 25px;
+  }
+}
+
 /* Restyle search button */
+
+.DocSearch-Button {
+  font-family: inherit;
+}
 
 @media (max-width: 768px) {
   button.DocSearch-Button {
@@ -68,6 +96,7 @@
     border-radius: 10px;
     padding: 0 10px;
   }
+
   .DocSearch-Search-Icon {
     opacity: 0.6;
   }

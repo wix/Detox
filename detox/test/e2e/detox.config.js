@@ -8,16 +8,14 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
-  logger: {
-    level: process.env.CI ? 'debug' : undefined,
-  },
-
   testRunner: {
     args: {
       $0: 'nyc jest',
       config: 'e2e/jest.config.js',
-      _: ['e2e/']
+      forceExit: process.env.CI ? true : undefined,
+      _: ['e2e/'],
     },
+    detached: !!process.env.CI,
     retries: process.env.CI ? 1 : undefined,
     jest: {
       setupTimeout: +`${process.env.DETOX_JEST_SETUP_TIMEOUT || 300000}`,
@@ -128,6 +126,13 @@ const config = {
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
         avdName: 'Pixel_3A_API_29'
+      },
+    },
+
+    'android.attached': {
+      type: 'android.attached',
+      device: {
+        adbName: '.*'
       },
     },
 

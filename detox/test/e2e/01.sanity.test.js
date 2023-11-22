@@ -1,3 +1,13 @@
+/**
+ * Sanity suite
+ * ------------
+ *
+ * Tests in this suite ensure that the most basic functionality of Detox is
+ * working as expected: app launches, element matching, assertions, etc.
+ *
+ * @severity critical
+ * @tag sanity
+ */
 describe('Sanity', () => {
   beforeEach(async () => {
     await device.reloadReactNative();

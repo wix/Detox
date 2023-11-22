@@ -1,60 +1,85 @@
+@import '@site/src/css/fonts';
+
 .heroBanner {
-  height: 725px;
+  --ifm-heading-color: #fff;
+
   width: 100%;
-  padding: 4rem 0;
-  color: white;
+  height: calc(357px + 23vw);
+  padding-top: 54px;
+  min-height: 450px;
+  max-height: 725px;
   overflow: hidden;
-  background: rgb(21, 33, 107);
-  background-image: url(@site/static/img/homepage/hero-image.jpg);
-  background-position-x: center;
-  background-position-y: top;
+  position: relative;
+  background-attachment: local;
+  background-color: #15216b;
+  background-image: url(@site/static/img/homepage/hero-image.webp);
+  background-position-x: calc(-495px + 31vw);
+  background-position-y: calc(19px - 19vw);
+  background-size: calc(947px + 41vw);
   background-repeat: no-repeat;
-  background-size: cover;
+
+  @media only screen and (max-width: 375px) {
+    background-position-x: -379px;
+    background-position-y: -53px;
+    background-size: 1100px;
+  }
+
+  @media only screen and (max-width: 890px) {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  @media only screen and (max-width: 1200px) {
+    --ifm-spacing-horizontal: 1.625rem;
+  }
+
+  @media only screen and (min-width: 1600px) {
+    background-position-x: center;
+    background-position-y: bottom;
+    background-size: cover;
+  }
 }
 
-html[data-theme='dark'] {
-  --ifm-background-color: #202429;
-  --ifm-background-surface-color: #202429;
-  --ifm-footer-background-color: #202429;
-}
-
-.heroBanner h1 {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 700;
+.title {
+  @include h2;
   font-size: 120px;
-  line-height: 150px;
+  line-height: normal;
+  letter-spacing: -6px;
   margin-left: -10px;
+
+  @media only screen and (max-width: 890px) {
+    font-size: 72px;
+    line-height: normal;
+    letter-spacing: -3.6px;
+    margin-left: -6px;
+  }
 }
 
-.heroBanner h2 {
-  font-family: 'Nunito Sans', sans-serif;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 20px;
-  height: 60px;
-  margin-bottom: 30px;
+.tagline {
+  @include t1;
   max-width: 450px;
+  min-height: 60px;
+  margin-top: -30px;
+  margin-bottom: 32px;
+  letter-spacing: 0.1px;
+
+  @media only screen and (max-width: 890px) {
+    margin-top: -22px;
+    margin-bottom: 21px;
+  }
 }
 
 .buttons {
-  display: flex;
-  text-shadow: none;
-  width: 251px;
   height: 50px;
+}
+
+.linkText {
+  @include t2;
+  font-size: 17px;
+  color: var(--ifm-color-gray-900);
+  background-color: var(--ifm-button-background-color);
+  min-width: 250px;
+  padding: 12px 20px;
+  border: 0;
   border-radius: 10px;
-}
-
-.buttons a {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 300;
-  font-size: 16px;
-  font-style: normal;
-  line-height: 35px;
-}
-
-@media only screen and (max-width: 600px) {
-  .buttons a {
-    font-size: 14px;
-  }
 }

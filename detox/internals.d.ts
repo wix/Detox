@@ -113,7 +113,12 @@ declare global {
         /** Test suite name */
         name: string;
       }): Promise<void>;
-
+      /**
+       * Workaround for Jest exiting abruptly in --bail mode.
+       * Makes sure that all workers and their test environments are properly torn down.
+       * @param [permanent] - forbids further retries
+       */
+      unsafe_conductEarlyTeardown(permanent?: boolean): Promise<void>;
       /**
        * Reports to Detox CLI about passed and failed test files.
        * The failed test files might be re-run again if
@@ -215,6 +220,11 @@ declare global {
        * Randomly generated ID for the entire Detox test session, including retries.
        */
       id: string;
+      /**
+       * Signalizes that the test session is being torn down.
+       * Experimental feature for Jest --bail mode.
+       */
+      unsafe_earlyTeardown?: boolean;
       /**
        * Results of test file executions. Primarily used for Detox CLI retry mechanism.
        */

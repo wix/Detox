@@ -1,13 +1,13 @@
+/* eslint-disable no-useless-escape */
 // @ts-nocheck
 describe('Instrumentation arguments', () => {
-  const mockEncodeBase64Fn = (arg) => `base64Mocked(${arg})`;
-
   let uut;
+  let encodeBase64;
+
   beforeEach(() => {
-    let encoding;
     jest.mock('../../../../../utils/encoding');
-    encoding = require('../../../../../utils/encoding');
-    encoding.encodeBase64.mockImplementation(mockEncodeBase64Fn);
+    const encoding = require('../../../../../utils/encoding');
+    encodeBase64 = encoding.encodeBase64;
 
     uut = require('./instrumentationArgs');
   });
@@ -49,11 +49,17 @@ describe('Instrumentation arguments', () => {
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
   it('should whitelist reserved instrumentation args with respect to base64 encoding', async () => {
+    const blackListRegexps = [
+      /http:\/\/meaningless\.first\.url/,
+      /^http:\/\/localhost(?::\d{4,5})?\/[a-z]+(?:\/\d{4})?$/
+    ];
+
     const args = {
       // Free arg
       'user-arg': 'merry christ-nukah',
-
       // Reserved instrumentation args
+      'detoxURLOverride': 'https://example.com/?q=search term&ref=source',
+      'detoxURLBlacklistRegex': `(${blackListRegexps.map(r => r.source)})`,
       'class': 'class-value',
       'package': 'package-value',
       'func': 'func-value',
@@ -69,6 +75,8 @@ describe('Instrumentation arguments', () => {
     const result = uut.prepareInstrumentationArgs(args);
     expect(result.args).toEqual([
       ...expectedArgEncoded('user-arg', 'merry christ-nukah'),
+      ...expectedArgUnencoded('detoxURLOverride', "'https://example.com/?q=search term&ref=source'"),
+      ...expectedArgUnencoded('detoxURLBlacklistRegex', '(http:\\/\\/meaningless\\.first\\.url,^http:\\/\\/localhost(?::\\d{4,5})?\\/[a-z]+(?:\\/\\d{4})?$)'),
       ...expectedArgUnencoded('class', 'class-value'),
       ...expectedArgUnencoded('package', 'package-value'),
       ...expectedArgUnencoded('func', 'func-value'),
@@ -104,6 +112,6 @@ describe('Instrumentation arguments', () => {
     expect(result.args).toEqual(expectedArgs);
   });
 
-  const expectedArgEncoded = (key, value) => (['-e', key, mockEncodeBase64Fn(value)]);
+  const expectedArgEncoded = (key, value) => (['-e', key, encodeBase64(value)]);
   const expectedArgUnencoded = (key, value) => (['-e', key, value]);
 });

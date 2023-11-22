@@ -83,6 +83,12 @@ const config = {
             label: 'API'
           },
           {
+            type: 'doc',
+            docId: 'contributing',
+            position: 'left',
+            label: 'Contribute'
+          },
+          {
             to: 'blog',
             label: 'Blog',
             position: 'left'
@@ -145,24 +151,15 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/wix/Detox',
-                position: 'left',
-                className: 'footer-gh-footer',
-                favicon: '/static/img/showcase/gh-footer-light.svg'
+                href: 'https://github.com/wix/Detox'
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/detoxe2e/',
-                position: 'left',
-                className: 'footer-twitter-footer',
-                favicon: '/static/img/showcase/twitter-footer-light.svg'
+                href: 'https://twitter.com/detoxe2e/'
               },
               {
                 label: 'Discord',
-                href: 'https://discord.gg/CkD5QKheF5',
-                position: 'left',
-                className: 'footer-discord-footer',
-                favicon: '/static/img/showcase/discord-footer-light.png'
+                href: 'https://discord.gg/CkD5QKheF5'
               }
             ]
           }

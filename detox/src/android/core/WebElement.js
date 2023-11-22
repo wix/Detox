@@ -1,5 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const assertIsFunction = require('../../utils/assertIsFunction');
+const isArrowFunction = require('../../utils/isArrowFunction');
 const actions = require('../actions/web');
 const EspressoWebDetoxApi = require('../espressoapi/web/EspressoWebDetox');
 const WebViewElementApi = require('../espressoapi/web/WebViewElement');
@@ -73,12 +75,14 @@ class WebElement {
     return await new ActionInteraction(this[_invocationManager], new actions.WebMoveCursorEnd(this)).execute();
   }
 
-  async runScript(script) {
-    return await new ActionInteraction(this[_invocationManager], new actions.WebRunScriptAction(this, script)).execute();
-  }
+  async runScript(maybeFunction, args) {
+    const script = stringifyScript(maybeFunction);
 
-  async runScriptWithArgs(script, args) {
-    return await new ActionInteraction(this[_invocationManager], new actions.WebRunScriptWithArgsAction(this, script, args)).execute();
+    if (args) {
+      return await new ActionInteraction(this[_invocationManager], new actions.WebRunScriptWithArgsAction(this, script, args)).execute();
+    } else {
+      return await new ActionInteraction(this[_invocationManager], new actions.WebRunScriptAction(this, script)).execute();
+    }
   }
 
   async getCurrentUrl() {
@@ -116,8 +120,22 @@ class WebViewElement {
       });
     }
 
-    throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof element}`);
+    throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof webMatcher}`);
   }
+}
+
+function stringifyScript(maybeFunction) {
+  if (typeof maybeFunction !== 'string' && typeof maybeFunction !== 'function') {
+    return maybeFunction;
+  }
+
+  const script = (typeof maybeFunction === 'function' ? maybeFunction.toString() : assertIsFunction(maybeFunction)).trim();
+  // WebElement interactions don't support arrow functions for some reason.
+  if (isArrowFunction(script)) {
+    return `function arrowWorkaround() { return (${script}).apply(this, arguments); }`;
+  }
+
+  return script;
 }
 
 module.exports = {

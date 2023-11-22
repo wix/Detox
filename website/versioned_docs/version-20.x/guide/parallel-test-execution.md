@@ -11,23 +11,12 @@ If no simulator is available for that worker, the worker will create one with th
 
 ## Lock File
 
-Simulators/emulators run on a different process, outside of node, and require some sort of lock mechanism to make sure only one process controls a simulator in a given time. Therefore, Detox 7.4.0 introduced `device.registry.state.lock`, a lock file controlled by Detox, that registers all in-use simulators.
-
-> **Note:** Each worker is responsible for removing the device ID from the list in `device.registry.state.lock`. Exiting a test runner abruptly (using `Ctrl+C` / `⌘+C`) will not give the worker a chance to unregister the device from the lock file, resulting in an inconsistent state, which can result in creation of unnecessary new simulators.
->
-> - `detox-cli` makes sure `device.registry.state.lock` is cleaned whenever it executes.
-> - If you use Detox without `detox-cli` make sure you delete or reset the lock file before running tests.
->
->   ```bash
->   echo "[]" > ~/Library/Detox/device.registry.state.lock
->   ```
+Since any attached device can potentially be used simultaneously by multiple workers, Detox needs to maintain a lock file to make sure that doesn't happen.
+Therefore, Detox maintains `device.registry.json`, a file with exclusive access based on `proper-lockfile`, controlled by Detox, that registers all simulators and emulators
+currently in use by Detox instances.
 
 The lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
 
-- **MacOS**: `~/Library/Detox/device.registry.state.lock`
-- **Linux**: `~/.local/share/Detox/device.registry.state.lock`
-- **Windows**: `%LOCALAPPDATA%/data/Detox/device.registry.state.lock` or `%USERPROFILE%/Application Data/Detox/device.registry.state.lock`
-
-### Persisting the Lock File
-
-By default, once all workers finish their test runs, Detox will delete the lock file. Under certain conditions, you may want to persist the lock file. Use the `--keepLockFile` flag to disable automatic deletion.
+- **MacOS**: `~/Library/Detox/device.registry.json`
+- **Linux**: `~/.local/share/Detox/device.registry.json`
+- **Windows**: `%LOCALAPPDATA%/data/Detox/device.registry.json` or `%USERPROFILE%/Application Data/Detox/device.registry.json`

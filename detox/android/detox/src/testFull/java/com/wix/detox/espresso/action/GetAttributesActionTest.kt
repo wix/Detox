@@ -37,7 +37,7 @@ class GetAttributesActionTest {
 
     private fun perform(v: View = view): JSONObject {
         uut.perform(null, v)
-        return JSONObject(uut.getResult())
+        return uut.getResult()!!
     }
 
     @Test
@@ -135,10 +135,10 @@ class GetAttributesActionTest {
         }
 
         val resultJson = perform()
-        assertThat(resultJson.opt("alpha")).isEqualTo(0.42)
+        assertThat(resultJson.opt("alpha")).isEqualTo(0.42f)
         assertThat(resultJson.opt("width")).isEqualTo(123)
         assertThat(resultJson.opt("height")).isEqualTo(456)
-        assertThat(resultJson.opt("elevation")).isEqualTo(0.314)
+        assertThat(resultJson.opt("elevation")).isEqualTo(0.314f)
     }
 
     @Test
@@ -208,7 +208,8 @@ class GetAttributesActionTest {
         }
 
         val resultJson = perform(slider)
-        assertThat(resultJson.opt("value")).isEqualTo(0.42)
+        android.util.Log.i("TESTS", "should return material-Slider state through value attribute: "+ resultJson)
+        assertThat(resultJson.opt("value")).isEqualTo(0.42f)
     }
 
     @Test
@@ -221,7 +222,7 @@ class GetAttributesActionTest {
 
         val resultJson = perform(textView)
         assertThat(resultJson.opt("text")).isEqualTo("mock-text")
-        assertThat(resultJson.opt("textSize")).isEqualTo(24)
+        assertThat(resultJson.opt("textSize")).isEqualTo(24f)
         assertThat(resultJson.opt("length")).isEqualTo(111)
     }
 

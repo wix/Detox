@@ -33,6 +33,14 @@ class DetoxSecondaryContext extends DetoxContext {
     }
   }
 
+  [symbols.conductEarlyTeardown] = async (permanent = false) => {
+    if (this[_ipcClient]) {
+      await this[_ipcClient].conductEarlyTeardown({ permanent });
+    } else {
+      throw new DetoxInternalError('Detected an attempt to report early teardown using a non-initialized context.');
+    }
+  };
+
   async [symbols.resolveConfig]() {
     return this[symbols.config];
   }
@@ -51,6 +59,25 @@ class DetoxSecondaryContext extends DetoxContext {
 
     if (opts.workerId !== null) {
       await this[symbols.installWorker](opts);
+    }
+  }
+
+  /** @override */
+  async [symbols.allocateDevice]() {
+    if (this[_ipcClient]) {
+      const deviceCookie = await this[_ipcClient].allocateDevice();
+      return deviceCookie;
+    } else {
+      throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
+    }
+  }
+
+  /** @override */
+  async [symbols.deallocateDevice](deviceCookie) {
+    if (this[_ipcClient]) {
+      await this[_ipcClient].deallocateDevice(deviceCookie);
+    } else {
+      throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
     }
   }
 

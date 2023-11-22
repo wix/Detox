@@ -36,25 +36,20 @@ describe('DetoxPrimaryContext', () => {
   let fs;
   /** @type {jest.Mocked<import('signal-exit')>} */
   let signalExit;
-  /** @type {jest.Mocked<import('../logger')>} */
+  /** @type {import('../logger')} */
   let logger;
   /** @type {jest.Mocked<import('../configuration')>} */
   let configuration;
   /** @type {jest.Mock<import('../ipc/IPCServer')>} */
   let IPCServer;
-  /** @type {jest.Mocked<import('../devices/lifecycle/GenyGlobalLifecycleHandler')>} */
-  let globalLifecycleHandler;
   /** @type {jest.Mocked<import('../environmentFactory')>} */
   let environmentFactory;
-  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
-  let deviceRegistryIOS;
-  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
-  let deviceRegistryAndroid;
-  /** @type {jest.Mocked<import('../devices/DeviceRegistry')>} */
-  let deviceRegistryGenyCloud;
-  /** @type {jest.Mock<import('../server/DetoxServer')>} */
+
+  /** @type {jest.Mocked<import('../devices/allocation/DeviceAllocator').AllocationDriverBase>} */
+  let deviceAllocator;
+  /** @type {jest.Mocked<import('../server/DetoxServer')>} */
   let DetoxServer;
-  /** @type {jest.Mock<import('../DetoxWorker')>} */
+  /** @type {jest.Mocked<import('../DetoxWorker')>} */
   let DetoxWorker;
   //#endregion
 
@@ -118,28 +113,9 @@ describe('DetoxPrimaryContext', () => {
       expect(ipcServer().init).toHaveBeenCalled();
     });
 
-    it('should init the global lifecycle handler', async () => {
+    it('should init the device allocation driver', async () => {
       await facadeInit();
-      expect(globalLifecycleHandler.globalInit).toHaveBeenCalled();
-    });
-
-    it('should reset the device registry', async () => {
-      detoxConfigDriver.givenIosSimulatorDevice();
-      await facadeInit();
-      expect(deviceRegistryIOS.reset).toHaveBeenCalled();
-    });
-
-    it('should not reset the device registry if opted-out of', async () => {
-      detoxConfigDriver.givenKeepLockFile(true);
-      await facadeInit();
-      expect(deviceRegistryIOS.reset).not.toHaveBeenCalled();
-    });
-
-    it('should reset the genymotion global-shutdown device-registry', async () => {
-      detoxConfigDriver.givenGenyCloudDevice();
-      await facadeInit();
-      expect(deviceRegistryAndroid.reset).toHaveBeenCalled();
-      expect(deviceRegistryGenyCloud.reset).toHaveBeenCalled();
+      expect(deviceAllocator.init).toHaveBeenCalled();
     });
 
     describe('given detox-server auto-start enabled via config', () => {
@@ -247,11 +223,11 @@ describe('DetoxPrimaryContext', () => {
         expect(detoxWorker().cleanup).toHaveBeenCalled();
       });
 
-      it('should clean up the lifecycle handler', async () => {
+      it('should clean up the allocation driver', async () => {
         await facadeInit();
         await facade.cleanup();
 
-        expect(globalLifecycleHandler.globalCleanup).toHaveBeenCalled();
+        expect(deviceAllocator.cleanup).toHaveBeenCalled();
       });
 
       it('should close the detox server', async () => {
@@ -335,7 +311,7 @@ describe('DetoxPrimaryContext', () => {
       });
 
       it('should *emergency* cleanup the global lifecycle handler', () =>
-        expect(globalLifecycleHandler.emergencyCleanup).toHaveBeenCalled());
+        expect(deviceAllocator.emergencyCleanup).toHaveBeenCalled());
 
       it('should close the detox server', async () =>
         expect(detoxServer().close).toHaveBeenCalled());
@@ -362,13 +338,12 @@ describe('DetoxPrimaryContext', () => {
       it('should do nothing', () => {
         signalHandler(123, undefined);
 
-        expect(globalLifecycleHandler.emergencyCleanup).not.toHaveBeenCalled();
+        expect(deviceAllocator.emergencyCleanup).not.toHaveBeenCalled();
         expect(detoxServer().close).not.toHaveBeenCalled();
         expect(ipcServer().dispose).not.toHaveBeenCalled();
       });
     });
   });
-
 
   function _initDetoxConfig() {
     detoxConfigDriver = new DetoxConfigDriver(_.cloneDeep(DETOX_CONFIG_BASE));
@@ -389,28 +364,25 @@ describe('DetoxPrimaryContext', () => {
     jest.mock('../logger');
     logger = jest.requireMock('../logger');
 
-    jest.mock('../devices/DeviceRegistry');
-    const DeviceRegistry = jest.requireMock('../devices/DeviceRegistry');
-    deviceRegistryIOS = new DeviceRegistry();
-    DeviceRegistry.forIOS.mockReturnValue(deviceRegistryIOS);
-
-    deviceRegistryAndroid = new DeviceRegistry();
-    DeviceRegistry.forAndroid.mockReturnValue(deviceRegistryAndroid);
-
-    jest.mock('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-    const genycloudDeviceRegistryFactory = jest.requireMock('../devices/allocation/drivers/android/genycloud/GenyDeviceRegistryFactory');
-    deviceRegistryGenyCloud = new DeviceRegistry();
-    genycloudDeviceRegistryFactory.forGlobalShutdown.mockReturnValue(deviceRegistryGenyCloud);
-
     jest.mock('../ipc/IPCServer');
     IPCServer = jest.requireMock('../ipc/IPCServer');
 
-    const GenyGlobalLifecycleHandler = jest.createMockFromModule('../devices/lifecycle/GenyGlobalLifecycleHandler');
-    globalLifecycleHandler = new GenyGlobalLifecycleHandler();
+    deviceAllocator = {
+      init: jest.fn(),
+      allocate: jest.fn(),
+      postAllocate: jest.fn(),
+      free: jest.fn(),
+      cleanup: jest.fn(),
+      emergencyCleanup: jest.fn(),
+    };
 
     jest.mock('../environmentFactory');
     environmentFactory = jest.requireMock('../environmentFactory');
-    environmentFactory.createGlobalLifecycleHandler.mockReturnValue(globalLifecycleHandler);
+    environmentFactory.createFactories.mockReturnValue({
+      deviceAllocatorFactory: {
+        createDeviceAllocator: () => deviceAllocator,
+      }
+    });
 
     jest.mock('../server/DetoxServer');
     DetoxServer = jest.requireMock('../server/DetoxServer');
