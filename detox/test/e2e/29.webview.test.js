@@ -140,6 +140,13 @@ describe('WebView', () => {
       await expect(web.element(by.web.id('testingPar'))).toHaveText(text);
     });
 
+    it.only('should run script on element', async () => {
+      const textInput = await web.element(by.web.id('textInput'));
+
+      const response = await textInput.runScript('(el) => el.value');
+      expect(response).toEqual('');
+    });
+
     it(':android: should replace text', async () => {
       const textInput = await web.element(by.web.id('textInput'));
       await textInput.scrollToView();
