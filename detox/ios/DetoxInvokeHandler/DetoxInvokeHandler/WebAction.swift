@@ -44,7 +44,7 @@ public enum WebAction: Equatable, Hashable {
   ///
   /// - Note: Although this action returns the URL of the presented web document, it can be called
   /// from an inner element only (for example, an iframe id or the HTML) and not from the root
-  /// native web view element itself. 
+  /// native web view element itself.
   case getCurrentUrl
 
   /// Gets the current title.
@@ -71,7 +71,7 @@ extension WebAction {
 
       case .selectAllText:
         return .selectAllText
-        
+
       case .getText:
         fatalError("invalid web action handling request, cannot handle get-text from here")
 
@@ -90,7 +90,7 @@ extension WebAction {
 
       case .runScriptWithArgs:
         let script = params?[0].value as! String
-        let scriptArgs = params?[1].value as! [String]
+        let scriptArgs = (params?[1].value as! [AnyCodable]).map { $0.value as! String }
         return .runScriptWithArgs(script: script, args: scriptArgs)
 
       case .getCurrentUrl:

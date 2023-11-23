@@ -118,6 +118,6 @@ class WebActionDelegate: WebActionDelegateProtocol {
       withHost: webView, script: script, args: args, whiteBoxMessageHandler: whiteBoxMessageHandler
     )
 
-    return AnyCodable(result)
+    return AnyCodable(["result": result])
   }
 }

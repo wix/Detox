@@ -30,6 +30,10 @@ extension XCUIElement {
     /// Failed to evaluate JS code on element.
     case failedToEvaluateScript(
       element: XCUIElement, host: XCUIElement, script: String, args: [String])
+
+    /// Failed to find web-view element.
+    case failedToFindWebViewElement(
+      element: XCUIElement, host: XCUIElement, script: String, args: [String])
   }
 }
 
@@ -67,6 +71,15 @@ extension XCUIElement.Error: CustomStringConvertible {
         args: let args
       ):
         return "Failed to evaluate JS code on element: `\(element.debugDescription)`" +
+        " with hosting web-view: `\(host.debugDescription)`, script: `\(script)`, args: `\(args)`"
+
+      case .failedToFindWebViewElement(
+        element: let element,
+        host: let host,
+        script: let script,
+        args: let args
+      ):
+        return "Failed to find web-view element, XCUITest element: `\(element.debugDescription)`" +
         " with hosting web-view: `\(host.debugDescription)`, script: `\(script)`, args: `\(args)`"
     }
   }

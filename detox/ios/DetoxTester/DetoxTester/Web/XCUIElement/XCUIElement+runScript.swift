@@ -24,7 +24,7 @@ extension XCUIElement {
         type: .error
       )
 
-      throw Error.failedToEvaluateScript(element: self, host: host, script: script, args: args)
+      throw Error.failedToFindWebViewElement(element: self, host: host, script: script, args: args)
     }
 
     let jsArgs = args.count != 0 ? ", \(args.joined(separator: ", "))" : ""
@@ -35,10 +35,12 @@ extension XCUIElement {
           let element = document.querySelector('[aria-label="\(label)"]');
 
           if (!element) {
-              return null;
+              throw new Error('Failed to find element with aria-label `\(label)`');
           }
 
-          return \(script)(element\(jsArgs));
+          const script = \(script);
+
+          return script(element\(jsArgs));
         })();
       """)
     )

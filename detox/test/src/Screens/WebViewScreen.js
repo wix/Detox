@@ -97,7 +97,7 @@ npm
 <span class="a">Aa</span>
 <span class="b">Ba</span>
 <span class="c">Ca</span>
-<input type="text" id="textInput" placeholder="type something"/><br>
+<input type="text" id="textInput" aria-label="textInputLabel" placeholder="type something"/><br>
 <input type="button" value="Change Text" onclick="changeText()" id="changeTextBtn"/><br>
 <p id="testingPar">Message</p>
 

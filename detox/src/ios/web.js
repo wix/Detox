@@ -121,14 +121,30 @@ class WebElement {
     return this.withAction('moveCursorToEnd', traceDescription);
   }
 
-  runScript(script) {
+  async runScript(script, args) {
+    if (args !== undefined && args.length !== 0) {
+      return await this.runScriptWithArgs(script, args);
+    }
+
     const traceDescription = webViewActionDescription.runScript(script);
-    return this.withAction('runScript', traceDescription, script);
+    const result = await this.withAction('runScript', traceDescription, script);
+
+    if (result['result'] !== undefined) {
+      return result['result'];
+    } else {
+      throw new DetoxRuntimeError(`Failed to extract result from result: ${JSON.stringify(result)}`);
+    }
   }
 
-  runScriptWithArgs(script, ...args) {
-    const traceDescription = webViewActionDescription.runScriptWithArgs(script, ...args);
-    return this.withAction('runScriptWithArgs', traceDescription, script, ...args);
+  async runScriptWithArgs(script, args) {
+    const traceDescription = webViewActionDescription.runScriptWithArgs(script, args);
+    const result = await this.withAction('runScriptWithArgs', traceDescription, script, args);
+
+    if (result['result'] !== undefined) {
+      return result['result'];
+    } else {
+      throw new DetoxRuntimeError(`Failed to extract result from result: ${JSON.stringify(result)}`);
+    }
   }
 
   async getCurrentUrl() {
