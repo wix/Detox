@@ -152,10 +152,10 @@ class DetoxContext {
   }
 
   /** @abstract */
-  async [symbols.allocateDevice]() {}
+  async [symbols.allocateDevice](_deviceConfig) {}
 
   /** @abstract */
-  async [symbols.deallocateDevice]() {}
+  async [symbols.deallocateDevice](_deviceCookie) {}
 
   async [symbols.uninstallWorker]() {
     try {

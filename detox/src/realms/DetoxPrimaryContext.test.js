@@ -53,8 +53,12 @@ describe('DetoxPrimaryContext', () => {
   let DetoxWorker;
   //#endregion
 
+  /** @type {import('./DetoxPrimaryContext')} */
+  let context;
   /** @type {import('./DetoxInternalsFacade')} */
   let facade;
+  /** @type {import('./symbols')} */
+  let symbols;
 
   const detoxServer = () => latestInstanceOf(DetoxServer);
   const ipcServer = () => latestInstanceOf(IPCServer);
@@ -72,8 +76,9 @@ describe('DetoxPrimaryContext', () => {
     const DetoxPrimaryContext = require('./DetoxPrimaryContext');
     const DetoxInternalsFacade = require('./DetoxInternalsFacade');
 
-    const context = new DetoxPrimaryContext();
+    context = new DetoxPrimaryContext();
     facade = new DetoxInternalsFacade(context);
+    symbols = require('./symbols');
   });
 
   describe('when not initialized', () => {
@@ -111,11 +116,6 @@ describe('DetoxPrimaryContext', () => {
     it('should init the IPC server', async () => {
       await facadeInit();
       expect(ipcServer().init).toHaveBeenCalled();
-    });
-
-    it('should init the device allocation driver', async () => {
-      await facadeInit();
-      expect(deviceAllocator.init).toHaveBeenCalled();
     });
 
     describe('given detox-server auto-start enabled via config', () => {
@@ -205,6 +205,11 @@ describe('DetoxPrimaryContext', () => {
   });
 
   describe('when initialized', () => {
+    beforeEach(async () => {
+      /** Allocate a device to enable more assertions in the tests */
+      await context[symbols.allocateDevice]({ type: 'some.device' });
+    });
+
     it('should reject further initializations', async () => {
       await facadeInit();
       await expect(() => facadeInit()).rejects.toThrowErrorMatchingSnapshot();
@@ -213,6 +218,12 @@ describe('DetoxPrimaryContext', () => {
     it('should change status to "active"', async () => {
       await facadeInit();
       expect(facade.getStatus()).toBe('active');
+    });
+
+    it('should call the device allocator', async () => {
+      expect(deviceAllocator.init).toHaveBeenCalled();
+      expect(deviceAllocator.allocate).toHaveBeenCalled();
+      expect(deviceAllocator.postAllocate).toHaveBeenCalled();
     });
 
     describe('then cleaned-up', () => {
@@ -369,8 +380,8 @@ describe('DetoxPrimaryContext', () => {
 
     deviceAllocator = {
       init: jest.fn(),
-      allocate: jest.fn(),
-      postAllocate: jest.fn(),
+      allocate: jest.fn().mockResolvedValue({ id: 'a-device-id' }),
+      postAllocate: jest.fn().mockResolvedValue({ id: 'a-device-id' }),
       free: jest.fn(),
       cleanup: jest.fn(),
       emergencyCleanup: jest.fn(),
