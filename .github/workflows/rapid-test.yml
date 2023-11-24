@@ -76,7 +76,7 @@ jobs:
         working-directory: detox/test
       - name: Pack Allure results
         run: |
-          Compress-Archive -Path detox/allure-results, detox/test/allure-results -DestinationPath allure-results.zip
+          Compress-Archive -Path detox/allure-results -DestinationPath allure-results.zip
         shell: pwsh
       - name: Upload Allure results
         uses: actions/upload-artifact@v3
