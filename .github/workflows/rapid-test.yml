@@ -47,6 +47,13 @@ jobs:
       - name: Generation tests
         run: npm test
         working-directory: generation
+      - name: Pack Allure results
+        run: zip -r allure-results.zip detox/allure-results detox/test/allure-results generation/allure-results
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-linux
+          path: allure-results.zip
 
   windows:
     name: Windows
@@ -67,3 +74,12 @@ jobs:
       - name: Integration tests
         run: npm run integration
         working-directory: detox/test
+      - name: Pack Allure results
+        run: |
+          Compress-Archive -Path detox/allure-results -DestinationPath allure-results.zip
+        shell: pwsh
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-windows
+          path: allure-results.zip
