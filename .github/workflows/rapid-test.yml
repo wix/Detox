@@ -75,7 +75,9 @@ jobs:
         run: npm run integration
         working-directory: detox/test
       - name: Pack Allure results
-        run: zip -r allure-results.zip detox/allure-results detox/test/allure-results
+        run: |
+          Compress-Archive -Path detox/allure-results, detox/test/allure-results -DestinationPath allure-results.zip
+        shell: pwsh
       - name: Upload Allure results
         uses: actions/upload-artifact@v3
         with:
