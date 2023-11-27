@@ -252,7 +252,10 @@ extension XCUIElement.ElementType {
       case .statusItem:
         return "statusItem"
 
-      case .any, .other:
+      case .any:
+        return "any"
+
+      case .other:
         return "other"
 
       @unknown default:

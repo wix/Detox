@@ -52,6 +52,10 @@ extension MessageBuilder {
     return setWebPredicate("tag", value)
   }
 
+  func setTypeWebPredicate(_ value: String) -> Self {
+    return setWebPredicate("accessibilityType", value)
+  }
+
   fileprivate func setWebPredicate(_ type: String, _ value: String) -> Self {
     let webPredicate: [String: AnyHashable] = [
       "type": type,

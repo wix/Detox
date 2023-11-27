@@ -70,6 +70,10 @@ describe('WebView', () => {
     it('expect to find element by tag name', async () => {
       await expect(web.element(by.web.tag('mark'))).toExist();
     });
+
+    it(':ios: expect to find element by accessibility type', async () => {
+      await expect(web.element(by.web.accessibilityType('link'))).toExist();
+    });
   });
 
   describe(':android: ContentEditable', () => {

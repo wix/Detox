@@ -144,7 +144,7 @@ class MessageWebPredicateSpec: QuickSpec {
         ))
       }
 
-      it("should parse web-predicate with `hrefContains` type") {
+      it("should parse web-predicate with `tag` type") {
         let message = messageBuilder.setTagWebPredicate("foo").build()
 
         let parsed = try Message(from: message)
@@ -154,6 +154,20 @@ class MessageWebPredicateSpec: QuickSpec {
             type: .webAction,
             webAction: .tap,
             webPredicate: .init(type: .tag, value: "foo")
+          )
+        ))
+      }
+
+      it("should parse web-predicate with `accessibilityType` type") {
+        let message = messageBuilder.setTypeWebPredicate("foo").build()
+
+        let parsed = try Message(from: message)
+
+        expect(parsed).to(equal(
+          Message.defaultInstance(
+            type: .webAction,
+            webAction: .tap,
+            webPredicate: .init(type: .accessibilityType, value: "foo")
           )
         ))
       }

@@ -66,6 +66,13 @@ class ValueMatcher extends WebMatcher {
   }
 }
 
+class AccessibilityTypeMatcher extends WebMatcher {
+  constructor(_) {
+    super();
+    throw new DetoxRuntimeError('Accessibility-type matching is not supported on Android');
+  }
+}
+
 class TagNameMatcher extends WebMatcher {
   constructor(tag) {
     super();
@@ -83,5 +90,6 @@ module.exports = {
   PartialLinkTextMatcher,
   TagNameMatcher,
   LabelMatcher,
-  ValueMatcher
+  ValueMatcher,
+  AccessibilityTypeMatcher,
 };

@@ -37,6 +37,9 @@ public indirect enum WebElementPattern: Hashable, Equatable {
 
   /// Value predicate, expects the element's value to equal the specified value.
   case value(String)
+
+  /// Accessibility-type predicate, expects the element's type to equal the specified value.
+  case accessibilityType(String)
 }
 
 extension WebElementPattern {
@@ -80,6 +83,9 @@ extension WebElementPattern {
 
       case .value:
         self = .value(predicate.value.value as! String)
+
+      case .accessibilityType:
+        self = .accessibilityType(predicate.value.value as! String)
     }
   }
 }

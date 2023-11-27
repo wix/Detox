@@ -36,4 +36,7 @@ public enum WebPredicateType: String, Codable, Hashable {
 
   /// Value predicate, expects the element's value to equal the specified `value`.
   case value = "value"
+
+  /// Accessibility-type predicate, expects the element's type to equal the specified `type`.
+  case accessibilityType = "accessibilityType"
 }

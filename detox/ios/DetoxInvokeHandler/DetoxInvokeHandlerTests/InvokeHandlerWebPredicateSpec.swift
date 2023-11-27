@@ -118,6 +118,14 @@ class InvokeHandlerWebPredicateSpec: QuickSpec {
       expect { try handler.handle(message) }.notTo(throwError())
     }
 
+    it("should find element by `accessibilityType` predicate") {
+      let message = messageBuilderWithAction.setTypeWebPredicate("type").build()
+
+      matcher.setWebMatch(from: .accessibilityType("type"), to: "foo")
+
+      expect { try handler.handle(message) }.notTo(throwError())
+    }
+
     it("should throw if could not find element at index") {
       let message = messageBuilderWithAction.setNameWebPredicate("name").webAt(index: 1).build()
 

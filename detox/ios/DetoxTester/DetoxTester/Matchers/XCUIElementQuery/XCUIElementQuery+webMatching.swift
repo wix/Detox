@@ -97,7 +97,7 @@ extension XCUIElementQuery {
 
         guard let response = response else {
           matcherLog(
-            "cannot match by this pattern (\(pattern)) type using the XCUITest framework`",
+            "cannot match by this pattern (\(pattern)) type using the XCUITest framework",
             type: .error
           )
 
@@ -134,6 +134,42 @@ extension XCUIElementQuery {
           return ariaLabelsFound.contains(label)
         })
 
+      case .accessibilityType(let typeString):
+        var type: XCUIElement.ElementType?
+        var i: UInt = 0
+
+        while let ithType = XCUIElement.ElementType(rawValue: i) {
+          let ithTypeString = ithType.asString()
+
+          guard ithTypeString != "unknown" else {
+            break
+          }
+
+          matcherLog(
+            "checking \(i)'th type: \(ithType) (\(ithTypeString)), comparing to: \(typeString)",
+            type: .debug
+          )
+
+          if ithTypeString == typeString {
+            matcherLog("found matching type: \(ithTypeString)", type: .debug)
+
+            type = ithType
+            break
+          }
+
+          i += 1
+        }
+
+        guard let type = type else {
+          matcherLog(
+            "invalid element type (`\(typeString)`), please check the docs for list of valid types",
+            type: .error
+          )
+
+          throw Error.invalidAccessibilityType(type: typeString)
+        }
+
+        return webViews.descendants(matching: type)
 
       case .label(let label):
         return webViews.descendants(matching: .any).matching(NSPredicate { evaluatedObject, _ in
@@ -205,7 +241,7 @@ extension XCUIElementQuery {
       case .tag(let tag):
         return "(() => Array.from(document.getElementsByTagName('\(tag)')))"
 
-      case .label, .value:
+      case .label, .value, .accessibilityType:
         throw Error.operationNotSupported(pattern: pattern)
     }
   }

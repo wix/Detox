@@ -16,6 +16,9 @@ extension XCUIElementQuery {
 
     /// Cannot run matching from this pattern
     case operationNotSupported(pattern: WebElementPattern)
+
+    /// Invalid element type
+    case invalidAccessibilityType(type: String)
   }
 }
 
@@ -28,6 +31,9 @@ extension XCUIElementQuery.Error: CustomStringConvertible {
 
       case .operationNotSupported(let pattern):
         return "Cannot run matching from this pattern: \(pattern)"
+
+      case .invalidAccessibilityType(let type):
+        return "Cannot match elements with invalid accessibility type: \(type)"
     }
   }
 }
