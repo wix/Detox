@@ -1,10 +1,10 @@
 {
   "name": "demo-react-native-detox-instruments",
-  "version": "21.0.0-rc.7",
+  "version": "21.0.0-rc.8",
   "private": true,
   "scripts": {},
   "devDependencies": {
-    "detox": "^21.0.0-rc.7"
+    "detox": "^21.0.0-rc.8"
   },
   "detox": {
     "configurations": {
