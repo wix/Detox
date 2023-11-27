@@ -52,6 +52,7 @@ Web view matchers are used to find elements within a web view:
 - [`by.web.tag(tag)`]
 - [`by.web.label(label)`] (**iOS only**)
 - [`by.web.value(value)`] (**iOS only**)
+- [`by.web.accessibilityType(type)`] (**iOS only**)
 - [`atIndex(index)`]
 
 ### `by.web.id(id)`
@@ -120,6 +121,8 @@ web.element(by.web.tag('h1'));
 
 ### `by.web.label(label)`
 
+**iOS only**
+
 Match elements with the specified label.
 
 ```js
@@ -128,10 +131,22 @@ web.element(by.web.label('label'));
 
 ### `by.web.value(value)`
 
+**iOS only**
+
 Match elements with the specified value.
 
 ```js
 web.element(by.web.value('value'));
+```
+
+### `by.web.accessibilityType(type)`
+
+**iOS only**
+
+Match elements with the specified accessibility type.
+
+```js
+web.element(by.web.accessibilityType('button'));
 ```
 
 ### `atIndex(index)`
@@ -363,6 +378,8 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`by.web.label(label)`]: webviews.md#byweblabellabel
 
 [`by.web.value(value)`]: webviews.md#bywebvaluevalue
+
+[`by.web.accessibilityType(type)`]: webviews.md#bywebaccessibilitytypetype
 
 [`atIndex(index)`]: webviews.md#atindexindex
 
