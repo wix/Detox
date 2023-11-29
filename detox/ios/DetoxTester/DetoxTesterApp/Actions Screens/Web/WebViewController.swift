@@ -28,113 +28,78 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     webView.navigationDelegate = self
     view.addSubview(webView)
 
-    //////////
+    let html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                box-sizing: border-box;
+            }
 
+            h1 {
+                font-size: 3em;
+                margin: 20px;
+            }
 
-    let url = "https://aleksandrap0.wixsite.com/website-126/product-page/i-m-a-product-6"
-    webView.load(URLRequest(url: URL(string: url)!))
+            #myLabel {
+                font-size: 2.5em;
+                margin: 20px;
+            }
 
-    // JS Code to locate element with aria-label="Site"
-    let jsCode = """
-        (() => {
-          var element = document.querySelector('[aria-label="Email for order confirmation"]');
+            button {
+                margin: 20px;
+                padding: 15px;
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 3em;
+                border-radius: 10px;
+                cursor: pointer;
+            }
 
-          if (element) {
-            element.style.backgroundColor = "red";
-            element.setAttribute("aria-label", "New Email");
+            input[type=text] {
+                width: 90%;
+                padding: 15px;
+                margin: 20px;
+                font-size: 2em;
+                border-radius: 10px;
+                border: 2px solid #ccc;
+            }
 
-            return "managed to change color";
-          }
+        </style>
 
-          return "hello world?";
-        })();
+        </head>
+        <body>
+
+        <h1 aria-label="hello-world">This is a Web View</h1>
+
+        <button type="button" onclick="myFunction()">Press me!</button>
+
+        <input type="text" id="myText" placeholder="Enter some text..." aria-label="Enter text">
+        <p id="myLabel"></p>
+
+        <script>
+            function myFunction() {
+                var x = document.getElementById("myText").value;
+                document.getElementById("myLabel").innerHTML = x;
+            }
+        </script>
+        </body>
+        </html>
         """
-
-    // execute JS code every 5 seconds:
-    Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
-      self.webView.evaluateJavaScript(jsCode) { result, error in
-        if let error = error {
-          print(error.localizedDescription)
-        }
-
-        if let result = result {
-          print(result)
-        }
-      }
-    }
-
-    //    let html = """
-    //        <!DOCTYPE html>
-    //        <html>
-    //        <head>
-    //        <style>
-    //            body {
-    //                display: flex;
-    //                flex-direction: column;
-    //                justify-content: center;
-    //                align-items: center;
-    //                height: 100vh;
-    //                margin: 0;
-    //                font-family: Arial, sans-serif;
-    //                padding: 20px;
-    //                box-sizing: border-box;
-    //            }
-    //
-    //            h1 {
-    //                font-size: 3em;
-    //                margin: 20px;
-    //            }
-    //
-    //            #myLabel {
-    //                font-size: 2.5em;
-    //                margin: 20px;
-    //            }
-    //
-    //            button {
-    //                margin: 20px;
-    //                padding: 15px;
-    //                background-color: #4CAF50;
-    //                border: none;
-    //                color: white;
-    //                text-align: center;
-    //                text-decoration: none;
-    //                display: inline-block;
-    //                font-size: 3em;
-    //                border-radius: 10px;
-    //                cursor: pointer;
-    //            }
-    //
-    //            input[type=text] {
-    //                width: 90%;
-    //                padding: 15px;
-    //                margin: 20px;
-    //                font-size: 2em;
-    //                border-radius: 10px;
-    //                border: 2px solid #ccc;
-    //            }
-    //
-    //        </style>
-    //
-    //        </head>
-    //        <body>
-    //
-    //        <h1 aria-label="hello-world">This is a Web View</h1>
-    //
-    //        <button type="button" onclick="myFunction()">Press me!</button>
-    //
-    //        <input type="text" id="myText" placeholder="Enter some text..." aria-label="Enter text">
-    //        <p id="myLabel"></p>
-    //
-    //        <script>
-    //            function myFunction() {
-    //                var x = document.getElementById("myText").value;
-    //                document.getElementById("myLabel").innerHTML = x;
-    //            }
-    //        </script>
-    //        </body>
-    //        </html>
-    //        """
-    //    webView.loadHTMLString(html, baseURL: nil)
+    webView.loadHTMLString(html, baseURL: nil)
   }
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
