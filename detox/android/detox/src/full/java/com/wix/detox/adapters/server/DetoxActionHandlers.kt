@@ -3,6 +3,7 @@ package com.wix.detox.adapters.server
 import android.content.Context
 import android.util.Log
 import com.wix.detox.TestEngineFacade
+import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
@@ -24,6 +25,20 @@ class ReadyActionHandler(
     override fun handle(params: String, messageId: Long) {
         testEngineFacade.awaitIdle()
         outboundServerAdapter.sendMessage("ready", emptyMap(), messageId)
+    }
+}
+
+class PrematureReadyHandler(): DetoxActionHandler {
+    var isActionPending = false
+    var params: String? = null
+    var messageId: Long? = null
+
+    override fun handle(params: String, messageId: Long) {
+        Log.i(DetoxLog.LOG_TAG, "Got a premature ready action, saving for later...")
+
+        this.isActionPending = true
+        this.params = params
+        this.messageId = messageId
     }
 }
 
@@ -151,8 +166,4 @@ class InstrumentsEventsActionsHandler(
         }
         outboundServerAdapter.sendMessage("eventDone", emptyMap<String, Any>(), messageId)
     }
-}
-
-class ScarceActionHandler: DetoxActionHandler {
-    override fun handle(params: String, messageId: Long) {}
 }
