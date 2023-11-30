@@ -28,20 +28,6 @@ class ReadyActionHandler(
     }
 }
 
-class PrematureReadyHandler(): DetoxActionHandler {
-    var isActionPending = false
-    var params: String? = null
-    var messageId: Long? = null
-
-    override fun handle(params: String, messageId: Long) {
-        Log.i(DetoxLog.LOG_TAG, "Got a premature ready action, saving for later...")
-
-        this.isActionPending = true
-        this.params = params
-        this.messageId = messageId
-    }
-}
-
 open class ReactNativeReloadActionHandler(
         private val appContext: Context,
         private val outboundServerAdapter: OutboundServerAdapter,
