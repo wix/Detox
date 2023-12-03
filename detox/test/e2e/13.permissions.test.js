@@ -1,10 +1,10 @@
-const { RESULTS } = require('react-native-permissions');
+const { RESULTS, PERMISSIONS } = require('react-native-permissions');
 
 const CALENDAR_AUTHORIZATION_STATUS = 'calendar_authorization_status';
 
 describe(':ios: Permissions', () => {
   describe('Calendar', () => {
-    const calendarAuthorizationStatus = element(by.id(CALENDAR_AUTHORIZATION_STATUS));
+    const calendarAuthorizationStatus = element(by.id(PERMISSIONS.IOS.CALENDARS));
 
     it('should show default permissions when undefined', async () => {
       await device.launchApp({newInstance: true});
