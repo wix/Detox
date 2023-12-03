@@ -1,9 +1,35 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
+# Update when upgrading to RN.72: https://github.com/zoontek/react-native-permissions#ios
+require_relative '../node_modules/react-native-permissions/scripts/setup'
+
 platform :ios, '13.0'
 
 install! 'cocoapods', :deterministic_uuids => false
+
+# Uncomment wanted permissions
+setup_permissions([
+  # 'AppTrackingTransparency',
+  # 'BluetoothPeripheral',
+  'Calendars',
+  # 'Camera',
+  # 'Contacts',
+  # 'FaceID',
+  # 'LocationAccuracy',
+  # 'LocationAlways',
+  # 'LocationWhenInUse',
+  # 'MediaLibrary',
+  # 'Microphone',
+  # 'Motion',
+  # 'Notifications',
+  # 'PhotoLibrary',
+  # 'PhotoLibraryAddOnly',
+  # 'Reminders',
+  # 'Siri',
+  # 'SpeechRecognition',
+  # 'StoreKit',
+])
 
 def shared_pods
     config = use_native_modules!
@@ -31,7 +57,6 @@ end
 target 'example' do
   shared_pods
   pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-
 end
 
 target 'example_ci' do

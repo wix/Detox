@@ -30,8 +30,6 @@
 		4FB97BE02636490900B7B57C /* CustomKeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FB97BDE2636490800B7B57C /* CustomKeyboardViewController.m */; };
 		672CB76AF6D68D56259F08FB /* libPods-example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D77962AECF29A300FFA668B4 /* libPods-example.a */; };
 		CC17D3321D60A24300267B0C /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CC17D3311D60A24300267B0C /* NativeModule.m */; };
-		E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
-		E088C8F51F025DE900CC48E9 /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E088C8F31F01585500CC48E9 /* CalendarManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,8 +118,6 @@
 		CC17D3311D60A24300267B0C /* NativeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NativeModule.m; path = example/NativeModule.m; sourceTree = "<group>"; };
 		CD2D2A7D46E170EAE3BAD452 /* libPods-example_ci.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example_ci.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D77962AECF29A300FFA668B4 /* libPods-example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E088C8F21F01585500CC48E9 /* CalendarManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalendarManager.h; path = example/CalendarManager.h; sourceTree = "<group>"; };
-		E088C8F31F01585500CC48E9 /* CalendarManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CalendarManager.m; path = example/CalendarManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,8 +255,6 @@
 			children = (
 				CC17D3301D60A24300267B0C /* NativeModule.h */,
 				CC17D3311D60A24300267B0C /* NativeModule.m */,
-				E088C8F21F01585500CC48E9 /* CalendarManager.h */,
-				E088C8F31F01585500CC48E9 /* CalendarManager.m */,
 			);
 			name = ReactModules;
 			sourceTree = "<group>";
@@ -577,7 +571,6 @@
 			files = (
 				CC17D3321D60A24300267B0C /* NativeModule.m in Sources */,
 				39F5268625C725BF00BA644D /* DragDropViewController.m in Sources */,
-				E088C8F41F01585500CC48E9 /* CalendarManager.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				39F5268D25C7429E00BA644D /* DragDropTableViewController.m in Sources */,
 				4FB97BDF2636490900B7B57C /* CustomKeyboardViewController.m in Sources */,
@@ -591,7 +584,6 @@
 			files = (
 				399B4DEC1ED587120098D2AC /* NativeModule.m in Sources */,
 				39F5268725C725BF00BA644D /* DragDropViewController.m in Sources */,
-				E088C8F51F025DE900CC48E9 /* CalendarManager.m in Sources */,
 				399B4DED1ED587120098D2AC /* AppDelegate.m in Sources */,
 				39F5268E25C7429E00BA644D /* DragDropTableViewController.m in Sources */,
 				4FB97BE02636490900B7B57C /* CustomKeyboardViewController.m in Sources */,

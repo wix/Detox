@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  NativeModules
 } from 'react-native';
 
-const CalendarManager = NativeModules.CalendarManager;
+import {checkMultiple, PERMISSIONS} from 'react-native-permissions';
 
 const CALENDAR_AUTH_STATUS_TEST_ID = 'calendar_authorization_status';
 
@@ -19,7 +18,8 @@ export default class Permissions extends Component {
   }
 
   async getCalendarAuthStatus() {
-    const calendarAuthStatus = await CalendarManager.getAuthorizationStatus();
+    const statuses = await checkMultiple([PERMISSIONS.IOS.CALENDARS]);
+    const calendarAuthStatus = statuses[PERMISSIONS.IOS.CALENDARS];
 
     this.setState({
       calendarAuthStatus: calendarAuthStatus
