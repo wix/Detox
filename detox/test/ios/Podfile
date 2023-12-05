@@ -8,27 +8,27 @@ platform :ios, '13.0'
 
 install! 'cocoapods', :deterministic_uuids => false
 
-# Uncomment wanted permissions
+# Comment unwanted permissions
 setup_permissions([
-  # 'AppTrackingTransparency',
-  # 'BluetoothPeripheral',
+  'AppTrackingTransparency',
+  'BluetoothPeripheral',
   'Calendars',
-  # 'Camera',
-  # 'Contacts',
-  # 'FaceID',
-  # 'LocationAccuracy',
-  # 'LocationAlways',
-  # 'LocationWhenInUse',
-  # 'MediaLibrary',
-  # 'Microphone',
-  # 'Motion',
-  # 'Notifications',
-  # 'PhotoLibrary',
-  # 'PhotoLibraryAddOnly',
-  # 'Reminders',
-  # 'Siri',
-  # 'SpeechRecognition',
-  # 'StoreKit',
+  'Camera',
+  'Contacts',
+  'FaceID',
+  'LocationAccuracy',
+  'LocationAlways',
+  'LocationWhenInUse',
+  'MediaLibrary',
+  'Microphone',
+  'Motion',
+  'Notifications',
+  'PhotoLibrary',
+  'PhotoLibraryAddOnly',
+  'Reminders',
+  'Siri',
+  'SpeechRecognition',
+  'StoreKit',
 ])
 
 def shared_pods
