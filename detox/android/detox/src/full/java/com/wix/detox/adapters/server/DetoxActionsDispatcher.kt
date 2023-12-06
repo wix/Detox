@@ -16,6 +16,12 @@ class DetoxActionsDispatcher {
         actionsExecutor.associateHandler(type, actionHandler)
     }
 
+    fun associateActionHandler(type: String, handlerFunc: (params: String, messageId: Long) -> Unit) {
+        associateActionHandler(type, object: DetoxActionHandler {
+            override fun handle(params: String, messageId: Long) = handlerFunc(params, messageId)
+        })
+    }
+
     fun dispatchAction(type: String, params: String, messageId: Long) {
         (primaryExec.executeAction(type, params, messageId) ||
             secondaryExec.executeAction(type, params, messageId))
@@ -74,7 +80,5 @@ private class ActionsExecutor(name: String) {
         handler.looper.quit()
     }
 
-    fun join() {
-        thread.join()
-    }
+    fun join() = thread.join()
 }

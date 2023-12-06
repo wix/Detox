@@ -160,7 +160,6 @@ object ReactNativeExtension {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-
         }
     }
 

@@ -3,7 +3,6 @@ package com.wix.detox.adapters.server
 import android.content.Context
 import android.util.Log
 import com.wix.detox.TestEngineFacade
-import com.wix.detox.common.DetoxLog
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
