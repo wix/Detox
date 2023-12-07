@@ -123,13 +123,7 @@ public final class Detox {
         DetoxConfig.CONFIG.apply();
 
         sActivityLaunchHelper = new ActivityLaunchHelper(activityTestRule);
-
-        try {
-            DetoxMain.run(context, sActivityLaunchHelper);
-        } catch (Exception e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Detox got interrupted prematurely", e);
-        }
+        DetoxMain.run(context, sActivityLaunchHelper);
     }
 
     public static void launchMainActivity() {
