@@ -13,39 +13,39 @@ import java.util.concurrent.CountDownLatch
 private const val TERMINATION_ACTION = "_terminate"
 
 object DetoxMain {
-    private val loginMonitor = CountDownLatch(1)
+    private val handshakeLock = CountDownLatch(1)
 
     @JvmStatic
     fun run(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
         val detoxServerInfo = DetoxServerInfo()
         val testEngineFacade = TestEngineFacade()
         val actionsDispatcher = DetoxActionsDispatcher()
-        val externalAdapter = DetoxServerAdapter(actionsDispatcher, detoxServerInfo, TERMINATION_ACTION)
+        val serverAdapter = DetoxServerAdapter(actionsDispatcher, detoxServerInfo, TERMINATION_ACTION)
 
-        initActionHandlers(actionsDispatcher, externalAdapter, testEngineFacade, rnHostHolder)
-        initCrashHandler(externalAdapter)
-        initANRListener(externalAdapter)
+        initCrashHandler(serverAdapter)
+        initANRListener(serverAdapter)
         initEspresso()
         initReactNative()
 
-        externalAdapter.connect()
+        setupActionHandlers(actionsDispatcher, serverAdapter, testEngineFacade, rnHostHolder)
+        serverAdapter.connect()
 
         launchActivityOnCue(rnHostHolder, activityLaunchHelper)
         actionsDispatcher.join()
     }
 
     /**
-     * Launch the tested activity "on cue", meaning - right after a connection is established and the handshake
+     * Launch the tested activity "on cue", namely, right after a connection is established and the handshake
      * completes successfully.
      *
      * This has to be synchronized so that an `isReady` isn't handled *before* the activity is launched (albeit not fully
      * initialized - all native modules and everything) and a react context is available.
      *
      * As a better alternative, it would make sense to execute this as a simple action from within the actions
-     * dispatcher (i.e. handler of `loginSuccess`), in which case, no inter-thread sync (latches) would be required
-     * thanks to the usage of Handlers. However, for a reason we're not yet sure of, in this type of a solution,
-     * errors / crashes would be reported not by instrumentation itself, but based on the `AppWillTerminateWithError`
-     * message. For a reason we're not sure of yet, it is ignored by the test runner at this point.
+     * dispatcher (i.e. handler of `loginSuccess`), in which case, no inter-thread locking would be required
+     * thanks to the usage of Handlers. However, in this type of a solution, errors / crashes would be reported
+     * not by instrumentation itself, but based on the `AppWillTerminateWithError` message; In it's own, it is a good
+     * thing, but for a reason we're not sure of yet, it is ignored by the test runner at this point in the flow.
      */
     @Synchronized
     private fun launchActivityOnCue(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
@@ -54,11 +54,11 @@ object DetoxMain {
     }
 
     private fun awaitHandshake() {
-        loginMonitor.await()
+        handshakeLock.await()
     }
 
     private fun onLoginSuccess() {
-        loginMonitor.countDown()
+        handshakeLock.countDown()
     }
 
     private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade) {
@@ -68,30 +68,28 @@ object DetoxMain {
         actionsDispatcher.teardown()
     }
 
-    private fun initActionHandlers(actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
+    private fun setupActionHandlers(actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
+        class SynchronizedActionHandler(private val actionHandler: DetoxActionHandler): DetoxActionHandler {
+            override fun handle(params: String, messageId: Long) {
+                synchronized(this@DetoxMain) {
+                    actionHandler.handle(params, messageId)
+                }
+            }
+        }
+
         // Primary actions
         with(actionsDispatcher) {
-            val readyHandler = ReadyActionHandler(serverAdapter, testEngineFacade)
-            val rnReloadHandler = ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade)
+            val readyHandler = SynchronizedActionHandler( ReadyActionHandler(serverAdapter, testEngineFacade) )
+            val rnReloadHandler = SynchronizedActionHandler( ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade) )
 
-            associateActionHandler("isReady") { params, messageId ->
-                synchronized(this@DetoxMain) {
-                    readyHandler.handle(params, messageId)
-                }
-            }
-            associateActionHandler("loginSuccess") { _, _ -> this@DetoxMain.onLoginSuccess() }
-            associateActionHandler("reactNativeReload") { params, messageId ->
-                synchronized(this@DetoxMain) {
-                    rnReloadHandler.handle(params, messageId)
-                }
-            }
+            associateActionHandler("loginSuccess", ::onLoginSuccess)
+            associateActionHandler("isReady", readyHandler)
+            associateActionHandler("reactNativeReload", rnReloadHandler)
             associateActionHandler("invoke", InvokeActionHandler(MethodInvocation(), serverAdapter))
             associateActionHandler("cleanup", CleanupActionHandler(serverAdapter, testEngineFacade) {
                 dispatchAction(TERMINATION_ACTION, "", 0)
             })
-            associateActionHandler(TERMINATION_ACTION) { _, _ ->
-                this@DetoxMain.doTeardown(serverAdapter, actionsDispatcher, testEngineFacade)
-            }
+            associateActionHandler(TERMINATION_ACTION) { -> doTeardown(serverAdapter, actionsDispatcher, testEngineFacade) }
 
             if (DetoxInstrumentsManager.supports()) {
                 val instrumentsManager = DetoxInstrumentsManager(rnHostHolder)
@@ -102,13 +100,8 @@ object DetoxMain {
 
         // Secondary actions
         with(actionsDispatcher) {
-            val queryStatusHandler = QueryStatusActionHandler(serverAdapter, testEngineFacade)
-            associateActionHandler("currentStatus", object: DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) =
-                    synchronized(this@DetoxMain) {
-                        queryStatusHandler.handle(params, messageId)
-                    }
-            }, false)
+            val queryStatusHandler = SynchronizedActionHandler( QueryStatusActionHandler(serverAdapter, testEngineFacade) )
+            associateSecondaryActionHandler("currentStatus", queryStatusHandler)
         }
     }
 

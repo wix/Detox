@@ -11,16 +11,17 @@ class DetoxActionsDispatcher {
     private val primaryExec = ActionsExecutor("detox.primary")
     private val secondaryExec = ActionsExecutor("detox.secondary")
 
-    fun associateActionHandler(type: String, actionHandler: DetoxActionHandler, isPrimary: Boolean = true) {
-        val actionsExecutor = (if (isPrimary) primaryExec else secondaryExec)
-        actionsExecutor.associateHandler(type, actionHandler)
-    }
+    fun associateActionHandler(type: String, actionHandler: DetoxActionHandler) =
+        associateActionHandler(type, actionHandler, true)
 
-    fun associateActionHandler(type: String, handlerFunc: (params: String, messageId: Long) -> Unit) {
+    fun associateActionHandler(type: String, handlerFunc: () -> Unit) {
         associateActionHandler(type, object: DetoxActionHandler {
-            override fun handle(params: String, messageId: Long) = handlerFunc(params, messageId)
+            override fun handle(params: String, messageId: Long) = handlerFunc()
         })
     }
+
+    fun associateSecondaryActionHandler(type: String, actionHandler: DetoxActionHandler) =
+        associateActionHandler(type, actionHandler, false)
 
     fun dispatchAction(type: String, params: String, messageId: Long) {
         (primaryExec.executeAction(type, params, messageId) ||
@@ -38,6 +39,11 @@ class DetoxActionsDispatcher {
     fun join() {
         primaryExec.join()
         secondaryExec.join()
+    }
+
+    private fun associateActionHandler(type: String, actionHandler: DetoxActionHandler, isPrimary: Boolean = true) {
+        val actionsExecutor = (if (isPrimary) primaryExec else secondaryExec)
+        actionsExecutor.associateHandler(type, actionHandler)
     }
 }
 
