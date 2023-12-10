@@ -36,7 +36,6 @@ object ReactNativeExtension {
             val reactContext = awaitNewReactNativeContext(it, null)
 
             enableOrDisableSynchronization(reactContext)
-            hackRN50WaitForReady()
         }
     }
 
@@ -66,7 +65,6 @@ object ReactNativeExtension {
             val reactContext = awaitNewReactNativeContext(it, previousReactContext)
 
             enableOrDisableSynchronization(reactContext, networkSyncEnabled)
-            hackRN50WaitForReady()
         }
     }
 
@@ -149,17 +147,6 @@ object ReactNativeExtension {
 
         rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs, networkSyncEnabled).apply {
             registerAll()
-        }
-    }
-
-    private fun hackRN50WaitForReady() {
-        if (ReactNativeInfo.rnVersion().minor in 50..62) {
-            try {
-                //TODO- Temp hack to make Detox usable for RN>=50 till we find a better sync solution.
-                Thread.sleep(1000)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
         }
     }
 
