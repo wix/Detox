@@ -9,8 +9,9 @@ const BASIC_PERMISSIONS_TO_CHECK = [
   'reminders',
   'siri',
   'speech',
-  // 'bluetooth_peripheral', 'storekit', // Unsupported in Detox?
-  // 'faceid','medialibrary', 'motion', // Unavailable, though *supported* in Detox
+  'faceid',
+  'medialibrary',
+  'motion',
 ];
 
 const LOCATION_ALWAYS = 'location_always';
