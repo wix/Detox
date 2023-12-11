@@ -9,7 +9,6 @@ import {checkMultiple, request, PERMISSIONS, RESULTS} from 'react-native-permiss
 
 const PERMISSIONS_TO_CHECK = [
   { name: 'userTracking', key: PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY },
-  { name: 'bluetooth_peripheral', key: PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL },
   { name: 'calendar', key: PERMISSIONS.IOS.CALENDARS },
   { name: 'camera', key: PERMISSIONS.IOS.CAMERA },
   { name: 'contacts', key: PERMISSIONS.IOS.CONTACTS },
@@ -24,7 +23,6 @@ const PERMISSIONS_TO_CHECK = [
   { name: 'reminders', key: PERMISSIONS.IOS.REMINDERS },
   { name: 'siri', key: PERMISSIONS.IOS.SIRI },
   { name: 'speech', key: PERMISSIONS.IOS.SPEECH_RECOGNITION },
-  { name: 'storekit', key: PERMISSIONS.IOS.STOREKIT },
 ];
 
 export default class Permissions extends Component {
