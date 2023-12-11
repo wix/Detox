@@ -102,7 +102,7 @@ describe(':ios: Permissions', () => {
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
-      await expect(locationAlways).toHaveText(RESULTS.DENIED);
+      await expect(locationAlways).toHaveText(RESULTS.BLOCKED);
       await expect(locationInuse).toHaveText(RESULTS.GRANTED);
     });
 
