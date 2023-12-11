@@ -1,6 +1,6 @@
 const { RESULTS, PERMISSIONS } = require('react-native-permissions');
 
-const REGULAR_PERMISSIONS_TO_CHECK = [
+const BASIC_PERMISSIONS_TO_CHECK = [
   'userTracking',
   'calendar',
   'camera',
@@ -23,7 +23,7 @@ const PHOTO_LIBRARY = 'photo_library';
 const PHOTO_LIBRARY_ADD_ONLY = 'photo_library_add_only';
 
 describe(':ios: Permissions', () => {
-  REGULAR_PERMISSIONS_TO_CHECK.forEach((name) => {
+  BASIC_PERMISSIONS_TO_CHECK.forEach((name) => {
     describe(name, () => {
       const authorizationStatus = element(by.id(name));
 

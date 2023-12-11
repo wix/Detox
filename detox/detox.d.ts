@@ -644,6 +644,7 @@ declare global {
              */
             selectApp(app: string): Promise<void>;
 
+            // TODO: document permissions types.
             /**
              * Launch the app.
              *
@@ -1624,23 +1625,25 @@ declare global {
             userTracking?: UserTrackingPermission;
         }
 
+        type BasicPermissionState = 'YES' | 'NO' | 'unset';
+        type ExtendedPermissionState = 'YES' | 'NO' | 'unset' | 'limited';
         type LocationPermission = 'always' | 'inuse' | 'never' | 'unset';
-        type PermissionState = 'YES' | 'NO' | 'unset';
-        type CameraPermission = PermissionState;
-        type ContactsPermission = PermissionState;
-        type CalendarPermission = PermissionState;
-        type HealthPermission = PermissionState;
-        type HomekitPermission = PermissionState;
-        type MediaLibraryPermission = PermissionState;
-        type MicrophonePermission = PermissionState;
-        type MotionPermission = PermissionState;
-        type PhotosPermission = PermissionState;
-        type RemindersPermission = PermissionState;
-        type SiriPermission = PermissionState;
-        type SpeechPermission = PermissionState;
-        type NotificationsPermission = PermissionState;
-        type FaceIDPermission = PermissionState;
-        type UserTrackingPermission = PermissionState;
+
+        type CameraPermission = BasicPermissionState;
+        type ContactsPermission = BasicPermissionState;
+        type CalendarPermission = BasicPermissionState;
+        type HealthPermission = BasicPermissionState;
+        type HomekitPermission = BasicPermissionState;
+        type MediaLibraryPermission = BasicPermissionState;
+        type MicrophonePermission = BasicPermissionState;
+        type MotionPermission = BasicPermissionState;
+        type PhotosPermission = ExtendedPermissionState;
+        type RemindersPermission = BasicPermissionState;
+        type SiriPermission = BasicPermissionState;
+        type SpeechPermission = BasicPermissionState;
+        type NotificationsPermission = BasicPermissionState;
+        type FaceIDPermission = BasicPermissionState;
+        type UserTrackingPermission = BasicPermissionState;
 
         interface DeviceLaunchAppConfig {
             /**
