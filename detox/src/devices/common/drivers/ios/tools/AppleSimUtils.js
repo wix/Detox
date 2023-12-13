@@ -34,23 +34,19 @@ class AppleSimUtils {
         case 'location':
           switch (value) {
             case 'always':
-              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location');
               await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location-always');
               break;
 
             case 'inuse':
               await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location');
-              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location-always');
               break;
 
             case 'never':
               await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.REVOKE, 'location');
-              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.REVOKE, 'location-always');
               break;
 
             case 'unset':
               await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location');
-              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location-always');
               break;
           }
 
@@ -59,20 +55,16 @@ class AppleSimUtils {
 
         case 'contacts':
           if (value === PERMISSIONS_VALUES.LIMITED) {
-            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'contacts');
             await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'contacts-limited');
           } else {
-            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'contacts-limited');
             await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'contacts');
           }
           break;
 
         case 'photos':
           if (value === PERMISSIONS_VALUES.LIMITED) {
-            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'photos');
             await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'photos-add');
           } else {
-            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'photos-add');
             await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'photos');
           }
           break;

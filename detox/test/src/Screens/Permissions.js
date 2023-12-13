@@ -39,30 +39,36 @@ export default class Permissions extends Component {
     };
   }
 
-  onLocationReceived = (position) => {
+  requestLocation() {
     this.setState({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      error: 'none',
+      location: {
+        latitude: "loading...",
+        longitude: "loading...",
+        error: 'loading...',
+      }
     });
-  }
 
-  onLocationError = (error) => {
-    this.setState({
-      latitude: "undefined",
-      longitude: "undefined",
-      error: `error: ${error.message}, code: ${error.code}`,
-    });
-  }
-
-  requestLocation = async () => {
-    const options = {
+    Geolocation.watchPosition((position) => {
+      this.setState({
+        location: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          error: 'none',
+        }
+      });
+    }, (error) => {
+      this.setState({
+        location: {
+          latitude: "undefined",
+          longitude: "undefined",
+          error: `error: ${error.message}, code: ${error.code}`,
+        }
+      });
+    },{
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0,
-    };
-
-    Geolocation.watchPosition(this.onLocationReceived, this.onLocationError, options);
+    });
   }
 
   async getStatuses() {

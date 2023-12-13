@@ -131,13 +131,27 @@ describe(':ios: Permissions', () => {
       const permissions = {location: 'always'};
 
       await device.launchApp({permissions, delete: true});
+      await device.setLocation(37.5, -122.2);
       await element(by.text('Permissions')).tap();
 
-      await device.setLocation(37.785834, -122.406417);
+      await waitFor(locationError).toHaveText('none').withTimeout(3000);
+      await expect(locationLatitude).toHaveText('37.5');
+      await expect(locationLongitude).toHaveText('-122.2');
+    });
+
+    it('should set location multiple times when granted', async () => {
+      const permissions = {location: 'always'};
+
+      await device.launchApp({permissions, delete: true});
+      await device.setLocation(35, -122.66);
+      await device.setLocation(37.11, -122.55);
+      await device.setLocation(37.5, -122.7);
+
+      await element(by.text('Permissions')).tap();
 
       await waitFor(locationError).toHaveText('none').withTimeout(3000);
-      await expect(locationLatitude).toHaveText('37.785834');
-      await expect(locationLongitude).toHaveText('-122.406417');
+      await expect(locationLatitude).toHaveText('37.5');
+      await expect(locationLongitude).toHaveText('-122.7');
     });
 
     it('should block permissions', async () => {
