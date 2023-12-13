@@ -31,33 +31,41 @@ describe(':ios: Permissions', () => {
       it('should find element with test-id: ' + name, async () => {
         await device.launchApp({delete: true});
         await element(by.text('Permissions')).tap();
+
         await expect(authorizationStatus).toBeVisible();
       });
 
       it('should show default permissions when undefined', async () => {
         await device.launchApp({delete: true});
         await element(by.text('Permissions')).tap();
+
         await expect(authorizationStatus).toHaveText(RESULTS.DENIED);
       });
 
       it('should show default permissions when defined to `unset`', async () => {
         const permissions = {[name]: 'unset'};
+
         await device.launchApp({permissions, delete: true});
         await element(by.text('Permissions')).tap();
+
         await expect(authorizationStatus).toHaveText(RESULTS.DENIED);
       });
 
       it('should grant permission', async () => {
         const permissions = {[name]: 'YES'};
+
         await device.launchApp({permissions, delete: true});
         await element(by.text('Permissions')).tap();
+
         await expect(authorizationStatus).toHaveText('granted');
       });
 
       it('should block permissions', async () => {
         const permissions = {[name]: 'NO'};
+
         await device.launchApp({permissions, delete: true});
         await element(by.text('Permissions')).tap();
+
         await expect(authorizationStatus).toHaveText(RESULTS.BLOCKED);
       });
     });
@@ -91,6 +99,7 @@ describe(':ios: Permissions', () => {
 
     it('should show default permissions when defined to `unset`', async () => {
       const permissions = {location: 'unset'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -100,6 +109,7 @@ describe(':ios: Permissions', () => {
 
     it('should grant permission `inuse`', async () => {
       const permissions = {location: 'inuse'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -109,6 +119,7 @@ describe(':ios: Permissions', () => {
 
     it('should grant permission `always`', async () => {
       const permissions = {location: 'always'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -118,19 +129,20 @@ describe(':ios: Permissions', () => {
 
     it('should set location when granted', async () => {
       const permissions = {location: 'always'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
       await device.setLocation(37.785834, -122.406417);
 
       await waitFor(locationError).toHaveText('none').withTimeout(3000);
-
       await expect(locationLatitude).toHaveText('37.785834');
       await expect(locationLongitude).toHaveText('-122.406417');
     });
 
     it('should block permissions', async () => {
       const permissions = {location: 'never'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -161,6 +173,7 @@ describe(':ios: Permissions', () => {
 
     it('should show default permissions when defined to `unset`', async () => {
       const permissions = {photos: 'unset'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -170,15 +183,17 @@ describe(':ios: Permissions', () => {
 
     it('should grant permission `limited`', async () => {
       const permissions = {photos: 'limited'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
-      await expect(photoLibrary).toHaveText(RESULTS.DENIED);
+      await expect(photoLibrary).toHaveText(RESULTS.BLOCKED);
       await expect(photoLibraryAddOnly).toHaveText(RESULTS.GRANTED);
     });
 
     it('should grant permission', async () => {
       const permissions = {photos: 'YES'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
@@ -188,12 +203,30 @@ describe(':ios: Permissions', () => {
 
     it('should block permissions', async () => {
       const permissions = {photos: 'NO'};
+
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
       await expect(photoLibrary).toHaveText(RESULTS.BLOCKED);
-      await expect(photoLibraryAddOnly).toHaveText(RESULTS.BLOCKED);
+      await expect(photoLibraryAddOnly).toHaveText(RESULTS.DENIED);
     });
+  });
+
+  it('should grant or block multiple permissions', async () => {
+    const permissions = {
+      photos: 'YES',
+      camera: 'YES',
+      faceid: 'NO',
+      location: 'NO'
+    };
+
+    await device.launchApp({permissions, delete: true});
+    await element(by.text('Permissions')).tap();
+
+    await expect(element(by.id('photos'))).toHaveText(RESULTS.GRANTED);
+    await expect(element(by.id('camera'))).toHaveText(RESULTS.GRANTED);
+    await expect(element(by.id('faceid'))).toHaveText(RESULTS.BLOCKED);
+    await expect(element(by.id('location'))).toHaveText(RESULTS.BLOCKED);
   });
 });
 
