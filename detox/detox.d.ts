@@ -1630,7 +1630,7 @@ declare global {
         type LocationPermission = 'always' | 'inuse' | 'never' | 'unset';
 
         type CameraPermission = BasicPermissionState;
-        type ContactsPermission = BasicPermissionState;
+        type ContactsPermission = ExtendedPermissionState;
         type CalendarPermission = BasicPermissionState;
         type HealthPermission = BasicPermissionState;
         type HomekitPermission = BasicPermissionState;
