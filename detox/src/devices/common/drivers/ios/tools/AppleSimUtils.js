@@ -10,21 +10,137 @@ const environment = require('../../../../../utils/environment');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const { quote } = require('../../../../../utils/shellQuote');
 
+const PERMISSIONS_VALUES = {
+  YES: 'YES',
+  NO: 'NO',
+  UNSET: 'unset',
+  LIMITED: 'limited',
+};
+
+const SIMCTL_SET_PERMISSION_ACTIONS ={
+  GRANT: 'grant',
+  REVOKE: 'revoke',
+  RESET: 'reset',
+};
+
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
-    let permissions = [];
-    _.forEach(permissionsObj, function (shouldAllow, permission) {
-      permissions.push(permission + '=' + shouldAllow);
-    });
+    log.warn(`permissionsObj: ${JSON.stringify(permissionsObj)}`);
 
+    for (const [service, value] of Object.entries(permissionsObj)) {
+      log.warn(`service: ${service}, value: ${value}`);
+
+      switch (service) {
+        case 'location':
+          switch (value) {
+            case 'always':
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location');
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location-always');
+              break;
+
+            case 'inuse':
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'location');
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location-always');
+              break;
+
+            case 'never':
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.REVOKE, 'location');
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.REVOKE, 'location-always');
+              break;
+
+            case 'unset':
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location');
+              await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'location-always');
+              break;
+          }
+
+          break;
+
+
+        case 'contacts':
+          if (value === PERMISSIONS_VALUES.LIMITED) {
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'contacts');
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'contacts-limited');
+          } else {
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'contacts-limited');
+            await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'contacts');
+          }
+          break;
+
+        case 'photos':
+          if (value === PERMISSIONS_VALUES.LIMITED) {
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'photos');
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'photos-add');
+          } else {
+            await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.RESET, 'photos-add');
+            await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'photos');
+          }
+          break;
+
+        // eslint-disable-next-line no-fallthrough
+        case 'calendar':
+        case 'camera':
+        case 'medialibrary':
+        case 'microphone':
+        case 'motion':
+        case 'reminders':
+        case 'siri':
+          // Simctl uses kebab-case for service names.
+          const simctlService = service.replace('medialibrary', 'media-library');
+          await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), simctlService);
+          break;
+
+
+        // Requires AppleSimUtils: unsupported by latest Simctl at the moment of writing this code.
+        // eslint-disable-next-line no-fallthrough
+        case 'notifications':
+        case 'health':
+        case 'homekit':
+        case 'speech':
+        case 'faceid':
+        case 'userTracking':
+          await this.setPermissionWithAppleSimUtils(udid, bundleId, service, value);
+          break;
+      }
+    }
+  }
+
+  basicPermissionValueToSimctlAction(value) {
+    switch (value) {
+      case PERMISSIONS_VALUES.YES:
+        return SIMCTL_SET_PERMISSION_ACTIONS.GRANT;
+
+      case PERMISSIONS_VALUES.NO:
+        return SIMCTL_SET_PERMISSION_ACTIONS.REVOKE;
+
+      case PERMISSIONS_VALUES.UNSET:
+        return SIMCTL_SET_PERMISSION_ACTIONS.RESET;
+    }
+  }
+
+  async setPermissionWithSimctl(udid, bundleId, action, service) {
     const options = {
-      args: `--byId ${udid} --bundle ${bundleId} --restartSB --setPermissions ${_.join(permissions, ',')}`,
+      cmd: `privacy ${udid} ${action} ${service} ${bundleId}`,
       statusLogs: {
-        trying: `Trying to set permissions...`,
-        successful: 'Permissions are set'
+        trying: `Trying to set permissions with Simctl: ${action} ${service}...`,
+        successful: `${service} permissions are set`
       },
       retries: 1,
     };
+
+    await this._execSimctl(options);
+  }
+
+  async setPermissionWithAppleSimUtils(udid, bundleId, service, value) {
+    const options = {
+      args: `--byId ${udid} --bundle ${bundleId} --restartSB --setPermissions ${service}=${value}`,
+      statusLogs: {
+        trying: `Trying to set permissions with AppleSimUtils: ${service}=${value}...`,
+        successful: `${service} permissions are set`
+      },
+      retries: 1,
+    };
+
     await this._execAppleSimUtils(options);
   }
 
@@ -319,14 +435,7 @@ class AppleSimUtils {
   }
 
   async setLocation(udid, lat, lon) {
-    const result = await childProcess.execWithRetriesAndLogs(`which fbsimctl`, { retries: 1 });
-    if (_.get(result, 'stdout')) {
-      await childProcess.execWithRetriesAndLogs(`fbsimctl ${udid} set_location ${lat} ${lon}`, { retries: 1 });
-    } else {
-      throw new DetoxRuntimeError(`setLocation currently supported only through fbsimctl.
-      Install fbsimctl using:
-      "brew tap facebook/fb && export CODE_SIGNING_REQUIRED=NO && brew install fbsimctl"`);
-    }
+    await this._execSimctl({ cmd: `location ${udid} set ${lat},${lon}` });
   }
 
   async resetContentAndSettings(udid) {
