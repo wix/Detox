@@ -43,7 +43,7 @@
     "react-native": "0.71.10",
     "react-native-launch-arguments": "^4.0.0",
     "react-native-webview": "^11.18.1",
-    "react-native-permissions": "^3.10.1"
+    "react-native-permissions": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

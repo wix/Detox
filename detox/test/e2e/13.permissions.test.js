@@ -201,7 +201,7 @@ describe(':ios: Permissions', () => {
       await device.launchApp({permissions, delete: true});
       await element(by.text('Permissions')).tap();
 
-      await expect(photoLibrary).toHaveText(RESULTS.BLOCKED);
+      await expect(photoLibrary).toHaveText(RESULTS.DENIED);
       await expect(photoLibraryAddOnly).toHaveText(RESULTS.GRANTED);
     });
 
