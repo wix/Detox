@@ -25,11 +25,7 @@ const SIMCTL_SET_PERMISSION_ACTIONS ={
 
 class AppleSimUtils {
   async setPermissions(udid, bundleId, permissionsObj) {
-    log.warn(`permissionsObj: ${JSON.stringify(permissionsObj)}`);
-
     for (const [service, value] of Object.entries(permissionsObj)) {
-      log.warn(`service: ${service}, value: ${value}`);
-
       switch (service) {
         case 'location':
           switch (value) {
