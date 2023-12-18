@@ -10,6 +10,7 @@ interface OutboundServerAdapter {
 class DetoxServerAdapter(
         private val actionsDispatcher: DetoxActionsDispatcher,
         private val detoxServerInfo: DetoxServerInfo,
+        private val readyActionType: String,
         private val terminationActionType: String)
     : WebSocketClient.WSEventsHandler, OutboundServerAdapter {
 
@@ -26,6 +27,7 @@ class DetoxServerAdapter(
 
     override fun onConnect() {
         Log.i(DetoxLog.LOG_TAG, "Connected to server!")
+        actionsDispatcher.dispatchAction(readyActionType, "", -1000L)
     }
 
     override fun onClosed() {
