@@ -19,3 +19,6 @@
 -keep class kotlin.text.** { *; }
 -keep class kotlin.io.** { *; }
 -keep class okhttp3.** { *; }
+
+-keep class androidx.concurrent.futures.CallbackToFutureAdapter$* { *; }
+-keep class androidx.concurrent.futures.CallbackToFutureAdapter { *; }
