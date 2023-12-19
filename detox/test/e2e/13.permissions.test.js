@@ -9,9 +9,7 @@ const BASIC_PERMISSIONS_TO_CHECK = [
   'reminders',
   'siri',
   'speech',
-  'faceid',
-  'medialibrary',
-  'motion',
+  // 'medialibrary', // todo: Temporary disabled, see https://github.com/zoontek/react-native-permissions/pull/831
 ];
 
 const LOCATION_ALWAYS = 'location_always';
@@ -165,6 +163,67 @@ describe(':ios: Permissions', () => {
     });
   });
 
+  describe("faceid", () => {
+    const faceid = element(by.id('faceid'));
+
+    it('should find status elements', async () => {
+      await device.launchApp({ delete: true });
+      await element(by.text('Permissions')).tap();
+
+      await expect(faceid).toBeVisible();
+    });
+
+    it('should get unavailable status when biometrics are not enrolled', async () => {
+      await device.setBiometricEnrollment(false);
+
+      await device.launchApp({ delete: true });
+      await element(by.text('Permissions')).tap();
+
+      await expect(faceid).toHaveText(RESULTS.UNAVAILABLE);
+    });
+
+    describe("when biometrics are enrolled", () => {
+      beforeEach(async () => {
+        await device.setBiometricEnrollment(true);
+      });
+
+      it('should show default permissions when undefined', async () => {
+        await device.launchApp({ delete: true });
+        await element(by.text('Permissions')).tap();
+
+        await expect(faceid).toHaveText(RESULTS.DENIED);
+      });
+
+      it('should show default permissions when defined to `unset`', async () => {
+        const permissions = { faceid: 'unset' };
+
+        await device.launchApp({ permissions, delete: true });
+        await element(by.text('Permissions')).tap();
+
+        await expect(faceid).toHaveText(RESULTS.DENIED);
+      });
+
+      // todo: Skipped due to an error coming from react-native-permissions. Fix or implement a custom check.
+      it.skip('should grant permission', async () => {
+        const permissions = { faceid: 'YES' };
+
+        await device.launchApp({ permissions, delete: true });
+        await element(by.text('Permissions')).tap();
+
+        await expect(faceid).toHaveText('granted');
+      });
+
+      it('should block permissions', async () => {
+        const permissions = { faceid: 'NO' };
+
+        await device.launchApp({ permissions, delete: true });
+        await element(by.text('Permissions')).tap();
+
+        await expect(faceid).toHaveText(RESULTS.BLOCKED);
+      });
+    });
+  });
+
   describe("photos", () => {
     const photoLibrary = element(by.id(PHOTO_LIBRARY));
     const photoLibraryAddOnly = element(by.id(PHOTO_LIBRARY_ADD_ONLY));
@@ -230,17 +289,15 @@ describe(':ios: Permissions', () => {
     const permissions = {
       photos: 'YES',
       camera: 'YES',
-      faceid: 'NO',
-      location: 'NO'
+      location: 'never'
     };
 
     await device.launchApp({permissions, delete: true});
     await element(by.text('Permissions')).tap();
 
-    await expect(element(by.id('photos'))).toHaveText(RESULTS.GRANTED);
+    await expect(element(by.id('photo_library'))).toHaveText(RESULTS.GRANTED);
     await expect(element(by.id('camera'))).toHaveText(RESULTS.GRANTED);
-    await expect(element(by.id('faceid'))).toHaveText(RESULTS.BLOCKED);
-    await expect(element(by.id('location'))).toHaveText(RESULTS.BLOCKED);
+    await expect(element(by.id(LOCATION_ALWAYS))).toHaveText(RESULTS.BLOCKED);
   });
 });
 

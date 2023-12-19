@@ -53,7 +53,7 @@ class AppleSimUtils {
           if (value === PERMISSIONS_VALUES.LIMITED) {
             await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'contacts-limited');
           } else {
-            await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'contacts');
+            await this.setPermissionWithAppleSimUtils(udid, bundleId, service, value);
           }
           break;
 
@@ -61,7 +61,7 @@ class AppleSimUtils {
           if (value === PERMISSIONS_VALUES.LIMITED) {
             await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'photos-add');
           } else {
-            await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), 'photos');
+            await this.setPermissionWithAppleSimUtils(udid, bundleId, service, value);
           }
           break;
 
