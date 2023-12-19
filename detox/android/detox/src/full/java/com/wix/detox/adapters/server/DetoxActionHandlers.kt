@@ -152,7 +152,3 @@ class InstrumentsEventsActionsHandler(
         outboundServerAdapter.sendMessage("eventDone", emptyMap<String, Any>(), messageId)
     }
 }
-
-class ScarceActionHandler: DetoxActionHandler {
-    override fun handle(params: String, messageId: Long) {}
-}
