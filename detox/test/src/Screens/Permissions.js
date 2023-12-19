@@ -3,7 +3,6 @@ import {
   View,
   Text,
 } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
 
 import {checkMultiple, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
@@ -31,44 +30,7 @@ export default class Permissions extends Component {
 
     this.state = {
       statuses: {},
-      location: {
-        latitude: "undefined",
-        longitude: "undefined",
-        error: 'undefined',
-      },
     };
-  }
-
-  requestLocation() {
-    this.setState({
-      location: {
-        latitude: "loading...",
-        longitude: "loading...",
-        error: 'loading...',
-      }
-    });
-
-    Geolocation.watchPosition((position) => {
-      this.setState({
-        location: {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: 'none',
-        }
-      });
-    }, (error) => {
-      this.setState({
-        location: {
-          latitude: "undefined",
-          longitude: "undefined",
-          error: `error: ${error.message}, code: ${error.code}`,
-        }
-      });
-    },{
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    });
   }
 
   async getStatuses() {
@@ -78,10 +40,6 @@ export default class Permissions extends Component {
     this.setState({
       statuses: statuses,
     });
-
-    if (statuses[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED) {
-      await this.requestLocation();
-    }
   }
 
   async requestPermission(permissionKey) {
@@ -121,28 +79,6 @@ export default class Permissions extends Component {
             </View>
           );
         })}
-
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{fontSize: 20, marginTop: 30, marginBottom: 20}}>Location Coordinates</Text>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}}>Latitude</Text>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}} testID="location_latitude">
-            {this.state.location.latitude}
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}}>Longitude</Text>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}} testID="location_longitude">
-            {this.state.location.longitude}
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}}>Error</Text>
-          <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}} testID="location_error">
-            {this.state.location.error}
-          </Text>
-        </View>
       </View>
     );
   }

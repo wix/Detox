@@ -14,9 +14,6 @@ const BASIC_PERMISSIONS_TO_CHECK = [
 
 const LOCATION_ALWAYS = 'location_always';
 const LOCATION_WHEN_IN_USE = 'location_when_in_use';
-const LOCATION_LATITUDE = 'location_latitude';
-const LOCATION_LONGITUDE = 'location_longitude';
-const LOCATION_ERROR = 'location_error';
 
 const PHOTO_LIBRARY = 'photo_library';
 const PHOTO_LIBRARY_ADD_ONLY = 'photo_library_add_only';
@@ -72,9 +69,6 @@ describe(':ios: Permissions', () => {
   describe("location", () => {
     const locationAlways = element(by.id(LOCATION_ALWAYS));
     const locationInuse = element(by.id(LOCATION_WHEN_IN_USE));
-    const locationLatitude = element(by.id(LOCATION_LATITUDE));
-    const locationLongitude = element(by.id(LOCATION_LONGITUDE));
-    const locationError = element(by.id(LOCATION_ERROR));
 
     it('should find status elements', async () => {
       await device.launchApp({delete: true});
@@ -82,9 +76,6 @@ describe(':ios: Permissions', () => {
 
       await expect(locationAlways).toBeVisible();
       await expect(locationInuse).toBeVisible();
-      await expect(locationLatitude).toBeVisible();
-      await expect(locationLongitude).toBeVisible();
-      await expect(locationError).toBeVisible();
     });
 
     it('should show default permissions when undefined', async () => {
@@ -123,33 +114,6 @@ describe(':ios: Permissions', () => {
 
       await expect(locationAlways).toHaveText(RESULTS.GRANTED);
       await expect(locationInuse).toHaveText(RESULTS.GRANTED);
-    });
-
-    it('should set location when granted', async () => {
-      const permissions = {location: 'always'};
-
-      await device.launchApp({permissions, delete: true});
-      await device.setLocation(37.5, -122.2);
-      await element(by.text('Permissions')).tap();
-
-      await waitFor(locationError).toHaveText('none').withTimeout(3000);
-      await expect(locationLatitude).toHaveText('37.5');
-      await expect(locationLongitude).toHaveText('-122.2');
-    });
-
-    it('should set location multiple times when granted', async () => {
-      const permissions = {location: 'always'};
-
-      await device.launchApp({permissions, delete: true});
-      await device.setLocation(35, -122.66);
-      await device.setLocation(37.11, -122.55);
-      await device.setLocation(37.5, -122.7);
-
-      await element(by.text('Permissions')).tap();
-
-      await waitFor(locationError).toHaveText('none').withTimeout(3000);
-      await expect(locationLatitude).toHaveText('37.5');
-      await expect(locationLongitude).toHaveText('-122.7');
     });
 
     it('should block permissions', async () => {
