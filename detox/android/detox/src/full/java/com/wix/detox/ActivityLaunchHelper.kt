@@ -6,11 +6,13 @@ import android.content.Intent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 
-class ActivityLaunchHelper(private val activityTestRule: ActivityTestRule<*>) {
-
-    private val launchArgs = LaunchArgs()
-    private val intentsFactory = LaunchIntentsFactory()
-
+class ActivityLaunchHelper
+    @JvmOverloads constructor(
+        private val activityTestRule: ActivityTestRule<*>,
+        private val launchArgs: LaunchArgs = LaunchArgs(),
+        private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
+        private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
+) {
     fun launchActivityUnderTest() {
         val intent = extractInitialIntent()
         activityTestRule.launchActivity(intent)
@@ -26,20 +28,20 @@ class ActivityLaunchHelper(private val activityTestRule: ActivityTestRule<*>) {
     }
 
     fun startActivityFromNotification(dataFilePath: String) {
-        val notificationData = NotificationDataParser(dataFilePath!!).toBundle()
+        val notificationData = notificationDataParserGen(dataFilePath).toBundle()
         val intent = intentsFactory.intentWithNotificationData(appContext, notificationData, false)
         launchActivitySync(intent)
     }
 
     private fun extractInitialIntent(): Intent =
-        if (launchArgs.hasUrlOverride()) {
+        (if (launchArgs.hasUrlOverride()) {
             intentsFactory.intentWithUrl(launchArgs.urlOverride, true)
         } else if (launchArgs.hasNotificationPath()) {
-            val notificationData = NotificationDataParser(launchArgs.notificationPath).toBundle()
+            val notificationData = notificationDataParserGen(launchArgs.notificationPath).toBundle()
             intentsFactory.intentWithNotificationData(appContext, notificationData, true)
         } else {
             intentsFactory.cleanIntent()
-        }.also {
+        }).also {
             it.putExtra(INTENT_LAUNCH_ARGS_KEY, launchArgs.asIntentBundle())
         }
 
