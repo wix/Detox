@@ -1,7 +1,7 @@
 const { urlDriver } = require('./drivers/url-driver');
 const { launchArgsDriver } = require('./drivers/launch-args-driver');
 
-describe('Launch arguments while handing launch URLs', () => {
+describe(':android: Launch arguments while handing launch URLs', () => {
   it('should pass user args in normally', async () => {
     const userArgs = {
       how: 'about some',
