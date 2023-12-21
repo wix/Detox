@@ -362,18 +362,22 @@ describe('IPC', () => {
   });
 
   describe('integration', () => {
+    const deviceConfig = { type: 'stub.device' };
+
     beforeEach(() => ipcServer.init());
     beforeEach(() => ipcClient1.init());
 
     describe('onAllocateDevice', () => {
       it('should allocate a device and return its cookie', async () => {
         callbacks.onAllocateDevice.mockResolvedValue({ id: 'device-1' });
-        await expect(ipcClient1.allocateDevice()).resolves.toEqual({ id: 'device-1' });
+        await expect(ipcClient1.allocateDevice(deviceConfig)).resolves.toEqual({ id: 'device-1' });
+        expect(callbacks.onAllocateDevice).toHaveBeenCalledWith(deviceConfig);
       });
 
       it('should return an error if allocation fails', async () => {
         callbacks.onAllocateDevice.mockRejectedValue(new Error('foo'));
-        await expect(ipcClient1.allocateDevice()).rejects.toThrow('foo');
+        await expect(ipcClient1.allocateDevice(deviceConfig)).rejects.toThrow('foo');
+        expect(callbacks.onAllocateDevice).toHaveBeenCalledWith(deviceConfig);
       });
     });
 

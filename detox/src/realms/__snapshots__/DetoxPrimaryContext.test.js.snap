@@ -7,6 +7,14 @@ HINT: If you are using Detox with Jest according to the latest guide, please rep
 https://github.com/wix/Detox/issues"
 `;
 
+exports[`DetoxPrimaryContext when initialized when a device is being allocated should throw on attempt to deallocate a cookie that does not belong to this context 1`] = `
+"Cannot deallocate device some-other-device because it was not allocated by this context.
+
+HINT: See the actually known allocated devices below:
+
+- a-device-id"
+`;
+
 exports[`DetoxPrimaryContext when not initialized should throw on attempt to get a worker 1`] = `
 "Detox worker instance has not been installed in this context (DetoxPrimaryContext).
 

@@ -132,7 +132,7 @@ class DetoxWorker {
     };
 
     this._artifactsManager = artifactsManagerFactory.createArtifactsManager(this._artifactsConfig, commonDeps);
-    this._deviceCookie = yield this._context[symbols.allocateDevice]();
+    this._deviceCookie = yield this._context[symbols.allocateDevice](this._deviceConfig);
 
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
