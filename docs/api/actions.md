@@ -144,15 +144,17 @@ Continuously scrolls the scroll element until the specified expectation is resol
 await waitFor(element(by.text('Text5'))).toBeVisible().whileElement(by.id('ScrollView630')).scroll(50, 'down');
 ```
 
-### `scrollTo(edge)`
+### `scrollTo(edge[, startPositionX, startPositionY])`
 
 Simulates a scroll to the specified edge.
 
-`edge`—the edge to scroll to (valid input: `"left"`/`"right"`/`"top"`/`"bottom"`)
+`edge`—the edge to scroll to (valid input: `"left"`/`"right"`/`"top"`/`"bottom"`) <br/>
+`startPositionX`—the normalized x percentage of the element to use as scroll start point (optional, valid input: \[0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`) <br/>
+`startPositionY`—the normalized y percentage of the element to use as scroll start point (optional, valid input: \[0.0, 1.0], `NaN`—choose an optimal value automatically, default is `NaN`)
 
 ```js
 await element(by.id('scrollView')).scrollTo('bottom');
-await element(by.id('scrollView')).scrollTo('top');
+await element(by.id('scrollView')).scrollTo('top', NaN, 0.2);
 ```
 
 ### `typeText(text)`

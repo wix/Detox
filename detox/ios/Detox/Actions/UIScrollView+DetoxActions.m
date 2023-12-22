@@ -121,6 +121,38 @@ else \
 	[self _dtx_scrollWithOffset:CGPointMake(- edge.x * CGFLOAT_MAX, - edge.y * CGFLOAT_MAX) normalizedStartingPoint:CGPointMake(NAN, NAN) strict:NO];
 }
 
+- (void)dtx_scrollToEdge:(UIRectEdge)edge
+	normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
+	CGPoint normalizedEdge;
+	switch (edge) {
+		case UIRectEdgeTop:
+			normalizedEdge = CGPointMake(0, -1);
+			break;
+		case UIRectEdgeBottom:
+			normalizedEdge = CGPointMake(0, 1);
+			break;
+		case UIRectEdgeLeft:
+			normalizedEdge = CGPointMake(-1, 0);
+			break;
+		case UIRectEdgeRight:
+			normalizedEdge = CGPointMake(1, 0);
+			break;
+		default:
+			DTXAssert(NO, @"Incorect edge provided.");
+			return;
+	}
+	
+	[self _dtx_scrollToNormalizedEdge:normalizedEdge normalizedStartingPoint: normalizedStartingPoint ];
+}
+
+- (void)_dtx_scrollToNormalizedEdge:(CGPoint)edge
+			normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
+	[self _dtx_scrollWithOffset:CGPointMake(- edge.x * CGFLOAT_MAX, - edge.y * CGFLOAT_MAX) normalizedStartingPoint:normalizedStartingPoint strict:NO];
+}
+
+
 DTX_ALWAYS_INLINE
 static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)
 {

@@ -435,8 +435,22 @@ class ScrollToEdgeAction : Action {
 			break;
 		}
 		
-		element.scroll(to: targetEdge)
-		
+		let startPositionX : Double
+		if params?.count ?? 0 > 1, let param1 = params?[1] as? Double, param1.isNaN == false {
+			startPositionX = param1
+		} else {
+			startPositionX = Double.nan
+		}
+		let startPositionY : Double
+		if params?.count ?? 0 > 2, let param2 = params?[2] as? Double, param2.isNaN == false {
+			startPositionY = param2
+		} else {
+			startPositionY = Double.nan
+		}
+		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
+
+		element.scroll(to: targetEdge, normalizedStartingPoint: normalizedStartingPoint)
+
 		return nil
 	}
 }
