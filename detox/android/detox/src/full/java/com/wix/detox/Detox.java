@@ -1,17 +1,12 @@
 package com.wix.detox;
 
-import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-
-import com.wix.detox.config.DetoxConfig;
-import com.wix.detox.espresso.UiControllerSpy;
 
 import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+
+import com.wix.detox.config.DetoxConfig;
 
 /**
  * <p>Static class.</p>
@@ -67,12 +62,7 @@ import androidx.test.rule.ActivityTestRule;
  * <p>If not set, then Detox tests are no ops. So it's safe to mix it with other tests.</p>
  */
 public final class Detox {
-    private static final String INTENT_LAUNCH_ARGS_KEY = "launchArgs";
-    private static final long ACTIVITY_LAUNCH_TIMEOUT = 10000L;
-
-    private static final LaunchArgs sLaunchArgs = new LaunchArgs();
-    private static final LaunchIntentsFactory sIntentsFactory = new LaunchIntentsFactory();
-    private static ActivityTestRule sActivityTestRule;
+    private static ActivityLaunchHelper sActivityLaunchHelper;
 
     private Detox() {
     }
@@ -132,72 +122,20 @@ public final class Detox {
         DetoxConfig.CONFIG = detoxConfig;
         DetoxConfig.CONFIG.apply();
 
-        sActivityTestRule = activityTestRule;
-
-        UiControllerSpy.attachThroughProxy();
-
-        Intent intent = extractInitialIntent();
-        sActivityTestRule.launchActivity(intent);
-
-        try {
-            DetoxMain.run(context);
-        } catch (Exception e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Detox got interrupted prematurely", e);
-        }
+        sActivityLaunchHelper = new ActivityLaunchHelper(activityTestRule);
+        DetoxMain.run(context, sActivityLaunchHelper);
     }
 
     public static void launchMainActivity() {
-        final Activity activity = sActivityTestRule.getActivity();
-        launchActivitySync(sIntentsFactory.activityLaunchIntent(activity));
+        sActivityLaunchHelper.launchMainActivity();
     }
 
     public static void startActivityFromUrl(String url) {
-        launchActivitySync(sIntentsFactory.intentWithUrl(url, false));
+        sActivityLaunchHelper.startActivityFromUrl(url);
     }
 
     public static void startActivityFromNotification(String dataFilePath) {
-        Bundle notificationData = new NotificationDataParser(dataFilePath).toBundle();
-        Intent intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, false);
-        launchActivitySync(intent);
-    }
-
-    private static Intent extractInitialIntent() {
-        Intent intent;
-
-        if (sLaunchArgs.hasUrlOverride()) {
-            intent = sIntentsFactory.intentWithUrl(sLaunchArgs.getUrlOverride(), true);
-        } else if (sLaunchArgs.hasNotificationPath()) {
-            Bundle notificationData = new NotificationDataParser(sLaunchArgs.getNotificationPath()).toBundle();
-            intent = sIntentsFactory.intentWithNotificationData(getAppContext(), notificationData, true);
-        } else {
-            intent = sIntentsFactory.cleanIntent();
-        }
-        intent.putExtra(INTENT_LAUNCH_ARGS_KEY, sLaunchArgs.asIntentBundle());
-        return intent;
-    }
-
-    private static void launchActivitySync(Intent intent) {
-        // Ideally, we would just call sActivityTestRule.launchActivity(intent) and get it over with.
-        // BUT!!! as it turns out, Espresso has an issue where doing this for an activity running in the background
-        // would have Espresso set up an ActivityMonitor which will spend its time waiting for the activity to load, *without
-        // ever being released*. It will finally fail after a 45 seconds timeout.
-        // Without going into full details, it seems that activity test rules were not meant to be used this way. However,
-        // the all-new ActivityScenario implementation introduced in androidx could probably support this (e.g. by using
-        // dedicated methods such as moveToState(), which give better control over the lifecycle).
-        // In any case, this is the core reason for this issue: https://github.com/wix/Detox/issues/1125
-        // What it forces us to do, then, is this -
-        // 1. Launch the activity by "ourselves" from the OS (i.e. using context.startActivity()).
-        // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
-        // ^ Hence the code below.
-
-        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        final Activity activity = sActivityTestRule.getActivity();
-        final Instrumentation.ActivityMonitor activityMonitor = new Instrumentation.ActivityMonitor(activity.getClass().getName(), null, true);
-
-        activity.startActivity(intent);
-        instrumentation.addMonitor(activityMonitor);
-        instrumentation.waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT);
+        sActivityLaunchHelper.startActivityFromNotification(dataFilePath);
     }
 
     private static Context getAppContext() {
