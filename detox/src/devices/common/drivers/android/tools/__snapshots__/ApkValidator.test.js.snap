@@ -4,7 +4,7 @@ exports[`APK validation App APK validation should throw a descriptive error if a
 "App APK at path mock-bin-path was detected as the *test* APK!
 
 HINT: Your binary path was probably wrongly set in the active Detox configuration.
-For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup"
 `;
 
 exports[`APK validation App APK validation should throw a specific error if AAPT throws 1`] = `
@@ -12,14 +12,14 @@ exports[`APK validation App APK validation should throw a specific error if AAPT
 Error: mock error
 
 HINT: Check that the binary path in the active Detox configuration has been set to a path of an APK file.
-For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup"
 `;
 
 exports[`APK validation Test APK validation should throw a descriptive error if APK happens to be an app APK 1`] = `
 "Test APK at path mock-test-bin-path was detected as the *app* APK!
 
 HINT: Your test test-binary path was probably wrongly set in the active Detox configuration.
-For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup"
 `;
 
 exports[`APK validation Test APK validation should throw a specific error if AAPT throws 1`] = `
@@ -27,5 +27,5 @@ exports[`APK validation Test APK validation should throw a specific error if AAP
 Error: mock error
 
 HINT: Check that the test-binary path in the active Detox configuration has been set to a path of an APK file.
-For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup"
 `;

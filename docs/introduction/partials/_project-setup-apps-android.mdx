@@ -18,7 +18,7 @@ module.exports = {
       type: 'android.apk',
       // highlight-start
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=debug'
       // highlight-end
     },
     // ...
@@ -27,11 +27,45 @@ module.exports = {
 };
 ```
 
-If you have a typical React Native project, these values should already be correct.
+If you have a typical React Native project, these values should already be sufficient and correct.
 
-On the other hand, if your app has extra [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
-(let's imagine you have `driver` and `passenger` flavors of a taxi application), then you should rewrite your apps config
-for both **debug** and **release** configurations, e.g.:
+#### testBinaryPath
+
+In some projects, some choose to generate the Android _test_ APK (which is different from the _app_ APK) separately.
+It may therefore reside under a custom path, which Detox can't find by itself (Detox does resolve the
+[default path](https://stackoverflow.com/questions/43670463/where-is-the-test-apk-located-in-android-project) automatically).
+In this case, you have to specify the path explicitly by applying the `testBinaryPath` attributes. For example:
+
+```js title=".detoxrc.js"
+module.exports = {
+  apps: {
+    'android.debug': {
+      type: 'android.apk',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      // highlight-start
+      testBinaryPath: 'custom/path/to/app-debug-androidTest.apk',
+      // highlight-end
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug'
+    },
+    'android.release': {
+      type: 'android.apk',
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+      // highlight-start
+      testBinaryPath: 'custom/path/to/app-debug-androidTest.apk',
+      // highlight-end
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=debug'
+    },
+    // ...
+  },
+  // ...
+};
+```
+
+#### Product flavors
+
+On even more advanced use cases, apps may have additional, custom [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
+(consider the case of a `driver` and `passenger` flavors of a taxi application). In this case, you should rewrite your apps config,
+for both **debug** and **release** configurations, according to those flavors, e.g.:
 
 <FlavorizedCodeBlock
   language="diff"
