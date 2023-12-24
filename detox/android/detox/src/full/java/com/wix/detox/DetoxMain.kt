@@ -3,35 +3,62 @@ package com.wix.detox
 import android.content.Context
 import android.util.Log
 import com.wix.detox.adapters.server.*
-import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.common.DetoxLog
+import com.wix.detox.espresso.UiControllerSpy
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.ReactNativeExtension
 import com.wix.invoke.MethodInvocation
+import java.util.concurrent.CountDownLatch
 
-private const val INIT_ACTION = "_init"
-private const val IS_READY_ACTION = "isReady"
 private const val TERMINATION_ACTION = "_terminate"
 
 object DetoxMain {
-    @JvmStatic
-    fun run(rnHostHolder: Context) {
-        val detoxServerInfo = DetoxServerInfo()
-        Log.i(LOG_TAG, "Detox server connection details: $detoxServerInfo")
+    private val handshakeLock = CountDownLatch(1)
 
+    @JvmStatic
+    fun run(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
+        val detoxServerInfo = DetoxServerInfo()
         val testEngineFacade = TestEngineFacade()
         val actionsDispatcher = DetoxActionsDispatcher()
-        val externalAdapter = DetoxServerAdapter(actionsDispatcher, detoxServerInfo, IS_READY_ACTION, TERMINATION_ACTION)
-        initActionHandlers(actionsDispatcher, externalAdapter, testEngineFacade, rnHostHolder)
-        actionsDispatcher.dispatchAction(INIT_ACTION, "", 0)
+        val serverAdapter = DetoxServerAdapter(actionsDispatcher, detoxServerInfo, TERMINATION_ACTION)
+
+        initCrashHandler(serverAdapter)
+        initANRListener(serverAdapter)
+        initEspresso()
+        initReactNative()
+
+        setupActionHandlers(actionsDispatcher, serverAdapter, testEngineFacade, rnHostHolder)
+        serverAdapter.connect()
+
+        launchActivityOnCue(rnHostHolder, activityLaunchHelper)
         actionsDispatcher.join()
     }
 
-    private fun doInit(externalAdapter: DetoxServerAdapter, rnHostHolder: Context) {
-        externalAdapter.connect()
+    /**
+     * Launch the tested activity "on cue", namely, right after a connection is established and the handshake
+     * completes successfully.
+     *
+     * This has to be synchronized so that an `isReady` isn't handled *before* the activity is launched (albeit not fully
+     * initialized - all native modules and everything) and a react context is available.
+     *
+     * As a better alternative, it would make sense to execute this as a simple action from within the actions
+     * dispatcher (i.e. handler of `loginSuccess`), in which case, no inter-thread locking would be required
+     * thanks to the usage of Handlers. However, in this type of a solution, errors / crashes would be reported
+     * not by instrumentation itself, but based on the `AppWillTerminateWithError` message; In it's own, it is a good
+     * thing, but for a reason we're not sure of yet, it is ignored by the test runner at this point in the flow.
+     */
+    @Synchronized
+    private fun launchActivityOnCue(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
+        awaitHandshake()
+        launchActivity(rnHostHolder, activityLaunchHelper)
+    }
 
-        initCrashHandler(externalAdapter)
-        initANRListener(externalAdapter)
-        initReactNativeIfNeeded(rnHostHolder)
+    private fun awaitHandshake() {
+        handshakeLock.await()
+    }
+
+    private fun onLoginSuccess() {
+        handshakeLock.countDown()
     }
 
     private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade) {
@@ -41,35 +68,28 @@ object DetoxMain {
         actionsDispatcher.teardown()
     }
 
-    private fun initActionHandlers(actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
+    private fun setupActionHandlers(actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
+        class SynchronizedActionHandler(private val actionHandler: DetoxActionHandler): DetoxActionHandler {
+            override fun handle(params: String, messageId: Long) {
+                synchronized(this@DetoxMain) {
+                    actionHandler.handle(params, messageId)
+                }
+            }
+        }
+
         // Primary actions
         with(actionsDispatcher) {
-            val rnReloadHandler = ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade)
+            val readyHandler = SynchronizedActionHandler( ReadyActionHandler(serverAdapter, testEngineFacade) )
+            val rnReloadHandler = SynchronizedActionHandler( ReactNativeReloadActionHandler(rnHostHolder, serverAdapter, testEngineFacade) )
 
-            associateActionHandler(INIT_ACTION, object : DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) =
-                    synchronized(this@DetoxMain) {
-                        this@DetoxMain.doInit(serverAdapter, rnHostHolder)
-                    }
-            })
-            associateActionHandler(IS_READY_ACTION, ReadyActionHandler(serverAdapter, testEngineFacade))
-
-            associateActionHandler("loginSuccess", ScarceActionHandler())
-            associateActionHandler("reactNativeReload", object: DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) =
-                    synchronized(this@DetoxMain) {
-                        rnReloadHandler.handle(params, messageId)
-                    }
-            })
+            associateActionHandler("loginSuccess", ::onLoginSuccess)
+            associateActionHandler("isReady", readyHandler)
+            associateActionHandler("reactNativeReload", rnReloadHandler)
             associateActionHandler("invoke", InvokeActionHandler(MethodInvocation(), serverAdapter))
             associateActionHandler("cleanup", CleanupActionHandler(serverAdapter, testEngineFacade) {
                 dispatchAction(TERMINATION_ACTION, "", 0)
             })
-            associateActionHandler(TERMINATION_ACTION, object: DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) {
-                    this@DetoxMain.doTeardown(serverAdapter, actionsDispatcher, testEngineFacade)
-                }
-            })
+            associateActionHandler(TERMINATION_ACTION) { -> doTeardown(serverAdapter, actionsDispatcher, testEngineFacade) }
 
             if (DetoxInstrumentsManager.supports()) {
                 val instrumentsManager = DetoxInstrumentsManager(rnHostHolder)
@@ -80,13 +100,8 @@ object DetoxMain {
 
         // Secondary actions
         with(actionsDispatcher) {
-            val queryStatusHandler = QueryStatusActionHandler(serverAdapter, testEngineFacade)
-            associateActionHandler("currentStatus", object: DetoxActionHandler {
-                override fun handle(params: String, messageId: Long) =
-                    synchronized(this@DetoxMain) {
-                        queryStatusHandler.handle(params, messageId)
-                    }
-            }, false)
+            val queryStatusHandler = SynchronizedActionHandler( QueryStatusActionHandler(serverAdapter, testEngineFacade) )
+            associateSecondaryActionHandler("currentStatus", queryStatusHandler)
         }
     }
 
@@ -98,7 +113,17 @@ object DetoxMain {
         DetoxANRHandler(outboundServerAdapter).attach()
     }
 
-    private fun initReactNativeIfNeeded(rnHostHolder: Context) {
+    private fun initEspresso() {
+        UiControllerSpy.attachThroughProxy()
+    }
+
+    private fun initReactNative() {
+        ReactNativeExtension.initIfNeeded()
+    }
+
+    private fun launchActivity(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
+        Log.i(DetoxLog.LOG_TAG, "Launching the tested activity!")
+        activityLaunchHelper.launchActivityUnderTest()
         ReactNativeExtension.waitForRNBootstrap(rnHostHolder)
     }
 }

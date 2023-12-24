@@ -11,11 +11,8 @@ class UiControllerSpy: MethodsSpy("uiController") {
     fun eventInjectionsIterator(): Iterator<CallInfo?> = historyOf("injectMotionEvent").iterator()
 
     companion object {
-        @JvmStatic
         val instance = UiControllerSpy()
 
-        @JvmStatic
-        @JvmOverloads
         fun attachThroughProxy(spy: UiControllerSpy = instance) {
             val eventsInjectorReflected = EventsInjectorReflected(getUiController())
 
