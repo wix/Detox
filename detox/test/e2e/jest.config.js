@@ -15,6 +15,9 @@ module.exports = async () => {
   /** @type {import('jest-allure2-reporter').ReporterOptions} */
   const jestAllure2ReporterOptions = {
     overwrite: !process.env.CI,
+    attachments: {
+      fileHandler: 'copy',
+    },
     testCase: {
       labels: {
         package: ({ filePath }) => filePath.slice(1).join('/'),
@@ -44,6 +47,13 @@ module.exports = async () => {
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
+    'testEnvironmentOptions': {
+      'eventListeners': [
+        'jest-metadata/environment-listener',
+        'jest-allure2-reporter/environment-listener',
+        require.resolve('detox-allure2-adapter'),
+      ]
+    },
     'testRunner': './test/node_modules/jest-circus/runner',
     'testMatch': [
       '<rootDir>/test/e2e/**/*.test.{js,ts}',
