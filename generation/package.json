@@ -1,6 +1,6 @@
 {
   "name": "generation",
-  "version": "20.14.0",
+  "version": "20.14.2-smoke.0",
   "description": "Generate wrapper code for native dependencies",
   "main": "index.js",
   "private": true,
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "jest": "^27.0.0",
-    "jest-allure2-reporter": "2.0.0-alpha.11",
+    "jest-allure2-reporter": "^2.0.0-beta.2",
     "lint-staged": "^6.0.0",
     "prettier": "^1.8.2"
   },

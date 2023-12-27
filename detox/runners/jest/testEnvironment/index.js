@@ -1,5 +1,6 @@
 const path = require('path');
 
+const WithEmitter = require('jest-environment-emit');
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
 /** @type {typeof import('@jest/environment').JestEnvironment} */
@@ -31,7 +32,7 @@ const log = detox.log.child({ cat: 'lifecycle,jest-environment' });
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
  */
-class DetoxCircusEnvironment extends NodeEnvironment {
+class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
   constructor(config, context) {
     super(assertJestCircus27(config), assertExistingContext(context));
 
@@ -62,6 +63,8 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       SpecReporter,
       WorkerAssignReporter,
     });
+
+    this.testEvents.on('*', this._onTestEvent.bind(this));
   }
 
   /** @override */
@@ -72,18 +75,12 @@ class DetoxCircusEnvironment extends NodeEnvironment {
 
   // @ts-expect-error TS2425
   async handleTestEvent(event, state) {
+    await super.handleTestEvent(event, state);
+
     if (detox.session.unsafe_earlyTeardown) {
       if (event.name === 'test_fn_start' || event.name === 'hook_start') {
         throw new Error('Detox halted test execution due to an early teardown request');
       }
-    }
-
-    this._timer.schedule(state.testTimeout != null ? state.testTimeout : this.setupTimeout);
-
-    if (SYNC_CIRCUS_EVENTS.has(event.name)) {
-      this._handleTestEventSync(event, state);
-    } else {
-      await this._handleTestEventAsync(event, state);
     }
   }
 
@@ -144,6 +141,23 @@ class DetoxCircusEnvironment extends NodeEnvironment {
       if (typeof listener[name] === 'function') {
         listener[name](event, state);
       }
+    }
+  }
+
+  /** @private */
+  _onTestEvent({ type, event, state }) {
+    const timeout = state && state.testTimeout != null ? state.testTimeout : this.setupTimeout;
+
+    this._timer.schedule(timeout);
+
+    if (event) {
+      if (SYNC_CIRCUS_EVENTS.has(event.name)) {
+        this._handleTestEventSync(event, state);
+      } else {
+        return this._handleTestEventAsync(event, state);
+      }
+    } else {
+      return this._handleTestEventAsync({ name: type }, null);
     }
   }
 
