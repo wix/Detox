@@ -74,7 +74,7 @@ module.exports = {
     'runners/jest/testEnvironment',
     'src/DetoxWorker.js',
     'src/logger/utils/streamUtils.js',
-    'src/realms'
+    'src/realms',
   ],
   resetMocks: true,
   resetModules: true,

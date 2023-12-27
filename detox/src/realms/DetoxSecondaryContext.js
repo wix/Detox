@@ -63,9 +63,9 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   /** @override */
-  async [symbols.allocateDevice]() {
+  async [symbols.allocateDevice](deviceConfig) {
     if (this[_ipcClient]) {
-      const deviceCookie = await this[_ipcClient].allocateDevice();
+      const deviceCookie = await this[_ipcClient].allocateDevice(deviceConfig);
       return deviceCookie;
     } else {
       throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');
