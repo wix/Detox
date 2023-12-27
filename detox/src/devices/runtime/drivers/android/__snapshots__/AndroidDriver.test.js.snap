@@ -4,5 +4,5 @@ exports[`Android driver App installation should throw if auto test-binary path r
 "The test APK could not be found at path: 'testApkPathOf(absolutePathOf(mock-bin-path))'
 
 HINT: Try running the detox build command, and make sure it was configured to execute a build command (e.g. './gradlew assembleAndroidTest')
-For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md"
+For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup"
 `;
