@@ -1,6 +1,6 @@
 const path = require('path');
 
-const WithEmitter = require('jest-environment-emit');
+const WithEmitter = require('jest-environment-emit').default;
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
 /** @type {typeof import('@jest/environment').JestEnvironment} */
@@ -75,6 +75,7 @@ class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
 
   // @ts-expect-error TS2425
   async handleTestEvent(event, state) {
+    // @ts-expect-error TS2855
     await super.handleTestEvent(event, state);
 
     if (detox.session.unsafe_earlyTeardown) {
