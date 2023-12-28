@@ -214,7 +214,7 @@ declare global {
                  * This flag tells Detox to print messages like these every time the device gets assigned to a specific suite:
                  *
                  * ```plain text
-                 * 18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 12 Pro Max)
+                 * 18:03:29.869 detox[40125] i starter.test.js is assigned to 4EC84833-C7EA-4CA3-A6E9-5C30A29EA596 (iPhone 15)
                  * ```
                  *
                  * @default true
