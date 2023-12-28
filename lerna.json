@@ -1,34 +1,8 @@
 {
-  "lerna": "3.22.1",
-  "packages": [
-    "detox",
-    "detox-cli",
-    "detox/test",
-    "examples/demo-native-android",
-    "examples/demo-native-ios",
-    "examples/demo-react-native",
-    "examples/demo-react-native-detox-instruments",
-    "examples/demo-react-native-jest",
-    "examples/demo-plugin",
-    "generation",
-    "."
-  ],
-  "version": "20.14.6",
-  "npmClient": "npm",
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "useWorkspaces": true,
+  "version": "1.1.1",
   "command": {
-    "publish": {
-      "ignoreChanges": [
-        "demo-react-native-jest",
-        "demo-plugin",
-        "examples/demo-react-native-detox-instruments",
-        "detox-demo-native-android",
-        "detox-demo-native-ios",
-        "detox-demo-react-native",
-        "detox-test",
-        "generation",
-        "."
-      ]
-    },
     "bootstrap": {
       "npmClientArgs": [
         "--no-package-lock",

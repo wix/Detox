@@ -12,26 +12,18 @@ Please complete our [Introductory environment setup](introduction/environment-se
 
 Our repository is a monorepo, which means it contains multiple Detox-related projects and packages. [Read more about our repository structure](../code/overview.md#repository-structure).
 
-To set up the monorepo locally, follow these steps:
-
-Install the monorepo management tool, `lerna`:
-
-```bash npm2yarn
-npm install lerna@3.x.x --global
-```
-
-Clone the repository and navigate to the project directory:
+To set up the monorepo locally, clone it and navigate to the project directory:
 
 ```bash
 git clone git@github.com:wix/Detox.git
-cd detox
+cd Detox
 git submodule update --init --recursive
 ```
 
 From the project's root directory, install and link the internal projects:
 
 ```bash
-lerna bootstrap
+npm install
 ```
 
 ## Installing Common Dependencies

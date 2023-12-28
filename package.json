@@ -23,7 +23,7 @@
   "devDependencies": {
     "chalk": "^4.0.0",
     "dictionary-en": "^3.1.0",
-    "lerna": "3.22.1",
+    "lerna": "^8.0.0",
     "lodash": "4.17.x",
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
@@ -54,5 +54,18 @@
     "shell-utils": "1.x.x",
     "unified": "^10.1.0"
   },
-  "version": "20.14.6"
+  "version": "20.14.6",
+  "workspaces": [
+    "detox",
+    "detox-cli",
+    "detox/test",
+    "examples/demo-native-android",
+    "examples/demo-native-ios",
+    "examples/demo-react-native",
+    "examples/demo-react-native-detox-instruments",
+    "examples/demo-react-native-jest",
+    "examples/demo-plugin",
+    "generation",
+    "website"
+  ]
 }
