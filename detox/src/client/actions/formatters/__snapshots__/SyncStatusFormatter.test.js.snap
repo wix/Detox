@@ -1,92 +1,92 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Sync Status Formatter assertions should throw error when \`app_status\` is \`busy\` but \`busy_resources\` is empty 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"app_status\\":\\"busy\\",\\"busy_resources\\":[]}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"busy","busy_resources":[]}.
 With reasons:
-• must NOT have additional properties in path \\"#/oneOf/0/additionalProperties\\" with params: {\\"additionalProperty\\":\\"busy_resources\\"}
-• must NOT have fewer than 1 items in path \\"#/oneOf/1/properties/busy_resources/minItems\\" with params: {\\"limit\\":1}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must NOT have additional properties in path "#/oneOf/0/additionalProperties" with params: {"additionalProperty":"busy_resources"}
+• must NOT have fewer than 1 items in path "#/oneOf/1/properties/busy_resources/minItems" with params: {"limit":1}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Sync Status Formatter assertions should throw error when \`app_status\` is \`busy\` but \`busy_resources\` is missing 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"app_status\\":\\"busy\\"}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"busy"}.
 With reasons:
-• must be equal to constant in path \\"#/oneOf/0/properties/app_status/const\\" with params: {\\"allowedValue\\":\\"idle\\"}
-• must have required property 'busy_resources' in path \\"#/oneOf/1/required\\" with params: {\\"missingProperty\\":\\"busy_resources\\"}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must be equal to constant in path "#/oneOf/0/properties/app_status/const" with params: {"allowedValue":"idle"}
+• must have required property 'busy_resources' in path "#/oneOf/1/required" with params: {"missingProperty":"busy_resources"}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Sync Status Formatter assertions should throw error when \`app_status\` is invalid 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"app_status\\":\\"foo\\"}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"foo"}.
 With reasons:
-• must be equal to constant in path \\"#/oneOf/0/properties/app_status/const\\" with params: {\\"allowedValue\\":\\"idle\\"}
-• must have required property 'busy_resources' in path \\"#/oneOf/1/required\\" with params: {\\"missingProperty\\":\\"busy_resources\\"}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must be equal to constant in path "#/oneOf/0/properties/app_status/const" with params: {"allowedValue":"idle"}
+• must have required property 'busy_resources' in path "#/oneOf/1/required" with params: {"missingProperty":"busy_resources"}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Sync Status Formatter assertions should throw error when \`app_status\` is missing 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"busy_resource\\":[]}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"busy_resource":[]}.
 With reasons:
-• must have required property 'app_status' in path \\"#/oneOf/0/required\\" with params: {\\"missingProperty\\":\\"app_status\\"}
-• must have required property 'app_status' in path \\"#/oneOf/1/required\\" with params: {\\"missingProperty\\":\\"app_status\\"}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must have required property 'app_status' in path "#/oneOf/0/required" with params: {"missingProperty":"app_status"}
+• must have required property 'app_status' in path "#/oneOf/1/required" with params: {"missingProperty":"app_status"}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Sync Status Formatter assertions should throw error when a busy resource is invalid 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"app_status\\":\\"busy\\",\\"busy_resources\\":[{\\"name\\":\\"foo\\"}]}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"busy","busy_resources":[{"name":"foo"}]}.
 With reasons:
-• must NOT have additional properties in path \\"#/oneOf/0/additionalProperties\\" with params: {\\"additionalProperty\\":\\"busy_resources\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/0/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/1/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/2/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/3/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/4/properties/name/const\\" with params: {\\"allowedValue\\":\\"timers\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/5/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/6/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/7/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/8/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/9/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/10/properties/name/const\\" with params: {\\"allowedValue\\":\\"io\\"}
-• must be equal to constant in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/11/properties/name/const\\" with params: {\\"allowedValue\\":\\"bridge\\"}
-• must have required property 'description' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/12/required\\" with params: {\\"missingProperty\\":\\"description\\"}
-• must match a schema in anyOf in path \\"#/oneOf/1/properties/busy_resources/items/anyOf\\" with params: {}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must NOT have additional properties in path "#/oneOf/0/additionalProperties" with params: {"additionalProperty":"busy_resources"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/0/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/1/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/2/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/3/required" with params: {"missingProperty":"description"}
+• must be equal to constant in path "#/oneOf/1/properties/busy_resources/items/anyOf/4/properties/name/const" with params: {"allowedValue":"timers"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/5/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/6/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/7/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/8/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/9/required" with params: {"missingProperty":"description"}
+• must be equal to constant in path "#/oneOf/1/properties/busy_resources/items/anyOf/10/properties/name/const" with params: {"allowedValue":"io"}
+• must be equal to constant in path "#/oneOf/1/properties/busy_resources/items/anyOf/11/properties/name/const" with params: {"allowedValue":"bridge"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/12/required" with params: {"missingProperty":"description"}
+• must match a schema in anyOf in path "#/oneOf/1/properties/busy_resources/items/anyOf" with params: {}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;
 
 exports[`Sync Status Formatter assertions should throw error when resource \`name\` is missing 1`] = `
-"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {\\"app_status\\":\\"busy\\",\\"busy_resources\\":[{\\"description\\":{\\"foo\\":\\"bar\\"}}]}.
+"Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"busy","busy_resources":[{"description":{"foo":"bar"}}]}.
 With reasons:
-• must NOT have additional properties in path \\"#/oneOf/0/additionalProperties\\" with params: {\\"additionalProperty\\":\\"busy_resources\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/0/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/1/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/2/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/3/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/4/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/5/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/6/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/7/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/8/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/9/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/10/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/11/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must have required property 'name' in path \\"#/oneOf/1/properties/busy_resources/items/anyOf/12/required\\" with params: {\\"missingProperty\\":\\"name\\"}
-• must match a schema in anyOf in path \\"#/oneOf/1/properties/busy_resources/items/anyOf\\" with params: {}
-• must match exactly one schema in oneOf in path \\"#/oneOf\\" with params: {\\"passingSchemas\\":null}
+• must NOT have additional properties in path "#/oneOf/0/additionalProperties" with params: {"additionalProperty":"busy_resources"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/0/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/1/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/2/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/3/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/4/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/5/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/6/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/7/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/8/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/9/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/10/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/11/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/12/required" with params: {"missingProperty":"name"}
+• must match a schema in anyOf in path "#/oneOf/1/properties/busy_resources/items/anyOf" with params: {}
+• must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
@@ -109,7 +109,7 @@ exports[`Sync Status Formatter busy status should format "delayed_perform_select
 
 exports[`Sync Status Formatter busy status should format "dispatch_queue" correctly 1`] = `
 "The app is busy with the following tasks:
-• There are 123 work items pending on the dispatch queue: \\"foo\\"."
+• There are 123 work items pending on the dispatch queue: "foo"."
 `;
 
 exports[`Sync Status Formatter busy status should format "io" correctly 1`] = `
@@ -149,17 +149,17 @@ exports[`Sync Status Formatter busy status should format "network" correctly 1`]
 
 exports[`Sync Status Formatter busy status should format "one_time_events" correctly 1`] = `
 "The app is busy with the following tasks:
-• The event \\"foo\\" is taking place with object: \\"bar\\"."
+• The event "foo" is taking place with object: "bar"."
 `;
 
 exports[`Sync Status Formatter busy status should format "one_time_events" correctly when there is no object 1`] = `
 "The app is busy with the following tasks:
-• The event \\"foo\\" is taking place."
+• The event "foo" is taking place."
 `;
 
 exports[`Sync Status Formatter busy status should format "run_loop" correctly 1`] = `
 "The app is busy with the following tasks:
-• Run loop \\"foo\\" is awake."
+• Run loop "foo" is awake."
 `;
 
 exports[`Sync Status Formatter busy status should format "timers" correctly when there are timers in description 1`] = `
@@ -209,7 +209,7 @@ exports[`Sync Status Formatter busy status should format "ui" correctly #3 1`] =
 
 exports[`Sync Status Formatter busy status should format "unknown" correctly 1`] = `
 "The app is busy with the following tasks:
-• Resource \\"foo.bar#baz\\" is busy."
+• Resource "foo.bar#baz" is busy."
 `;
 
 exports[`Sync Status Formatter should format idle status correctly 1`] = `"The app seems to be idle"`;

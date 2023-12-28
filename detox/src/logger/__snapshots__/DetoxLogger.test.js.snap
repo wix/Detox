@@ -15,7 +15,7 @@ exports[`DetoxLogger - main functionality - should format messages according to 
   origin: some-module/index.js
 00:00:00.000 detox[PID] i custom-category:MESSAGE A message with a payload
   data: {
-    \\"foo\\": \\"bar\\"
+    "foo": "bar"
   }
 00:00:00.000 detox[PID] i custom-category One more message with a payload
   data: raw string data"
@@ -59,13 +59,13 @@ exports[`DetoxLogger - main functionality - should format messages according to 
   origin: some-module/index.js
 00:00:00.000 detox[PID] i custom-category:MESSAGE A message with a payload
   data: {
-    \\"foo\\": \\"bar\\"
+    "foo": "bar"
   }
 00:00:00.000 detox[PID] i custom-category One more message with a payload
   data: raw string data
 00:00:00.000 detox[PID] i custom-category:MESSAGE Trace message
 00:00:00.000 detox[PID] i  someMethodCall
-  args: (\\"stringArgument\\", {\\"prop\\":\\"value\\"})"
+  args: ("stringArgument", {"prop":"value"})"
 `;
 
 exports[`DetoxLogger - main functionality - should format messages according to the log level: warn 1`] = `
