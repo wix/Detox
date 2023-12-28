@@ -67,13 +67,17 @@ module.exports = {
 };
 ```
 
-> Mind that in the common case, the `testBinaryPath` attributes is not explicitly required, simply because Detox knows
+:::info Note
+
+In the common case, the `testBinaryPath` attributes is not explicitly required, simply because Detox knows
 how to locate it in one of the default paths automatically.
+
+:::
 
 #### Product flavors
 
 On even more advanced use cases, apps may have additional, custom [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
-(consider the case of a `driver` and `passenger` flavors of a taxi application). In this case, you should rewrite your apps config,
+(for example, `driver` and `passenger` flavors of a taxi application). In this case, you should rewrite your apps config,
 for both **debug** and **release** configurations, according to those flavors, e.g.:
 
 <FlavorizedCodeBlock
