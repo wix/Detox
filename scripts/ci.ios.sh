@@ -1,5 +1,14 @@
 #!/bin/bash -ex
 
+#Set xcode version from .xcoderc file
+if [[ -f "$(dirname "$0")/.xcoderc" ]];then
+    xc_version=$(cat .xcoderc)
+    echo "Setting $xc_version"
+    export DEVELOPER_DIR=$xc_version
+else
+    echo ".xcoderc not found. Xcode is default"
+fi
+
 UPLOAD_ARTIFACT="$(pwd)/scripts/upload_artifact.sh"
 trap "$UPLOAD_ARTIFACT" EXIT
 
