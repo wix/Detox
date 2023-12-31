@@ -4,7 +4,7 @@
 if [[ -f .xcoderc ]];then
     xc_version=$(cat .xcoderc)
     echo "Setting $xc_version"
-    export DEVELOPER_DIR=$xc_version
+    export DEVELOPER_DIR="/Applications/Xcode_$xc_version.app/"
 else
     echo ".xcoderc not found. Xcode is default"
 fi
