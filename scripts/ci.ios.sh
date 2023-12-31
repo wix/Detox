@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 #Set xcode version from .xcoderc file
-if [[ -f "$(dirname "$0")/.xcoderc" ]];then
+if [[ -f .xcoderc ]];then
     xc_version=$(cat .xcoderc)
     echo "Setting $xc_version"
     export DEVELOPER_DIR=$xc_version
