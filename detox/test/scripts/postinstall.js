@@ -2,20 +2,28 @@ const fs = require('fs-extra');
 const path = require('path');
 const cp = require('child_process');
 
-function patchBoostPodspec() {
-  // Patch boost.podspec.json to use a different source URL due to an issue with the original
-  // one https://github.com/boostorg/boost/issues/843
-  console.log('[POST-INSTALL] Applying boost.podspec patch...');
+const patchBoostPodspec = () => {
+  const log = message => console.log(`[POST-INSTALL] ${message}`);
+  const boostPodspecPath = `${process.cwd()}/node_modules/react-native/third-party-podspecs/boost.podspec`;
+  const originalUrl = 'https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2';
+  const patchedUrl = 'https://sourceforge.net/projects/boost/files/boost/1.76.0/boost_1_76_0.tar.bz2';
 
-  const boostPodspecPath = path.join(process.cwd(), 'node_modules', 'react-native', 'third-party-podspecs', 'boost.podspec');
-  const boostPodspec = fs.readFileSync(boostPodspecPath, 'utf8');
-  const boostPodspecPatched = boostPodspec.replace(
-    'https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2',
-    'https://sourceforge.net/projects/boost/files/boost/1.76.0/boost_1_76_0.tar.bz2'
-  );
+  if (!fs.existsSync(boostPodspecPath)) {
+    log('boost.podspec does not exist, skipping patch...');
+    return;
+  }
 
-  fs.writeFileSync(boostPodspecPath, boostPodspecPatched, 'utf8');
-}
+  let boostPodspec = fs.readFileSync(boostPodspecPath, 'utf8');
+
+  if (!boostPodspec.includes(originalUrl)) {
+    log('boost.podspec is already patched or the URL is different, skipping patch...');
+    return;
+  }
+
+  log('Applying boost.podspec patch...');
+  boostPodspec = boostPodspec.replace(originalUrl, patchedUrl);
+  fs.writeFileSync(boostPodspecPath, boostPodspec, 'utf8');
+};
 
 function podInstallIfRequired() {
   if (process.platform === 'darwin' && !process.env.DETOX_DISABLE_POD_INSTALL) {
@@ -23,7 +31,7 @@ function podInstallIfRequired() {
     patchBoostPodspec();
 
     cp.execSync('pod install', {
-      cwd: path.join(process.cwd(), 'ios'),
+      cwd: `${process.cwd()}/ios`,
       stdio: 'inherit'
     });
   }
