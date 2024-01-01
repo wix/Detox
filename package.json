@@ -10,8 +10,7 @@
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
-    "package:ios": "scripts/ci.ios-release.sh",
-    "postinstall": "node scripts/postinstall.js"
+    "package:ios": "scripts/ci.ios-release.sh"
   },
   "repository": {
     "type": "git",
