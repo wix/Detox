@@ -48,7 +48,6 @@ class AppleSimUtils {
 
           break;
 
-
         case 'contacts':
           if (value === PERMISSIONS_VALUES.LIMITED) {
             await this.setPermissionWithSimctl(udid, bundleId, SIMCTL_SET_PERMISSION_ACTIONS.GRANT, 'contacts-limited');
@@ -77,7 +76,6 @@ class AppleSimUtils {
           const simctlService = service.replace('medialibrary', 'media-library');
           await this.setPermissionWithSimctl(udid, bundleId, this.basicPermissionValueToSimctlAction(value), simctlService);
           break;
-
 
         // Requires AppleSimUtils: unsupported by latest Simctl at the moment of writing this code.
         // eslint-disable-next-line no-fallthrough
