@@ -1,10 +1,13 @@
 package com.wix.detox.espresso.scroll;
 
 import android.content.Context;
+import android.graphics.Insets;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowInsets;
 
 import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.espresso.DeviceDisplay;
@@ -171,6 +174,50 @@ public class ScrollHelper {
         int offsetX = ((int) (view.getWidth() * offsetFactorX) + safetyOffsetX);
         int offsetY = ((int) (view.getHeight() * offsetFactorY) + safetyOffsetY);
 
+        final float[] displaySize = DeviceDisplay.getScreenSizeInPX();
+
+        // Calculate the min/max scrollable area, taking into account the system gesture insets.
+        // By default we assume the scrollable area is the entire view.
+        int gestureSafeOffset = DeviceDisplay.convertDpiToPx(1) * 3;
+        int minX = gestureSafeOffset;
+        int minY = gestureSafeOffset;
+        float maxX = displaySize[0] - gestureSafeOffset;
+        float maxY = displaySize[1] - gestureSafeOffset;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // System gesture insets are only available on Android Q (29) and above.
+            WindowInsets rootWindowInsets = view.getRootWindowInsets();
+            if (rootWindowInsets == null) {
+                Log.w(LOG_TAG, "Could not get root window insets. Using default calculation.");
+            } else {
+                Insets gestureInsets = rootWindowInsets.getSystemGestureInsets();
+                minX = gestureInsets.left;
+                minY = gestureInsets.top;
+                maxX -= gestureInsets.right;
+                maxY -= gestureInsets.bottom;
+
+                Log.d(LOG_TAG,
+                    "System gesture insets: " +
+                        gestureInsets + " minX=" +
+                        minX + " minY=" + minY + " maxX=" + maxX + " maxY=" + maxY + " offsetX=" + offsetX + " offsetY=" + offsetY);
+            }
+        }
+
+        switch (direction) {
+            case MOTION_DIR_UP:
+                offsetY = (int) Math.max(offsetY, minY);
+                break;
+            case MOTION_DIR_DOWN:
+                offsetY = (int) Math.min(offsetY, maxY);
+                break;
+            case MOTION_DIR_LEFT:
+                offsetX = (int) Math.max(offsetX, minX);
+                break;
+            case MOTION_DIR_RIGHT:
+                offsetX = (int) Math.min(offsetX, maxX);
+                break;
+        }
+
         point.offset(offsetX, offsetY);
         return point;
     }
@@ -217,7 +264,7 @@ public class ScrollHelper {
         return new Point(pos[0], pos[1]);
     }
 
-    private static ViewConfiguration getViewConfiguration() {
+    public static ViewConfiguration getViewConfiguration() {
         if (viewConfiguration == null) {
             final Context applicationContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
             viewConfiguration = ViewConfiguration.get(applicationContext);
