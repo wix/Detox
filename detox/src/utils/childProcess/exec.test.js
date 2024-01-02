@@ -21,7 +21,7 @@ describe('Exec utils', () => {
   it(`exec command with no arguments ends successfully`, async () => {
     mockCppSuccessful(cpp);
     await exec.execWithRetriesAndLogs('bin');
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
   });
 
   it(`exec command with arguments ends successfully`, async () => {
@@ -30,7 +30,7 @@ describe('Exec utils', () => {
     const options = { args: `--argument 123` };
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, {});
   });
 
   it(`exec command with env-vars pass-through (i.e. no custom env-vars specification`, async () => {
@@ -50,7 +50,7 @@ describe('Exec utils', () => {
     };
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin --argument 123`, {});
   });
 
   it(`exec command with prefix (no args) ends successfully`, async () => {
@@ -59,7 +59,7 @@ describe('Exec utils', () => {
     const options = { prefix: `export MY_PREFIX` };
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`export MY_PREFIX && bin`, {});
   });
 
   it(`exec command log using a custom logger`, async () => {
@@ -86,7 +86,7 @@ describe('Exec utils', () => {
     };
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, {});
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 1 }, options.statusLogs.trying);
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_TRY', retryNumber: 2 }, options.statusLogs.trying);
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
@@ -108,7 +108,7 @@ describe('Exec utils', () => {
 
     await exec.execWithRetriesAndLogs('bin', options);
 
-    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin --argument 123`, {});
     expect(logger.debug).toHaveBeenCalledWith({ event: 'EXEC_RETRY' }, '(Retry #1)', 'bin --argument 123');
     expect(logger.debug).not.toHaveBeenCalledWith({ event: 'EXEC_RETRY' }, expect.stringContaining('Retry #0'), expect.any(String));
     expect(logger.trace).toHaveBeenCalledWith({ event: 'EXEC_TRY_FAIL' }, 'error result');
@@ -162,7 +162,7 @@ describe('Exec utils', () => {
       await exec.execWithRetriesAndLogs('bin', { retries: 0, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
-      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
       expect(logger.error.mock.calls).toHaveLength(3);
       expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'EXEC_FAIL' }), expect.anything());
     }
@@ -175,7 +175,7 @@ describe('Exec utils', () => {
       await exec.execWithRetriesAndLogs('bin', { verbosity: 'low', retries: 0, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
-      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
       expect(logger.error).not.toHaveBeenCalled();
       expect(logger.debug.mock.calls).toHaveLength(4);
     }
@@ -193,6 +193,13 @@ describe('Exec utils', () => {
     }
   });
 
+  it(`exec command with a given maxBuffer`, async () => {
+    mockCppSuccessful(cpp);
+
+    await exec.execWithRetriesAndLogs('bin', { maxBuffer: 1000 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { maxBuffer: 1000 });
+  });
+
   it(`exec command with multiple failures`, async () => {
     const errorResult = returnErrorWithValue('error result');
     cpp.exec
@@ -207,7 +214,7 @@ describe('Exec utils', () => {
       await exec.execWithRetriesAndLogs('bin', { retries: 5, interval: 1 });
       fail('expected execWithRetriesAndLogs() to throw');
     } catch (object) {
-      expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+      expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
       expect(cpp.exec).toHaveBeenCalledTimes(6);
       expect(object).toBeDefined();
     }
@@ -226,7 +233,7 @@ describe('Exec utils', () => {
       .mockResolvedValueOnce(successfulResult);
 
     await exec.execWithRetriesAndLogs('bin', { retries: 6, interval: 1 });
-    expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 0 });
+    expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });
 
