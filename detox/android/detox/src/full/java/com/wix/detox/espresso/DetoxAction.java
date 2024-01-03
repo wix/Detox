@@ -79,8 +79,8 @@ public class DetoxAction {
      * Scrolls to the edge of the given scrollable view.
      *
      * @param edge Direction to scroll (see {@link MotionDir})
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      * @return ViewAction
      */
     public static ViewAction scrollToEdge(final int edge, double startOffsetPercentX, double startOffsetPercentY) {
