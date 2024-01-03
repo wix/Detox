@@ -1,5 +1,3 @@
-/* global by, device, element */
-const _ = require('lodash');
 const { launchArgsDriver: driver } = require('./drivers/launch-args-driver');
 
 // Note: Android-only as, according to Leo, on iOS there's no added value here compared to

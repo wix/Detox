@@ -7,9 +7,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import ScrollBarGradient from '../Views/ScrollBarGradient';
-import BadgeButton from "../Views/BadgeButton";
-
 export default class VisibilityExpectationScreen extends Component {
   constructor(props) {
     super(props);
