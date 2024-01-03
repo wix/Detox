@@ -9,7 +9,6 @@ const BASIC_PERMISSIONS_TO_CHECK = [
   'reminders',
   'siri',
   'speech',
-  // 'medialibrary', // todo: Temporary disabled, see https://github.com/zoontek/react-native-permissions/pull/831
 ];
 
 const LOCATION_ALWAYS = 'location_always';
