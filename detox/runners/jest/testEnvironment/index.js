@@ -1,6 +1,7 @@
 const path = require('path');
 
-const WithEmitter = require('jest-environment-emit').default;
+// TODO [2024-01-10]: fix .default fallback in jest-metadata
+const WithMetadata = require('jest-metadata/environment-decorator').default ?? require('jest-metadata/environment-decorator');
 const resolveFrom = require('resolve-from');
 const maybeNodeEnvironment = require(resolveFrom(process.cwd(), 'jest-environment-node'));
 /** @type {typeof import('@jest/environment').JestEnvironment} */
@@ -32,7 +33,7 @@ const log = detox.log.child({ cat: 'lifecycle,jest-environment' });
 /**
  * @see https://www.npmjs.com/package/jest-circus#overview
  */
-class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
+class DetoxCircusEnvironment extends WithMetadata(NodeEnvironment) {
   constructor(config, context) {
     super(assertJestCircus27(config), assertExistingContext(context));
 

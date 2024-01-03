@@ -49,7 +49,6 @@ module.exports = async () => {
     'testEnvironment': './test/e2e/testEnvironment.js',
     'testEnvironmentOptions': {
       'eventListeners': [
-        'jest-metadata/environment-listener',
         'jest-allure2-reporter/environment-listener',
         require.resolve('detox-allure2-adapter'),
       ]
