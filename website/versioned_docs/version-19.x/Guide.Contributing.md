@@ -40,7 +40,7 @@ Either install `npm` or check that you have it installed, using their [official 
 #### Install the monorepo management tool, `lerna`
 
 ```bash npm2yarn
-npm install lerna@6.x.x --global
+npm install lerna@3.x.x --global
 ```
 
 For all the internal projects (detox, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
