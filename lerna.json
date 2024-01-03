@@ -1,5 +1,5 @@
 {
-  "lerna": "6.5.0",
+  "lerna": "6.6.2",
   "useWorkspaces": false,
   "packages": [
     "detox",
