@@ -17,7 +17,7 @@ To set up the monorepo locally, follow these steps:
 Install the monorepo management tool, `lerna`:
 
 ```bash npm2yarn
-npm install lerna@3.x.x --global
+npm install lerna@6.x.x --global
 ```
 
 Clone the repository and navigate to the project directory:

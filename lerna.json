@@ -1,5 +1,6 @@
 {
-  "lerna": "3.22.1",
+  "lerna": "6.5.0",
+  "useWorkspaces": false,
   "packages": [
     "detox",
     "detox-cli",
