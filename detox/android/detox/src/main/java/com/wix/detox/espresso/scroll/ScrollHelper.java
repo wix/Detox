@@ -64,8 +64,8 @@ public class ScrollHelper {
      * of the screen.)
      *
      * @param direction Direction to scroll (see {@link @MotionDir})
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view. Null means select automatically.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view. Null means select automatically.
      */
     public static void performOnce(UiController uiController, View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
         final int scrollableRangePx = getViewSafeScrollableRangePix(view, direction);
