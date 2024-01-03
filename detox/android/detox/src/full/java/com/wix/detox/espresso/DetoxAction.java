@@ -117,8 +117,8 @@ public class DetoxAction {
      *
      * @param direction           Direction to scroll (see {@link MotionDir})
      * @param amountInDP          Density Independent Pixels
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      */
     public static ViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
@@ -134,8 +134,8 @@ public class DetoxAction {
      *
      * @param direction           Direction to scroll (see {@link MotionDir})
      * @param amountInDP          Density Independent Pixels
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      */
     public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
