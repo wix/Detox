@@ -99,7 +99,8 @@ Grants or denies runtime permissions to your application. This will cause the ap
 await device.launchApp({permissions: {calendar: 'YES'}});
 ```
 
-Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) to implement this functionality for iOS simulators. Read about the different types of permissions and how to set them in AppleSimUtils' documentation and by checking out Detox’s [own test suite](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/test/e2e/13.permissions.test.js).
+Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) to implement this functionality for iOS simulators.
+Read about the different types of permissions and how to set them in AppleSimUtils' documentation and by checking out Detox’s [own test suite](https://github.com/wix/Detox/blob/master/detox/test/e2e/13.permissions.test.js).
 
 #### 3. `url`—Launching with URL
 
