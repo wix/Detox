@@ -130,6 +130,7 @@ class OmniListener implements DetoxCircusListener {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class CustomEnvironment extends DetoxCircusEnvironment {
   constructor(config: any, context: any) {
     super(config, context);

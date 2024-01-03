@@ -5,11 +5,9 @@ import {
   Text,
   View,
   ScrollView,
-  Animated,
-  TouchableOpacity
 } from 'react-native';
 
-function Block({ children }) {
+function Block() {
   const subBlocks = _.times(30, (i) => (
     <SubBlock>{i + 1}</SubBlock>
   ));

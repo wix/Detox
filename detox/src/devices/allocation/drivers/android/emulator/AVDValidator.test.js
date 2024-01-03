@@ -54,7 +54,7 @@ describe('AVD validator', () => {
 
     try {
       await uut.validate();
-      fail('expected to throw');
+      throw 'expected to throw';
     } catch (err) {
       const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
       expect(err).toBeInstanceOf(DetoxRuntimeError);
@@ -68,7 +68,7 @@ describe('AVD validator', () => {
 
     try {
       await uut.validate('mock-avd-name');
-      fail('expected to throw');
+      throw 'expected to throw';
     } catch (err) {
       const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
       expect(err).toBeInstanceOf(DetoxRuntimeError);

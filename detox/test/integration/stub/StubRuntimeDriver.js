@@ -47,7 +47,7 @@ class StubRuntimeDriver extends DeviceDriverBase {
     return process.pid;
   }
 
-  async deliverPayload(params) {
+  async deliverPayload(_params) {
     await sleepVeryLittle();
   }
 

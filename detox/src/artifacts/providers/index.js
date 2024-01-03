@@ -1,5 +1,5 @@
 class ArtifactPluginsProvider {
-  declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars
+  declareArtifactPlugins({ client }) {} // eslint-disable-line no-unused-vars,@typescript-eslint/no-unused-vars
 }
 
 class AndroidArtifactPluginsProvider extends ArtifactPluginsProvider {

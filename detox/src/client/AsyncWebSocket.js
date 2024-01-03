@@ -134,7 +134,7 @@ class AsyncWebSocket {
     }
   }
 
-  // TODO: handle this leaked abstraction some day
+  // TODO [2024-12-01]: handle this leaked abstraction some day
   hasPendingActions() {
     return _.some(this.inFlightPromises, p => p.message.type !== 'currentStatus');
   }
@@ -168,7 +168,7 @@ class AsyncWebSocket {
       case WebSocket.CONNECTING: return 'opening';
       case WebSocket.OPEN: return 'open';
       /* istanbul ignore next */
-      default: // TODO: [2021-12-01] throw new DetoxInternalError('...'); instead
+      default:
         return undefined;
     }
   }

@@ -531,7 +531,7 @@ describe('AndroidExpect', () => {
         const script = 'function named(el) { return el.textContent; }';
         await e.web.element(e.by.web.id('id')).runScript(function () {});
         await e.web.element(e.by.web.className('className')).runScript((el) => el.textContent);
-        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(function named(...args) {});
+        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(function named(..._args) {});
         await e.web.element(e.by.web.name('name')).runScript(script);
         await e.web.element(e.by.web.xpath('xpath')).runScript(script);
         await e.web.element(e.by.web.href('linkText')).runScript(script);

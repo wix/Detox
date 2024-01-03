@@ -3,7 +3,7 @@ module.exports = ({ rootDir }) => {
   const sanitize = require('sanitize-filename');
 
   return {
-    buildPathForTestArtifact(artifactName, testSummary = null) {
+    buildPathForTestArtifact(artifactName, _testSummary) {
       return path.join(rootDir, sanitize(artifactName));
     }
   };

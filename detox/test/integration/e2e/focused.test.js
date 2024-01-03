@@ -3,6 +3,7 @@ describe('Focused', () => {
     // Reproducing when hook_start is called after test_start
   });
 
+  // eslint-disable-next-line jest/no-focused-tests
   it.only('Only test', async () => {
     // Checking that skipped tests are also traced
   });

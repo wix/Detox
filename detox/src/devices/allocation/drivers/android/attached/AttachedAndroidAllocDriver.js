@@ -41,7 +41,6 @@ class AttachedAndroidAllocDriver {
   async postAllocate(deviceCookie) {
     const { adbName } = deviceCookie;
 
-    // TODO Also disable native animations?
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
   }

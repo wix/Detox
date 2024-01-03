@@ -93,7 +93,6 @@ export default class example extends Component {
         {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 
-        { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderButton('Crash', () => {
             // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
