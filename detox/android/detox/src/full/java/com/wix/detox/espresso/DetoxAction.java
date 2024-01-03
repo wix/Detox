@@ -84,9 +84,9 @@ public class DetoxAction {
      * @return ViewAction
      */
     public static ViewAction scrollToEdge(final int edge, double startOffsetPercentX, double startOffsetPercentY) {
-
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
         final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
+
         return actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
