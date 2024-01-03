@@ -140,7 +140,6 @@ class NativeElement {
   }
 
   async takeScreenshot(screenshotName) {
-    // TODO this should be moved to a lower-layer handler of this use-case
     const action = new actions.TakeElementScreenshot();
     const traceDescription = actionDescription.takeScreenshot(screenshotName);
     const resultBase64 = await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();

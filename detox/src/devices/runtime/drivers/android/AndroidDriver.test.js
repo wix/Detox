@@ -8,7 +8,7 @@ describe('Android driver', () => {
   const mockNotificationDataTargetPath = '/ondevice/path/to/notification.json';
 
   let logger;
-  let fs; // TODO don't mock
+  let fs; // on the next rewrite, do your best not to mock fs
   let client;
   let getAbsoluteBinaryPath;
   let eventEmitter;
@@ -21,7 +21,6 @@ describe('Android driver', () => {
   let appInstallHelper;
   let appUninstallHelper;
   let instrumentation;
-  let DeviceRegistryClass;
 
   let uut;
   beforeEach(() => {
@@ -584,7 +583,6 @@ describe('Android driver', () => {
 
 
     jest.mock('../../../allocation/DeviceRegistry');
-    DeviceRegistryClass = require('../../../allocation/DeviceRegistry');
   };
 
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
