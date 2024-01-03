@@ -3,5 +3,5 @@
 echo "Node version:"
 node --version
 
-npm install -g lerna@3.22.1
+npm install -g lerna@6.6.2
 npm install -g react-native-cli >/dev/null 2>&1

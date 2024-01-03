@@ -22,7 +22,7 @@
   "devDependencies": {
     "chalk": "^4.0.0",
     "dictionary-en": "^3.1.0",
-    "lerna": "3.22.1",
+    "lerna": "^6.6.2",
     "lodash": "4.17.x",
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
