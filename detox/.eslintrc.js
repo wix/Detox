@@ -16,10 +16,6 @@ module.exports = {
   env: {
     node: true
   },
-  globals: {
-    // TODO: remove use of fail() across the project because Jest Circus doesn't support it
-    'fail': true
-  },
   rules: {
     '@typescript-eslint/no-unused-vars': [
       'warn',

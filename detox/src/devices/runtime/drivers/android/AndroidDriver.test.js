@@ -53,12 +53,9 @@ describe('Android driver', () => {
     });
 
     it('should break if instrumentation launch fails', async () => {
-      instrumentation.launch.mockRejectedValue(new Error());
+      instrumentation.launch.mockRejectedValue(new Error('Simulated failure'));
 
-      try {
-        await uut.launchApp(bundleId, {}, '');
-        fail();
-      } catch (e) {}
+      await expect(uut.launchApp(bundleId, {}, '')).rejects.toThrowError('Simulated failure');
     });
 
     it('should set a termination callback function', async () => {
@@ -354,12 +351,8 @@ describe('Android driver', () => {
       instrumentation.waitForCrash.mockRejectedValue(new Error());
 
       await uut.launchApp(bundleId, {}, '');
-      try {
-        await uut.waitUntilReady();
-        fail();
-      } catch (e) {
-        expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
-      }
+      await expect(uut.waitUntilReady()).rejects.toThrowError();
+      expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
     });
   });
 
@@ -440,14 +433,10 @@ describe('Android driver', () => {
         .mockRejectedValueOnce(new Error())
         .mockResolvedValueOnce();
 
-      try {
-        await uut.installUtilBinaries(binaryPaths);
-        fail();
-      } catch (e) {
-        expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-        expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
-        expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
-      }
+      await expect(uut.installUtilBinaries(binaryPaths)).rejects.toThrowError();
+      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
     });
 
     it('should not install if already installed', async () => {

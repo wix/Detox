@@ -283,12 +283,8 @@ describe('expectTwo API Coverage', () => {
 });
 
 async function expectToThrow(func) {
-  try {
-    await func();
-    fail('should throw');
-  } catch (ex) {
-    expect(ex).toBeDefined();
-  }
+  const asyncWrapper = async () => await func();
+  await expect(asyncWrapper()).rejects.toThrow();
 }
 
 class MockExecutor {
