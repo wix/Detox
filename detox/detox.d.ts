@@ -9,7 +9,6 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { WebMatcher } from './index';
 
 declare global {
     namespace Detox {

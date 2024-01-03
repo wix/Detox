@@ -3,7 +3,7 @@
   "include": ["*.ts"],
   "exclude": [],
   "compilerOptions": {
-    "types": ["node", "detox"],
+    "types": ["node", "detox/globals"],
     "skipLibCheck": false,
     "strict": true,
     "noImplicitAny": true,

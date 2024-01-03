@@ -4,6 +4,45 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the latter builds to learn about their improvements and changes.
 
+## 21.0
+
+### Node.js version
+
+Detox 21 requires Node.js 16 or higher. If you are using an older version, please upgrade.
+
+### Explicit TypeScript imports
+
+If you were using Detox globals in your TypeScript tests (`device`, `element`, `expect`, etc.), please import them now explicitly via `types` compiler option:
+
+```diff title="tsconfig.json"
+{
+  "compilerOptions": {
+    ...
+-   "types": ["node", "jest", "detox"],
++   "types": ["node", "jest", "detox/globals"],
+  }
+}
+```
+
+### jest-metadata is included by default
+
+If you were using `jest-metadata` package explicitly in your `jest.config.js`, you can remove it now, e.g.:
+
+```diff title="jest.config.js"
+ module.exports = {
+   testEnvironment: 'detox/runners/jest/testEnvironment',
+   testEnvironmentOptions: {
+     eventListeners: [
+-      'jest-metadata/environment-listener',
+       'jest-allure2-reporter/environment-listener',
+       'detox-allure2-adapter',
+     ]
+   },
+ };
+```
+
+Detox test environment now extends `jest-metadata/environment-node` by default, so you don’t need to register metadata listeners explicitly.
+
 ## 20.0
 
 ### No [Mocha] support
