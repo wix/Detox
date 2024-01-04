@@ -8,6 +8,18 @@ Please complete our [Introductory environment setup](introduction/environment-se
 
 :::
 
+## Node.js
+
+We recommend using [`nvm`](https://github.com/nvm-sh/nvm) or [`nvm-windows`](https://github.com/coreybutler/nvm-windows) to manage your Node.js versions. However, you can find our required Node.js version in the [`.nvmrc`](https://github.com/wix/Detox/blob/master/.nvmrc) file and install it using your preferred method or from the [official download page](https://nodejs.org/en/download/).
+
+Currently, we require `lts/iron` (Node.js 20.x) for our development environment.
+
+:::tip
+
+The exhaustive list of LTS codenames (e.g. `lts/iron`)  can be found at [CODENAMES.md](https://github.com/nodejs/Release/blob/main/CODENAMES.md) in the Node.js repository.
+
+:::
+
 ## Setting Up The Monorepo Management
 
 Our repository is a monorepo, which means it contains multiple Detox-related projects and packages. [Read more about our repository structure](../code/overview.md#repository-structure).
