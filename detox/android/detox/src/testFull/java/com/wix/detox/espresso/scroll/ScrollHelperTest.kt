@@ -8,6 +8,7 @@ import androidx.test.espresso.UiController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.wix.detox.action.common.MOTION_DIR_DOWN
 import com.wix.detox.espresso.DeviceDisplay
+import com.wix.detox.espresso.scroll.ScrollHelper.getViewSafeScrollableRangePix
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
@@ -19,6 +20,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 
+private const val INSETS_SIZE = 100
+
 @Config(qualifiers = "xxxhdpi", sdk = [33])
 @RunWith(RobolectricTestRunner::class)
 class ScrollHelperTest {
@@ -26,54 +29,64 @@ class ScrollHelperTest {
     private val display = DeviceDisplay.getScreenSizeInPX()
     private val displayWidth = display[0].toInt()
     private val displayHeight = display[1].toInt()
+    private val touchSlopPx = ScrollHelper.getViewConfiguration().scaledTouchSlop
+    private val safetyMarginPx = DeviceDisplay.convertDpiToPx(2.0)
 
-    private val uiController = mock<UiController>()
-    private val view = mockView(displayWidth, displayHeight)
+    private val uiControllerMock = mock<UiController>()
+    private val viewMock = mockViewWithGestureNavigation(displayWidth, displayHeight)
 
     @Test
-    fun `perform scroll down for 200 dp on full screen view`() {
+    fun `perform scroll down for 200 dp on full screen view with gesture navigation enabled`() {
         val amountInDp = 200.0
         val amountInPx = amountInDp * DeviceDisplay.getDensity()
-        val touchSlopPx = ScrollHelper.getViewConfiguration().scaledTouchSlop
 
-        ScrollHelper.perform(uiController, view, MOTION_DIR_DOWN, amountInDp, null, null)
-        val capture = argumentCaptor<Iterable<MotionEvent>>()
-        verify(uiController).injectMotionEventSequence(capture.capture())
+        // Perform the scroll
+        ScrollHelper.perform(uiControllerMock, viewMock, MOTION_DIR_DOWN, amountInDp, null, null)
 
-        val listOfCapturedEvents = capture.firstValue.toList()
-        val lastEvent = listOfCapturedEvents.last() // The last event is the UP event with the target coordinates
-        // the joinery of the swipe is not interesting
-        val lastEventX = lastEvent.x
-        val lastEventY = lastEvent.y
-        assertEquals(displayWidth / 2.0, lastEventX.toDouble(), 0.0)
-        assertEquals(displayHeight - amountInPx - touchSlopPx - DeviceDisplay.convertDpiToPx(1.0), lastEventY.toDouble(), 0.0)
+        // Verify start and end coordinates
+        val upEvent = getUpEvent()
+        val x = upEvent.x
+        val y = upEvent.y
+        // Verify that the scroll started at the center of the view
+        assertEquals(displayWidth / 2.0, x.toDouble(), 0.0)
+        // Verify that the scroll ended at the center of the view minus the requested amount
+        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, y.toDouble(), 0.0)
     }
 
     @Test
-    fun `perform scroll down for 200 dp on full screen view with offset y`() {
-        val amountInDp = 200.0
-        val amountInPx = amountInDp * DeviceDisplay.getDensity()
-        val touchSlopPx = ScrollHelper.getViewConfiguration().scaledTouchSlop
-        val offsetPercent = 0.9f
+    fun `perform scroll down to edge on full screen view with gesture navigation enabled`() {
+        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_DOWN)
+        val upEvent = getUpEvent()
+        val x = upEvent.x
+        val y = upEvent.y
+        val amountInPx = getViewSafeScrollableRangePix(viewMock, MOTION_DIR_DOWN).toFloat()
 
-        ScrollHelper.perform(uiController, view, MOTION_DIR_DOWN, amountInDp, null, offsetPercent)
-        val capture = argumentCaptor<Iterable<MotionEvent>>()
-        verify(uiController).injectMotionEventSequence(capture.capture())
-
-        val listOfCapturedEvents = capture.firstValue.toList()
-        val lastEvent = listOfCapturedEvents.last() // The last event is the UP event with the target coordinates
-        // the joinery of the swipe is not interesting
-        val lastEventX = lastEvent.x
-        val lastEventY = lastEvent.y
-        assertEquals(displayWidth / 2.0, lastEventX.toDouble(), 0.0)
-        assertEquals(displayHeight - amountInPx - touchSlopPx  - DeviceDisplay.convertDpiToPx(1.0), lastEventY.toDouble(), 0.0)
+        assertEquals(displayWidth / 2.0, x.toDouble(), 0.0)
+        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, y, 0.0f)
 
     }
 
-    private fun mockView(displayWidth: Int, displayHeight: Int): View {
+    /**
+     * Get the performed UP event from the ui controller
+     */
+    private fun getUpEvent(): MotionEvent {
+        val capture = argumentCaptor<Iterable<MotionEvent>>()
+        // Capture the events from the ui controller
+        verify(uiControllerMock).injectMotionEventSequence(capture.capture())
+
+        val listOfCapturedEvents = capture.firstValue.toList()
+        // The last event is the UP event with the target coordinates. All of the rest are not interesting
+        return listOfCapturedEvents.last()
+    }
+
+    /**
+     * Mock a view with gesture navigation enabled
+     */
+    private fun mockViewWithGestureNavigation(displayWidth: Int, displayHeight: Int): View {
+        // This is how we enable gesture navigation
         val windowInsets = mock<WindowInsets>() {
             whenever(it.systemGestureInsets).thenReturn(
-                Insets.of(88, 88, 88, 100)
+                Insets.of(INSETS_SIZE, INSETS_SIZE, INSETS_SIZE, INSETS_SIZE)
             )
         }
 
