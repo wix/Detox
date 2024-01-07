@@ -1,2 +1,7 @@
 include ':detox'
-includeBuild('../node_modules/react-native-gradle-plugin')
+
+includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// FIXME: Support RN 0.71
+// includeBuild('../node_modules/react-native-gradle-plugin')
+

@@ -10,11 +10,14 @@ project.ext.rnInfo = [
     isRN69OrHigher: rnMajorVer >= 69,
     isRN70OrHigher: rnMajorVer >= 70,
     isRN71OrHigher: rnMajorVer >= 71,
+    isRN72OrHigher: rnMajorVer >= 72,
 ]
 
 private static def getRNVersion(workingDir) {
     def jsonSlurper = new JsonSlurper()
-    Map<String, Object> packageJSON  = jsonSlurper.parse(new File("$workingDir/../node_modules/react-native/package.json"))
+    def packageFile = "$workingDir/../node_modules/react-native/package.json"
+    println("RNInfo: reading $packageFile")
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File(packageFile))
     String rnVersion = packageJSON.get('version')
     return rnVersion
 }
