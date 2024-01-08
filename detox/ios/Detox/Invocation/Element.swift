@@ -140,10 +140,13 @@ class Element : NSObject {
 		view.dtx_pinch(withScale: scale, velocity: velocity, angle: angle)
 	}
 	
-	func scroll(to edge: UIRectEdge) {
+	func scroll(to edge: UIRectEdge, normalizedStartingPoint: CGPoint? = nil) {
 		let scrollView = extractScrollView()
-		
-		scrollView.dtx_scroll(to: edge)
+		if let normalizedStartingPoint = normalizedStartingPoint {
+			scrollView.dtx_scroll(to: edge, normalizedStarting: normalizedStartingPoint)
+		} else {
+			scrollView.dtx_scroll(to: edge)
+		}
 	}
 
 	func scroll(withOffset offset: CGPoint, normalizedStartingPoint: CGPoint? = nil) {
