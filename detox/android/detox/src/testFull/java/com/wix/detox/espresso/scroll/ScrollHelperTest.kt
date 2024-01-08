@@ -36,33 +36,27 @@ class ScrollHelperTest {
     private val viewMock = mockViewWithGestureNavigation(displayWidth, displayHeight)
 
     @Test
-    fun `perform scroll down for 200 dp on full screen view with gesture navigation enabled`() {
+    fun `should take gesture navigation into account when scrolling down`() {
         val amountInDp = 200.0
         val amountInPx = amountInDp * DeviceDisplay.getDensity()
 
-        // Perform the scroll
         ScrollHelper.perform(uiControllerMock, viewMock, MOTION_DIR_DOWN, amountInDp, null, null)
 
-        // Verify start and end coordinates
         val upEvent = getUpEvent()
-        val x = upEvent.x
-        val y = upEvent.y
         // Verify that the scroll started at the center of the view
-        assertEquals(displayWidth / 2.0, x.toDouble(), 0.0)
+        assertEquals(displayWidth / 2.0, upEvent.x.toDouble(), 0.0)
         // Verify that the scroll ended at the center of the view minus the requested amount
-        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, y.toDouble(), 0.0)
+        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, upEvent.y.toDouble(), 0.0)
     }
 
     @Test
-    fun `perform scroll down to edge on full screen view with gesture navigation enabled`() {
+    fun `should scroll down to edge on full screen view when gesture navigation enabled`() {
         ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_DOWN)
         val upEvent = getUpEvent()
-        val x = upEvent.x
-        val y = upEvent.y
         val amountInPx = getViewSafeScrollableRangePix(viewMock, MOTION_DIR_DOWN).toFloat()
 
-        assertEquals(displayWidth / 2.0, x.toDouble(), 0.0)
-        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, y, 0.0f)
+        assertEquals(displayWidth / 2.0, upEvent.x.toDouble(), 0.0)
+        assertEquals(displayHeight - amountInPx - touchSlopPx - safetyMarginPx - INSETS_SIZE, upEvent.y, 0.0f)
 
     }
 

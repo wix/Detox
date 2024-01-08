@@ -143,7 +143,7 @@ public class ScrollHelper {
         return range;
     }
 
-    private static int[] getScrollStartCoordinatesInView(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
+    private static int[] getScrollStartOffsetInView(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
         final int safetyOffset = DeviceDisplay.convertDpiToPx(1);
         float offsetFactorX;
         float offsetFactorY;
@@ -197,10 +197,10 @@ public class ScrollHelper {
         Point result = getGlobalViewLocation(view);
 
         // 1. Calculate the scroll start point, with respect to the view's location.
-        int[] coordinates = getScrollStartCoordinatesInView(view, direction, startOffsetPercentX, startOffsetPercentY);
+        int[] coordinates = getScrollStartOffsetInView(view, direction, startOffsetPercentX, startOffsetPercentY);
 
         // 2. Make sure that the start point is within the scrollable area, taking into account the system gesture insets.
-        coordinates = calculateScrollStartWithNavigationGestureInsets(view, direction, coordinates[0], coordinates[1]);
+        coordinates = applyScreenInsets(view, direction, coordinates[0], coordinates[1]);
 
         result.offset(coordinates[0], coordinates[1]);
         return result;
@@ -214,7 +214,7 @@ public class ScrollHelper {
      * @param y The scroll start point, with respect to the view's location.
      * @return an array of two integers, denoting the scroll start point, with respect to the system gesture insets.
      */
-    private static int[] calculateScrollStartWithNavigationGestureInsets(View view, int direction, int x, int y) {
+    private static int[] applyScreenInsets(View view, int direction, int x, int y) {
         // System gesture insets are only available on Android Q (29) and above.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             return new int[]{x, y};
