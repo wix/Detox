@@ -70,6 +70,9 @@ post_install do |installer|
   __apply_update_deployment_target_workaround(installer)
   __apply_Xcode_15_post_install_workaround(installer)
 
+  config = use_native_modules!
+
+
   if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
     react_native_post_install(installer)
   else
