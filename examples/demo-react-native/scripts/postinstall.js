@@ -6,7 +6,7 @@ const patchBoostPodspec = () => {
   const log = message => console.log(`[POST-INSTALL] ${message}`);
   const boostPodspecPath = `${process.cwd()}/node_modules/react-native/third-party-podspecs/boost.podspec`;
   const originalUrl = 'https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2';
-  const patchedUrl = 'https://sourceforge.net/projects/boost/files/boost/1.76.0/boost_1_76_0.tar.bz2';
+  const patchedUrl = 'https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.bz2';
 
   if (!fs.existsSync(boostPodspecPath)) {
     log('boost.podspec does not exist, skipping patch...');
