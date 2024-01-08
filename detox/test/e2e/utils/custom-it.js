@@ -18,6 +18,32 @@ function runOrExpectFailByPredicates(spec, specFn, ...predicateFuncs) {
   });
 }
 
+
+/**
+ * Run the test only if the RN version is {version} or below. Otherwise, skip it.
+ * @returns it or it.skip functions
+ */
+function itRNVersionOrBelow(version) {
+  if (parseInt(rnMinorVer) <= version) {
+    return it;
+  } else {
+    return it.skip;
+  }
+}
+
+/**
+ * Run the test only if the RN version is {version} or below. Otherwise, skip it.
+ * @param version
+ * @returns describe or describe.skip functions
+ */
+function describeRNVersionOrBelow(version) {
+  if (parseInt(rnMinorVer) <= version) {
+    return describe;
+  } else {
+    return describe.skip;
+  }
+}
+
 const platformIs = (platform) => () => (device.getPlatform() === platform);
 const rnVerLessThan = (rnVer) => () => (rnMinorVer < rnVer);
 const allPredicatesTrue = (predicateFuncs) => _.reduce(predicateFuncs, (result, predicate) => (result && predicate()), true);
@@ -36,4 +62,6 @@ const runSpec = (specFn) => specFn();
 
 module.exports = {
   it: _it,
+  itRNVersionOrBelow,
+  describeRNVersionOrBelow
 };

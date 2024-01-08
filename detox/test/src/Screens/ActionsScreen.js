@@ -16,9 +16,9 @@ import {
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
 
-let LegacySlider;
 const isLegacyRNVersion = (parseInt(rnVersion.minor) <= 71);
 
+let LegacySlider;
 if (isLegacyRNVersion) {
   LegacySlider = require('react-native').Slider;
 }
