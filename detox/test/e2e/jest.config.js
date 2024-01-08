@@ -73,6 +73,7 @@ module.exports = async () => {
       '!**/__mocks__/**',
       '!**/*.mock.js',
       '!**/*.test.js'
-    ]
+    ],
+    'preset': 'react-native',
   };
 };
