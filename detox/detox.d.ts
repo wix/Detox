@@ -1363,10 +1363,13 @@ declare global {
 
             /**
              * Scroll to edge.
-             * @example await element(by.id('scrollView')).scrollTo('bottom');
+             * @param  edge - left|right|top|bottom
+             * @param startPositionX - the X starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+             * @param startPositionY - the Y starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+             * @example await element(by.id('scrollView')).scrollTo('bottom', NaN, 0.85);
              * @example await element(by.id('scrollView')).scrollTo('top');
              */
-            scrollTo(edge: Direction): Promise<void>;
+            scrollTo(edge: Direction, startPositionX?: number, startPositionY?: number): Promise<void>;
 
             /**
              * Adjust slider to position.

@@ -69,6 +69,7 @@ describe("Test", () => {
             element(by.id("element").withDescendant(by.id("child_element")))
         ).toNotExist();
 
+        // eslint-disable-next-line jest/valid-expect
         const expectElement = expect(element(by.id('TextField_Id1')));
 
         await expectElement.toBeVisible();

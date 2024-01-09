@@ -81,10 +81,10 @@ class ScrollAmountStopAtEdgeAction extends Action {
 }
 
 class ScrollEdgeAction extends Action {
-  constructor(edge) {
+  constructor(edge, startPositionX = -1, startPositionY = -1) {
     super();
 
-    this._call = invoke.callDirectly(DetoxActionApi.scrollToEdge(edge));
+    this._call = invoke.callDirectly(DetoxActionApi.scrollToEdge(edge, startPositionX, startPositionY));
   }
 }
 

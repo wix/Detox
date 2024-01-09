@@ -10,7 +10,7 @@ const launchArgs = {
 const config = {
   testRunner: {
     args: {
-      $0: 'nyc jest',
+      $0: process.env.CI ? 'nyc jest' : 'jest',
       config: 'e2e/jest.config.js',
       forceExit: process.env.CI ? true : undefined,
       _: ['e2e/'],

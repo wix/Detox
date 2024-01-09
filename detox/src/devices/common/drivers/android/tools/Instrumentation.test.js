@@ -131,11 +131,7 @@ describe('Instrumentation', () => {
       childProcessUtils.interruptProcess.mockRejectedValue(new Error());
 
       await uut.launch(deviceId, bundleId, []);
-
-      try {
-        await invokeTerminationCallback();
-        fail();
-      } catch(error) {}
+      await expect(invokeTerminationCallback()).rejects.toThrowError();
     });
 
     it('should not terminate if dispatched twice', async () => {
@@ -162,11 +158,7 @@ describe('Instrumentation', () => {
     it('should break if process interruption fails', async () => {
       childProcessUtils.interruptProcess.mockRejectedValue(new Error());
       await uut.launch(deviceId, bundleId, []);
-
-      try {
-        await uut.terminate();
-        fail();
-      } catch(error) {}
+      await expect(uut.terminate()).rejects.toThrowError();
     });
 
     it('should not terminate if not running', async () => {

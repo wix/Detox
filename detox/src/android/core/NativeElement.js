@@ -93,12 +93,12 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
-  async scrollTo(edge) {
+  async scrollTo(edge, startPositionX, startPositionY) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._matcher = this._matcher._extendToDescendantScrollViews();
 
-    const action = new actions.ScrollEdgeAction(edge);
-    const traceDescription = actionDescription.scrollTo(edge);
+    const action = new actions.ScrollEdgeAction(edge, startPositionX, startPositionY);
+    const traceDescription = actionDescription.scrollTo(edge, startPositionX, startPositionY);
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
@@ -140,7 +140,6 @@ class NativeElement {
   }
 
   async takeScreenshot(screenshotName) {
-    // TODO this should be moved to a lower-layer handler of this use-case
     const action = new actions.TakeElementScreenshot();
     const traceDescription = actionDescription.takeScreenshot(screenshotName);
     const resultBase64 = await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();

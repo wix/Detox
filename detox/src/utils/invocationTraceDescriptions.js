@@ -12,8 +12,9 @@ module.exports = {
     pinchWithAngle: (direction, speed, angle) => `pinch with direction ${direction}, speed ${speed}, and angle ${angle}`,
     replaceText: (value) => `replace input text: "${value}"`,
     scroll: (amount, direction, startPositionX, startPositionY) =>
-      `scroll ${amount} pixels ${direction}${startPositionX !== undefined && startPositionY !== undefined ? ` from normalized position (${startPositionX}, ${startPositionY})` : ''}`,
-    scrollTo: (edge) => `scroll to ${edge}`,
+      `scroll ${amount} pixels ${direction}${startPositionX !== undefined || startPositionY !== undefined ? ` from normalized position (${startPositionX}, ${startPositionY})` : ''}`,
+    scrollTo: (edge, startPositionX, startPositionY) =>
+      `scroll to ${edge} ${startPositionX !== undefined || startPositionY !== undefined ? ` from normalized position (${startPositionX}, ${startPositionY})` : ''}`,
     scrollToIndex: (index) => `scroll to index #${index}`,
     setColumnToValue: (column, value) => `set column ${column} to value ${value}`,
     setDatePickerDate: (dateString, dateFormat) => `set date picker date to ${dateString} using format ${dateFormat}`,

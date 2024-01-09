@@ -40,7 +40,7 @@ class IPCServer {
     this._ipc.config.logger = (msg) => this._logger.trace(msg);
 
     await new Promise((resolve) => {
-      // TODO: handle reject
+      // It is worth to handle rejection here some day
       this._ipc.serve(() => resolve());
       this._ipc.server.on('conductEarlyTeardown', this.onConductEarlyTeardown.bind(this));
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));

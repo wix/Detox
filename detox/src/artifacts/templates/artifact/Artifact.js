@@ -107,7 +107,7 @@ class Artifact {
 
   async doStop() {}
 
-  async doSave(artifactPath) {} // eslint-disable-line no-unused-vars
+  async doSave(_artifactPath) {}
 
   async doDiscard() {}
 }

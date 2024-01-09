@@ -7,7 +7,7 @@ class EmulatorVersionResolver {
     this.version = undefined;
   }
 
-  async resolve(isHeadless = false) { // TODO Make isHeadless a config arg (i.e. through c'tor)?
+  async resolve(isHeadless = false) {
     if (!this.version) {
       this.version = await this._resolve(isHeadless);
     }

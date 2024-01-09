@@ -129,6 +129,15 @@ class Action : CustomStringConvertible {
 		}
 	}
 	
+	func startPosition(forIndex index: Int, in params: [Any]?) -> Double {
+		guard params?.count ?? 0 > index,
+			  let param = params?[index] as? Double,
+			  param.isNaN == false else {
+			return Double.nan
+		}
+		return param
+	}
+	
 	var description: String {
 		let paramsDescription: String
 		if let params = params {
@@ -434,9 +443,13 @@ class ScrollToEdgeAction : Action {
 			fatalError("Unknown scroll direction")
 			break;
 		}
-		
-		element.scroll(to: targetEdge)
-		
+
+		let startPositionX = startPosition(forIndex: 1, in: params)
+		let startPositionY = startPosition(forIndex: 2, in: params)
+		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
+
+		element.scroll(to: targetEdge, normalizedStartingPoint: normalizedStartingPoint)
+
 		return nil
 	}
 }
@@ -487,18 +500,9 @@ class SwipeAction : Action {
 		targetNormalizedOffset.x *= CGFloat(appliedPercentage)
 		targetNormalizedOffset.y *= CGFloat(appliedPercentage)
 		
-		let startPositionX : Double
-		if params?.count ?? 0 > 3, let param2 = params?[3] as? Double, param2.isNaN == false {
-			startPositionX = param2
-		} else {
-			startPositionX = Double.nan
-		}
-		let startPositionY : Double
-		if params?.count ?? 0 > 4, let param3 = params?[4] as? Double, param3.isNaN == false {
-			startPositionY = param3
-		} else {
-			startPositionY = Double.nan
-		}
+		
+		let startPositionX = startPosition(forIndex: 3, in: params)
+		let startPositionY = startPosition(forIndex: 4, in: params)
 		let normalizedStartingPoint = CGPoint(x: startPositionX, y: startPositionY)
 		
 		element.swipe(normalizedOffset: targetNormalizedOffset, velocity: velocity, normalizedStartingPoint: normalizedStartingPoint)

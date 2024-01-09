@@ -110,7 +110,6 @@ describe('Artifact', () => {
         it('should wait till .save() ends and .start() again', async () => {
           await artifact.start(1, 2, 3, 4);
           expect(artifact.doStart).toHaveBeenCalledTimes(2);
-          // TODO: assert the correct execution order
         });
       });
 
@@ -137,7 +136,6 @@ describe('Artifact', () => {
         it('should wait till .discard() ends and .start() again', async () => {
           await artifact.start(1, 2, 3, 4);
           expect(artifact.doStart).toHaveBeenCalledTimes(2);
-          // TODO: assert the correct execution order
         });
       });
 

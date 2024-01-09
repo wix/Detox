@@ -187,14 +187,14 @@ class Client {
       this._whenAppIsReady = new Deferred();
 
       await this._whenAppIsConnected.promise;
-      // TODO: optimize traffic (!) - we can just listen for 'ready' event
+      // TODO [2024-12-01]: optimize traffic (!) - we can just listen for 'ready' event
       // if app always sends it upon load completion. On iOS it works,
       // but not on Android. Afterwards, this will suffice:
       //
       // await this._whenAppIsReady.promise;
     }
 
-    // TODO: move to else branch after the optimization
+    // TODO [2024-12-01]: move to else branch after the optimization ↑↑
     if (!this._whenAppIsReady.isResolved()) {
       this._whenAppIsReady = new Deferred();
       await this.sendAction(new actions.Ready());
