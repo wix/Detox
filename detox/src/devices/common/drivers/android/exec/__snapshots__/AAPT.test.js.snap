@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AAPT Checking whether APK holds instrumentation testing should execute the AAPT command with proper args 1`] = `"\\"escaped(mockSdk/build-tools/30.0.0/aapt)\\" dump xmlstrings \\"escaped(path/to/app.apk)\\" AndroidManifest.xml"`;
+exports[`AAPT Checking whether APK holds instrumentation testing should execute the AAPT command with proper args 1`] = `""escaped(mockSdk/build-tools/30.0.0/aapt)" dump xmlstrings "escaped(path/to/app.apk)" AndroidManifest.xml"`;
 
-exports[`AAPT Reading package name should execute the AAPT command with proper args 1`] = `"\\"escaped(mockSdk/build-tools/30.0.0/aapt)\\" dump badging \\"escaped(path/to/app.apk)\\""`;
+exports[`AAPT Reading package name should execute the AAPT command with proper args 1`] = `""escaped(mockSdk/build-tools/30.0.0/aapt)" dump badging "escaped(path/to/app.apk)""`;

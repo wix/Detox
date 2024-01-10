@@ -1,4 +1,5 @@
 describe('Suite with skipped tests', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('Skipped test', async () => {
     // Checking that skipped tests are also traced
   });

@@ -133,7 +133,9 @@ describe('DetoxWorker', () => {
         expect(envValidator.validate).toHaveBeenCalled());
 
       it('should allocate a device', () => {
-        expect(detoxContext[symbols.allocateDevice]).toHaveBeenCalledWith();
+        expect(detoxContext[symbols.allocateDevice]).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'fake.device',
+        }));
       });
 
       it('should create a runtime-device based on the allocation result (cookie)', () =>

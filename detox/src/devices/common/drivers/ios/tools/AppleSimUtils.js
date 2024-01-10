@@ -33,6 +33,7 @@ class AppleSimUtils {
       args: `--list ${joinArgs(query)}`,
       retries: 1,
       statusLogs: listOptions.trying ? { trying: listOptions.trying } : undefined,
+      maxBuffer: 4 * 1024 * 1024,
     };
     const response = await this._execAppleSimUtils(options);
     const parsed = this._parseResponseFromAppleSimUtils(response);

@@ -7,9 +7,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import ScrollBarGradient from '../Views/ScrollBarGradient';
-import BadgeButton from "../Views/BadgeButton";
-
 export default class VisibilityExpectationScreen extends Component {
   constructor(props) {
     super(props);
@@ -26,10 +23,7 @@ export default class VisibilityExpectationScreen extends Component {
       <SafeAreaView testID='VisibilityExpectationScreen' style={styles.screen}>
         <Text style={styles.header}>Half Visible Element</Text>
         <Text style={styles.text}>Element should be only half-visible.</Text>
-        <View style={styles.halfVisible, { left: shouldMoveElement ? "75%" : "50%" }} testID='halfVisible'>
-          <Text>Half Visible Element</Text>
-        </View>
-
+        <View style={[styles.fullWidth, shouldMoveElement ? styles.quarterVisible : styles.halfVisible]} testID='halfVisible' />
         <Text style={styles.header}>Move Element Button</Text>
         <Text style={styles.text}>Element should be 1/4 visible after button is pressed.</Text>
         <Button title={"Move That Element"} testID={"moveHalfVisible"} onPress={() => { this.setState({shouldMoveElement: true}) }} />
@@ -41,7 +35,9 @@ export default class VisibilityExpectationScreen extends Component {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    borderColor: 'red',
+    borderWidth: 1,
   },
   header: {
     fontSize: 18,
@@ -55,10 +51,15 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   halfVisible: {
-    position: 'relative',
-    backgroundColor: '#ccc',
-    textAlign: 'center',
-    lineHeight: 30,
-    height: 100
+    left: '50%',
   },
+  quarterVisible: {
+    left: '75%',
+  },
+  fullWidth: {
+    alignSelf: 'stretch',
+    backgroundColor: 'purple',
+    height: 30,
+    minWidth: 30,
+  }
 });

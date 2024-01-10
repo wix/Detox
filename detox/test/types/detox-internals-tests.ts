@@ -109,6 +109,7 @@ async function logTest() {
   serverLogger.trace.end();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function tracingTest() {
   return new Promise((resolve, reject) => {
     tracing.createEventStream()

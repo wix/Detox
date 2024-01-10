@@ -3,10 +3,7 @@ package com.wix.detox.espresso.matcher
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class RegexMatcherTest {
     @Test
     fun `should work with string matching regex`() {

@@ -28,7 +28,7 @@ class ActionInteraction extends Interaction {
   constructor(invocationManager, matcher, action, traceDescription) {
     super(invocationManager, traceDescription);
     this._call = EspressoDetoxApi.perform(matcher, action._call);
-    // TODO: move this.execute() here from the caller
+    // TODO [2024-12-01]: move this.execute() here from the caller
   }
 }
 
@@ -39,7 +39,7 @@ class MatcherAssertionInteraction extends Interaction {
 
     matcher = notCondition ? matcher.not : matcher;
     this._call = DetoxAssertionApi.assertMatcher(call(element._call), matcher._call.value);
-    // TODO: move this.execute() here from the caller
+    // TODO [2024-12-01]: move this.execute() here from the caller
   }
 }
 

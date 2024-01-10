@@ -52,10 +52,7 @@ describe('Monitored instrumentation', () => {
     it('should break if underlying launch fails', async () => {
       instrumentationObj().launch.mockRejectedValue(new Error());
 
-      try {
-        await uut.launch(deviceId, bundleId, {});
-        fail();
-      } catch (e) {}
+      await expect(uut.launch(deviceId, bundleId, {})).rejects.toThrowError();
     });
   });
 
@@ -81,10 +78,7 @@ describe('Monitored instrumentation', () => {
 
       await uut.launch(deviceId, bundleId, {});
 
-      try {
-        await uut.terminate();
-        fail();
-      } catch (e) {}
+      await expect(uut.terminate()).rejects.toThrowError();
     });
 
     it('should allow for termination without launch', async () => {

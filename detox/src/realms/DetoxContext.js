@@ -47,7 +47,7 @@ class DetoxContext {
     this[$sessionState] = this[$restoreSessionState]();
 
     /**
-     * @type {DetoxLogger & Detox.Logger}
+     * @type {import('../logger/').DetoxLogger & Detox.Logger}
      */
     this[symbols.logger] = new DetoxLogger({
       file: temporary.for.jsonl(`${this[$sessionState].id}.${process.pid}`),
@@ -152,10 +152,10 @@ class DetoxContext {
   }
 
   /** @abstract */
-  async [symbols.allocateDevice]() {}
+  async [symbols.allocateDevice](_deviceConfig) {}
 
   /** @abstract */
-  async [symbols.deallocateDevice]() {}
+  async [symbols.deallocateDevice](_deviceCookie) {}
 
   async [symbols.uninstallWorker]() {
     try {

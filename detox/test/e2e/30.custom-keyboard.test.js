@@ -3,7 +3,7 @@ describe(':ios: Custom Keyboard', () => {
     await device.reloadReactNative();
     await element(by.text('Custom Keyboard')).tap();
   });
-  
+
   afterEach(async () => {
     await element(by.id('closeButton')).tap();
   });
@@ -17,6 +17,6 @@ describe(':ios: Custom Keyboard', () => {
   it('should obscure elements at bottom of screen when visible', async () => {
     await expect(element(by.text('Obscured by keyboard'))).toBeVisible();
     await element(by.id('textWithCustomInput')).tap();
-    await expect(element(by.text('Obscured by keyboard'))).toBeNotVisible();
+    await expect(element(by.text('Obscured by keyboard'))).not.toBeVisible();
   });
 });

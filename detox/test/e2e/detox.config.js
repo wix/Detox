@@ -10,7 +10,7 @@ const launchArgs = {
 const config = {
   testRunner: {
     args: {
-      $0: 'nyc jest',
+      $0: process.env.CI ? 'nyc jest' : 'jest',
       config: 'e2e/jest.config.js',
       forceExit: process.env.CI ? true : undefined,
       _: ['e2e/'],
@@ -116,7 +116,7 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 12 Pro Max',
+        type: 'iPhone 14 Pro Max',
       },
     },
 

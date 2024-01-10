@@ -299,6 +299,6 @@ export default class ActionsScreen extends Component {
       backPressed: true
     });
     return true;
-  };
+  }
 
 }

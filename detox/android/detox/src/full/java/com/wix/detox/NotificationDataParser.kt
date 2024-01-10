@@ -5,7 +5,7 @@ import com.wix.detox.common.JsonConverter
 import com.wix.detox.common.TextFileReader
 import org.json.JSONObject
 
-internal class NotificationDataParser(private val notificationPath: String) {
+class NotificationDataParser(private val notificationPath: String) {
     fun toBundle(): Bundle {
         val rawData = readNotificationFromFile()
         val json = JSONObject(rawData)

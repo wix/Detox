@@ -24,8 +24,9 @@ public class ViewAssertions {
      * which is more suitable for Detox' separated interaction-matcher architecture.
      * See {@link MatchesViewAssertion} for more details.
      */
+    @SuppressWarnings("unchecked")
     public static ViewAssertion matches(final Matcher<? super View> viewMatcher) {
-        return new MatchesViewAssertion(checkNotNull(viewMatcher));
+        return new MatchesViewAssertion((Matcher<? super View>) checkNotNull(viewMatcher));
     }
 
     /**

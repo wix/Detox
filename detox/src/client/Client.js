@@ -197,7 +197,7 @@ class Client {
       // await this._whenAppIsReady.promise;
     }
 
-    // TODO: move to else branch after the optimization
+    // TODO [2024-12-01]: move to else branch after the optimization ↑↑
     if (!this._whenAppIsReady.isResolved()) {
       this._whenAppIsReady = new Deferred();
       console.log('Waiting for app to become ready...');

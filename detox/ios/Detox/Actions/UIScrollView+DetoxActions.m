@@ -83,7 +83,7 @@ else \
 [self setContentOffset:pointMakeMacro(target) animated:YES]; \
 [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:[[self valueForKeyPath:@"animation.duration"] doubleValue] + 0.05]];
 
-- (void)dtx_scrollToEdge:(UIRectEdge)edge
+- (CGPoint)_edgeToNormalizedEdge:(UIRectEdge)edge
 {
 	CGPoint normalizedEdge;
 	switch (edge) {
@@ -100,10 +100,19 @@ else \
 			normalizedEdge = CGPointMake(1, 0);
 			break;
 		default:
+			normalizedEdge= CGPointMake(0, 0);
 			DTXAssert(NO, @"Incorect edge provided.");
-			return;
 	}
-	
+	return normalizedEdge;
+}
+
+
+- (void)dtx_scrollToEdge:(UIRectEdge)edge
+{
+	CGPoint normalizedEdge = [self _edgeToNormalizedEdge:edge];
+	if(normalizedEdge.x == 0 && normalizedEdge.y == 0)
+		return;
+
 	[self _dtx_scrollToNormalizedEdge:normalizedEdge];
 }
 
@@ -120,6 +129,23 @@ else \
 	
 	[self _dtx_scrollWithOffset:CGPointMake(- edge.x * CGFLOAT_MAX, - edge.y * CGFLOAT_MAX) normalizedStartingPoint:CGPointMake(NAN, NAN) strict:NO];
 }
+
+- (void)dtx_scrollToEdge:(UIRectEdge)edge
+	normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
+	CGPoint normalizedEdge = [self _edgeToNormalizedEdge:edge];
+	if(normalizedEdge.x == 0 && normalizedEdge.y == 0)
+		return;
+	
+	[self _dtx_scrollToNormalizedEdge:normalizedEdge normalizedStartingPoint: normalizedStartingPoint ];
+}
+
+- (void)_dtx_scrollToNormalizedEdge:(CGPoint)edge
+			normalizedStartingPoint:(CGPoint)normalizedStartingPoint
+{
+	[self _dtx_scrollWithOffset:CGPointMake(- edge.x * CGFLOAT_MAX, - edge.y * CGFLOAT_MAX) normalizedStartingPoint:normalizedStartingPoint strict:NO];
+}
+
 
 DTX_ALWAYS_INLINE
 static NSString* _DTXScrollDirectionDescriptionWithOffset(CGPoint offset)

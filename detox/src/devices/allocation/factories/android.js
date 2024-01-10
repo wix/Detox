@@ -42,7 +42,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
 }
 
 class AndroidAttached extends DeviceAllocatorFactory {
-  _createDriver({ detoxSession, detoxConfig }) {
+  _createDriver({ detoxSession }) {
     const serviceLocator = require('../../servicelocator/android');
     const adb = serviceLocator.adb;
     const DeviceRegistry = require('../../allocation/DeviceRegistry');

@@ -105,12 +105,7 @@ describe('Deferred', () => {
       deferred = Deferred.rejected(new Error('error mock'));
 
       expect(deferred.status).toBe(Deferred.REJECTED);
-      try {
-        await deferred.promise;
-        fail();
-      } catch (e) {
-        expect(e.message).toEqual('error mock');
-      }
+      await expect(deferred.promise).rejects.toThrowError('error mock');
     });
   });
 });

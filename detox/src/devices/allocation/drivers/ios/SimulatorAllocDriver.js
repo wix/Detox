@@ -39,7 +39,6 @@ class SimulatorAllocDriver {
   async allocate(deviceConfig) {
     const deviceQuery = new SimulatorQuery(deviceConfig.device);
 
-    // TODO Delegate this onto a well tested allocator class
     const udid = await this._deviceRegistry.registerDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });

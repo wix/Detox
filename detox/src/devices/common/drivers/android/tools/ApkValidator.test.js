@@ -1,3 +1,4 @@
+
 describe('APK validation', () => {
 
   const binaryPath = 'mock-bin-path';

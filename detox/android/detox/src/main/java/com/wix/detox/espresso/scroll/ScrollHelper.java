@@ -1,14 +1,18 @@
 package com.wix.detox.espresso.scroll;
 
 import android.content.Context;
+import android.graphics.Insets;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowInsets;
 
 import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.espresso.DeviceDisplay;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.test.espresso.UiController;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -42,8 +46,8 @@ public class ScrollHelper {
      *
      * @param direction Direction to scroll (see {@link MotionDir})
      * @param amountInDP Density Independent Pixels
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view. Null means select automatically.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view. Null means select automatically.
      */
     public static void perform(UiController uiController, View view, @MotionDir int direction, double amountInDP, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
         final int amountInPx = DeviceDisplay.convertDpiToPx(amountInDP);
@@ -51,7 +55,7 @@ public class ScrollHelper {
         final int times = amountInPx / safeScrollableRangePx;
         final int remainder = amountInPx % safeScrollableRangePx;
 
-        Log.d(LOG_TAG, "prescroll amountDP="+amountInDP + " amountPx="+amountInPx + " scrollableRangePx="+safeScrollableRangePx + " times="+times + " remainder="+remainder);
+        Log.d(LOG_TAG, "prescroll amountDP=" + amountInDP + " amountPx=" + amountInPx + " scrollableRangePx=" + safeScrollableRangePx + " times=" + times + " remainder=" + remainder);
 
         for (int i = 0; i < times; ++i) {
             scrollOnce(uiController, view, direction, safeScrollableRangePx, startOffsetPercentX, startOffsetPercentY);
@@ -64,10 +68,12 @@ public class ScrollHelper {
      * of the screen.)
      *
      * @param direction Direction to scroll (see {@link @MotionDir})
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view. Null means select automatically.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view. Null means select automatically.
      */
-    public static void performOnce(UiController uiController, View view, @MotionDir int direction) throws ScrollEdgeException {
+    public static void performOnce(UiController uiController, View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
         final int scrollableRangePx = getViewSafeScrollableRangePix(view, direction);
-        scrollOnce(uiController, view, direction, scrollableRangePx, null, null);
+        scrollOnce(uiController, view, direction, scrollableRangePx, startOffsetPercentX, startOffsetPercentY);
     }
 
     private static void scrollOnce(UiController uiController, View view, @MotionDir int direction, int userAmountPx, Float startOffsetPercentX, Float startOffsetPercentY) throws ScrollEdgeException {
@@ -113,25 +119,32 @@ public class ScrollHelper {
         }
     }
 
-    private static int getViewSafeScrollableRangePix(View view, @MotionDir int direction) {
+    @VisibleForTesting
+    public static int getViewSafeScrollableRangePix(View view, @MotionDir int direction) {
         final float[] screenSize = DeviceDisplay.getScreenSizeInPX();
         final int[] pos = new int[2];
         view.getLocationInWindow(pos);
 
         int range;
         switch (direction) {
-            case MOTION_DIR_LEFT: range = (int) ((screenSize[0] - pos[0]) * SCROLL_RANGE_SAFE_PERCENT); break;
-            case MOTION_DIR_RIGHT: range = (int) ((pos[0] + view.getWidth()) * SCROLL_RANGE_SAFE_PERCENT); break;
-            case MOTION_DIR_UP: range = (int) ((screenSize[1] - pos[1]) * SCROLL_RANGE_SAFE_PERCENT); break;
-            default: range = (int) ((pos[1] + view.getHeight()) * SCROLL_RANGE_SAFE_PERCENT); break;
+            case MOTION_DIR_LEFT:
+                range = (int) ((screenSize[0] - pos[0]) * SCROLL_RANGE_SAFE_PERCENT);
+                break;
+            case MOTION_DIR_RIGHT:
+                range = (int) ((pos[0] + view.getWidth()) * SCROLL_RANGE_SAFE_PERCENT);
+                break;
+            case MOTION_DIR_UP:
+                range = (int) ((screenSize[1] - pos[1]) * SCROLL_RANGE_SAFE_PERCENT);
+                break;
+            default:
+                range = (int) ((pos[1] + view.getHeight()) * SCROLL_RANGE_SAFE_PERCENT);
+                break;
         }
         return range;
     }
 
-    private static Point getScrollStartPoint(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
+    private static int[] getScrollStartOffsetInView(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
         final int safetyOffset = DeviceDisplay.convertDpiToPx(1);
-
-        Point point = getGlobalViewLocation(view);
         float offsetFactorX;
         float offsetFactorY;
         int safetyOffsetX;
@@ -169,8 +182,87 @@ public class ScrollHelper {
         int offsetX = ((int) (view.getWidth() * offsetFactorX) + safetyOffsetX);
         int offsetY = ((int) (view.getHeight() * offsetFactorY) + safetyOffsetY);
 
-        point.offset(offsetX, offsetY);
-        return point;
+        return new int[]{offsetX, offsetY};
+    }
+
+    /**
+     * Calculates the scroll start point, with respect to the global screen coordinates and gesture insets.
+     * @param view The view to scroll.
+     * @param direction The scroll direction.
+     * @param startOffsetPercentX The scroll start offset, as a percentage of the view's width. Null means select automatically.
+     * @param startOffsetPercentY The scroll start offset, as a percentage of the view's height. Null means select automatically.
+     * @return a Point object, denoting the scroll start point.
+     */
+    private static Point getScrollStartPoint(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
+        Point result = getGlobalViewLocation(view);
+
+        // 1. Calculate the scroll start point, with respect to the view's location.
+        int[] coordinates = getScrollStartOffsetInView(view, direction, startOffsetPercentX, startOffsetPercentY);
+
+        // 2. Make sure that the start point is within the scrollable area, taking into account the system gesture insets.
+        coordinates = applyScreenInsets(view, direction, coordinates[0], coordinates[1]);
+
+        result.offset(coordinates[0], coordinates[1]);
+        return result;
+    }
+
+    /**
+     * Calculates the scroll start point, with respect to the system gesture insets.
+     * @param view
+     * @param direction The scroll direction.
+     * @param x The scroll start point, with respect to the view's location.
+     * @param y The scroll start point, with respect to the view's location.
+     * @return an array of two integers, denoting the scroll start point, with respect to the system gesture insets.
+     */
+    private static int[] applyScreenInsets(View view, int direction, int x, int y) {
+        // System gesture insets are only available on Android Q (29) and above.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return new int[]{x, y};
+        }
+
+        final float[] displaySize = DeviceDisplay.getScreenSizeInPX();
+
+        // Calculate the min/max scrollable area, taking into account the system gesture insets.
+        // By default we assume the scrollable area is the entire screen.
+        // 2dp is a safety offset to make sure we don't hit the system gesture area.
+        int gestureSafeOffset = DeviceDisplay.convertDpiToPx(2);
+        int minX = gestureSafeOffset;
+        int minY = gestureSafeOffset;
+        float maxX = displaySize[0] - gestureSafeOffset;
+        float maxY = displaySize[1] - gestureSafeOffset;
+
+        // Try to get the root window insets, and if available, use them to calculate the scrollable area.
+        WindowInsets rootWindowInsets = view.getRootWindowInsets();
+        if (rootWindowInsets == null) {
+            Log.w(LOG_TAG, "Could not get root window insets");
+        } else {
+            Insets gestureInsets = rootWindowInsets.getSystemGestureInsets();
+            minX = gestureInsets.left;
+            minY = gestureInsets.top;
+            maxX -= gestureInsets.right;
+            maxY -= gestureInsets.bottom;
+
+            Log.d(LOG_TAG,
+                "System gesture insets: " +
+                    gestureInsets + " minX=" + minX + " minY=" + minY + " maxX=" + maxX + " maxY=" + maxY + " currentX=" + x + " currentY=" + y);
+        }
+
+        switch (direction) {
+            case MOTION_DIR_UP:
+                y = (int) Math.max(y, minY);
+                break;
+            case MOTION_DIR_DOWN:
+                y = (int) Math.min(y, maxY);
+                break;
+            case MOTION_DIR_LEFT:
+                x = (int) Math.max(x, minX);
+                break;
+            case MOTION_DIR_RIGHT:
+                x = (int) Math.min(x, maxX);
+                break;
+        }
+
+        return new int[]{x, y};
     }
 
     private static Point getScrollEndPoint(Point startPoint, @MotionDir int direction, int userAmountPx, Float startOffsetPercentX, Float startOffsetPercentY) {
@@ -209,13 +301,18 @@ public class ScrollHelper {
         return point;
     }
 
+    /**
+     * Calculates the global location of the view on the screen.
+     * @param view The view to calculate.
+     * @return a Point object, denoting the global location of the view.
+     */
     private static Point getGlobalViewLocation(View view) {
         int[] pos = new int[2];
         view.getLocationInWindow(pos);
         return new Point(pos[0], pos[1]);
     }
 
-    private static ViewConfiguration getViewConfiguration() {
+    public static ViewConfiguration getViewConfiguration() {
         if (viewConfiguration == null) {
             final Context applicationContext = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
             viewConfiguration = ViewConfiguration.get(applicationContext);

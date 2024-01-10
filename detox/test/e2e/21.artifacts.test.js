@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const jestExpect = require('expect').default;
 const { PNG } = require('pngjs');
 
 const {
@@ -83,11 +84,7 @@ describe('Artifacts', () => {
 
     it('should capture hierarchy upon multiple invocation failures', async () => {
       for (let i = 0; i < 2; i++) {
-        try {
-          await element(by.id('nonExistentId')).tap();
-          fail('should have failed');
-        } catch (e) {
-        }
+        await jestExpect(element(by.id('nonExistentId')).tap()).rejects.toThrow();
       }
     });
 
@@ -104,12 +101,8 @@ describe('Artifacts', () => {
 
     describe('edge uninstall case', () => {
       it('should capture hierarchy regardless', async () => {
-        try {
-          await element(by.id('nonExistentId')).tap();
-          fail('should have failed');
-        } catch (e) {
-          await device.uninstallApp();
-        }
+        await jestExpect(element(by.id('nonExistentId')).tap()).rejects.toThrow();
+        await device.uninstallApp();
       });
 
       afterAll(async () => {

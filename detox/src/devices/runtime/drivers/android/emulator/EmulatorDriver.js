@@ -11,7 +11,6 @@ const AndroidDriver = require('../AndroidDriver');
  * @property forceAdbInstall { Boolean }
  */
 
-// TODO Unit test coverage
 class EmulatorDriver extends AndroidDriver {
   /**
    * @param deps { EmulatorDriverDeps }
