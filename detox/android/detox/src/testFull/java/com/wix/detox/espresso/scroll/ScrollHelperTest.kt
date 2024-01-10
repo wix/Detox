@@ -72,7 +72,7 @@ class ScrollHelperTest {
 
     @Test
     fun `should scroll down to edge on full screen view when gesture navigation enabled`() {
-        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_DOWN)
+        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_DOWN, null, null)
         val upEvent = getUpEvent()
         val amountInPx = displayHeight * SCROLL_RANGE_SAFE_PERCENT
 
@@ -88,7 +88,7 @@ class ScrollHelperTest {
 
     @Test
     fun `should scroll left to edge on full screen view when gesture navigation enabled`() {
-        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_LEFT)
+        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_LEFT, null, null)
         val upEvent = getUpEvent()
         val amountInPx = displayWidth * SCROLL_RANGE_SAFE_PERCENT
 
@@ -103,7 +103,7 @@ class ScrollHelperTest {
 
     @Test
     fun `should scroll up to edge on full screen view when gesture navigation enabled`() {
-        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_UP)
+        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_UP,null, null)
         val upEvent = getUpEvent()
         val amountInPx = displayHeight * SCROLL_RANGE_SAFE_PERCENT
 
@@ -118,7 +118,7 @@ class ScrollHelperTest {
 
     @Test
     fun `should scroll right to edge on full screen view when gesture navigation enabled`() {
-        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_RIGHT)
+        ScrollHelper.performOnce(uiControllerMock, viewMock, MOTION_DIR_RIGHT,  null, null)
         val upEvent = getUpEvent()
         val amountInPx = displayWidth * SCROLL_RANGE_SAFE_PERCENT
 
