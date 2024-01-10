@@ -58,6 +58,7 @@
     "cross-env": "^7.0.3",
     "detox": "^21.0.0-rc.10",
     "eslint": "^8.41.0",
+    "detox-allure2-adapter": "^1.0.0-alpha.2",
     "eslint-plugin-unicorn": "^47.0.0",
     "execa": "^5.1.1",
     "express": "^4.15.3",
