@@ -1,10 +1,14 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
-
+if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
+    require_relative '../node_modules/react-native/scripts/react_native_pods'
+    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+else
+    # Resolve react_native_pods.rb with node to allow for hoisting
+    require Pod::Executable.execute_command('node', ['-p',
+      'require.resolve(
+        "react-native/scripts/react_native_pods.rb",
+        {paths: [process.argv[1]]},
+      )', __dir__]).strip
+end
 platform :ios, '13.0'
 
 install! 'cocoapods', :deterministic_uuids => false
