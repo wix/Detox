@@ -17,7 +17,7 @@ object DeviceDisplay {
     }
 
     @JvmStatic
-    fun getScreenSizeInPX(): FloatArray? {
+    fun getScreenSizeInPX(): FloatArray {
         val metrics = getDisplayMetrics()
         return floatArrayOf(metrics.widthPixels.toFloat(), metrics.heightPixels.toFloat())
     }
