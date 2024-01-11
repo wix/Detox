@@ -1,4 +1,4 @@
-apply from: '../../android/rninfohelper.gradle'
+apply from: 'rninfohelper.gradle'
 rootProject.name = 'DetoxTest'
 include ':app'
 
@@ -6,7 +6,7 @@ def rnVersion = getRNVersion(rootDir)
 def rnMajorVer = getMajorVersion(rnVersion)
 println "[settings] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
 
-if (rnVersion < 72) {
+if (rnMajorVer < 72) {
     includeBuild('../node_modules/react-native-gradle-plugin')
 } else {
     includeBuild('../node_modules/@react-native/gradle-plugin')

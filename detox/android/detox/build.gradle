@@ -142,6 +142,7 @@ dependencies {
 
 // Unit-testing deps.
 dependencies {
+    testImplementation project(path: ':@react-native-community_slider')
     testImplementation "${_rnNativeArtifact}"
     testImplementation 'org.json:json:20230227'
 
