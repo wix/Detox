@@ -1,4 +1,4 @@
-apply from: '../../android/rninfohelper.gradle'
+apply from: 'rninfohelper.gradle'
 rootProject.name = 'DetoxTest'
 include ':app'
 
