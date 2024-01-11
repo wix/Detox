@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.facebook.react.views.slider.ReactSlider
 import com.google.android.material.slider.Slider
-import com.reactnativecommunity.slider.ReactSlider
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
