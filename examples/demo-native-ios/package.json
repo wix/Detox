@@ -1,9 +1,9 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.14.8",
+  "version": "20.15.0",
   "private": true,
   "devDependencies": {
-    "detox": "^20.14.8"
+    "detox": "^20.15.0"
   },
   "detox": {
     "specs": "",
@@ -23,7 +23,7 @@
       "simulator": {
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 14 Pro"
+          "type": "iPhone 15 Pro Max"
         }
       }
     },

@@ -15,6 +15,7 @@ target 'example' do
 
   post_install do |installer|
     __apply_update_deployment_target_workaround(installer)
+    __apply_Xcode_15_workaround(installer)
 
      react_native_post_install(
        installer,
@@ -34,6 +35,16 @@ def __apply_update_deployment_target_workaround(installer)
       if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] < '12.4'
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
       end
+    end
+  end
+end
+
+def __apply_Xcode_15_workaround(installer)
+  # This is a workaround for Xcode 15, see: https://github.com/facebook/react-native/issues/37748.
+  puts "Applying Xcode 15 post install workaround"
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
     end
   end
 end
