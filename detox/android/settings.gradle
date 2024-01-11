@@ -1,7 +1,14 @@
+apply from: 'rninfohelper.gradle'
 include ':detox'
 
-includeBuild('../node_modules/@react-native/gradle-plugin')
+println("RNInfo: rootDir=$rootDir")
+def rnVersion = getRNVersion(rootDir)
+def rnMajorVer = getMajorVersion(rnVersion)
+println "[settings] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
 
-// FIXME: Support RN 0.71
-// includeBuild('../node_modules/react-native-gradle-plugin')
+if (rnMajorVer < 72) {
+    includeBuild('../node_modules/react-native-gradle-plugin')
+} else {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
+}
 
