@@ -1,9 +1,0 @@
-  - label: ":ios::react: RN. 70 + iOS: Demo app"
-    command:
-      - "nvm install"
-      - "./scripts/demo-projects.ios.sh"
-    env:
-      REACT_NATIVE_VERSION: 0.70.7
-    artifact_paths:
-      - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/artifacts*.tar.gz"
