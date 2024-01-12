@@ -1,4 +1,4 @@
-const { RESULTS, PERMISSIONS } = require('react-native-permissions');
+const { RESULTS } = require('react-native-permissions');
 
 const BASIC_PERMISSIONS_TO_CHECK = [
   'userTracking',
