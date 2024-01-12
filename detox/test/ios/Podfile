@@ -1,8 +1,10 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-# Update when upgrading to RN.72: https://github.com/zoontek/react-native-permissions#ios
-require_relative '../node_modules/react-native-permissions/scripts/setup'
+# No need for this workaround on React Native >= 0.72, see: https://github.com/zoontek/react-native-permissions#ios
+if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70|71).*/)
+    require_relative '../node_modules/react-native-permissions/scripts/setup'
+end
 
 platform :ios, '13.0'
 
