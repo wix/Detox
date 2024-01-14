@@ -6,6 +6,9 @@ println("RNInfo: rootDir=$rootDir")
 def rnMajorVer = getRnMajorVersion(rootDir)
 println "[settings] RNInfo: detected React Native version: (major=$rnMajorVer)"
 
+include ':@react-native-community_slider'
+project(':@react-native-community_slider').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/slider/android')
+
 if (rnMajorVer < 72) {
     includeBuild('../node_modules/react-native-gradle-plugin')
 } else {
