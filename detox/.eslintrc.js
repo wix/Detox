@@ -5,7 +5,6 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:node/recommended',
     'plugin:ecmascript-compat/recommended',
-    '@react-native',
   ],
   parser: '@typescript-eslint/parser',
   plugins: [
