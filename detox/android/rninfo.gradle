@@ -1,15 +1,39 @@
-apply from: "${rootDir}/rninfohelper.gradle"
+import groovy.json.JsonSlurper
 
-def rnVersion = getRNVersion(project.rootDir)
-def rnMajorVer = getMajorVersion(rnVersion)
-println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
+def getRNVersion = { workingDir ->
+    println("RNInfo: workingDir=$workingDir")
+    def jsonSlurper = new JsonSlurper()
+    def packageFile = "$workingDir/../node_modules/react-native/package.json"
+    println("RNInfo: reading $packageFile")
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File(packageFile))
+    String rnVersion = packageJSON.get('version')
+    return rnVersion
+}
 
-project.ext.rnInfo = [
-    version: rnVersion,
-    majorVersion: rnMajorVer,
-    isRN69OrHigher: rnMajorVer >= 69,
-    isRN70OrHigher: rnMajorVer >= 70,
-    isRN71OrHigher: rnMajorVer >= 71,
-    isRN72OrHigher: rnMajorVer >= 72,
-]
+def getMajorVersionInternal = { semanticVersion ->
+    Integer rnVersionMajor = semanticVersion.split('\\.')[1].toInteger()
+    return rnVersionMajor
+}
 
+ext.getRnMajorVersion = { workingDir ->
+    String rnVersion = getRNVersion(workingDir)
+    Integer rnVersionMajor = getMajorVersionInternal(rnVersion)
+    return rnVersionMajor
+}
+
+def rnVersion = getRNVersion(rootDir)
+def rnMajorVer = getMajorVersionInternal(rnVersion)
+if (hasProperty('project')) {
+    println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
+
+    project.ext.rnInfo = [
+        version       : rnVersion,
+        majorVersion  : rnMajorVer,
+        isRN69OrHigher: rnMajorVer >= 69,
+        isRN70OrHigher: rnMajorVer >= 70,
+        isRN71OrHigher: rnMajorVer >= 71,
+        isRN72OrHigher: rnMajorVer >= 72,
+    ]
+} else {
+    println "settings.gradle RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
+}
