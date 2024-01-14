@@ -1,4 +1,3 @@
-const { rnVersion } = require('../src/helpers/rn-consts');
 const { itRNVersionOrBelow } = require('./utils/custom-it');
 const driver = require('./drivers/actions-driver').actionsScreenDriver;
 
