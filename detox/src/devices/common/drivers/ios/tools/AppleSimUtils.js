@@ -2,6 +2,8 @@
 const path = require('path');
 
 const _ = require('lodash');
+const makeParser = require('stream-json');
+const { streamArray } = require('stream-json/streamers/StreamArray');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { joinArgs } = require('../../../../../utils/argparse');
@@ -130,16 +132,18 @@ class AppleSimUtils {
     await this._execAppleSimUtils(options);
   }
 
-  async list(query, listOptions = {}) {
-    const options = {
-      args: `--list ${joinArgs(query)}`,
-      retries: 1,
-      statusLogs: listOptions.trying ? { trying: listOptions.trying } : undefined,
-      maxBuffer: 4 * 1024 * 1024,
-    };
-    const response = await this._execAppleSimUtils(options);
-    const parsed = this._parseResponseFromAppleSimUtils(response);
-    return parsed;
+  async list(query = {}) {
+    const results = [];
+    const args = ['--list', ...joinArgs(query)];
+    const childPromise = childProcess.spawnAndLog('applesimutils', args, { silent: true });
+    const jsonStream = childPromise.childProcess.stdout.pipe(makeParser());
+    jsonStream.on('error', () => jsonStream.destroy());
+
+    const arrayStream = jsonStream.pipe(streamArray());
+    arrayStream.on('data', ({ value }) => results.push(value));
+
+    await childPromise;
+    return results;
   }
 
   /***

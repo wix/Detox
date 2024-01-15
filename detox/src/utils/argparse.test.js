@@ -45,7 +45,7 @@ describe('argparse', () => {
       argparse = require('./argparse');
     });
 
-    it('should convert key-values to args string', () => {
+    it('should convert key-values to string array', () => {
       expect(argparse.joinArgs({
         optional: undefined,
         debug: true,
@@ -53,17 +53,16 @@ describe('argparse', () => {
         logLevel: 'verbose',
         '-w': 1,
         'device-name': 'iPhone X'
-      })).toBe('--debug --timeout 3000 --logLevel verbose -w 1 --device-name "iPhone X"');
+      })).toEqual(['--debug', '--timeout', '3000', '--logLevel', 'verbose', '-w', '1', '--device-name', 'iPhone X']);
     });
 
-    it('should accept options', () => {
-      const options = { prefix: '-', joiner: '=' };
+    it('should accept a custom prefix', () => {
       const argsObject = {
         'version': 100,
         '--help': true
       };
 
-      expect(argparse.joinArgs(argsObject, options)).toBe('-version=100 --help');
+      expect(argparse.joinArgs(argsObject, '-')).toEqual(['-version', '100', '--help']);
     });
   });
 

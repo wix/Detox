@@ -2,8 +2,6 @@ const path = require('path');
 
 const _ = require('lodash');
 
-const { escape } = require('./pipeCommands');
-
 function getEnvValue(key) {
   const envKey = _.findKey(process.env, matchesKey(
     `DETOX_${_.snakeCase(key)}`.toUpperCase()
@@ -23,16 +21,7 @@ function matchesKey(key) {
     : (value, envKey) => envKey === key;
 }
 
-const DEFAULT_JOIN_ARGUMENTS_OPTIONS = {
-  prefix: '--',
-  joiner: ' ',
-};
-
-function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
-  const { prefix, joiner } = options === DEFAULT_JOIN_ARGUMENTS_OPTIONS
-    ? options
-    : { ...DEFAULT_JOIN_ARGUMENTS_OPTIONS, ...options };
-
+function joinArgs(keyValues, prefix = '--') {
   const argArray = [];
 
   for (const [key, value] of Object.entries(keyValues)) {
@@ -40,22 +29,14 @@ function joinArgs(keyValues, options = DEFAULT_JOIN_ARGUMENTS_OPTIONS) {
       continue;
     }
 
-    let arg = (!key.startsWith('-') ? prefix : '') + key;
-
-    if (value !== true) {
-      arg += joiner;
-
-      if (_.isString(value) && value.includes(' ')) {
-        arg += `"${escape.inQuotedString(value)}"`;
-      } else {
-        arg += value;
-      }
-    }
-
+    const arg = (key.startsWith('-') ? '' : prefix) + key;
     argArray.push(arg);
+    if (value !== true) {
+      argArray.push(String(value));
+    }
   }
 
-  return argArray.join(' ');
+  return argArray;
 }
 
 function getCurrentCommand() {
