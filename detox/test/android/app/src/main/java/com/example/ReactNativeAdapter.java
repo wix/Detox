@@ -9,6 +9,7 @@ import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativelauncharguments.LaunchArgumentsPackage;
+import com.zoontek.rnpermissions.RNPermissionsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,8 @@ class ReactNativeAdapter {
             new AsyncStoragePackage(),
             new ReactCheckBoxPackage(),
             new RNDateTimePickerPackage(),
-            new LaunchArgumentsPackage()
+            new LaunchArgumentsPackage(),
+            new RNPermissionsPackage()
         );
     }
 }

@@ -36,3 +36,6 @@ project(':react-native-datetimepicker').projectDir = new File(rootProject.projec
 
 include ':react-native-launcharguments'
 project(':react-native-launcharguments').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-launch-arguments/android')
+
+include ':react-native-permissions'
+project(':react-native-permissions').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-permissions/android')
