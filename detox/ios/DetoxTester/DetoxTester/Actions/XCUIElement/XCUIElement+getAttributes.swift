@@ -37,7 +37,8 @@ extension XCUIElement {
       elementType: elementType,
       accessibilityHint: accessibilityHint,
       isSelected: isSelected,
-      isFocused: hasFocus
+      isFocused: hasFocus,
+      hasKeyboardFocus: hasKeyboardFocusOnTextField
     ).encodeToDictionary()
 
     return attributes

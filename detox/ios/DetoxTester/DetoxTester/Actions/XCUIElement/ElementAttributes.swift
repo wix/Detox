@@ -84,6 +84,9 @@ struct ElementAttributes: Codable, Equatable {
 
   /// Indicates whether the element is focused.
   let focused: Bool?
+
+  /// Indicates whether the element has keyboard focus.
+  let hasKeyboardFocus: Bool?
 }
 
 extension ElementAttributes {
@@ -95,7 +98,7 @@ extension ElementAttributes {
        elementSafeBounds: CGRect?, datePickerDate: Date?, normalizedSliderPosition: CGFloat?,
        scrollViewContentOffset: CGFloat?, scrollViewContentInset: CGFloat?,
        scrollViewAdjustedContentInset: CGFloat?, elementType: XCUIElement.ElementType,
-       accessibilityHint: String?, isSelected: Bool?, isFocused: Bool?) {
+       accessibilityHint: String?, isSelected: Bool?, isFocused: Bool?, hasKeyboardFocus: Bool?) {
     self.text = text
     self.label = accessibilityLabel
     self.placeholder = placeholderValue
@@ -120,6 +123,7 @@ extension ElementAttributes {
     self.hint = accessibilityHint
     self.selected = isSelected
     self.focused = isFocused
+    self.hasKeyboardFocus = hasKeyboardFocus
   }
 }
 
