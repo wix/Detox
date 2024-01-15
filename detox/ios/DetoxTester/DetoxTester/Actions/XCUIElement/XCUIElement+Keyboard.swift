@@ -11,7 +11,10 @@ import XCTest
 extension XCUIElement {
   /// Indicates whether the text field element has keyboard focus.
   public var hasKeyboardFocusOnTextField: Bool {
-    return (textField ?? self).hasKeyboardFocus
+    logProperties()
+    
+    let textField = textField ?? self
+    return textField.hasKeyboardFocus || textField.hasFocus
   }
 
   private var hasKeyboardFocus: Bool {
