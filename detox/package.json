@@ -34,6 +34,7 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
+    "@react-native-community/slider": "4.2.4",
     "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
     "@types/fs-extra": "^11.0.4",
