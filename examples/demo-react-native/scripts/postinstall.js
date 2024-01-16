@@ -30,7 +30,8 @@ function podInstallIfRequired() {
     patchBoostPodspec();
 
     const result = cp.execSync('pod install', {
-      cwd: `${process.cwd()}/ios`
+      cwd: `${process.cwd()}/ios`,
+      stdio: 'inherit'
     });
 
     console.log(result.toString());
