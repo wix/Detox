@@ -29,12 +29,10 @@ function podInstallIfRequired() {
     console.log('[POST-INSTALL] Running pod install...');
     patchBoostPodspec();
 
-    const result = cp.execSync('pod install', {
+    cp.execSync('pod install', {
       cwd: `${process.cwd()}/ios`,
       stdio: 'inherit'
     });
-
-    console.log(result.toString());
   }
 }
 
