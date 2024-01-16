@@ -16,7 +16,7 @@ else
     node_require('react-native/scripts/react_native_pods.rb')
     node_require('react-native-permissions/scripts/setup.rb')
 end
-platform :ios, '13.0'
+platform :ios, min_ios_version_supported
 
 install! 'cocoapods', :deterministic_uuids => false
 
