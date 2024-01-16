@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply from: '../rninfo.gradle'
 
 def _kotlinMinVersion = '1.2.0'
-def _materialMinVersion = '1.2.1'
+def _materialMinVersion = '1.11.0'
 
 def _ext = rootProject.ext
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
@@ -81,6 +81,15 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
     }
 }
 
