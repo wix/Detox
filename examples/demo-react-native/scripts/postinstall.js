@@ -37,5 +37,12 @@ function podInstallIfRequired() {
 }
 
 console.log('[POST-INSTALL] Running Detox\'s example-app post-install script...');
-podInstallIfRequired();
+try {
+  podInstallIfRequired();
+} catch (error) {
+  console.error(`[POST-INSTALL] Failed with error: ${error.message}`);
+  cp.spawn('buildkite-agent', ['annotate', `Post-install script failed with error: ${error.message}`, '--context', 'postinstall-example', '--style', 'error'], {
+    stdio: 'inherit'
+  });
+}
 console.log('[POST-INSTALL] Completed!');
