@@ -4,6 +4,7 @@
       - "./scripts/demo-projects.ios.sh"
     env:
       REACT_NATIVE_VERSION: 0.71.10
+      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
