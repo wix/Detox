@@ -1,19 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.facebook.react'
 apply from: '../../../android/rninfo.gradle'
 
-if (rnInfo.isRN71OrHigher) {
-    apply plugin: 'com.facebook.react'
-} else {
-    project.ext.react = [
-        enableHermes: true
-    ]
-    apply from: '../../node_modules/react-native/react.gradle'
-}
 
 android {
     namespace 'com.example'
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
+    compileSdk = rootProject.ext.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -65,15 +59,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    productFlavors {
-        flavorDimensions 'reactNativeVersion'
-        rnDefault {
-            dimension 'reactNativeVersion'
-        }
-        rnLegacy { // For RN < 71
-            dimension 'reactNativeVersion'
-        }
-    }
     packagingOptions {
         pickFirst '**/libc++_shared.so'
 
@@ -87,12 +72,11 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-    rnDefaultImplementation('com.facebook.react:react-android')
-    // noinspection GradleDynamicVersion
-    rnLegacyImplementation('com.facebook.react:react-native:+')
+    implementation('com.facebook.react:react-android')
 
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
     implementation project(path: ':@react-native-community_slider')
     implementation project(':AsyncStorage')
     implementation project(':react-native-webview')
@@ -108,11 +92,7 @@ dependencies {
 
 // Apply Hermes as our JS engine
 dependencies {
-    rnDefaultImplementation('com.facebook.react:hermes-android')
-    // noinspection GradleDynamicVersion
-    rnLegacyImplementation('com.facebook.react:hermes-engine:+') {
-        exclude group: 'com.facebook.fbjni'
-    }
+    implementation('com.facebook.react:hermes-android')
 }
 
 // Run this once to be able to run the application with BUCK
