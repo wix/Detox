@@ -1,4 +1,4 @@
-if ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
+if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
     require_relative '../node_modules/react-native/scripts/react_native_pods'
     require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
     require_relative '../node_modules/react-native-permissions/scripts/setup'
@@ -46,7 +46,7 @@ setup_permissions([
 def shared_pods
     config = use_native_modules!
 
-    if ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
+    if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
       # Flags change depending on the env values.
       flags = get_default_flags()
 
