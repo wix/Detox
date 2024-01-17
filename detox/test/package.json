@@ -35,7 +35,7 @@
     "@react-native-community/checkbox": "0.5.16",
     "@react-native-community/datetimepicker": "^6.7.1",
     "@react-native-community/geolocation": "^2.0.2",
-    "@react-native-community/slider": "4.2.4",
+    "@react-native-community/slider": "4.5.0",
     "@react-native-picker/picker": "^2.1.0",
     "@react-native-segmented-control/segmented-control": "2.3.0",
     "moment": "^2.24.0",
