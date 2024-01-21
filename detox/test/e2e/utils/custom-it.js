@@ -67,5 +67,5 @@ const runSpec = (specFn) => specFn();
 
 module.exports = {
   it: _it,
-  describe: describe,
+  describe: _describe,
 };
