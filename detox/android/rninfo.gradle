@@ -34,6 +34,4 @@ if (hasProperty('project')) {
         isRN71OrHigher: rnMajorVer >= 71,
         isRN72OrHigher: rnMajorVer >= 72,
     ]
-} else {
-    println "settings.gradle RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
 }

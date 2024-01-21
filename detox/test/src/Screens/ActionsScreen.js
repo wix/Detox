@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-const { rnVersion } = require('../helpers/rn-consts');
 import {
   Text,
   BackHandler,
@@ -16,11 +15,11 @@ import {
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
 
-const isLegacyRNVersion = (parseInt(rnVersion.minor) <= 71);
-
 let LegacySlider;
-if (isLegacyRNVersion) {
+try {
   LegacySlider = require('react-native').Slider;
+} catch (e) {
+  LegacySlider = undefined;
 }
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
@@ -182,7 +181,7 @@ export default class ActionsScreen extends Component {
         </View>
 
         {
-          isLegacyRNVersion &&
+          LegacySlider &&
           <View style={{ height: 40, borderColor: '#c0c0c0', marginHorizontal: 20 }}>
             <LegacySlider testID='legacySliderWithASimpleID' maximumValue={1000.0} minimumValue={0.0} value={250.0} />
           </View>

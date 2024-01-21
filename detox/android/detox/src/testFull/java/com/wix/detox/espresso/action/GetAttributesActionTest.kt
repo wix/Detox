@@ -197,8 +197,6 @@ class GetAttributesActionTest {
             on { progress } doReturn 50
         }
 
-        progressBar.
-
         val resultJson = perform(progressBar)
         assertThat(resultJson.opt("value")).isEqualTo(0.5)
     }*/

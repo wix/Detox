@@ -1,6 +1,6 @@
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
-const { describeRNVersionOrBelow } = require('./utils/custom-it');
+const { custom } = require('./utils/custom-it');
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
@@ -157,7 +157,7 @@ describe('Attributes', () => {
     });
   });
 
-  describeRNVersionOrBelow(71)('of a legacy slider', () => {
+  custom.describe.skipFromRNVersion(71)('of a legacy slider', () => {
     beforeAll(() => useMatcher(by.id('legacySliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {

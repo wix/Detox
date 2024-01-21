@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Slider from '@react-native-community/slider';
-import { rnVersion } from '../helpers/rn-consts';
 import {default as DatePicker} from '@react-native-community/datetimepicker';
 
-const isLegacyRNVersion = (parseInt(rnVersion.minor) <= 71);
 
 let LegacySlider;
-if (isLegacyRNVersion) {
+try {
   LegacySlider = require('react-native').Slider;
+} catch (e) {
+  LegacySlider = undefined;
 }
 
 export default class AttributesScreen extends Component {
@@ -80,7 +80,7 @@ export default class AttributesScreen extends Component {
           }}
           autoFocus={false}
         />
-        {isLegacyRNVersion && <LegacySlider testID={'legacySliderId'} value={0.5} />}
+        {LegacySlider && <LegacySlider testID={'legacySliderId'} value={0.5} />}
         <Slider testID={'sliderId'} value={0.5} />
       </View>
     );

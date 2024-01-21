@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { rnVersion } = require('../src/helpers/rn-consts');
+const { rnVersion } = require('./utils/rn-consts/rn-consts');
 
 const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const isRNVersionBellow71 = (rnVersion.minor < 71);

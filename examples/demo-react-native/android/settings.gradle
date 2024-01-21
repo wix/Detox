@@ -5,7 +5,7 @@ include ':app'
 
 println("RNInfo: rootDir=$rootDir")
 def rnMajorVer = getRnMajorVersion(rootDir)
-println "[settings] RNInfo: detected React Native version: (major=$rnMajorVer)"
+println("[settings] RNInfo: detected React Native version: (major=$rnMajorVer)")
 
 if (rnMajorVer < 72) {
     includeBuild('../node_modules/react-native-gradle-plugin')

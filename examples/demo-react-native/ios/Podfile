@@ -35,7 +35,7 @@ target 'example' do
      )
 
     # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
-    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(66|67|68|69|70|72).*/)
+    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(70|72).*/)
      __apply_Xcode_12_5_M1_post_install_workaround(installer)
     end
   end
