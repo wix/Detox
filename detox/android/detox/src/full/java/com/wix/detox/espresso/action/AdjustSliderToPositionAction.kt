@@ -10,7 +10,7 @@ import com.wix.detox.espresso.common.ReactSliderHelper
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
-class AdjustSliderToPositionAction(private val targetPositionPct: Double) : ViewAction {
+class AdjustSliderToPositionAction(private val targetPositionPct: Float) : ViewAction {
     override fun getDescription() = "adjustSliderToPosition"
     override fun getConstraints(): Matcher<View?>? =
         Matchers.allOf( isDisplayed(), isAssignableFrom(AppCompatSeekBar::class.java) )
