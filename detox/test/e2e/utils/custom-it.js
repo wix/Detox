@@ -10,7 +10,7 @@ const _it = {
 };
 
 const _describe = {
-  describeFromRNVersion: (version) => describeFromRNVersion(version),
+  skipFromRNVersion: (version) => describeFromRNVersion(version),
 }
 
 function runOrExpectFailByPredicates(spec, specFn, ...predicateFuncs) {

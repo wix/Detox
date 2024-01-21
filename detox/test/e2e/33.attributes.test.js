@@ -1,6 +1,6 @@
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
-const { custom } = require('./utils/custom-it');
+const custom = require('./utils/custom-it');
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
