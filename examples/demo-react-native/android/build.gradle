@@ -1,4 +1,5 @@
 buildscript {
+    apply from: '../../../detox/android/rninfo.gradle'
 
     ext {
         kotlinVersion = '1.8.22'
@@ -30,5 +31,7 @@ allprojects {
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+if (ext.rnInfo.isRN73OrHigher) {
+    apply plugin: "com.facebook.react.rootproject"
+}
 
