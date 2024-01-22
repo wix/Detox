@@ -1,6 +1,7 @@
-const rnMinor = require('../test/e2e/utils/rn-consts/rn-consts').rnVersion.minor;
 const fs = require('fs');
 const path = require('path');
+
+const rnMinor = require('../test/e2e/utils/rn-consts/rn-consts').rnVersion.minor;
 
 function getGradleVersionByRNVersion() {
   switch (rnMinor) {
