@@ -62,7 +62,7 @@ abstract class ReactSliderHelper(protected val slider: AppCompatSeekBar) {
 private class LegacySliderHelper(slider: AppCompatSeekBar): ReactSliderHelper(slider) {
     override fun setProgressJS(valueJS: Float) {
         val reactSliderManager = Class.forName(CLASS_REACT_SLIDER_LEGACY_MANAGER).newInstance()
-        Reflect.on(reactSliderManager).call("updateProperties", slider, buildStyles("value", valueJS))
+        Reflect.on(reactSliderManager).call("updateProperties", slider, buildStyles("value", valueJS.toDouble()))
     }
 
     private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
