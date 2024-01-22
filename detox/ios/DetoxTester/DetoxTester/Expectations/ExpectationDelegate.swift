@@ -105,7 +105,10 @@ class ExpectationDelegate: ExpectationDelegateProtocol {
           throw Error.elementNotFound
         }
 
-        try element.assertIsFocused(isTruthy: isTruthy)
+        try element.assertIsFocused(
+          isTruthy: isTruthy,
+          whiteBoxMessageHandler: whiteBoxMessageHandler
+        )
 
       case .toHaveId(let id):
         guard let element = element else {

@@ -10,14 +10,25 @@ import XCTest
 /// Extends `XCUIElement` with keyboard actions.
 extension XCUIElement {
   /// Indicates whether the text field element has keyboard focus.
-  public var hasKeyboardFocusOnTextField: Bool {
-    logProperties()
-    
+  func hasKeyboardFocusOnTextField(_ whiteBoxMessageHandler: WhiteBoxMessageHandler) -> Bool {
     let textField = textField ?? self
-    return textField.hasKeyboardFocus || textField.hasFocus
+    if (textField.hasKeyboardFocus || textField.hasFocus) {
+      return true
+    }
+
+    let message = WhiteBoxExecutor.Message.isFocused(element: textField)
+    guard let response = whiteBoxMessageHandler(message) else {
+      fatalError("Is-focused check is not supported by the XCUITest target")
+    }
+
+    guard case .boolean(let isFocusedOnWhiteBox) = response else {
+      return false
+    }
+
+    return isFocusedOnWhiteBox
   }
 
-  private var hasKeyboardFocus: Bool {
+  public var hasKeyboardFocus: Bool {
     return value(forKey: "hasKeyboardFocus") as? Bool ?? false
   }
 
@@ -26,8 +37,11 @@ extension XCUIElement {
   }
 
   /// Taps the keyboard key with the given type.
-  func tapKey(_ keyType: Action.TapKeyType) throws {
-    try focusKeyboard()
+  func tapKey(
+    _ keyType: Action.TapKeyType,
+    _ whiteBoxMessageHandler: WhiteBoxMessageHandler
+  ) throws {
+    try focusKeyboard(whiteBoxMessageHandler)
 
     switch keyType {
       case .returnKey:
@@ -39,8 +53,8 @@ extension XCUIElement {
   }
 
   /// Focuses the keyboard on the element.
-  func focusKeyboard() throws {
-    if hasKeyboardFocus == true {
+  func focusKeyboard(_ whiteBoxMessageHandler: WhiteBoxMessageHandler) throws {
+    if hasKeyboardFocusOnTextField(whiteBoxMessageHandler) == true {
       return
     }
 
@@ -48,7 +62,7 @@ extension XCUIElement {
       withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
     ).shortPress()
 
-    guard hasKeyboardFocus == true else {
+    guard hasKeyboardFocusOnTextField(whiteBoxMessageHandler) == true else {
       throw Error.failedToFocusKeyboardOnElement(element: self)
     }
   }

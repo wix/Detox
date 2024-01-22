@@ -49,6 +49,9 @@ extension WhiteBoxExecutor {
     /// Returns response of `boolean`.
     case verifyText(ofElement: XCUIElement, equals: String)
 
+    /// Returns whether an element is focused.
+    case isFocused(element: XCUIElement)
+
     /// Returns response of `identifiersAndFrames`.
     case findElementsByText(text: String, isRegex: Bool)
 
@@ -127,6 +130,10 @@ extension WhiteBoxExecutor.Message: CustomStringConvertible {
       case .verifyText(ofElement: let ofElement, equals: let equals):
         return "expect text to equal `\(equals)`, " +
           "for element with identifier: `\(ofElement.cleanIdentifier)`"
+
+      case .isFocused(element: let element):
+        return "request boolean value of focused state, for element with " +
+          "identifier: `\(element.cleanIdentifier)`"
 
       case .findElementsByText(text: let text, isRegex: let isRegex):
         return "match elements by text: `\(text)` (is-regex: \(isRegex ? "true" : "false"))"

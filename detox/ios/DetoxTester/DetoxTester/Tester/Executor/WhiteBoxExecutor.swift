@@ -219,6 +219,27 @@ class WhiteBoxExecutor {
 
         return .boolean(hasText)
 
+      case .isFocused(let element):
+        let message = createMessage(
+          type: "isElementFocused",
+          params: [
+            "elementID": AnyCodable(element.identifier),
+            "elementFrame": AnyCodable([
+              element.frame.origin.x,
+              element.frame.origin.y,
+              element.frame.width,
+              element.frame.height
+            ])
+          ],
+          messageId: messageId
+        )
+
+        let result = send(message, andExpectToType: "didElementFocusCheck", messageId: messageId)
+        expectLog("result for check focus: \(result)")
+        let isFocused = (result["isFocused"] as! NSNumber).boolValue
+
+        return .boolean(isFocused)
+
       case .findElementsByText(let text, let isRegex):
         let message = createMessage(
           type: "findElementsByText",

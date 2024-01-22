@@ -14,8 +14,12 @@ extension XCUIElement {
   }
 
   /// Asserts whether the element is focused or not.
-  func assertIsFocused(isTruthy: Bool) throws {
-    try assertProperty("focus", expected: isTruthy, actual: hasKeyboardFocusOnTextField)
+  func assertIsFocused(isTruthy: Bool, whiteBoxMessageHandler: WhiteBoxMessageHandler) throws {
+    try assertProperty(
+      "focus",
+      expected: isTruthy,
+      actual: hasKeyboardFocusOnTextField(whiteBoxMessageHandler)
+    )
   }
 
   /// Asserts whether the element's identifier equals the expected value.

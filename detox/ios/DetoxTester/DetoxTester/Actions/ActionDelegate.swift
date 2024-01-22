@@ -140,7 +140,7 @@ class ActionDelegate: ActionDelegateProtocol {
         )
 
       case .tapKey(let type):
-        try element.tapKey(type)
+        try element.tapKey(type, whiteBoxMessageHandler)
 
       case .changeText(let change):
         try element.changeText(change, app: app)

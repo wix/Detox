@@ -651,6 +651,22 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 					messageId: messageId
 				)
 
+			case "isElementFocused":
+				let targetIdentifier = params["elementID"] as! String
+				let targetFrame = params["elementFrame"] as! [NSNumber]
+				let targetElement = findElement(byIdentifier: targetIdentifier, andFrame: targetFrame)
+
+				let isElementFocused = targetElement.dtx_isFocused()
+				log.error("element: \(targetElement), is focused: \(isElementFocused)")
+
+				self.safeSend(
+					action: "didElementFocusCheck",
+					params: [
+						"isFocused": isElementFocused
+					],
+					messageId: messageId
+				)
+
 			case "setRecordingState":
 				handlePerformanceRecording(props: params, isFromLaunch: false) {
 					self.safeSend(action: "didSetRecordingState", messageId: messageId)
