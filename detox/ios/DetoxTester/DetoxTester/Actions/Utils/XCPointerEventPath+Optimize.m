@@ -10,7 +10,7 @@
 
 @import ObjectiveC;
 
-@interface NSObject (XCPointerEventPathOptimize)
+@interface NSObject (XCPointerEventPathOptimize_Private)
 
 - (void)typeText:(id)arg1
         atOffset:(double)arg2

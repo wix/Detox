@@ -4,9 +4,11 @@
 //
 
 import Foundation
+import XCTest
 
+/// Extends XCUIElement with util for debugging purposes.
 extension XCUIElement {
-  /// Log all properties of this element.
+  /// Log all properties of this element. Use for debugging purposes.
   func logProperties() {
     var outCount: UInt32 = 0
 
