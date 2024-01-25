@@ -52,25 +52,37 @@ class WebActionDelegate: WebActionDelegateProtocol {
         element.tap()
 
       case .typeText(let text, _):
-        try element.changeText(.type(text), app: app)
+        try element.changeText(
+          .type(text),
+          app: app,
+          whiteBoxMessageHandler: whiteBoxMessageHandler
+        )
 
       case .replaceText(let text):
-        try element.changeText(.replace(text), app: app)
+        try element.changeText(
+          .replace(text),
+          app: app,
+          whiteBoxMessageHandler: whiteBoxMessageHandler
+        )
 
       case .clearText:
-        try element.changeText(.clear, app: app)
+        try element.changeText(.clear, app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
 
       case .selectAllText:
-        try element.selectAllText(app: app, completion: nil)
+        try element.selectAllText(
+          app: app,
+          whiteBoxMessageHandler: whiteBoxMessageHandler, 
+          completion: nil
+        )
 
       case .scrollToView:
         try webView.scrollToView(to: element, testCase: testCase)
 
       case .focus:
-        try element.focusKeyboard()
+        try element.focusKeyboard(whiteBoxMessageHandler)
 
       case .moveCursorToEnd:
-        try element.focusKeyboard()
+        try element.focusKeyboard(whiteBoxMessageHandler)
 
       case .runScript, .runScriptWithArgs:
         throw Error.actionNotSupported(action: "runScript")

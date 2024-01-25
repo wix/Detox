@@ -58,20 +58,34 @@ extension XCUIElement {
       return
     }
 
-    coordinate(
-      withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
-    ).shortPress()
+    shortPressOnCorner()
 
     guard hasKeyboardFocusOnTextField(whiteBoxMessageHandler) == true else {
       throw Error.failedToFocusKeyboardOnElement(element: self)
     }
   }
 
+  private func shortPressOnCorner() {
+    coordinate(
+      withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
+    ).shortPress()
+  }
+
+  private func longPressOnCorner() {
+    coordinate(
+      withNormalizedOffset: CGVector(dx: 0.9, dy: 0.9)
+    ).longPress(duration: 0.6)
+  }
+
   /// Changes the text in the element with the given text and change type.
-  func changeText(_ changeType: Action.ChangeTextType, app: XCUIApplication) throws {
+  func changeText(
+    _ changeType: Action.ChangeTextType,
+    app: XCUIApplication,
+    whiteBoxMessageHandler: WhiteBoxMessageHandler
+  ) throws {
     if let textField = textField {
       uiLog("found underlying text field, changing text on the text field (\(textField)")
-      try textField.changeText(changeType, app: app)
+      try textField.changeText(changeType, app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
       return
     }
 
@@ -81,57 +95,69 @@ extension XCUIElement {
 
     switch changeType {
       case .clear:
-        try deleteText(app: app)
+        try replaceText("", app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
 
       case .type(let text):
-        try addText(text)
+        try addText(text, whiteBoxMessageHandler: whiteBoxMessageHandler)
 
       case .replace(let text):
-        try deleteAndPasteText(text, app: app)
+        try replaceText(text, app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
     }
   }
 
   /// Selects all text in the element.
-  func selectAllText(app: XCUIApplication, completion: (() -> Void)?) throws {
-    try focusKeyboard()
-
-    shortPress()
-
-    tapOnSelectAllIfPresent(app: app, completion: nil)
-  }
-
-
-  private func deleteText(app: XCUIApplication) throws {
-    try selectAllText(app: app) { [self] in
-      typeText(String(XCUIKeyboardKey.delete.rawValue))
+  func selectAllText(
+    app: XCUIApplication,
+    whiteBoxMessageHandler: WhiteBoxMessageHandler,
+    completion: (() -> Void)?
+  ) throws {
+    let currentValue = value as? String
+    if currentValue?.isEmpty == true {
+      return
     }
+
+    longPressOnCorner()
+    uiLog("long-pressed on element's corner: `\(self.cleanIdentifier)`", type: .debug)
+
+    if (tapOnSelectAllIfPresent(app: app)) {
+      uiLog(
+        "did (successful) select all text ('\(String(describing: currentValue))') on element:" +
+        " `\(self.cleanIdentifier)`",
+        type: .debug
+      )
+
+      completion?()
+      return
+    }
+
+    throw Error.failedToSelectAllText(element: self)
   }
 
-  private func addText(_ text: String) throws {
-    try focusKeyboard()
+  private func addText(_ text: String, whiteBoxMessageHandler: WhiteBoxMessageHandler) throws {
+    try focusKeyboard(whiteBoxMessageHandler)
 
     typeText(text)
   }
 
-  private func deleteAndPasteText(_ text: String, app: XCUIApplication) throws {
+  private func replaceText(
+    _ text: String,
+    app: XCUIApplication,
+    whiteBoxMessageHandler: WhiteBoxMessageHandler
+  ) throws {
     UIPasteboard.general.string = text
 
-    try selectAllText(app: app, completion: nil)
+    try selectAllText(app: app, whiteBoxMessageHandler: whiteBoxMessageHandler, completion: nil)
     try tapOnPasteText(app: app, completion: pressOnAllowPaste)
   }
 
-  private func tapOnSelectAllIfPresent(app: XCUIApplication, completion: (() -> Void)?) {
-    let currentValue = value as? String
-    if currentValue?.isEmpty == false {
-      let selectAll = app.menuItems[localize("Select All")]
-      if selectAll.waitForExistence(timeout: 0.5) {
-        selectAll.tap()
-
-        if let completion = completion {
-          completion()
-        }
-      }
+  private func tapOnSelectAllIfPresent(app: XCUIApplication) -> Bool {
+    let selectAll = app.menuItems[localize("Select All")]
+    if selectAll.waitForExistence(timeout: 0.5) {
+      selectAll.tap()
+      return true
     }
+
+    return false
   }
 
   private func tapOnPasteText(app: XCUIApplication, completion: () -> Void) throws {

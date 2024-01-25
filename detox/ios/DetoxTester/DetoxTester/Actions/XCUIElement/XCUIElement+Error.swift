@@ -34,6 +34,9 @@ extension XCUIElement {
     /// Failed to find web-view element.
     case failedToFindWebViewElement(
       element: XCUIElement, host: XCUIElement, script: String, args: [String])
+
+    /// Failed to select all text on type element.
+    case failedToSelectAllText(element: XCUIElement)
   }
 }
 
@@ -49,6 +52,9 @@ extension XCUIElement.Error: CustomStringConvertible {
 
       case .failedToPasteNewText(let onAction):
         return "Failed to paste new text on text input, on action: \(onAction)"
+
+      case .failedToSelectAllText(let element):
+        return "Failed to select all text on input element: `\(element.cleanIdentifier)`"
 
       case .elementNotHittable(let element):
         return "Failed to hit element with identifier " +
