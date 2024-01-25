@@ -69,11 +69,7 @@ class WebActionDelegate: WebActionDelegateProtocol {
         try element.changeText(.clear, app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
 
       case .selectAllText:
-        try element.selectAllText(
-          app: app,
-          whiteBoxMessageHandler: whiteBoxMessageHandler, 
-          completion: nil
-        )
+        try element.selectAllText(app: app, completion: nil)
 
       case .scrollToView:
         try webView.scrollToView(to: element, testCase: testCase)

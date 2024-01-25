@@ -95,42 +95,28 @@ extension XCUIElement {
 
     switch changeType {
       case .clear:
-        try replaceText("", app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
+        try replaceText("", app: app)
 
       case .type(let text):
         try addText(text, whiteBoxMessageHandler: whiteBoxMessageHandler)
 
       case .replace(let text):
-        try replaceText(text, app: app, whiteBoxMessageHandler: whiteBoxMessageHandler)
+        try replaceText(text, app: app)
     }
   }
 
   /// Selects all text in the element.
-  func selectAllText(
-    app: XCUIApplication,
-    whiteBoxMessageHandler: WhiteBoxMessageHandler,
-    completion: (() -> Void)?
-  ) throws {
-    let currentValue = value as? String
-    if currentValue?.isEmpty == true {
-      return
-    }
-
+  func selectAllText(app: XCUIApplication, completion: (() -> Void)?) throws {
     longPressOnCorner()
     uiLog("long-pressed on element's corner: `\(self.cleanIdentifier)`", type: .debug)
 
     if (tapOnSelectAllIfPresent(app: app)) {
-      uiLog(
-        "did (successful) select all text ('\(String(describing: currentValue))') on element:" +
-        " `\(self.cleanIdentifier)`",
-        type: .debug
-      )
-
-      completion?()
-      return
+      uiLog("did select all text on element `\(self.cleanIdentifier)`", type: .debug)
+    } else {
+      uiLog("nothing to select on element `\(self.cleanIdentifier)`", type: .debug)
     }
 
-    throw Error.failedToSelectAllText(element: self)
+    completion?()
   }
 
   private func addText(_ text: String, whiteBoxMessageHandler: WhiteBoxMessageHandler) throws {
@@ -139,14 +125,13 @@ extension XCUIElement {
     typeText(text)
   }
 
-  private func replaceText(
-    _ text: String,
-    app: XCUIApplication,
-    whiteBoxMessageHandler: WhiteBoxMessageHandler
-  ) throws {
+  private func replaceText(_ text: String, app: XCUIApplication) throws {
     UIPasteboard.general.string = text
 
-    try selectAllText(app: app, whiteBoxMessageHandler: whiteBoxMessageHandler, completion: nil)
+    try selectAllText(app: app) {
+      uiLog("text selected before pasting new text", type: .debug)
+    }
+
     try tapOnPasteText(app: app, completion: pressOnAllowPaste)
   }
 
