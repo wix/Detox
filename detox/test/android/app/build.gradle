@@ -10,7 +10,7 @@ android {
     buildToolsVersion = rootProject.ext.buildToolsVersion
     compileSdk = rootProject.ext.compileSdkVersion
 
-    if (rnInfo.isRN72OrNewer) {
+    if (rnInfo.isRN72OrHigher) {
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_17
             targetCompatibility JavaVersion.VERSION_17
