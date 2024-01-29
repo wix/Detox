@@ -31,6 +31,17 @@ allprojects {
     }
 }
 
+subprojects {
+    // Apply common configurations to all sub-projects
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            project.android {
+                buildToolsVersion = rootProject.ext.buildToolsVersion
+            }
+        }
+    }
+}
+
 if (ext.rnInfo.isRN73OrHigher) {
     apply plugin: "com.facebook.react.rootproject"
 }
