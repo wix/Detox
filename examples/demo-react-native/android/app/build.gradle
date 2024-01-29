@@ -4,7 +4,7 @@ apply plugin: 'com.facebook.react'
 android {
     namespace 'com.example'
 
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'com.detox.rn.example'
