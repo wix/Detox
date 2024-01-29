@@ -71,7 +71,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
-
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', "${project(':detox').projectDir}/proguard-rules-app.pro"
             signingConfig signingConfigs.release
         }
     }
@@ -108,10 +108,6 @@ dependencies {
 
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
-
-    implementation("com.google.android.material:material:1.11.0") {
-        because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'
-    }
 }
 
 // Apply Hermes as our JS engine
