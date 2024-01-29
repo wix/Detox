@@ -6,6 +6,8 @@ android {
 
     buildToolsVersion = rootProject.ext.buildToolsVersion
 
+    println("[$project] Using buildToolsVersion $buildToolsVersion")
+
     defaultConfig {
         applicationId 'com.detox.rn.example'
         versionCode 1
