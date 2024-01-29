@@ -48,8 +48,8 @@ export default class MatchersScreen extends Component {
 
         {<View style={{ flexDirection: 'row', marginBottom: 20 }}>
           {Array.from({ length: 4 }, (_, i) => (
-            <View key={i} testID={`ProductId00${i}`} style={{ margin: 10 }}>
-              <Text>Product</Text>
+            <View key={i} style={{ margin: 10 }}>
+              <Text testID={`ProductId00${i}`}>Product</Text>
             </View>
           ))}
         </View>}
