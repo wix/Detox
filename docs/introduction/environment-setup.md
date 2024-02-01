@@ -34,7 +34,7 @@ on your use case).
 
 :::info Note
 
-Mind that for Android, we have an equivalent [environment setup guide](../guide/android-dev-env), which is a bit different,
+Mind that for Android, we have an equivalent [environment setup guide](../guide/android-dev-env.md), which is a bit different,
 but more comprehensive. Use your judgement and take what's most suitable for your environment from both guides. For
 example, there is more than one way to install the right Java Development Kit.
 
