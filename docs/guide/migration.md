@@ -4,25 +4,6 @@
 
 We are improving Detox API as we go along, sometimes these changes require us to break the API in order for it to make more sense. These migration guides refer to breaking changes. If a newer version has no entries in this document, it means it does not require special migration steps. Refer to the release notes of the latter builds to learn about their improvements and changes.
 
-### 20.18
-
-The latest versions of Android Gradle Plugin (8) requires some minor changes to your `android/app/build.gradle` file:
-
-```diff
-      buildTypes {
-        // 'release' is typically the default proguard-enabled build-type
-        release {
-            minifyEnabled true
-
-            // Typical pro-guard definitions
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // Detox-specific additions to pro-guard
-            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
-+            testProguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
-        }
-    }
-```
-
 ## 20.0
 
 ### No [Mocha] support

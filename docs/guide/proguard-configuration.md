@@ -60,7 +60,6 @@ end-to-end tests with Detox, and the other one for publishing to the marketplace
             setMatchingFallbacks('release')
 
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
-            testProguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
 // highlight-end
