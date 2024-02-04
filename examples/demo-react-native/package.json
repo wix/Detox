@@ -28,12 +28,10 @@
     "tslib": "^2.0.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-env": "^7.20.0",
-    "@babel/runtime": "^7.20.0",
+    "@babel/preset-react": "^7.23.3",
     "@react-native/babel-preset": "0.73.19",
     "@react-native/metro-config": "^0.73.2",
-    "@react-native/typescript-config": "^0.73.1",
+    "@tsconfig/react-native": "^2.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
     "@types/react": "^18.0.24",
