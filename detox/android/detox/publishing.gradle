@@ -110,7 +110,7 @@ tasks.named("dokkaJavadoc") {
 // suppression config var or something.
 task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
-    classifier = 'javadoc'
+    archiveClassifier.set("javadoc")
 }
 
 /*
@@ -119,7 +119,7 @@ task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set("sources")
 }
 
 /*

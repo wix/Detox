@@ -1,13 +1,12 @@
-  - label: ":android::detox: RN .70 + Android: Tests app"
+  - label: ":android::react: RN .72 + Android: Demo app"
     command:
       - "nvm install"
-      - "./scripts/ci.android.sh"
+      - "./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.70.7
+      REACT_NATIVE_VERSION: 0.72.8
+      REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
-      SKIP_UNIT_TESTS: true
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/**/allure-report-*.html"
       - "/Users/builder/work/artifacts*.tar.gz"

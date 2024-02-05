@@ -4,7 +4,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:import/recommended',
     'plugin:node/recommended',
-    'plugin:ecmascript-compat/recommended'
+    'plugin:ecmascript-compat/recommended',
   ],
   parser: '@typescript-eslint/parser',
   plugins: [

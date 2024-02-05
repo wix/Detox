@@ -62,7 +62,7 @@ export default class LocationScreen extends Component {
     if (!this.state.locationRequested) {
       return (
         <Frame>
-          <Button testID="getLocationButton" title="Get location" onPress={this.requestLocation} />
+          <Button testID="get_location_button" title="Get location" onPress={this.requestLocation} />
         </Frame>
       );
     }
@@ -70,8 +70,8 @@ export default class LocationScreen extends Component {
     if (this.state.coordinates) {
       return (
         <Frame>
-          <Label testID="latitude">Latitude: {this.state.coordinates.latitude}</Label>
-          <Label testID="longitude">Longitude: {this.state.coordinates.longitude}</Label>
+          <Label testID="location_latitude">Latitude: {this.state.coordinates.latitude}</Label>
+          <Label testID="location_longitude">Longitude: {this.state.coordinates.longitude}</Label>
         </Frame>
       );
     }
@@ -79,14 +79,14 @@ export default class LocationScreen extends Component {
     if (this.state.error) {
       return (
         <Frame>
-          <Label testID="error">{this.state.error}</Label>
+          <Label testID="location_error">{this.state.error}</Label>
         </Frame>
       );
     }
 
     return (
       <Frame>
-        <Label testID="loading">Locating...</Label>
+        <Label testID="location_loading">Locating...</Label>
       </Frame>
     );
   }
