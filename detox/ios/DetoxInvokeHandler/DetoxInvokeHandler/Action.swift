@@ -117,10 +117,14 @@ extension Action {
 
   /// Represents the type of the scrolling action.
   public enum ScrollType: Equatable, Hashable {
-    /// Scroll to specified `edge`.
-    case to(_ edge: ScrollToEdgeType)
+    /// Scroll to specified `edge` with normalized position (optional).
+    case to(
+      _ edge: ScrollToEdgeType,
+      startNormalizedPositionX: Double?,
+      startNormalizedPositionY: Double?
+    )
 
-    /// Scroll with given parameters.
+    /// Scroll to `offset` in specified `direction` with normalized position (optional).
     case withParams(
       offset: Double,
       direction: ScrollingDirection,

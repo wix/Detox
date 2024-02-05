@@ -54,8 +54,17 @@ extension MessageBuilder {
     return setAction("clearText")
   }
 
-  func makeScrollToEdgeAction(_ direction: String) -> Self {
-    message["params"] = [direction]
+  func makeScrollToEdgeAction(_ edge: String) -> Self {
+    message["params"] = [edge, AnyHashable(NSNull()), AnyHashable(NSNull())]
+    return setAction("scrollTo")
+  }
+
+  func makeScrollToEdgeWithStartPositionAction(
+    edge: String,
+    startNormalizedPositionX: AnyHashable,
+    startNormalizedPositionY: AnyHashable
+  ) -> Self {
+    message["params"] = [edge, startNormalizedPositionX, startNormalizedPositionY]
     return setAction("scrollTo")
   }
 

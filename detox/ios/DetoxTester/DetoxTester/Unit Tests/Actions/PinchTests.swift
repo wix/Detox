@@ -27,7 +27,11 @@ class PinchTests: DTXTestCase {
     let container = app.children(matching: .any).run().first!
 
     try actionDelegate.act(
-      action: .scroll(.to(.bottom)),
+      action: .scroll(.to(
+        .bottom,
+        startNormalizedPositionX: nil,
+        startNormalizedPositionY: nil
+      )),
       on: container,
       testCase: self
     )

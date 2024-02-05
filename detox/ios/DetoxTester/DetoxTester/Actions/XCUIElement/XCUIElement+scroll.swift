@@ -18,8 +18,18 @@ extension XCUIElement {
     }
 
     switch type {
-      case .to(let edge):
-        try scroll(toEdge: edge, app: app, testCase: testCase)
+      case .to(
+        let edge,
+        startNormalizedPositionX: let startNormalizedPositionX,
+        startNormalizedPositionY: let startNormalizedPositionY
+      ):
+        try scroll(
+          toEdge: edge,
+          app: app,
+          testCase: testCase,
+          startNormalizedPositionX: startNormalizedPositionX,
+          startNormalizedPositionY: startNormalizedPositionY
+        )
 
       case .withParams(
         offset: let offset,
@@ -41,7 +51,9 @@ extension XCUIElement {
   private func scroll(
     toEdge edge: Action.ScrollToEdgeType,
     app: XCUIApplication,
-    testCase: XCTestCase
+    testCase: XCTestCase,
+    startNormalizedPositionX: Double?,
+    startNormalizedPositionY: Double?
   ) throws {
     var lastPNG = screenshotData(testCase: testCase)
     var count = 0
@@ -50,19 +62,11 @@ extension XCUIElement {
       uiLog("swipe #\(count) in direction: \(edge)")
       count += 1
 
-      switch edge {
-        case .top:
-          swipeDown()
-
-        case .bottom:
-          swipeUp()
-
-        case .left:
-          swipeRight()
-
-        case .right:
-          swipeLeft()
-      }
+      swipe(
+        edge,
+        startNormalizedPositionX: startNormalizedPositionX,
+        startNormalizedPositionY: startNormalizedPositionY
+      )
 
       let newPNG = screenshotData(testCase: testCase)
       if newPNG == lastPNG {
@@ -74,6 +78,66 @@ extension XCUIElement {
       }
 
       lastPNG = newPNG
+    }
+  }
+
+  private func swipe(
+    _ edge: Action.ScrollToEdgeType,
+    startNormalizedPositionX: Double?,
+    startNormalizedPositionY: Double?
+  ) {
+    let startPosition = coordinate(
+      normalizedOffsetX: startNormalizedPositionX,
+      normalizedOffsetY: startNormalizedPositionY
+    )
+
+    let pressDuration : TimeInterval = 0.05
+
+    let swipeToCoordinate: (XCUICoordinate) -> Void = { target in
+      startPosition.press(
+        forDuration: pressDuration,
+        thenDragTo: target,
+        withVelocity: .fast,
+        thenHoldForDuration: 0
+      )
+    }
+
+    switch edge {
+      case .bottom:
+        let targetCoordinate = coordinate(
+          normalizedOffsetX: startNormalizedPositionX,
+          normalizedOffsetY: 0
+        )
+
+        swipeToCoordinate(targetCoordinate)
+        break
+
+      case .top:
+        let targetCoordinate = coordinate(
+          normalizedOffsetX: startNormalizedPositionX,
+          normalizedOffsetY: 1
+        )
+
+        swipeToCoordinate(targetCoordinate)
+        break
+
+      case .right:
+        let targetCoordinate = coordinate(
+          normalizedOffsetX: 0,
+          normalizedOffsetY: startNormalizedPositionY
+        )
+
+        swipeToCoordinate(targetCoordinate)
+        break
+
+      case .left:
+        let targetCoordinate = coordinate(
+          normalizedOffsetX: 1,
+          normalizedOffsetY: startNormalizedPositionY
+        )
+
+        swipeToCoordinate(targetCoordinate)
+        break
     }
   }
 

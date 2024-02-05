@@ -11,6 +11,7 @@
 @interface NSObject ()
 
 - (void)_setCaretBlinkAnimationEnabled:(BOOL)arg1;
+
 - (void)setCaretBlinks:(BOOL)arg1;
 
 @end

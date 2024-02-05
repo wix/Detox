@@ -157,7 +157,7 @@ class MessageActionSpec: QuickSpec {
             type: .action,
             action: .scrollTo,
             atIndex: 3,
-            params: ["left"],
+            params: ["left", .init(NSNull()), .init(NSNull())],
             predicate: predicate
           )
         ))

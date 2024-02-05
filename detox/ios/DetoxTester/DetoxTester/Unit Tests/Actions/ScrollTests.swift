@@ -33,15 +33,35 @@ class ScrollTests: DTXTestCase {
   }
 
   func testScrollToBottomEdge() throws {
-    try actionDelegate.act(action: Action.scroll(.to(.bottom)), on: scrollView, testCase: self)
+    try actionDelegate.act(action: Action.scroll(
+      .to(.bottom, startNormalizedPositionX: nil, startNormalizedPositionY: nil)
+    ), on: scrollView, testCase: self)
 
     XCTAssertFalse(app.staticTexts["Top"].isVisible)
     XCTAssertTrue(app.staticTexts["Bottom"].isVisible)
   }
 
   func testScrollToTopEdge() throws {
-    try actionDelegate.act(action: Action.scroll(.to(.bottom)), on: scrollView, testCase: self)
-    try actionDelegate.act(action: Action.scroll(.to(.top)), on: scrollView, testCase: self)
+    try actionDelegate.act(action: Action.scroll(
+      .to(.bottom, startNormalizedPositionX: nil, startNormalizedPositionY: nil)
+    ), on: scrollView, testCase: self)
+
+    try actionDelegate.act(action: Action.scroll(
+      .to(.top, startNormalizedPositionX: nil, startNormalizedPositionY: nil)
+    ), on: scrollView, testCase: self)
+
+    XCTAssertTrue(app.staticTexts["Top"].isVisible)
+    XCTAssertFalse(app.staticTexts["Bottom"].isVisible)
+  }
+
+  func testScrollToTopEdgeWithStartPosition() throws {
+    try actionDelegate.act(action: Action.scroll(
+      .to(.bottom, startNormalizedPositionX: 0.1, startNormalizedPositionY: 0.1)
+    ), on: scrollView, testCase: self)
+
+    try actionDelegate.act(action: Action.scroll(
+      .to(.top, startNormalizedPositionX: 0.7, startNormalizedPositionY: 0.4)
+    ), on: scrollView, testCase: self)
 
     XCTAssertTrue(app.staticTexts["Top"].isVisible)
     XCTAssertFalse(app.staticTexts["Bottom"].isVisible)

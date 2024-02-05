@@ -507,16 +507,20 @@ public class InvokeHandler {
   }
 
   private func scrollToAction(params: [AnyCodable]?) throws -> Action {
-    return .scroll(.to(.init(rawValue: params!.first!.value as! String)!))
+    return .scroll(.to(
+      .init(rawValue: params!.first!.value as! String)!,
+      startNormalizedPositionX: (params![1].value as? NSNumber)?.doubleValue,
+      startNormalizedPositionY: (params![2].value as? NSNumber)?.doubleValue
+    ))
   }
 
   private func scrollAction(params: [AnyCodable]?) throws -> Action {
     return .scroll(.withParams(
-      offset: (params?[0].value as? NSNumber)!.doubleValue,
+      offset: (params![0].value as? NSNumber)!.doubleValue,
       direction: .init(rawValue: params![1].value as! String)!,
       startNormalizedPositionX: (params![2].value as? NSNumber)?.doubleValue,
-      startNormalizedPositionY: (params![3].value as? NSNumber)?.doubleValue)
-    )
+      startNormalizedPositionY: (params![3].value as? NSNumber)?.doubleValue
+    ))
   }
 
   private func setColumnToValueAction(params: [AnyCodable]?) throws -> Action {

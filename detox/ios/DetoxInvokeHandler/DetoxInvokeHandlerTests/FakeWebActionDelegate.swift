@@ -6,6 +6,13 @@
 import Foundation
 
 class FakeWebActionDelegate: WebActionDelegateProtocol {
+  func runScript(
+    on element: AnyHashable, host webView: AnyHashable, script: String, args: [String]
+  ) throws -> AnyCodable {
+    // Does nothing
+    return AnyCodable(true)
+  }
+  
   struct Error: Swift.Error { }
 
   var shouldThrow: Bool = false
@@ -18,7 +25,11 @@ class FakeWebActionDelegate: WebActionDelegateProtocol {
 
   private(set) var actRecorder: [(WebAction, AnyHashable)] = []
 
-  func act(action: WebAction, on element: AnyHashable, host webView: AnyHashable) throws {
+  func act(
+    action: WebAction,
+    on element: AnyHashable,
+    host webView: AnyHashable
+  ) throws {
     actRecorder.append((action, element))
 
     if shouldThrow {

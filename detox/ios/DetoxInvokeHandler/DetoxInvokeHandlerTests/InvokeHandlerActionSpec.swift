@@ -284,7 +284,11 @@ class InvokeHandlerActionSpec: QuickSpec {
         expect(try handler.handle(message)).to(beNil())
 
         let expected = (
-          Action.scroll(.to(.top)),
+          Action.scroll(.to(
+            .top,
+            startNormalizedPositionX: nil,
+            startNormalizedPositionY: nil
+          )),
           element
         )
         expect(actionDelegate.actRecorder.last).to(equal(expected))
@@ -296,7 +300,11 @@ class InvokeHandlerActionSpec: QuickSpec {
         expect(try handler.handle(message)).to(beNil())
 
         let expected = (
-          Action.scroll(.to(.bottom)),
+          Action.scroll(.to(
+            .bottom,
+            startNormalizedPositionX: nil,
+            startNormalizedPositionY: nil
+          )),
           element
         )
         expect(actionDelegate.actRecorder.last).to(equal(expected))
@@ -308,7 +316,11 @@ class InvokeHandlerActionSpec: QuickSpec {
         expect(try handler.handle(message)).to(beNil())
 
         let expected = (
-          Action.scroll(.to(.left)),
+          Action.scroll(.to(
+            .left,
+            startNormalizedPositionX: nil,
+            startNormalizedPositionY: nil
+          )),
           element
         )
         expect(actionDelegate.actRecorder.last).to(equal(expected))
@@ -320,7 +332,31 @@ class InvokeHandlerActionSpec: QuickSpec {
         expect(try handler.handle(message)).to(beNil())
 
         let expected = (
-          Action.scroll(.to(.right)),
+          Action.scroll(.to(
+            .right,
+            startNormalizedPositionX: nil,
+            startNormalizedPositionY: nil
+          )),
+          element
+        )
+        expect(actionDelegate.actRecorder.last).to(equal(expected))
+      }
+
+      it("should call delegate for scroll to edge with start position action") {
+        let message = messageBuilderWithPredicate.makeScrollToEdgeWithStartPositionAction(
+          edge: "right",
+          startNormalizedPositionX: 1.1,
+          startNormalizedPositionY: 2.2
+        ).build()
+
+        expect(try handler.handle(message)).to(beNil())
+
+        let expected = (
+          Action.scroll(.to(
+            .right,
+            startNormalizedPositionX: 1.1,
+            startNormalizedPositionY: 2.2
+          )),
           element
         )
         expect(actionDelegate.actRecorder.last).to(equal(expected))

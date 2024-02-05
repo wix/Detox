@@ -75,7 +75,7 @@ describe('Actions - Scroll', () => {
   it('should scroll from a custom start-position ratio', async () => {
     await expect(element(by.text('Text12'))).not.toBeVisible();
     await element(by.id('toggleScrollOverlays')).tap();
-    await element(by.id('ScrollView161')).scroll(700, 'down', 0.8, 0.6);
+    await element(by.id('ScrollView161')).scroll(750, 'down', 0.8, 0.6);
     await element(by.id('toggleScrollOverlays')).tap();
     await expect(element(by.text('Text12'))).toBeVisible();
 
