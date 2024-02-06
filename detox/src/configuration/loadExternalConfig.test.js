@@ -2,6 +2,7 @@ const os = require('os');
 const path = require('path');
 
 describe('loadExternalConfig', () => {
+  const DIR_CJS = path.join(__dirname, '__mocks__/configuration/cjs');
   const DIR_PACKAGEJSON = path.join(__dirname, '__mocks__/configuration/packagejson');
   const DIR_PRIORITY = path.join(__dirname, '__mocks__/configuration/priority');
   const DIR_EXTENDS = path.join(__dirname, '__mocks__/configuration/extends');
@@ -31,6 +32,13 @@ describe('loadExternalConfig', () => {
     const { filepath, config } = await loadExternalConfig({ cwd: DIR_PRIORITY });
 
     expect(filepath).toBe(path.join(DIR_PRIORITY, '.detoxrc.js'));
+    expect(config).toMatchObject({ configurations: expect.anything() });
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it('should implicitly use .detoxrc.cjs', async () => {
+    const { filepath, config } = await loadExternalConfig({ cwd: DIR_CJS });
+    expect(filepath).toBe(path.join(DIR_CJS, '.detoxrc.cjs'));
     expect(config).toMatchObject({ configurations: expect.anything() });
     expect(logger.warn).not.toHaveBeenCalled();
   });
