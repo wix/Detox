@@ -29,7 +29,16 @@ Please select type of your mobile application before you start the tutorial:
 ## React Native CLI Quickstart
 
 Your first step would be to complete the
-[📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup).
+[📚 React Native CLI Quickstart Guide](https://reactnative.dev/docs/next/environment-setup) for iOS/Android/both (depending
+on your use case).
+
+:::info Note
+
+Mind that for Android, we have an equivalent [environment setup guide](../guide/android-dev-env.md), which is a bit different,
+but more comprehensive. Use your judgement and take what's most suitable for your environment from both guides. For
+example, there is more than one way to install the right Java Development Kit.
+
+:::
 
 ![RN Env](../img/rn-env.png)
 
