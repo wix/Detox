@@ -17,7 +17,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
     timeout,
     statusLogs = {},
     verbosity = 'normal',
-    maxBuffer,
+    maxBuffer = 1024 * 1024,
   } = options;
 
   const trackingId = execsCounter.inc();
@@ -127,6 +127,7 @@ async function execAsync(command) {
   const result = await exec(command);
   return _.trim(result.stdout);
 }
+
 module.exports = {
   execWithRetriesAndLogs,
   execAsync

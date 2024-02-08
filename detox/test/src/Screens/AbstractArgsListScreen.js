@@ -39,7 +39,11 @@ export default class AbstractArgsListScreen extends Component {
         {this.state.argsList && this.renderArgsList()}
 
         <Text style={{paddingTop: 20, fontWeight: 'bold'}}>Arguments count: </Text>
-        {this.state.argsList && <Text testID="argsCount">{Object.keys(this.state.argsList || {}).length}</Text>}
+        {this.state.argsList &&
+          <View testID="argsCount">
+            <Text>{Object.keys(this.state.argsList || {}).length}</Text>
+          </View>
+        }
       </View>
     );
   }

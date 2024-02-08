@@ -51,6 +51,18 @@ Make sure your TypeScript compiles without errors before proceeding:
 tsc # or tsc --noEmit if you don't want to generate output files
 ```
 
+If you plan to use Detox globals such as `device`, `element`, `by`, etc. in your tests, you need to add them to your `tsconfig.json` file:
+
+```plain
+{
+  "compilerOptions": {
+    ...
+    // highlight-next-line
+    "types": ["node", "jest", "detox/globals"],
+  }
+}
+```
+
 ## Setting up Jest with TypeScript
 
 Jest requires a few extra packages to work seamlessly with TypeScript, so let's install them:

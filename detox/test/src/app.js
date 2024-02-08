@@ -90,8 +90,9 @@ export default class example extends Component {
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
-        {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
+        {this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
+        {this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderButton('Crash', () => {
@@ -117,9 +118,6 @@ export default class example extends Component {
         {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          {this.renderScreenButton('Init URL', Screens.LaunchUrlScreen)}
-          {isAndroid && this.renderInlineSeparator()}
-          {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
           {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>

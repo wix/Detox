@@ -53,6 +53,7 @@ class RuntimeDevice {
     traceMethods(log, this, methodNames);
     wrapWithStackTraceCutter(this, methodNames);
 
+    this._isTestRunnerConnected = false;
     this._appsConfig = appsConfig;
     this._behaviorConfig = behaviorConfig;
     this._deviceConfig = deviceConfig;
@@ -157,8 +158,11 @@ class RuntimeDevice {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
       this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      console.log('Launched app process:', this._processes[bundleId]);
       await this.deviceDriver.waitUntilReady();
+      console.log('wait for active');
       await this.deviceDriver.waitForActive();
+      console.log('App launched. Running test...');
     }
 
     await this._emitter.emit('appReady', {
@@ -362,6 +366,7 @@ class RuntimeDevice {
     }
     return this._currentApp;
   }
+
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     const payload = {

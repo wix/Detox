@@ -1104,6 +1104,34 @@ declare global {
              * web.element(by.web.tag('mark'))
              */
             tag(tagName: string): WebMatcher;
+
+            /**
+             * (iOS Only)
+             * Find an element on the web-view by its text content
+             * @param label
+             * @example
+             * web.element(by.web.label('Welcome'))
+             */
+            label(label: string): WebMatcher;
+
+            /**
+             * (iOS Only)
+             * Find an element on the web-view by its content description
+             * @param value
+             * @example
+             * web.element(by.web.value('Write a comment...'))
+             */
+            value(value: string): WebMatcher;
+
+            /**
+             * Find an element on the DOM tree by its accessibility type
+             * For iOS, uses XCUITest element type: https://developer.apple.com/documentation/xctest/xcuielement/elementtype
+             * @note This API is only available on iOS
+             * @param viewType
+             * @example
+             * web.element(by.web.accessibilityType('TextField'))
+             */
+            accessibilityType(viewType: string): WebMatcher;
         }
 
         interface NativeMatcher {

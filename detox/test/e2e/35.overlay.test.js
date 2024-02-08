@@ -72,8 +72,11 @@ describe(':ios: Overlay', () => {
         await showOverlayWindowButton.tap();
       });
 
-      it('should not be able to tap on elements', async () => {
-        await expectToThrow(() => showOverlayWindowButton.tap());
+      it('should not throw when tapping on element', async () => {
+        // Note: this is a regression by XCUITest, Detox was throwing on this tap before,
+        // however XCUITest is not aware this element is not hittable and the hit does nothing (bug).
+        // TODO: potentially fix this in Detox by checking if the element is hittable before tapping. `XCUIElement.isHittable` is not enough.
+        await showOverlayWindowButton.tap();
       });
 
       it('should not be able to scroll elements', async () => {

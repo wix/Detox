@@ -213,12 +213,12 @@ describe('AndroidExpect', () => {
         await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
         await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 100, y: 200 });
         await e.element(e.by.label('Tap Me')).longPress();
-        await e.element(e.by.id('UniqueId819')).multiTap(3);
+        await e.element(e.by.id('tapsCounter')).multiTap(3);
       });
 
       it('should not tap and long-press given bad args', async () => {
         await [null, undefined, 0, -1, 'NaN'].forEach(item => {
-          jestExpect(() => e.element(e.by.id('UniqueId819')).multiTap(item)).rejects.toThrow();
+          jestExpect(() => e.element(e.by.id('tapsCounter')).multiTap(item)).rejects.toThrow();
         });
       });
 
@@ -400,15 +400,15 @@ describe('AndroidExpect', () => {
         jestExpect(() => e.web(e.by.web.hrefContains('webMatcher'))).toThrow();
         jestExpect(() => e.web(e.by.web.tag('webMatcher'))).toThrow();
         jestExpect(() => e.web(e.by.web.xpath('webMatcher'))).toThrow();
+        jestExpect(() => e.web(e.by.web.label('webMatcher'))).toThrow();
+        jestExpect(() => e.web(e.by.web.value('webMatcher'))).toThrow();
       });
 
       it(`inner element with wrong matcher should throw`, async () => {
         jestExpect(() => e.web.element(e.by.accessibilityLabel('nativeMatcher'))).toThrow();
         jestExpect(() => e.web.element(e.by.id('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.label('nativeMatcher'))).toThrow();
         jestExpect(() => e.web.element(e.by.text('nativeMatcher'))).toThrow();
         jestExpect(() => e.web.element(e.by.traits('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.value('nativeMatcher'))).toThrow();
       });
     });
 
@@ -641,6 +641,20 @@ describe('AndroidExpect', () => {
         await e.expect(e.web.element(e.by.web.tag('tag'))).not.toExist();
         await e.expect(e.web.element(e.by.web.tag('tag'))).toHaveText('text');
         await e.expect(e.web.element(e.by.web.tag('tag'))).not.toHaveText('text');
+      });
+
+      it('by.web.label', async () => {
+        await e.expect(e.web.element(e.by.web.label('label'))).toExist();
+        await e.expect(e.web.element(e.by.web.label('label'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.label('label'))).toHaveText('text');
+        await e.expect(e.web.element(e.by.web.label('label'))).not.toHaveText('text');
+      });
+
+      it('by.web.value', async () => {
+        await e.expect(e.web.element(e.by.web.value('value'))).toExist();
+        await e.expect(e.web.element(e.by.web.value('value'))).not.toExist();
+        await e.expect(e.web.element(e.by.web.value('value'))).toHaveText('value');
+        await e.expect(e.web.element(e.by.web.value('value'))).not.toHaveText('value');
       });
 
       it('should allow for access to except via element', async () => {

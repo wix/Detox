@@ -40,6 +40,7 @@ class DetoxSessionManager {
    * @returns {DetoxSession}
    */
   registerSession(connection, { role, sessionId }) {
+    console.log('registerSession', role, sessionId);
     let session;
 
     if (this._assertConnectionIsNotInSession(connection)) {

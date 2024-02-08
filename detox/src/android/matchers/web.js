@@ -1,6 +1,7 @@
 const invoke = require('../../invoke');
 const { WebMatcher } = require('../core/WebMatcher');
 const DetoxWebMatcherApi = require('../espressoapi/web/DetoxWebAtomMatcher');
+const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 
 class IdMatcher extends WebMatcher {
   constructor(id) {
@@ -51,6 +52,27 @@ class PartialLinkTextMatcher extends WebMatcher {
   }
 }
 
+class LabelMatcher extends WebMatcher {
+  constructor(_) {
+    super();
+    throw new DetoxRuntimeError('Label matching is not supported on Android');
+  }
+}
+
+class ValueMatcher extends WebMatcher {
+  constructor(_) {
+    super();
+    throw new DetoxRuntimeError('Label matching is not supported on Android');
+  }
+}
+
+class AccessibilityTypeMatcher extends WebMatcher {
+  constructor(_) {
+    super();
+    throw new DetoxRuntimeError('Accessibility-type matching is not supported on Android');
+  }
+}
+
 class TagNameMatcher extends WebMatcher {
   constructor(tag) {
     super();
@@ -66,5 +88,8 @@ module.exports = {
   XPathMatcher,
   LinkTextMatcher,
   PartialLinkTextMatcher,
-  TagNameMatcher
+  TagNameMatcher,
+  LabelMatcher,
+  ValueMatcher,
+  AccessibilityTypeMatcher,
 };

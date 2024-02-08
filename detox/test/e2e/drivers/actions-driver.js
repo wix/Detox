@@ -2,7 +2,7 @@ const rootId = 'View7990';
 
 const driver = {
   tapsElement: {
-    testId: 'UniqueId819',
+    testId: 'tapsCounter',
     get coordinates() {
       return {
         x: (device.getPlatform() === 'ios' ? 180 : 100),
@@ -11,7 +11,9 @@ const driver = {
     },
     multiTap: () => element(by.id(driver.tapsElement.testId)).multiTap(3),
     tapAtPoint: () => element(by.id(rootId)).tapAtPoint(driver.tapsElement.coordinates),
-    assertTapsCount: (count) => expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`),
+    assertTapsCount: async (count) => {
+      await expect(element(by.id(driver.tapsElement.testId))).toHaveText(`Taps: ${count}`);
+    },
     assertTappedOnce: () => driver.tapsElement.assertTapsCount(1),
     assertMultiTapped: () => driver.tapsElement.assertTapsCount(3),
   },

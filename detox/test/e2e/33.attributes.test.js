@@ -5,9 +5,9 @@ const custom = require('./utils/custom-it');
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
   let currentElement;
-  /** @type {Detox.IosElementAttributes | Detox.AndroidElementAttributes} */
+  /** @type {Detox.ElementAttributes} */
   let attributes;
-  /** @type {Detox.IosElementAttributes[] | Detox.AndroidElementAttributes[]} */
+  /** @type {Detox.ElementAttributes[]} */
   let attributesArray;
 
   /**
@@ -16,11 +16,10 @@ describe('Attributes', () => {
   async function useMatcher(matcher) {
     currentElement = element(matcher);
     const result = await currentElement.getAttributes();
-
     if ('elements' in result) {
       attributesArray = result.elements;
     } else {
-      attributes = result;
+      attributes = await result;
     }
   }
 
@@ -204,68 +203,41 @@ describe('Attributes', () => {
   });
 
   describe('of multiple views', () => {
-    it(':ios: should return an object with .elements array', async () => {
-      await useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView')));
+    describe(':ios:', () => {
+      beforeAll(() => useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView'))));
 
-      const viewShape = {
-        identifier: expect.any(String),
-        enabled: true,
-        visible: true,
-        activationPoint: shapes.Point2D(),
-        normalizedActivationPoint: shapes.Point2D(),
-        hittable: true,
-        frame: shapes.IosElementAttributeFrame(),
-        elementFrame: shapes.IosElementAttributeFrame(),
-        elementBounds: shapes.IosElementAttributeFrame(),
-        safeAreaInsets: shapes.IosElementAttributesInsets(),
-        elementSafeBounds: shapes.IosElementAttributeFrame(),
-        layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
-      };
+      it('should return an object with .elements array', async () => {
+        const viewShape = {
+          identifier: expect.any(String),
+          enabled: true,
+          visible: true,
+          activationPoint: shapes.Point2D(),
+          normalizedActivationPoint: shapes.Point2D(),
+          hittable: true,
+          frame: shapes.IosElementAttributeFrame(),
+          elementFrame: shapes.IosElementAttributeFrame(),
+          elementBounds: shapes.IosElementAttributeFrame(),
+          safeAreaInsets: shapes.IosElementAttributesInsets(),
+          elementSafeBounds: shapes.IosElementAttributeFrame(),
+          layer: expect.stringMatching(/^<CALayer: 0x[\da-f]+>$/),
+        };
 
-      const innerViews = attributesArray.filter(a => a.identifier);
-      expect(innerViews.length).toBe(2);
-      expect(innerViews[0]).toMatchObject({ ...viewShape });
-      expect(innerViews[1]).toMatchObject({ ...viewShape });
+        const innerViews = attributesArray.filter(a => a.identifier.startsWith("innerView"));
+        expect(innerViews.length).toBe(2);
+        expect(innerViews[0]).toMatchObject({ ...viewShape });
+        expect(innerViews[1]).toMatchObject({ ...viewShape });
+      });
     });
 
-    it(':android: should return an object with .elements array', async () => {
-      await useMatcher(by.type('com.facebook.react.views.view.ReactViewGroup').withAncestor(by.id('attrScrollView')));
-
-      expect(attributesArray.length).toBe(3);
-
-      const baseAttributes = {
-        visibility: 'visible',
-        visible: true,
-        alpha: 1,
-        elevation: 0,
-        focused: false,
-        enabled: true,
-      };
-
-      expect(attributesArray[0]).toMatchObject({
-        ...{
-          height: 394,
-          width: 1074,
-        },
-        ...baseAttributes
-      });
-
-      expect(attributesArray[1]).toMatchObject({
-        ...{
-          height: 197,
-          width: 262,
-          identifier: 'innerView1'
-        },
-        ...baseAttributes
-      });
-
-      expect(attributesArray[2]).toMatchObject({
-        ...{
-          height: 197,
-          width: 262,
-          identifier: 'innerView2'
-        },
-        ...baseAttributes
+    describe(':android:', () => {
+      // TODO (@jonathanmos) : Can we decide something about it officially?
+      it('should throw an error (because it is not implemented)', async () => {
+        await expect(
+          element(
+            by.type('com.facebook.react.views.view.ReactViewGroup')
+              .withAncestor(by.id('attrScrollView'))
+          ).getAttributes()
+        ).rejects.toThrowError(/Problem views are marked with '.{4}MATCHES.{4}' below/m);
       });
     });
   });

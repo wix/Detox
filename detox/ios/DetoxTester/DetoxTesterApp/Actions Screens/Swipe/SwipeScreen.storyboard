@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y6W-OH-hqX">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Swipe View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController id="Y6W-OH-hqX" customClass="SwipeViewController" customModule="DetoxTesterApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Text Will Be Here" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3PE-LA-XMb">
+                                <rect key="frame" x="143" y="426" width="129" height="21"/>
+                                <accessibility key="accessibilityConfiguration" identifier="resultLabel"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="liV-P6-UZV">
+                                <rect key="frame" x="41.5" y="403" width="331" height="100"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swipe right" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="017-9A-cU4">
+                                        <rect key="frame" x="122.5" y="40" width="86" height="20"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                <constraints>
+                                    <constraint firstItem="017-9A-cU4" firstAttribute="centerY" secondItem="liV-P6-UZV" secondAttribute="centerY" id="8Dt-tY-vPH"/>
+                                    <constraint firstItem="017-9A-cU4" firstAttribute="centerX" secondItem="liV-P6-UZV" secondAttribute="centerX" id="hGO-B4-hWI"/>
+                                    <constraint firstAttribute="height" constant="100" id="rfk-en-7GG"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <accessibility key="accessibilityConfiguration" identifier="screenView"/>
+                        <constraints>
+                            <constraint firstItem="3PE-LA-XMb" firstAttribute="top" secondItem="liV-P6-UZV" secondAttribute="bottom" constant="20" id="BoA-6C-sBM"/>
+                            <constraint firstItem="liV-P6-UZV" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="FH1-u5-cbh"/>
+                            <constraint firstItem="liV-P6-UZV" firstAttribute="centerY" secondItem="vDu-zF-Fre" secondAttribute="centerY" id="a1h-uT-TWF"/>
+                            <constraint firstItem="liV-P6-UZV" firstAttribute="width" secondItem="5EZ-qb-Rvc" secondAttribute="width" multiplier="0.8" id="hFS-Lb-80r"/>
+                            <constraint firstItem="3PE-LA-XMb" firstAttribute="centerX" secondItem="liV-P6-UZV" secondAttribute="centerX" id="phF-8q-KDs"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="label" destination="3PE-LA-XMb" id="rWi-M9-feV"/>
+                        <outlet property="swipableView" destination="liV-P6-UZV" id="vik-Nm-XjE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="131.8840579710145" y="67.633928571428569"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

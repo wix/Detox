@@ -124,6 +124,24 @@ class WaitForActive extends Action {
   }
 }
 
+class SendToHome extends Action {
+  constructor() {
+    super('sendToHome');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'sendToHomeDone');
+  }
+}
+
 class Shake extends Action {
   constructor() {
     super('shakeDevice');
@@ -139,6 +157,24 @@ class Shake extends Action {
 
   async handle(response) {
     this.expectResponseOfType(response, 'shakeDeviceDone');
+  }
+}
+
+class Terminate extends Action {
+  constructor() {
+    super('terminate');
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'willTerminate');
   }
 }
 
@@ -325,6 +361,7 @@ module.exports = {
   Login,
   WaitForBackground,
   WaitForActive,
+  SendToHome,
   Ready,
   Invoke,
   ReloadReactNative,
@@ -336,4 +373,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
+  Terminate,
 };

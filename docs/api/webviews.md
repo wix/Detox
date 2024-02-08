@@ -1,7 +1,7 @@
 # Web views
 
 :::caution Note
-Detox supports testing web views on **Android** only. We are working on adding support for iOS apps as well.
+There are some gaps between matchers in Android and iOS. Also, evaluation of JS code is not supported on iOS.
 :::
 
 A web view is a native component that displays content not available in a native format, such as a web page or a PDF document.
@@ -16,7 +16,7 @@ That's why Detox provides a set of matchers, actions, and expectations to allow 
 In the most common case, you will have a single web view on the screen, so you can use `web.element()` function with [web view matchers] to reference elements inside it. After you have a reference to a web element, you can use the [web view actions] and [web view expectations] on it, e.g.:
 
 ```js
-const innerElement = web.element(by.web.id('inner_element_identifier'))
+const innerElement = web.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
@@ -28,7 +28,7 @@ If you have multiple web views on the screen, you must locate a specific web vie
 
 ```js
 const myWebView = web(by.id('webview_identifier'));
-const innerElement = myWebView.element(by.web.id('inner_element_identifier'))
+const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
@@ -42,15 +42,18 @@ In the example above:
 
 Web view matchers are used to find elements within a web view:
 
-- [`by.web.id()`]
-- [`by.web.className()`]
-- [`by.web.cssSelector()`]
-- [`by.web.name()`]
-- [`by.web.xpath()`]
-- [`by.web.href()`]
-- [`by.web.hrefContains()`]
-- [`by.web.tag()`]
-- [`atIndex()`]
+- [`by.web.id(id)`]
+- [`by.web.className(className)`]
+- [`by.web.cssSelector(cssSelector)`]
+- [`by.web.name(name)`]
+- [`by.web.xpath(xpath)`]
+- [`by.web.href(href)`]
+- [`by.web.hrefContains(hrefContains)`]
+- [`by.web.tag(tag)`]
+- [`by.web.label(label)`] (**iOS only**)
+- [`by.web.value(value)`] (**iOS only**)
+- [`by.web.accessibilityType(type)`] (**iOS only**)
+- [`atIndex(index)`]
 
 ### `by.web.id(id)`
 
@@ -116,6 +119,36 @@ Match elements with the specified tag.
 web.element(by.web.tag('h1'));
 ```
 
+### `by.web.label(label)`
+
+**iOS only**
+
+Match elements with the specified label.
+
+```js
+web.element(by.web.label('label'));
+```
+
+### `by.web.value(value)`
+
+**iOS only**
+
+Match elements with the specified value.
+
+```js
+web.element(by.web.value('value'));
+```
+
+### `by.web.accessibilityType(type)`
+
+**iOS only**
+
+Match elements with the specified accessibility type.
+
+```js
+web.element(by.web.accessibilityType('button'));
+```
+
 ### `atIndex(index)`
 
 Choose the element at the specified index.
@@ -131,8 +164,8 @@ Use it sparingly for those rare cases when you cannot make your matcher less amb
 Web view actions are used to interact with elements within a web view:
 
 - [`tap()`]
-- [`typeText()`]
-- [`replaceText()`]
+- [`typeText(text)`]
+- [`replaceText(text)`]
 - [`clearText()`]
 - [`selectAllText()`]
 - [`getText()`]
@@ -235,6 +268,8 @@ await web.element(by.web.id('identifier')).moveCursorToEnd();
 
 ### `runScript(script[, args])`
 
+**Android only**
+
 Run the specified script on the element.
 The script should be a string that contains a valid JavaScript function.
 It will be called with that element as the first argument:
@@ -256,6 +291,8 @@ const text = await webElement.runScript(function get(element, property) {
 
 ### `getCurrentUrl()`
 
+**Android only**
+
 Get the current URL of the web view.
 
 :::note
@@ -267,6 +304,8 @@ const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ```
 
 ### `getTitle()`
+
+**Android only**
 
 Get the title of the web view.
 
@@ -282,7 +321,7 @@ const title = await web.element(by.web.id('identifier')).getTitle();
 
 Web view expectations are used to assert the state of elements within a web view:
 
-- [`toHaveText()`]
+- [`toHaveText(text)`]
 - [`toExist()`]
 - [`not`]
 
@@ -336,15 +375,21 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [`by.web.tag()`]: webviews.md#bywebtagtag
 
-[`atIndex()`]: webviews.md#atindexindex
+[`by.web.label(label)`]: webviews.md#byweblabellabel
+
+[`by.web.value(value)`]: webviews.md#bywebvaluevalue
+
+[`by.web.accessibilityType(type)`]: webviews.md#bywebaccessibilitytypetype
+
+[`atIndex(index)`]: webviews.md#atindexindex
 
 [`tap()`]: webviews.md#tap
 
-[`typeText()`]: webviews.md#typetexttext-iscontenteditable
+[`typeText(text)`]: webviews.md#typetexttext-iscontenteditable
 
 [content-editable]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contentEditable
 
-[`replaceText()`]: webviews.md#replacetexttext
+[`replaceText(text)`]: webviews.md#replacetexttext
 
 [`clearText()`]: webviews.md#cleartext
 
@@ -366,7 +411,7 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 
 [`getTitle()`]: webviews.md#gettitle
 
-[`toHaveText()`]: webviews.md#tohavetexttext
+[`toHaveText(text)`]: webviews.md#tohavetexttext
 
 [`toExist()`]: webviews.md#toexist
 

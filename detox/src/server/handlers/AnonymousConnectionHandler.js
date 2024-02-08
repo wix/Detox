@@ -23,6 +23,7 @@ class AnonymousConnectionHandler {
   }
 
   _handleLoginAction(action) {
+    console.log(`[DetoxServer.js/LOGIN] role=${action.params.role}, sessionId=${action.params.sessionId}`);
     if (!action.params) {
       throw new DetoxRuntimeError({
         message: `Invalid login action received, it has no .params`,

@@ -1,5 +1,11 @@
-if (process.platform === 'darwin' && !process.env.DETOX_DISABLE_POSTINSTALL) {
-	require('child_process').execFileSync(`${__dirname}/build_framework.ios.sh`, {
-		stdio: 'inherit'
-	});
+const { platform, env } = process;
+
+const isDarwin = platform === 'darwin';
+const shouldInstallDetox = !env.DETOX_DISABLE_POSTINSTALL;
+
+if (isDarwin && shouldInstallDetox) {
+  const execFileSync = require('child_process').execFileSync;
+
+  execFileSync(`${__dirname}/build_local_framework.ios.sh`, { stdio: 'inherit' });
+  execFileSync(`${__dirname}/build_local_xcuitest.ios.sh`, { stdio: 'inherit' });
 }

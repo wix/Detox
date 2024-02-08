@@ -17,9 +17,7 @@ describe('DatePicker', () => {
       }
 
       await element(by.text('DatePicker')).tap();
-    });
 
-    beforeEach(async () => {
       for (let i = 0; i < toggleTimes; i++) {
         await element(by.id('toggleDatePicker')).tap();
       }
@@ -64,9 +62,14 @@ describe('DatePicker', () => {
     // Spinner-specific tests
     if (platform !== 'ios' || mode !== 'spinner') return;
 
-    it('setColumnToValue should not work for a spinner date picker', async () => {
-      const invalidAction = element(by.id('datePicker')).setColumnToValue(1, "6");
-      await jestExpect(invalidAction).rejects.toThrow(/is not an instance of.*UIPickerView/);
+    it('setColumnToValue should work for a spinner date picker', async () => {
+      const datePicker = element(by.id('datePicker'));
+
+      await datePicker.setColumnToValue(0, "February");
+      await datePicker.setColumnToValue(1, "6");
+      await datePicker.setColumnToValue(2, "2022");
+
+      await expect(element(by.id('utcDateLabel'))).toHaveText(`Date (UTC): Feb 6th, 2022`);
     });
   });
 });

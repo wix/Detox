@@ -50,8 +50,8 @@ class AnimationsComponent extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-        <Animated.Text testID='UniqueId_AnimationsScreen_animatedText' style={{
+      <View testID='UniqueId_AnimationsScreen_animatedText' style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+        <Animated.Text style={{
           opacity: this._fadeInValue,
           backgroundColor: 'green'
         }}
@@ -66,9 +66,9 @@ class AnimationsComponent extends Component {
   renderAfterAnimTextIfNeeded() {
     if (this.state.showAfterAnimationText) {
       return (
-        <Text testID='UniqueId_AnimationsScreen_afterAnimationText' style={{ marginTop: 20 }}>
-          After-animation-text
-        </Text>
+        <View testID='UniqueId_AnimationsScreen_afterAnimationText' style={{ marginTop: 20 }}>
+          <Text>After-animation-text</Text>
+        </View>
       );
     }
     return undefined;
