@@ -14,7 +14,13 @@ import {
 } from 'react-native';
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
-const LegacySlider = require('react-native').Slider;
+
+let LegacySlider;
+try {
+  LegacySlider = require('react-native').Slider;
+} catch (e) {
+  // Ignore
+}
 
 const DoubleTapsText = requireNativeComponent('DetoxDoubleTapsTextView');
 const SluggishTapsText = requireNativeComponent('DetoxSluggishTapsTextView');
