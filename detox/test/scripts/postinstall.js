@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const cp = require('child_process');
-const { setGradleVersionByRNVersion } = require('./updateGradle');
+const { setGradleVersionByRNVersion } = require('../../scripts/updateGradle');
 
 const patchBoostPodspec = () => {
   const log = message => console.log(`[POST-INSTALL] ${message}`);
