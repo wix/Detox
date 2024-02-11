@@ -223,7 +223,7 @@ class DetoxAction {
       },
       method: "adjustSliderToPosition",
       args: [{
-        type: "float",
+        type: "Float",
         value: newPosition
       }]
     };
