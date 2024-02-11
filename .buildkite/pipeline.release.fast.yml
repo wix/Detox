@@ -15,6 +15,7 @@
     env:
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
+      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
     artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
 
   - label: ":shipit: Publish"
