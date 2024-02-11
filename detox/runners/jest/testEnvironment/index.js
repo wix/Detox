@@ -64,7 +64,8 @@ class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
       WorkerAssignReporter,
     });
 
-    this.testEvents.on('*', this._onTestEvent.bind(this));
+    // Artifacts flushing should be delayed to avoid conflicts with third-party reporters
+    this.testEvents.on('*', this._onTestEvent.bind(this), 1e6);
   }
 
   /** @override */
