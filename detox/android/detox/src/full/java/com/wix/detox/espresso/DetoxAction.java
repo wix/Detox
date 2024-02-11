@@ -178,7 +178,7 @@ public class DetoxAction {
         return PickerActions.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
     }
 
-    public static ViewAction adjustSliderToPosition(final double newPosition) {
+    public static ViewAction adjustSliderToPosition(final Float newPosition) {
         return new AdjustSliderToPositionAction(newPosition);
     }
 

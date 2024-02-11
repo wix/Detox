@@ -4,7 +4,9 @@ apply plugin: 'com.facebook.react'
 android {
     namespace 'com.example'
 
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
+
+    println("[$project] Using buildToolsVersion $buildToolsVersion")
 
     defaultConfig {
         applicationId 'com.detox.rn.example'
@@ -43,7 +45,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
-
             signingConfig signingConfigs.release
         }
     }
@@ -54,6 +55,11 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

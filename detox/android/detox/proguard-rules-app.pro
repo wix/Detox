@@ -21,3 +21,7 @@
 -keep class okhttp3.** { *; }
 
 -keep class androidx.concurrent.futures.** { *; }
+
+-dontwarn androidx.appcompat.**
+-dontwarn javax.lang.model.element.**
+

@@ -193,11 +193,11 @@ publishing {
 
                     // Register sources, javadoc as published artifacts (via equivalent tasks' output)
                     artifact sourcesJar
-                    artifact dokkaDocJar
+                    //artifact dokkaDocJar // waiting for dokka to fix https://github.com/Kotlin/dokka/issues/3153
 
                     // Also register source, javadoc as archive-artifacts, for signing
                     declareArchive sourcesJar
-                    declareArchive dokkaDocJar
+                    //declareArchive dokkaDocJar // waiting for dokka to fix https://github.com/Kotlin/dokka/issues/3153
 
                     // Add detox package metadata to the .pom
                     pom {

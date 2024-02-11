@@ -20,3 +20,6 @@
 
 -keep class com.wix.detoxprofiler.** { *; }
 -dontnote  com.wix.detox.instruments.reflected.**
+
+-dontwarn androidx.appcompat.**
+-dontwarn javax.lang.model.element.**
