@@ -1,9 +1,6 @@
 const _ = require('lodash');
-const { rnVersion } = require('./utils/rn-consts/rn-consts');
 
 const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-const isRNVersionBellow71 = (rnVersion.minor < 71);
-const warnOnce = _.once((...args) => console.warn(...args));
 
 function androidBaseAppConfig(buildType /* 'debug' | 'release' */) {
   const buildTypeUC = capitalizeFirstLetter(buildType);
