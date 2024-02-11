@@ -51,6 +51,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
     if (this.enabled) {
       const scope = this.context.testSummary ? 'perTest' : 'perSession';
       setUniqueProperty(this._artifacts[scope], name, artifact);
+      this.api.trackArtifact(artifact);
     } else {
       this._pendingDeletions.push(artifact.discard());
     }
@@ -97,6 +98,7 @@ class IosUIHierarchyPlugin extends ArtifactPlugin {
       .map(async ([key, artifact]) => {
         const destination = await this.api.preparePathForArtifact(`${key}.viewhierarchy`, testSummary);
         await artifact.save(destination);
+        this.api.untrackArtifact(artifact);
       })
       .value();
 
