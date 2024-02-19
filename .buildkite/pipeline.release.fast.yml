@@ -33,6 +33,7 @@
   - label: ":shipit: Publish"
     depends_on:
       - 'android_package'
+      - 'android_package_legacy'
       - 'ios_package'
     command:
       - "nvm install 20"
