@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'signing'
 apply from: './publish-pom.gradle'
+apply from: '../rninfo.gradle'
 
 String TARGET_LOCAL_DIR = "$buildDir/../../../Detox-android"
 String TARGET_MAVEN_CENTRAL_URL = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
@@ -180,7 +181,11 @@ publishing {
 
                 "maven${variantNameCapitalized}Aar"(MavenPublication) {
                     groupId 'com.wix'
-                    artifactId 'detox'
+                    if (rnInfo.isRN72OrHigher) {
+                        artifactId 'detox'
+                    } else {
+                        artifactId 'detox-legacy'
+                    }
                     version "$_versionName"
 
                     // Register built .aar as published artifact (as a file, explicitly)
