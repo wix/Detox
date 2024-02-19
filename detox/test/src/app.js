@@ -110,8 +110,9 @@ export default class example extends Component {
           })}
         </View>
 
+
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
-        {isIos && this.renderScreenNotifyingButton_iOS('Drag And Drop', 'dragAndDrop')}
+        {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
         {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}

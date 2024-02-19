@@ -12,7 +12,6 @@
 #import <React/config/ReactNativeConfig.h>
 #endif
 
-#import "DragDropTableViewController.h"
 #import "CustomKeyboardViewController.h"
 @import CoreSpotlight;
 
@@ -191,12 +190,8 @@ RCT_EXPORT_MODULE();
 	
 	[NSNotificationCenter.defaultCenter addObserverForName:@"ChangeScreen" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
 		NSString* name = note.userInfo[@"name"];
-		
-		if([name isEqualToString:@"dragAndDrop"])
-		{
-			DragDropTableViewController* vc = [[DragDropTableViewController alloc] initWithStyle:UITableViewStyleInsetGrouped];
-			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
-		} else if ([name isEqualToString:@"customKeyboard"])
+
+		if ([name isEqualToString:@"customKeyboard"])
 		{
 			CustomKeyboardViewController *vc = [[CustomKeyboardViewController alloc] init];
 			vc.modalPresentationStyle = UIModalPresentationFullScreen;
