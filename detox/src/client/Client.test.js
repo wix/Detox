@@ -676,7 +676,7 @@ describe('Client', () => {
   });
 
   describe('on AppWillTerminateWithError', () => {
-    it('should schedule the app termination in 5 seconds, and reject pending', async () => {
+    it('should schedule the app termination in 5 seconds, and reject pending and future requests until the app reconnects', async () => {
       jest.spyOn(client, 'terminateApp');
 
       await client.connect();
@@ -695,7 +695,15 @@ describe('Client', () => {
       mockAws.mockEventCallback('appDisconnected');
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
       expect(log.error).not.toHaveBeenCalled();
+      // pending requests should be rejected
       await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+      // any future requests should be rejected
+      await expect(client.sendAction(new actions.Invoke(anInvocation()))).rejects.toThrowError('SIGSEGV whatever');
+      // simulate the app reconnecting
+      mockAws.mockEventCallback('appConnected');
+      // now we again should be able to send requests
+      mockAws.mockResponse('invokeResult', { result: 'some_result' });
+      await expect(client.sendAction(new actions.Invoke(anInvocation()))).resolves.not.toThrow();
     });
 
     it('should log errors if the app termination does not go well', async () => {

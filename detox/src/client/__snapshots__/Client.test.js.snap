@@ -64,7 +64,7 @@ THREAD_DUMP
 Refer to https://developer.android.com/training/articles/perf-anr for further details."
 `;
 
-exports[`Client on AppWillTerminateWithError should schedule the app termination in 5 seconds, and reject pending 1`] = `
+exports[`Client on AppWillTerminateWithError should schedule the app termination in 5 seconds, and reject pending and future requests until the app reconnects 1`] = `
 [DetoxRuntimeError: The app has crashed, see the details below:
 
 SIGSEGV whatever]
