@@ -18,12 +18,25 @@ describe('Crash Handling', () => {
   it('Should throw error upon internal app crash', async () => {
     await device.reloadReactNative();
     await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
-    await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
+  });
+
+  it('Should throw the same crash error even in the next test if the app was not relaunched', async () => {
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
   });
 
   it('Should recover from app crash', async () => {
     await device.launchApp({ newInstance: false });
     await expect(element(by.text('Sanity'))).toBeVisible();
+  });
+
+  it('Should print generic connectivity error when the app was terminated intentionally', async () => {
+    /**
+     * @issue https://github.com/wix/Detox/issues/4377
+     * @tag flaky
+     */
+    await device.terminateApp();
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // see the issue for details
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
   it('Should throw a detailed error upon early app crash', async () => {
