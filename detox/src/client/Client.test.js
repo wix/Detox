@@ -676,7 +676,7 @@ describe('Client', () => {
   });
 
   describe('on AppWillTerminateWithError', () => {
-    it('should schedule the app termination in 5 seconds, and reject pending and future requests until the app reconnects', async () => {
+    it('should schedule the app termination in 5 seconds, and reject pending', async () => {
       jest.spyOn(client, 'terminateApp');
 
       await client.connect();
@@ -695,15 +695,38 @@ describe('Client', () => {
       mockAws.mockEventCallback('appDisconnected');
       expect(mockAws.rejectAll.mock.calls[0][0]).toMatchSnapshot();
       expect(log.error).not.toHaveBeenCalled();
-      // pending requests should be rejected
-      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
-      // any future requests should be rejected
-      await expect(client.sendAction(new actions.Invoke(anInvocation()))).rejects.toThrowError('SIGSEGV whatever');
-      // simulate the app reconnecting
-      mockAws.mockEventCallback('appConnected');
-      // now we again should be able to send requests
-      mockAws.mockResponse('invokeResult', { result: 'some_result' });
-      await expect(client.sendAction(new actions.Invoke(anInvocation()))).resolves.not.toThrow();
+    });
+
+    describe('after app exits', () => {
+      beforeEach(async () => {
+        jest.spyOn(client, 'terminateApp');
+
+        await client.connect();
+
+        mockAws.mockEventCallback('AppWillTerminateWithError', {
+          params: { errorDetails: 'SIGSEGV whatever' },
+        });
+
+        jest.advanceTimersByTime(5000);
+        await fastForwardAllPromises();
+        mockAws.mockEventCallback('appDisconnected');
+        await fastForwardAllPromises();
+      });
+
+      it('should reject pending and future requests', async () => {
+        // any future requests should be rejected
+        mockAws.mockResponse('invokeResult', { result: 'some_result' });
+        await expect(client.sendAction(new actions.Invoke(anInvocation()))).rejects.toThrowError('SIGSEGV whatever');
+
+        // pending requests should be rejected
+        await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+      });
+
+      it('should allow new requests after the app reconnects', async () => {
+        mockAws.mockEventCallback('appConnected');
+        mockAws.mockResponse('invokeResult', { result: 'some_result' });
+        await expect(client.sendAction(new actions.Invoke(anInvocation()))).resolves.not.toThrow();
+      });
     });
 
     it('should log errors if the app termination does not go well', async () => {
