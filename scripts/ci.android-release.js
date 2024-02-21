@@ -3,7 +3,7 @@ const {log, logSection, getVersionSafe, getReleaseNpmTag, getReleaseVersionType}
 
 function run() {
   logSection('Initializing');
-  exec.execSync('bash change_all_react_native_versions.sh')
+  exec.execSync('bash scripts/change_all_react_native_versions.sh')
   exec.execSync('lerna bootstrap --no-ci');
 
   const versionType = getReleaseVersionType();
