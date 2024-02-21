@@ -28,6 +28,7 @@ module.exports = async () => {
     environment: () => ({
       'version.node': process.version,
       'version.jest': require('jest/package.json').version,
+      'version.allure-reporter': require('jest-allure2-reporter/package.json').version,
       ..._(process.env)
         .pickBy((_1, key) => key.match(/detox/i))
         .mapKeys((_1, key) => 'env.' + key)
