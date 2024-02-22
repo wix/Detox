@@ -63,6 +63,7 @@ For example, to build the Detox test app for iOS in release mode, run:
 ```bash
 cd detox/test
 detox build --configuration ios.sim.release
+```
 
 ### End-to-End Tests
 
@@ -100,6 +101,7 @@ Run the following command to run the integration tests:
 ```bash
 cd detox/test
 npm run integration
+```
 
 ### Linting
 
