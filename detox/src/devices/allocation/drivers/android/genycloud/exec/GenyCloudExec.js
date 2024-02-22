@@ -11,10 +11,6 @@ class GenyCloudExec {
     return this._exec('--version');
   }
 
-  whoAmI() {
-    return this._exec('auth whoami');
-  }
-
   getRecipe(name) {
     return this._exec(`recipes list --name "${name}"`);
   }
