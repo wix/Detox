@@ -33,5 +33,6 @@ if (hasProperty('project')) {
         isRN70OrHigher: rnMajorVer >= 70,
         isRN71OrHigher: rnMajorVer >= 71,
         isRN72OrHigher: rnMajorVer >= 72,
+        isRN73OrHigher: rnMajorVer >= 73,
     ]
 }

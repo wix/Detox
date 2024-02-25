@@ -67,6 +67,8 @@ module.exports = generator({
     'boolean',
     'double',
     'Double',
+    'float',
+    'Float',
     'int',
     'Integer',
     'Matcher<View>',
