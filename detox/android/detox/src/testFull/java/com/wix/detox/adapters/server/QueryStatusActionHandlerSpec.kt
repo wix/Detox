@@ -3,7 +3,6 @@ package com.wix.detox.adapters.server
 import com.wix.detox.TestEngineFacade
 import com.wix.detox.inquiry.DetoxBusyResource
 import com.wix.detox.inquiry.DetoxBusyResourceDescription
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -43,17 +42,16 @@ object QueryStatusActionHandlerSpec : Spek({
         }
 
         describe("given a busy app") {
-
-
-            fun aBusyResource(identifier: String): DetoxBusyResource {
-
-                return mock<DetoxBusyResource.BusyIdlingResource> {
-                    on { getDescription() } doReturn DetoxBusyResourceDescription.Builder()
-                        .name("mock")
-                        .addDescription("mock", identifier)
-                        .build()
+            fun aBusyResourceDescription(description: Map<String, Any>): DetoxBusyResourceDescription =
+                mock {
+                    on { json() }.thenReturn(description)
                 }
 
+            fun aBusyResource(identifier: String): DetoxBusyResource {
+                val mockedDescription = aBusyResourceDescription(mapOf("mock" to identifier))
+                return mock {
+                    on { getDescription() }.thenReturn(mockedDescription)
+                }
             }
 
             it("should send a descriptive busy-status indication") {
@@ -62,8 +60,8 @@ object QueryStatusActionHandlerSpec : Spek({
                 val expectedData =  mapOf<String, Any>("status" to mapOf(
                     "app_status" to "busy",
                     "busy_resources" to listOf(
-                        mapOf("name" to "mock", "description" to mapOf("mock" to "some-resource")),
-                        mapOf("name" to "mock", "description" to mapOf("mock" to "yet-another-resource"))
+                        mapOf("mock" to "some-resource"),
+                        mapOf("mock" to "yet-another-resource"),
                     )
                 ))
                 whenever(testEngineFacade.getAllBusyResources()).thenReturn(listOf(busyResource, busyResource2))

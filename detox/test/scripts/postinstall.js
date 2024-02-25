@@ -1,6 +1,5 @@
 const fs = require('fs-extra');
 const cp = require('child_process');
-const { setGradleVersionByRNVersion } = require('../../scripts/updateGradle');
 
 const patchBoostPodspec = () => {
   const log = message => console.log(`[POST-INSTALL] ${message}`);
@@ -39,5 +38,4 @@ function podInstallIfRequired() {
 
 console.log('[POST-INSTALL] Running Detox\'s test-app post-install script...');
 podInstallIfRequired();
-setGradleVersionByRNVersion()
 console.log('[POST-INSTALL] Completed!');
