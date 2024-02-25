@@ -216,6 +216,7 @@ class DetoxAction {
   }
 
   static adjustSliderToPosition(newPosition) {
+    if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
     return {
       target: {
         type: "Class",
@@ -223,7 +224,7 @@ class DetoxAction {
       },
       method: "adjustSliderToPosition",
       args: [{
-        type: "Float",
+        type: "Double",
         value: newPosition
       }]
     };
