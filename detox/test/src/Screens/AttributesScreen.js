@@ -9,12 +9,7 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import Slider from '@react-native-community/slider';
 import {default as DatePicker} from '@react-native-community/datetimepicker';
-let LegacySlider;
-try {
-  LegacySlider = require('react-native').Slider;
-} catch (e) {
-  // Ignore
-}
+const LegacySlider = require('react-native').Slider;
 
 export default class AttributesScreen extends Component {
   constructor(props) {
