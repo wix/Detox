@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const rnMinorVer = require('../../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+const rnMinorVer = require('./rn-consts/rn-consts').rnVersion.minor;
 
 const _it = {
   withFailureIf: {
