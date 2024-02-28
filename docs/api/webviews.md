@@ -111,9 +111,7 @@ Expectations are assertions on the state of elements within a web view:
 
 ```javascript
 // Assert an element has specific text
-await expect(web
-
-.element(by.web.id('identifier'))).toHaveText('Hello World!');
+await expect(web.element(by.web.id('identifier'))).toHaveText('Hello World!');
 
 // Assert an element exists
 await expect(web.element(by.web.id('identifier'))).toExist();
