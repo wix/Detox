@@ -12,7 +12,7 @@ describe('Web View', () => {
   });
 
   describe('Expectations',() => {
-    it('expect element to exists', async () => {
+    it.only('expect element to exists', async () => {
       await expect(webview_1.element(by.web.id('testingPar'))).toExist();
     });
 

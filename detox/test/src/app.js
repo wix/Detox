@@ -90,7 +90,7 @@ export default class example extends Component {
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
-        {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
+        {this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
