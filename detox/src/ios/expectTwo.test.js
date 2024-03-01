@@ -734,18 +734,6 @@ describe('expectTwo', () => {
     jestExpect(() => e.waitFor(stubMatcher).toBeVisible(101)).toThrow(expectedErrorMsg);
   });
 
-  it('by.web should throw', async () => {
-    expect(() => e.by.web).toThrowError(/not support/);
-  });
-
-  it('web() should throw', async () => {
-    expect(() => e.web(e.by.id('someId'))).toThrowError(/not support/);
-  });
-
-  it('web.element() should throw', async () => {
-    expect(() => e.web.element(e.by.id('someId'))).toThrowError(/not support/);
-  });
-
   it(`element(e.by.text('tapMe')).performAccessibilityAction('activate')`, async () => {
     const testCall = await e.element(e.by.text('tapMe')).performAccessibilityAction('activate');
     const jsonOutput = {
@@ -764,6 +752,96 @@ describe('expectTwo', () => {
     };
 
     expect(testCall).toDeepEqual(jsonOutput);
+  });
+
+  describe('web views', () => {
+    it(`should parse expect(web(by.id('webViewId').element(web(by.label('tapMe')))).toExist()`, async () => {
+      const testCall = await e.expect(e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe'))).toExist();
+      const jsonOutput = {
+        invocation: {
+          type: 'webExpectation',
+          webExpectation: 'toExist',
+          predicate: {
+            type: 'id',
+            value: 'webViewId',
+            isRegex: false
+          },
+          webPredicate: {
+            type: 'label',
+            value: 'tapMe'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should parse expect(web(by.id('webViewId').element(web(by.label('tapMe')))).not.toHaveText('Hey')`, async () => {
+      const testCall = await e.expect(e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe'))).not.toHaveText('Hey');
+      const jsonOutput = {
+        invocation: {
+          type: 'webExpectation',
+          webExpectation: 'toHaveText',
+          params: ['Hey'],
+          predicate: {
+            type: 'id',
+            value: 'webViewId',
+            isRegex: false
+          },
+          webModifiers: ['not'],
+          webPredicate: {
+            type: 'label',
+            value: 'tapMe'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it('should throw when passing non-web-element matcher to element()', async () => {
+        const expectedErrorMsg = 'is not a Detox web-view matcher';
+        jestExpect(() => e.expect(
+            e.web(e.by.id('webViewId')).element(e.by.label('tapMe'))
+        ).toExist()).toThrow(expectedErrorMsg);
+    });
+
+    it(`should parse web(by.id('webViewId')).element(web.by.label('tapMe')).tap()`, async () => {
+      const testCall = await e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe')).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'webAction',
+          webAction: 'tap',
+          predicate: {
+            type: 'id',
+            value: 'webViewId',
+            isRegex: false
+          },
+          webPredicate: {
+            type: 'label',
+            value: 'tapMe'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should parse web.element(web.by.label('tapMe')).tap()`, async () => {
+      const testCall = await e.web.element(e.by.web.label('tapMe')).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'webAction',
+          webAction: 'tap',
+          webPredicate: {
+            type: 'label',
+            value: 'tapMe'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
   });
 });
 
