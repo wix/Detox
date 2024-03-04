@@ -36,7 +36,9 @@ class WebExpectation {
 	func evaluate(completionHandler: @escaping (Error?) -> Void) {
 		do {
 			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
-				throw dtx_errorForFatalError("Failed to find web view")
+				throw dtx_errorForFatalError(
+					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +
+					"at index: `\(atIndex ?? 0)`")
 			}
 
 			let jsString = WebJSCodeBuilder()
@@ -44,52 +46,35 @@ class WebExpectation {
 				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
 				.build()
 
-			var errorOrNil: Error? = dtx_errorForFatalError(
-				"Failed to evaluate expectation on web view `\(webView.debugDescription)`")
 			var observation: NSKeyValueObservation?
 			observation = webView.observe(
-				\.isLoading,
-				 options: [.new, .old, .initial]
-			) { [self] (object, change) in
-				if change.newValue == false {
-					observation?.invalidate()
+				\.isLoading, options: [.new, .old, .initial]
+			) { [self] (webView, change) in
+				guard change.newValue == false else { return }
 
-					errorOrNil = dtx_errorForFatalError(
-						"Failed to evaluate expectation on web view `\(webView.debugDescription)`, page loaded")
-					webView.evaluateJavaScript(jsString) { [self] (result, error) in
-						errorOrNil = error
+				observation?.invalidate()
 
-						guard errorOrNil == nil else {
-							return
-						}
-
-						guard result as? Bool == true else {
-							errorOrNil = dtx_errorForFatalError(
-								"Failed on web expectation: \(webModifiers?.description ?? "") " +
-								"\(webExpectation.rawValue.capitalized) " +
-								"with params \(params?.description ?? "") " +
-								"on element with \(webPredicate.type.rawValue.capitalized) == " +
-								"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
-								"Got: \(String(describing: errorOrNil))"
-							)
-
-							return
-						}
+				webView.evaluateJavaScript(jsString) { [self] (result, error) in
+					if let error = error {
+						completionHandler(error)
+					} else if result as? Bool != true {
+						completionHandler(dtx_errorForFatalError(
+							"Failed on web expectation: \(webModifiers?.description ?? "") " +
+							"\(webExpectation.rawValue.capitalized) " +
+							"with params \(params?.description ?? "") " +
+							"on element with \(webPredicate.type.rawValue.capitalized) == " +
+							"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
+							"Got evaluation result: `\(String(describing: result))`"))
+					} else {
+						completionHandler(nil)
 					}
 				}
 			}
-
-			if let error = errorOrNil {
-				throw error
-			}
-
-			completionHandler(nil)
 		} catch {
 			completionHandler(error)
 		}
 	}
 }
-
 
 enum WebModifier: String, Codable {
 	case not = "not"

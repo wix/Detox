@@ -33,7 +33,7 @@ class WebJSCodeBuilder {
 		return """
 		 (() => {
 			document.body.style.background = "red";
-			return "body background has changed successfully!";
+			return true;
 		 })();
 		"""
 	}
