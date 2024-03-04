@@ -12,7 +12,7 @@ describe('Web View', () => {
   });
 
   describe('Expectations',() => {
-    it.only('expect element to exists', async () => {
+    it('expect element to exists', async () => {
       await expect(webview_1.element(by.web.id('testingPar'))).toExist();
     });
 
@@ -51,7 +51,7 @@ describe('Web View', () => {
     });
 
     it('expect to find element by href', async () => {
-      await expect(webview_1.element(by.web.href('disney.com'))).toExist();
+      await expect(webview_1.element(by.web.href('http://www.disney.com'))).toExist();
     });
 
     it('expect to find element by hrefContains', async () => {
@@ -66,7 +66,7 @@ describe('Web View', () => {
   describe('Script injection', () => {
     it('should execute script', async () => {
       const link = webview_1.element(by.web.cssSelector('#cssSelector'));
-      await link.runScript(' \n (el) => { el.textContent = "Changed"; }');
+      await link.runScript('(el) => { el.textContent = "Changed"; }');
       await expect(link).toHaveText('Changed');
     });
 

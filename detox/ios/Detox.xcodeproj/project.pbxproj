@@ -109,6 +109,9 @@
 		600A0A762B923B1F00937051 /* WebExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A752B923B1F00937051 /* WebExpectation.swift */; };
 		600A0A792B93097200937051 /* WKWebView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A782B93097200937051 /* WKWebView+Utils.swift */; };
 		600A0A7B2B9376D600937051 /* WebJSCodeBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */; };
+		600A0A852B966F9000937051 /* WebAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A842B966F9000937051 /* WebAction.swift */; };
+		600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A862B966FBE00937051 /* WebPredicate.swift */; };
+		600A0A892B966FE200937051 /* WebPredicateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A882B966FE200937051 /* WebPredicateType.swift */; };
 		6062B5E12720323700CBDBF0 /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */; };
 		6062B5E22720323700CBDBF0 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */; };
 		6062B5E32720323700CBDBF0 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */; };
@@ -310,6 +313,9 @@
 		600A0A752B923B1F00937051 /* WebExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectation.swift; sourceTree = "<group>"; };
 		600A0A782B93097200937051 /* WKWebView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+Utils.swift"; sourceTree = "<group>"; };
 		600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebJSCodeBuilder.swift; sourceTree = "<group>"; };
+		600A0A842B966F9000937051 /* WebAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAction.swift; sourceTree = "<group>"; };
+		600A0A862B966FBE00937051 /* WebPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPredicate.swift; sourceTree = "<group>"; };
+		600A0A882B966FE200937051 /* WebPredicateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPredicateType.swift; sourceTree = "<group>"; };
 		6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
 		6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXSwizzlingHelper.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXSwizzlingHelper.h; sourceTree = SOURCE_ROOT; };
 		6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Utils.h"; path = "DetoxSync/DetoxSync/DTXObjectiveCHelpers/NSArray+Utils.h"; sourceTree = SOURCE_ROOT; };
@@ -624,9 +630,12 @@
 		600A0A772B92FD5800937051 /* WebViews */ = {
 			isa = PBXGroup;
 			children = (
+				600A0A842B966F9000937051 /* WebAction.swift */,
 				600A0A752B923B1F00937051 /* WebExpectation.swift */,
-				600A0A782B93097200937051 /* WKWebView+Utils.swift */,
 				600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */,
+				600A0A782B93097200937051 /* WKWebView+Utils.swift */,
+				600A0A862B966FBE00937051 /* WebPredicate.swift */,
+				600A0A882B966FE200937051 /* WebPredicateType.swift */,
 			);
 			name = WebViews;
 			sourceTree = "<group>";
@@ -853,8 +862,10 @@
 				3980D15C244C45EA004812DD /* Action.swift in Sources */,
 				AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
+				600A0A892B966FE200937051 /* WebPredicateType.swift in Sources */,
 				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
+				600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */,
 				3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */,
 				3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */,
 				3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */,
@@ -904,6 +915,7 @@
 				3980D1102448B52C004812DD /* DTXSyntheticEvents.m in Sources */,
 				3980D16E244DDCD7004812DD /* UIScrollView+DetoxActions.m in Sources */,
 				392324D72477D87D00A3D119 /* DetoxManager.swift in Sources */,
+				600A0A852B966F9000937051 /* WebAction.swift in Sources */,
 				3980D1192448B52C004812DD /* UITouch+DTXAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -36,21 +36,28 @@ final class InvocationManager {
 			switch kind {
 			case Types.action:
 				let action = try Action.with(dictionaryRepresentation: dictionaryRepresentation)
-				os_signpost(.begin, log: log.osLog, name: "Action Invocation", signpostID: signpostID, "%{public}s", action.description)
+				os_signpost(.begin, log: log.osLog, name: "Action Invocation", 
+										signpostID: signpostID, "%{public}s", action.description)
 				action.perform(completionHandler: signpostCompletionHandler)
 
 			case Types.expectation:
 				let expectation = try Expectation.with(dictionaryRepresentation: dictionaryRepresentation)
-				os_signpost(.begin, log: log.osLog, name: "Expectation Invocation", signpostID: signpostID, "%{public}s", expectation.description)
+				os_signpost(.begin, log: log.osLog, name: "Expectation Invocation", 
+										signpostID: signpostID, "%{public}s", expectation.description)
 				expectation.evaluate { error in
 					signpostCompletionHandler(nil, error)
 				}
 
 			case Types.webAction:
-				fatalError("web action is not supported: \(dictionaryRepresentation)")
+				let action = try WebAction.init(json: dictionaryRepresentation)
+				os_signpost(.begin, log: log.osLog, name: "Web action Invocation",
+										signpostID: signpostID, "%{public}s", action.description)
+				action.perform(completionHandler: signpostCompletionHandler)
 
 			case Types.webExpectation:
 				let expectation = try WebExpectation.init(json: dictionaryRepresentation)
+				os_signpost(.begin, log: log.osLog, name: "Web expectation Invocation", 
+										signpostID: signpostID, "%{public}s", expectation.description)
 				expectation.evaluate { error in
 					signpostCompletionHandler(nil, error)
 				}

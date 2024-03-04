@@ -6,25 +6,28 @@
 import Foundation
 import WebKit
 
-class WebExpectation {
-	var webExpectation: WebExpectationType
-	var params: [String]?
+class WebExpectation: CustomStringConvertible {
 	var predicate: Predicate?
 	var atIndex: Int?
-	var webModifiers: [WebModifier]?
 	var webPredicate: WebPredicate
+	var webModifiers: [WebModifier]?
+	var webExpectation: WebExpectationType
+	var params: [String]?
 
 	init(json: [String: Any]) throws {
 		self.webExpectation = WebExpectationType(rawValue: json["webExpectation"] as! String)!
 		self.params = json["params"] as? [String]
 		self.webModifiers = (json["webModifiers"] as? [String])?.compactMap { WebModifier(rawValue: $0) }
 
+		let webPredicateJSON = json["webPredicate"] as? [String: Any]
+
 		guard
-			let webPredicateJSON = json["webPredicate"] as? [String: Any],
+			let webPredicateJSON = webPredicateJSON,
 			let webPredicateData = try? JSONSerialization.data(withJSONObject: webPredicateJSON),
 			let decodedWebPredicate = try? JSONDecoder().decode(WebPredicate.self, from: webPredicateData) else {
-			throw dtx_errorForFatalError("Failed to decode WebPredicate")
+			throw dtx_errorForFatalError("Failed to decode WebPredicate \(String(describing: webPredicateJSON))")
 		}
+
 		self.webPredicate = decodedWebPredicate
 		if let predicateJSON = json["predicate"] as? [String: Any] {
 			self.predicate = try Predicate.with(dictionaryRepresentation: predicateJSON)
@@ -33,18 +36,22 @@ class WebExpectation {
 		self.atIndex = json["atIndex"] as? Int
 	}
 
+	var description: String {
+		return "WebExpectation: \(webExpectation.rawValue)"
+	}
+
 	func evaluate(completionHandler: @escaping (Error?) -> Void) {
+		let jsString = WebJSCodeBuilder()
+			.with(predicate: webPredicate)
+			.with(expectation: webExpectation, params: params, modifiers: webModifiers)
+			.build()
+
 		do {
 			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
 				throw dtx_errorForFatalError(
 					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +
 					"at index: `\(atIndex ?? 0)`")
 			}
-
-			let jsString = WebJSCodeBuilder()
-				.with(predicate: webPredicate)
-				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
-				.build()
 
 			var observation: NSKeyValueObservation?
 			observation = webView.observe(
@@ -56,15 +63,17 @@ class WebExpectation {
 
 				webView.evaluateJavaScript(jsString) { [self] (result, error) in
 					if let error = error {
-						completionHandler(error)
+						completionHandler(dtx_errorForFatalError(
+							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+							"Error: \(error.localizedDescription)"))
 					} else if result as? Bool != true {
 						completionHandler(dtx_errorForFatalError(
-							"Failed on web expectation: \(webModifiers?.description ?? "") " +
-							"\(webExpectation.rawValue.capitalized) " +
+							"Failed on web expectation: \(webModifiers?.description.uppercased() ?? "") " +
+							"\(webExpectation.rawValue.uppercased()) " +
 							"with params \(params?.description ?? "") " +
-							"on element with \(webPredicate.type.rawValue.capitalized) == " +
+							"on element with \(webPredicate.type.rawValue.uppercased()) == " +
 							"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
-							"Got evaluation result: `\(String(describing: result))`"))
+							"Got evaluation result: `\(result as? Bool == false ? "FALSY" : String(describing: result))`"))
 					} else {
 						completionHandler(nil)
 					}
@@ -80,26 +89,7 @@ enum WebModifier: String, Codable {
 	case not = "not"
 }
 
-class WebPredicate: Codable {
-	let type: WebPredicateType
-	let value: String
-}
-
 enum WebExpectationType: String, Codable {
 	case toExist = "toExist"
 	case toHaveText = "toHaveText"
-}
-
-enum WebPredicateType: String, Codable {
-	case id = "id"
-	case className = "className"
-	case cssSelector = "cssSelector"
-	case name = "name"
-	case xpath = "xpath"
-	case href = "href"
-	case hrefContains = "hrefContains"
-	case tag = "tag"
-	case label = "label"
-	case value = "value"
-	case accessibilityType = "accessibilityType"
 }
