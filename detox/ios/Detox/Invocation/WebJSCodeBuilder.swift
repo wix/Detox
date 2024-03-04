@@ -30,6 +30,11 @@ class WebJSCodeBuilder {
 	}
 
 	func build() -> String {
-		return "document.body.style.backgroundColor = `red`; return true;"
+		return """
+		 (() => {
+			document.body.style.background = "red";
+			return "body background has changed successfully!";
+		 })();
+		"""
 	}
 }

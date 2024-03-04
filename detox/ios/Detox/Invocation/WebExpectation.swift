@@ -44,23 +44,46 @@ class WebExpectation {
 				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
 				.build()
 
-			var errorOrNil: Error?
-			webView.evaluateJavaScript(jsString) { (result, error) in
-				errorOrNil = error
+			var errorOrNil: Error? = dtx_errorForFatalError(
+				"Failed to evaluate expectation on web view `\(webView.debugDescription)`")
+			var observation: NSKeyValueObservation?
+			observation = webView.observe(
+				\.isLoading,
+				 options: [.new, .old, .initial]
+			) { [self] (object, change) in
+				if change.newValue == false {
+					observation?.invalidate()
 
-				guard result as? Bool == true else {
 					errorOrNil = dtx_errorForFatalError(
-						"Failed on web expectation: \(self.webModifiers?.description ?? "") " +
-						"\(self.webExpectation.rawValue.capitalized) " +
-						"with params \(self.params?.description ?? "") " +
-						"on element with \(self.webPredicate.type.rawValue.capitalized) == " +
-						"'\(self.webPredicate.value)', web-view: \(webView.debugDescription)")
-					
-					return
+						"Failed to evaluate expectation on web view `\(webView.debugDescription)`, page loaded")
+					webView.evaluateJavaScript(jsString) { [self] (result, error) in
+						errorOrNil = error
+
+						guard errorOrNil == nil else {
+							return
+						}
+
+						guard result as? Bool == true else {
+							errorOrNil = dtx_errorForFatalError(
+								"Failed on web expectation: \(webModifiers?.description ?? "") " +
+								"\(webExpectation.rawValue.capitalized) " +
+								"with params \(params?.description ?? "") " +
+								"on element with \(webPredicate.type.rawValue.capitalized) == " +
+								"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
+								"Got: \(String(describing: errorOrNil))"
+							)
+
+							return
+						}
+					}
 				}
 			}
 
-			completionHandler(errorOrNil)
+			if let error = errorOrNil {
+				throw error
+			}
+
+			completionHandler(nil)
 		} catch {
 			completionHandler(error)
 		}
