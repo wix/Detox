@@ -31,6 +31,7 @@ function getReleaseVersionType() {
 function isPreRelease() {
   return PRE_RELEASE === 'true';
 }
+
 function isSkipNpm() {
   return RELEASE_SKIP_NPM === 'true';
 }
@@ -72,10 +73,14 @@ function getReleaseNpmTag() {
 
 function getPackagesFromPreviousBuilds() {
   cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
-  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
   cp.execSync(`find . -name "*.t[bg]z" -exec cp {} detox/ \\;`);
   cp.execSync(`mkdir -p detox/Detox-android`);
+
+  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android"`).toString();
   cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+  cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android Legacy"`).toString();
+  cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+
   cp.execSync(`rm -rf detox/ARCHIVE*`);
 }
 
