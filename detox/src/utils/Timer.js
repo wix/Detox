@@ -77,6 +77,12 @@ class Timer {
       Promise.resolve().then(action),
     ]);
   }
+
+  static run(timeout, description, action) {
+    const timer = new Timer();
+    timer.schedule(timeout);
+    return timer.run(description, action);
+  }
 }
 
 module.exports = Timer;

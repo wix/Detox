@@ -1,0 +1,26 @@
+.header-github-link:hover {
+  opacity: 0.6;
+}
+
+.header-github-link:before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: flex;
+  background: url(@site/static/img/showcase/gh-nav-light.svg) no-repeat;
+}
+
+html[data-theme='dark'] .header-github-link:before {
+  background: url(@site/static/img/showcase/gh-nav-dark.svg) no-repeat;
+}
+
+.header-github-link:hover {
+  -webkit-tap-highlight-color: transparent;
+  background-color: #ebedf0;
+  border-radius: 50%;
+  transition: background var(--ifm-transition-fast);
+}
+
+html[data-theme='dark'] .header-github-link:hover {
+  background-color: #444950;
+}

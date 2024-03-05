@@ -25,6 +25,22 @@ Possible values in the descending severity order: `fatal`, `error`, `warn`, `inf
 
 Please note that the log level has no effect on the [generated log files](artifacts.mdx) and their content – it filters only the messages printed to your terminal.
 
+:::info
+
+The verbosity of the logs can be influenced by the [`session.debugSynchronization`](session.mdx#sessiondebugsynchronization-number) setting in your Detox configuration. Enabled by default, this setting helps track the reasons preventing your current actions from completing by identifying what the app is still busy with. It produces logs like this:
+
+```
+15:13:07.309 detox[17005] i The app is busy with the following tasks:
+• There are 10 work items pending on the dispatch queue: "Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)".
+...
+```
+
+If you want to disable or decrease how often session logs are saved, change the `session.debugSynchronization` value to `0` (to turn off logs) or increase it to `60000` (to lower the frequency of logs). For a deeper understanding of this setting's purpose, refer to the [How Detox Works](../articles/how-detox-works.md#how-detox-automatically-synchronizes-with-your-app) article.
+
+:::
+
+---
+
 ## `logger.overrideConsole` \[boolean\]
 
 Default: `true`.

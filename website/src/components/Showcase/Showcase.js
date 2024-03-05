@@ -6,20 +6,17 @@ import styles from './Showcase.module.scss';
 import _ from 'lodash';
 import { TailSpin } from 'react-loader-spinner';
 
-function Showcase() {
+const Showcase = () => {
   const [cards, setCards] = useState([]);
-  const [toRender, setToRender] = useState([]);
 
   useEffect(() => {
-    setCards(_makeShuffledCardList(cardList).map(_makeCard));
+    const shouldShuffle = new URLSearchParams(window.location.search).get('shuffle') !== 'disabled';
+    const resultingCardList = shouldShuffle ? _makeShuffledCardList(cardList) : cardList;
+    setCards(resultingCardList.map(_makeCard));
   }, []);
 
-  useEffect(() => {
-    setToRender(cards.length > 0 ? _makeCardsContainer(cards) : _makeLoadingSpinner());
-  }, [cards]);
-
-  return toRender;
-}
+  return cards.length > 0 ? _makeCardsContainer(cards) : _makeLoadingSpinner();
+};
 
 const _makeShuffledCardList = (cardList) => {
   const partition = _.partition(cardList, 'shouldStayOnTop');

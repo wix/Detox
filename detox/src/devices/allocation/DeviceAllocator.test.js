@@ -7,6 +7,7 @@ describe('Device allocator', () => {
   beforeEach(() => {
     allocDriver = {
       allocate: jest.fn(),
+      postAllocate: jest.fn(),
       free: jest.fn(),
     };
 
@@ -25,6 +26,18 @@ describe('Device allocator', () => {
     const result = await deviceAllocator.allocate(query);
     expect(result).toEqual(device);
     expect(allocDriver.allocate).toHaveBeenCalledWith(query);
+  });
+
+  it('should post-allocate via driver', async () => {
+    const cookie = {};
+
+    const result = await deviceAllocator.postAllocate(cookie);
+    expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+  });
+
+  it('should not post-allocate if the driver does not implement this function', async () => {
+    delete allocDriver.postAllocate;
+    await expect(deviceAllocator.postAllocate({})).resolves.not.toThrow();
   });
 
   it('should deallocate via driver', async () => {

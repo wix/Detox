@@ -124,6 +124,13 @@ class ScrollToIndex extends Action {
   }
 }
 
+class SetDatePickerDateAction extends Action {
+  constructor(dateString, formatString) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.setDatePickerDate(dateString, formatString));
+  }
+}
+
 class AdjustSliderToPosition extends Action {
   constructor(newPosition) {
     super();
@@ -135,6 +142,13 @@ class TakeElementScreenshot extends Action {
   constructor() {
     super();
     this._call = invoke.callDirectly(DetoxActionApi.takeViewScreenshot());
+  }
+}
+
+class AccessibilityActionAction extends Action {
+  constructor(actionName) {
+    super();
+    this._call = invoke.callDirectly(DetoxActionApi.accessibilityAction(actionName));
   }
 }
 
@@ -155,5 +169,7 @@ module.exports = {
   SwipeAction,
   TakeElementScreenshot,
   ScrollToIndex,
+  SetDatePickerDateAction,
   AdjustSliderToPosition,
+  AccessibilityActionAction
 };

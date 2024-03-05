@@ -62,27 +62,6 @@ describe('Allocation driver for attached Android devices', () => {
       await expect(allocDriver.allocate(deviceConfig)).rejects.toThrowError('mock error');
     });
 
-    it('should init ADB\'s API-level', async () => {
-      givenDeviceAllocationResult(adbName);
-
-      await allocDriver.allocate(deviceConfig);
-      expect(adb.apiLevel).toHaveBeenCalledWith(adbName);
-    });
-
-    it('should unlock the screen using ADB', async () => {
-      givenDeviceAllocationResult(adbName);
-
-      await allocDriver.allocate(deviceConfig);
-      expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
-    });
-
-    it('should report boot-event via launcher', async () => {
-      givenDeviceAllocationResult(adbName);
-
-      await allocDriver.allocate(deviceConfig);
-      expect(attachedAndroidLauncher.notifyLaunchCompleted).toHaveBeenCalledWith(adbName);
-    });
-
     it('should return a valid cookie', async () => {
       const Cookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
 
@@ -91,6 +70,28 @@ describe('Allocation driver for attached Android devices', () => {
       const result = await allocDriver.allocate(deviceConfig);
       expect(result.constructor.name).toEqual('AttachedAndroidDeviceCookie');
       expect(Cookie).toHaveBeenCalledWith(adbName);
+    });
+
+    describe('post-allocation', () => {
+      beforeEach(async () => {
+        givenDeviceAllocationResult(adbName);
+        await allocDriver.allocate(deviceConfig);
+      });
+
+      it('should init ADB\'s API-level', async () => {
+        await allocDriver.postAllocate({ adbName });
+        expect(adb.apiLevel).toHaveBeenCalledWith(adbName);
+      });
+
+      it('should unlock the screen using ADB', async () => {
+        await allocDriver.postAllocate({ adbName });
+        expect(adb.unlockScreen).toHaveBeenCalledWith(adbName);
+      });
+
+      it('should report boot-event via launcher', async () => {
+        await allocDriver.postAllocate({ adbName });
+        expect(attachedAndroidLauncher.notifyLaunchCompleted).toHaveBeenCalledWith(adbName);
+      });
     });
   });
 

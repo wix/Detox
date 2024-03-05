@@ -138,6 +138,8 @@ class DetoxWorker {
     this._deviceAllocator = deviceAllocatorFactory.createDeviceAllocator(commonDeps);
     this._deviceCookie = yield this._deviceAllocator.allocate(this._deviceConfig);
 
+    yield this._deviceAllocator.postAllocate(this._deviceCookie);
+
     this.device = runtimeDeviceFactory.createRuntimeDevice(
       this._deviceCookie,
       commonDeps,
@@ -200,9 +202,12 @@ class DetoxWorker {
     }
 
     if (this.device) {
-      const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
       // @ts-ignore
       await this.device._cleanup();
+    }
+
+    if (this._deviceCookie) {
+      const shutdown = this._behaviorConfig ? this._behaviorConfig.cleanup.shutdownDevice : false;
       await this._deviceAllocator.free(this._deviceCookie, { shutdown });
     }
 

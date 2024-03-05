@@ -22,10 +22,11 @@ Use [expectations](expect.md) to verify element states.
 - [`.tapReturnKey()`](#tapreturnkey)
 - [`.tapBackspaceKey()`](#tapbackspacekey)
 - [`.setColumnToValue()`](#setcolumntovaluecolumn-value--ios-only) **iOS only**
-- [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) **iOS only**
+- [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat)
 - [`.adjustSliderToPosition()`](#adjustslidertopositionnormalizedposition)
 - [`.getAttributes()`](#getattributes)
 - [`.takeScreenshot(name)`](#takescreenshotname)
+- [`.performAccessibilityAction()`](#performaccessibilityactionactionname)
 
 ### `tap(point)`
 
@@ -214,7 +215,7 @@ Sets the element’s specified column to the specified value, using the system�
 
 Values accepted by this method are strings only, and the system will do its best to match complex picker view cells to the string.
 
-This function does not support date pickers. Use [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat--ios-only) instead.
+This function does not support date pickers. Use [`.setDatePickerDate()`](#setdatepickerdatedatestring-dateformat) instead.
 
 `column`—the element’s column to set (valid input: number, 0 and above) <br/>
 `value`—the string value to set (valid input: string)
@@ -226,19 +227,39 @@ await element(by.id('pickerView')).setColumnToValue(2, "Hello World");
 
 > **Note:** When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles. See [here](device.md#9-languageandlocalelaunch-with-a-specific-language-andor-local-ios-only) for more information.
 
-### `setDatePickerDate(dateString, dateFormat)`  iOS only
+### `setDatePickerDate(dateString, dateFormat)`
 
-Sets the element’s date to the specified date string, parsed using the specified date format.
+Sets the date-picker’s date to the specified date and time.
 
-The specified date string is converted by the system to an [`NSDate`](https://developer.apple.com/documentation/foundation/nsdate) object, using [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter) with the specified date format, or [`NSISO8601DateFormatter`](https://developer.apple.com/documentation/foundation/iso8601dateformatter) in case of ISO 8601 date strings. If you use JavaScript’s [Date.toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) or otherwise provide a valid ISO 8601 date string, set the date format to `"ISO8601"`, which is supported as a special case.
+`dateString`—The date to set. Should match the format provided by `dateFormat`.<br/>
+`dateFormat`—The format of `dateString`. Should be either [`'ISO8601'`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString), or an explicit date representation format, as supported by [`NSDateFormatter`] on iOS / [`DateTimeFormatter`] on Android (e.g. `'yyyy/MM/dd'`).
 
-`dateString`—the date to set (valid input: valid, parsable date string) <br/>
-`dateFormat`—the date format of `dateString` (valid input: `"ISO8601"` or a valid, parsable date format supported by [`NSDateFormatter`](https://developer.apple.com/documentation/foundation/dateformatter))
+> _The recommended `dateFormat` is `ISO8601`._
+
+Examples:
 
 ```js
-await element(by.id('datePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00', "ISO8601");
-await element(by.id('datePicker')).setDatePickerDate('2019/02/06', "yyyy/MM/dd");
+const datePicker = element(by.id('datePicker'));
+
+// ISO8601:
+await datePicker.setDatePickerDate('2019-02-06T05:10:00-08:00', 'ISO8601');
+await datePicker.setDatePickerDate(new Date().toISOString(), 'ISO8601'); // toISOString returns an ISO8601 format with no timezone (UTC-0)
+
+// Explicit format:
+await datePicker.setDatePickerDate('2019/02/06', "yyyy/MM/dd");
 ```
+
+:::info
+
+As far as element-matching is concerned, on Android, older versions of the popular [`@react-native-community/datetimepicker`] package don’t allow for the specification of your own [`testID`] prop for the date-picker component. Therefore, you'd have to either upgrade your package  to a newer version containing [PR datetimepicker#705] inside, or use Detox's [`by.type`] matcher as a workaround. For example:
+
+```js
+const datePicker = device.getPlatform() === 'android'
+  ? element(by.type('android.widget.DatePicker'))
+  : element(by.id('datePicker'));
+```
+
+:::
 
 ### `adjustSliderToPosition(normalizedPosition)`
 
@@ -257,7 +278,7 @@ Returns an object, representing various attributes of the element.
 Retrieved attributes are:
 
 - `text`: The text value of any textual element.
-- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android.
+- `label`: The label of the element. Matches `accessibilityLabel` for iOS, and `contentDescription` for android. Refer to the [`.toHaveLabel()` API](./expect.md#tohavelabellabel) in order to learn about caveats associated with this attribute in React Native apps.
 - `placeholder`: The placeholder text value of the element. Matches `hint` on android.
 - `enabled`: Whether the element is enabled for user interaction.
 - `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component’s test ID in React Native apps**.
@@ -310,6 +331,16 @@ Takes a screenshot of the matched element. For full details on taking screenshot
 
 `name`—the name of the screenshot
 
+### `performAccessibilityAction(actionName)`
+
+Triggers an [accessibility action](https://reactnative.dev/docs/accessibility#accessibility-actions).
+
+`actionName`—the name of the accessibility action <br/>
+
+```js
+await element(by.id('scrollView')).performAccessibilityAction("activate");
+```
+
 ## Deprecated Methods
 
 - [`.tapAtPoint()`](#tapatpointpoint)
@@ -340,3 +371,17 @@ Simulates a pinch on the element with the provided options.
 ```js
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```
+
+[`testID`]: ../guide/test-id.mdx
+
+[`by.type`]: ../api/matchers.md#bytypeclassname
+
+[`Date.prototype.toISOString()`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+
+[`NSDateFormatter`]: https://developer.apple.com/documentation/foundation/dateformatter
+
+[`DateTimeFormatter`]: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+[`@react-native-community/datetimepicker`]: https://www.npmjs.com/package/@react-native-community/datetimepicker
+
+[PR datetimepicker#705]: https://github.com/react-native-datetimepicker/datetimepicker/pull/705

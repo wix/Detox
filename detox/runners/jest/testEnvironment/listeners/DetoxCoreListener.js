@@ -12,6 +12,7 @@ const log = detoxInternals.log.child({ cat: 'lifecycle,jest-environment' });
 class DetoxCoreListener {
   constructor({ env }) {
     this._startedTests = new Set();
+    this._skippedTests = new Set();
     this._testsFailedBeforeStart = new Set();
     this._env = env;
     this._circusRetryTimes = 1;
@@ -46,11 +47,7 @@ class DetoxCoreListener {
       this._testsFailedBeforeStart.add(test);
     }
 
-    const logTrace = this._isTestSkipped(test)
-      ? log.trace
-      : log.trace.begin;
-
-    logTrace({
+    log.trace.begin({
       context: 'test',
       status: metadata.status,
       fullName: metadata.fullName,
@@ -59,6 +56,16 @@ class DetoxCoreListener {
 
     const circusRetryTimes = +this._env.global[RETRY_TIMES];
     this._circusRetryTimes = isNaN(circusRetryTimes) ? 1 : 1 + circusRetryTimes;
+  }
+
+  async test_skip({ test }) {
+    log.trace.end({ status: 'skip' }, getFullTestName(test));
+    this._skippedTests.add(test);
+  }
+
+  async test_todo({ test }) {
+    log.trace.end({ status: 'todo' }, getFullTestName(test));
+    this._skippedTests.add(test);
   }
 
   async hook_start(event, state) {
@@ -122,7 +129,7 @@ class DetoxCoreListener {
   }
 
   _isTestSkipped(test) {
-    return test && (test.mode === 'skip' || test.mode === 'todo');
+    return test && this._skippedTests.has(test);
   }
 
   _getTestMetadata(test) {
@@ -140,14 +147,10 @@ class DetoxCoreListener {
     return result;
   }
 
-  /** @returns { 'failed' | 'passed' | 'running' | 'skip' | 'todo' } */
+  /** @returns { 'failed' | 'passed' | 'running'} */
   _getTestStatus(test) {
     if (!_.isEmpty(test.errors)) {
       return 'failed';
-    }
-
-    if (this._isTestSkipped(test)) {
-      return test.mode;
     }
 
     if (test.status === 'done') {

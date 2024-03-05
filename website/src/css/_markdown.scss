@@ -1,0 +1,19 @@
+.docusaurus-highlight-code-line {
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+.markdown {
+  @media (min-width: 768px) {
+    code {
+      white-space: pre;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    code {
+      white-space: pre-wrap;
+    }
+  }
+}

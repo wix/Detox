@@ -1,6 +1,6 @@
 [submodule "detox/ios/COSTouchVisualizer"]
 	path = detox/ios/COSTouchVisualizer
-	url = https://github.com/joeblau/COSTouchVisualizer
+	url = https://github.com/wix-incubator/COSTouchVisualizer
 [submodule "detox/ios/DTXLoggingInfra"]
 	path = detox/ios/DTXLoggingInfra
 	url = https://github.com/wix/DTXLoggingInfra.git

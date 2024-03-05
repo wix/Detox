@@ -7,7 +7,9 @@ const _ = require('lodash');
 const tempfile = require('tempfile');
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
+const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
@@ -228,6 +230,13 @@ class Element {
     return this.withAction('clearText', traceDescription);
   }
 
+  performAccessibilityAction(actionName) {
+    if (typeof actionName !== 'string') throw new Error('actionName should be a string, but got ' + (actionName + (' (' + (typeof actionName + ')'))));
+
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
+    return this.withAction('accessibilityAction', traceDescription, actionName);
+  }
+
   scroll(pixels, direction = 'down', startPositionX = NaN, startPositionY = NaN) {
     if (!['left', 'right', 'up', 'down'].some(option => option === direction)) throw new Error('direction should be one of [left, right, up, down], but got ' + direction);
     if (typeof pixels !== 'number') throw new Error('amount of pixels should be a number, but got ' + (pixels + (' (' + (typeof pixels + ')'))));
@@ -275,6 +284,9 @@ class Element {
   setDatePickerDate(dateString, dateFormat) {
     if (typeof dateString !== 'string') throw new Error('dateString should be a string, but got ' + (dateString + (' (' + (typeof dateString + ')'))));
     if (typeof dateFormat !== 'string') throw new Error('dateFormat should be a string, but got ' + (dateFormat + (' (' + (typeof dateFormat + ')'))));
+    if (dateFormat === 'ISO8601') {
+      dateString = removeMilliseconds(dateString);
+    }
 
     const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
     return this.withAction('setDatePickerDate', traceDescription, dateString, dateFormat);
@@ -398,14 +410,14 @@ class Matcher {
   }
 
   label(label) {
-    if (typeof label !== 'string') throw new Error('label should be a string, but got ' + (label + (' (' + (typeof label + ')'))));
-    this.predicate = { type: 'label', value: label };
+    if (typeof label !== 'string' && !isRegExp(label)) throw new Error('label should be a string or regex, but got ' + (label + (' (' + (typeof label + ')'))));
+    this.predicate = { type: 'label', value: label.toString(), isRegex: isRegExp(label) };
     return this;
   }
 
   id(id) {
-    if (typeof id !== 'string') throw new Error('id should be a string, but got ' + (id + (' (' + (typeof id + ')'))));
-    this.predicate = { type: 'id', value: id };
+    if (typeof id !== 'string' && !isRegExp(id)) throw new Error('id should be a string or regex, but got ' + (id + (' (' + (typeof id + ')'))));
+    this.predicate = { type: 'id', value: id.toString(), isRegex: isRegExp(id) };
     return this;
   }
 
@@ -428,8 +440,8 @@ class Matcher {
   }
 
   text(text) {
-    if (typeof text !== 'string') throw new Error('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
-    this.predicate = { type: 'text', value: text };
+    if (typeof text !== 'string' && !isRegExp(text)) throw new Error(`text should be a string or regex, but got ` + (text + (' (' + (typeof text + ')'))));
+    this.predicate = { type: 'text', value: text.toString(), isRegex: isRegExp(text) };
     return this;
   }
 
@@ -541,6 +553,16 @@ class WaitFor {
     return this;
   }
 
+  toBeFocused() {
+    this.expectation = this.expectation.toBeFocused();
+    return this;
+  }
+
+  toBeNotFocused() {
+    this.expectation = this.expectation.toBeNotFocused();
+    return this;
+  }
+
   get not() {
     this.expectation.not;
     return this;
@@ -643,6 +665,12 @@ class WaitFor {
   setDatePickerDate(dateString, dateFormat) {
     this.action = this.actionableElement.setDatePickerDate(dateString, dateFormat);
     const traceDescription = actionDescription.setDatePickerDate(dateString, dateFormat);
+    return this.waitForWithAction(traceDescription);
+  }
+
+  performAccessibilityAction(actionName) {
+    this.action = this.actionableElement.performAccessibilityAction(actionName);
+    const traceDescription = actionDescription.performAccessibilityAction(actionName);
     return this.waitForWithAction(traceDescription);
   }
 

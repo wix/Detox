@@ -76,4 +76,14 @@ describe('Timer', () => {
     await expect(timer.run('testing', () => 5))
       .rejects.toThrowError(/Exceeded timeout of 100ms while testing/);
   });
+
+  it('should run action in time with static method', async () => {
+    await expect(Timer.run(1000, 'running test', () => 5)).resolves.toBe(5);
+  });
+
+  it('should throw if an action takes longer with static method', async () => {
+    const promise = Timer.run(999, 'running this test', () => new Deferred().promise);
+    jest.advanceTimersByTime(1000);
+    await expect(promise).rejects.toThrowError(/Exceeded timeout of 999ms while running this test/);
+  });
 });

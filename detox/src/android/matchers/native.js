@@ -1,19 +1,30 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const { isRegExp } = require('../../utils/isRegExp');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForContentDescription(value));
+    const isRegex = isRegExp(value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForAccessibilityLabel(isRegex ? value.toString() : value, isRegex));
+  }
+}
+
+class ShallowLabelMatcher extends NativeMatcher {
+  constructor(value) {
+    super();
+    const isRegex = isRegExp(value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForShallowAccessibilityLabel(isRegex ? value.toString() : value, isRegex));
   }
 }
 
 class IdMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(value));
+    const isRegex = isRegExp(value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForTestId(isRegex ? value.toString() : value, isRegex));
   }
 }
 
@@ -46,7 +57,8 @@ class ExistsMatcher extends NativeMatcher {
 class TextMatcher extends NativeMatcher {
   constructor(value) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(value));
+    const isRegex = isRegExp(value);
+    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForText(isRegex ? value.toString() : value, isRegex));
   }
 }
 
@@ -90,6 +102,7 @@ class SliderPositionMatcher extends NativeMatcher {
 
 module.exports = {
   LabelMatcher,
+  ShallowLabelMatcher,
   IdMatcher,
   TypeMatcher,
   TraitsMatcher,

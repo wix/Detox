@@ -20,6 +20,7 @@ class SessionState {
     this.detoxIPCServer = detoxIPCServer;
     this.testResults = testResults;
     this.testSessionIndex = testSessionIndex;
+    this.unsafe_earlyTeardown = undefined;
     this.workersCount = workersCount;
   }
 

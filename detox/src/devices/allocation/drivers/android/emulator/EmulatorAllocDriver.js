@@ -1,8 +1,6 @@
 // @ts-nocheck
 const _ = require('lodash');
 
-const log = require('../../../../../utils/logger').child({ cat: 'device' });
-const traceMethods = require('../../../../../utils/traceMethods');
 const AndroidEmulatorCookie = require('../../../../cookies/AndroidEmulatorCookie');
 const AllocationDriverBase = require('../../AllocationDriverBase');
 
@@ -23,8 +21,7 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     this._emulatorVersionResolver = emulatorVersionResolver;
     this._emulatorLauncher = emulatorLauncher;
     this._allocationHelper = allocationHelper;
-
-    traceMethods(log, this, ['_launchEmulator']);
+    this._launchInfo = {};
   }
 
   /**
@@ -38,19 +35,35 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
     const allocResult = await this._allocationHelper.allocateDevice(avdName);
-    const { adbName, placeholderPort, isRunning } = allocResult;
-    const launchOptions = {
-      bootArgs: deviceConfig.bootArgs,
-      gpuMode: deviceConfig.gpuMode,
-      headless: deviceConfig.headless,
-      readonly: deviceConfig.readonly,
-      port: placeholderPort,
+    const { adbName } = allocResult;
+
+    this._launchInfo[adbName] = {
+      avdName,
+      isRunning: allocResult.isRunning,
+      launchOptions: {
+        bootArgs: deviceConfig.bootArgs,
+        gpuMode: deviceConfig.gpuMode,
+        headless: deviceConfig.headless,
+        readonly: deviceConfig.readonly,
+        port: allocResult.placeholderPort,
+      },
     };
 
-    await this._launchEmulator(avdName, adbName, isRunning, launchOptions);
-    await this._prepareEmulator(adbName);
-
     return new AndroidEmulatorCookie(adbName);
+  }
+
+  /**
+   * @param {AndroidEmulatorCookie} deviceCookie
+   * @returns {Promise<void>}
+   */
+  async postAllocate(deviceCookie) {
+    const { adbName } = deviceCookie;
+    const { avdName, isRunning, launchOptions } = this._launchInfo[adbName];
+
+    await this._emulatorLauncher.launch(avdName, adbName, isRunning, launchOptions);
+    await this._adb.apiLevel(adbName);
+    await this._adb.disableAndroidAnimations(adbName);
+    await this._adb.unlockScreen(adbName);
   }
 
   /**
@@ -72,21 +85,6 @@ class EmulatorAllocDriver extends AllocationDriverBase {
     const rawBinaryVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     const binaryVersion = _.get(rawBinaryVersion, 'major');
     return await patchAvdSkinConfig(avdName, binaryVersion);
-  }
-
-  async _launchEmulator(avdName, adbName, isRunning, options) {
-    try {
-      await this._emulatorLauncher.launch(avdName, adbName, isRunning, options);
-    } catch (e) {
-      await this._allocationHelper.deallocateDevice(adbName);
-      throw e;
-    }
-  }
-
-  async _prepareEmulator(adbName) {
-    await this._adb.apiLevel(adbName);
-    await this._adb.disableAndroidAnimations(adbName);
-    await this._adb.unlockScreen(adbName);
   }
 }
 

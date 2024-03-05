@@ -48,8 +48,9 @@ declare module 'detox/runners/jest' {
   }
 
   export class DetoxCircusEnvironment extends NodeEnvironment {
-    public readonly handleTestEvent: (event: unknown, state: unknown) => void | Promise<void>;
     public readonly testPath: string;
+
+    public handleTestEvent(event: unknown, state: unknown): void | Promise<void>;
 
     protected registerListeners(map: Record<string, DetoxListenerFactory>): void;
     protected setupTimeout: number;

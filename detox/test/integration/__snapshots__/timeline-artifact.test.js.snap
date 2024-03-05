@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Timeline integration test should deterministically produce a timeline artifact 1`] = `
+exports[`Timeline integration test Flaky test should deterministically produce a timeline artifact 1`] = `
 [
   {
     "args": {
@@ -815,3 +815,815 @@ Detox CLI is going to restart the test runner with those files...
   },
 ]
 `;
+
+exports[`Timeline integration test Focused test should deterministically produce a timeline artifact 1`] = `
+[
+  {
+    "args": {
+      "cwd": "$CWD",
+      "data": {},
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 focused",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 0,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Serialized the session state at: $TMPDIR/$SESSION_ID.detox.json",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 1,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js focused",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 2,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/focused.test.js",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 3,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 4,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 5,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "focused.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 6,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 7,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Focused",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 8,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Focused Only test",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Only test",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 9,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Focused: Only test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 10,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 11,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 12,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    // Checking that skipped tests are also traced
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 13,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "passed",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 15,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Focused: Only test [OK]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 16,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Focused Skipped test",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 17,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Focused: Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 18,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 19,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Focused: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 20,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    // Reproducing when hook_start is called after test_start
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "afterAll",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 21,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 22,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 23,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 24,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 25,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 26,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 27,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 28,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 29,
+  },
+]
+`;
+
+exports[`Timeline integration test Skipped test should deterministically produce a timeline artifact 1`] = `
+[
+  {
+    "args": {
+      "cwd": "$CWD",
+      "data": {},
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "detox test -c stub --config integration/e2e/config.js -a integration_artifacts/ -R 1 skipped",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 0,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Serialized the session state at: $TMPDIR/$SESSION_ID.detox.json",
+    "ph": "i",
+    "pid": 0,
+    "tid": 0,
+    "ts": 1,
+  },
+  {
+    "args": {
+      "env": {},
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "name": "nyc jest --config integration/e2e/config.js skipped",
+    "ph": "B",
+    "pid": 0,
+    "tid": 0,
+    "ts": 2,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "integration/e2e/passing-skipped.test.js",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 3,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "set up environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 4,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 5,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "passing-skipped.test.js is assigned to Stub #StubDevice#1",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 6,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "run the tests",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 7,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Suite with skipped tests",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 8,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Suite with skipped tests Skipped test",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Skipped test",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 9,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Suite with skipped tests: Skipped test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 10,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "skip",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 11,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Suite with skipped tests: Skipped test [SKIPPED]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 12,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Suite with skipped tests Regular test",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Regular test",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 13,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Suite with skipped tests: Regular test",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 14,
+  },
+  {
+    "args": {
+      "functionCode": "() => {
+    if (config.resetModules) {
+      runtime.resetModules();
+    }
+    if (config.clearMocks) {
+      runtime.clearAllMocks();
+    }
+    if (config.resetMocks) {
+      runtime.resetAllMocks();
+      if (
+        config.fakeTimers.enableGlobally &&
+        config.fakeTimers.legacyFakeTimers
+      ) {
+        // during setup, this cannot be null (and it's fine to explode if it is)
+        environment.fakeTimers.useFakeTimers();
+      }
+    }
+    if (config.restoreMocks) {
+      runtime.restoreAllMocks();
+    }
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "beforeEach",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 15,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 16,
+  },
+  {
+    "args": {
+      "functionCode": "async () => {
+    // should be traced as usual
+  }",
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "test_fn",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 17,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 18,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "passed",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 19,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Suite with skipped tests: Regular test [OK]",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 20,
+  },
+  {
+    "args": {
+      "context": "test",
+      "fullName": "Suite with skipped tests Check that todo tests are also traced",
+      "invocations": 1,
+      "level": 10,
+      "status": "running",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "Check that todo tests are also traced",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 21,
+  },
+  {
+    "args": {
+      "level": 30,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "name": "Suite with skipped tests: Check that todo tests are also traced",
+    "ph": "i",
+    "pid": 1,
+    "tid": 1,
+    "ts": 22,
+  },
+  {
+    "args": {
+      "level": 10,
+      "status": "todo",
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 23,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 24,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 25,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "name": "tear down environment",
+    "ph": "B",
+    "pid": 1,
+    "tid": 1,
+    "ts": 26,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 27,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,jest-environment",
+    "ph": "E",
+    "pid": 1,
+    "tid": 1,
+    "ts": 28,
+  },
+  {
+    "args": {
+      "level": 10,
+      "success": true,
+      "v": 0,
+    },
+    "cat": "lifecycle,cli",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 29,
+  },
+  {
+    "args": {
+      "level": 10,
+      "v": 0,
+    },
+    "cat": "lifecycle",
+    "ph": "E",
+    "pid": 0,
+    "tid": 0,
+    "ts": 30,
+  },
+]
+`;
+

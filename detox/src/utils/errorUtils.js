@@ -41,7 +41,7 @@ function asError(error) {
 }
 
 function serializeObjectWithError(obj, errorKey) {
-  if (obj[errorKey]) {
+  if (obj[errorKey] instanceof Error) {
     return { ...obj, [errorKey]: serializeError(obj[errorKey]) };
   }
 

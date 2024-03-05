@@ -6,6 +6,14 @@
   url: http://localhost:3000/Detox/
   execute: document.documentElement.setAttribute("data-theme", "light")
 
+- name: Demo page dark theme
+  url: http://localhost:3000/Detox/docs/next/demo
+  execute: document.documentElement.setAttribute("data-theme", "dark")
+
+- name: Demo page light theme
+  url: http://localhost:3000/Detox/docs/next/demo
+  execute: document.documentElement.setAttribute("data-theme", "light")
+
 - name: Blog page dark theme
   url: http://localhost:3000/Detox/blog
   execute: document.documentElement.setAttribute("data-theme", "dark")
@@ -14,10 +22,11 @@
   url: http://localhost:3000/Detox/blog
   execute: document.documentElement.setAttribute("data-theme", "light")
 
-- name: Demo page dark theme
-  url: http://localhost:3000/Detox/docs/next/demo
+- name: Showcase page dark theme
+  url: http://localhost:3000/Detox/showcase?shuffle=disabled
   execute: document.documentElement.setAttribute("data-theme", "dark")
 
-- name: Demo page light theme
-  url: http://localhost:3000/Detox/docs/next/demo
+- name: Showcase page light theme
+  url: http://localhost:3000/Detox/showcase?shuffle=disabled
   execute: document.documentElement.setAttribute("data-theme", "light")
+

@@ -14,15 +14,51 @@ function sanitize_matcher(matcher) {
   return originalMatcher.type ? originalMatcher.value : originalMatcher;
 } 
 class DetoxMatcher {
-  static matcherForText(text) {
+  static matcherForText(text, isRegex) {
     if (typeof text !== "string") throw new Error("text should be a string, but got " + (text + (" (" + (typeof text + ")"))));
+    if (typeof isRegex !== "boolean") throw new Error("isRegex should be a boolean, but got " + (isRegex + (" (" + (typeof isRegex + ")"))));
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxMatcher"
       },
       method: "matcherForText",
-      args: [text]
+      args: [text, {
+        type: "boolean",
+        value: isRegex
+      }]
+    };
+  }
+
+  static matcherForAccessibilityLabel(label, isRegex) {
+    if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
+    if (typeof isRegex !== "boolean") throw new Error("isRegex should be a boolean, but got " + (isRegex + (" (" + (typeof isRegex + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForAccessibilityLabel",
+      args: [label, {
+        type: "boolean",
+        value: isRegex
+      }]
+    };
+  }
+
+  static matcherForShallowAccessibilityLabel(label, isRegex) {
+    if (typeof label !== "string") throw new Error("label should be a string, but got " + (label + (" (" + (typeof label + ")"))));
+    if (typeof isRegex !== "boolean") throw new Error("isRegex should be a boolean, but got " + (isRegex + (" (" + (typeof isRegex + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxMatcher"
+      },
+      method: "matcherForShallowAccessibilityLabel",
+      args: [label, {
+        type: "boolean",
+        value: isRegex
+      }]
     };
   }
 
@@ -38,15 +74,19 @@ class DetoxMatcher {
     };
   }
 
-  static matcherForTestId(testId) {
+  static matcherForTestId(testId, isRegex) {
     if (typeof testId !== "string") throw new Error("testId should be a string, but got " + (testId + (" (" + (typeof testId + ")"))));
+    if (typeof isRegex !== "boolean") throw new Error("isRegex should be a boolean, but got " + (isRegex + (" (" + (typeof isRegex + ")"))));
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.espresso.DetoxMatcher"
       },
       method: "matcherForTestId",
-      args: [testId]
+      args: [testId, {
+        type: "boolean",
+        value: isRegex
+      }]
     };
   }
 

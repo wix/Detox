@@ -25,11 +25,20 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     const adbNamePattern = deviceConfig.device.adbName;
     const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
+    return new AttachedAndroidDeviceCookie(adbName);
+  }
+
+  /**
+   * @param {AttachedAndroidDeviceCookie} deviceCookie
+   * @returns {Promise<void>}
+   */
+  async postAllocate(deviceCookie) {
+    const { adbName } = deviceCookie;
+
     // TODO Also disable native animations?
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
     await this._attachedAndroidLauncher.notifyLaunchCompleted(adbName);
-    return new AttachedAndroidDeviceCookie(adbName);
   }
 
   /**
