@@ -30,8 +30,7 @@
     "test": "npm run unit",
     "posttest": "cp coverage/lcov.info coverage/unit.lcov",
     "unit:watch": "jest --watch",
-    "prepublish": "npm run build",
-    "postinstall": "node scripts/postinstall.js"
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.8",

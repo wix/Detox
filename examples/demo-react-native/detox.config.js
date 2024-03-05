@@ -37,7 +37,12 @@ module.exports = {
     "android.release": {
       "type": "android.apk",
       "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -",
+      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -"
+    },
+    "android.cloud.debug":{
+      "type": "android.cloud",
+      "app":"bs://c13101d5b0b1dfd32371a0610bc7202755d6becb",
+      "appClient":"bs://d52b6360bb5db1b2e9530ffe30b31c2ea5d02b27"
     }
   },
   devices: {
@@ -76,6 +81,13 @@ module.exports = {
       utilBinaryPaths: [
         "./cache/test-butler-app.apk"
       ],
+    },
+    "cloud":{
+      "type":"android.cloud",
+      "device":{
+        "name":"OnePlus 8",
+        "osVersion": "10.0"
+      }
     }
   },
   configurations: {
@@ -106,6 +118,20 @@ module.exports = {
     "android.emu.release": {
       "device": "emulator",
       "app": "android.release"
+    },
+    "android.cloud.debug": {
+      "device":"cloud",
+      "app": "android.cloud.debug",
+      "cloudAuthentication":{
+        "username":"avinashbharti_2VdzKZ",
+        "accessKey":"GySoHrGXvSkSfSKSTPwB"
+      },
+      "session":{
+        "server":"wss://detox.browserstack.com/init",
+        "name": "example-session-name",
+        "build": "example-build-name",
+        "project": "example-project-name"
+      }
     }
   }
 };
