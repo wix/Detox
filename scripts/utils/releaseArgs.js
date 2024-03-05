@@ -72,6 +72,7 @@ function getReleaseNpmTag() {
 
 function getPackagesFromPreviousBuilds() {
   cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
+  cp.execSync(`mkdir -p detox/Detox-android`);
   cp.execSync(`buildkite-agent artifact download "**/com/**" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
   cp.execSync(`find . -name "*.t[bg]z" -exec cp {} detox/ \\;`);
 }
