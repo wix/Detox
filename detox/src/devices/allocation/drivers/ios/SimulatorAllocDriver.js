@@ -1,22 +1,37 @@
-// @ts-nocheck
+/**
+ * @typedef {import('../AllocationDriverBase').AllocationDriverBase} AllocationDriverBase
+ * @typedef {import('../AllocationDriverBase').DeallocOptions} DeallocOptions
+ * @typedef {import('../../../common/drivers/ios/cookies').IosSimulatorCookie} IosSimulatorCookie
+ */
+
 const _ = require('lodash');
 
-const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
-const IosSimulatorCookie = require('../../../cookies/IosSimulatorCookie');
-const AllocationDriverBase = require('../AllocationDriverBase');
+const { DetoxRuntimeError } = require('../../../../errors');
+const log = require('../../../../utils/logger').child({ cat: 'device,device-allocation' });
 
-class SimulatorAllocDriver extends AllocationDriverBase {
+const SimulatorQuery = require('./SimulatorQuery');
+
+/**
+ * @implements {AllocationDriverBase}
+ */
+class SimulatorAllocDriver {
   /**
-   * @param deviceRegistry { DeviceRegistry }
-   * @param applesimutils { AppleSimUtils }
-   * @param simulatorLauncher { SimulatorLauncher }
+   * @param {object} options
+   * @param {import('../../DeviceRegistry')} options.deviceRegistry
+   * @param {DetoxInternals.RuntimeConfig} options.detoxConfig
+   * @param {import('../../../common/drivers/ios/tools/AppleSimUtils')} options.applesimutils
+   * @param {import('./SimulatorLauncher')} options.simulatorLauncher
    */
-  constructor({ deviceRegistry, applesimutils, simulatorLauncher }) {
-    super();
+  constructor({ detoxConfig, deviceRegistry, applesimutils, simulatorLauncher }) {
     this._deviceRegistry = deviceRegistry;
     this._applesimutils = applesimutils;
     this._simulatorLauncher = simulatorLauncher;
     this._launchInfo = {};
+    this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
+  }
+
+  async init() {
+    await this._deviceRegistry.unregisterZombieDevices();
   }
 
   /**
@@ -24,30 +39,37 @@ class SimulatorAllocDriver extends AllocationDriverBase {
    * @return {Promise<IosSimulatorCookie>}
    */
   async allocate(deviceConfig) {
-    const deviceQuery = this._adaptQuery(deviceConfig.device);
+    const deviceQuery = new SimulatorQuery(deviceConfig.device);
 
     // TODO Delegate this onto a well tested allocator class
-    const udid = await this._deviceRegistry.allocateDevice(async () => {
+    const udid = await this._deviceRegistry.registerDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });
 
-    const deviceComment = this._commentDevice(deviceQuery);
     if (!udid) {
-      throw new DetoxRuntimeError(`Failed to find device matching ${deviceComment}`);
+      throw new DetoxRuntimeError(`Failed to find device matching ${deviceQuery.getDeviceComment()}`);
     }
 
     this._launchInfo[udid] = { deviceConfig };
-    return new IosSimulatorCookie(udid);
+    return { id: udid, udid };
   }
 
   /**
    * @param {IosSimulatorCookie} deviceCookie
-   * @returns {Promise<void>}
+   * @returns {Promise<IosSimulatorCookie>}
    */
   async postAllocate(deviceCookie) {
     const { udid } = deviceCookie;
     const { deviceConfig } = this._launchInfo[udid];
     await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs, deviceConfig.headless);
+
+    return {
+      id: udid,
+      udid,
+      type: deviceConfig.type,
+      bootArgs: deviceConfig.bootArgs,
+      headless: deviceConfig.headless,
+    };
   }
 
   /**
@@ -58,21 +80,40 @@ class SimulatorAllocDriver extends AllocationDriverBase {
   async free(cookie, options = {}) {
     const { udid } = cookie;
 
-    await this._deviceRegistry.disposeDevice(udid);
-
     if (options.shutdown) {
+      await this._doShutdown(udid);
+      await this._deviceRegistry.unregisterDevice(udid);
+    } else {
+      await this._deviceRegistry.releaseDevice(udid);
+    }
+  }
+
+  async cleanup() {
+    if (this._shouldShutdown) {
+      const sessionDevices = await this._deviceRegistry.readSessionDevices();
+      const shutdownPromises = sessionDevices.getIds().map((udid) => this._doShutdown(udid));
+      await Promise.all(shutdownPromises);
+    }
+
+    await this._deviceRegistry.unregisterSessionDevices();
+  }
+
+  /**
+   * @param {string} udid
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _doShutdown(udid) {
+    try {
       await this._simulatorLauncher.shutdown(udid);
+    } catch (err) {
+      log.warn({ err }, `Failed to shutdown simulator ${udid}`);
     }
   }
 
   /***
    * @private
-   * @param deviceQuery {{
-   *   byId?: string;
-   *   byName?: string;
-   *   byType?: string;
-   *   byOS?: string;
-   * }}
+   * @param {SimulatorQuery} deviceQuery
    * @returns {Promise<String>}
    */
   async _findOrCreateDevice(deviceQuery) {
@@ -83,6 +124,7 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     if (_.isEmpty(free)) {
       const prototypeDevice = taken[0];
       udid = this._applesimutils.create(prototypeDevice);
+      await this._runScreenshotWorkaround(udid);
     } else {
       udid = free[0].udid;
     }
@@ -90,11 +132,30 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     return udid;
   }
 
+  async _runScreenshotWorkaround(udid) {
+    await this._applesimutils.takeScreenshot(udid, '/dev/null').catch(() => {
+      log.debug({}, `
+          NOTE: For an unknown yet reason, taking the first screenshot is apt
+          to fail when booting iOS Simulator in a hidden window mode (or on CI).
+          Detox applies a workaround by taking a dummy screenshot to ensure
+          that the future ones are going to work fine. This screenshot is not
+          saved anywhere, and the error above is suppressed for all log levels
+          except for "debug" and "trace."
+        `.trim());
+    });
+  }
+
+  /**
+   * @private
+   * @param {SimulatorQuery} deviceQuery
+   */
   async _groupDevicesByStatus(deviceQuery) {
     const searchResults = await this._queryDevices(deviceQuery);
-    const { rawDevices: takenDevices } = this._deviceRegistry.getRegisteredDevices();
-    const takenUDIDs = new Set(_.map(takenDevices, 'id'));
-    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => takenUDIDs.has(udid) ? 'taken' : 'free');
+    const takenDevices = this._deviceRegistry.getTakenDevicesSync();
+
+    const { taken, free }  = _.groupBy(searchResults, ({ udid }) => {
+      return takenDevices.includes(udid) ? 'taken' : 'free';
+    });
 
     const targetOS = _.get(taken, '0.os.identifier');
     const isMatching = targetOS && { os: { identifier: targetOS } };
@@ -105,42 +166,24 @@ class SimulatorAllocDriver extends AllocationDriverBase {
     };
   }
 
+  /**
+   * @private
+   * @param {SimulatorQuery} deviceQuery
+   */
   async _queryDevices(deviceQuery) {
     const result = await this._applesimutils.list(
       deviceQuery,
-      `Searching for device ${this._commentQuery(deviceQuery)} ...`
+      `Searching for device ${deviceQuery} ...`
     );
 
     if (_.isEmpty(result)) {
       throw new DetoxRuntimeError({
-        message: `Failed to find a device ${this._commentQuery(deviceQuery)}`,
+        message: `Failed to find a device ${deviceQuery}`,
         hint: `Run 'applesimutils --list' to list your supported devices. ` +
           `It is advised only to specify a device type, e.g., "iPhone Xʀ" and avoid explicit search by OS version.`
       });
     }
     return result;
-  }
-
-  _adaptQuery({ id, name, os, type }) {
-    return _.omitBy({
-      byId: id,
-      byName: name,
-      byOS: os,
-      byType: type,
-    }, _.isUndefined);
-  }
-
-  _commentQuery({ byId, byName, byOS, byType }) {
-    return _.compact([
-      byId && `by UDID = ${JSON.stringify(byId)}`,
-      byName && `by name = ${JSON.stringify(byName)}`,
-      byType && `by type = ${JSON.stringify(byType)}`,
-      byOS && `by OS = ${JSON.stringify(byOS)}`,
-    ]).join(' and ');
-  }
-
-  _commentDevice({ byId, byName, byOS, byType }) {
-    return byId || _.compact([byName, byType, byOS]).join(', ');
   }
 }
 

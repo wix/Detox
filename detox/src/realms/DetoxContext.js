@@ -151,6 +151,12 @@ class DetoxContext {
     await this[$worker].init();
   }
 
+  /** @abstract */
+  async [symbols.allocateDevice]() {}
+
+  /** @abstract */
+  async [symbols.deallocateDevice]() {}
+
   async [symbols.uninstallWorker]() {
     try {
       if (this[$worker]) {

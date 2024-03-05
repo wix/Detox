@@ -8,11 +8,15 @@ class IPCServer {
    * @param {object} options
    * @param {import('./SessionState')} options.sessionState
    * @param {Detox.Logger} options.logger
+   * @param {object} options.callbacks
+   * @param {() => Promise<any>} options.callbacks.onAllocateDevice
+   * @param {(cookie: any) => Promise<void>} options.callbacks.onDeallocateDevice
    */
-  constructor({ sessionState, logger }) {
+  constructor({ sessionState, logger, callbacks }) {
     this._sessionState = sessionState;
     this._logger = logger.child({ cat: 'ipc,ipc-server' });
     this._ipc = null;
+    this._callbacks = callbacks;
     this._workers = new Set();
     this._contexts = new Set();
   }
@@ -42,6 +46,8 @@ class IPCServer {
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
       this._ipc.server.on('registerWorker', this.onRegisterWorker.bind(this));
       this._ipc.server.on('reportTestResults', this.onReportTestResults.bind(this));
+      this._ipc.server.on('allocateDevice', this.onAllocateDevice.bind(this));
+      this._ipc.server.on('deallocateDevice', this.onDeallocateDevice.bind(this));
       this._ipc.server.start();
     });
   }
@@ -94,6 +100,26 @@ class IPCServer {
     }
 
     this._ipc.server.broadcast('sessionStateUpdate', newState);
+  }
+
+  async onAllocateDevice(_payload, socket) {
+    let deviceCookie;
+
+    try {
+      deviceCookie = await this._callbacks.onAllocateDevice();
+      this._ipc.server.emit(socket, 'allocateDeviceDone', { deviceCookie });
+    } catch (error) {
+      this._ipc.server.emit(socket, 'allocateDeviceDone', serializeObjectWithError({ error }));
+    }
+  }
+
+  async onDeallocateDevice({ deviceCookie }, socket) {
+    try {
+      await this._callbacks.onDeallocateDevice(deviceCookie);
+      this._ipc.server.emit(socket, 'deallocateDeviceDone', {});
+    } catch (error) {
+      this._ipc.server.emit(socket, 'deallocateDeviceDone', serializeObjectWithError({ error }));
+    }
   }
 
   onReportTestResults({ testResults }, socket = null) {

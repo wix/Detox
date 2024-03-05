@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.12.2",
+  "version": "20.13.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -136,9 +136,9 @@
       "src/artifacts/log",
       "src/artifacts/screenshot",
       "src/artifacts/video",
-      "src/devices/allocation/drivers/AllocationDriverBase.js",
       "src/devices/allocation/drivers/android/emulator/launchEmulatorProcess.js",
       "src/devices/allocation/drivers/android/emulator/patchAvdSkinConfig.js",
+      "src/devices/allocation/.*AllocDriver.js",
       "src/devices/allocation/drivers/ios",
       "src/devices/allocation/factories",
       "src/devices/allocation/factories/drivers",
@@ -153,10 +153,9 @@
       "src/devices/runtime/drivers/ios",
       "src/devices/runtime/factories",
       "src/devices/runtime/factories/drivers",
+      "src/devices/validation/EnvironmentValidatorBase.js",
+      "src/devices/validation/factories",
       "src/matchers/factories",
-      "src/validation/EnvironmentValidatorBase.js",
-      "src/validation/factories",
-      "src/validation/ios/IosSimulatorEnvValidator",
       "src/utils/appdatapath.js",
       "src/utils/debug.js",
       "src/utils/environment.js",

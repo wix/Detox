@@ -19,9 +19,8 @@ function which(executable, path) {
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
-const DEVICE_LOCK_FILE_PATH_IOS = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.state.lock');
-const DEVICE_LOCK_FILE_PATH_ANDROID = path.join(DETOX_LIBRARY_ROOT_PATH, 'android-device.registry.state.lock');
-const GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'genycloud-cleanup.lock');
+const DETOX_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'global-context.json');
+const DEVICE_REGISTRY_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.json');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
 
 function getAndroidSDKPath() {
@@ -195,17 +194,12 @@ function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
 }
 
-function getDeviceLockFilePathIOS() {
-  return DEVICE_LOCK_FILE_PATH_IOS;
+function getDetoxLockFilePath() {
+  return DETOX_LOCK_FILE_PATH;
 }
 
-// TODO This can probably be merged with IOS' by now
-function getDeviceLockFilePathAndroid() {
-  return DEVICE_LOCK_FILE_PATH_ANDROID;
-}
-
-function getGenyCloudGlobalCleanupFilePath() {
-  return GENYCLOUD_GLOBAL_CLEANUP_FILE_PATH;
+function getDeviceRegistryPath() {
+  return DEVICE_REGISTRY_PATH;
 }
 
 function getLastFailedTestsPath() {
@@ -229,9 +223,8 @@ module.exports = {
   getAndroidSDKPath,
   getAndroidEmulatorPath,
   getDetoxLibraryRootPath,
-  getDeviceLockFilePathIOS,
-  getDeviceLockFilePathAndroid,
-  getGenyCloudGlobalCleanupFilePath,
+  getDetoxLockFilePath,
+  getDeviceRegistryPath,
   getLastFailedTestsPath,
   getHomeDir,
 };

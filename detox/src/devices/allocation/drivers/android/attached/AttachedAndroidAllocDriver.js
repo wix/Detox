@@ -1,20 +1,26 @@
-// @ts-nocheck
-const AttachedAndroidDeviceCookie = require('../../../../cookies/AttachedAndroidDeviceCookie');
-const AllocationDriverBase = require('../../AllocationDriverBase');
+/**
+ * @typedef {import('../../AllocationDriverBase').AllocationDriverBase} AllocationDriverBase
+ * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
+ */
 
-class AttachedAndroidAllocDriver extends AllocationDriverBase {
+/**
+ * @implements {AllocationDriverBase}
+ */
+class AttachedAndroidAllocDriver {
   /**
-   * @param adb { ADB }
-   * @param deviceRegistry { DeviceRegistry }
-   * @param freeDeviceFinder { FreeDeviceFinder }
-   * @param attachedAndroidLauncher { AttachedAndroidLauncher }
+   * @param {object} options
+   * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
+   * @param {import('../../../DeviceRegistry')} options.deviceRegistry
+   * @param {import('../FreeDeviceFinder')} options.freeDeviceFinder
    */
-  constructor({ adb, deviceRegistry, freeDeviceFinder, attachedAndroidLauncher }) {
-    super();
+  constructor({ adb, deviceRegistry, freeDeviceFinder }) {
     this._adb = adb;
     this._deviceRegistry = deviceRegistry;
     this._freeDeviceFinder = freeDeviceFinder;
-    this._attachedAndroidLauncher = attachedAndroidLauncher;
+  }
+
+  async init() {
+    await this._deviceRegistry.unregisterZombieDevices();
   }
 
   /**
@@ -23,13 +29,13 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
    */
   async allocate(deviceConfig) {
     const adbNamePattern = deviceConfig.device.adbName;
-    const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
+    const adbName = await this._deviceRegistry.registerDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
-    return new AttachedAndroidDeviceCookie(adbName);
+    return { id: adbName, adbName };
   }
 
   /**
-   * @param {AttachedAndroidDeviceCookie} deviceCookie
+   * @param {AndroidDeviceCookie} deviceCookie
    * @returns {Promise<void>}
    */
   async postAllocate(deviceCookie) {
@@ -38,16 +44,15 @@ class AttachedAndroidAllocDriver extends AllocationDriverBase {
     // TODO Also disable native animations?
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
-    await this._attachedAndroidLauncher.notifyLaunchCompleted(adbName);
   }
 
   /**
-   * @param cookie { AttachedAndroidDeviceCookie }
+   * @param cookie { AndroidDeviceCookie }
    * @return {Promise<void>}
    */
   async free(cookie) {
     const { adbName } = cookie;
-    await this._deviceRegistry.disposeDevice(adbName);
+    await this._deviceRegistry.unregisterDevice(adbName);
   }
 }
 
