@@ -73,12 +73,25 @@ function getReleaseNpmTag() {
 function getPackagesFromPreviousBuilds() {
   cp.execSync(`buildkite-agent artifact download "**/Detox*.tbz" . --build ${process.env.BUILDKITE_BUILD_ID}`).toString();
   cp.execSync(`find . -name "*.t[bg]z" -exec cp {} detox/ \\;`);
+  cp.execSync("ls -l")
+  cp.execSync("pwd")
   cp.execSync(`mkdir -p detox/Detox-android`);
+  cp.execSync("ls -l")
+  cp.execSync("pwd")
 
   cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android"`).toString();
+  cp.execSync("ls -l")
+  cp.execSync("pwd")
   cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+  cp.execSync("ls -l detox/Detox-android/")
+  cp.execSync("pwd")
   cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android Legacy"`).toString();
+  cp.execSync("ls -l detox/Detox-android/")
+  cp.execSync("ls -l")
+  cp.execSync("pwd")
   cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+  cp.execSync("ls -l")
+  cp.execSync("pwd")
 
   cp.execSync(`rm -rf detox/ARCHIVE*`);
 }
