@@ -11,12 +11,12 @@ class WebAction: CustomStringConvertible {
 	var atIndex: Int?
 	var webPredicate: WebPredicate
 	var webAction: WebActionType
-	var params: [String]?
+	var params: [Any]?
 
 	init(json: [String: Any]) throws {
 		self.webAction = WebActionType(rawValue: json["webAction"] as! String)!
 
-		self.params = json["params"] as? [String]
+		self.params = json["params"] as? [Any]
 
 		let webPredicateJSON = json["webPredicate"] as! [String: Any]
 		let webPredicateData = try JSONSerialization.data(withJSONObject: webPredicateJSON)
@@ -31,12 +31,12 @@ class WebAction: CustomStringConvertible {
 	}
 
 	func perform(completionHandler: @escaping ([String: Any]?, Error?) -> Void) {
-		let jsString = WebJSCodeBuilder()
-			.with(predicate: webPredicate)
-			.with(action: webAction, params: params)
-			.build()
-
 		do {
+			let jsString = try WebJSCodeBuilder()
+				.with(predicate: webPredicate)
+				.with(action: webAction, params: params)
+				.build()
+
 			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
 				throw dtx_errorForFatalError(
 					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +
@@ -53,10 +53,10 @@ class WebAction: CustomStringConvertible {
 
 				webView.evaluateJavaScript(jsString) { (result, error) in
 					if let error = error {
-						completionHandler(nil, dtx_errorForFatalError(
+						completionHandler(["result": false], dtx_errorForFatalError(
 							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
 							"Error: \(error.localizedDescription)"))
-					} else if let result = result as? String {
+					} else if let result = result {
 						completionHandler(["result": result], nil)
 					} else {
 						completionHandler(["result": true], nil)

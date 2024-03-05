@@ -41,12 +41,12 @@ class WebExpectation: CustomStringConvertible {
 	}
 
 	func evaluate(completionHandler: @escaping (Error?) -> Void) {
-		let jsString = WebJSCodeBuilder()
-			.with(predicate: webPredicate)
-			.with(expectation: webExpectation, params: params, modifiers: webModifiers)
-			.build()
-
 		do {
+			let jsString = try WebJSCodeBuilder()
+				.with(predicate: webPredicate)
+				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
+				.build()
+			
 			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
 				throw dtx_errorForFatalError(
 					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +

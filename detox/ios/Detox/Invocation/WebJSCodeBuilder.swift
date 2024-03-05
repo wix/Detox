@@ -11,7 +11,7 @@ class WebJSCodeBuilder {
 	private var expectationParams: [String]?
 	private var expectationModifiers: [WebModifier]?
 	private var action: WebActionType?
-	private var actionParams: [String]?
+	private var actionParams: [Any]?
 
 	func with(predicate: WebPredicate) -> WebJSCodeBuilder {
 		self.predicate = predicate
@@ -31,14 +31,14 @@ class WebJSCodeBuilder {
 		return self
 	}
 
-	func with(action: WebActionType, params: [String]?) -> WebJSCodeBuilder {
+	func with(action: WebActionType, params: [Any]?) -> WebJSCodeBuilder {
 		self.action = action
 		self.actionParams = params
 
 		return self
 	}
 
-	func build() -> String {
+	func build() throws -> String {
 		guard let predicate = predicate else {
 			return "return false;"
 		}
@@ -56,19 +56,19 @@ class WebJSCodeBuilder {
 			}
 
 			return """
-		(() => {
-		let element = \(elementScript);
-		return \(modifyJSExpectation(expectation: expectationScript, withModifiers: expectationModifiers));
-		})();
-		"""
+	(() => {
+	let element = \(elementScript);
+	return \(modifyJSExpectation(expectation: expectationScript, withModifiers: expectationModifiers));
+	})();
+	"""
 		} else if let action = action {
-			let actionScript = createActionScript(
+			let actionScript = try createActionScript(
 				forAction: action, params: actionParams, onElementWithScript: elementScript)
 			return """
-		(() => {
+	(() => {
 		\(actionScript)
-		})();
-		"""
+	})();
+	"""
 		} else {
 			dtx_fatalError("No expectation or action was set")
 		}
@@ -95,9 +95,9 @@ class WebJSCodeBuilder {
 
 	private func createActionScript(
 		forAction action: WebActionType,
-		params: [String]?,
+		params: [Any]?,
 		onElementWithScript elementScript: String
-	) -> String {
+	) throws -> String {
 		switch action {
 			case .tap:
 				return "\(elementScript).click();"
@@ -105,7 +105,7 @@ class WebJSCodeBuilder {
 				return "\(elementScript).value = '';"
 			case .typeText:
 				guard let text = params?.first else {
-					dtx_fatalError("Missing text parameter for typeText action")
+					throw dtx_errorForFatalError("Missing text parameter for typeText action")
 				}
 
 				return "\(elementScript).value = '\(text)';"
@@ -119,43 +119,50 @@ class WebJSCodeBuilder {
 				return "return document.title;"
 			case .moveCursorToEnd:
 				return """
-					let element = \(elementScript);
-					let length = element.value.length;
-					element.setSelectionRange(length, length);
-					"""
+	let element = \(elementScript);
+	let length = element.value.length;
+	element.setSelectionRange(length, length);
+	"""
 			case .replaceText:
 				guard let text = params?.first else {
-					dtx_fatalError("Missing text parameter for replaceText action")
+					throw dtx_errorForFatalError("Missing text parameter for replaceText action")
 				}
 
 				return "\(elementScript).value = '\(text)';"
 			case .runScript:
-				guard let script = params?.first else {
-					dtx_fatalError("Missing script parameter for runScript action")
+				guard let script = params?.first as? String else {
+					throw dtx_errorForFatalError("Missing script parameter for runScript action")
 				}
 
 				return "return (\(script))(\(elementScript));"
 
 			case .runScriptWithArgs:
 				guard let script = params?.first else {
-					dtx_fatalError("Missing script parameter for runScript action")
+					throw dtx_errorForFatalError("Missing script parameter for runScript action")
 				}
 
-				let paramsOrNil = params?.dropFirst().joined(separator: ", ")
-				let params = paramsOrNil != nil ? paramsOrNil! + ", " : ""
+				let extraParamsOrNil = params?
+					.dropFirst()
+					.map({ param in
+						let data = try! JSONSerialization.data(withJSONObject: param, options: [])
+						return String(data: data, encoding: .utf8)!
+					})
+					.joined(separator: ",")
 
-				return "return (\(script))(\(elementScript)\(params));"
+				let extraParams = extraParamsOrNil != nil ? ",...\(extraParamsOrNil!)" : ""
+				return "return (\(script))(\(elementScript)\(extraParams));"
+
 			case .selectAllText:
 				return """
-					let element = \(elementScript);
-					let length = element.value.length;
-					element.setSelectionRange(0, length);
-					"""
+	let element = \(elementScript);
+	let length = element.value.length;
+	element.setSelectionRange(0, length);
+	"""
 			case .scrollToView:
 				return """
-					let element = \(elementScript);
-					element.scrollIntoView({ behavior: 'auto' });
-					"""
+	let element = \(elementScript);
+	element.scrollIntoView({ behavior: 'auto' });
+	"""
 		}
 	}
 

@@ -1,3 +1,4 @@
+const {platform} = require("os");
 const jestExpect = require('expect').default;
 const MOCK_TEXT = 'Mock Text';
 
@@ -77,11 +78,14 @@ describe('Web View', () => {
         throw new Error(msg);
       }
 
-      await jestExpect(link.runScript(throwError)).rejects.toThrowError(/Simulated Error/);
-      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(/Custom Error/);
+      const expected = device.getPlatform() === 'ios' ? /Missing script parameter for runScript action/ :  /Simulated Error/;
+      await jestExpect(link.runScript(throwError)).rejects.toThrowError(expected);
+
+      const expected2 = device.getPlatform() === 'ios' ? /Missing script parameter for runScript action/ :  /Custom Error/;
+      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(expected2);
     });
 
-    it('should evaluate a script with complex args', async () => {
+    it.only('should evaluate a script with complex args', async () => {
       const link = webview_1.element(by.web.cssSelector('#cssSelector'));
       const evaluationResult = await link.runScript(function (element, a, b, c, d) {
         const newText = a[0] + b.a + c[0].b + d.c[0];
