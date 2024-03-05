@@ -14,7 +14,7 @@
     "generation",
     "."
   ],
-  "version": "20.18.10-smoke.0",
+  "version": "20.18.11-smoke.0",
   "npmClient": "npm",
   "command": {
     "publish": {
