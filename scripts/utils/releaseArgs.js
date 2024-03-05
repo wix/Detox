@@ -78,10 +78,11 @@ function getPackagesFromPreviousBuilds() {
 
   cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android"`).toString();
   cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+  cp.execSync(`rm -rf detox/ARCHIVE*`);
   cp.execSync(`buildkite-agent artifact download "**/ARCHIVE*.tgz" . --build ${process.env.BUILDKITE_BUILD_ID} --step ":android: Package android Legacy"`).toString();
   cp.execSync(`find detox -name "ARCHIVE*.tgz" -exec tar -xf {} -C detox/Detox-android/ \\;`);
+  cp.execSync(`rm -rf detox/ARCHIVE*`);
 
-  //cp.execSync(`rm -rf detox/ARCHIVE*`);
 }
 
 module.exports = {
