@@ -62,7 +62,7 @@ class WebJSCodeBuilder {
  result: \(
    modifyJSExpectation(expectation: expectationScript, withModifiers: expectationModifiers)
  ), 
- element: element.outerHTML
+ element: element ? element.outerHTML : null
  };
  })();
  """
