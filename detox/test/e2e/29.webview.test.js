@@ -1,4 +1,3 @@
-const {platform} = require("os");
 const jestExpect = require('expect').default;
 const MOCK_TEXT = 'Mock Text';
 
@@ -78,14 +77,12 @@ describe('Web View', () => {
         throw new Error(msg);
       }
 
-      const expected = device.getPlatform() === 'ios' ? /Missing script parameter for runScript action/ :  /Simulated Error/;
-      await jestExpect(link.runScript(throwError)).rejects.toThrowError(expected);
+      await jestExpect(link.runScript(throwError)).rejects.toThrowError(/Simulated Error/);
 
-      const expected2 = device.getPlatform() === 'ios' ? /Missing script parameter for runScript action/ :  /Custom Error/;
-      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(expected2);
+      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(/Custom Error/);
     });
 
-    it.only('should evaluate a script with complex args', async () => {
+    it('should evaluate a script with complex args', async () => {
       const link = webview_1.element(by.web.cssSelector('#cssSelector'));
       const evaluationResult = await link.runScript(function (element, a, b, c, d) {
         const newText = a[0] + b.a + c[0].b + d.c[0];
@@ -99,8 +96,7 @@ describe('Web View', () => {
   });
 
   describe('ContentEditable', () => {
-
-    it('should replace text by selecting all text', async () => {
+    it(':android: should replace text by selecting all text', async () => {
         const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
         const text = await editable.getText();
 
@@ -117,7 +113,7 @@ describe('Web View', () => {
         await expect(editable).toHaveText(MOCK_TEXT);
     });
 
-    it('move cursor to end and add text', async () => {
+    it(':android: should move cursor to end and add text', async () => {
       const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
       await editable.scrollToView();
 
@@ -188,5 +184,4 @@ describe('Web View', () => {
     const webview_2 = await web(by.id('webview_2'));
     await expect(webview_2.element(by.web.tag('p'))).toHaveText('Second Webview');
   });
-
 });

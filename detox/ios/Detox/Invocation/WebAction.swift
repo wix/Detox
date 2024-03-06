@@ -53,9 +53,19 @@ class WebAction: CustomStringConvertible {
 
 				webView.evaluateJavaScript(jsString) { (result, error) in
 					if let error = error {
-						completionHandler(["result": false], dtx_errorForFatalError(
-							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
-							"Error: \(error.localizedDescription)"))
+						completionHandler(
+							["result": false, "error": error.localizedDescription],
+							dtx_errorForFatalError(
+								"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+								"Error: \(error.localizedDescription)")
+						)
+					} else if let jsError = (result as? [String: Any])?["error"] as? String {
+						completionHandler(
+							["result": false, "error": jsError],
+							dtx_errorForFatalError(
+								"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+								"Error: \(jsError)")
+						)
 					} else if let result = result {
 						completionHandler(["result": result], nil)
 					} else {

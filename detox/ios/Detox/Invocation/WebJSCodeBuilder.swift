@@ -56,19 +56,28 @@ class WebJSCodeBuilder {
 			}
 
 			return """
-	(() => {
-	let element = \(elementScript);
-	return \(modifyJSExpectation(expectation: expectationScript, withModifiers: expectationModifiers));
-	})();
-	"""
+ (() => {
+ let element = \(elementScript);
+ return { 
+ result: \(
+   modifyJSExpectation(expectation: expectationScript, withModifiers: expectationModifiers)
+ ), 
+ element: element.outerHTML
+ };
+ })();
+ """
 		} else if let action = action {
 			let actionScript = try createActionScript(
 				forAction: action, params: actionParams, onElementWithScript: elementScript)
 			return """
-	(() => {
-		\(actionScript)
-	})();
-	"""
+ (() => {
+ try {
+ \(actionScript)
+ } catch (error) {
+ return {'error': error.message};
+ }
+ })();
+ """
 		} else {
 			dtx_fatalError("No expectation or action was set")
 		}
@@ -119,10 +128,10 @@ class WebJSCodeBuilder {
 				return "return document.title;"
 			case .moveCursorToEnd:
 				return """
-	let element = \(elementScript);
-	let length = element.value.length;
-	element.setSelectionRange(length, length);
-	"""
+ let element = \(elementScript);
+ let length = element.value.length;
+ element.setSelectionRange(length, length);
+ """
 			case .replaceText:
 				guard let text = params?.first else {
 					throw dtx_errorForFatalError("Missing text parameter for replaceText action")
@@ -131,14 +140,16 @@ class WebJSCodeBuilder {
 				return "\(elementScript).value = '\(text)';"
 			case .runScript:
 				guard let script = params?.first as? String else {
-					throw dtx_errorForFatalError("Missing script parameter for runScript action")
+					throw dtx_errorForFatalError(
+						"Missing script parameter for runScript action, got: \(String(describing: params))")
 				}
 
 				return "return (\(script))(\(elementScript));"
 
 			case .runScriptWithArgs:
 				guard let script = params?.first else {
-					throw dtx_errorForFatalError("Missing script parameter for runScript action")
+					throw dtx_errorForFatalError(
+						"Missing script parameter for runScript action, got: \(String(describing: params))")
 				}
 
 				let extraParamsOrNil = params?
@@ -154,15 +165,15 @@ class WebJSCodeBuilder {
 
 			case .selectAllText:
 				return """
-	let element = \(elementScript);
-	let length = element.value.length;
-	element.setSelectionRange(0, length);
-	"""
+ let element = \(elementScript);
+ let length = element.value.length;
+ element.setSelectionRange(0, length);
+ """
 			case .scrollToView:
 				return """
-	let element = \(elementScript);
-	element.scrollIntoView({ behavior: 'auto' });
-	"""
+ let element = \(elementScript);
+ element.scrollIntoView({ behavior: 'auto' });
+ """
 		}
 	}
 
@@ -185,7 +196,7 @@ class WebJSCodeBuilder {
 			case .hrefContains:
 				return "document.querySelector('a[href*=\"\(value)\"]').href"
 			case .tag:
-				return "document.querySelector('\(value)')"
+				return "document.getElementsByTagName('\(value)').item(0)"
 			case .label:
 				return "document.querySelector('[aria-label=\"\(value)\"]')"
 			case .value:

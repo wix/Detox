@@ -98,11 +98,19 @@ class WebElement {
   async getText() {
     const traceDescription = webViewActionDescription.getText();
     let result = await this.withAction('getText', traceDescription);
+    return this.extractResult(result, 'text');
+  }
 
-    if (result['text']) {
-      return result['text'];
+  extractResult(result, type) {
+    // iOS returns the result under `result` key, while Android returns it under the action `type` key.
+    if (result['error']) {
+      throw new DetoxRuntimeError(`Error thrown in web action: ${result['error']}`);
+    } else if (type && result[type]) {
+      return result[type];
+    } else if (result['result']) {
+      return result['result'];
     } else {
-      throw new DetoxRuntimeError(`Failed to extract text from result: ${JSON.stringify(result)}`);
+      throw new DetoxRuntimeError(`Failed to extract ${type} from result: ${JSON.stringify(result)}`);
     }
   }
 
@@ -122,51 +130,39 @@ class WebElement {
   }
 
   async runScript(script, args) {
+    if (typeof script === 'function') {
+      script = script.toString();
+    }
+
     if (args !== undefined && args.length !== 0) {
       return await this.runScriptWithArgs(script, args);
     }
 
     const traceDescription = webViewActionDescription.runScript(script);
     const result = await this.withAction('runScript', traceDescription, script);
-
-    if (result['result'] !== undefined) {
-      return result['result'];
-    } else {
-      throw new DetoxRuntimeError(`Failed to extract result from result: ${JSON.stringify(result)}`);
-    }
+    return this.extractResult(result);
   }
 
   async runScriptWithArgs(script, args) {
+    if (typeof script === 'function') {
+      script = script.toString();
+    }
+
     const traceDescription = webViewActionDescription.runScriptWithArgs(script, args);
     const result = await this.withAction('runScriptWithArgs', traceDescription, script, args);
-
-    if (result['result'] !== undefined) {
-      return result['result'];
-    } else {
-      throw new DetoxRuntimeError(`Failed to extract result from result: ${JSON.stringify(result)}`);
-    }
+    return this.extractResult(result);
   }
 
   async getCurrentUrl() {
     const traceDescription = webViewActionDescription.getCurrentUrl();
     let result = await this.withAction('getCurrentUrl', traceDescription);
-
-    if (result['url']) {
-      return result['url'];
-    } else {
-      throw new DetoxRuntimeError(`Failed to extract url from result: ${JSON.stringify(result)}`);
-    }
+    return this.extractResult(result, 'url');
   }
 
   async getTitle() {
     const traceDescription = webViewActionDescription.getTitle();
     let result = await this.withAction('getTitle', traceDescription);
-
-    if (result['title']) {
-      return result['title'];
-    } else {
-      throw new DetoxRuntimeError(`Failed to extract title from result: ${JSON.stringify(result)}`);
-    }
+    return this.extractResult(result, 'title');
   }
 
   withAction(action, traceDescription, ...params) {

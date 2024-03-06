@@ -12,8 +12,12 @@ extension WKWebView {
 		atIndex index: Int?
 	) throws -> WKWebView? {
 		if let predicate = predicate {
-			let ancestorElement = Element(predicate: predicate, index: index)
-			return try findWebViewDescendant(in: ancestorElement.dtx_view)
+			guard let ancestor = Element(predicate: predicate, index: index).view as? UIView else {
+				throw dtx_errorForFatalError(
+					"Failed to find web view with predicate: \(predicate.description)")
+			}
+
+			return try findWebViewDescendant(in: ancestor)
 		}
 
 		return try findWebViewDescendant()
