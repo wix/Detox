@@ -3,6 +3,7 @@ const {log, logSection, getVersionSafe, getReleaseNpmTag, getReleaseVersionType}
 
 function run() {
   logSection('Initializing');
+  exec.execSync('bash scripts/change_all_react_native_versions.sh')
   exec.execSync('lerna bootstrap --no-ci');
 
   const versionType = getReleaseVersionType();
@@ -13,8 +14,7 @@ function run() {
   exec.execSync(`lerna version --yes ${versionType} ${preid} --no-git-tag-version --force-publish=detox --no-push`);
   const futureVersion = getVersionSafe();
   log('Version is: ' + futureVersion);
-  exec.execSync('git reset --hard');
-
+  
   logSection('Packing up Android artifacts...');
   log('Accepting all Android SDK licenses...');
   exec.execSync(`yes | ${process.env.ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses`);
