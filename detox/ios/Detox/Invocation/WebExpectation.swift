@@ -27,7 +27,7 @@ class WebExpectation: WebInteraction {
 		var webView: WKWebView
 
 		do {
-			jsString = try WebJSCodeBuilder()
+			jsString = try WebCodeBuilder()
 				.with(predicate: webPredicate)
 				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
 				.build()
@@ -42,7 +42,7 @@ class WebExpectation: WebInteraction {
 			let valueResult = (result as? [String: Any])?["result"]
 			let elementResult = (result as? [String: Any])?["element"]
 			let elementInfo: String =
-			elementResult != nil ? "HTML: `\(String(describing: elementResult!))`" : "not found"
+				elementResult != nil ? "HTML: `\(String(describing: elementResult!))`" : "not found"
 
 			if let error = error {
 				completionHandler(dtx_errorForFatalError(

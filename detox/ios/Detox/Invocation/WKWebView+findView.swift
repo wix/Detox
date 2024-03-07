@@ -11,7 +11,7 @@ extension WKWebView {
 		by predicate: Predicate?,
 		atIndex index: Int?
 	) throws -> WKWebView {
-		var webView: WKWebView?
+		let webView: WKWebView?
 
 		if let predicate = predicate {
 			guard let ancestor = Element(predicate: predicate, index: index).view as? UIView else {

@@ -25,7 +25,7 @@ class WebAction: WebInteraction {
 		var webView: WKWebView
 
 		do {
-			jsString = try WebJSCodeBuilder()
+			jsString = try WebCodeBuilder()
 				.with(predicate: webPredicate)
 				.with(action: webAction, params: params)
 				.build()
