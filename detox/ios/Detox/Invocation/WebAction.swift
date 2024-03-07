@@ -5,6 +5,7 @@
 
 import WebKit
 
+/// Represents a web action to be performed on a web view.
 class WebAction: WebInteraction {
 	var webAction: WebActionType
 	var params: [Any]?
@@ -26,40 +27,31 @@ class WebAction: WebInteraction {
 				.with(action: webAction, params: params)
 				.build()
 
-			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
+			guard let webView = try WKWebView.findElement(by: predicate, atIndex: atIndex) else {
 				throw dtx_errorForFatalError(
 					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +
 					"at index: `\(atIndex ?? 0)`")
 			}
 
-			var observation: NSKeyValueObservation?
-			observation = webView.observe(
-				\.isLoading, options: [.new, .old, .initial]
-			) { (webView, change) in
-				guard change.newValue == false else { return }
-
-				observation?.invalidate()
-
-				webView.evaluateJavaScript(jsString) { (result, error) in
-					if let error = error {
-						completionHandler(
-							["result": false, "error": error.localizedDescription],
-							dtx_errorForFatalError(
-								"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
-								"Error: \(error.localizedDescription)")
-						)
-					} else if let jsError = (result as? [String: Any])?["error"] as? String {
-						completionHandler(
-							["result": false, "error": jsError],
-							dtx_errorForFatalError(
-								"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
-								"Error: \(jsError)")
-						)
-					} else if let result = result {
-						completionHandler(["result": result], nil)
-					} else {
-						completionHandler(["result": true], nil)
-					}
+			webView.evaluateJSAfterLoading(jsString) { (result, error) in
+				if let error = error {
+					completionHandler(
+						["result": false, "error": error.localizedDescription],
+						dtx_errorForFatalError(
+							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+							"Error: \(error.localizedDescription)")
+					)
+				} else if let jsError = (result as? [String: Any])?["error"] as? String {
+					completionHandler(
+						["result": false, "error": jsError],
+						dtx_errorForFatalError(
+							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+							"Error: \(jsError)")
+					)
+				} else if let result = result {
+					completionHandler(["result": result], nil)
+				} else {
+					completionHandler(["result": true], nil)
 				}
 			}
 		} catch {

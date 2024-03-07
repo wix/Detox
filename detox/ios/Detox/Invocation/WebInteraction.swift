@@ -5,6 +5,7 @@
 
 import WebKit
 
+/// Represents a web interaction base class.
 class WebInteraction: CustomStringConvertible {
 	var predicate: Predicate?
 	var atIndex: Int?

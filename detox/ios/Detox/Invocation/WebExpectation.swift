@@ -5,6 +5,7 @@
 
 import WebKit
 
+/// The expectation type to evaluate on a web view.
 class WebExpectation: WebInteraction {
 	var webModifiers: [WebModifier]?
 	var webExpectation: WebExpectationType
@@ -28,43 +29,34 @@ class WebExpectation: WebInteraction {
 				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
 				.build()
 
-			guard let webView = try WKWebView.dtx_findElement(by: predicate, atIndex: atIndex) else {
+			guard let webView = try WKWebView.findElement(by: predicate, atIndex: atIndex) else {
 				throw dtx_errorForFatalError(
 					"Failed to find web view with predicate: `\(predicate?.description ?? "")` " +
 					"at index: `\(atIndex ?? 0)`")
 			}
 
-			var observation: NSKeyValueObservation?
-			observation = webView.observe(
-				\.isLoading, options: [.new, .old, .initial]
-			) { [self] (webView, change) in
-				guard change.newValue == false else { return }
+			webView.evaluateJSAfterLoading(jsString) { [self] (result, error) in
+				let valueResult = (result as? [String: Any])?["result"]
+				let elementResult = (result as? [String: Any])?["element"]
+				let elementInfo: String =
+				elementResult != nil ? "HTML: `\(String(describing: elementResult!))`" : "not found"
 
-				observation?.invalidate()
-
-				webView.evaluateJavaScript(jsString) { [self] (result, error) in
-					let valueResult = (result as? [String: Any])?["result"]
-					let elementResult = (result as? [String: Any])?["element"]
-					let elementInfo: String =
-							elementResult != nil ? "HTML: `\(String(describing: elementResult!))`" : "not found"
-
-					if let error = error {
-						completionHandler(dtx_errorForFatalError(
-							"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
-							"Error: \(error.localizedDescription)"))
-					} else if valueResult as? Bool != true {
-						completionHandler(dtx_errorForFatalError(
-							"Failed on web expectation: \(webModifiers?.description.uppercased() ?? "") " +
-							"\(webExpectation.rawValue.uppercased()) " +
-							"with params \(params?.description ?? "") " +
-							"on element with \(webPredicate.type.rawValue.uppercased()) == " +
-							"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
-							"Got evaluation result: " +
-							"\(valueResult as? Bool == false ? "FALSE" : String(describing: valueResult)). " +
-							"Element \(elementInfo)"))
-					} else {
-						completionHandler(nil)
-					}
+				if let error = error {
+					completionHandler(dtx_errorForFatalError(
+						"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
+						"Error: \(error.localizedDescription)"))
+				} else if valueResult as? Bool != true {
+					completionHandler(dtx_errorForFatalError(
+						"Failed on web expectation: \(webModifiers?.description.uppercased() ?? "") " +
+						"\(webExpectation.rawValue.uppercased()) " +
+						"with params \(params?.description ?? "") " +
+						"on element with \(webPredicate.type.rawValue.uppercased()) == " +
+						"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
+						"Got evaluation result: " +
+						"\(valueResult as? Bool == false ? "FALSE" : String(describing: valueResult)). " +
+						"Element \(elementInfo)"))
+				} else {
+					completionHandler(nil)
 				}
 			}
 		} catch {

@@ -107,7 +107,7 @@
 		39EECB7D24C0A5AF009C3364 /* NSThread+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB7B24C0A5AF009C3364 /* NSThread+DetoxUtils.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
 		600A0A762B923B1F00937051 /* WebExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A752B923B1F00937051 /* WebExpectation.swift */; };
-		600A0A792B93097200937051 /* WKWebView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A782B93097200937051 /* WKWebView+Utils.swift */; };
+		600A0A792B93097200937051 /* WKWebView+findElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A782B93097200937051 /* WKWebView+findElement.swift */; };
 		600A0A7B2B9376D600937051 /* WebJSCodeBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */; };
 		600A0A852B966F9000937051 /* WebAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A842B966F9000937051 /* WebAction.swift */; };
 		600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A862B966FBE00937051 /* WebPredicate.swift */; };
@@ -116,6 +116,7 @@
 		600A0AA82B998B4200937051 /* WebExpectationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0AA72B998B4200937051 /* WebExpectationType.swift */; };
 		600A0AAA2B998B5500937051 /* WebExpectationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0AA92B998B5500937051 /* WebExpectationModifier.swift */; };
 		600A0AAC2B998C1800937051 /* WebInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0AAB2B998C1800937051 /* WebInteraction.swift */; };
+		600A0AAE2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0AAD2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift */; };
 		6062B5E12720323700CBDBF0 /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */; };
 		6062B5E22720323700CBDBF0 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */; };
 		6062B5E32720323700CBDBF0 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */; };
@@ -315,7 +316,7 @@
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
 		600A0A752B923B1F00937051 /* WebExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectation.swift; sourceTree = "<group>"; };
-		600A0A782B93097200937051 /* WKWebView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+Utils.swift"; sourceTree = "<group>"; };
+		600A0A782B93097200937051 /* WKWebView+findElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+findElement.swift"; sourceTree = "<group>"; };
 		600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebJSCodeBuilder.swift; sourceTree = "<group>"; };
 		600A0A842B966F9000937051 /* WebAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAction.swift; sourceTree = "<group>"; };
 		600A0A862B966FBE00937051 /* WebPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPredicate.swift; sourceTree = "<group>"; };
@@ -324,6 +325,7 @@
 		600A0AA72B998B4200937051 /* WebExpectationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectationType.swift; sourceTree = "<group>"; };
 		600A0AA92B998B5500937051 /* WebExpectationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectationModifier.swift; sourceTree = "<group>"; };
 		600A0AAB2B998C1800937051 /* WebInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebInteraction.swift; sourceTree = "<group>"; };
+		600A0AAD2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+evaluateJSAfterLoading.swift"; sourceTree = "<group>"; };
 		6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
 		6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXSwizzlingHelper.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXSwizzlingHelper.h; sourceTree = SOURCE_ROOT; };
 		6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Utils.h"; path = "DetoxSync/DetoxSync/DTXObjectiveCHelpers/NSArray+Utils.h"; sourceTree = SOURCE_ROOT; };
@@ -679,7 +681,8 @@
 				600A0AAB2B998C1800937051 /* WebInteraction.swift */,
 				600A0A862B966FBE00937051 /* WebPredicate.swift */,
 				600A0A882B966FE200937051 /* WebPredicateType.swift */,
-				600A0A782B93097200937051 /* WKWebView+Utils.swift */,
+				600A0A782B93097200937051 /* WKWebView+findElement.swift */,
+				600A0AAD2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -915,6 +918,7 @@
 				3980D16A244DD837004812DD /* UIDatePicker+DetoxActions.m in Sources */,
 				3980D11B2448B52C004812DD /* DTXRunLoopSpinner.m in Sources */,
 				3980D166244DC8F0004812DD /* UIPickerView+DetoxActions.m in Sources */,
+				600A0AAE2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift in Sources */,
 				3990BA162457248600B608C8 /* UIView+DetoxUtils.m in Sources */,
 				397CA7A324840449005E8A71 /* NSException+DetoxUtils.swift in Sources */,
 				39DC984824BB8E8900FFB224 /* DTXLogging.m in Sources */,
@@ -937,7 +941,7 @@
 				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
-				600A0A792B93097200937051 /* WKWebView+Utils.swift in Sources */,
+				600A0A792B93097200937051 /* WKWebView+findElement.swift in Sources */,
 				39CF46212A2E1F50004A0CA3 /* String+matchesJSRegex.swift in Sources */,
 				600A0A762B923B1F00937051 /* WebExpectation.swift in Sources */,
 				396D454425238B780096E7FA /* DetoxPolicy.m in Sources */,

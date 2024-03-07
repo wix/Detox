@@ -1,12 +1,13 @@
 //
-//  WKWebView+Utils.swift (Detox)
+//  WKWebView+findElement.swift (Detox)
 //  Created by Asaf Korem (Wix.com) on 2024.
 //
 
 import WebKit
 
+/// Extends WKWebView with the ability to find a web view element.
 extension WKWebView {
-	class func dtx_findElement(
+	class func findElement(
 		by predicate: Predicate?,
 		atIndex index: Int?
 	) throws -> WKWebView? {
