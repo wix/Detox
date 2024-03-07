@@ -10,7 +10,7 @@ Note that running automated UI tests is _not the same_ as developing Android app
 
 This is the most basic step in the process, as without a proper Java SDK installed, nothing Android-ish works – at least not from command-line, which is mandatory for executing `Detox`.
 
-_The bottom line is that **Android needs Java installed**. If you want to run with React Native 66 and Android 12 then it needs to be at least Java 11, otherwise you should have Java 8._
+_The bottom line is that **Android needs Java installed**. If you want to run with React Native 73 and Android 14 then it needs to be at least Java 17, otherwise you should have Java 11._
 
 To check for your real java-executable’s version, in a command-line console, run:
 
@@ -21,18 +21,9 @@ java -version
 What needs to be verified is that `java` is in-path and that the output contains something like this:
 
 ```bash
-java version "11.x.x"
+java version "17.x.x"
 ...
 ```
-
-or, if you have [openjdk](https://techoral.com/blog/openjdk-developers-guide.html) installed:
-
-```bash
-openjdk version "11.0.2" 2019-01-1
-...
-```
-
-**Namely, that the version is `11.x.x`**.
 
 > Note: Do not be confused by the Java version potentially used by your browsers, etc. For `Detox`, what the command-line sees is what matters.
 
@@ -44,7 +35,7 @@ If otherwise the version is simply wrong, try these course of actions:
 
 - On MacOS, in particular, Java comes from both the OS _and_ possibly other installers such as `homebrew`. That can really get things tangled up. To mitigate:
   - Use one of the options suggested in this [Stack Overflow post](https://stackoverflow.com/questions/52524112/how-do-i-install-java-on-mac-osx-allowing-version-switching/52524114#52524114).
-  - Install OpenJDK 11 on top of the existing versions ([how to check?](https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd)): <https://techoral.com/blog/java/install-openjdk-11-on-mac.html>. Consider employing the `JAVA_HOME` variable to get things to work right. _Note: This is more suitable if your environment is fairly clean, and does not contain versions from 3rd-party installers (e.g. `homebrew`)._
+  - Install OpenJDK 17 on top of the existing versions ([how to check?](https://medium.com/notes-for-geeks/java-home-and-java-home-on-macos-f246cab643bd)): <https://java.tutorials24x7.com/blog/how-to-install-openjdk-17-on-mac>. Consider employing the `JAVA_HOME` variable to get things to work right. _Note: This is more suitable if your environment is fairly clean, and does not contain versions from 3rd-party installers (e.g. `homebrew`)._
 - Use these refs, which might be useful:
   - <https://java.com/en/download/faq/java_mac.xml#version>
   - <https://www.java.com/en/download/help/version_manual.xml>

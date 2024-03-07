@@ -21,13 +21,13 @@ abstract class ReactSliderHelper(protected val slider: AppCompatSeekBar) {
     }
 
     // TODO Make this more testable (e.g. by delegating the set action away)
-    fun setProgressPct(valuePct: Double) {
+    fun setProgressPct(valuePct: Float) {
         val maxJSProgress = calcMaxJSProgress()
         val valueJS = valuePct * maxJSProgress
-        setProgressJS(valueJS)
+        setProgressJS(valueJS.toFloat())
     }
 
-    protected abstract fun setProgressJS(valueJS: Double)
+    protected abstract fun setProgressJS(valueJS: Float)
 
     private fun calcMaxJSProgress(): Double {
         val nativeProgress = slider.progress.toDouble()
@@ -60,16 +60,16 @@ abstract class ReactSliderHelper(protected val slider: AppCompatSeekBar) {
 }
 
 private class LegacySliderHelper(slider: AppCompatSeekBar): ReactSliderHelper(slider) {
-    override fun setProgressJS(valueJS: Double) {
+    override fun setProgressJS(valueJS: Float) {
         val reactSliderManager = Class.forName(CLASS_REACT_SLIDER_LEGACY_MANAGER).newInstance()
-        Reflect.on(reactSliderManager).call("updateProperties", slider, buildStyles("value", valueJS))
+        Reflect.on(reactSliderManager).call("updateProperties", slider, buildStyles("value", valueJS.toDouble()))
     }
 
     private fun buildStyles(vararg keysAndValues: Any) = ReactStylesDiffMap(JavaOnlyMap.of(*keysAndValues))
 }
 
 private class CommunitySliderHelper(slider: AppCompatSeekBar): ReactSliderHelper(slider) {
-    override fun setProgressJS(valueJS: Double) {
+    override fun setProgressJS(valueJS: Float) {
         val reactSliderManager = Class.forName(CLASS_REACT_SLIDER_COMMUNITY_MANAGER).newInstance()
         Reflect.on(reactSliderManager).call("setValue", slider, valueJS)
     }
