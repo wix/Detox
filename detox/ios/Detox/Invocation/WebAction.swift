@@ -54,7 +54,7 @@ class WebAction: WebInteraction {
 			} else if let result = result {
 				completionHandler(["result": result], nil)
 			} else {
-				completionHandler(["result": true], nil)
+				completionHandler(nil, nil)
 			}
 		}
 	}

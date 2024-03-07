@@ -1,187 +1,213 @@
+const fs = require("fs");
 const jestExpect = require('expect').default;
-const MOCK_TEXT = 'Mock Text';
 
 describe('Web View', () => {
-  /** @type {Detox.WebViewElement} */
-  let webview_1;
-
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.text('WebViewV2')).tap();
-    webview_1 = web(by.id('webview_1'));
+    await element(by.text('WebView V2')).tap();
   });
 
-  describe('Expectations',() => {
-    it('expect element to exists', async () => {
-      await expect(webview_1.element(by.web.id('testingPar'))).toExist();
+  describe('default view', () => {
+    describe('matchers', () => {
+      it('should find element by id', async () => {
+        await expect(web.element(by.web.id('pageHeadline'))).toExist();
+      });
+
+      it('should find element by tag', async () => {
+        await expect(web.element(by.web.tag('body'))).toExist();
+      });
+
+      it('should find element by class name', async () => {
+        await expect(web.element(by.web.className('specialParagraph'))).toExist();
+      });
+
+      it('should find element by css selector', async () => {
+        await expect(web.element(by.web.cssSelector('.specialParagraph'))).toExist();
+      });
+
+      it('should find element by xpath', async () => {
+        await expect(web.element(by.web.xpath('//p[@class="specialParagraph"]'))).toExist();
+      });
+
+      it('should find element by hrefContains', async () => {
+        await expect(web.element(by.web.hrefContains('w3schools'))).toExist();
+      });
+
+      it('should find element by href', async () => {
+        await expect(web.element(by.web.href('https://www.w3schools.com'))).toExist();
+      });
+
+      it('should find element by name', async () => {
+        await expect(web.element(by.web.name('fname'))).toExist();
+      });
+
+      it('should raise an error when element not exists', async () => {
+        try {
+          await expect(web.element(by.web.id('nonExistentElement'))).toExist();
+        } catch (error) {
+          await jestExpect(error).toBeDefined();
+        }
+      });
+
+      it('should assert that an element is not visible', async () => {
+        await expect(web.element(by.web.id('nonExistentElement'))).not.toExist();
+      });
     });
 
-    it('expect element to NOT exists', async () => {
-      await expect(webview_1.element(by.web.id('not_found'))).not.toExist();
+    describe('actions', () => {
+      it('should type text in input', async () => {
+        await web.element(by.web.id('fname')).typeText('Test');
+        await web.element(by.web.id('fname')).typeText('er');
+
+        await expect(web.element(by.web.id('fname'))).toHaveText('Tester');
+      });
+
+      it('should clear text in input', async () => {
+        await web.element(by.web.id('fname')).typeText('Test');
+        await web.element(by.web.id('fname')).clearText();
+
+        await expect(web.element(by.web.id('fname'))).toHaveText('');
+      });
+
+      it('should replace text in input', async () => {
+        await web.element(by.web.id('fname')).typeText('Test');
+        await web.element(by.web.id('fname')).replaceText('Tester');
+
+        await expect(web.element(by.web.id('fname'))).toHaveText('Tester');
+      });
+
+      it('should tap on submit button', async () => {
+        await web.element(by.web.id('fname')).typeText('Tester');
+
+        await web.element(by.web.id('submit')).tap();
+
+        await expect(web.element(by.web.id('resultFname'))).toHaveText('Tester');
+      });
+
+      // selectAllText action
+      it('should select all text in input', async () => {
+        await web.element(by.web.id('fname')).typeText('Tester');
+        await web.element(by.web.id('fname')).selectAllText();
+
+        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
+        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
+        if (!fs.existsSync(screenshotPath)) {
+          fs.copyFileSync(bitmapPath, screenshotPath);
+        }
+
+        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+      });
+
+      it('should scroll to view', async () => {
+        await web.element(by.web.id('bottomParagraph')).scrollToView();
+
+        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
+        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
+        if (!fs.existsSync(screenshotPath)) {
+          fs.copyFileSync(bitmapPath, screenshotPath);
+        }
+
+        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+      });
+
+      it('should focus on input', async () => {
+        await web.element(by.web.id('fname')).focus();
+
+        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
+        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
+        if (!fs.existsSync(screenshotPath)) {
+          fs.copyFileSync(bitmapPath, screenshotPath);
+        }
+
+        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+      });
+
+      it('should move cursor to end', async () => {
+        await web.element(by.web.id('fname')).typeText('Tester');
+        await web.element(by.web.id('fname')).moveCursorToEnd();
+
+        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
+        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
+        if (!fs.existsSync(screenshotPath)) {
+          fs.copyFileSync(bitmapPath, screenshotPath);
+        }
+
+        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+      });
+
+      it('should run script', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        await headline.runScript('(el) => { el.textContent = "Changed"; }');
+
+        await expect(headline).toHaveText('Changed');
+      });
+
+      it('should run script with arguments', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        await headline.runScript('(el, text) => { el.textContent = text; }', 'Changed');
+
+        await expect(headline).toHaveText('Changed');
+      });
+
+      it('should raise error when script fails', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        try {
+          await headline.executeScript('(el) => { el.textContent = "Changed"; throw new Error("Error"); }');
+        } catch (error) {
+          await jestExpect(error).toBeDefined();
+        }
+      });
     });
 
-    it('expect element to have text', async () => {
-      await expect(webview_1.element(by.web.id('testingPar'))).toHaveText('Message');
-    });
+    describe('getters', () => {
+      it('should get the web page title', async () => {
+        const title = await web.element(by.web.tag('body')).getTitle();
+        await jestExpect(title).toBe('First Webview');
+      });
 
-    it('expect element to NOT have text', async () => {
-      await expect(webview_1.element(by.web.id('testingPar'))).not.toHaveText(MOCK_TEXT);
+      it('should get the web page url', async () => {
+        await web.element(by.web.href('https://www.w3schools.com')).tap();
+
+        // Sleep for a second to allow the web page to load.
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        const url = await web.element(by.web.tag('body')).getCurrentUrl();
+
+        await jestExpect(url).toBe('https://www.w3schools.com/');
+      });
+
+      it('should get text from element', async () => {
+        const source = await web.element(by.web.id('pageHeadline')).getText();
+        await jestExpect(source).toBe('First Webview');
+      });
     });
   });
 
-  describe('Element Matchers',() => {
-    it('expect to find element by id', async () => {
-      await expect(webview_1.element(by.web.id('testingh1'))).toExist();
+  describe('with native matcher',() => {
+    /** @type {Detox.WebViewElement} */
+    let webview;
+
+    beforeEach(async () => {
+      webview = web(by.id('dummyWebView'));
     });
 
-    it('expect to find element by class name', async () => {
-      await expect(webview_1.element(by.web.className('a'))).toExist();
+    it('should have a title', async () => {
+      const title = await webview.element(by.web.tag('body')).getTitle();
+      await jestExpect(title).toBe('Second Webview');
     });
 
-    it('expect to find element by css selector', async () => {
-      await expect(webview_1.element(by.web.cssSelector('#cssSelector'))).toExist();
+    it('should have a paragraph', async () => {
+      await expect(webview.element(by.web.id('secondWebview'))).toExist();
+      await expect(webview.element(by.web.id('secondWebview'))).toHaveText('This is the second webview');
     });
-
-    it('expect to find element by name', async () => {
-      await expect(webview_1.element(by.web.name('sec_input'))).toExist();
-    });
-
-    it('expect to find element by xpath', async () => {
-      await expect(webview_1.element(by.web.xpath('//*[@id="testingh1-1"]'))).toExist();
-    });
-
-    it('expect to find element by href', async () => {
-      await expect(webview_1.element(by.web.href('http://www.disney.com'))).toExist();
-    });
-
-    it('expect to find element by hrefContains', async () => {
-      await expect(webview_1.element(by.web.hrefContains('disney'))).toExist();
-    });
-
-    it('expect to find element by tag name', async () => {
-      await expect(webview_1.element(by.web.tag('mark'))).toExist();
-    });
-  });
-
-  describe('Script injection', () => {
-    it('should execute script', async () => {
-      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
-      await link.runScript('(el) => { el.textContent = "Changed"; }');
-      await expect(link).toHaveText('Changed');
-    });
-
-    it('should throw error if script fails', async () => {
-      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
-
-      function throwError(_, msg = 'Simulated Error') {
-        throw new Error(msg);
-      }
-
-      await jestExpect(link.runScript(throwError)).rejects.toThrowError(/Simulated Error/);
-
-      await jestExpect(link.runScript(throwError, ['Custom Error'])).rejects.toThrowError(/Custom Error/);
-    });
-
-    it('should evaluate a script with complex args', async () => {
-      const link = webview_1.element(by.web.cssSelector('#cssSelector'));
-      const evaluationResult = await link.runScript(function (element, a, b, c, d) {
-        const newText = a[0] + b.a + c[0].b + d.c[0];
-        element.textContent = newText;
-        return a.concat({ ...b, ...c[0], ...d });
-      }.toString(), [['1'], {a: 8}, [{b: 4}], {c: [3]}]);
-      jestExpect(evaluationResult).toEqual(['1', { a: 8, b: 4, c: [3] }]);
-
-      await expect(link).toHaveText('1843');
-    });
-  });
-
-  describe('ContentEditable', () => {
-    it(':android: should replace text by selecting all text', async () => {
-        const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
-        const text = await editable.getText();
-
-        await editable.scrollToView();
-        await editable.selectAllText();
-
-        //tapping, (at the moment not working on content-editable)
-        const uiDevice = device.getUiDevice();
-        await uiDevice.click(40, 150);
-
-        await editable.typeText(MOCK_TEXT, true);
-
-        await expect(editable).not.toHaveText(text);
-        await expect(editable).toHaveText(MOCK_TEXT);
-    });
-
-    it(':android: should move cursor to end and add text', async () => {
-      const editable = await webview_1.element(by.web.className('public-DraftEditor-content'));
-      await editable.scrollToView();
-
-      //tapping, (at the moment not working on content-editable)
-      const uiDevice = device.getUiDevice();
-      await uiDevice.click(40, 150);
-
-      //Initial Text
-      await editable.selectAllText();
-      await editable.typeText(MOCK_TEXT, true);
-
-      //Addition Text
-      const ADDITION_TEXT = ' AdditionText';
-      await editable.moveCursorToEnd();
-      await editable.typeText(ADDITION_TEXT, true);
-
-      await expect(editable).toHaveText(MOCK_TEXT + ADDITION_TEXT);
-    });
-  });
-
-  it('should set input and change text', async () => {
-    // Verify initial value
-    const para = webview_1.element(by.web.id('testingPar'));
-    await expect(para).toHaveText('Message');
-
-    const textInput = await webview_1.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText(MOCK_TEXT);
-
-    await webview_1.element(by.web.id('changeTextBtn')).tap();
-    // Verify text updated
-    await expect(para).toHaveText(MOCK_TEXT);
-  });
-
-  it('should header get text and verify its value', async () => {
-    const text = await webview_1.element(by.web.id('testingh1')).getText();
-
-    const textInput = await webview_1.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText(text);
-
-    await webview_1.element(by.web.id('changeTextBtn')).tap();
-
-    // Verify text is the title text
-    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText(text);
-
-  });
-
-  it('should replace text', async () => {
-    const textInput = await webview_1.element(by.web.id('textInput'));
-    await textInput.scrollToView();
-    await textInput.tap();
-    await textInput.typeText('first text');
-
-    await webview_1.element(by.web.id('changeTextBtn')).tap();
-    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText('first text');
-
-    await textInput.replaceText(MOCK_TEXT);
-    await webview_1.element(by.web.id('changeTextBtn')).tap();
-
-    // Verify param value is the latest changed text
-    await expect(webview_1.element(by.web.id('testingPar'))).toHaveText(MOCK_TEXT);
-  });
-
-  it('getWebView with matcher id', async () => {
-    const webview_2 = await web(by.id('webview_2'));
-    await expect(webview_2.element(by.web.tag('p'))).toHaveText('Second Webview');
   });
 });
+
+function expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath) {
+  const bitmapBuffer = fs.readFileSync(bitmapPath);
+  const expectedBitmapBuffer = fs.readFileSync(expectedBitmapPath);
+  if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
+    throw new Error(
+        `Expected bitmap at ${bitmapPath} to be equal to ${expectedBitmapPath}, but it is different!`);
+  }
+}

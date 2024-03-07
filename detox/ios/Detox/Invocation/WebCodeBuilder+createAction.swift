@@ -14,22 +14,22 @@ extension WebCodeBuilder {
 			case .tap:
 				return executeJSMethod("click", on: selector)
 			case .clearText:
-				return setJSValue("", for: "value", on: selector)
+				return setValue("", on: selector)
 			case .typeText:
-				return setJSValue(
-					try extractValueParam(action, params), for: "value", on: selector, jsOperator: "+=")
+				return setValue(
+					try extractValueParam(action, params), on: selector, jsOperator: "+=")
 			case .focus:
 				return executeJSMethod("focus", on: selector)
 			case .getCurrentUrl:
 				return "return window.location.href;"
 			case .getText:
-				return "return \(selector).textContent;"
+				return getTextFromElement(selector)
 			case .getTitle:
 				return "return document.title;"
 			case .moveCursorToEnd:
 				return moveCursorToEnd(on: selector)
 			case .replaceText:
-				return setJSValue(try extractValueParam(action, params), for: "value", on: selector)
+				return setValue(try extractValueParam(action, params), on: selector)
 			case .runScript:
 				return try runScript(extractValueParam(action, params), on: selector)
 			case .runScriptWithArgs:
@@ -68,32 +68,38 @@ extension WebCodeBuilder {
 		return "\(element).\(method)();"
 	}
 
-	private func setJSValue(
-		_ value: String, for property: String, on element: String, jsOperator: String = "=") -> String {
-			return "\(element).\(property) \(jsOperator) '\(value)';"
+	private func setValue(
+		_ value: String, on element: String, jsOperator: String = "=") -> String {
+			return """
+let element = \(element);
+if (element.contentEditable === 'true' ||
+ (['INPUT', 'TEXTAREA'].includes(element.tagName) && !element.readOnly && !element.disabled)) {
+ element.value \(jsOperator) '\(value)';
+}
+"""
 		}
 
 	private func moveCursorToEnd(on element: String) -> String {
 		return """
- let element = \(element);
- let length = element.value.length;
- element.setSelectionRange(length, length);
- """
+let element = \(element);
+let length = element.value.length;
+element.setSelectionRange(length, length);
+"""
 	}
 
 	private func selectAllText(on element: String) -> String {
 		return """
- let element = \(element);
- let length = element.value.length;
- element.setSelectionRange(0, length);
- """
+let element = \(element);
+let length = element.value.length;
+element.setSelectionRange(0, length);
+"""
 	}
 
 	private func scrollIntoView(_ element : String) -> String {
 		return """
- let element = \(element);
- element.scrollIntoView({ behavior: 'auto' });
- """
+let element = \(element);
+element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center });
+"""
 	}
 
 	private func runScript(_ script: String, on elementScript: String) throws -> String {
@@ -117,5 +123,12 @@ extension WebCodeBuilder {
 		let extraParams = extraParamsOrNil.isEmpty ? "" : ",...\(extraParamsOrNil)"
 
 		return "return (\(script))(\(elementScript)\(extraParams));"
+	}
+
+	private func getTextFromElement(_ element: String) -> String {
+		return """
+let element = \(element);
+return element.textContent.length > 0 ? element.textContent : element.value;
+"""
 	}
 }

@@ -11,13 +11,13 @@ extension WebCodeBuilder {
 
 		switch type {
 			case .id:
-				return "document.querySelector('#\(value)')"
+				return "document.getElementById('\(value)')"
 			case .className:
-				return "document.querySelector('.\(value)')"
+				return "document.getElementsByClassName('\(value)').item(0)"
 			case .cssSelector:
 				return "document.querySelector('\(value)')"
 			case .name:
-				return "document.querySelector('[name=\"\(value)\"]')"
+				return "document.getElementsByName('\(value)').item(0)"
 			case .xpath:
 				return "document.evaluate('\(value)', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue"
 			case .href:

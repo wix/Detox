@@ -29,7 +29,7 @@ class WebExpect {
     this.modifiers.push('not');
     return this;
   }
-  getText;
+
   createInvocation(webExpectation, ...params) {
     const definedParams = _.without(params, undefined);
     return {

@@ -13,7 +13,9 @@ extension WebCodeBuilder {
 				expectationScript = "element !== null"
 			case .toHaveText:
 				let expectedText = params?.first ?? ""
-				expectationScript = "element.textContent === '\(expectedText)'"
+				expectationScript = "element.textContent.trim() === '\(expectedText)' || " +
+					"element.innerText.trim() === '\(expectedText)' || " +
+					"element.value === '\(expectedText)'"
 		}
 
 		return modifyExpectation(script: expectationScript, modifiers: modifiers)
