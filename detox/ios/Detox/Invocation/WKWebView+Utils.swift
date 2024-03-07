@@ -3,7 +3,6 @@
 //  Created by Asaf Korem (Wix.com) on 2024.
 //
 
-import Foundation
 import WebKit
 
 extension WKWebView {

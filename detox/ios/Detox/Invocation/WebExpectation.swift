@@ -3,40 +3,21 @@
 //  Created by Asaf Korem (Wix.com) on 2024.
 //
 
-import Foundation
 import WebKit
 
-class WebExpectation: CustomStringConvertible {
-	var predicate: Predicate?
-	var atIndex: Int?
-	var webPredicate: WebPredicate
+class WebExpectation: WebInteraction {
 	var webModifiers: [WebModifier]?
 	var webExpectation: WebExpectationType
 	var params: [String]?
 
-	init(json: [String: Any]) throws {
+	override init(json: [String: Any]) throws {
 		self.webExpectation = WebExpectationType(rawValue: json["webExpectation"] as! String)!
 		self.params = json["params"] as? [String]
 		self.webModifiers = (json["webModifiers"] as? [String])?.compactMap { WebModifier(rawValue: $0) }
-
-		let webPredicateJSON = json["webPredicate"] as? [String: Any]
-
-		guard
-			let webPredicateJSON = webPredicateJSON,
-			let webPredicateData = try? JSONSerialization.data(withJSONObject: webPredicateJSON),
-			let decodedWebPredicate = try? JSONDecoder().decode(WebPredicate.self, from: webPredicateData) else {
-			throw dtx_errorForFatalError("Failed to decode WebPredicate \(String(describing: webPredicateJSON))")
-		}
-
-		self.webPredicate = decodedWebPredicate
-		if let predicateJSON = json["predicate"] as? [String: Any] {
-			self.predicate = try Predicate.with(dictionaryRepresentation: predicateJSON)
-		}
-
-		self.atIndex = json["atIndex"] as? Int
+		try super.init(json: json)
 	}
 
-	var description: String {
+	override var description: String {
 		return "WebExpectation: \(webExpectation.rawValue)"
 	}
 
@@ -90,13 +71,4 @@ class WebExpectation: CustomStringConvertible {
 			completionHandler(error)
 		}
 	}
-}
-
-enum WebModifier: String, Codable {
-	case not = "not"
-}
-
-enum WebExpectationType: String, Codable {
-	case toExist = "toExist"
-	case toHaveText = "toHaveText"
 }
