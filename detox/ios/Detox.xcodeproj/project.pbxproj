@@ -107,7 +107,7 @@
 		39EECB7D24C0A5AF009C3364 /* NSThread+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 39EECB7B24C0A5AF009C3364 /* NSThread+DetoxUtils.m */; };
 		39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */; };
 		600A0A762B923B1F00937051 /* WebExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A752B923B1F00937051 /* WebExpectation.swift */; };
-		600A0A792B93097200937051 /* WKWebView+findElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A782B93097200937051 /* WKWebView+findElement.swift */; };
+		600A0A792B93097200937051 /* WKWebView+findView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A782B93097200937051 /* WKWebView+findView.swift */; };
 		600A0A7B2B9376D600937051 /* WebJSCodeBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */; };
 		600A0A852B966F9000937051 /* WebAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A842B966F9000937051 /* WebAction.swift */; };
 		600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0A862B966FBE00937051 /* WebPredicate.swift */; };
@@ -316,7 +316,7 @@
 		39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTXLoggingSubsystem.h; sourceTree = "<group>"; };
 		39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DetoxCrashHandler.mm; sourceTree = "<group>"; };
 		600A0A752B923B1F00937051 /* WebExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebExpectation.swift; sourceTree = "<group>"; };
-		600A0A782B93097200937051 /* WKWebView+findElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+findElement.swift"; sourceTree = "<group>"; };
+		600A0A782B93097200937051 /* WKWebView+findView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+findView.swift"; sourceTree = "<group>"; };
 		600A0A7A2B9376D600937051 /* WebJSCodeBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebJSCodeBuilder.swift; sourceTree = "<group>"; };
 		600A0A842B966F9000937051 /* WebAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAction.swift; sourceTree = "<group>"; };
 		600A0A862B966FBE00937051 /* WebPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPredicate.swift; sourceTree = "<group>"; };
@@ -677,14 +677,30 @@
 		600A0AA42B998A9100937051 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				600A0AB02B999E5E00937051 /* Interaction */,
 				600A0AA32B998A5E00937051 /* JSCodeBuilder */,
+				600A0AAF2B999E3900937051 /* WKWebView */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		600A0AAF2B999E3900937051 /* WKWebView */ = {
+			isa = PBXGroup;
+			children = (
+				600A0A782B93097200937051 /* WKWebView+findView.swift */,
+				600A0AAD2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift */,
+			);
+			name = WKWebView;
+			sourceTree = "<group>";
+		};
+		600A0AB02B999E5E00937051 /* Interaction */ = {
+			isa = PBXGroup;
+			children = (
 				600A0AAB2B998C1800937051 /* WebInteraction.swift */,
 				600A0A862B966FBE00937051 /* WebPredicate.swift */,
 				600A0A882B966FE200937051 /* WebPredicateType.swift */,
-				600A0A782B93097200937051 /* WKWebView+findElement.swift */,
-				600A0AAD2B999D2300937051 /* WKWebView+evaluateJSAfterLoading.swift */,
 			);
-			name = Shared;
+			name = Interaction;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -941,7 +957,7 @@
 				39EECB4324BF4FDA009C3364 /* ReactNativeSupport.m in Sources */,
 				3980D15A244C45EA004812DD /* Element.swift in Sources */,
 				3980D1122448B52C004812DD /* UIApplication+DTXAdditions.m in Sources */,
-				600A0A792B93097200937051 /* WKWebView+findElement.swift in Sources */,
+				600A0A792B93097200937051 /* WKWebView+findView.swift in Sources */,
 				39CF46212A2E1F50004A0CA3 /* String+matchesJSRegex.swift in Sources */,
 				600A0A762B923B1F00937051 /* WebExpectation.swift in Sources */,
 				396D454425238B780096E7FA /* DetoxPolicy.m in Sources */,
