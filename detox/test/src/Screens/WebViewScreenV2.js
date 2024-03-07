@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-export default class WebViewScreen extends Component {
+export default class WebViewScreenV2 extends Component {
   render() {
     // const debugSource = require('../assets/html/test.html');
     // const releaseSourcePrefix = Platform.OS === 'android' ? 'file:///android_asset' : './assets';
