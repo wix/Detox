@@ -16,7 +16,8 @@ extension WebCodeBuilder {
 			case .clearText:
 				return setJSValue("", for: "value", on: selector)
 			case .typeText:
-				return setJSValue(try extractValueParam(action, params), for: "value", on: selector)
+				return setJSValue(
+					try extractValueParam(action, params), for: "value", on: selector, jsOperator: "+=")
 			case .focus:
 				return executeJSMethod("focus", on: selector)
 			case .getCurrentUrl:
@@ -68,8 +69,8 @@ extension WebCodeBuilder {
 	}
 
 	private func setJSValue(
-		_ value: String, for property: String, on element: String, operator: String = "=") -> String {
-			return "\(element).\(property) = '\(value)';"
+		_ value: String, for property: String, on element: String, jsOperator: String = "=") -> String {
+			return "\(element).\(property) \(jsOperator) '\(value)';"
 		}
 
 	private func moveCursorToEnd(on element: String) -> String {
