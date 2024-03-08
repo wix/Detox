@@ -89,50 +89,26 @@ describe('Web View', () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).selectAllText();
 
-        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
-        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
-        if (!fs.existsSync(screenshotPath)) {
-          fs.copyFileSync(bitmapPath, screenshotPath);
-        }
-
-        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+        await expectSnapshotToMatch('select-all-text-in-webview');
       });
 
       it('should scroll to view', async () => {
         await web.element(by.web.id('bottomParagraph')).scrollToView();
 
-        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
-        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
-        if (!fs.existsSync(screenshotPath)) {
-          fs.copyFileSync(bitmapPath, screenshotPath);
-        }
-
-        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+        await expectSnapshotToMatch('scroll-to-view-webview');
       });
 
       it('should focus on input', async () => {
         await web.element(by.web.id('fname')).focus();
 
-        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
-        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
-        if (!fs.existsSync(screenshotPath)) {
-          fs.copyFileSync(bitmapPath, screenshotPath);
-        }
-
-        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+        await expectSnapshotToMatch('focus-on-input-webview');
       });
 
       it('should move cursor to end', async () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).moveCursorToEnd();
 
-        const screenshotPath = `./e2e/assets/elementScreenshot.${device.getPlatform()}.vert.png`;
-        const bitmapPath = await device.takeScreenshot('select-all-text-in-webview');
-        if (!fs.existsSync(screenshotPath)) {
-          fs.copyFileSync(bitmapPath, screenshotPath);
-        }
-
-        expectBitmapsToBeEqual(bitmapPath, screenshotPath);
+        await expectSnapshotToMatch('move-cursor-to-end-webview');
       });
 
       it('should run script', async () => {
@@ -202,6 +178,16 @@ describe('Web View', () => {
     });
   });
 });
+
+async function expectSnapshotToMatch(snapshotName) {
+  const bitmapPath = await device.takeScreenshot(snapshotName);
+  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}.png`;
+  if (!fs.existsSync(expectedBitmapPath)) {
+    fs.copyFileSync(bitmapPath, expectedBitmapPath);
+  }
+
+  expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath);
+}
 
 function expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath) {
   const bitmapBuffer = fs.readFileSync(bitmapPath);
