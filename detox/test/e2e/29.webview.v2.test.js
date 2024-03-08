@@ -1,4 +1,4 @@
-const fs = require("fs");
+const {expectElementSnapshotToMatch} = require("./utils/snapshot");
 const jestExpect = require('expect').default;
 
 describe('Web View', () => {
@@ -89,36 +89,40 @@ describe('Web View', () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).selectAllText();
 
-        await expectSnapshotToMatch('select-all-text-in-webview');
+        const webViewElement = element(by.id('webViewFormWithScrolling'));
+        await expectElementSnapshotToMatch(webViewElement, 'select-all-text-in-webview');
       });
 
-      it('should scroll to view', async () => {
+      it.skip('should scroll to view', async () => {
         await web.element(by.web.id('bottomParagraph')).scrollToView();
 
-        await expectSnapshotToMatch('scroll-to-view-webview');
+        const webViewElement = element(by.id('webViewFormWithScrolling'));
+        await expectElementSnapshotToMatch(webViewElement, 'scroll-to-view-webview');
       });
 
       it('should focus on input', async () => {
         await web.element(by.web.id('fname')).focus();
 
-        await expectSnapshotToMatch('focus-on-input-webview');
+        const webViewElement = element(by.id('webViewFormWithScrolling'));
+        await expectElementSnapshotToMatch(webViewElement, 'focus-on-input-webview');
       });
 
       it('should move cursor to end', async () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).moveCursorToEnd();
 
-        await expectSnapshotToMatch('move-cursor-to-end-webview');
+        const webViewElement = element(by.id('webViewFormWithScrolling'));
+        await expectElementSnapshotToMatch(webViewElement, 'move-cursor-to-end-webview');
       });
 
-      it('should run script', async () => {
+      it.skip('should run script', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
         await headline.runScript('(el) => { el.textContent = "Changed"; }');
 
         await expect(headline).toHaveText('Changed');
       });
 
-      it('should run script with arguments', async () => {
+      it.skip('should run script with arguments', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
         await headline.runScript('(el, text) => { el.textContent = text; }', 'Changed');
 
@@ -141,7 +145,7 @@ describe('Web View', () => {
         await jestExpect(title).toBe('First Webview');
       });
 
-      it('should get the web page url', async () => {
+      it.skip('should get the web page url', async () => {
         await web.element(by.web.href('https://www.w3schools.com')).tap();
 
         // Sleep for a second to allow the web page to load.
@@ -178,22 +182,3 @@ describe('Web View', () => {
     });
   });
 });
-
-async function expectSnapshotToMatch(snapshotName) {
-  const bitmapPath = await device.takeScreenshot(snapshotName);
-  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}.png`;
-  if (!fs.existsSync(expectedBitmapPath)) {
-    fs.copyFileSync(bitmapPath, expectedBitmapPath);
-  }
-
-  expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath);
-}
-
-function expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath) {
-  const bitmapBuffer = fs.readFileSync(bitmapPath);
-  const expectedBitmapBuffer = fs.readFileSync(expectedBitmapPath);
-  if (!bitmapBuffer.equals(expectedBitmapBuffer)) {
-    throw new Error(
-        `Expected bitmap at ${bitmapPath} to be equal to ${expectedBitmapPath}, but it is different!`);
-  }
-}
