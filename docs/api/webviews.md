@@ -28,6 +28,7 @@ await expect(innerElement).toHaveText('Hello World!');
 ```
 
 In this example:
+
 1. The `web()` function and `by.id()` matcher locate the web view by its accessibility identifier.
 2. The `myWebView.element()` method and `by.web.id()` matcher locate an HTML element within the web view.
 3. The expectation to verify the element's text is the same as in the single web view scenario.
