@@ -7,6 +7,7 @@ import WebKit
 
 /// Extends WKWebView with the ability to find a web view element.
 extension WKWebView {
+	/// Finds a web view element by the given `predicate` at the given `index`.
 	class func findView(
 		by predicate: Predicate?,
 		atIndex index: Int?

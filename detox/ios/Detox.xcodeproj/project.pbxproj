@@ -744,16 +744,16 @@
 			isa = PBXGroup;
 			children = (
 				600A0AB12B99B1D100937051 /* WebCodeBuilder+createAction.swift */,
-				600A0ACD2B9B60F800937051 /* WebCodeBuilder+createTapAction.swift */,
 				600A0ACF2B9B625600937051 /* WebCodeBuilder+createFocusAction.swift */,
-				600A0AD12B9C39EE00937051 /* WebCodeBuilder+createTypeAction.swift */,
-				600A0AD32B9C407900937051 /* WebCodeBuilder+createGetURLAction.swift */,
 				600A0AD52B9C410900937051 /* WebCodeBuilder+createGetTextAction.swift */,
 				600A0AD72B9C41C400937051 /* WebCodeBuilder+createGetTitleAction.swift */,
+				600A0AD32B9C407900937051 /* WebCodeBuilder+createGetURLAction.swift */,
 				600A0AD92B9C7E5900937051 /* WebCodeBuilder+createMoveCursorToEndAction.swift */,
 				600A0ADB2B9C7F9D00937051 /* WebCodeBuilder+createRunScriptAction.swift */,
-				600A0ADD2B9C817500937051 /* WebCodeBuilder+createSelectAllTextAction.swift */,
 				600A0ADF2B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift */,
+				600A0ADD2B9C817500937051 /* WebCodeBuilder+createSelectAllTextAction.swift */,
+				600A0ACD2B9B60F800937051 /* WebCodeBuilder+createTapAction.swift */,
+				600A0AD12B9C39EE00937051 /* WebCodeBuilder+createTypeAction.swift */,
 			);
 			name = CodeBuilder;
 			sourceTree = "<group>";
