@@ -49,7 +49,7 @@ class WebCodeBuilder {
 
 			return "(() => {" +
 			"let element = \(selector);" +
-			"return {result: \(expectationScript), element: element ? element.outerHTML : null};" +
+			"return {'result': \(expectationScript), 'element': element ? element.outerHTML : null};" +
 			"})();"
 
 		} else if let action = action {
@@ -57,9 +57,12 @@ class WebCodeBuilder {
 				forAction: action, params: actionParams, onSelector: selector)
 
 			return "(() => {" +
-			"try { \(actionScript) } catch (error) {" +
+			"try {" +
+			"const result = \(actionScript)" +
+			"return result;" +
+			"} catch (error) {" +
 			"return {'error': error.message};" +
-			"};" +
+			"}" +
 			"})();"
 		} else {
 			dtx_fatalError("No expectation or action was set")
