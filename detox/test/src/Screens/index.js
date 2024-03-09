@@ -26,7 +26,6 @@ import OverlayScreen from './OverlayScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
-import WebViewScreenV2 from './WebViewScreenV2';
 import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
@@ -59,7 +58,6 @@ export {
   OverlayScreen,
   ElementScreenshotScreen,
   WebViewScreen,
-  WebViewScreenV2,
   VirtualizedListStressScreen,
   VisibilityExpectationScreen,
   VisibilityScreen,
