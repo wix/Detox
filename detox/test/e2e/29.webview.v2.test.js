@@ -133,7 +133,7 @@ describe('Web View', () => {
         const headline = web.element(by.web.id('pageHeadline'));
         const textContent = await headline.runScript('(el) => { return el.textContent; }');
 
-        await expect(textContent).toBe('First Webview');
+        await jestExpect(textContent).toBe('First Webview');
       });
 
       it('should raise error when script fails', async () => {
