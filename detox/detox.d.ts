@@ -1520,24 +1520,27 @@ declare global {
             tap(): Promise<void>;
 
             /**
+             * Type text into a web element.
              * @param text to type
-             * @param isContentEditable whether its a ContentEditable element, default is false.
+             * @param isContentEditable whether the element is content-editable, default is false. Ignored on iOS.
              */
             typeText(text: string, isContentEditable: boolean): Promise<void>;
 
             /**
-             * At the moment not working on content-editable
+             * Replaces the input content with the new text.
+             * @note On Android, not working for content-editable elements.
              * @param text to replace with the old content.
              */
             replaceText(text: string): Promise<void>;
 
             /**
-             * At the moment not working on content-editable
+             * Clears the input content.
+             * @note On Android, not working for content-editable elements.
              */
             clearText(): Promise<void>;
 
             /**
-             * scrolling to the view, the element top position will be at the top of the screen.
+             * Scrolling to the view, the element top position will be at the top of the screen.
              */
             scrollToView(): Promise<void>;
 
@@ -1552,12 +1555,14 @@ declare global {
             focus(): Promise<void>;
 
             /**
-             * Selects all the input content, works on ContentEditable at the moment.
+             * Selects all the input content.
+             * @note On Android, it works only for content-editable elements.
              */
             selectAllText(): Promise<void>;
 
             /**
-             * Moves the input cursor / caret to the end of the content, works on ContentEditable at the moment.
+             * Moves the input cursor to the end of the content.
+             * @note On Android, it works only for content-editable elements.
              */
             moveCursorToEnd(): Promise<void>;
 
