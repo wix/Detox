@@ -10,12 +10,12 @@ extension WebCodeBuilder {
 
 		switch expectation {
 			case .toExist:
-				expectationScript = "element !== null"
+				expectationScript = "element != null"
 			case .toHaveText:
 				let expectedText = params?.first ?? ""
-				expectationScript = "element.textContent.trim() === '\(expectedText)' || " +
-					"element.innerText.trim() === '\(expectedText)' || " +
-					"element.value === '\(expectedText)'"
+				expectationScript = "element.textContent.trim() == `\(expectedText)` || " +
+					"element.innerText.trim() == `\(expectedText)` || " +
+					"element.value.trim() == `\(expectedText)`"
 		}
 
 		return modifyExpectation(script: expectationScript, modifiers: modifiers)

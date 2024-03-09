@@ -6,7 +6,7 @@
 /// Extends `WebCodeBuilder` with the ability to create a web type action JS code.
 extension WebCodeBuilder {
 	/// The delay between typing each character.
-	private var typeCharacterDelay: Int { 50 }
+	private var typeCharacterDelay: Int { 200 }
 
 	/// Creates a web type action JS code.
 	func createTypeAction(
@@ -57,6 +57,7 @@ extension WebCodeBuilder {
 	}
 
 	let currentIndex = 0;
+	const delay = \(typeCharacterDelay);
 	const typeCharacters = () => {
 		if (currentIndex < textToType.length) {
 			if (isContentEditable) {
@@ -67,7 +68,13 @@ extension WebCodeBuilder {
 
 			currentIndex++;
 
-			setTimeout(typeCharacters, \(typeCharacterDelay));
+			typeCharacters();
+
+			const startTime = new Date().getTime();
+			const finishTime = startTime + delay;
+			while (new Date().getTime() < finishTime) {
+				/* Synchronically wait for type delay to pass */
+			}
 		}
 	};
 

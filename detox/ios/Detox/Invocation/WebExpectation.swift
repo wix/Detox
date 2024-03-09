@@ -42,7 +42,9 @@ class WebExpectation: WebInteraction {
 			let valueResult = (result as? [String: Any])?["result"]
 			let elementResult = (result as? [String: Any])?["element"]
 			let elementInfo: String =
-				elementResult != nil ? "HTML: `\(String(describing: elementResult!))`" : "not found"
+				elementResult != nil ?
+					"info: `\(String(describing: elementResult!))`" :
+					"not found"
 
 			if let error = error {
 				completionHandler(dtx_errorForFatalError(
@@ -56,7 +58,7 @@ class WebExpectation: WebInteraction {
 					"on element with \(webPredicate.type.rawValue.uppercased()) == " +
 					"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
 					"Got evaluation result: " +
-					"\(valueResult as? Bool == false ? "FALSE" : String(describing: valueResult)). " +
+					"\(valueResult as? Bool == false ? "false" : String(describing: valueResult)). " +
 					"Element \(elementInfo)"))
 			} else {
 				completionHandler(nil)

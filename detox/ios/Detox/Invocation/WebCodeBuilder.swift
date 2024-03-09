@@ -48,10 +48,18 @@ class WebCodeBuilder {
 			let expectationScript = createExpectation(expectation: expectation, params: expectationParams, modifiers: expectationModifiers);
 
 			return "(() => {" +
+			"const truncateString = (string = '', maxLength = 124) =>" +
+			"string.length > maxLength ? `${string.substring(0, maxLength)}…`: string;" +
 			"let element = \(selector);" +
-			"return {'result': \(expectationScript), 'element': element ? element.outerHTML : null};" +
+			"let result = \(expectationScript);" +
+			"let elementInfo = element ? {" +
+			"'html': truncateString(element.outerHTML)," +
+			"'value': element.value, " +
+			"'textContent': element.textContent," +
+			"'innerText': element.innerText" +
+			"} : null;" +
+			"return {'result': result, 'element': elementInfo};" +
 			"})();"
-
 		} else if let action = action {
 			let actionScript = try createAction(
 				forAction: action, params: actionParams, onSelector: selector)
