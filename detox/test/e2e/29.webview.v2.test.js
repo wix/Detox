@@ -70,7 +70,7 @@ describe('Web View', () => {
       });
 
       it('should replace text in input', async () => {
-        await web.element(by.web.id('fname')).typeText('Test');
+        await web.element(by.web.id('fname')).typeText('Temp');
         await web.element(by.web.id('fname')).replaceText('Tester');
 
         await expect(web.element(by.web.id('fname'))).toHaveText('Tester');
@@ -84,7 +84,6 @@ describe('Web View', () => {
         await expect(web.element(by.web.id('resultFname'))).toHaveText('Tester');
       });
 
-      // selectAllText action
       it('should select all text in input', async () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).selectAllText();
@@ -93,7 +92,7 @@ describe('Web View', () => {
         await expectElementSnapshotToMatch(webViewElement, 'select-all-text-in-webview');
       });
 
-      it.skip('should scroll to view', async () => {
+      it('should scroll to view', async () => {
         await web.element(by.web.id('bottomParagraph')).scrollToView();
 
         const webViewElement = element(by.id('webViewFormWithScrolling'));
@@ -115,18 +114,25 @@ describe('Web View', () => {
         await expectElementSnapshotToMatch(webViewElement, 'move-cursor-to-end-webview');
       });
 
-      it.skip('should run script', async () => {
+      it('should run script', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
         await headline.runScript('(el) => { el.textContent = "Changed"; }');
 
         await expect(headline).toHaveText('Changed');
       });
 
-      it.skip('should run script with arguments', async () => {
+      it('should run script with arguments', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
         await headline.runScript('(el, text) => { el.textContent = text; }', 'Changed');
 
         await expect(headline).toHaveText('Changed');
+      });
+
+      it('should return value from run script', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        const textContent = await headline.runScript('(el) => { return el.textContent; }');
+
+        await expect(textContent).toBe('First Webview');
       });
 
       it('should raise error when script fails', async () => {
@@ -145,7 +151,7 @@ describe('Web View', () => {
         await jestExpect(title).toBe('First Webview');
       });
 
-      it.skip('should get the web page url', async () => {
+      it('should get the web page url', async () => {
         await web.element(by.web.href('https://www.w3schools.com')).tap();
 
         // Sleep for a second to allow the web page to load.
