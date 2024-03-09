@@ -28,8 +28,9 @@ class WebExpectation: WebInteraction {
 
 		do {
 			jsString = try WebCodeBuilder()
-				.with(predicate: webPredicate)
-				.with(expectation: webExpectation, params: params, modifiers: webModifiers)
+				.with(predicate: webPredicate, atIndex: webAtIndex)
+				.with(
+					expectation: webExpectation, params: params, modifiers: webModifiers)
 				.build()
 
 			webView = try WKWebView.findView(by: predicate, atIndex: atIndex)

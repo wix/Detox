@@ -22,6 +22,22 @@ describe('Web View', () => {
         await expect(web.element(by.web.tag('body'))).toExist();
       });
 
+      it('should find element by index', async () => {
+        await expect(web.element(by.web.tag('p')).atIndex(0)).toExist();
+      });
+
+      it('should not find element by invalid index', async () => {
+        await expect(web.element(by.web.tag('p')).atIndex(100)).not.toExist();
+      });
+
+      it('should raise an error when element not exists', async () => {
+        try {
+          await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
+        } catch (error) {
+          await jestExpect(error).toBeDefined();
+        }
+      });
+
       it('should find element by class name', async () => {
         await expect(web.element(by.web.className('specialParagraph'))).toExist();
       });

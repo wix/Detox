@@ -10,6 +10,7 @@ class WebInteraction: CustomStringConvertible {
 	var predicate: Predicate?
 	var atIndex: Int?
 	var webPredicate: WebPredicate
+	var webAtIndex: Int?
 
 	init(json: [String: Any]) throws {
 		let webPredicateJSON = json["webPredicate"] as? [String: Any]
@@ -31,6 +32,7 @@ class WebInteraction: CustomStringConvertible {
 		}
 
 		self.atIndex = json["atIndex"] as? Int
+		self.webAtIndex = json["webAtIndex"] as? Int
 	}
 
 	var description: String {

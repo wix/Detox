@@ -26,7 +26,7 @@ class WebAction: WebInteraction {
 
 		do {
 			jsString = try WebCodeBuilder()
-				.with(predicate: webPredicate)
+				.with(predicate: webPredicate, atIndex: webAtIndex)
 				.with(action: webAction, params: params)
 				.build()
 

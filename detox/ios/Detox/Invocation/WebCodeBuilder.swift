@@ -9,11 +9,13 @@ class WebCodeBuilder {
 	private var expectation: WebExpectationType?
 	private var expectationParams: [String]?
 	private var expectationModifiers: [WebModifier]?
+	private var index: Int?
 	private var action: WebActionType?
 	private var actionParams: [Any]?
 
-	func with(predicate: WebPredicate) -> WebCodeBuilder {
+	func with(predicate: WebPredicate, atIndex: Int?) -> WebCodeBuilder {
 		self.predicate = predicate
+		self.index = atIndex
 
 		return self
 	}
@@ -42,7 +44,7 @@ class WebCodeBuilder {
 			return "return false;"
 		}
 
-		let selector = createSelector(forType: predicate.type, value: predicate.value)
+		let selector = createSelector(forType: predicate.type, value: predicate.value, index: index)
 
 		if let expectation = expectation {
 			let expectationScript = createExpectation(expectation: expectation, params: expectationParams, modifiers: expectationModifiers);

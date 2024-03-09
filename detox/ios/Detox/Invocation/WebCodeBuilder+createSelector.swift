@@ -6,7 +6,8 @@
 /// This extension is responsible for creating the JavaScript selector for the given predicate type
 ///  and value.
 extension WebCodeBuilder {
-	func createSelector(forType type: WebPredicateType, value: String) -> String {
+	func createSelector(forType type: WebPredicateType, value: String, index: Int?) -> String {
+		let index = index != nil ? index! : 0
 		let value = value.replacingOccurrences(of: "'", with: "/'")
 
 		switch type {
@@ -14,13 +15,13 @@ extension WebCodeBuilder {
 				return "document.getElementById('\(value)')"
 
 			case .className:
-				return "document.getElementsByClassName('\(value)').item(0)"
+				return "document.getElementsByClassName('\(value)').item(\(index))"
 
 			case .cssSelector:
 				return "document.querySelector('\(value)')"
 
 			case .name:
-				return "document.getElementsByName('\(value)').item(0)"
+				return "document.getElementsByName('\(value)').item(\(index))"
 
 			case .xpath:
 				return "document.evaluate('\(value)', document, null, " +
@@ -33,7 +34,7 @@ extension WebCodeBuilder {
 				return "document.querySelector('a[href*=\"\(value)\"]').href"
 
 			case .tag:
-				return "document.getElementsByTagName('\(value)').item(0)"
+				return "document.getElementsByTagName('\(value)').item(\(index))"
 
 			case .label:
 				return "document.querySelector('[aria-label=\"\(value)\"]')"
