@@ -5,7 +5,7 @@
 
 import WebKit
 
-fileprivate let log = DetoxLog(category: "WKWebView+evaluateJSAfterLoading")
+fileprivate let log = DetoxLog(category: "WebView")
 
 /// Extends WKWebView with the ability to evaluate JavaScript after the web view has
 ///  finished loading.
