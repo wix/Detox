@@ -69,14 +69,14 @@ web.element(by.web.id('identifier').atIndex(1));
 Actions allow you to interact with elements within a web view. Available actions include:
 
 - `tap()` - Taps the element.
-- `typeText(text[, isContentEditable])` - Types text into the element. The `isContentEditable` flag indicates if the element is [content-editable], defaulting to `false`.
-- `replaceText(text)` - Replaces the element's text. Note: Not supported for content-editable elements.
-- `clearText()` - Clears the element's text. Note: Not supported for content-editable elements.
-- `selectAllText()` - Selects all text of the element. Supported only for content-editable elements.
+- `typeText(text[, isContentEditable])` - Types text into the element. **Android:** the `isContentEditable` flag indicates if the element is [content-editable], defaulting to `false`.
+- `replaceText(text)` - Replaces the element's text. **Android:** not supported for content-editable elements.
+- `clearText()` - Clears the element's text. **Android:** not supported for content-editable elements.
+- `selectAllText()` - Selects all text of the element. **Android:** supported only for content-editable elements.
 - `getText()` - Retrieves the element's text.
 - `scrollToView()` - Scrolls until the element is visible at the top of the viewport.
 - `focus()` - Focuses on the element.
-- `moveCursorToEnd()` - Moves the cursor to the end of the element's content. Supported only for content-editable elements.
+- `moveCursorToEnd()` - Moves the cursor to the end of the element's content. **Android:** supported only for content-editable elements.
 - `runScript(script[, args])` - Executes a JavaScript script on the element. You can pass a function or a string to be executed in the context of the web view, and the result will be returned. **Note:** Can only be called from an inner element.
 - `getCurrentUrl()` - Retrieves the current URL of the web view. **Note:** Can only be called from an inner element.
 - `getTitle()` - Retrieves the title of the web view. **Note:** Can only be called from an inner element.
