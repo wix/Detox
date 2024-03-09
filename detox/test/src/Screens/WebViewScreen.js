@@ -58,10 +58,17 @@ const webViewFormWithScrolling = `
             h1 {
               margin-top: 50px;
             }
+
             .specialParagraph {
               margin-top: 200px;
               color: blue;
               font-size: 20px;
+            }
+
+            .contentEditable {
+              margin: 20px;
+              padding: 10px;
+              border: 1px solid grey;
             }
         </style>
     </head>
@@ -77,9 +84,12 @@ const webViewFormWithScrolling = `
         <h2>Form Results</h2>
         <p>Your first name is: <span id="resultFname">No input yet</span></p>
 
+        <h2>Content Editable</h2>
+        <div id="contentEditable" class='contentEditable' contenteditable="true">Name: </div>
+
         <h2>Text and link</h2>
         <p>Some text and a <a href="https://www.w3schools.com">link</a>.</p>
-        <p class="specialParagraph" id="bottomParagraph">This is a bottom paragraph with class.</p>
+        <p id="bottomParagraph" class="specialParagraph">This is a bottom paragraph with class.</p>
     </body>
 </html>
 `;

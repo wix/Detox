@@ -18,7 +18,7 @@ extension WebCodeBuilder {
 		throw new Error('Element not found');
 	}
 
-	\(createFocusAction(selector: selector))
+	\(createMoveCursorToEndAction(selector: selector))
 
 	const isContentEditable = element.contentEditable === 'true';
 	const isInputField = (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');

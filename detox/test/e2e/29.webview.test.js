@@ -60,59 +60,118 @@ describe('Web View', () => {
     });
 
     describe('actions', () => {
-      it('should type text in input', async () => {
-        await web.element(by.web.id('fname')).typeText('Test');
-        await web.element(by.web.id('fname')).typeText('er');
+      describe('input', () => {
+        const inputElement = web.element(by.web.id('fname'));
 
-        await expect(web.element(by.web.id('fname'))).toHaveText('Tester');
+        it('should type text in input', async () => {
+          await inputElement.typeText('Test');
+          await inputElement.typeText('er');
+
+          await expect(inputElement).toHaveText('Tester');
+        });
+
+        it(':ios: should type text in input regardless of content-editable parameter on ios', async () => {
+          await inputElement.typeText('Test', false);
+          await inputElement.typeText('er', true);
+
+          await expect(inputElement).toHaveText('Tester');
+        });
+
+        it('should clear text in input', async () => {
+          await inputElement.typeText('Test');
+          await inputElement.clearText();
+
+          await expect(inputElement).toHaveText('');
+        });
+
+        it('should replace text in input', async () => {
+          await inputElement.typeText('Temp');
+          await inputElement.replaceText('Tester');
+
+          await expect(inputElement).toHaveText('Tester');
+        });
+
+        it('should tap on submit button and update result', async () => {
+          await inputElement.typeText('Tester');
+
+          await web.element(by.web.id('submit')).tap();
+
+          await expect(inputElement).toHaveText('Tester');
+        });
+
+        it('should select all text in input', async () => {
+          await inputElement.typeText('Tester');
+          await inputElement.selectAllText();
+
+          await expectWebViewToMatchSnapshot('select-all-text-in-webview');
+        });
+
+        it('should focus on input', async () => {
+          await inputElement.focus();
+
+          await expectWebViewToMatchSnapshot('focus-on-input-webview');
+        });
+
+        it('should move cursor to end', async () => {
+          await inputElement.typeText('Tester');
+          await inputElement.moveCursorToEnd();
+
+          await expectWebViewToMatchSnapshot('move-cursor-to-end-webview');
+        });
       });
 
-      it('should clear text in input', async () => {
-        await web.element(by.web.id('fname')).typeText('Test');
-        await web.element(by.web.id('fname')).clearText();
+      describe('content-editable', () => {
+        const contentEditableElement = web.element(by.web.id('contentEditable'));
 
-        await expect(web.element(by.web.id('fname'))).toHaveText('');
-      });
+        it('should type text in content-editable', async () => {
+          await contentEditableElement.typeText('Test');
+          await contentEditableElement.typeText('er');
 
-      it('should replace text in input', async () => {
-        await web.element(by.web.id('fname')).typeText('Temp');
-        await web.element(by.web.id('fname')).replaceText('Tester');
+          await expect(contentEditableElement).toHaveText('Name: Tester');
+        });
 
-        await expect(web.element(by.web.id('fname'))).toHaveText('Tester');
-      });
+        it(':ios: should type text in content-editable regardless of content-editable parameter on ios', async () => {
+          await contentEditableElement.typeText('Test', false);
+          await contentEditableElement.typeText('er', true);
 
-      it('should tap on submit button', async () => {
-        await web.element(by.web.id('fname')).typeText('Tester');
+          await expect(contentEditableElement).toHaveText('Name: Tester');
+        });
 
-        await web.element(by.web.id('submit')).tap();
+        it('should clear text in content-editable', async () => {
+          await contentEditableElement.clearText();
 
-        await expect(web.element(by.web.id('resultFname'))).toHaveText('Tester');
-      });
+          await expect(contentEditableElement).toHaveText('');
+        });
 
-      it('should select all text in input', async () => {
-        await web.element(by.web.id('fname')).typeText('Tester');
-        await web.element(by.web.id('fname')).selectAllText();
+        it('should replace text in content-editable', async () => {
+          await contentEditableElement.replaceText('Tester');
 
-        await expectWebViewToMatchSnapshot('select-all-text-in-webview');
+          await expect(contentEditableElement).toHaveText('Tester');
+        });
+
+        it('should select all text in content-editable', async () => {
+          await contentEditableElement.selectAllText();
+
+          await expectWebViewToMatchSnapshot('select-all-text-in-content-editable-webview');
+        });
+
+        it('should focus on content-editable', async () => {
+          await contentEditableElement.focus();
+
+          await expectWebViewToMatchSnapshot('focus-on-content-editable-webview');
+        });
+
+        it('should move cursor to end', async () => {
+          await contentEditableElement.moveCursorToEnd();
+
+          await expectWebViewToMatchSnapshot('move-cursor-to-end-content-editable-webview');
+        });
       });
 
       it('should scroll to view', async () => {
         await web.element(by.web.id('bottomParagraph')).scrollToView();
 
         await expectWebViewToMatchSnapshot('scroll-to-view-webview');
-      });
-
-      it('should focus on input', async () => {
-        await web.element(by.web.id('fname')).focus();
-
-        await expectWebViewToMatchSnapshot('focus-on-input-webview');
-      });
-
-      it('should move cursor to end', async () => {
-        await web.element(by.web.id('fname')).typeText('Tester');
-        await web.element(by.web.id('fname')).moveCursorToEnd();
-
-        await expectWebViewToMatchSnapshot('move-cursor-to-end-webview');
       });
 
       it('should run script', async () => {

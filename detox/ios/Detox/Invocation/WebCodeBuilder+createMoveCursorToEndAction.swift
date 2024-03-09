@@ -15,8 +15,33 @@ extension WebCodeBuilder {
 
 	\(createFocusAction(selector: selector))
 
-  let length = element.value.length;
-  element.setSelectionRange(length, length);
+	const getLength = (element) => {
+		if (element.value) {
+			return element.value.length;
+		} else if (element.innerText) {
+			return element.innerText.length;
+		} else if (element.textContent) {
+			return element.textContent.length;
+		} else {
+			return 0;
+		}
+	};
+
+
+	if (typeof element.setSelectionRange === 'function') {
+		const length = getLength(element);
+		element.setSelectionRange(length, length);
+	} else {
+		var range = document.createRange();
+
+		range.selectNodeContents(element);
+		range.collapse(false);
+
+		var selection = window.getSelection();
+
+		selection.removeAllRanges();
+		selection.addRange(range);
+	}
 })(\(selector));
 """
 	}
