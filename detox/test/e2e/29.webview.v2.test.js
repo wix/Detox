@@ -8,6 +8,11 @@ describe('Web View', () => {
   });
 
   describe('default view', () => {
+    const expectWebViewToMatchSnapshot = async (snapshotName) => {
+      const webViewElement = element(by.id('webViewFormWithScrolling'));
+      await expectElementSnapshotToMatch(webViewElement, snapshotName);
+    };
+
     describe('matchers', () => {
       it('should find element by id', async () => {
         await expect(web.element(by.web.id('pageHeadline'))).toExist();
@@ -88,30 +93,26 @@ describe('Web View', () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).selectAllText();
 
-        const webViewElement = element(by.id('webViewFormWithScrolling'));
-        await expectElementSnapshotToMatch(webViewElement, 'select-all-text-in-webview');
+        await expectWebViewToMatchSnapshot('select-all-text-in-webview');
       });
 
       it('should scroll to view', async () => {
         await web.element(by.web.id('bottomParagraph')).scrollToView();
 
-        const webViewElement = element(by.id('webViewFormWithScrolling'));
-        await expectElementSnapshotToMatch(webViewElement, 'scroll-to-view-webview');
+        await expectWebViewToMatchSnapshot('scroll-to-view-webview');
       });
 
       it('should focus on input', async () => {
         await web.element(by.web.id('fname')).focus();
 
-        const webViewElement = element(by.id('webViewFormWithScrolling'));
-        await expectElementSnapshotToMatch(webViewElement, 'focus-on-input-webview');
+        await expectWebViewToMatchSnapshot('focus-on-input-webview');
       });
 
       it('should move cursor to end', async () => {
         await web.element(by.web.id('fname')).typeText('Tester');
         await web.element(by.web.id('fname')).moveCursorToEnd();
 
-        const webViewElement = element(by.id('webViewFormWithScrolling'));
-        await expectElementSnapshotToMatch(webViewElement, 'move-cursor-to-end-webview');
+        await expectWebViewToMatchSnapshot('move-cursor-to-end-webview');
       });
 
       it('should run script', async () => {
@@ -123,7 +124,7 @@ describe('Web View', () => {
 
       it('should run script with arguments', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
-        await headline.runScript('(el, text) => { el.textContent = text; }', 'Changed');
+        await headline.runScript('(el, text) => { el.textContent = text; }', ['Changed']);
 
         await expect(headline).toHaveText('Changed');
       });

@@ -51,7 +51,7 @@ class WebAction: WebInteraction {
 						"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
 						"JS exception: \(jsError)")
 				)
-			} else if let result = result {
+			} else if let result = (result as? [String: Any])?["result"] as? String {
 				completionHandler(["result": result], nil)
 			} else {
 				completionHandler(nil, nil)

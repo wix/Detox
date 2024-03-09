@@ -98,19 +98,21 @@ class WebElement {
   async getText() {
     const traceDescription = webViewActionDescription.getText();
     let result = await this.withAction('getText', traceDescription);
-    return this.extractResult(result, 'text');
+    return this.extractResult(result, { type: 'text' });
   }
 
-  extractResult(result, type) {
+  extractResult(result, options) {
     // iOS returns the result under `result` key, while Android returns it under the action `type` key.
     if (result['error']) {
       throw new DetoxRuntimeError(`Error thrown in web action: ${result['error']}`);
-    } else if (type && result[type]) {
-      return result[type];
+    } else if (options.type && result[options.type]) {
+      return result[options.type];
     } else if (result['result']) {
       return result['result'];
+    } else if (options.allowUndefined) {
+      return undefined;
     } else {
-      throw new DetoxRuntimeError(`Failed to extract ${type} from result: ${JSON.stringify(result)}`);
+      throw new DetoxRuntimeError(`Failed to extract ${options.type ?? 'result'} from result: ${JSON.stringify(result)}`);
     }
   }
 
@@ -140,7 +142,7 @@ class WebElement {
 
     const traceDescription = webViewActionDescription.runScript(script);
     const result = await this.withAction('runScript', traceDescription, script);
-    return this.extractResult(result);
+    return this.extractResult(result, { allowUndefined: true });
   }
 
   async runScriptWithArgs(script, args) {
@@ -150,19 +152,19 @@ class WebElement {
 
     const traceDescription = webViewActionDescription.runScriptWithArgs(script, args);
     const result = await this.withAction('runScriptWithArgs', traceDescription, script, args);
-    return this.extractResult(result);
+    return this.extractResult(result, { allowUndefined: true });
   }
 
   async getCurrentUrl() {
     const traceDescription = webViewActionDescription.getCurrentUrl();
     let result = await this.withAction('getCurrentUrl', traceDescription);
-    return this.extractResult(result, 'url');
+    return this.extractResult(result, { type: 'url' });
   }
 
   async getTitle() {
     const traceDescription = webViewActionDescription.getTitle();
     let result = await this.withAction('getTitle', traceDescription);
-    return this.extractResult(result, 'title');
+    return this.extractResult(result, { type: 'title' });
   }
 
   withAction(action, traceDescription, ...params) {
