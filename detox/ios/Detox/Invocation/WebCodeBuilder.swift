@@ -67,7 +67,7 @@ class WebCodeBuilder {
 			return "(() => {" +
 			"try {" +
 			"const result = \(actionScript)" +
-			"return result;" +
+			"return {'result': result};" +
 			"} catch (error) {" +
 			"return {'error': error.message};" +
 			"}" +
