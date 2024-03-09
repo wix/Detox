@@ -49,7 +49,7 @@ class WebAction: WebInteraction {
 					["result": false, "error": jsError],
 					dtx_errorForFatalError(
 						"Failed to evaluate JavaScript on web view: \(webView.debugDescription). " +
-						"Error: \(jsError)")
+						"JS exception: \(jsError)")
 				)
 			} else if let result = result {
 				completionHandler(["result": result], nil)
