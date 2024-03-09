@@ -4,7 +4,7 @@ const expectElementSnapshotToMatch = async function (element, snapshotName) {
     const bitmapPath = await element.takeScreenshot(snapshotName);
     const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}.png`;
     if (await fs.pathExists(expectedBitmapPath) === false || process.env.UPDATE_SNAPSHOTS === 'true') {
-        await fs.copyFile(bitmapPath, expectedBitmapPath, {overwrite: true});
+        await fs.copy(bitmapPath, expectedBitmapPath, {overwrite: true});
     }
 
     expectBitmapsToBeEqual(bitmapPath, expectedBitmapPath);
