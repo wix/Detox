@@ -7,7 +7,7 @@ describe('Web View', () => {
     await element(by.text('WebView')).tap();
   });
 
-  describe('default view', () => {
+  describe('single web-view scenario', () => {
     const expectWebViewToMatchSnapshot = async (snapshotName) => {
       const webViewElement = element(by.id('webViewFormWithScrolling'));
       await expectElementSnapshotToMatch(webViewElement, snapshotName);
@@ -30,12 +30,10 @@ describe('Web View', () => {
         await expect(web.element(by.web.tag('p')).atIndex(100)).not.toExist();
       });
 
-      it('should raise an error when element not exists', async () => {
-        try {
+      it('should raise an error when does element not exists at index', async () => {
+        await jestExpect(async () => {
           await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
-        } catch (error) {
-          await jestExpect(error).toBeDefined();
-        }
+        }).rejects.toThrowError();
       });
 
       it('should find element by class name', async () => {
@@ -62,12 +60,10 @@ describe('Web View', () => {
         await expect(web.element(by.web.name('fname'))).toExist();
       });
 
-      it('should raise an error when element not exists', async () => {
-        try {
+      it('should raise an error when element does not exists', async () => {
+        await jestExpect(async () => {
           await expect(web.element(by.web.id('nonExistentElement'))).toExist();
-        } catch (error) {
-          await jestExpect(error).toBeDefined();
-        }
+        }).rejects.toThrowError();
       });
 
       it('should assert that an element is not visible', async () => {
@@ -213,11 +209,10 @@ describe('Web View', () => {
 
       it('should raise error when script fails', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
-        try {
+
+        await jestExpect(async () => {
           await headline.executeScript('(el) => { el.textContent = "Changed"; throw new Error("Error"); }');
-        } catch (error) {
-          await jestExpect(error).toBeDefined();
-        }
+        }).rejects.toThrowError();
       });
     });
 
@@ -245,22 +240,57 @@ describe('Web View', () => {
     });
   });
 
-  describe('with native matcher',() => {
+  describe('multiple web-views scenario',() => {
     /** @type {Detox.WebViewElement} */
     let webview;
 
     beforeEach(async () => {
+      await element(by.id('toggleDummyWebViewButton')).tap();
+
       webview = web(by.id('dummyWebView'));
     });
 
     it('should have a title', async () => {
       const title = await webview.element(by.web.tag('body')).getTitle();
-      await jestExpect(title).toBe('Second Webview');
+      await jestExpect(title).toBe('Dummy Webview');
     });
 
     it('should have a paragraph', async () => {
-      await expect(webview.element(by.web.id('secondWebview'))).toExist();
-      await expect(webview.element(by.web.id('secondWebview'))).toHaveText('This is the second webview');
+      await expect(webview.element(by.web.id('message'))).toExist();
+      await expect(webview.element(by.web.id('message'))).toHaveText('This is a dummy webview.');
+    });
+
+    it('should throw on multiple matches', async () => {
+      await element(by.id('toggleDummyWebView2Button')).tap();
+
+      await jestExpect(async () => {
+        await expect(web(by.id('dummyWebView')).element(by.web.id('message'))).toExist();
+      }).rejects.toThrowError();
+    });
+
+    describe('at-index support', () => {
+      beforeEach(async () => {
+        await element(by.id('toggleDummyWebView2Button')).tap();
+      });
+
+      it.only(':ios: should find web-view by index', async () => {
+        await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
+        await expect(web(by.id('dummyWebView')).atIndex(1).element(by.web.id('message'))).toExist();
+      });
+
+      it(':ios: should throw on index out of bounds', async () => {
+        await jestExpect(async () => {
+          await expect(web(by.id('dummyWebView')).atIndex(2).element(by.web.id('message'))).toExist();
+        }).rejects.toThrowError();
+
+        await device.launchApp();
+      });
+
+      it(':android: should throw on usage of atIndex', async () => {
+        await jestExpect(async () => {
+          await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
+        }).rejects.toThrowError();
+      });
     });
   });
 });
