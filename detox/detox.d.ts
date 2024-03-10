@@ -1508,8 +1508,6 @@ declare global {
         interface IndexableWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index.
-             * @note Currently, this is partially supported on iOS, it works only for
-             *  `by.web.tag`, `by.web.className` and `by.web.name`.
              * @example await web.element(by.web.tag('p')).atIndex(2).tap();
              */
             atIndex(index: number): WebElement;

@@ -7,43 +7,55 @@
 ///  and value.
 extension WebCodeBuilder {
 	func createSelector(forType type: WebPredicateType, value: String, index: Int?) -> String {
-		let index = index != nil ? index! : 0
-		let value = value.replacingOccurrences(of: "'", with: "/'")
+		let index = index ?? 0
+		let indexStatement = ".item(\(index))"
+
+		let value = value.replacingOccurrences(of: "'", with: "\'")
 
 		switch type {
 			case .id:
+				if index > 0 {
+					// ID should be unique by definition, so if `index` > 0 it's an error.
+					return "null"
+				}
+
 				return "document.getElementById('\(value)')"
 
 			case .className:
-				return "document.getElementsByClassName('\(value)').item(\(index))"
+				return "document.getElementsByClassName('\(value)')\(indexStatement)"
 
 			case .cssSelector:
-				return "document.querySelector('\(value)')"
+				return "document.querySelectorAll('\(value)')\(indexStatement)"
 
 			case .name:
-				return "document.getElementsByName('\(value)').item(\(index))"
+				return "document.getElementsByName('\(value)')\(indexStatement)"
 
 			case .xpath:
+				if index > 0 {
+					return "document.evaluate('(\(value))[\(index + 1)]', document, null, " +
+						"XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue"
+				}
+
 				return "document.evaluate('\(value)', document, null, " +
 					"XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue"
 
 			case .href:
-				return "document.querySelector('a[href=\"\(value)\"]')"
+				return "document.querySelectorAll('a[href=\"\(value)\"]')\(indexStatement)"
 
 			case .hrefContains:
-				return "document.querySelector('a[href*=\"\(value)\"]').href"
+				return "document.querySelectorAll('a[href*=\"\(value)\"]')\(indexStatement)"
 
 			case .tag:
-				return "document.getElementsByTagName('\(value)').item(\(index))"
+				return "document.getElementsByTagName('\(value)')\(indexStatement)"
 
 			case .label:
-				return "document.querySelector('[aria-label=\"\(value)\"]')"
+				return "document.querySelectorAll('[aria-label=\"\(value)\"]')\(indexStatement)"
 
 			case .value:
-				return "document.querySelector('[value=\"\(value)\"]')"
-				
+				return "document.querySelectorAll('[value=\"\(value)\"]')\(indexStatement)"
+
 			case .accessibilityType:
-				return "document.querySelector('[role=\"\(value)\"]')"
+				return "document.querySelectorAll('[role=\"\(value)\"]')\(indexStatement)"
 		}
 	}
 }
