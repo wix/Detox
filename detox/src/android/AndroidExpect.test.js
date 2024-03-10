@@ -378,7 +378,6 @@ describe('AndroidExpect', () => {
     });
 
     describe('web', () => {
-
       it('default', async () => {
         await e.web.element(e.by.web.id('id')).tap();
       });
@@ -400,6 +399,10 @@ describe('AndroidExpect', () => {
         jestExpect(() => e.web(e.by.web.hrefContains('webMatcher'))).toThrow();
         jestExpect(() => e.web(e.by.web.tag('webMatcher'))).toThrow();
         jestExpect(() => e.web(e.by.web.xpath('webMatcher'))).toThrow();
+      });
+
+      it('with at-index should throw', async () => {
+        jestExpect(() => e.web(e.by.id('webview_id')).atIndex(1).element(e.by.web.id('id')).tap()).toThrow();
       });
 
       it(`inner element with wrong matcher should throw`, async () => {

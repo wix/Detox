@@ -105,7 +105,7 @@ class WebViewElement {
       this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView(matcher._call.value));
     } else {
       this._call = invoke.callDirectly(EspressoWebDetoxApi.getWebView());
-    }
+  }
 
     this.element = this.element.bind(this);
   }
@@ -121,6 +121,11 @@ class WebViewElement {
     }
 
     throw new DetoxRuntimeError(`element() argument is invalid, expected a web matcher, but got ${typeof webMatcher}`);
+  }
+
+  atIndex(_index) {
+    // Not implemented yet
+    throw new Error('atIndex() is not supported for Android WebViewElement');
   }
 }
 
