@@ -27,6 +27,14 @@ const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
+#### Using `atIndex` (iOS only)
+
+It is also possible to locate the web view by applying at-index to the web view matcher:
+
+```javascript
+const myWebView = web(by.id('webview_identifier').atIndex(1));
+```
+
 In this example:
 
 1. The `web()` function and `by.id()` matcher locate the web view by its accessibility identifier.
