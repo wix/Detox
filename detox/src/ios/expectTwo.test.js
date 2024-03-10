@@ -755,8 +755,8 @@ describe('expectTwo', () => {
   });
 
   describe('web views', () => {
-    it(`should parse web(by.id('webViewId').element(web(by.label('tapMe')))).toExist()`, async () => {
-      const testCall = await e.expect(e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe'))).toExist();
+    it(`should parse expect(web(by.id('webViewId').element(web(by.label('tapMe')))).toExist()`, async () => {
+      const testCall = await e.expect(e.web(e.by.id('webViewId')).atIndex(1).element(e.by.web.label('tapMe')).atIndex(2)).toExist();
 
       const jsonOutput = {
         invocation: {
@@ -767,10 +767,12 @@ describe('expectTwo', () => {
             value: 'webViewId',
             isRegex: false
           },
+          atIndex: 1,
           webPredicate: {
             type: 'label',
             value: 'tapMe'
-          }
+          },
+          webAtIndex: 2
         }
       };
 
@@ -814,18 +816,26 @@ describe('expectTwo', () => {
       jestExpect(() => e.web('invalid').element(e.by.label('tapMe')).toExist()).toThrow(expectedErrorMsg);
     });
 
-    it(`should parse web(by.id('webViewId')).element(web.by.label('tapMe')).clearText()`, async () => {
-      const testCall = await e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe')).clearText();
+    it('should throw when passing at-index to a non-matcher', async () => {
+      const expectedErrorMsg = 'cannot apply atIndex to a non-matcher';
+      jestExpect(() => e.web('invalid').atIndex(1).element(e.by.web.label('tapMe')).toExist()).toThrow(expectedErrorMsg);
+    });
+
+    it(`should parse web(by.id('webViewId')).atIndex(2).element(web.by.label('tapMe')).atIndex(1).clearText()`, async () => {
+      const testCall =
+          await e.web(e.by.id('webViewId')).atIndex(2).element(e.by.web.label('tapMe')).atIndex(1).clearText();
 
       const jsonOutput = {
         invocation: {
           type: 'webAction',
           webAction: 'clearText',
+          webAtIndex: 1,
           predicate: {
             type: 'id',
             value: 'webViewId',
             isRegex: false
           },
+          atIndex: 2,
           webPredicate: {
             type: 'label',
             value: 'tapMe'
@@ -834,6 +844,11 @@ describe('expectTwo', () => {
       };
 
       expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it('should raise on invalid at-index', async () => {
+      const expectedErrorMsg = 'index should be a number, but got -1 (number)';
+      jestExpect(() => e.web(e.by.id('webViewId')).atIndex(-1).element(e.by.web.label('tapMe')).atIndex(1).clearText()).toThrow(expectedErrorMsg);
     });
 
     it(`should parse web.element(by.web.label('tapMe')).tap()`, async () => {

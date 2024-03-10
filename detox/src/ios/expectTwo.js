@@ -782,6 +782,12 @@ class IosExpect {
 
   web(matcher) {
     return {
+      atIndex: index => {
+        if (typeof index !== 'number' || index < 0) throw new Error('index should be a number, but got ' + (index + (' (' + (typeof index + ')'))));
+        if (!(matcher instanceof Matcher)) throw new Error('cannot apply atIndex to a non-matcher');
+        matcher.index = index;
+        return this.web(matcher);
+      },
       element: webMatcher => {
         if (!(matcher instanceof Matcher) && matcher !== undefined) {
           throwMatcherError(matcher);

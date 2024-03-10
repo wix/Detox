@@ -36,7 +36,7 @@ class WebExpect {
       type: 'webExpectation',
       ...(this.element.webViewElement !== undefined) && {
         predicate: this.element.webViewElement.matcher.predicate,
-        ...(this.element.webViewElement.index !== undefined && { atIndex: this.element.webViewElement.index }),
+        ...(this.element.webViewElement.matcher.index !== undefined && { atIndex: this.element.webViewElement.matcher.index }),
       },
       webPredicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { webAtIndex: this.element.index }),
@@ -175,7 +175,7 @@ class WebElement {
       type: 'webAction',
       ...(this.webViewElement !== undefined) && {
         predicate: this.webViewElement.matcher.predicate,
-        ...(this.webViewElement.index !== undefined && { atIndex: this.webViewElement.index }),
+        ...(this.webViewElement.matcher.index !== undefined && { atIndex: this.webViewElement.matcher.index }),
       },
       webPredicate: this.matcher.predicate,
       ...(this.index !== undefined && { webAtIndex: this.index }),
