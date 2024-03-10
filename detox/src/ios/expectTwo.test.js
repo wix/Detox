@@ -847,8 +847,13 @@ describe('expectTwo', () => {
     });
 
     it('should raise on invalid at-index', async () => {
-      const expectedErrorMsg = 'index should be a number, but got -1 (number)';
+      const expectedErrorMsg = 'index should be an integer, got -1 (number)';
       jestExpect(() => e.web(e.by.id('webViewId')).atIndex(-1).element(e.by.web.label('tapMe')).atIndex(1).clearText()).toThrow(expectedErrorMsg);
+    });
+
+    it('should raise on invalid web-matcher at-index', async () => {
+      const expectedErrorMsg = 'index should be an integer, got -1 (number)';
+      jestExpect(() => e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe')).atIndex(-1).clearText()).toThrow(expectedErrorMsg);
     });
 
     it(`should parse web.element(by.web.label('tapMe')).tap()`, async () => {
@@ -1008,8 +1013,26 @@ describe('expectTwo', () => {
       expect(testCall).toDeepEqual(jsonOutput);
     });
 
-    it(`should parse web.element(by.web.value('someValue')).runScript('script', ['arg'])`, async () => {
+    it(`should parse web.element(by.web.value('someValue')).runScript(() => {}, ['arg'])`, async () => {
       const testCall = await e.web.element(e.by.web.value('someValue')).runScript(() => {}, ['arg']);
+
+      const jsonOutput = {
+        invocation: {
+          type: 'webAction',
+          webAction: 'runScriptWithArgs',
+          params: ['() => {}', ['arg']],
+          webPredicate: {
+            type: 'value',
+            value: 'someValue'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should parse web.element(by.web.value('someValue')).runScript('() => {}', ['arg'])`, async () => {
+      const testCall = await e.web.element(e.by.web.value('someValue')).runScript('() => {}', ['arg']);
 
       const jsonOutput = {
         invocation: {

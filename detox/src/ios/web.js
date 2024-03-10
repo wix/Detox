@@ -65,7 +65,7 @@ class WebElement {
   }
 
   atIndex(index) {
-    if (typeof index !== 'number') throw new DetoxRuntimeError(`atIndex argument must be a number, got ${typeof index}`);
+    if (typeof index !== 'number' || index < 0) throw new DetoxRuntimeError(`index should be an integer, got ${index} (${typeof index})`);
     this.index = index;
     return this;
   }
