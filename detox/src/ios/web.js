@@ -16,6 +16,7 @@ class WebExpect {
   }
 
   toHaveText(text) {
+    if (typeof text !== 'string') throw new DetoxRuntimeError('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
     const traceDescription = expectDescription.toHaveText(text);
     return this.expect('toHaveText', traceDescription, text);
   }

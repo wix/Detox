@@ -892,6 +892,25 @@ describe('expectTwo', () => {
       expect(testCall).toDeepEqual(jsonOutput);
     });
 
+    it(`should parse web.element(by.web.id('someValue')).typeText('text', true)`, async () => {
+      const testCall = await e.web.element(e.by.web.id('someValue')).atIndex(3).typeText('text', true);
+
+      const jsonOutput = {
+        invocation: {
+          type: 'webAction',
+          webAction: 'typeText',
+          webAtIndex: 3,
+          params: ['text'],
+          webPredicate: {
+            type: 'id',
+            value: 'someValue'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
     it(`should parse web.element(by.web.className('someValue')).replaceText('text')`, async () => {
       const testCall = await e.web.element(e.by.web.className('someValue')).replaceText('text');
 

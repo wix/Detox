@@ -28,7 +28,7 @@ module.exports = {
     typeText: (value) => `type input text: "${value}"`,
   },
   webViewActionDescription: {
-    tap: (value) => `tap${value !== undefined ? ` at ${JSON.stringify(value)}` : ''}`,
+    tap: () => `tap`,
     typeText: (value, isContentEditable) => `type input text: "${value}"${isContentEditable ? ' in content editable' : ''}`,
     replaceText: (value) => `replace input text: "${value}"`,
     clearText: () => 'clear input text',
