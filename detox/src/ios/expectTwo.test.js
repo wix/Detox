@@ -809,6 +809,11 @@ describe('expectTwo', () => {
         ).toExist()).toThrow(expectedErrorMsg);
     });
 
+    it('should throw when not passing matcher to web()', async () => {
+      const expectedErrorMsg = 'invalid is not a Detox matcher';
+      jestExpect(() => e.web('invalid').element(e.by.label('tapMe')).toExist()).toThrow(expectedErrorMsg);
+    });
+
     it(`should parse web(by.id('webViewId')).element(web.by.label('tapMe')).clearText()`, async () => {
       const testCall = await e.web(e.by.id('webViewId')).element(e.by.web.label('tapMe')).clearText();
 
