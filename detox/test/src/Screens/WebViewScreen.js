@@ -1,21 +1,53 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import {Button, View} from 'react-native';
 import { WebView } from 'react-native-webview';
 
-export default class WebViewScreen extends Component {
-  render() {
+export default function WebViewScreen() {
+    const [isDummyWebViewVisible, setIsDummyWebViewVisible] = React.useState(false);
+    const [isDummyWebView2Visible, setIsDummyWebView2Visible] = React.useState(false);
+
     return (
-        <View style={{flex: 1,flexDirection: 'column' ,backgroundColor:'blue'}}>
-          <View style={{flex: 5}}>
-            <WebView testID={'webViewFormWithScrolling'} source={{html: webViewFormWithScrolling}}/>
-          </View>
-          <View style={{flex: 5}}>
-            <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
-          </View>
+        <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={{
+                flex: 2,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                backgroundColor: '#edf6ff'
+            }}>
+                <View style={{flex: 1}}>
+                    <Button
+                        testID={'toggleDummyWebViewButton'}
+                        title={isDummyWebViewVisible ? 'Hide 2nd webview' : 'Show 2nd webview'}
+                        onPress={() => setIsDummyWebViewVisible(!isDummyWebViewVisible)}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <Button
+                        testID={'toggleDummyWebView2Button'}
+                        title={isDummyWebView2Visible ? 'Hide 3rd webview' : 'Show 3rd webview'}
+                        onPress={() => setIsDummyWebView2Visible(!isDummyWebView2Visible)}
+                    />
+                </View>
+            </View>
+            <View style={{flex: 7, flexDirection: 'column'}}>
+                <View style={{flex: 5}}>
+                    <WebView testID={'webViewFormWithScrolling'} source={{html: webViewFormWithScrolling}}/>
+                </View>
+                {isDummyWebViewVisible && (
+                    <View style={{flex: 5}}>
+                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                    </View>
+                )}
+                {isDummyWebView2Visible && (
+                    <View style={{flex: 5}}>
+                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                    </View>
+                )}
+            </View>
         </View>
     );
-  }
-}
+};
 
 // HTML content for the form with scrolling, for testing purposes.
 const webViewFormWithScrolling = `
@@ -60,7 +92,7 @@ const webViewFormWithScrolling = `
             }
 
             .specialParagraph {
-              margin-top: 200px;
+              margin-top: 1000px;
               color: blue;
               font-size: 20px;
             }
@@ -99,7 +131,7 @@ const dummyWebView = `
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Second Webview</title>
+        <title>Dummy Webview</title>
         <meta name="viewport" content="width=320, user-scalable=no">
         <style>
             body {
@@ -116,9 +148,7 @@ const dummyWebView = `
         </style>
     </head>
     <body>
-        <p id="secondWebview">
-            This is the second webview
-        </p>
+        <p id="message">This is a dummy webview.</p>
     </body>
 </html>
 `;
