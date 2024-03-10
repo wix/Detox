@@ -63,15 +63,18 @@ const webViewFormWithScrolling = `
               margin: 0;
               padding: 0;
             }
+            
             form {
               margin: 20px;
             }
+
             input[type=text] {
               width: 100%;
               padding: 12px 20px;
               margin: 8px 0;
               box-sizing: border-box;
             }
+
             input[type=submit] {
               background-color: #4CAF50;
               color: white;
@@ -81,14 +84,13 @@ const webViewFormWithScrolling = `
               cursor: pointer;
               width: 100%;
             }
+
             input[type=submit]:hover {
               background-color: #45a049;
             }
+
             p, h1, h2 {
               margin: 20px;
-            }
-            h1 {
-              margin-top: 50px;
             }
 
             .specialParagraph {

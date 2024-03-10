@@ -266,6 +266,8 @@ describe('Web View', () => {
       await jestExpect(async () => {
         await expect(web(by.id('dummyWebView')).element(by.web.id('message'))).toExist();
       }).rejects.toThrowError();
+
+      await device.launchApp();
     });
 
     describe('at-index support', () => {
@@ -273,23 +275,25 @@ describe('Web View', () => {
         await element(by.id('toggleDummyWebView2Button')).tap();
       });
 
-      it.only(':ios: should find web-view by index', async () => {
-        await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
-        await expect(web(by.id('dummyWebView')).atIndex(1).element(by.web.id('message'))).toExist();
-      });
-
-      it(':ios: should throw on index out of bounds', async () => {
-        await jestExpect(async () => {
-          await expect(web(by.id('dummyWebView')).atIndex(2).element(by.web.id('message'))).toExist();
-        }).rejects.toThrowError();
-
-        await device.launchApp();
-      });
-
-      it(':android: should throw on usage of atIndex', async () => {
-        await jestExpect(async () => {
+      describe(':ios: ios support', () => {
+        it('should find web-view by index', async () => {
           await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
-        }).rejects.toThrowError();
+          await expect(web(by.id('dummyWebView')).atIndex(1).element(by.web.id('message'))).toExist();
+        });
+
+        it('should throw on index out of bounds', async () => {
+          await jestExpect(async () => {
+            await expect(web(by.id('dummyWebView')).atIndex(2).element(by.web.id('message'))).toExist();
+          }).rejects.toThrowError();
+        });
+      });
+
+      describe(':android: android no-support', () => {
+        it('should throw on usage of atIndex', async () => {
+          await jestExpect(async () => {
+            await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
+          }).rejects.toThrowError();
+        });
       });
     });
   });
