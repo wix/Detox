@@ -77,7 +77,7 @@ class WebElement {
 
   typeText(text, isContentEditable = false) {
     const traceDescription = webViewActionDescription.typeText(text, isContentEditable);
-    return this.withAction('typeText', traceDescription, text, isContentEditable);
+    return this.withAction('typeText', traceDescription, text);
   }
 
   replaceText(text) {
@@ -109,10 +109,11 @@ class WebElement {
       return result[options.type];
     } else if (result['result']) {
       return result['result'];
-    } else if (options.allowUndefined) {
+    } else if (options.allowUndefined && Object.keys(result).length === 0) {
       return undefined;
     } else {
-      throw new DetoxRuntimeError(`Failed to extract ${options.type ?? 'result'} from result: ${JSON.stringify(result)}`);
+      log.warn(`Failed to extract ${options.type ?? 'result'} from result: ${JSON.stringify(result)}`);
+      return result;
     }
   }
 
@@ -132,12 +133,12 @@ class WebElement {
   }
 
   async runScript(script, args) {
-    if (typeof script === 'function') {
-      script = script.toString();
-    }
-
     if (args !== undefined && args.length !== 0) {
       return await this.runScriptWithArgs(script, args);
+    }
+
+    if (typeof script === 'function') {
+      script = script.toString();
     }
 
     const traceDescription = webViewActionDescription.runScript(script);
@@ -272,16 +273,7 @@ function throwWebViewMatcherError(param) {
 }
 
 function webExpect(invocationManager, element) {
-  if (!(element instanceof WebElement)) {
-    throwWebElementError(element);
-  }
-
   return new WebExpect(invocationManager, element);
-}
-
-function throwWebElementError(param) {
-  const paramDescription = JSON.stringify(param);
-  throw new DetoxRuntimeError(`${paramDescription} is not a web element. More about web elements here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
 function _executeInvocation(invocationManager, invocation, traceDescription) {
