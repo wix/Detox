@@ -41,10 +41,25 @@ extension WKWebView {
 			return view is WKWebView
 		}
 
+		var webViews: [WKWebView]
 		if let ancestor = ancestor {
-			return UIView.dtx_findViews(inHierarchy: ancestor, passing: predicate).firstObject as? WKWebView
+			webViews = UIView.dtx_findViews(inHierarchy: ancestor, passing: predicate).compactMap {
+				$0 as? WKWebView
+			}
+		} else {
+			webViews = UIView.dtx_findViewsInAllWindows(passing: predicate).compactMap {
+				$0 as? WKWebView
+			}
 		}
 
-		return UIView.dtx_findViewsInAllWindows(passing: predicate).firstObject as? WKWebView
+		if webViews.count == 0 {
+			return nil
+		} else if webViews.count > 1 {
+			throw dtx_errorForFatalError(
+				"Found more than one matching web view in the hierarchy. " +
+				"Please specify a predicate to find the correct web view.")
+		} else {
+			return webViews.first
+		}
 	}
 }

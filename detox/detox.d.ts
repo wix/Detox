@@ -1137,7 +1137,21 @@ declare global {
         }
 
         interface WebViewElement {
+            /**
+             * Find a web element by a matcher.
+             * @param webMatcher a web matcher for the web element.
+             */
             element(webMatcher: WebMatcher): IndexableWebElement;
+
+            /**
+             * Returns the index-th web-view in the UI hierarchy that is matched by the given matcher.
+             * @param index the index of the web-view.
+             *
+             * @note Currently, supported only for iOS.
+             *
+             * @example await web(by.id('webview')).atIndex(1);
+             */
+            atIndex(index: number): WebViewElement;
         }
 
         interface WebFacade extends WebViewElement {
@@ -1148,16 +1162,6 @@ declare global {
              * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
              */
             (matcher?: NativeMatcher): WebViewElement;
-
-            /**
-             * Returns the index-th webview element in the UI hierarchy that is matched by the given matcher.
-             * @param index the index of the webview element.
-             *
-             * @note Currently, supported only for iOS.
-             *
-             * @example await web(by.id('webview')).atIndex(1);
-             */
-            atIndex(index: number): WebViewElement;
         }
 
         interface Expect<R = Promise<void>> {

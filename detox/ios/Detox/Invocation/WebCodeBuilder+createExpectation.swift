@@ -11,11 +11,19 @@ extension WebCodeBuilder {
 		switch expectation {
 			case .toExist:
 				expectationScript = "element != null"
+
 			case .toHaveText:
 				let expectedText = params?.first ?? ""
-				expectationScript = "element.textContent.trim() == `\(expectedText)` || " +
-					"element.innerText.trim() == `\(expectedText)` || " +
-					"element.value.trim() == `\(expectedText)`"
+
+				let escapedExpectedText = expectedText
+					.replacingOccurrences(of: "`", with: "\\`")
+					.replacingOccurrences(of: "'", with: "\'")
+					.trimmingCharacters(in: .whitespacesAndNewlines)
+
+				expectationScript = "(element.textContent && element.textContent.trim() == `\(escapedExpectedText)`) || " +
+					"(element.innerText && element.innerText.trim() == `\(escapedExpectedText)`) || " +
+					"(element.value && element.value.trim() == `\(escapedExpectedText)`) || " +
+					"`\(escapedExpectedText)` == ''"
 		}
 
 		return modifyExpectation(script: expectationScript, modifiers: modifiers)
