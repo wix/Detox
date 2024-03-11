@@ -528,10 +528,10 @@ describe('AndroidExpect', () => {
       });
 
       it('runScript', async () => {
-        const script = 'function foo(el) {}';
-        await e.web.element(e.by.web.id('id')).runScript(script);
-        await e.web.element(e.by.web.className('className')).runScript(script);
-        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(script);
+        const script = 'function named(el) { return el.textContent; }';
+        await e.web.element(e.by.web.id('id')).runScript(function () {});
+        await e.web.element(e.by.web.className('className')).runScript((el) => el.textContent);
+        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(function named(..._args) {});
         await e.web.element(e.by.web.name('name')).runScript(script);
         await e.web.element(e.by.web.xpath('xpath')).runScript(script);
         await e.web.element(e.by.web.href('linkText')).runScript(script);
@@ -539,26 +539,23 @@ describe('AndroidExpect', () => {
         await e.web.element(e.by.web.tag('tag')).runScript(script);
       });
 
-      it('runScriptWithArgs', async () => {
-        const script = 'function bar(a,b) {}';
-        const argsArr = ['fooA','barB'];
-        await e.web.element(e.by.web.id('id')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.className('className')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.cssSelector('cssSelector')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.name('name')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.xpath('xpath')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.href('linkText')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.hrefContains('partialLinkText')).runScriptWithArgs(script, argsArr);
-        await e.web.element(e.by.web.tag('tag')).runScriptWithArgs(script, argsArr);
+      it('runScript (unhappy)', async () => {
+        await expect(e.web.element(e.by.web.id('id')).runScript(/nonsense/)).rejects.toThrow(/script should be a string, but got \/nonsense\//);
+        await expect(e.web.element(e.by.web.id('id')).runScript(null, [])).rejects.toThrow(/script should be a string, but got null/);
+        await expect(e.web.element(e.by.web.id('id')).runScript('return el.textContent')).rejects.toThrow(/Expected a valid function string, but got: return el.textContent/);
       });
 
-      it('runScriptWithArgs (unhappy paths)', async () => {
+      it('runScript (with args)', async () => {
         const script = 'function bar(a,b) {}';
-        const someElement = e.web.element(e.by.web.id('id'));
-
-        await expect(someElement.runScriptWithArgs(script, 42)).rejects.toThrowError(/args must be an array/);
-        await expect(someElement.runScriptWithArgs(script, null)).rejects.toThrowError(/args must be an array/);
-        await expect(someElement.runScriptWithArgs(script, {})).rejects.toThrowError(/args must be an array/);
+        const argsArr = ['fooA', 40];
+        await e.web.element(e.by.web.id('id')).runScript(script, argsArr);
+        await e.web.element(e.by.web.className('className')).runScript(script, argsArr);
+        await e.web.element(e.by.web.cssSelector('cssSelector')).runScript(script, argsArr);
+        await e.web.element(e.by.web.name('name')).runScript(script, argsArr);
+        await e.web.element(e.by.web.xpath('xpath')).runScript(script, argsArr);
+        await e.web.element(e.by.web.href('linkText')).runScript(script, argsArr);
+        await e.web.element(e.by.web.hrefContains('partialLinkText')).runScript(script, argsArr);
+        await e.web.element(e.by.web.tag('tag')).runScript(script, argsArr);
       });
 
       it('getCurrentUrl', async () => {

@@ -9,7 +9,7 @@ class IPCServer {
    * @param {import('./SessionState')} options.sessionState
    * @param {Detox.Logger} options.logger
    * @param {object} options.callbacks
-   * @param {() => Promise<any>} options.callbacks.onAllocateDevice
+   * @param {(deviceConfig: DetoxInternals.RuntimeConfig['device']) => Promise<any>} options.callbacks.onAllocateDevice
    * @param {(cookie: any) => Promise<void>} options.callbacks.onDeallocateDevice
    */
   constructor({ sessionState, logger, callbacks }) {
@@ -40,7 +40,7 @@ class IPCServer {
     this._ipc.config.logger = (msg) => this._logger.trace(msg);
 
     await new Promise((resolve) => {
-      // TODO: handle reject
+      // It is worth to handle rejection here some day
       this._ipc.serve(() => resolve());
       this._ipc.server.on('conductEarlyTeardown', this.onConductEarlyTeardown.bind(this));
       this._ipc.server.on('registerContext', this.onRegisterContext.bind(this));
@@ -73,6 +73,7 @@ class IPCServer {
     this._ipc.server.emit(socket, 'registerContextDone', {
       testResults: this._sessionState.testResults,
       testSessionIndex: this._sessionState.testSessionIndex,
+      unsafe_earlyTeardown: this._sessionState.unsafe_earlyTeardown,
     });
   }
 
@@ -90,10 +91,11 @@ class IPCServer {
     }
   }
 
-  onConductEarlyTeardown(_data = null, socket = null) {
-    // Note that we don't save `unsafe_earlyTeardown` in the primary session state
-    // because it's transient and needed only to make the workers quit early.
+  onConductEarlyTeardown({ permanent }, socket = null) {
     const newState = { unsafe_earlyTeardown: true };
+    if (permanent) {
+      Object.assign(this._sessionState, newState);
+    }
 
     if (socket) {
       this._ipc.server.emit(socket, 'conductEarlyTeardownDone', newState);
@@ -102,11 +104,11 @@ class IPCServer {
     this._ipc.server.broadcast('sessionStateUpdate', newState);
   }
 
-  async onAllocateDevice(_payload, socket) {
+  async onAllocateDevice({ deviceConfig }, socket) {
     let deviceCookie;
 
     try {
-      deviceCookie = await this._callbacks.onAllocateDevice();
+      deviceCookie = await this._callbacks.onAllocateDevice(deviceConfig);
       this._ipc.server.emit(socket, 'allocateDeviceDone', { deviceCookie });
     } catch (error) {
       this._ipc.server.emit(socket, 'allocateDeviceDone', serializeObjectWithError({ error }));

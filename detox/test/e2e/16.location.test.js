@@ -1,45 +1,91 @@
-const exec = require('child-process-promise').exec;
+const LOCATION_SCREEN_BUTTON_TEXT = 'Location';
+const LOCATION_LATITUDE_TEST_ID = 'location_latitude';
+const LOCATION_LONGITUDE_TEST_ID = 'location_longitude';
+const LOCATION_ERROR_TEST_ID = 'location_error';
+const GET_LOCATION_BUTTON_TEST_ID = 'get_location_button';
 
-//TODO: Ignoring the test in CI until fbsimctl supports Xcode 9
-async function isFbsimctlInstalled() {
-  try {
-    await exec(`which fbsimctl`);
-    return true;
-  } catch (e) {
-    console.log(`setLocation only works through fbsimctl currently`);
-    return false;
+const DUMMY_COORDINATE_1 = -80.125;
+const DUMMY_COORDINATE_2 = 66.5;
+
+describe('set location', () => {
+  const enterLocationScreen = async (location) => {
+    await device.launchApp({
+      delete: true,
+      ...(location !== undefined && { permissions: { location: location } }),
+    });
+
+    await element(by.text(LOCATION_SCREEN_BUTTON_TEXT)).tap();
   }
-}
 
-describe('location', () => {
-  const lat = -80.125;
-  const lon = 66.5;
+  const updateLocationInfo = async () => {
+    await element(by.id(GET_LOCATION_BUTTON_TEST_ID)).tap();
+  }
 
-  // Skipped on Android because there is no Android permissions support yet
-  it(':ios: Location should be unavailable', async () => {
-    if (!await isFbsimctlInstalled()) {
-      return;
-    }
-    await device.relaunchApp({ permissions: { location: 'never' } });
-    await element(by.text('Location')).tap();
-    await element(by.id('getLocationButton')).tap();
-    await expect(element(by.id('error'))).toBeVisible();
+  const expectLocationToAppear = async (latitude, longitude) => {
+    await waitFor(element(by.id(LOCATION_LATITUDE_TEST_ID))).toHaveText(`Latitude: ${latitude}`).withTimeout(3000);
+    await expect(element(by.id(LOCATION_LONGITUDE_TEST_ID))).toHaveText(`Longitude: ${longitude}`);
+  }
+
+  const expectErrorToAppear = async () => {
+    await waitFor(element(by.id(LOCATION_ERROR_TEST_ID))).toBeVisible().withTimeout(3000);
+    await expect(element(by.id(LOCATION_LATITUDE_TEST_ID))).not.toBeVisible();
+    await expect(element(by.id(LOCATION_LONGITUDE_TEST_ID))).not.toBeVisible();
+  }
+
+  describe(':android: permission granted in the app manifest', () => {
+    it('should set location', async () => {
+      await enterLocationScreen();
+
+      await device.setLocation(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+      await updateLocationInfo();
+
+      await expectLocationToAppear(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+    });
+
+    it('should set location multiple times', async () => {
+      await enterLocationScreen();
+
+      await device.setLocation(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+      await device.setLocation(DUMMY_COORDINATE_2, DUMMY_COORDINATE_1);
+      await updateLocationInfo();
+
+      await expectLocationToAppear(DUMMY_COORDINATE_2, DUMMY_COORDINATE_1);
+    });
   });
 
-  it('Should accept a location', async () => {
-    const isIOS = device.getPlatform() === 'ios';
+  describe(':ios: permission set on launch config', () => {
+    it('should show error when permission defined as `never`', async () => {
+      await enterLocationScreen('never');
+      await updateLocationInfo();
+      await expectErrorToAppear();
+    });
 
-    if (isIOS && !await isFbsimctlInstalled()) {
-      return;
-    }
+    it('should set location when permission defined as `inuse`', async () => {
+      await enterLocationScreen('inuse');
 
-    await device.relaunchApp({ permissions: { location: 'always' } });
-    await device.setLocation(lat, lon);
-    await element(by.text('Location')).tap();
-    await element(by.id('getLocationButton')).tap();
-    await waitFor(element(by.text(`Latitude: ${lat}`))).toBeVisible().withTimeout(5500);
+      await device.setLocation(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+      await updateLocationInfo();
 
-    await expect(element(by.text(`Latitude: ${lat}`))).toBeVisible();
-    await expect(element(by.text(`Longitude: ${lon}`))).toBeVisible();
+      await expectLocationToAppear(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+    });
+
+    it('should set location when permission defined as `always`', async () => {
+      await enterLocationScreen('always');
+
+      await device.setLocation(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+      await updateLocationInfo();
+
+      await expectLocationToAppear(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+    });
+
+    it('should set location multiple times', async () => {
+      await enterLocationScreen('always');
+
+      await device.setLocation(DUMMY_COORDINATE_1, DUMMY_COORDINATE_2);
+      await device.setLocation(DUMMY_COORDINATE_2, DUMMY_COORDINATE_1);
+      await updateLocationInfo();
+
+      await expectLocationToAppear(DUMMY_COORDINATE_2, DUMMY_COORDINATE_1);
+    });
   });
 });

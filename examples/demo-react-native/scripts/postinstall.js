@@ -1,29 +1,43 @@
-const rnVersion = function() {
-  const rnPackageJson = require('react-native/package.json');
-  return rnPackageJson.version;
-}();
+const fs = require('fs-extra');
+const cp = require('child_process');
+const { setGradleVersionByRNVersion } = require('detox/scripts/updateGradle');
 
-function patchHermesLocationForRN60Android() {
-  const semver = require('semver');
-  const fs = require('fs-extra');
-  const path = require('path');
+const patchBoostPodspec = () => {
+  const log = message => console.log(`[POST-INSTALL] ${message}`);
+  const boostPodspecPath = `${process.cwd()}/node_modules/react-native/third-party-podspecs/boost.podspec`;
+  const originalUrl = 'https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2';
+  const patchedUrl = 'https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.bz2';
 
-  if (semver.minor(rnVersion) === 60) {
-    console.log('Detox post-install: Detected RN .60...');
+  if (!fs.existsSync(boostPodspecPath)) {
+    log('boost.podspec does not exist, skipping patch...');
+    return;
+  }
 
-    const HERMES_PATH_ROOT = path.join('node_modules', 'hermesvm');
-    const HERMES_PATH_RN = path.join('node_modules', 'react-native', 'node_modules', 'hermesvm');
+  let boostPodspec = fs.readFileSync(boostPodspecPath, 'utf8');
 
-    const hermesIsInRoot = fs.existsSync(HERMES_PATH_ROOT);
-    const hermesIsInRN = fs.existsSync(HERMES_PATH_RN);
+  if (!boostPodspec.includes(originalUrl)) {
+    log('boost.podspec is already patched or the URL is different, skipping patch...');
+    return;
+  }
 
-    if (hermesIsInRoot && !hermesIsInRN) {
-      console.log('Detox post-install: Applying hermes-vm patch for RN .60...');
-      fs.ensureDirSync(path.join(HERMES_PATH_RN, 'android'));
-      fs.copySync(path.join(HERMES_PATH_ROOT, 'android'), path.join(HERMES_PATH_RN, 'android'));
-    } else {
-      console.log('Detox post-install: hermes-vm patch not needed:', hermesIsInRoot, hermesIsInRN);
-    }
+  log('Applying boost.podspec patch...');
+  boostPodspec = boostPodspec.replace(originalUrl, patchedUrl);
+  fs.writeFileSync(boostPodspecPath, boostPodspec, 'utf8');
+};
+
+function podInstallIfRequired() {
+  if (process.platform === 'darwin' && !process.env.DETOX_DISABLE_POD_INSTALL) {
+    console.log('[POST-INSTALL] Running pod install...');
+    patchBoostPodspec();
+
+    cp.execSync('pod install', {
+      cwd: `${process.cwd()}/ios`,
+      stdio: 'inherit'
+    });
   }
 }
-patchHermesLocationForRN60Android();
+
+console.log('[POST-INSTALL] Running Detox\'s example-app post-install script...');
+podInstallIfRequired();
+setGradleVersionByRNVersion();
+console.log('[POST-INSTALL] Completed!');

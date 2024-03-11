@@ -247,10 +247,13 @@ class Element {
     return this.withAction('scroll', traceDescription, pixels, direction, startPositionX, startPositionY);
   }
 
-  scrollTo(edge) {
+  scrollTo(edge, startPositionX = NaN, startPositionY = NaN) {
     if (!['left', 'right', 'top', 'bottom'].some(option => option === edge)) throw new Error('edge should be one of [left, right, top, bottom], but got ' + edge);
-    const traceDescription = actionDescription.scrollTo(edge);
-    return this.withAction('scrollTo', traceDescription, edge);
+    if (typeof startPositionX !== 'number') throw new Error('startPositionX should be a number, but got ' + (startPositionX + (' (' + (typeof startPositionX + ')'))));
+    if (typeof startPositionY !== 'number') throw new Error('startPositionY should be a number, but got ' + (startPositionY + (' (' + (typeof startPositionY + ')'))));
+
+    const traceDescription = actionDescription.scrollTo(edge, startPositionX, startPositionY);
+    return this.withAction('scrollTo', traceDescription, edge, startPositionX, startPositionY);
   }
 
   swipe(direction, speed = 'fast', normalizedSwipeOffset = NaN, normalizedStartingPointX = NaN, normalizedStartingPointY = NaN) {

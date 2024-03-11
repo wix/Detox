@@ -1,7 +1,6 @@
 const path = require('path');
 
 const fs = require('../../utils/fsext');
-const log = require('../../utils/logger').child({ cat: 'artifacts-plugin,artifacts' });
 const FileArtifact = require('../templates/artifact/FileArtifact');
 const temporaryPath = require('../utils/temporaryPath');
 

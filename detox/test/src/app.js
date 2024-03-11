@@ -3,7 +3,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Linking,
   Platform,
   NativeModules,
 } from 'react-native';
@@ -21,22 +20,13 @@ export default class example extends Component {
     this.state = {
       screen: undefined,
       screenProps: {},
-      url: undefined,
       notification: undefined,
     };
-
-    Linking.addEventListener('url', (params) => this._handleOpenURL(params));
 
     this.setScreen = this.setScreen.bind(this);
   }
 
-  async componentDidMount() {
-    const url = await Linking.getInitialURL();
-    if (url) {
-      console.log('App@didMount: Found pending URL', url);
-      this.setState({url: url});
-    }
-  }
+  async componentDidMount() {}
 
   renderButton(title, onPressCallback) {
     return (
@@ -68,33 +58,11 @@ export default class example extends Component {
     });
   }
 
-  renderText(text) {
-    return (
-      <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 25}}>
-          {text}
-        </Text>
-      </View>
-    );
-  }
-
   renderInlineSeparator() {
     return <Text style={{width: 10}}> | </Text>;
   }
 
-  render() {
-    if (this.state.url) {
-      console.log('App@render: rendering a URL:', this.state.url);
-      return this.renderText(this.state.url);
-    }
-
-    if (this.state.screen) {
-      console.log('App@render: JS rendering screen');
-      const Screen = this.state.screen;
-      return <Screen setScreen={this.setScreen}/>;
-    }
-
-    console.log('App@render: JS rendering main screen');
+  renderMainMenu() {
     return (
       <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
@@ -125,7 +93,6 @@ export default class example extends Component {
         {isAndroid && this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
 
-        { /* TODO: Push this into a dedicated screen */ }
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderButton('Crash', () => {
             // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
@@ -150,12 +117,29 @@ export default class example extends Component {
         {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Init URL', Screens.LaunchUrlScreen)}
+          {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
           {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>
       </View>
     );
+  }
+
+  renderInnerScreen() {
+    const Screen = this.state.screen;
+    return <Screen setScreen={this.setScreen}/>;
+  }
+
+  render() {
+    if (this.state.screen) {
+      console.log('App@render: JS rendering screen');
+      return this.renderInnerScreen();
+    }
+
+    console.log('App@render: JS rendering main screen');
+    return this.renderMainMenu();
 }
 
   setScreen(name) {
@@ -177,10 +161,5 @@ export default class example extends Component {
         {isAndroid && this.renderScreenButton('Native Animation', Screens.NativeAnimationsScreen)}
       </View>
     );
-  }
-
-  _handleOpenURL(params) {
-    console.log('App@handleOpenURL:', params);
-    this.setState({url: params.url});
   }
 }

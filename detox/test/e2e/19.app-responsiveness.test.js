@@ -11,7 +11,7 @@ describe(':android: App responsiveness', () => {
       logInterceptor.stopAll();
     }
 
-    if (!logInterceptor.strerrData.includes('APP_NONRESPONSIVE')) {
+    if (!logInterceptor.strerrData.includes('Application Not Responding')) {
       console.error('APP_NONRESPONSIVE warning-log was expected, but got:\n'+logInterceptor.strerrData);
       throw new Error('APP_NONRESPONSIVE not found in intercepted log');
     }

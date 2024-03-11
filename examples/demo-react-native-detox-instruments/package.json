@@ -1,17 +1,17 @@
 {
   "name": "demo-react-native-detox-instruments",
-  "version": "20.13.0",
+  "version": "20.18.5",
   "private": true,
   "scripts": {},
   "devDependencies": {
-    "detox": "^20.13.0"
+    "detox": "^20.18.5"
   },
   "detox": {
     "configurations": {
       "ios.sim.release": {
         "binaryPath": "../demo-react-native/ios/build/Build/Products/Release-iphonesimulator/example.app",
         "type": "ios.simulator",
-        "name": "iPhone 11 Pro"
+        "name": "iPhone 15 Pro Max"
       }
     }
   }

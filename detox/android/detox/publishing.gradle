@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'signing'
 apply from: './publish-pom.gradle'
+apply from: '../rninfo.gradle'
 
 String TARGET_LOCAL_DIR = "$buildDir/../../../Detox-android"
 String TARGET_MAVEN_CENTRAL_URL = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
@@ -110,7 +111,7 @@ tasks.named("dokkaJavadoc") {
 // suppression config var or something.
 task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from "$buildDir/dokkaDoc"
-    classifier = 'javadoc'
+    archiveClassifier.set("javadoc")
 }
 
 /*
@@ -119,7 +120,7 @@ task dokkaDocJar(type: Jar, dependsOn: dokkaJavadoc) {
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set("sources")
 }
 
 /*
@@ -180,7 +181,11 @@ publishing {
 
                 "maven${variantNameCapitalized}Aar"(MavenPublication) {
                     groupId 'com.wix'
-                    artifactId 'detox'
+                    if (rnInfo.isRN72OrHigher) {
+                        artifactId 'detox'
+                    } else {
+                        artifactId 'detox-legacy'
+                    }
                     version "$_versionName"
 
                     // Register built .aar as published artifact (as a file, explicitly)
@@ -193,11 +198,11 @@ publishing {
 
                     // Register sources, javadoc as published artifacts (via equivalent tasks' output)
                     artifact sourcesJar
-                    artifact dokkaDocJar
+                    //artifact dokkaDocJar // waiting for dokka to fix https://github.com/Kotlin/dokka/issues/3153
 
                     // Also register source, javadoc as archive-artifacts, for signing
                     declareArchive sourcesJar
-                    declareArchive dokkaDocJar
+                    //declareArchive dokkaDocJar // waiting for dokka to fix https://github.com/Kotlin/dokka/issues/3153
 
                     // Add detox package metadata to the .pom
                     pom {

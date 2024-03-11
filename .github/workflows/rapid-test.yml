@@ -25,7 +25,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Bootstrap Lerna
-        run: npx lerna@3 bootstrap --no-ci
+        run: npx lerna@6 bootstrap --no-ci
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
@@ -47,6 +47,13 @@ jobs:
       - name: Generation tests
         run: npm test
         working-directory: generation
+      - name: Pack Allure results
+        run: zip -r allure-results.zip detox/allure-results detox/test/allure-results generation/allure-results
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-linux
+          path: allure-results.zip
 
   windows:
     name: Windows
@@ -57,7 +64,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Bootstrap Lerna (Light)
-        run: npx lerna@3 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
+        run: npx lerna@6 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
@@ -67,3 +74,12 @@ jobs:
       - name: Integration tests
         run: npm run integration
         working-directory: detox/test
+      - name: Pack Allure results
+        run: |
+          Compress-Archive -Path detox/allure-results -DestinationPath allure-results.zip
+        shell: pwsh
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results-windows
+          path: allure-results.zip

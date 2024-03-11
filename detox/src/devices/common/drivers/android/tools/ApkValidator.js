@@ -1,6 +1,6 @@
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 
-const setupGuideHint = 'For further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md';
+const setupGuideHint = 'For further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup';
 
 class ApkValidator {
   constructor(aapt) {

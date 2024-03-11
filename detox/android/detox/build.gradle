@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply from: '../rninfo.gradle'
 
 def _kotlinMinVersion = '1.2.0'
-def _materialMinVersion = '1.2.1'
+def _materialMinVersion = '1.11.0'
 
 def _ext = rootProject.ext
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
@@ -20,9 +20,15 @@ def _rnNativeArtifact = rnInfo.isRN71OrHigher
         ? "com.facebook.react:react-android:${rnInfo.version}"
             : 'com.facebook.react:react-native:+'
 
+println "[$project] Resorted to RN native artifact $_rnNativeArtifact"
+
 android {
-    compileSdkVersion _compileSdkVersion
-    buildToolsVersion _buildToolsVersion
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+    if (agpVersion >= 7) {
+        namespace "com.wix.detox"
+    }
+    compileSdk _compileSdkVersion
+    buildToolsVersion = _buildToolsVersion
 
     defaultConfig {
         minSdkVersion _minSdkVersion
@@ -33,7 +39,7 @@ android {
         consumerProguardFiles 'proguard-rules.pro'
     }
 
-    flavorDimensions 'detox'
+    flavorDimensions = ['detox']
     productFlavors {
         full {
             dimension 'detox'
@@ -48,7 +54,7 @@ android {
         unitTests.returnDefaultValues = true
         unitTests.all { t ->
             reports {
-                html.enabled true
+                html.required = true
             }
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
@@ -59,7 +65,7 @@ android {
                     def repeatLength = output.length()
                     println '\n' + ('-' * repeatLength) + '\n' + output + '\n' + ('-' * repeatLength) + '\n'
 
-                    println "see report at file://${t.reports.html.destination}/index.html"
+                    println "see report at file://${t.reports.html.outputLocation}/index.html"
                 }
             }
         }
@@ -75,6 +81,26 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    if (rnInfo.isRN72OrHigher) {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_17
+            targetCompatibility JavaVersion.VERSION_17
+        }
+
+        kotlinOptions {
+            jvmTarget = '17'
+        }
+    } else {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
+        }
+
+        kotlinOptions {
+            jvmTarget = '11'
+        }
     }
 }
 
@@ -97,13 +123,13 @@ dependencies {
     // Versions are in-sync with the 'androidx-test-1.4.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.4.0
     // Important: Should remain so when generator tag is replaced!
-    api('androidx.test.espresso:espresso-core:3.4.0') {
+    api('androidx.test.espresso:espresso-core:3.5.1') {
         because 'Needed all across Detox but also makes Espresso seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
-    api('androidx.test.espresso:espresso-web:3.4.0') {
+    api('androidx.test.espresso:espresso-web:3.5.1') {
         because 'Web-View testing'
     }
-    api('androidx.test.espresso:espresso-contrib:3.4.0') {
+    api('androidx.test.espresso:espresso-contrib:3.5.1') {
         because 'Android datepicker support'
         exclude group: "org.checkerframework", module: "checker"
     }
@@ -145,8 +171,8 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.16.1'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$_kotlinVersion"
     testImplementation 'org.apache.commons:commons-io:1.3.2'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
-    testImplementation 'org.robolectric:robolectric:4.4'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.2.1'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
 
     testImplementation("com.google.android.material:material:$_materialMinVersion") {
         because 'Material components are mentioned explicitly (e.g. Slider in get-attributes handler)'

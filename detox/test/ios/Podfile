@@ -1,14 +1,52 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
+    require_relative '../node_modules/react-native/scripts/react_native_pods'
+    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+    require_relative '../node_modules/react-native-permissions/scripts/setup'
+else
+    # Resolve react_native_pods.rb with node to allow for hoisting
+    def node_require(script)
+      # Resolve script with node to allow for hoisting
+      require Pod::Executable.execute_command('node', ['-p',
+        "require.resolve(
+          '#{script}',
+          {paths: [process.argv[1]]},
+        )", __dir__]).strip
+    end
 
-platform :ios, '13.0'
+    node_require('react-native/scripts/react_native_pods.rb')
+    node_require('react-native-permissions/scripts/setup.rb')
+end
+platform :ios, min_ios_version_supported
 
 install! 'cocoapods', :deterministic_uuids => false
+
+# Comment unwanted permissions
+setup_permissions([
+  'AppTrackingTransparency',
+  'Bluetooth',
+  'Calendars',
+  'Camera',
+  'Contacts',
+  'FaceID',
+  'LocationAccuracy',
+  'LocationAlways',
+  'LocationWhenInUse',
+  'MediaLibrary',
+  'Microphone',
+  'Motion',
+  'Notifications',
+  'PhotoLibrary',
+  'PhotoLibraryAddOnly',
+  'Reminders',
+  'Siri',
+  'SpeechRecognition',
+  'StoreKit',
+])
 
 def shared_pods
     config = use_native_modules!
 
-    if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(68|69|70).*/)
+    if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70).*/)
       # Flags change depending on the env values.
       flags = get_default_flags()
 
@@ -31,7 +69,6 @@ end
 target 'example' do
   shared_pods
   pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-
 end
 
 target 'example_ci' do
@@ -66,19 +103,18 @@ post_install do |installer|
   __apply_update_deployment_target_workaround(installer)
   __apply_Xcode_15_post_install_workaround(installer)
 
-  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.6[6,7,8,9].*/)
-    react_native_post_install(installer)
-  else
-    react_native_post_install(
-      installer,
-        # Set `mac_catalyst_enabled` to `true` in order to apply patches
-        # necessary for Mac Catalyst builds
-        :mac_catalyst_enabled => false
-    )
-  end
+  config = use_native_modules!
+
+  react_native_post_install(
+    installer,
+      config[:reactNativePath],
+      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+      # necessary for Mac Catalyst builds
+      :mac_catalyst_enabled => false
+  )
 
   # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
-  if !ENV["REACT_NATIVE_VERSION"] || ENV["REACT_NATIVE_VERSION"].match(/0.(66|67|68|69|70).*/)
+  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|72).*/)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

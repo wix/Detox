@@ -1,7 +1,16 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
+    require_relative '../node_modules/react-native/scripts/react_native_pods'
+    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+else
+    # Resolve react_native_pods.rb with node to allow for hoisting
+    require Pod::Executable.execute_command('node', ['-p',
+      'require.resolve(
+        "react-native/scripts/react_native_pods.rb",
+        {paths: [process.argv[1]]},
+      )', __dir__]).strip
+end
 
-platform :ios, '13.0'
+platform :ios, min_ios_version_supported
 
 target 'example' do
   config = use_native_modules!
@@ -15,13 +24,20 @@ target 'example' do
 
   post_install do |installer|
     __apply_update_deployment_target_workaround(installer)
+    __apply_Xcode_15_workaround(installer)
 
      react_native_post_install(
        installer,
+       config[:reactNativePath],
        # Set `mac_catalyst_enabled` to `true` in order to apply patches
        # necessary for Mac Catalyst builds
        :mac_catalyst_enabled => false
      )
+
+    # See https://github.com/wix/Detox/pull/3035#discussion_r774747705
+    if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|72).*/)
+     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    end
   end
 end
 
@@ -34,6 +50,16 @@ def __apply_update_deployment_target_workaround(installer)
       if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] < '12.4'
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
       end
+    end
+  end
+end
+
+def __apply_Xcode_15_workaround(installer)
+  # This is a workaround for Xcode 15, see: https://github.com/facebook/react-native/issues/37748.
+  puts "Applying Xcode 15 post install workaround"
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
     end
   end
 end

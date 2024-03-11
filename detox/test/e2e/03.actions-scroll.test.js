@@ -46,6 +46,32 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('HText1'))).toBeVisible();
   });
 
+  it('should scroll to edge from a custom start-position ratio', async () => {
+    await expect(element(by.text('Text12'))).not.toBeVisible();
+    await element(by.id('toggleScrollOverlays')).tap();
+    await element(by.id('ScrollView161')).scrollTo('bottom', 0.2, 0.4);
+    await element(by.id('toggleScrollOverlays')).tap();
+    await expect(element(by.text('Text12'))).toBeVisible();
+
+    await element(by.id('toggleScrollOverlays')).tap();
+    await element(by.id('ScrollView161')).scrollTo('top', 0.8, 0.6);
+    await element(by.id('toggleScrollOverlays')).tap();
+    await expect(element(by.text('Text1'))).toBeVisible();
+  });
+
+  it('should scroll to edge horizontally from a custom start-position ratio', async () => {
+    await expect(element(by.text('HText8'))).not.toBeVisible();
+    await element(by.id('toggleScrollOverlays')).tap();
+    await element(by.id('ScrollViewH')).scrollTo('right', 0.8, 0.6);
+    await element(by.id('toggleScrollOverlays')).tap();
+    await expect(element(by.text('HText8'))).toBeVisible();
+
+    await element(by.id('toggleScrollOverlays')).tap();
+    await element(by.id('ScrollViewH')).scrollTo('left',0.2, 0.4);
+    await element(by.id('toggleScrollOverlays')).tap();
+    await expect(element(by.text('HText1'))).toBeVisible();
+  });
+
   it('should scroll from a custom start-position ratio', async () => {
     await expect(element(by.text('Text12'))).not.toBeVisible();
     await element(by.id('toggleScrollOverlays')).tap();

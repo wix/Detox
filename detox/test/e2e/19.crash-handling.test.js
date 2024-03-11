@@ -18,12 +18,25 @@ describe('Crash Handling', () => {
   it('Should throw error upon internal app crash', async () => {
     await device.reloadReactNative();
     await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
-    await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
+  });
+
+  it('Should throw the same crash error even in the next test if the app was not relaunched', async () => {
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'The app has crashed');
   });
 
   it('Should recover from app crash', async () => {
     await device.launchApp({ newInstance: false });
     await expect(element(by.text('Sanity'))).toBeVisible();
+  });
+
+  it('Should print generic connectivity error when the app was terminated intentionally', async () => {
+    /**
+     * @issue https://github.com/wix/Detox/issues/4377
+     * @tag flaky
+     */
+    await device.terminateApp();
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // see the issue for details
+    await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
   it('Should throw a detailed error upon early app crash', async () => {
@@ -51,12 +64,14 @@ describe('Crash Handling', () => {
   it(':android: Should throw a detailed error upon app bootstrap crash', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ detoxAndroidCrashingActivity: true }),
-      'Failed to run application on the device');
+      'The app has crashed, see the details below:');
 
     // It's important that the native-error message (containing the native stack-trace) would also
     // be included in the error's stack property, in order for Jest (specifically) to properly output all
     // of that into the shell, as we expect it to.
-    jestExpect(error.stack).toContain('Native stacktrace dump:\njava.lang.IllegalStateException: This is an intentional crash!');
-    jestExpect(error.stack).toContain('\tat com.example.CrashingActivity.onResume');
+    jestExpect(error.stack).toContain('java.lang.RuntimeException: Unable to resume activity');
+
+    // In particular, we want the original cause to be bundled in.
+    jestExpect(error.stack).toContain('Caused by: java.lang.IllegalStateException: This is an intentional crash!');
   }, 60000);
 });

@@ -181,6 +181,8 @@ describe('expectTwo API Coverage', () => {
 
       await expectToThrow(() => e.element(e.by.id('someId')).scrollTo(0));
       await expectToThrow(() => e.element(e.by.id('someId')).scrollTo('noDirection'));
+      await expectToThrow(() => e.element(e.by.id('someId')).scrollTo('top','Nan', 0.5));
+      await expectToThrow(() => e.element(e.by.id('someId')).scrollTo('top', 0.5, 'Nan'));
 
       await expectToThrow(() => e.element(e.by.id('someId')).swipe(4, 'fast'));
       await expectToThrow(() => e.element(e.by.id('someId')).swipe('left', 'fast', 20));
@@ -266,6 +268,7 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down', 0, 0);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scrollTo('left');
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scrollTo('left', 0.1, 0.1);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('left');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('left', 'fast');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('left', 'slow', 0.1);
@@ -283,12 +286,8 @@ describe('expectTwo API Coverage', () => {
 });
 
 async function expectToThrow(func) {
-  try {
-    await func();
-    fail('should throw');
-  } catch (ex) {
-    expect(ex).toBeDefined();
-  }
+  const asyncWrapper = async () => await func();
+  await expect(asyncWrapper()).rejects.toThrow();
 }
 
 class MockExecutor {

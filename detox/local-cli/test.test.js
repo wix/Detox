@@ -1,10 +1,11 @@
 // @ts-nocheck
 if (process.platform === 'win32') {
-  jest.retryTimes(1); // TODO: investigate why it gets stuck for the 1st time on Windows
+  jest.retryTimes(1); // TODO [2024-12-01]: investigate why it gets stuck for the 1st time on Windows
 }
 
 jest.mock('../src/logger/DetoxLogger');
 jest.mock('./utils/jestInternals');
+jest.mock('./utils/interruptListeners');
 
 const cp = require('child_process');
 const cpSpawn = cp.spawn;
@@ -17,6 +18,8 @@ const _ = require('lodash');
 const { buildMockCommand, callCli } = require('../__tests__/helpers');
 
 const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./testCommand/warnings');
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('CLI', () => {
   let _env;
@@ -140,6 +143,38 @@ describe('CLI', () => {
       test('should not hint essential environment variables', () => {
         expect(cliCall().fullCommand).not.toMatch(/\bDETOX_CONFIG_PATH=.*\bexecutable\b/);
       });
+    });
+  });
+
+  describe('detached runner', () => {
+    beforeEach(() => {
+      detoxConfig.testRunner.detached = true;
+    });
+
+    test('should be able to run as you would normally expect', async () => {
+      await run();
+      expect(_.last(cliCall().argv)).toEqual('e2e/config.json');
+    });
+
+    test('should intercept SIGINT and SIGTERM', async () => {
+      const { subscribe, unsubscribe } = jest.requireMock('./utils/interruptListeners');
+      const simulateSIGINT = () => subscribe.mock.calls[0][0]();
+
+      mockExitCode(1);
+      mockLongRun(2000);
+
+      await Promise.all([
+        run('--retries 2').catch(_.noop),
+        sleep(1000).then(() => {
+          simulateSIGINT();
+          simulateSIGINT();
+          expect(unsubscribe).not.toHaveBeenCalled();
+        }),
+      ]);
+
+      expect(unsubscribe).toHaveBeenCalled();
+      expect(cliCall(0)).not.toBe(null);
+      expect(cliCall(1)).toBe(null);
     });
   });
 
@@ -618,6 +653,11 @@ describe('CLI', () => {
 
   function mockExitCode(code) {
     mockExecutable.options.exitCode = code;
+    detoxConfig.testRunner.args.$0 = mockExecutable.cmd;
+  }
+
+  function mockLongRun(ms) {
+    mockExecutable.options.sleep = ms;
     detoxConfig.testRunner.args.$0 = mockExecutable.cmd;
   }
 });

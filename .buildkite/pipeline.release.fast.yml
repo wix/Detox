@@ -15,14 +15,28 @@
     env:
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
+      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
+    artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
+
+  - label: ":android: Package android Legacy"
+    key: 'android_package_legacy'
+    command:
+      - "nvm install"
+      - "npm install"
+      - "npm run package:android"
+    env:
+      REACT_NATIVE_VERSION: 0.71.10
+      DETOX_DISABLE_POSTINSTALL: true
+      DETOX_DISABLE_POD_INSTALL: true
     artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
 
   - label: ":shipit: Publish"
     depends_on:
       - 'android_package'
+      - 'android_package_legacy'
       - 'ios_package'
     command:
-      - "nvm install 16"
+      - "nvm install 20"
       - "npm install"
       - "npm run release"
     env:

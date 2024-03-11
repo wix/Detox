@@ -1,4 +1,5 @@
 const path = require('path');
+const _ = require('lodash');
 const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
@@ -7,15 +8,37 @@ const maxWorkersMap = {
   'ios.simulator': 2,
 };
 
+
 module.exports = async () => {
   const config = await resolveConfig();
 
+  /** @type {import('jest-allure2-reporter').ReporterOptions} */
+  const jestAllure2ReporterOptions = {
+    overwrite: !process.env.CI,
+    attachments: {
+      fileHandler: 'copy',
+    },
+    testCase: {
+      labels: {
+        package: ({ filePath }) => filePath.slice(1).join('/'),
+        testMethod: ({ testCase }) => testCase.fullName,
+        tag: ['e2e', ...config.configurationName.split('.')],
+      },
+    },
+    environment: () => ({
+      'version.node': process.version,
+      'version.jest': require('jest/package.json').version,
+      'version.allure-reporter': require('jest-allure2-reporter/package.json').version,
+      ..._(process.env)
+        .pickBy((_1, key) => key.match(/detox/i))
+        .mapKeys((_1, key) => 'env.' + key)
+        .value()
+    }),
+  };
+
   const reporters = [
     '<rootDir>/runners/jest/reporter',
-    ['jest-allure2-reporter', {
-      getEnvironmentInfo: false,
-      overwriteResultsDir: !process.env.CI,
-    }]
+    ['jest-allure2-reporter', jestAllure2ReporterOptions],
   ];
 
   if (process.env.DISABLE_JUNIT_REPORTER !== '1') {
@@ -25,6 +48,13 @@ module.exports = async () => {
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
+    'testEnvironmentOptions': {
+      'eventListeners': [
+        'jest-metadata/environment-listener',
+        'jest-allure2-reporter/environment-listener',
+        require.resolve('detox-allure2-adapter'),
+      ]
+    },
     'testRunner': './test/node_modules/jest-circus/runner',
     'testMatch': [
       '<rootDir>/test/e2e/**/*.test.{js,ts}',

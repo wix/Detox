@@ -137,6 +137,10 @@ class Client {
   }
 
   async sendAction(action) {
+    if (this._pendingAppCrash) {
+      throw this._pendingAppCrash;
+    }
+
     const { shouldQueryStatus, ...options } = this._inferSendOptions(action);
 
     return await (shouldQueryStatus
@@ -187,14 +191,14 @@ class Client {
       this._whenAppIsReady = new Deferred();
 
       await this._whenAppIsConnected.promise;
-      // TODO: optimize traffic (!) - we can just listen for 'ready' event
+      // TODO [2024-12-01]: optimize traffic (!) - we can just listen for 'ready' event
       // if app always sends it upon load completion. On iOS it works,
       // but not on Android. Afterwards, this will suffice:
       //
       // await this._whenAppIsReady.promise;
     }
 
-    // TODO: move to else branch after the optimization
+    // TODO [2024-12-01]: move to else branch after the optimization ↑↑
     if (!this._whenAppIsReady.isResolved()) {
       this._whenAppIsReady = new Deferred();
       await this.sendAction(new actions.Ready());
@@ -306,6 +310,8 @@ class Client {
   }
 
   _onAppConnected() {
+    this._pendingAppCrash = null;
+
     if (this._whenAppIsConnected.isPending()) {
       this._whenAppIsConnected.resolve();
     } else {
@@ -356,7 +362,6 @@ class Client {
     if (this._pendingAppCrash) {
       this._whenAppDisconnected.reject(this._pendingAppCrash);
       this._asyncWebSocket.rejectAll(this._pendingAppCrash);
-      this._pendingAppCrash = null;
     } else if (this._asyncWebSocket.hasPendingActions()) {
       const error = new DetoxRuntimeError('The app has unexpectedly disconnected from Detox server.');
       this._asyncWebSocket.rejectAll(error);

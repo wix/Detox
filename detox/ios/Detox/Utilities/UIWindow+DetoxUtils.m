@@ -224,37 +224,37 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 }
 
 + (nullable UIWindow *)dtx_topMostWindowAtPoint:(CGPoint)point {
-  NSArray<UIWindow *> *windows = UIApplication.sharedApplication.windows;
+  NSArray<UIWindow *> *windows = [self dtx_allWindows];
 
-  NSArray<UIWindow *> *visibleWindowsAtPoint = [windows
-    filteredArrayUsingPredicate:[NSPredicate
-	predicateWithBlock:^BOOL(UIWindow *window, NSDictionary<NSString *, id> * _Nullable __unused bindings) {
-	  if (!CGRectContainsPoint(window.frame, point)) {
-		return NO;
-	  }
+  NSArray<UIWindow *> *visibleWindowsAtPoint = [windows filteredArrayUsingPredicate:
+		[NSPredicate predicateWithBlock:^BOOL(
+			UIWindow *window,
+			NSDictionary<NSString *, id> * _Nullable __unused bindings
+		) {
+			if (!CGRectContainsPoint(window.frame, point)) {
+				return NO;
+			}
 
-	  if (![window isVisibleAroundPoint:point]) {
-		return NO;
-	  }
+			if (![window isVisibleAroundPoint:point]) {
+				return NO;
+			}
 
-	  UIView * _Nullable hit = [window hitTest:point withEvent:nil];
-	  if (!hit) {
-		// The point lies completely outside the windos's hierarchy.
-		return NO;
-	  }
+			if (![window hitTest:point withEvent:nil]) {
+				// The point lies completely outside the window's hierarchy.
+				return NO;
+			}
 
-	  return YES;
-	}]];
+			return YES;
+		}]];
 
-  if (!visibleWindowsAtPoint) {
-	return nil;
+	if (!visibleWindowsAtPoint) {
+		return nil;
   }
 
   return [[visibleWindowsAtPoint
-	sortedArrayUsingComparator:^NSComparisonResult(UIWindow *window1, UIWindow *window2) {
-	  return window1.windowLevel - window2.windowLevel;
-	}]
-	lastObject];
+	  sortedArrayUsingComparator:^NSComparisonResult(UIWindow *window1, UIWindow *window2) {
+		return window1.windowLevel - window2.windowLevel;
+	}] lastObject];
 }
 
 @end

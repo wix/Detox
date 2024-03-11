@@ -45,7 +45,7 @@ async function interruptProcess(childProcessPromise, schedule) {
   const childProcess = childProcessPromise.childProcess;
   const cpid = childProcess.pid;
   const spawnargs = childProcess.spawnargs.join(' ');
-  const log = rootLogger.child({ event: 'SPAWN_KILL', pid: cpid });
+  const log = rootLogger.child({ event: 'SPAWN_KILL', cpid });
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {

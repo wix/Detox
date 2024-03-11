@@ -1,5 +1,4 @@
-/* global by, device, element */
-const _ = require('lodash');
+const { launchArgsDriver: driver } = require('./drivers/launch-args-driver');
 
 // Note: Android-only as, according to Leo, on iOS there's no added value here compared to
 // existing tests that check deep-link URLs. Combined with the fact that we do not yet
@@ -13,26 +12,27 @@ describe(':android: Launch arguments', () => {
 
   beforeEach(async () => {
     await device.selectApp('exampleWithArgs');
-    assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
+    driver.assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
   });
 
   it('should preserve a shared arg in spite of app reselection', async () => {
     const override = { ama: 'zed' };
 
     try {
-      assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
-      assertPreconfiguredValues(device.appLaunchArgs.shared.get(), {});
+      driver.assertPreconfiguredValues(device.appLaunchArgs.get(), defaultArgs);
+      driver.assertPreconfiguredValues(device.appLaunchArgs.shared.get(), {});
       device.appLaunchArgs.shared.modify(override);
 
-      assertPreconfiguredValues(device.appLaunchArgs.get(), { ...defaultArgs, ...override });
-      assertPreconfiguredValues(device.appLaunchArgs.shared.get(), override);
+      driver.assertPreconfiguredValues(device.appLaunchArgs.get(), { ...defaultArgs, ...override });
+      driver.assertPreconfiguredValues(device.appLaunchArgs.shared.get(), override);
 
       await device.selectApp('example');
-      assertPreconfiguredValues(device.appLaunchArgs.get(), override);
-      assertPreconfiguredValues(device.appLaunchArgs.shared.get(), override);
+      driver.assertPreconfiguredValues(device.appLaunchArgs.get(), override);
+      driver.assertPreconfiguredValues(device.appLaunchArgs.shared.get(), override);
 
       await device.launchApp({ newInstance: true });
-      await assertLaunchArgs(override);
+      await driver.navToLaunchArgsScreen();
+      await driver.assertLaunchArgs(override);
     } finally {
       device.appLaunchArgs.shared.reset();
     }
@@ -46,7 +46,8 @@ describe(':android: Launch arguments', () => {
     };
 
     await device.launchApp({ newInstance: true, launchArgs });
-    await assertLaunchArgs(launchArgs);
+    await driver.navToLaunchArgsScreen();
+    await driver.assertLaunchArgs(launchArgs);
   });
 
   it('should handle complex args when used on-site', async () => {
@@ -61,7 +62,8 @@ describe(':android: Launch arguments', () => {
     };
 
     await device.launchApp({ newInstance: true, launchArgs });
-    await assertLaunchArgs({
+    await driver.navToLaunchArgsScreen();
+    await driver.assertLaunchArgs({
       complex: JSON.stringify(launchArgs.complex),
       complexlist: JSON.stringify(launchArgs.complexlist),
     });
@@ -75,7 +77,8 @@ describe(':android: Launch arguments', () => {
     });
 
     await device.launchApp({ newInstance: true });
-    await assertLaunchArgs({
+    await driver.navToLaunchArgsScreen();
+    await driver.assertLaunchArgs({
       'goo': 'gle!',
       'ama': 'zon',
       'micro': 'soft',
@@ -93,7 +96,8 @@ describe(':android: Launch arguments', () => {
     });
 
     await device.launchApp({ newInstance: true, launchArgs });
-    await assertLaunchArgs({ anArg: 'aValue!' });
+    await driver.navToLaunchArgsScreen();
+    await driver.assertLaunchArgs({ anArg: 'aValue!' });
   });
 
   // Ref: https://developer.android.com/studio/test/command-line#AMOptionsSyntax
@@ -106,33 +110,7 @@ describe(':android: Launch arguments', () => {
     };
 
     await device.launchApp({ newInstance: true, launchArgs });
-    await assertLaunchArgs({ hello: 'world' }, ['debug', 'log', 'size']);
+    await driver.navToLaunchArgsScreen();
+    await driver.assertLaunchArgs({ hello: 'world' }, ['debug', 'log', 'size']);
   });
-
-  async function assertLaunchArgs(expected, notExpected) {
-    await element(by.text('Launch Args')).tap();
-
-    if (expected) {
-      for (const [key, value] of Object.entries(expected)) {
-        await expect(element(by.id(`launchArg-${key}.name`))).toBeVisible();
-        await expect(element(by.id(`launchArg-${key}.value`))).toHaveText(`${value}`);
-      }
-    }
-
-    if (notExpected) {
-      for (const key of notExpected) {
-        await expect(element(by.id(`launchArg-${key}.name`))).not.toBeVisible();
-      }
-    }
-  }
-
-  function assertPreconfiguredValues(initArgs, expectedInitArgs) {
-    if (!_.isEqual(initArgs, expectedInitArgs)) {
-      throw new Error(
-        `Precondition failure: Preconfigured launch arguments (in detox.config.js) do not match the expected value.\n` +
-        `Expected: ${JSON.stringify(expectedInitArgs)}\n` +
-        `Received: ${JSON.stringify(initArgs)}`
-      );
-    }
-  }
 });

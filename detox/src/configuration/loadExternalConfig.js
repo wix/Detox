@@ -10,9 +10,11 @@ const log = require('../utils/logger').child({ cat: 'config' });
 
 async function locateExternalConfig(cwd) {
   return findUp([
+    '.detoxrc.cjs',
     '.detoxrc.js',
     '.detoxrc.json',
     '.detoxrc',
+    'detox.config.cjs',
     'detox.config.js',
     'detox.config.json',
     'package.json',
@@ -20,7 +22,7 @@ async function locateExternalConfig(cwd) {
 }
 
 async function loadConfig(configPath) {
-  let config = path.extname(configPath) === '.js'
+  let config = isJS(path.extname(configPath))
     ? require(configPath)
     : JSON.parse(await fs.readFile(configPath, 'utf8'));
 
@@ -32,6 +34,10 @@ async function loadConfig(configPath) {
     config,
     filepath: configPath,
   };
+}
+
+function isJS(ext) {
+  return ext === '.js' || ext === '.cjs';
 }
 
 async function resolveConfigPath(configPath, cwd) {

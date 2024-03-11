@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Detox server integration "app" connects first, and then disconnects 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 8081,
   },
@@ -12,8 +12,8 @@ Array [
 `;
 
 exports[`Detox server integration "tester" connects first, and then disconnects 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 8081,
   },
@@ -23,8 +23,8 @@ Array [
 `;
 
 exports[`Detox server integration edge cases .registerSession - calling twice 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
     "role": "app",
@@ -38,18 +38,18 @@ https://github.com/wix/Detox/issues",
 `;
 
 exports[`Detox server integration edge cases app dispatches "ready" action before login 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  "The app has dispatched \\"ready\\" action too early.",
+  "The app has dispatched "ready" action too early.",
 ]
 `;
 
 exports[`Detox server integration edge cases attempt to register the same connection twice 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
@@ -60,8 +60,8 @@ https://github.com/wix/Detox/issues",
 `;
 
 exports[`Detox server integration edge cases attempt to unregister an unknown connection 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
   },
   "DetoxInternalError: Cannot unregister an unknown WebSocket instance.
@@ -71,12 +71,12 @@ https://github.com/wix/Detox/issues",
 `;
 
 exports[`Detox server integration edge cases login - empty .params 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Invalid login action received, it has no .params
 
 HINT: Please report this issue on our GitHub tracker:
@@ -91,12 +91,12 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases login - invalid .role 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Invalid login action received, it has invalid .role
 
 HINT: Please report this issue on our GitHub tracker:
@@ -115,12 +115,12 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases login - missing .sessionId 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Invalid login action received, it has no .sessionId
 
 HINT: Please report this issue on our GitHub tracker:
@@ -139,12 +139,12 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases login - non-string .sessionId 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Invalid login action received, it has a non-string .sessionId
 
 HINT: Please report this issue on our GitHub tracker:
@@ -165,15 +165,15 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases login twice (as app) 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
     "role": "app",
     "sessionId": "aSession",
     "trackingId": "app",
   },
-  Object {
+  {
     "error": [DetoxInternalError: Cannot log in twice into the same session (aSession) being "app" already
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues],
@@ -183,15 +183,15 @@ https://github.com/wix/Detox/issues],
 `;
 
 exports[`Detox server integration edge cases login twice (as tester) + socket send error 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
     "role": "tester",
     "sessionId": "aSession",
     "trackingId": "tester",
   },
-  Object {
+  {
     "err": [Error: TestError],
   },
   "Cannot forward the error details to the tester due to the error:",
@@ -199,15 +199,15 @@ Array [
 `;
 
 exports[`Detox server integration edge cases login twice (as tester) + socket send error 2`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
     "role": "tester",
     "sessionId": "aSession",
     "trackingId": "tester",
   },
-  Object {
+  {
     "error": [DetoxInternalError: Cannot log in twice into the same session (aSession) being "tester" already
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues],
@@ -217,12 +217,12 @@ https://github.com/wix/Detox/issues],
 `;
 
 exports[`Detox server integration edge cases on(message) - malformed data 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: The payload received is not a valid JSON.
 
 HINT: Please report this issue on our GitHub tracker:
@@ -233,12 +233,12 @@ https://github.com/wix/Detox/issues],
 `;
 
 exports[`Detox server integration edge cases on(message) - no .type 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Cannot process an action without a type.
 
 HINT: Please report this issue on our GitHub tracker:
@@ -253,12 +253,12 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases receiving an action before we login 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Action dispatched too early, there is no session to use:
 
 HINT: Please report this issue on our GitHub tracker:
@@ -274,12 +274,12 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`Detox server integration edge cases socket error 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 10,
   },
-  Object {
+  {
     "error": [Error: Test error],
   },
   "Caught socket error:",
@@ -287,15 +287,15 @@ Array [
 `;
 
 exports[`Detox server integration tester and app interconnect and then disconnect 1`] = `
-Array [
-  Object {
+[
+  {
     "cat": "ws-server,ws-session",
     "id": 11,
     "role": "app",
     "sessionId": "aSession",
     "trackingId": "app",
   },
-  Object {
+  {
     "error": [DetoxRuntimeError: Cannot forward the message to the Detox client.
 
 {

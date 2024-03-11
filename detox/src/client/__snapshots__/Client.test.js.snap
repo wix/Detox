@@ -39,7 +39,7 @@ HINT: To print view hierarchy on failed actions/matches, use log-level verbose o
 exports[`Client .execute() should throw even if a non-error object is thrown 1`] = `"non-error"`;
 
 exports[`Client .execute() should throw on an unsupported result 1`] = `
-"Tried to invoke an action on app, got an unsupported response: {\\"type\\":\\"unsupportedResult\\",\\"params\\":{\\"foo\\":\\"bar\\"}}
+"Tried to invoke an action on app, got an unsupported response: {"type":"unsupportedResult","params":{"foo":"bar"}}
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;

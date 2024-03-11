@@ -60,8 +60,8 @@ class IPCClient {
     this._sessionState.patch(sessionState);
   }
 
-  async allocateDevice() {
-    const { deviceCookie, error } = deserializeObjectWithError(await this._emit('allocateDevice', {}));
+  async allocateDevice(deviceConfig) {
+    const { deviceCookie, error } = deserializeObjectWithError(await this._emit('allocateDevice', { deviceConfig }));
     if (error) {
       throw error;
     }
@@ -86,8 +86,8 @@ class IPCClient {
     this._sessionState.patch(sessionState);
   }
 
-  async conductEarlyTeardown() {
-    const sessionState = await this._emit('conductEarlyTeardown', {});
+  async conductEarlyTeardown({ permanent }) {
+    const sessionState = await this._emit('conductEarlyTeardown', { permanent });
     this._sessionState.patch(sessionState);
   }
 

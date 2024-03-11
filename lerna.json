@@ -1,5 +1,6 @@
 {
-  "lerna": "3.22.1",
+  "lerna": "6.6.2",
+  "useWorkspaces": false,
   "packages": [
     "detox",
     "detox-cli",
@@ -13,7 +14,7 @@
     "generation",
     "."
   ],
-  "version": "20.13.0",
+  "version": "20.18.5",
   "npmClient": "npm",
   "command": {
     "publish": {

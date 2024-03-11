@@ -1,7 +1,17 @@
+apply from: file("../../android/rninfo.gradle")
 rootProject.name = 'DetoxTest'
 include ':app'
 
-includeBuild('../node_modules/react-native-gradle-plugin')
+def rnMajorVer = getRnMajorVersion(rootDir)
+println "[settings] RNInfo: detected React Native version: (major=$rnMajorVer)"
+
+if (rnMajorVer < 72) {
+    includeBuild('../node_modules/react-native-gradle-plugin')
+} else {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
+}
+
+
 
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
@@ -26,3 +36,6 @@ project(':react-native-datetimepicker').projectDir = new File(rootProject.projec
 
 include ':react-native-launcharguments'
 project(':react-native-launcharguments').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-launch-arguments/android')
+
+include ':react-native-permissions'
+project(':react-native-permissions').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-permissions/android')

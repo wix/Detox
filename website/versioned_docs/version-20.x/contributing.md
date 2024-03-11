@@ -1,201 +1,48 @@
-# Contributing
+# Contributing to Detox
 
-<!-- markdownlint-configure-file { "header-increment": 0 } -->
+Detox, an open-source project, greatly values community involvement. Whether you're a mobile developer, QA specialist, or an open source enthusiast, your contribution could significantly enhance the reliability, user experience, and development process of mobile applications.
 
-This guide is about contributing to our codebase.
+## Our Code of Conduct
 
-We don’t have any special guidelines - just some setup walk-through!
+To ensure an inclusive, safe environment for all contributors, we adhere to the [Contributor Covenant code of conduct]. This well-recognized code provides clear guidelines for respectful behavior.
 
-### Environment
+## Ways to Contribute
 
-First, complete our [Getting Started](introduction/getting-started.mdx) guide.
+All contributions, regardless of size, can help shape Detox. We welcome:
 
-#### Install the monorepo management tool, `lerna`
+- **[Questions]**: Your inquiries can help identify gaps in our documentation and benefit all users.
+- **[Answers]**: Assisting other Detox users by providing guidance or responses to their questions.
+- **[Bug Reports]**: Help us identify and resolve Detox issues.
+- **[Feature Suggestions]**: Your ideas for new features can help us improve Detox according to user needs.
+- **[Code Contributions]**: Directly contribute by fixing bugs, adding features, or improving our codebase.
+- **[Code Reviews]**: Help maintain the quality of our codebase by reviewing others' contributions.
+- **[Documentation Enhancements]**: Improve Detox documentation from user guides to API references.
+- **Content Creation**: Share your knowledge of Detox through blog posts, tutorials, videos, and more. We're always excited to share your content on our [Twitter account] and [Discord server].
 
-```bash npm2yarn
-npm install lerna@3.x.x --global
-```
+Your active participation helps build a vibrant community dedicated to improving mobile development.
 
-For all the internal projects (detox, detox-cli, demos, test) `lerna` will create symbolic links in `node_modules` instead of `npm` copying the content of the projects. This way, any change you do on any code is there immediately. There is no need to update node modules or copy files between projects.
+## Engaging in the Community
 
-#### Install common React Native dependencies
+Join our [Discord server] to discuss Detox, ask questions, and provide help. Follow our [Twitter account] for updates on the project.
 
-React-Native CLI:
+Becoming an active community member is a great way to start contributing to Detox. It provides familiarity with the project, helps identify opportunities to contribute, and allows guidance from other contributors. The more you engage, the more recognition your contributions receive and the greater impact you can make on the project's direction.
 
-```bash npm2yarn
-npm install react-native-cli --global
-```
+## Appreciation and Recognition
 
-Watchman:
+All our contributors deserve recognition. We express our gratitude by featuring them in our [Release Notes].
 
-```bash
-brew install watchman
-```
+### Core Contributors Program
 
-#### xcpretty
+We plan to launch a "Core Contributor" program for individuals who have significantly contributed to Detox and shown deep understanding of the project while being active in the community. Core contributors will be invited to a private Discord channel for exclusive discussions and will receive a distinguished role on our Discord server.
 
-You must also have `xcpretty` installed:
-
-```bash
-gem install xcpretty
-```
-
-### Detox
-
-#### Clone Detox and Submodules
-
-```bash
-git clone git@github.com:wix/Detox.git
-cd detox
-git submodule update --init --recursive
-```
-
-(this makes sure all git submodule dependencies have been properly checked out)
-
-#### Installing and Linking Internal Projects
-
-```bash
-lerna bootstrap
-```
-
-#### Building and Testing
-
-##### Automatically
-
-`scripts/ci.ios.sh` and `scripts/ci.android.sh` are the scripts Detox runs in CI, they will run `lerna bootstrap`, unit tests, and E2E tests. Make sure these scripts pass before submitting a PR, this is exactly what Detox is going to run in CI.
-
-##### Manually
-
-The following steps can be run manually in order to build / test the various components of Detox.
-
-###### 1. Unit Tests and Lint
-
-```bash
-lerna run test
-```
-
-Detox JS code is 100% test covered and is set to break the build if coverage gets below, so make sure you run unit tests (`lerna run test`) locally before pushing.
-
-Alternatively, to run only the JS tests, run the following from the `detox/detox` directory:
-
-```bash npm2yarn
-npm run unit
-```
-
-or
-
-```bash npm2yarn
-npm run unit:watch
-```
-
-After running the tests, _Jest_ will create a coverage report you can examine:
-
-```bash
-cd detox
-open coverage/lcov-report/index.html
-```
-
-###### 2. Running Detox E2E Coverage Tests
-
-Detox has a suite of end-to-end tests to test its own API while developing (and for regression); We maintain a special application that is "tested" against Detox’s API, but essentially, it’s the API that is tested, not the app.
-
-To run the tests, you must first build the native code and then run based on your target of choice (Android / iOS):
-
-- **iOS:**
-
-  ```bash npm2yarn
-  cd detox/test
-  npm run build:ios
-  npm run e2e:ios
-  ```
-
-- **Android:**
-
-  ```bash npm2yarn
-  cd detox/test
-  npm run build:android
-  npm run e2e:android
-  ```
-
-FYI Android test project includes two flavors:
-
-- `fromBin` - (**standard use case**) utilizes the precompiled `.aar` from `node_modules` just like a standard RN project.
-- `fromSource` - compiles the project with RN sources from `node_modules`, this is useful when developing and debugging Espresso idle resource.
-  [Here](https://github.com/facebook/react-native/wiki/Building-from-source#android) are the prerequisites to compiling React Native from source.
-
-Each build can be triggered separately by running its Gradle assembling task (under `detox/test/android/`):
-
-```bash
-./gradlew assembleFromSourceDebug
-```
-
-or:
-
-```bash
-./gradlew assembleFromBinDebug
-```
-
-To run from Android Studio, React Native’s `react.gradle` script may require `node` to be in path.
-On MacOS, environment variables can be exported to desktop applications by adding the following to your `.bashrc`/`.zshrc`:
-
-```bash
-launchctl setenv PATH $PATH
-```
-
-###### 3. Android Native Unit-Tests
-
-Under `detox/`:
-
-```bash
-npm run unit:android-release
-```
-
-:::caution Note
-Due to limitations with Robolectric, this currently does not work with JDK 17. Best to use Java 11, as explained in the [Android environment setup guide](./guide/android-dev-env.md).
-:::
-
-### Detox - Example Projects
-
-This is in fact a monorepo that also sports some example projects (for usage reference), alongside the main test project:
-
-- `examples/demo-react-native-jest`: Demonstrate usage of Detox in a React Native app project.
-- `examples/demo-native-ios`: Demonstrates usage of Detox in a pure-native iOS app.
-- `examples/demo-native-android` (broken): Demonstrates usage of Detox in a pure-native Android app.
-- `examples/demo-pure-native-android`: Demonstrates usage of the _pure_ [Detox-Native](https://github.com/wix/Detox/tree/master/detox-native/README.md) project
-- more...
-
-**In order to run E2E tests associated with any of these projects, refer to the [project-specific](https://github.com/wix/Detox/tree/master/examples) READMEs.**
-
-### Detox Documentation Website
-
-The [documentation website](https://wix.github.io/Detox) is built using [Docusaurus](https://docusaurus.io/).
-
-To run the website locally, run the following commands:
-
-```bash npm2yarn
-cd website
-npm install
-npm start
-```
-
-#### Updating the Website
-
-To update a specific page, edit the corresponding markdown file in `docs/`. To add a new page, create a new markdown file in `docs/` and add a link to it in `website/sidebars.json`.
-
-##### Website Deployment
-
-While changes to the website are published automatically on every commit to `master` under the `Next` version, tagging and locking docs to a specific version is done automatically on every Detox release.
-
-In case you want to update the docs for a specific version, you can change the related files and code under `website/versioned_docs/version-<version>/` and `website/versioned_sidebars/version-<version>-sidebars.json`.
-
-##### Update Old Versions
-
-To update a specific version with the latest changes:
-
-1. Remove the version from `versions.json`.
-1. Run `npm run docusaurus docs:version <version>`.
-
-##### Inspect Documentation Style Changes
-
-This [demo page](demo.mdx) serves as a visual representation of the styling and formatting of our documentation.
-If you are changing the stylesheets, check with it to prevent undesirable visual regressions.
+[Contributor Covenant code of conduct]: contributing/code-of-conduct.md
+[Questions]: contributing/questions/asking-questions.md
+[Answers]: contributing/questions/answering-questions.md
+[Bug Reports]: contributing/reporting-bugs.md
+[Feature Suggestions]: contributing/feature-requests.md
+[Code Contributions]: contributing/code/overview.md
+[Code Reviews]: contributing/code/reviewing-pull-requests.md
+[Documentation Enhancements]: contributing/documentation.md
+[Discord server]: https://discord.gg/CkD5QKheF5
+[Twitter account]: https://twitter.com/detoxe2e
+[Release Notes]: https://github.com/wix/Detox/releases

@@ -33,9 +33,9 @@ class DetoxSecondaryContext extends DetoxContext {
     }
   }
 
-  [symbols.conductEarlyTeardown] = async () => {
+  [symbols.conductEarlyTeardown] = async (permanent = false) => {
     if (this[_ipcClient]) {
-      await this[_ipcClient].conductEarlyTeardown();
+      await this[_ipcClient].conductEarlyTeardown({ permanent });
     } else {
       throw new DetoxInternalError('Detected an attempt to report early teardown using a non-initialized context.');
     }
@@ -63,9 +63,9 @@ class DetoxSecondaryContext extends DetoxContext {
   }
 
   /** @override */
-  async [symbols.allocateDevice]() {
+  async [symbols.allocateDevice](deviceConfig) {
     if (this[_ipcClient]) {
-      const deviceCookie = await this[_ipcClient].allocateDevice();
+      const deviceCookie = await this[_ipcClient].allocateDevice(deviceConfig);
       return deviceCookie;
     } else {
       throw new DetoxInternalError('Detected an attempt to allocate a device using a non-initialized context.');

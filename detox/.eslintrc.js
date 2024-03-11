@@ -4,7 +4,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:import/recommended',
     'plugin:node/recommended',
-    'plugin:ecmascript-compat/recommended'
+    'plugin:ecmascript-compat/recommended',
   ],
   parser: '@typescript-eslint/parser',
   plugins: [
@@ -15,10 +15,6 @@ module.exports = {
   ],
   env: {
     node: true
-  },
-  globals: {
-    // TODO: remove use of fail() across the project because Jest Circus doesn't support it
-    'fail': true
   },
   rules: {
     '@typescript-eslint/no-unused-vars': [

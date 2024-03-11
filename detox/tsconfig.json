@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "node16",
     "lib": ["es2022"],
     "target": "ES2022",
     "allowJs": true,
@@ -15,6 +15,9 @@
   },
   "rootDir": ".",
   "include": [
+    "detox.d.ts",
+    "globals.d.ts",
+    "index.d.ts",
     "**/*.js",
     "**/*.ts"
   ],

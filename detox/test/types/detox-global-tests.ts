@@ -69,6 +69,7 @@ describe("Test", () => {
             element(by.id("element").withDescendant(by.id("child_element")))
         ).toNotExist();
 
+        // eslint-disable-next-line jest/valid-expect
         const expectElement = expect(element(by.id('TextField_Id1')));
 
         await expectElement.toBeVisible();
@@ -92,6 +93,12 @@ describe("Test", () => {
             .scroll(50, "down");
 
         await web.element(by.web.id("btnSave")).tap();
+        await web.element(by.web.id("btnSave")).runScript('(el) => el.click()');
+        const scriptResult = await web.element(by.web.id("btnSave")).runScript(function (el: any, text: string) {
+          el.textContent = text;
+          return text.length;
+        }, ['new button text']);
+        assertType<number>(scriptResult);
         await web.element(by.web.className("scroll-end")).atIndex(0).scrollToView();
 
         const webview = web(by.id("webview"));

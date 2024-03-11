@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   extends: [
-    '@react-native-community',
+    '@react-native',
   ],
   plugins: [
     'unicorn',
@@ -16,8 +16,7 @@ module.exports = {
     // disabled due to styling conflicts between eslint and prettier
     'prettier/prettier': 0,
 
-    // TODO: enable this with argsIgnorePattern
-    '@typescript-eslint/no-unused-vars': 0, // ['error', {argsIgnorePattern: '^_'}],
+    '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_'}],
 
     // TODO: enable these rules gradually
     'comma-dangle': 0,
@@ -26,7 +25,6 @@ module.exports = {
     'eqeqeq': 0,
     'jsx-quotes': 0,
     'keyword-spacing': 0,
-    'no-extra-semi': 0,
     'no-sequences': 0,
     'no-trailing-spaces': 0,
     'no-useless-escape': 0,

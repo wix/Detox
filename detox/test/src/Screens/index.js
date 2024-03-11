@@ -17,6 +17,7 @@ import LocationScreen from './LocationScreen';
 import ShakeScreen from './ShakeScreen';
 import DatePickerScreen from './DatePickerScreen';
 import LanguageScreen from './LanguageScreen';
+import LaunchUrlScreen from './LaunchUrlScreen';
 import LaunchArgsScreen from './LaunchArgsScreen';
 import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
@@ -50,6 +51,7 @@ export {
   DatePickerScreen,
   PickerViewScreen,
   LanguageScreen,
+  LaunchUrlScreen,
   LaunchArgsScreen,
   LaunchNotificationScreen,
   DeviceScreen,

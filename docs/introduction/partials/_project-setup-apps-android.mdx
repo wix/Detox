@@ -2,7 +2,7 @@
 
 import FlavorizedCodeBlock from '@site/src/components/FlavorizedCodeBlock';
 
-Check **binaryPath** and **build** configs for `android.debug` and `android.release` mode in your Detox config:
+Check the **build** and **binaryPath** attributes for the `android.debug` and `android.release` Detox configs:
 
 ```js title=".detoxrc.js"
 module.exports = {
@@ -10,15 +10,15 @@ module.exports = {
     'android.debug': {
       type: 'android.apk',
       // highlight-start
-      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug'
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk'
       // highlight-end
     },
     'android.release': {
       type: 'android.apk',
       // highlight-start
-      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
-      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release',
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk'
       // highlight-end
     },
     // ...
@@ -27,23 +27,70 @@ module.exports = {
 };
 ```
 
-If you have a typical React Native project, these values should already be correct.
+If you have a typical React Native project, these values should already be sufficient and correct.
 
-On the other hand, if your app has extra [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
-(let's imagine you have `driver` and `passenger` flavors of a taxi application), then you should rewrite your apps config
-for both **debug** and **release** configurations, e.g.:
+#### testBinaryPath
+
+In Android automation testing, there are in fact 2 app binaries involved:
+1. The _app_ APK, containing your app's code.
+2. The _test_ APK, containing _test_ code. That includes Detox's native code, Espresso and more.
+
+In some projects, it might make sense for the test APK to be generated over a separate flow, through which is may end up
+being put it some custom,
+[non-default path](https://stackoverflow.com/questions/43670463/where-is-the-test-apk-located-in-android-project).
+One such example is an optimization where the test APK is prebuilt once and used across multiple app variations. This is
+a place where the `testBinaryPath` attribute can come to the rescue; It can be applied in order to set the custom path
+to the test APK explicitly:
+
+```js title=".detoxrc.js"
+module.exports = {
+  apps: {
+    'android.debug': {
+      type: 'android.apk',
+      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
+      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
+      // highlight-start
+      testBinaryPath: 'custom/path/to/app-debug-androidTest.apk'
+      // highlight-end
+    },
+    'android.release': {
+      type: 'android.apk',
+      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release',
+      // highlight-start
+      testBinaryPath: 'custom/path/to/app-release-androidTest.apk'
+      // highlight-end
+    },
+    // ...
+  },
+  // ...
+};
+```
+
+:::info Note
+
+In the common case, the `testBinaryPath` attributes is not explicitly required, simply because Detox knows
+how to locate it in one of the default paths automatically.
+
+:::
+
+#### Product flavors
+
+On even more advanced use cases, apps may have additional, custom [`productFlavors`](https://developer.android.com/studio/build/build-variants#product-flavors)
+(for example, `driver` and `passenger` flavors of a taxi application). In this case, you should rewrite your apps config,
+for both **debug** and **release** configurations, according to those flavors, e.g.:
 
 <FlavorizedCodeBlock
   language="diff"
   header={'   apps: {\n'}
   flavors={['Driver', 'Passenger']}
 >
-  {(conf) => `\
-     '${conf.toLowerCase()}.android.debug': {
+  {(flavor) => `\
+     '${flavor.toLowerCase()}.android.debug': {
        type: 'android.apk',
 -      binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
-+      binaryPath: 'android/app/build/outputs/apk/${conf.toLowerCase()}/debug/app-${conf.toLowerCase()}-debug.apk',
++      binaryPath: 'android/app/build/outputs/apk/${flavor.toLowerCase()}/debug/app-${flavor.toLowerCase()}-debug.apk',
 -      build: 'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug',
-+      build: 'cd android && ./gradlew assemble${conf}Debug assemble${conf}DebugAndroidTest -DtestBuildType=debug',
++      build: 'cd android && ./gradlew assemble${flavor}Debug assemble${flavor}DebugAndroidTest -DtestBuildType=debug',
      },`}
 </FlavorizedCodeBlock>

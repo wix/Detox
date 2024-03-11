@@ -1,13 +1,14 @@
 import React from 'react';
-import './Features.scss';
+import styles from './Features.module.scss';
+import clsx from 'clsx';
 
 const Features = ({ Svg, title, description }) => {
   return (
-    <div className="col col--4 features-gap">
-      <Svg className="feature-image" alt={title} />
+    <div className={clsx('col col--4', styles.featuresGap)}>
+      <Svg className={styles.featureImage} alt={title} />
       <div>
-        <h3>{title}</h3>
-        <p>{description}</p>
+        <h3 className={styles.featureTitle}>{title}</h3>
+        <p className={styles.featureText}>{description}</p>
       </div>
     </div>
   );

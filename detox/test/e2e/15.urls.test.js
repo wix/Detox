@@ -1,3 +1,5 @@
+const { urlDriver } = require('./drivers/url-driver');
+
 describe('Open URLs', () => {
   afterAll(async () => {
     await device.launchApp({
@@ -7,47 +9,31 @@ describe('Open URLs', () => {
     });
   });
 
-  const withDefaultArgs = () => ({
-    url: 'detoxtesturlscheme://such-string',
-    launchArgs: undefined,
-  });
-
-  const withSingleInstanceActivityArgs = () => ({
-    url: 'detoxtesturlscheme.singleinstance://such-string',
-    launchArgs: { detoxAndroidSingleInstanceActivity: true },
-  });
-
-  [
-    {
-      platform: '',
-      ...withDefaultArgs(),
-    },
-    {
-      platform: 'android',
-      ...withSingleInstanceActivityArgs(),
-    }
-  ].forEach((testSpec) => {
-    const {platform, url, launchArgs} = testSpec;
-    const _platform = platform ? `:${platform}: ` : '';
-
-    it(`${_platform}device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
+  describe.each([
+    ['(default)', urlDriver.withDetoxArgs.default()],
+    [':android: (single activity)', urlDriver.withDetoxArgs.forSingleInstanceActivityLaunch()],
+  ])('%s', (_platform, {url, launchArgs}) => {
+    it(`device.launchApp() with a URL and a fresh app should launch app and trigger handling open url handling in app`, async () => {
       await device.launchApp({newInstance: true, url, launchArgs});
-      await expect(element(by.text(url))).toBeVisible();
+      await urlDriver.navToUrlScreen();
+      await urlDriver.assertUrl(url);
     });
 
-    it(`${_platform}device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
+    it(`device.openURL() should trigger open url handling in app when app is in foreground`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
-      await expect(element(by.text(url))).not.toBeVisible();
+      await urlDriver.navToUrlScreen();
+      await urlDriver.assertNoUrl(url);
       await device.openURL({url});
-      await expect(element(by.text(url))).toBeVisible();
+      await urlDriver.assertUrl(url);
     });
 
-    it(`${_platform}device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
+    it(`device.launchApp() with a URL should trigger url handling when app is in background`, async () => {
       await device.launchApp({newInstance: true, launchArgs});
-      await expect(element(by.text(url))).not.toBeVisible();
+      await urlDriver.navToUrlScreen();
+      await urlDriver.assertNoUrl(url);
       await device.sendToHome();
       await device.launchApp({newInstance: false, url});
-      await expect(element(by.text(url))).toBeVisible();
+      await urlDriver.assertUrl(url);
     });
   });
 });

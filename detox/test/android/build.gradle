@@ -1,22 +1,14 @@
 buildscript {
     apply from: '../../android/rninfo.gradle'
 
-    def androidGradlePluginVersion =
-        rnInfo.isRN71OrHigher ? '7.3.1' :
-        rnInfo.isRN70OrHigher ? '7.2.1' :
-        rnInfo.isRN69OrHigher ? '7.1.1' :
-                                '7.0.4'
-
-    println "[$project] Resorted to Android Gradle-plugin version $androidGradlePluginVersion"
-
     ext {
         isOfficialDetoxApp = true
-        kotlinVersion = '1.6.21'
-        buildToolsVersion = '33.0.0'
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        kotlinVersion = '1.8.0'
+        buildToolsVersion = '34.0.0'
+        compileSdkVersion = 34
+        targetSdkVersion = 34
         minSdkVersion = 21
-        appCompatVersion = '1.4.2'
+        appCompatVersion = '1.6.1'
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
@@ -27,18 +19,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-
-        // In RN .71, they've switched to the gradle plugin they've uploaded to maven-central
-        if (rnInfo.isRN71OrHigher) {
-            classpath 'com.facebook.react:react-native-gradle-plugin'
-        }
-
-        // Gradle task downloader seems to come built-in in newer versions of RN/Gradle
-        if (!rnInfo.isRN71OrHigher) {
-            classpath 'de.undercouch:gradle-download-task:5.0.1'
-        }
-
+        classpath "com.android.tools.build:gradle"
+        classpath 'com.facebook.react:react-native-gradle-plugin'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // Needed by Spek (https://spekframework.org/setup-android)
@@ -49,23 +31,8 @@ buildscript {
 
 allprojects {
     repositories {
-        // In RN below 71, we want RN and hermes/js-core native code to come from node_modules/ rather
-        // than from maven-central, because there are also older versions over there.
-        if (rnInfo.isRN71OrHigher) {
-            google()
-            mavenCentral()
-        } else {
-            maven {
-                url "$rootDir/../../node_modules/react-native/android"
-            }
-            google()
-            mavenCentral() {
-                content {
-                    excludeGroup 'com.facebook.react'
-                }
-            }
-        }
-
+        google()
+        mavenCentral()
         mavenLocal()
     }
 }
@@ -78,4 +45,8 @@ subprojects {
             }
         }
     }
+}
+
+if (ext.rnInfo.isRN73OrHigher) {
+    apply plugin: "com.facebook.react.rootproject"
 }

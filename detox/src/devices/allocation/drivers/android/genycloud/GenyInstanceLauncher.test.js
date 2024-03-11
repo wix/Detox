@@ -33,11 +33,9 @@ describe('Genymotion-Cloud instance launcher', () => {
   let instanceLifecycleService;
   let uut;
   let retry;
-  let logger;
 
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
-    logger = jest.requireMock('../../../../../utils/logger');
 
     jest.mock('../../../../../utils/retry');
     retry = jest.requireMock('../../../../../utils/retry');

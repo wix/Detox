@@ -142,6 +142,16 @@ Default: `false`.
 When true, tells `detox test` to cancel next retrying if it gets at least one report about a [permanent test suite failure](../api/internals.mdx#reporting-test-results).
 Has no effect, if [`testRunner.retries`] is undefined or set to zero.
 
+### `testRunner.detached` \[boolean]
+
+Default: `false`.
+
+When true, tells `detox test` to spawn the test runner in a detached mode.
+
+This is useful in CI environments, where you want to intercept SIGINT and SIGTERM signals to gracefully shut down the test runner and the device.
+
+Instead of passing the kill signal to the child process (the test runner), Detox will send an emergency shutdown request to all the workers, and then it will wait for them to finish.
+
 ### `testRunner.forwardEnv` \[boolean]
 
 Default: `false`.

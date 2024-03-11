@@ -20,12 +20,10 @@ class SimulatorAllocDriver {
    * @param {import('../../DeviceRegistry')} options.deviceRegistry
    * @param {DetoxInternals.RuntimeConfig} options.detoxConfig
    * @param {import('../../../common/drivers/ios/tools/AppleSimUtils')} options.applesimutils
-   * @param {import('./SimulatorLauncher')} options.simulatorLauncher
    */
-  constructor({ detoxConfig, deviceRegistry, applesimutils, simulatorLauncher }) {
+  constructor({ detoxConfig, deviceRegistry, applesimutils }) {
     this._deviceRegistry = deviceRegistry;
     this._applesimutils = applesimutils;
-    this._simulatorLauncher = simulatorLauncher;
     this._launchInfo = {};
     this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
   }
@@ -41,7 +39,6 @@ class SimulatorAllocDriver {
   async allocate(deviceConfig) {
     const deviceQuery = new SimulatorQuery(deviceConfig.device);
 
-    // TODO Delegate this onto a well tested allocator class
     const udid = await this._deviceRegistry.registerDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });
@@ -61,7 +58,7 @@ class SimulatorAllocDriver {
   async postAllocate(deviceCookie) {
     const { udid } = deviceCookie;
     const { deviceConfig } = this._launchInfo[udid];
-    await this._simulatorLauncher.launch(udid, deviceConfig.type, deviceConfig.bootArgs, deviceConfig.headless);
+    await this._applesimutils.boot(udid, deviceConfig.bootArgs, deviceConfig.headless);
 
     return {
       id: udid,
@@ -105,7 +102,7 @@ class SimulatorAllocDriver {
    */
   async _doShutdown(udid) {
     try {
-      await this._simulatorLauncher.shutdown(udid);
+      await this._applesimutils.shutdown(udid);
     } catch (err) {
       log.warn({ err }, `Failed to shutdown simulator ${udid}`);
     }

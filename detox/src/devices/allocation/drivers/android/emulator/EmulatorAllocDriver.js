@@ -5,7 +5,6 @@
 
 const _ = require('lodash');
 
-const Deferred = require('../../../../../utils/Deferred');
 const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
 
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');

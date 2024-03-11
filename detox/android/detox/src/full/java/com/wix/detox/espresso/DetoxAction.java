@@ -79,9 +79,14 @@ public class DetoxAction {
      * Scrolls to the edge of the given scrollable view.
      *
      * @param edge Direction to scroll (see {@link MotionDir})
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      * @return ViewAction
      */
-    public static ViewAction scrollToEdge(final int edge) {
+    public static ViewAction scrollToEdge(final int edge, double startOffsetPercentX, double startOffsetPercentY) {
+        final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
+        final Float _startOffsetPercentY = startOffsetPercentY < 0 ? null : (float) startOffsetPercentY;
+
         return actionWithAssertions(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -97,7 +102,7 @@ public class DetoxAction {
             public void perform(UiController uiController, View view) {
                 try {
                     for (int i = 0; i < 100; i++) {
-                        ScrollHelper.performOnce(uiController, view, edge);
+                        ScrollHelper.performOnce(uiController, view, edge, _startOffsetPercentX, _startOffsetPercentY);
                     }
                     throw new DetoxRuntimeException("Scrolling a lot without reaching the edge: force-breaking the loop");
                 } catch (ScrollEdgeException e) {
@@ -112,8 +117,8 @@ public class DetoxAction {
      *
      * @param direction           Direction to scroll (see {@link MotionDir})
      * @param amountInDP          Density Independent Pixels
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      */
     public static ViewAction scrollInDirection(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
@@ -129,8 +134,8 @@ public class DetoxAction {
      *
      * @param direction           Direction to scroll (see {@link MotionDir})
      * @param amountInDP          Density Independent Pixels
-     * @param startOffsetPercentX Percentage denoting where X-swipe should start, with respect to the scrollable view.
-     * @param startOffsetPercentY Percentage denoting where Y-swipe should start, with respect to the scrollable view.
+     * @param startOffsetPercentX Percentage denoting where the scroll should start from on the X-axis, with respect to the scrollable view.
+     * @param startOffsetPercentY Percentage denoting where the scroll should start from on the Y-axis, with respect to the scrollable view.
      */
     public static ViewAction scrollInDirectionStaleAtEdge(final int direction, final double amountInDP, double startOffsetPercentX, double startOffsetPercentY) {
         final Float _startOffsetPercentX = startOffsetPercentX < 0 ? null : (float) startOffsetPercentX;
@@ -173,7 +178,7 @@ public class DetoxAction {
         return PickerActions.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
     }
 
-    public static ViewAction adjustSliderToPosition(final double newPosition) {
+    public static ViewAction adjustSliderToPosition(final Float newPosition) {
         return new AdjustSliderToPositionAction(newPosition);
     }
 

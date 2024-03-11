@@ -129,6 +129,36 @@ describe('IPC', () => {
       });
     });
 
+    describe('conductEarlyTeardown', () => {
+      beforeEach(() => ipcServer.init());
+
+      describe('(permanent)', () => {
+        beforeEach(() => ipcServer.onConductEarlyTeardown({ permanent: true }));
+
+        it('should change the session state', async () => {
+          expect(ipcServer.sessionState.unsafe_earlyTeardown).toEqual(true);
+        });
+
+        it('should pass the session state to the client', async () => {
+          await ipcClient1.init();
+          expect(ipcClient1.sessionState.unsafe_earlyTeardown).toEqual(true);
+        });
+      });
+
+      describe('(transient)', () => {
+        beforeEach(() => ipcServer.onConductEarlyTeardown({ permanent: false }));
+
+        it('should not change the session state', async () => {
+          expect(ipcServer.sessionState.unsafe_earlyTeardown).toBe(undefined);
+        });
+
+        it('should not pass the session state to the client', async () => {
+          await ipcClient1.init();
+          expect(ipcClient1.sessionState.unsafe_earlyTeardown).toBe(undefined);
+        });
+      });
+    });
+
     describe('dispose()', () => {
       it('should resolve if there are no connected clients', async () => {
         await ipcServer.init();
@@ -278,7 +308,7 @@ describe('IPC', () => {
           expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
           expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
 
-          await ipcClient1.conductEarlyTeardown();
+          await ipcClient1.conductEarlyTeardown({ permanent: false });
           expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
           await sleep(10); // broadcasting might happen with a delay
           expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
@@ -287,7 +317,7 @@ describe('IPC', () => {
         it('should broadcast early teardown in all connected clients (from server)', async () => {
           expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
           expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: undefined }));
-          await ipcServer.onConductEarlyTeardown();
+          await ipcServer.onConductEarlyTeardown({ permanent: false });
           await sleep(10); // broadcasting might happen with a delay
           expect(ipcClient1.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
           expect(ipcClient2.sessionState).toEqual(expect.objectContaining({ unsafe_earlyTeardown: true }));
@@ -332,18 +362,22 @@ describe('IPC', () => {
   });
 
   describe('integration', () => {
+    const deviceConfig = { type: 'stub.device' };
+
     beforeEach(() => ipcServer.init());
     beforeEach(() => ipcClient1.init());
 
     describe('onAllocateDevice', () => {
       it('should allocate a device and return its cookie', async () => {
         callbacks.onAllocateDevice.mockResolvedValue({ id: 'device-1' });
-        await expect(ipcClient1.allocateDevice()).resolves.toEqual({ id: 'device-1' });
+        await expect(ipcClient1.allocateDevice(deviceConfig)).resolves.toEqual({ id: 'device-1' });
+        expect(callbacks.onAllocateDevice).toHaveBeenCalledWith(deviceConfig);
       });
 
       it('should return an error if allocation fails', async () => {
         callbacks.onAllocateDevice.mockRejectedValue(new Error('foo'));
-        await expect(ipcClient1.allocateDevice()).rejects.toThrow('foo');
+        await expect(ipcClient1.allocateDevice(deviceConfig)).rejects.toThrow('foo');
+        expect(callbacks.onAllocateDevice).toHaveBeenCalledWith(deviceConfig);
       });
     });
 

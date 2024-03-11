@@ -62,7 +62,7 @@ https://github.com/wix/Detox/issues
 `;
 
 exports[`AsyncWebSocket .send() when opened should fail if the message timeout has expired 1`] = `
-"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+"The pending request #0 ("invoke") has been rejected due to the following error:
 
 The tester has not received a response within 5000ms timeout to the message:
 
@@ -88,7 +88,7 @@ The payload was:
 `;
 
 exports[`AsyncWebSocket .send() when opened should reject all messages in the flight if there's an error 1`] = `
-"The pending request #0 (\\"invoke\\") has been rejected due to the following error:
+"The pending request #0 ("invoke") has been rejected due to the following error:
 
 Failed to deliver the message to the Detox server:
 

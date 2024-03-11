@@ -23,7 +23,9 @@ const _emergencyTeardown = Symbol('emergencyTeardown');
 const _lifecycleLogger = Symbol('lifecycleLogger');
 const _sessionFile = Symbol('sessionFile');
 const _logFinalError = Symbol('logFinalError');
-const _deviceAllocator = Symbol('deviceAllocator');
+const _cookieAllocators = Symbol('cookieAllocators');
+const _deviceAllocators = Symbol('deviceAllocators');
+const _createDeviceAllocator = Symbol('createDeviceAllocator');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -32,7 +34,8 @@ class DetoxPrimaryContext extends DetoxContext {
 
     this[_dirty] = false;
     this[_wss] = null;
-    this[_deviceAllocator] = null;
+    this[_cookieAllocators] = {};
+    this[_deviceAllocators] = {};
 
     /** Path to file where the initial session object is serialized */
     this[_sessionFile] = '';
@@ -51,9 +54,9 @@ class DetoxPrimaryContext extends DetoxContext {
     }
   }
 
-  [symbols.conductEarlyTeardown] = async () => {
+  [symbols.conductEarlyTeardown] = async (permanent = false) => {
     if (this[_ipcServer]) {
-      await this[_ipcServer].onConductEarlyTeardown();
+      await this[_ipcServer].onConductEarlyTeardown({ permanent });
     }
   };
 
@@ -85,7 +88,6 @@ class DetoxPrimaryContext extends DetoxContext {
     const detoxConfig = await this[symbols.resolveConfig](opts);
 
     const {
-      device: deviceConfig,
       logger: loggerConfig,
       session: sessionConfig
     } = detoxConfig;
@@ -96,7 +98,6 @@ class DetoxPrimaryContext extends DetoxContext {
       data: this[$sessionState],
     }, getCurrentCommand());
 
-    // TODO: IPC Server creation ought to be delegated to a generator/factory.
     const IPCServer = require('../ipc/IPCServer');
     this[_ipcServer] = new IPCServer({
       sessionState: this[$sessionState],
@@ -109,17 +110,6 @@ class DetoxPrimaryContext extends DetoxContext {
 
     await this[_ipcServer].init();
 
-    const environmentFactory = require('../environmentFactory');
-
-    const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
-    this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({
-      detoxConfig,
-      detoxSession: this[$sessionState],
-    });
-
-    await this[_deviceAllocator].init();
-
-    // TODO: Detox-server creation ought to be delegated to a generator/factory.
     const DetoxServer = require('../server/DetoxServer');
     if (sessionConfig.autoStart) {
       this[_wss] = new DetoxServer({
@@ -132,7 +122,6 @@ class DetoxPrimaryContext extends DetoxContext {
       await this[_wss].open();
     }
 
-    // TODO: double check that this config is indeed propogated onto the client create at the detox-worker side
     if (!sessionConfig.server && this[_wss]) {
       // @ts-ignore
       sessionConfig.server = `ws://localhost:${this[_wss].port}`;
@@ -162,17 +151,20 @@ class DetoxPrimaryContext extends DetoxContext {
   }
 
   /** @override */
-  async [symbols.allocateDevice]() {
-    const { device } = this[$sessionState].detoxConfig;
-    const deviceCookie = await this[_deviceAllocator].allocate(device);
+  async [symbols.allocateDevice](deviceConfig) {
+    const deviceAllocator = await this[_createDeviceAllocator](deviceConfig);
+    const deviceCookie = await deviceAllocator.allocate(deviceConfig);
+    this[_cookieAllocators][deviceCookie.id] = deviceAllocator;
 
     try {
-      return await this[_deviceAllocator].postAllocate(deviceCookie);
+      return await deviceAllocator.postAllocate(deviceCookie);
     } catch (e) {
       try {
-        await this[_deviceAllocator].free(deviceCookie, { shutdown: true });
+        await deviceAllocator.free(deviceCookie, { shutdown: true });
       } catch (e2) {
-        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to free ${deviceCookie.name || deviceCookie.id} after a failed allocation`);
+        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to free ${deviceCookie.name || deviceCookie.id} after a failed allocation attempt`);
+      } finally {
+        delete this[_cookieAllocators][deviceCookie.id];
       }
 
       throw e;
@@ -181,7 +173,17 @@ class DetoxPrimaryContext extends DetoxContext {
 
   /** @override */
   async [symbols.deallocateDevice](cookie) {
-    await this[_deviceAllocator].free(cookie);
+    const deviceAllocator = this[_cookieAllocators][cookie.id];
+    if (!deviceAllocator) {
+      throw new DetoxRuntimeError({
+        message: `Cannot deallocate device ${cookie.id} because it was not allocated by this context.`,
+        hint: `See the actually known allocated devices below:`,
+        debugInfo: Object.keys(this[_cookieAllocators]).map(id => `- ${id}`).join('\n'),
+      });
+    }
+
+    await deviceAllocator.free(cookie);
+    delete this[_cookieAllocators][cookie.id];
   }
 
   /** @override */
@@ -191,10 +193,17 @@ class DetoxPrimaryContext extends DetoxContext {
         await this[symbols.uninstallWorker]();
       }
     } finally {
-      if (this[_deviceAllocator]) {
-        await this[_deviceAllocator].cleanup();
-        this[_deviceAllocator] = null;
+      for (const key of Object.keys(this[_deviceAllocators])) {
+        const deviceAllocator = this[_deviceAllocators][key];
+        delete this[_deviceAllocators][key];
+        try {
+          await deviceAllocator.cleanup();
+        } catch (err) {
+          this[symbols.logger].error({ cat: 'device', err }, `Failed to cleanup the device allocation driver for ${key}`);
+        }
       }
+
+      this[_cookieAllocators] = {};
 
       if (this[_wss]) {
         await this[_wss].close();
@@ -227,10 +236,17 @@ class DetoxPrimaryContext extends DetoxContext {
       return;
     }
 
-    if (this[_deviceAllocator]) {
-      this[_deviceAllocator].emergencyCleanup();
-      this[_deviceAllocator] = null;
+    for (const key of Object.keys(this[_deviceAllocators])) {
+      const deviceAllocator = this[_deviceAllocators][key];
+      delete this[_deviceAllocators][key];
+      try {
+        deviceAllocator.emergencyCleanup();
+      } catch (err) {
+        this[symbols.logger].error({ cat: 'device', err }, `Failed to clean up the device allocation driver for ${key} in emergency mode`);
+      }
     }
+
+    this[_cookieAllocators] = {};
 
     if (this[_wss]) {
       this[_wss].close();
@@ -251,6 +267,35 @@ class DetoxPrimaryContext extends DetoxContext {
     } catch (err) {
       this[_logFinalError](err);
     }
+  };
+
+  /** @param {Detox.DetoxDeviceConfig} deviceConfig */
+  [_createDeviceAllocator] = async (deviceConfig) => {
+    const deviceType = deviceConfig.type;
+    if (!this[_deviceAllocators][deviceType]) {
+      const environmentFactory = require('../environmentFactory');
+      const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
+      const { detoxConfig } = this[$sessionState];
+      const deviceAllocator = deviceAllocatorFactory.createDeviceAllocator({
+        detoxConfig,
+        detoxSession: this[$sessionState],
+      });
+
+      try {
+        await deviceAllocator.init();
+        this[_deviceAllocators][deviceType] = deviceAllocator;
+      } catch (e) {
+        try {
+          await deviceAllocator.cleanup();
+        } catch (e2) {
+          this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to cleanup the device allocation driver for ${deviceType} after a failed initialization`);
+        }
+
+        throw e;
+      }
+    }
+
+    return this[_deviceAllocators][deviceType];
   };
 
   [_logFinalError] = (err) => {

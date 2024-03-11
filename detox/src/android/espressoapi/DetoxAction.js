@@ -68,8 +68,10 @@ class DetoxAction {
     };
   }
 
-  static scrollToEdge(edge) {
+  static scrollToEdge(edge, startOffsetPercentX, startOffsetPercentY) {
     if (typeof edge !== "string") throw new Error("edge should be a string, but got " + (edge + (" (" + (typeof edge + ")"))));
+    if (typeof startOffsetPercentX !== "number") throw new Error("startOffsetPercentX should be a number, but got " + (startOffsetPercentX + (" (" + (typeof startOffsetPercentX + ")"))));
+    if (typeof startOffsetPercentY !== "number") throw new Error("startOffsetPercentY should be a number, but got " + (startOffsetPercentY + (" (" + (typeof startOffsetPercentY + ")"))));
     return {
       target: {
         type: "Class",
@@ -79,6 +81,12 @@ class DetoxAction {
       args: [{
         type: "Integer",
         value: sanitize_android_edge(edge)
+      }, {
+        type: "Double",
+        value: startOffsetPercentX
+      }, {
+        type: "Double",
+        value: startOffsetPercentY
       }]
     };
   }
@@ -208,7 +216,6 @@ class DetoxAction {
   }
 
   static adjustSliderToPosition(newPosition) {
-    if (typeof newPosition !== "number") throw new Error("newPosition should be a number, but got " + (newPosition + (" (" + (typeof newPosition + ")"))));
     return {
       target: {
         type: "Class",
@@ -216,7 +223,7 @@ class DetoxAction {
       },
       method: "adjustSliderToPosition",
       args: [{
-        type: "Double",
+        type: "Float",
         value: newPosition
       }]
     };

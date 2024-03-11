@@ -280,7 +280,7 @@ class AndroidDriver extends DeviceDriverBase {
       throw new DetoxRuntimeError({
         message: `The test APK could not be found at path: '${testApkPath}'`,
         hint: 'Try running the detox build command, and make sure it was configured to execute a build command (e.g. \'./gradlew assembleAndroidTest\')' +
-          '\nFor further assistance, visit the Android setup guide: https://github.com/wix/Detox/blob/master/docs/Introduction.Android.md',
+          '\nFor further assistance, visit the project setup guide (select the Android tabs): https://wix.github.io/Detox/docs/introduction/project-setup',
       });
     }
     return testApkPath;

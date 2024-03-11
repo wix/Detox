@@ -32,6 +32,8 @@ describe('IosUIHierarchyPlugin', () => {
       requestIdleCallback: jest.fn(async (callback) => {
         await callback();
       }),
+      trackArtifact: jest.fn(),
+      untrackArtifact: jest.fn(),
       userConfig: {
         enabled: true,
         keepOnlyFailedTestsArtifacts: false,
@@ -65,6 +67,8 @@ describe('IosUIHierarchyPlugin', () => {
       expect(session2.save).toHaveBeenCalledWith('artifacts/ui2.viewhierarchy');
       expect(test1.save).toHaveBeenCalledWith('artifacts/test/ui.viewhierarchy');
       expect(test2.save).toHaveBeenCalledWith('artifacts/test/ui2.viewhierarchy');
+      expect(api.trackArtifact).toHaveBeenCalledTimes(4);
+      expect(api.untrackArtifact).toHaveBeenCalledTimes(4);
     });
 
     it('should relocate existing artifacts before the app gets uninstalled', async () => {
