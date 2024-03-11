@@ -15,6 +15,32 @@ describe('Web View', () => {
     };
 
     describe('matchers', () => {
+      describe(':ios:', () => {
+        it('should not find element by invalid index', async () => {
+          await expect(web.element(by.web.tag('p')).atIndex(100)).not.toExist();
+        });
+
+        it('should find element by hrefContains', async () => {
+          await expect(web.element(by.web.hrefContains('w3schools'))).toExist();
+        });
+
+        it('should find element by href', async () => {
+          await expect(web.element(by.web.href('https://www.w3schools.com'))).toExist();
+        });
+
+        it('should raise an error when element does not exists but expect to exist', async () => {
+          await jestExpect(async () => {
+            await expect(web.element(by.web.id('nonExistentElement'))).toExist();
+          }).rejects.toThrowError();
+        });
+
+        it('should raise an error when does element not exists at index', async () => {
+          await jestExpect(async () => {
+            await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
+          }).rejects.toThrowError();
+        });
+      });
+
       it('should find element by id', async () => {
         await expect(web.element(by.web.id('pageHeadline'))).toExist();
       });
@@ -25,16 +51,6 @@ describe('Web View', () => {
 
       it('should find element by index', async () => {
         await expect(web.element(by.web.tag('p')).atIndex(0)).toExist();
-      });
-
-      it('should not find element by invalid index', async () => {
-        await expect(web.element(by.web.tag('p')).atIndex(100)).not.toExist();
-      });
-
-      it('should raise an error when does element not exists at index', async () => {
-        await jestExpect(async () => {
-          await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
-        }).rejects.toThrowError();
       });
 
       it('should find element by class name', async () => {
@@ -49,22 +65,8 @@ describe('Web View', () => {
         await expect(web.element(by.web.xpath('//p[@class="specialParagraph"]'))).toExist();
       });
 
-      it('should find element by hrefContains', async () => {
-        await expect(web.element(by.web.hrefContains('w3schools'))).toExist();
-      });
-
-      it('should find element by href', async () => {
-        await expect(web.element(by.web.href('https://www.w3schools.com'))).toExist();
-      });
-
       it('should find element by name', async () => {
         await expect(web.element(by.web.name('fname'))).toExist();
-      });
-
-      it('should raise an error when element does not exists', async () => {
-        await jestExpect(async () => {
-          await expect(web.element(by.web.id('nonExistentElement'))).toExist();
-        }).rejects.toThrowError();
       });
 
       it('should assert that an element is not visible', async () => {
@@ -76,40 +78,41 @@ describe('Web View', () => {
       describe('input', () => {
         const inputElement = web.element(by.web.id('fname'));
 
-        it('should type text in input', async () => {
-          await inputElement.typeText('Test');
-          await inputElement.typeText('er');
+        describe(':ios:', () => {
+          it('should type text in input regardless of content-editable parameter on ios', async () => {
+            await inputElement.typeText('Test', false);
+            await inputElement.typeText('er', true);
 
-          await expect(inputElement).toHaveText('Tester');
-        });
+            await expect(inputElement).toHaveText('Tester');
+          });
 
-        it(':ios: should type text in input regardless of content-editable parameter on ios', async () => {
-          await inputElement.typeText('Test', false);
-          await inputElement.typeText('er', true);
+          it('should type text in input', async () => {
+            await inputElement.typeText('Test');
+            await inputElement.typeText('er');
 
-          await expect(inputElement).toHaveText('Tester');
-        });
+            await expect(inputElement).toHaveText('Tester');
+          });
 
-        it('should clear text in input', async () => {
-          await inputElement.typeText('Test');
-          await inputElement.clearText();
+          it('should clear text in input', async () => {
+            await inputElement.typeText('Test');
+            await inputElement.clearText();
 
-          await expect(inputElement).toHaveText('');
-        });
+            await expect(inputElement).toHaveText('');
+          });
 
-        it('should replace text in input', async () => {
-          await inputElement.typeText('Temp');
-          await inputElement.replaceText('Tester');
+          it('should replace text in input', async () => {
+            await inputElement.typeText('Temp');
+            await inputElement.replaceText('Tester');
 
-          await expect(inputElement).toHaveText('Tester');
-        });
+            await expect(inputElement).toHaveText('Tester');
+          });
 
-        it('should tap on submit button and update result', async () => {
-          await inputElement.typeText('Tester');
+          it('should tap on submit button and update result', async () => {
+            await inputElement.typeText('Tester');
+            await web.element(by.web.id('submit')).tap();
 
-          await web.element(by.web.id('submit')).tap();
-
-          await expect(inputElement).toHaveText('Tester');
+            await expect(inputElement).toHaveText('Tester');
+          });
         });
 
         it('should select all text in input', async () => {
@@ -136,30 +139,33 @@ describe('Web View', () => {
       describe('content-editable', () => {
         const contentEditableElement = web.element(by.web.id('contentEditable'));
 
-        it('should type text in content-editable', async () => {
-          await contentEditableElement.typeText('Test');
-          await contentEditableElement.typeText('er');
+        describe(':ios:', () => {
+          it('should type text in content-editable regardless of content-editable parameter on ios', async () => {
+            await contentEditableElement.typeText('Tes', false);
+            await contentEditableElement.typeText('te', true);
+            await contentEditableElement.typeText('r');
 
-          await expect(contentEditableElement).toHaveText('Name: Tester');
-        });
+            await expect(contentEditableElement).toHaveText('Name: Tester');
+          });
 
-        it(':ios: should type text in content-editable regardless of content-editable parameter on ios', async () => {
-          await contentEditableElement.typeText('Test', false);
-          await contentEditableElement.typeText('er', true);
+          it('should clear text in content-editable', async () => {
+            await contentEditableElement.clearText();
 
-          await expect(contentEditableElement).toHaveText('Name: Tester');
-        });
+            await expect(contentEditableElement).toHaveText('');
+          });
 
-        it('should clear text in content-editable', async () => {
-          await contentEditableElement.clearText();
+          it('should replace text in content-editable', async () => {
+            await contentEditableElement.replaceText('Tester');
 
-          await expect(contentEditableElement).toHaveText('');
-        });
+            await expect(contentEditableElement).toHaveText('Tester');
+          });
 
-        it('should replace text in content-editable', async () => {
-          await contentEditableElement.replaceText('Tester');
+          it('should type text in content-editable', async () => {
+            await contentEditableElement.typeText('Test', true);
+            await contentEditableElement.typeText('er', true);
 
-          await expect(contentEditableElement).toHaveText('Tester');
+            await expect(contentEditableElement).toHaveText('Name: Tester');
+          });
         });
 
         it('should select all text in content-editable', async () => {
@@ -212,25 +218,25 @@ describe('Web View', () => {
         const headline = web.element(by.web.id('pageHeadline'));
 
         await jestExpect(async () => {
-          await headline.executeScript('(el) => { el.textContent = "Changed"; throw new Error("Error"); }');
+          await headline.runScript('(el) => { el.textContent = "Changed"; throw new Error("Error"); }');
         }).rejects.toThrowError();
       });
     });
 
     describe('getters', () => {
-      it('should get the web page title', async () => {
-        const title = await web.element(by.web.tag('body')).getTitle();
-        await jestExpect(title).toBe('First Webview');
-      });
-
-      it('should get the web page url', async () => {
-        await web.element(by.web.href('https://www.w3schools.com')).tap();
+      it(':ios: should get the web page url', async () => {
+        await web.element(by.web.id('w3link')).tap();
 
         await waitForCondition(
           () => web.element(by.web.tag('body')).getCurrentUrl(),
           (result) => result === 'https://www.w3schools.com/',
           5000
         );
+      });
+
+      it('should get the web page title', async () => {
+        const title = await web.element(by.web.tag('body')).getTitle();
+        await jestExpect(title).toBe('First Webview');
       });
 
       it('should get text from element', async () => {
@@ -275,7 +281,7 @@ describe('Web View', () => {
         await element(by.id('toggleDummyWebView2Button')).tap();
       });
 
-      describe(':ios: ios support', () => {
+      describe(':ios:', () => {
         it('should find web-view by index', async () => {
           await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
           await expect(web(by.id('dummyWebView')).atIndex(1).element(by.web.id('message'))).toExist();
@@ -288,12 +294,10 @@ describe('Web View', () => {
         });
       });
 
-      describe(':android: android no-support', () => {
-        it('should throw on usage of atIndex', async () => {
-          await jestExpect(async () => {
-            await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
-          }).rejects.toThrowError();
-        });
+      it(':android: should throw on usage of atIndex', async () => {
+        await jestExpect(async () => {
+          await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
+        }).rejects.toThrowError();
       });
     });
   });

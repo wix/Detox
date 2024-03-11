@@ -122,7 +122,7 @@ const webViewFormWithScrolling = `
         <div id="contentEditable" class='contentEditable' contenteditable="true">Name: </div>
 
         <h2>Text and link</h2>
-        <p>Some text and a <a href="https://www.w3schools.com">link</a>.</p>
+        <p>Some text and a <a id="w3link" href="https://www.w3schools.com">link</a>.</p>
         <p id="bottomParagraph" class="specialParagraph">This is a bottom paragraph with class.</p>
     </body>
 </html>
