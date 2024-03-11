@@ -112,6 +112,7 @@ class DetoxPrimaryContext extends DetoxContext {
     const environmentFactory = require('../environmentFactory');
 
     const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
+    // error 1 stack trace
     this[_deviceAllocator] = deviceAllocatorFactory.createDeviceAllocator({
       detoxConfig,
       detoxSession: this[$sessionState],

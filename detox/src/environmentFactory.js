@@ -1,5 +1,10 @@
 // @ts-nocheck
 const artifactsManagerFactories = require('./artifacts/factories');
+// error 1 stack trace, here all device allocation factories has been imported.
+// factories folder have a index.js and that exports cloud.js
+// in cloud.js, there is a noop class that extends deviceAllocationFactories class.
+// why it extends deviceAllocationFactories?
+// because deviceAllocationFactories is a base class for device allocation for android, ios, cloud and have a method that other subclass have their own definition.
 const deviceAllocationFactories = require('./devices/allocation/factories');
 const runtimeDeviceFactories = require('./devices/runtime/factories');
 const envValidationFactories = require('./devices/validation/factories');
