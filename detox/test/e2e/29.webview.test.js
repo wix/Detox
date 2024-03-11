@@ -1,4 +1,5 @@
 const {expectElementSnapshotToMatch} = require("./utils/snapshot");
+const {waitForCondition} = require("./utils/waitForCondition");
 const jestExpect = require('expect').default;
 
 describe('Web View', () => {
@@ -225,12 +226,11 @@ describe('Web View', () => {
       it('should get the web page url', async () => {
         await web.element(by.web.href('https://www.w3schools.com')).tap();
 
-        // Sleep for a second to allow the web page to load.
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const url = await web.element(by.web.tag('body')).getCurrentUrl();
-
-        await jestExpect(url).toBe('https://www.w3schools.com/');
+        await waitForCondition(
+          () => web.element(by.web.tag('body')).getCurrentUrl(),
+          (result) => result === 'https://www.w3schools.com/',
+          5000
+        );
       });
 
       it('should get text from element', async () => {
