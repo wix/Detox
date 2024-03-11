@@ -27,8 +27,7 @@ describe('Actions', () => {
     await driver.tapsElement.assertTappedOnce();
   });
 
-  // TODO: we have an unresolved issue with Metro bundler and symlinks
-  it.skip('should be able to send backdoor commands', async () => {
+  it('should be able to send backdoor commands', async () => {
     await device.backdoor({ action: 'greet', text: 'Arbitrary Text' });
     await expect(element(by.text('Arbitrary Text!!!'))).toBeVisible();
   });

@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import {
+  Text,
   BackHandler,
-  Dimensions,
-  Platform,
-  RefreshControl,
+  View,
+  TouchableOpacity,
   ScrollView,
+  RefreshControl,
+  Platform,
+  Dimensions,
   StyleSheet,
   SafeAreaView,
   requireNativeComponent,
 } from 'react-native';
-import { detoxBackdoor } from 'detox/react-native';
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
+import { detoxBackdoor } from 'detox/react-native';
 
 let LegacySlider;
 try {
