@@ -14,12 +14,7 @@ extension WebCodeBuilder {
 
 		switch type {
 			case .id:
-				if index > 0 {
-					// ID should be unique by definition, so if `index` > 0 it's an error.
-					return "null"
-				}
-
-				return "document.getElementById('\(value)')"
+				return "document.querySelectorAll('#\(value)')\(indexStatement)"
 
 			case .className:
 				return "document.getElementsByClassName('\(value)')\(indexStatement)"
