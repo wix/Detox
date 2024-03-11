@@ -14,14 +14,14 @@ async function expectElementSnapshotToMatch (elementOrDevice, snapshotName) {
     } else {
         await expectSSIMToBeClose(bitmapPath, expectedBitmapPath);
     }
-};
+}
 
 async function expectDeviceSnapshotToMatch (snapshotName) {
     // Set status bar to consistent state for snapshot. Currently, doesn't work on iOS 17.
     await device.setStatusBar({time: '2024-03-08T09:41:00-07:00'});
 
     await expectElementSnapshotToMatch(device, snapshotName);
-};
+}
 
 async function expectSSIMToBeClose (bitmapPath, expectedBitmapPath) {
     const image = loadImage(bitmapPath);
