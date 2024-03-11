@@ -49,7 +49,6 @@ export default function WebViewScreen() {
     );
 };
 
-// HTML content for the form with scrolling, for testing purposes.
 const webViewFormWithScrolling = `
 <!DOCTYPE html>
 <html>
@@ -128,7 +127,6 @@ const webViewFormWithScrolling = `
 </html>
 `;
 
-// HTML content for the dummy webview, for testing purposes.
 const dummyWebView = `
 <!DOCTYPE html>
 <html>
