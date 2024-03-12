@@ -229,6 +229,45 @@ class DetoxAction {
     };
   }
 
+  static longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
+    if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    if (typeof normalizedPositionX !== "number") throw new Error("normalizedPositionX should be a number, but got " + (normalizedPositionX + (" (" + (typeof normalizedPositionX + ")"))));
+    if (typeof normalizedPositionY !== "number") throw new Error("normalizedPositionY should be a number, but got " + (normalizedPositionY + (" (" + (typeof normalizedPositionY + ")"))));
+    if (typeof normalizedTargetPositionX !== "number") throw new Error("normalizedTargetPositionX should be a number, but got " + (normalizedTargetPositionX + (" (" + (typeof normalizedTargetPositionX + ")"))));
+    if (typeof normalizedTargetPositionY !== "number") throw new Error("normalizedTargetPositionY should be a number, but got " + (normalizedTargetPositionY + (" (" + (typeof normalizedTargetPositionY + ")"))));
+    if (typeof speed !== "string") throw new Error("speed should be a string, but got " + (speed + (" (" + (typeof speed + ")"))));
+    if (typeof holdDuration !== "number") throw new Error("holdDuration should be a number, but got " + (holdDuration + (" (" + (typeof holdDuration + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "longPressAndDrag",
+      args: [{
+        type: "Integer",
+        value: duration
+      }, {
+        type: "Double",
+        value: normalizedPositionX
+      }, {
+        type: "Double",
+        value: normalizedPositionY
+      }, {
+        type: "Invocation",
+        value: targetElement
+      }, {
+        type: "Double",
+        value: normalizedTargetPositionX
+      }, {
+        type: "Double",
+        value: normalizedTargetPositionY
+      }, speed, {
+        type: "Integer",
+        value: holdDuration
+      }]
+    };
+  }
+
   static takeViewScreenshot() {
     return {
       target: {

@@ -45,6 +45,32 @@ class PressKeyAction extends Action {
   }
 }
 
+class LongPressAndDragAction extends Action {
+  constructor(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
+    super();
+
+    assertNormalized({ normalizedPositionX });
+    assertNormalized({ normalizedPositionY });
+    assertNormalized({ normalizedTargetPositionX });
+    assertNormalized({ normalizedTargetPositionY });
+    assertSpeed({ speed });
+
+    this._call = invoke.callDirectly(
+      DetoxActionApi.longPressAndDrag(
+        duration,
+        normalizedPositionX,
+        normalizedPositionY,
+        targetElement._call(),
+        normalizedTargetPositionX,
+        normalizedTargetPositionY,
+        speed,
+        holdDuration
+      )
+    );
+  }
+
+}
+
 class TypeTextAction extends Action {
   constructor(value) {
     super();
@@ -157,6 +183,7 @@ module.exports = {
   TapAction,
   TapAtPointAction,
   LongPressAction,
+  LongPressAndDragAction,
   MultiClickAction,
   PressKeyAction,
   TypeTextAction,
