@@ -3,7 +3,7 @@ import { requireNativeComponent, View } from 'react-native';
 
 const NativeAnimatingView = requireNativeComponent('DetoxNativeAnimatingView');
 
-class NativeAnimationsScreen extends Component {
+export default class NativeAnimationsScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'stretch' }}>
@@ -12,5 +12,3 @@ class NativeAnimationsScreen extends Component {
     );
   }
 }
-
-module.exports = NativeAnimationsScreen;

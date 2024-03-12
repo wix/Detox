@@ -53,7 +53,7 @@ class Element : NSObject {
 		return array
 	}
 	
-	private var view : NSObject {
+	var view : NSObject {
 		let array = self.views
 		
 		let element : NSObject

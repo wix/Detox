@@ -1,141 +1,154 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import {Button, View} from 'react-native';
 import { WebView } from 'react-native-webview';
 
-export default class WebViewScreen extends Component {
-  render() {
-    // const debugSource = require('../assets/html/test.html');
-    // const releaseSourcePrefix = Platform.OS === 'android' ? 'file:///android_asset' : './assets';
-    // const releaseSource = { uri: `${releaseSourcePrefix}/assets/html/test.html` };
-    // const webViewSource = Image.resolveAssetSource(global.__DEV__ ? debugSource : releaseSource);
+export default function WebViewScreen() {
+    const [isDummyWebViewVisible, setIsDummyWebViewVisible] = React.useState(false);
+    const [isDummyWebView2Visible, setIsDummyWebView2Visible] = React.useState(false);
+
     return (
-        <View style={{flex: 1,flexDirection: 'column' ,backgroundColor:'blue'}}>
-          <View style={{flex: 8}}>
-            <WebView testID={'webview_1'} source={{html: webpageSource}}/>
-          </View>
-          <View style={{flex: 1}}>
-            <WebView testID={'webview_2'} source={{html: webpageSource2}} scrollEnabled={false}/>
-          </View>
+        <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={{
+                flex: 2,
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                backgroundColor: '#edf6ff'
+            }}>
+                <View style={{flex: 1}}>
+                    <Button
+                        testID={'toggleDummyWebViewButton'}
+                        title={isDummyWebViewVisible ? 'Hide 2nd webview' : 'Show 2nd webview'}
+                        onPress={() => setIsDummyWebViewVisible(!isDummyWebViewVisible)}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <Button
+                        testID={'toggleDummyWebView2Button'}
+                        title={isDummyWebView2Visible ? 'Hide 3rd webview' : 'Show 3rd webview'}
+                        onPress={() => setIsDummyWebView2Visible(!isDummyWebView2Visible)}
+                    />
+                </View>
+            </View>
+            <View style={{flex: 7, flexDirection: 'column'}}>
+                <View style={{flex: 5}}>
+                    <WebView testID={'webViewFormWithScrolling'} source={{html: webViewFormWithScrolling}}/>
+                </View>
+                {isDummyWebViewVisible && (
+                    <View style={{flex: 5}}>
+                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                    </View>
+                )}
+                {isDummyWebView2Visible && (
+                    <View style={{flex: 5}}>
+                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                    </View>
+                )}
+            </View>
         </View>
-
     );
-  }
-}
+};
 
-const webpageSource2 = `
+const webViewFormWithScrolling = `
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewport" content="width=320, user-scalable=no">
-</head>
-  <body>
-  <p>Second Webview</p>
-  </body>
+    <head>
+        <title>First Webview</title>
+        <meta name="viewport" content="width=320, user-scalable=no">
+        <style>
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              margin: 0;
+              padding: 0;
+            }
+
+            form {
+              margin: 20px;
+            }
+
+            input[type=text] {
+              width: 100%;
+              padding: 12px 20px;
+              margin: 8px 0;
+              box-sizing: border-box;
+            }
+
+            input[type=submit] {
+              background-color: #4CAF50;
+              color: white;
+              padding: 14px 20px;
+              margin: 8px 0;
+              border: none;
+              cursor: pointer;
+              width: 100%;
+            }
+
+            input[type=submit]:hover {
+              background-color: #45a049;
+            }
+
+            p, h1, h2 {
+              margin: 20px;
+            }
+
+            .specialParagraph {
+              margin-top: 1000px;
+              color: blue;
+              font-size: 20px;
+            }
+
+            .contentEditable {
+              margin: 20px;
+              padding: 10px;
+              border: 1px solid grey;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="pageHeadline">First Webview</h1>
+        <h2>Form</h2>
+        <form>
+            <label for="fname">Your name:</label><br>
+            <input type="text" id="fname" name="fname"><br>
+            <input type="submit" id="submit" value="Submit" onclick="document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;">
+        </form>
+
+        <h2>Form Results</h2>
+        <p>Your first name is: <span id="resultFname">No input yet</span></p>
+
+        <h2>Content Editable</h2>
+        <div id="contentEditable" class='contentEditable' contenteditable="true">Name: </div>
+
+        <h2>Text and link</h2>
+        <p>Some text and a <a id="w3link" href="https://www.w3schools.com">link</a>.</p>
+        <p id="bottomParagraph" class="specialParagraph">This is a bottom paragraph with class.</p>
+    </body>
 </html>
 `;
 
-const webpageSource = `
+const dummyWebView = `
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewport" content="width=320, user-scalable=no">
-</head>
-<body>
-<style>
-span.a {
-  display: inline; /* the default for span */
-  width: 100px;
-  height: 100px;
-  padding: 5px;
-  border: 1px solid blue;
-  background-color: yellow;
-}
-
-span.b {
-  display: inline-block;
-  width: 100px;
-  height: 100px;
-  padding: 5px;
-  border: 1px solid blue;
-  background-color: yellow;
-}
-
-span.c {
-  display: block;
-  width: 100px;
-  height: 100px;
-  padding: 5px;
-  border: 1px solid blue;
-  background-color: yellow;
-}
-
-#cssSelector {
-  background-color: yellow;
-}
-npm
-
-</style>
-<h1 id="testingh1">Testing <mark>Heading1</mark></h1>
-
-<div id="spacer" style="height:600px;"></div>
-<a id="cssSelector" href="http://www.disney.com">disney.com</a>
-
-<div id="root" style="min-height:80px;">
-   <div class="QiJxn LG3cc _2KPOx" dir="ltr" data-id="rce">
-      <style id="dynamicStyles"></style>
-      <div class="Tux6h _2N_hG">
-         <div class="DraftEditor-root">
-            <div class="DraftEditor-editorContainer">
-               <div aria-autocomplete="list" aria-describedby="placeholder-editor" aria-expanded="false" class="notranslate public-DraftEditor-content has-custom-focus" contenteditable="true" role="combobox" spellcheck="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;">
-                  <div data-contents="true">
-                     <div class="jwLWP _2hXa7 public-DraftStyleDefault-block-depth0 public-DraftStyleDefault-text-ltr" data-block="true" data-editor="editor" data-offset-key="00000-0-0">
-                        <div data-offset-key="00000-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="00000-0-0"><span data-text="true">Rich Content Test</span></span></div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</div>
-
-<div id="testingDiv">
-    <div id="testingDiv2">
-        <div id="testingDiv3">
-            <div id="testingDiv4">
-                <div id="testingDiv5">
-                    <div id="testingDiv6">
-                        <div id="testingDiv7">
-                            <div id="testingDiv8">
-                                <h1 id="testingh1-2">Testing Heading2</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<span class="a">Aa</span>
-<span class="b">Ba</span>
-<span class="c">Ca</span>
-<input type="text" id="textInput" placeholder="type something"/><br>
-<input type="button" value="Change Text" onclick="changeText()" id="changeTextBtn"/><br>
-<p id="testingPar">Message</p>
-
-<div id="spacer2" style="height:2000px;"></div>
-
-<input name="sec_input" type="text" id="textInput2" placeholder="Second Input"/><br>
-
-<div id="testingDiv9">
-    <h2 id="testingh1-1">Xpath</h2>
-</div>
-<script>
-    function changeText() {
-        var typedText = document.getElementById('textInput').value;
-        document.getElementById('testingPar').innerHTML=typedText;
-    }
-</script>
-
-</body>
-</html>`
+    <head>
+        <title>Dummy Webview</title>
+        <meta name="viewport" content="width=320, user-scalable=no">
+        <style>
+            body {
+              background-color: #b9e0ff;
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              margin: 0;
+              padding: 20px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="message">This is a dummy webview.</p>
+    </body>
+</html>
+`;

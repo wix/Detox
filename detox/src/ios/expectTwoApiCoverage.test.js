@@ -78,6 +78,19 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('test').withAncestor('notAMatcher')));
       await expectToThrow(() => e.element(e.by.id('test').withDescendant('notAMatcher')));
       // await expectToThrow(() => e.element(e.by.id('test').and('notAMatcher')));
+
+      // Web matchers
+      await expectToThrow(() => e.web.element(e.by.web.id(1)));
+      await expectToThrow(() => e.web.element(e.by.web.label(1)));
+      await expectToThrow(() => e.web.element(e.by.web.className(1)));
+      await expectToThrow(() => e.web.element(e.by.web.cssSelector(1)));
+      await expectToThrow(() => e.web.element(e.by.web.name(1)));
+      await expectToThrow(() => e.web.element(e.by.web.xpath(1)));
+      await expectToThrow(() => e.web.element(e.by.web.href(1)));
+      await expectToThrow(() => e.web.element(e.by.web.hrefContains(1)));
+      await expectToThrow(() => e.web.element(e.by.web.tag(1)));
+      await expectToThrow(() => e.web.element(e.by.web.value(1)));
+      await expectToThrow(() => e.web.element(e.by.web.accessibilityType(1)));
     });
 
     it(`should throw for invalid toBeVisible parameters`, async () => {
@@ -96,6 +109,8 @@ describe('expectTwo API Coverage', () => {
     it(`expect with wrong parameters should throw`, async () => {
       await expectToThrow(() => e.expect('notAnElement'));
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
+      await expectToThrow(() => e.expect(e.web.element('notAMatcher')));
+      await expectToThrow(() => e.expect(e.web.element(e.by.web.id('id'))).toHaveText(0));
     });
   });
 
