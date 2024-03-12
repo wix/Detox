@@ -143,7 +143,7 @@ it('should login successfully', async () => {
 
 [setup]: ../introduction/environment-setup.md
 [api]: ../api/webviews.md
-[native-matcher]: matchers.md
+[native-matcher]: ../api/matchers.md
 [content-editable]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contentEditable
 [webelementmatcher]: ../api/webviews.md#webelementmatcher
 [matchers-apis]: ../api/webviews.md#matchers
