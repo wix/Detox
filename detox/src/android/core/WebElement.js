@@ -132,7 +132,7 @@ class WebViewElement {
 
   atIndex(_index) {
     // Not implemented yet
-    throw new Error('atIndex() is not supported for Android WebViewElement');
+    throw new DetoxRuntimeError('atIndex() is not supported for Android WebViewElement');
   }
 }
 

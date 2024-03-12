@@ -200,9 +200,23 @@ describe('Web View', () => {
         await expect(headline).toHaveText('Changed');
       });
 
+      it('should run script with non-string function as parameter', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        await headline.runScript((el) => { el.textContent = "Changed"; });
+
+        await expect(headline).toHaveText('Changed');
+      });
+
       it('should run script with arguments', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
         await headline.runScript('(el, text) => { el.textContent = text; }', ['Changed']);
+
+        await expect(headline).toHaveText('Changed');
+      });
+
+      it('should run script with arguments with non-string function as parameter', async () => {
+        const headline = web.element(by.web.id('pageHeadline'));
+        await headline.runScript((el, text) => { el.textContent = text; }, ['Changed']);
 
         await expect(headline).toHaveText('Changed');
       });
