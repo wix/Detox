@@ -10,7 +10,6 @@ describe('Drag And Drop', () => {
 
 
   it('should drag pan to left of the title', async () => {
-    console.log('attributes: ', await element(by.id('draggable')).getAttributes());
     await element(by.id('draggable')).longPressAndDrag(
       1000,
       0.5,
@@ -21,8 +20,6 @@ describe('Drag And Drop', () => {
       'fast',
       0);
 
-
-    await new Promise(r => setTimeout(r, 2000));
   });
 
 });

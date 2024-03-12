@@ -48,6 +48,12 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
+  async longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
+    const action = new actions.LongPressAndDragAction(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
+    const traceDescription = actionDescription.longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration);
+    return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
+  }
+
   async multiTap(times) {
     if (typeof times !== 'number') throw new Error('times should be a number, but got ' + (times + (' (' + (typeof times + ')'))));
     if (times < 1) throw new Error('times should be greater than 0, but got ' + times);
