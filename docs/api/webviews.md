@@ -16,28 +16,30 @@ const innerElement = web.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
-The operation above explains how to locate an inner element using its HTML id attribute and how to verify its text content.
+In the example above, we locate an inner element by its `id` HTML attribute and verify its text content.
 
 ### `web(nativeMatcher).element(matcher)`
-
-For screens with several web views, it's first necessary to identify a specific web view using a native matcher.
-Following that, you can locate the element within the identified web view.
 
 If you have multiple web views on the screen, you must locate a specific web view first by using a [native matcher][native matchers], e.g.:
 
 ```js
 const myWebView = web(by.id('webview_identifier'));
+```
+
+Following that, you can locate the element within the identified web view:
+
+```js
 const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
-In the example above:
+### `web(nativeMatcher).atIndex(index).element(matcher)` (iOS only)
 
-1. We use `web()` function and [`by.id()`] matcher to locate a web view by its accessibility identifier.
-1. We use `myWebView.element()` method and [`by.web.id()`] web matcher to find an HTML element inside that web view.
-1. We run the same expectation (to have text) as in the previous example.
+:::note
 
-### `web(nativeMatcher).atIndex(index).element(matcher)`
+This matcher is available for iOS only. See [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
 
 If you have multiple web views on the screen and you want to interact with a specific web view, you can use the `atIndex()` method to choose the web view at the specified index.
 
@@ -48,12 +50,6 @@ await expect(innerElement).toHaveText('Hello World!');
 ```
 
 In the example above, we use `atIndex()` to select the second web view on the screen (that has the specified accessibility identifier) and then locate an HTML element inside that web view.
-
-:::note
-
-This matcher is available for iOS only. See [this GitHub issue](https://github.com/wix/Detox/issues/4398) on for more information.
-
-:::
 
 ## Matchers
 
