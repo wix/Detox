@@ -45,6 +45,7 @@ const sidebars = {
         'guide/android-dev-env',
         'guide/proguard-configuration',
         'guide/cucumber-js-integration',
+        'guide/testing-webviews',
         'guide/uninstalling',
       ]
     },
