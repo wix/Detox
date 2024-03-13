@@ -34,6 +34,7 @@ const sidebars = {
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
+        'guide/testing-webviews',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
         'guide/mocking',
@@ -45,7 +46,6 @@ const sidebars = {
         'guide/android-dev-env',
         'guide/proguard-configuration',
         'guide/cucumber-js-integration',
-        'guide/testing-webviews',
         'guide/uninstalling',
       ]
     },
