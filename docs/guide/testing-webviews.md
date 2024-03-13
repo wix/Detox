@@ -102,7 +102,21 @@ const textElement = web(by.id('webview_identifier')).element(by.web.id('text_ele
 const fontSize = await textElement.runScript(function get(element) {
   return element.style.fontSize;
 });
+
+// Use jestExpect to assert the font size
+jestExpect(fontSize).toBe('16px');
 ```
+
+:::note
+
+Using jest-expectations in Detox tests is possible by importing `expect` API from `jest` package and using it with a separate `jestExpect` variable (as shown in the example below).
+This is due to the fact that Detox uses its own `expect` API, which is not compatible with jest-expectations.
+
+```javascript
+const jestExpect = require('expect').default;
+```
+
+:::
 
 ## Step 4: Assert on Expected Behaviour
 
