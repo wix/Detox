@@ -44,7 +44,7 @@ This matcher is available for iOS only. See [this GitHub issue](https://github.c
 If you have multiple web views on the screen and you want to interact with a specific web view, you can use the `atIndex()` method to choose the web view at the specified index.
 
 ```js
-const myWebView = web(by.id('webview_identifier').atIndex(1));
+const myWebView = web(by.id('webview_identifier')).atIndex(1);
 const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
@@ -146,7 +146,7 @@ web.element(by.web.tag('h1'));
 Choose the element at the specified index.
 
 ```js
-web.element(by.web.tag('h1').atIndex(1));
+web.element(by.web.tag('h1')).atIndex(1);
 ```
 
 Use it sparingly for those rare cases when you cannot make your matcher less ambiguous, so it returns one element only.
