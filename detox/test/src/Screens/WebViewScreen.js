@@ -110,7 +110,7 @@ const webViewFormWithScrolling = `
         <h2>Form</h2>
         <form>
             <label for="fname">Your name:</label><br>
-            <input type="text" id="fname" name="fname"><br>
+            <input type="text" id="fname" name="fname" maxlength="10"><br>
             <input type="submit" id="submit" value="Submit" onclick="document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;">
         </form>
 
