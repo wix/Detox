@@ -317,6 +317,7 @@ describe('Web View', () => {
         });
       });
 
+      // Not implemented yet
       it(':android: should throw on usage of atIndex', async () => {
         await jestExpect(async () => {
           await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
