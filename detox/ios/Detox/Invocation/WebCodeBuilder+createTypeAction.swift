@@ -59,6 +59,10 @@ extension WebCodeBuilder {
 	let currentIndex = 0;
 	const delay = \(typeCharacterDelay);
 	const typeCharacters = () => {
+		if (isInputField && (element.value.length >= element.getAttribute('maxlength'))) {
+		  return;
+		}
+
 		if (currentIndex < textToType.length) {
 			if (isContentEditable) {
 				element.textContent += textToType.charAt(currentIndex);

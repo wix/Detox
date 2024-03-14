@@ -93,6 +93,15 @@ describe('Web View', () => {
             await expect(inputElement).toHaveText('Tester');
           });
 
+          it('should not type more text than `maxlength` limit', async () => {
+            const text = '0123456789 ABCDEF';
+            await inputElement.typeText(text);
+
+            const maxlength = 10;
+            const expectedText = text.substring(0, maxlength);
+            await expect(inputElement).toHaveText(expectedText);
+          });
+
           it('should clear text in input', async () => {
             await inputElement.typeText('Test');
             await inputElement.clearText();
@@ -308,6 +317,7 @@ describe('Web View', () => {
         });
       });
 
+      // Not implemented yet
       it(':android: should throw on usage of atIndex', async () => {
         await jestExpect(async () => {
           await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
