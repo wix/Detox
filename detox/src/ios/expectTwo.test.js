@@ -1068,6 +1068,23 @@ describe('expectTwo', () => {
       expect(testCall).toDeepEqual(jsonOutput);
     });
 
+    it(`should parse web.element(by.web.name('someValue')).selectAllText()`, async () => {
+      const testCall = await e.web.element(e.by.web.name('someValue')).selectAllText();
+
+      const jsonOutput = {
+        invocation: {
+          type: 'webAction',
+          webAction: 'selectAllText',
+          webPredicate: {
+            type: 'name',
+            value: 'someValue'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
     it(`should parse web.element(by.web.id('webViewId')).scrollToView()`, async () => {
       const testCall = await e.web.element(e.by.web.id('webViewId')).scrollToView();
 
