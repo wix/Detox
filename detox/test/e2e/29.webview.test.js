@@ -2,6 +2,8 @@ const {expectElementSnapshotToMatch} = require("./utils/snapshot");
 const {waitForCondition} = require("./utils/waitForCondition");
 const jestExpect = require('expect').default;
 
+const MockServer = require('../mock-server/mock-server');
+
 describe('Web View', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
@@ -285,14 +287,43 @@ describe('Web View', () => {
     });
   });
 
+  describe(':ios: inner frame', () => {
+    /** @type {Detox.WebViewElement} */
+    let webview;
+    const mockServer = new MockServer();
+
+    beforeAll(async () => {
+      mockServer.init();
+
+      if (device.getPlatform() === 'android') {
+        // Android needs to reverse the port in order to access the mock server
+        await device.reverseTcpPort(mockServer.port);
+      }
+    });
+
+    afterAll(async () => {
+      await mockServer.close();
+    });
+
+    beforeEach(async () => {
+      await element(by.id('toggle3rdWebviewButton')).tap();
+      webview = web(by.id('webView'));
+    });
+
+    it('should find element in inner frame', async () => {
+      await expect(webview.element(by.web.tag('h1'))).toExist();
+      await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+    });
+  });
+
   describe('multiple web-views scenario',() => {
     /** @type {Detox.WebViewElement} */
     let webview;
 
     beforeEach(async () => {
-      await element(by.id('toggleDummyWebViewButton')).tap();
+      await element(by.id('toggle2ndWebviewButton')).tap();
 
-      webview = web(by.id('dummyWebView'));
+      webview = web(by.id('webView'));
     });
 
     it('should have a title', async () => {
@@ -306,10 +337,10 @@ describe('Web View', () => {
     });
 
     it('should throw on multiple matches', async () => {
-      await element(by.id('toggleDummyWebView2Button')).tap();
+      await element(by.id('toggle3rdWebviewButton')).tap();
 
       await jestExpect(async () => {
-        await expect(web(by.id('dummyWebView')).element(by.web.id('message'))).toExist();
+        await expect(web(by.id('webView')).element(by.web.id('message'))).toExist();
       }).rejects.toThrowError();
 
       await device.launchApp();
@@ -317,18 +348,18 @@ describe('Web View', () => {
 
     describe('at-index support', () => {
       beforeEach(async () => {
-        await element(by.id('toggleDummyWebView2Button')).tap();
+        await element(by.id('toggle3rdWebviewButton')).tap();
       });
 
       describe(':ios:', () => {
         it('should find web-view by index', async () => {
-          await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
-          await expect(web(by.id('dummyWebView')).atIndex(1).element(by.web.id('message'))).toExist();
+          await expect(web(by.id('webView')).atIndex(0).element(by.web.id('message'))).toExist();
+          await expect(web(by.id('webView')).atIndex(1).element(by.web.id('message'))).toExist();
         });
 
         it('should throw on index out of bounds', async () => {
           await jestExpect(async () => {
-            await expect(web(by.id('dummyWebView')).atIndex(2).element(by.web.id('message'))).toExist();
+            await expect(web(by.id('webView')).atIndex(2).element(by.web.id('message'))).toExist();
           }).rejects.toThrowError();
         });
       });
@@ -336,7 +367,7 @@ describe('Web View', () => {
       // Not implemented yet
       it(':android: should throw on usage of atIndex', async () => {
         await jestExpect(async () => {
-          await expect(web(by.id('dummyWebView')).atIndex(0).element(by.web.id('message'))).toExist();
+          await expect(web(by.id('webView')).atIndex(0).element(by.web.id('message'))).toExist();
         }).rejects.toThrowError();
       });
     });

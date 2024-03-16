@@ -3,8 +3,8 @@ import {Button, View} from 'react-native';
 import { WebView } from 'react-native-webview';
 
 export default function WebViewScreen() {
-    const [isDummyWebViewVisible, setIsDummyWebViewVisible] = React.useState(false);
-    const [isDummyWebView2Visible, setIsDummyWebView2Visible] = React.useState(false);
+    const [is2ndWebViewVisible, setIs2ndWebViewVisible] = React.useState(false);
+    const [is3rdWebViewVisible, setIs3rdWebViewVisible] = React.useState(false);
 
     return (
         <View style={{flex: 1, flexDirection: 'column'}}>
@@ -17,37 +17,50 @@ export default function WebViewScreen() {
             }}>
                 <View style={{flex: 1}}>
                     <Button
-                        testID={'toggleDummyWebViewButton'}
-                        title={isDummyWebViewVisible ? 'Hide 2nd webview' : 'Show 2nd webview'}
-                        onPress={() => setIsDummyWebViewVisible(!isDummyWebViewVisible)}
+                        testID={'toggle2ndWebviewButton'}
+                        title={is2ndWebViewVisible ? 'Hide 2nd webview' : 'Show 2nd webview'}
+                        onPress={() => setIs2ndWebViewVisible(!is2ndWebViewVisible)}
                     />
                 </View>
                 <View style={{flex: 1}}>
                     <Button
-                        testID={'toggleDummyWebView2Button'}
-                        title={isDummyWebView2Visible ? 'Hide 3rd webview' : 'Show 3rd webview'}
-                        onPress={() => setIsDummyWebView2Visible(!isDummyWebView2Visible)}
+                        testID={'toggle3rdWebviewButton'}
+                        title={is3rdWebViewVisible ? 'Hide 3rd webview' : 'Show 3rd webview'}
+                        onPress={() => setIs3rdWebViewVisible(!is3rdWebViewVisible)}
                     />
                 </View>
             </View>
             <View style={{flex: 7, flexDirection: 'column'}}>
                 <View style={{flex: 5}}>
-                    <WebView testID={'webViewFormWithScrolling'} source={{html: webViewFormWithScrolling}}/>
+                    <WebView
+                      testID={'webViewFormWithScrolling'}
+                      source={{html: webViewFormWithScrolling}}
+                    />
                 </View>
-                {isDummyWebViewVisible && (
+                {is2ndWebViewVisible && (
                     <View style={{flex: 5}}>
-                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                        <WebView
+                          testID={'webView'}
+                          source={{html: dummyWebView}}
+                          scrollEnabled={false}
+                        />
                     </View>
                 )}
-                {isDummyWebView2Visible && (
-                    <View style={{flex: 5}}>
-                        <WebView testID={'dummyWebView'} source={{html: dummyWebView}} scrollEnabled={false}/>
+                {is3rdWebViewVisible && (
+                    <View style={{flex: 7}}>
+                        <WebView
+                          testID={'webView'}
+                          originWhitelist={['*']}
+                          source={{html: iframeWebView}}
+                          scrollEnabled={false}
+                          allowUniversalAccessFromFileURLs={true}
+                        />
                     </View>
                 )}
             </View>
         </View>
     );
-};
+}
 
 const webViewFormWithScrolling = `
 <!DOCTYPE html>
@@ -149,6 +162,39 @@ const dummyWebView = `
     </head>
     <body>
         <p id="message">This is a dummy webview.</p>
+    </body>
+</html>
+`;
+
+const iframeWebView = `
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Inline Frame Webview</title>
+        <meta name="viewport" content="width=320, user-scalable=no">
+        <style>
+            body {
+              background-color: #b9e0ff;
+              font-family: Arial, sans-serif;
+              font-size: 16px;
+              padding: 20px;
+              text-align: center;
+            }
+
+            iframe {
+              border: 1px solid #000;
+              background-color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="message">This is a webview with an inline frame inside.</p>
+        <iframe
+            id="iframe"
+            src="http://localhost:9001/hello-world.html"
+            width="95%"
+            height="150">
+        </iframe>
     </body>
 </html>
 `;
