@@ -40,12 +40,19 @@ class WebExpectation: WebInteraction {
 		}
 
 		webView.evaluateJSAfterLoading(jsString) { [self] (result, error) in
-			let valueResult = (result as? [String: Any])?["result"]
-			let elementResult = (result as? [String: Any])?["element"]
+			let dict = result as? [String: Any]
+
+			let valueResult = dict?["result"]
+
+			let elementResult = dict?["element"]
 			let elementInfo: String =
 				elementResult != nil ?
 					"info: `\(String(describing: elementResult!))`" :
 					"not found"
+
+			let jsError = dict?["error"]
+			let jsErrorDescription = jsError != nil ?
+					", with JS error: \(String(describing: jsError!))" : ""
 
 			if let error = error {
 				completionHandler(dtx_errorForFatalError(
@@ -60,7 +67,9 @@ class WebExpectation: WebInteraction {
 					"'\(webPredicate.value)', web-view: \(webView.debugDescription). " +
 					"Got evaluation result: " +
 					"\(valueResult as? Bool == false ? "false" : String(describing: valueResult)). " +
-					"Element \(elementInfo)"))
+					"Element \(elementInfo)" +
+					jsErrorDescription
+				))
 			} else {
 				completionHandler(nil)
 			}
