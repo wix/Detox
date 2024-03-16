@@ -36,7 +36,7 @@ extension WebCodeBuilder {
 	}
 
 	if (shouldReplaceCurrentText) {
-		const range = document.createRange();
+		const range = element.ownerDocument.createRange();
 		const sel = window.getSelection();
 
 		if (isContentEditable) {
@@ -44,11 +44,11 @@ extension WebCodeBuilder {
 			sel.removeAllRanges();
 			sel.addRange(range);
 
-			document.execCommand('delete', false, null);
+			element.ownerDocument.execCommand('delete', false, null);
 		} else if (isInputField) {
 			element.select();
 
-			document.execCommand('cut');
+			element.ownerDocument.execCommand('cut');
 		}
 	}
 

@@ -31,7 +31,7 @@ extension WebCodeBuilder {
   }
 
   if (isContentEditable) {
-		var range = document.createRange();
+		var range = element.ownerDocument.createRange();
 		range.selectNodeContents(element);
 		var selection = window.getSelection();
 		selection.removeAllRanges();
