@@ -36,7 +36,8 @@ extension WebCodeBuilder {
 				var frameElements = getAllElements(frameDoc, selector);
 				elements = elements.concat(frameElements);
 			} catch(e) {
-				/* ignore issues accessing iframe documents (e.g., CORS error) */
+				throw e;
+				/* Probably issues accessing iframe documents (CORS restrictions) */
 			}
 		}
 		return elements;
