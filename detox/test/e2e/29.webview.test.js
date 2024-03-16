@@ -93,6 +93,14 @@ describe('Web View', () => {
             await expect(inputElement).toHaveText('Tester');
           });
 
+          it('should keep cursor position on end while typing', async () => {
+            await inputElement.typeText('Test');
+            await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-input-1');
+
+            await inputElement.typeText('er');
+            await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-input-2');
+          });
+
           it('should not type more text than `maxlength` limit', async () => {
             const text = '0123456789 ABCDEF';
             await inputElement.typeText(text);
@@ -174,6 +182,14 @@ describe('Web View', () => {
             await contentEditableElement.typeText('er', true);
 
             await expect(contentEditableElement).toHaveText('Name: Tester');
+          });
+
+          it('should keep cursor position on end while typing', async () => {
+            await contentEditableElement.typeText('Test', true);
+            await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-content-editable-1');
+
+            await contentEditableElement.typeText('er', true);
+            await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-content-editable-2');
           });
         });
 
