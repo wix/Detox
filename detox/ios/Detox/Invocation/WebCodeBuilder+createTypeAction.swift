@@ -18,8 +18,6 @@ extension WebCodeBuilder {
 		throw new Error('Element not found');
 	}
 
-	\(createMoveCursorToEndAction(selector: selector))
-
 	const isContentEditable = element.contentEditable === 'true';
 	const isInputField = (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');
 
@@ -34,6 +32,8 @@ extension WebCodeBuilder {
   if (element.disabled) {
 	  throw new Error('Element is disabled');
 	}
+
+	\(createMoveCursorToEndAction(selector: selector))
 
 	if (shouldReplaceCurrentText) {
 		const range = element.ownerDocument.createRange();
@@ -69,6 +69,8 @@ extension WebCodeBuilder {
 			} else if (isInputField) {
 				element.value += textToType.charAt(currentIndex);
 			}
+
+			\(createMoveCursorToEndAction(selector: selector))
 
 			currentIndex++;
 
