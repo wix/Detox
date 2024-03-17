@@ -14,8 +14,12 @@ class Mockserver {
 
     const router = express.Router();
 
-    router.get('/', (req, res) => {
+    router.get('/', (_, res) => {
       res.json({message: 'hello world!'});
+    });
+
+    router.get('/hello-world.html', (_, res) => {
+      res.send('<html><body><h1>Hello World!</h1></body></html>');
     });
 
     router.route('/delay/:delay')

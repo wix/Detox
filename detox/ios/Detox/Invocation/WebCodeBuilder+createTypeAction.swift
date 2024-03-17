@@ -18,8 +18,6 @@ extension WebCodeBuilder {
 		throw new Error('Element not found');
 	}
 
-	\(createMoveCursorToEndAction(selector: selector))
-
 	const isContentEditable = element.contentEditable === 'true';
 	const isInputField = (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA');
 
@@ -35,8 +33,10 @@ extension WebCodeBuilder {
 	  throw new Error('Element is disabled');
 	}
 
+	\(createMoveCursorToEndAction(selector: selector))
+
 	if (shouldReplaceCurrentText) {
-		const range = document.createRange();
+		const range = element.ownerDocument.createRange();
 		const sel = window.getSelection();
 
 		if (isContentEditable) {
@@ -44,11 +44,11 @@ extension WebCodeBuilder {
 			sel.removeAllRanges();
 			sel.addRange(range);
 
-			document.execCommand('delete', false, null);
+			element.ownerDocument.execCommand('delete', false, null);
 		} else if (isInputField) {
 			element.select();
 
-			document.execCommand('cut');
+			element.ownerDocument.execCommand('cut');
 		}
 	}
 
@@ -69,6 +69,8 @@ extension WebCodeBuilder {
 			} else if (isInputField) {
 				element.value += textToType.charAt(currentIndex);
 			}
+
+			\(createMoveCursorToEndAction(selector: selector))
 
 			currentIndex++;
 

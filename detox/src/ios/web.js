@@ -248,12 +248,6 @@ class WebElementMatcher {
     this.predicate = { type: 'value', value: value.toString() };
     return this;
   }
-
-  accessibilityType(type) {
-    if (typeof type !== 'string') throw new DetoxRuntimeError('accessibilityType should be a string, but got ' + (type + (' (' + (typeof type + ')'))));
-    this.predicate = { type: 'accessibilityType', value: type.toString() };
-    return this;
-  }
 }
 
 function webMatcher() {

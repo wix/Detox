@@ -32,7 +32,7 @@ extension WebCodeBuilder {
 		const length = getLength(element);
 		element.setSelectionRange(length, length);
 	} else {
-		var range = document.createRange();
+		var range = element.ownerDocument.createRange();
 
 		range.selectNodeContents(element);
 		range.collapse(false);

@@ -50,6 +50,7 @@ class WebCodeBuilder {
 			let expectationScript = createExpectation(expectation: expectation, params: expectationParams, modifiers: expectationModifiers);
 
 			return "(() => {" +
+			"try {" +
 			"const truncateString = (string = '', maxLength = 124) =>" +
 			"string.length > maxLength ? `${string.substring(0, maxLength)}…`: string;" +
 			"let element = \(selector);" +
@@ -61,6 +62,9 @@ class WebCodeBuilder {
 			"'innerText': element.innerText" +
 			"} : null;" +
 			"return {'result': result, 'element': elementInfo};" +
+			"} catch (error) {" +
+			"return {'error': error.message};" +
+			"}" +
 			"})();"
 		} else if let action = action {
 			let actionScript = try createAction(

@@ -14,5 +14,4 @@ enum WebPredicateType: String, Codable {
 	case tag = "tag"
 	case label = "label"
 	case value = "value"
-	case accessibilityType = "accessibilityType"
 }

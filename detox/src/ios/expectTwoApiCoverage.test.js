@@ -90,7 +90,6 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.web.element(e.by.web.hrefContains(1)));
       await expectToThrow(() => e.web.element(e.by.web.tag(1)));
       await expectToThrow(() => e.web.element(e.by.web.value(1)));
-      await expectToThrow(() => e.web.element(e.by.web.accessibilityType(1)));
     });
 
     it(`should throw for invalid toBeVisible parameters`, async () => {
