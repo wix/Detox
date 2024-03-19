@@ -1,26 +1,22 @@
-# Web views
+# Web Views
 
-:::caution Note
-Detox supports testing web views on **Android** only. We are working on adding support for iOS apps as well.
-:::
+Web views are native components that render content not natively supported by the platform, like web pages or PDF documents.
+However, elements within web views are not native components, making direct interaction through Detox challenging.
+To address this, Detox offers a suite of matchers, actions, and expectations designed for interacting with content inside web views.
 
-A web view is a native component that displays content not available in a native format, such as a web page or a PDF document.
-
-Elements inside web views, however, are not native components, so Detox cannot interact with them the usual way.
-That's why Detox provides a set of matchers, actions, and expectations to allow you to interact with the content inside web views.
-
-## Locating web view elements
+## Locating Elements in Web Views
 
 ### `web.element(matcher)`
 
-In the most common case, you will have a single web view on the screen, so you can use `web.element()` function with [web view matchers] to reference elements inside it. After you have a reference to a web element, you can use the [web view actions] and [web view expectations] on it, e.g.:
+In cases where there's only one web view present on the screen, you may use the `web.element()` function, paired with [web view matchers], to reference elements within the web view.
+Upon obtaining the element reference, you can utilize web view actions and expectations on the webView element.
 
 ```js
-const innerElement = web.element(by.web.id('inner_element_identifier'))
+const innerElement = web.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
-The code above finds an inner element by HTML `id` attribute, and expects it to have a specific text.
+In the example above, we locate an inner element by its `id` HTML attribute and verify its text content.
 
 ### `web(nativeMatcher).element(matcher)`
 
@@ -28,15 +24,32 @@ If you have multiple web views on the screen, you must locate a specific web vie
 
 ```js
 const myWebView = web(by.id('webview_identifier'));
-const innerElement = myWebView.element(by.web.id('inner_element_identifier'))
+```
+
+Following that, you can locate the element within the identified web view:
+
+```js
+const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
 await expect(innerElement).toHaveText('Hello World!');
 ```
 
-In the example above:
+### `web(nativeMatcher).atIndex(index).element(matcher)` (iOS only)
 
-1. We use `web()` function and [`by.id()`] matcher to locate a web view by its accessibility identifier.
-1. We use `myWebView.element()` method and [`by.web.id()`] web matcher to find an HTML element inside that web view.
-1. We run the same expectation (to have text) as in the previous example.
+:::note
+
+This matcher is available for iOS only. See [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
+
+If you have multiple web views on the screen and you want to interact with a specific web view, you can use the `atIndex()` method to choose the web view at the specified index.
+
+```js
+const myWebView = web(by.id('webview_identifier')).atIndex(1);
+const innerElement = myWebView.element(by.web.id('inner_element_identifier'));
+await expect(innerElement).toHaveText('Hello World!');
+```
+
+In the example above, we use `atIndex()` to select the second web view on the screen (that has the specified accessibility identifier) and then locate an HTML element inside that web view.
 
 ## Matchers
 
@@ -100,6 +113,12 @@ Match elements with the specified `href`.
 web.element(by.web.href('https://wix.com'));
 ```
 
+:::note
+
+You might face issues with this matcher on Android. Check [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
+
 ### `by.web.hrefContains(href)`
 
 Match elements that contain the specified `href`.
@@ -107,6 +126,12 @@ Match elements that contain the specified `href`.
 ```js
 web.element(by.web.hrefContains('wix'));
 ```
+
+:::note
+
+You might face issues with this matcher on Android. Check [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
 
 ### `by.web.tag(tag)`
 
@@ -121,7 +146,7 @@ web.element(by.web.tag('h1'));
 Choose the element at the specified index.
 
 ```js
-web.element(by.web.tag('h1').atIndex(1));
+web.element(by.web.tag('h1')).atIndex(1);
 ```
 
 Use it sparingly for those rare cases when you cannot make your matcher less ambiguous, so it returns one element only.
@@ -161,41 +186,61 @@ Type the specified text into the element.
 await web.element(by.web.id('identifier')).typeText('Hello World!');
 ```
 
+:::note
+
+The `isContentEditable` parameter is currently necessary for content-editable elements only on Android.
+
+On iOS, Detox automatically detects content-editable elements regardless of this parameter.
+
+:::
+
 ### `replaceText(text)`
 
 Replace the text of the element with the specified text.
-
-:::note
-This action is currently not supported for content-editable elements.
-:::
 
 ```js
 await web.element(by.web.id('identifier')).replaceText('Hello World!');
 ```
 
+:::note
+
+This action is currently not supported for content-editable elements on Android.
+
+On iOS, Detox automatically detects content-editable elements and replaces their text.
+
+:::
+
 ### `clearText()`
 
 Clear the text of the element.
-
-:::note
-This action is currently not supported for content-editable elements.
-:::
 
 ```js
 await web.element(by.web.id('identifier')).clearText();
 ```
 
+:::note
+
+This action is currently not supported for content-editable elements on Android.
+
+On iOS, Detox automatically detects content-editable elements and clears their text.
+
+:::
+
 ### `selectAllText()`
 
 Select all the text of the element.
 
-:::note
-This action is currently supported for content-editable elements only.
-:::
-
 ```js
 await web.element(by.web.id('identifier')).selectAllText();
 ```
+
+:::note
+
+This action is currently supported for content-editable elements only on Android.
+
+On iOS, Detox can select all the text of any element that supports it (for example, an input element).
+
+:::
 
 ### `getText()`
 
@@ -225,13 +270,17 @@ await web.element(by.web.id('identifier')).focus();
 
 Move the input cursor to the end of the element's content.
 
-:::note
-This action is currently supported for content-editable elements only.
-:::
-
 ```js
 await web.element(by.web.id('identifier')).moveCursorToEnd();
 ```
+
+:::note
+
+This action is currently supported for content-editable elements only on Android.
+
+On iOS, Detox can move the cursor to the end of any element that supports it (for example, an input element).
+
+:::
 
 ### `runScript(script[, args])`
 
@@ -258,20 +307,26 @@ const text = await webElement.runScript(function get(element, property) {
 
 Get the current URL of the web view.
 
-:::note
-Although this action returns the URL of the presented web document, it can be called from an inner element only (for example, an iframe id or the HTML) and not from the root native web view element itself.
-:::
-
 ```js
 const url = await web.element(by.web.id('identifier')).getCurrentUrl();
 ```
+
+:::note
+
+Although this action returns the URL of the presented web document, it can be called from an inner element only (for example, an iframe id or the HTML) and not from the root native web view element itself.
+
+You might face issues with this action on Android. Check [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
 
 ### `getTitle()`
 
 Get the title of the web view.
 
 :::note
+
 Although this action returns the title of the presented web document, it can be called from an inner element only (for example, an iframe id or the HTML) and not from the root native web view element itself.
+
 :::
 
 ```js
@@ -301,6 +356,12 @@ Assert that the element exists.
 ```js
 await expect(web.element(by.web.id('identifier'))).toExist();
 ```
+
+:::note
+
+You might face issues with this expectation on Android. Check [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
+
+:::
 
 ### `not`
 

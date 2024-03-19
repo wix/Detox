@@ -34,6 +34,7 @@ const sidebars = {
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
+        'guide/testing-webviews',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
         'guide/mocking',

@@ -20,12 +20,12 @@ const HomepageSubHeader = () => {
                 <span className={styles.twitterFollowId}>@detoxe2e</span>
               </a>
               <a className={styles.twitterCounter} href='https://x.com/detoxe2e?s=20' target='_blank'>
-                <span>489</span>
+                <span>509</span>
                 <span>&nbsp;followers</span>
               </a>
               <a className={styles.githubButton} href='https://github.com/wix/detox' target='_blank'></a>
               <a className={styles.githubCounter} href='https://github.com/wix/detox/stargazers' target='_blank'>
-                <span>10,653</span>
+                <span>10,880</span>
               </a>
             </div>
           </div>

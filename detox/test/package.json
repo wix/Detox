@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.18.5",
+  "version": "20.19.3",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -33,7 +33,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.3",
     "@react-native-community/checkbox": "0.5.16",
-    "@react-native-community/datetimepicker": "^6.7.1",
+    "@react-native-community/datetimepicker": "^7.6.3",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/slider": "4.5.0",
     "@react-native-picker/picker": "^2.1.0",
@@ -43,7 +43,8 @@
     "react-native": "0.73.2",
     "react-native-launch-arguments": "^4.0.0",
     "react-native-permissions": "^4.0.2",
-    "react-native-webview": "^11.18.1"
+    "react-native-webview": "^11.18.1",
+    "ssim.js": "^3.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -59,7 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
     "cross-env": "^7.0.3",
-    "detox": "^20.18.5",
+    "detox": "^20.19.3",
     "detox-allure2-adapter": "^1.0.0-alpha.3",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
