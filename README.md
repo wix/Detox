@@ -60,7 +60,7 @@ The most difficult part of automated testing on mobile is the tip of the testing
 
 Detox was built from the ground up to support React Native projects.
 
-While Detox should work out of the box with almost any React Native version of the latest minor releases, official support is provided for React Native versions `0.70.x` and `0.71.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
+While Detox should work out of the box with almost any React Native version of the latest minor releases, official support is provided for React Native versions `0.71.x`, `0.72.x` and `0.73.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
 
 Newer versions, as well as React Native's "New Architecture", may work with Detox, but have not been tested out yet by the Detox team.
 

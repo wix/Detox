@@ -4,7 +4,7 @@ Detox was built from the ground up to support "classic" React Native projects.
 
 :::info Note
 
-While Detox should work out of the box with almost any React Native version from the past few minor releases, official support is provided for React Native versions `0.71.x` and `0.72.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
+While Detox should work out of the box with almost any React Native version from the past few minor releases, official support is provided for React Native versions `0.71.x`, `0.72.x` and `0.73.x` without React Native's ["New Architecture"](https://reactnative.dev/docs/the-new-architecture/landing-page).
 
 Newer versions, as well as React Native's "New Architecture", may work with Detox, but have not been tested out yet by the Detox team.
 
