@@ -200,7 +200,7 @@ public class DetoxAction {
                                               ViewInteraction targetElement,
                                               Double normalizedTargetPositionX,
                                               Double normalizedTargetPositionY,
-                                              String speed,
+                                              boolean isFast,
                                               Integer holdDuration) {
 
         Log.d("DetoxAction", "Current thread is: " + Thread.currentThread().getName());
@@ -214,7 +214,7 @@ public class DetoxAction {
             targetView,
             normalizedTargetPositionX,
             normalizedTargetPositionY,
-            speed,
+            isFast,
             holdDuration
         ));
     }

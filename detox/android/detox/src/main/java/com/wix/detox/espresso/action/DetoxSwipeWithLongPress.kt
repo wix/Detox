@@ -35,8 +35,8 @@ class DetoxSwipeWithLongPress(
                     }
                 }
             } finally {
-                wait(durationEnd)
                 moveTo(endX, endY)
+                wait(durationEnd)
                 finishAt(endX, endY)
             }
         }

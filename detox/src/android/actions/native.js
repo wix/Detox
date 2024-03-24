@@ -63,7 +63,7 @@ class LongPressAndDragAction extends Action {
         targetElement._call(),
         normalizedTargetPositionX,
         normalizedTargetPositionY,
-        speed,
+        speed === 'fast',
         holdDuration
       )
     );

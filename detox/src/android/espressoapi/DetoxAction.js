@@ -229,13 +229,13 @@ class DetoxAction {
     };
   }
 
-  static longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
+  static longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, isFast, holdDuration) {
     if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
     if (typeof normalizedPositionX !== "number") throw new Error("normalizedPositionX should be a number, but got " + (normalizedPositionX + (" (" + (typeof normalizedPositionX + ")"))));
     if (typeof normalizedPositionY !== "number") throw new Error("normalizedPositionY should be a number, but got " + (normalizedPositionY + (" (" + (typeof normalizedPositionY + ")"))));
     if (typeof normalizedTargetPositionX !== "number") throw new Error("normalizedTargetPositionX should be a number, but got " + (normalizedTargetPositionX + (" (" + (typeof normalizedTargetPositionX + ")"))));
     if (typeof normalizedTargetPositionY !== "number") throw new Error("normalizedTargetPositionY should be a number, but got " + (normalizedTargetPositionY + (" (" + (typeof normalizedTargetPositionY + ")"))));
-    if (typeof speed !== "string") throw new Error("speed should be a string, but got " + (speed + (" (" + (typeof speed + ")"))));
+    if (typeof isFast !== "boolean") throw new Error("isFast should be a boolean, but got " + (isFast + (" (" + (typeof isFast + ")"))));
     if (typeof holdDuration !== "number") throw new Error("holdDuration should be a number, but got " + (holdDuration + (" (" + (typeof holdDuration + ")"))));
     return {
       target: {
@@ -261,7 +261,10 @@ class DetoxAction {
       }, {
         type: "Double",
         value: normalizedTargetPositionY
-      }, speed, {
+      }, {
+        type: "boolean",
+        value: isFast
+      }, {
         type: "Integer",
         value: holdDuration
       }]

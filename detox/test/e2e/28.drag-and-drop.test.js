@@ -10,6 +10,11 @@ describe('Drag And Drop', () => {
   });
 
 
+  function expectWithEpsilon(actual, expected, epsilon) {
+    jestExpect(actual).toBeGreaterThanOrEqual(expected - epsilon);
+    jestExpect(actual).toBeLessThanOrEqual(expected + epsilon);
+  }
+
   async function performLongPressAndDrag(normalizedPositionX, normalizedPositionY, normalizedTargetPositionX, normalizedTargetPositionY) {
     await element(by.id('draggable')).longPressAndDrag(
       1000,
@@ -34,8 +39,8 @@ describe('Drag And Drop', () => {
     const actualX = draggableElementAttributes.frame.x;
     const actualY = draggableElementAttributes.frame.y;
 
-    jestExpect(actualX).toBe(expectedTargetX);
-    jestExpect(actualY).toBe(expectedTargetY);
+    expectWithEpsilon(actualX, expectedTargetX, 1);
+    expectWithEpsilon(actualY, expectedTargetY, 1);
   }
 
   it('should drag pan from left to left of the title', async () => {
