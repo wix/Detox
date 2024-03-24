@@ -9,7 +9,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
 
-suspend fun ViewInteraction.getView(): View = withContext(Dispatchers.IO) {
+fun ViewInteraction.getView(): View  {
     var result: View? = null
 
     val viewAction = object : ViewAction {
@@ -28,6 +28,6 @@ suspend fun ViewInteraction.getView(): View = withContext(Dispatchers.IO) {
 
     perform(viewAction)
 
-    result ?: throw IllegalStateException("Failed to get view")
+    return result ?: throw IllegalStateException("Failed to get view")
 }
 

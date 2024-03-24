@@ -14,8 +14,8 @@ import com.wix.detox.espresso.action.common.MotionEvents
  *
  * @see DetoxSwipe
  */
-class FlinglessSwiper @JvmOverloads constructor(
-        expectedMotions: Int,
+class LinearSwiper @JvmOverloads constructor(
+        private val expectedMotions: Int,
         private val uiController: UiController,
         viewConfig: ViewConfiguration,
         private val motionEvents: MotionEvents = MotionEvents())
@@ -29,6 +29,8 @@ class FlinglessSwiper @JvmOverloads constructor(
     private var events = mutableListOf<MotionEvent>()
     private var motionsCount = 0
 
+    private val duration = 1500L
+
     override fun startAt(touchX: Float, touchY: Float) {
         assertNotStarted()
 
@@ -40,7 +42,7 @@ class FlinglessSwiper @JvmOverloads constructor(
     override fun moveTo(targetX: Float, targetY: Float): Boolean {
         assertStarted()
 
-        val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(targetX, targetY), targetX, targetY)
+        val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(duration), targetX, targetY)
         events.add(moveEvent)
         Log.d("FlinglessSwiper", "moveEvent: $moveEvent")
         motionsCount++
@@ -53,8 +55,9 @@ class FlinglessSwiper @JvmOverloads constructor(
         val lastEvent = events.last()
         // Insert a fake move event without actually moving, just to wait for the given duration.
         val waitEvent = motionEvents.obtainMoveEvent(downEvent!!, lastEvent.eventTime + duration, lastEvent.x, lastEvent.y)
+
         Log.d("FlinglessSwiper", "waitEvent: $waitEvent")
-        motionsCount++
+        motionsCount += 2
         events.add(waitEvent)
     }
 
@@ -62,7 +65,7 @@ class FlinglessSwiper @JvmOverloads constructor(
         assertStarted()
 
         try {
-            val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(releaseX, releaseY), releaseX, releaseY)
+            val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(duration), releaseX, releaseY)
             events.add(upEvent)
 
             Log.d("FlinglessSwiper", "upEvent: $upEvent")
@@ -76,21 +79,10 @@ class FlinglessSwiper @JvmOverloads constructor(
         }
     }
 
-    private fun calcEventTime(targetX: Float, targetY: Float): Long {
+    private fun calcEventTime(duration: Long): Long {
         val lastEvent = events.last()
-        var dt = 10
 
-        if (motionsCount >= fastEventsCountLimit) {
-            val dx = Math.abs((targetX - lastEvent.x))
-            val dy = Math.abs((targetY - lastEvent.y))
-
-            val dtX = ((dx / pixelsPerSecond) * 1000).toInt()
-            val dtY = ((dy / pixelsPerSecond) * 1000).toInt()
-
-            dt = Math.max(dtX, dtY)
-        }
-
-        return lastEvent.eventTime + Math.max(dt, 10)
+        return lastEvent.eventTime + duration / expectedMotions
     }
 
     private fun assertStarted() {
