@@ -16,6 +16,7 @@ import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.action.common.MotionDir;
+import com.wix.detox.espresso.action.common.utils.ViewInteractionExtKt;
 import com.wix.detox.espresso.scroll.DetoxScrollAction;
 import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
@@ -48,6 +49,7 @@ import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withTagKey;
 
 import static org.hamcrest.Matchers.allOf;
 
@@ -200,10 +202,16 @@ public class DetoxAction {
                                               Double normalizedTargetPositionY,
                                               String speed,
                                               Integer holdDuration) {
+
+        Log.d("DetoxAction", "Current thread is: " + Thread.currentThread().getName());
+
+        View targetView = ViewInteractionExtKt.getView(targetElement);
+
         return actionWithAssertions(new LongPressAndDragAction(
+            duration,
             normalizedPositionX,
             normalizedPositionY,
-            targetElement,
+            targetView,
             normalizedTargetPositionX,
             normalizedTargetPositionY,
             speed,
