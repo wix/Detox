@@ -7,13 +7,9 @@ import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import com.wix.detox.espresso.scroll.LinearSwiper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.hamcrest.Matcher
 import kotlin.math.ceil
 
-
-private const val SCROLL_MOTIONS = 50
 
 class LongPressAndDragAction(
     private val duration: Int,
@@ -22,11 +18,13 @@ class LongPressAndDragAction(
     private val targetView: View,
     private val normalizedTargetPositionX: Double,
     private val normalizedTargetPositionY: Double,
-    private val speed: String,
+    private val isFast: Boolean,
     private val holdDuration: Int
 ) : ViewAction {
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val scrollMotions = if (isFast) 18 else 50
+
+
     override fun getDescription(): String {
         return "longPressAndDrag"
     }
@@ -45,21 +43,25 @@ class LongPressAndDragAction(
         val xy = IntArray(2)
 
         // Get start coordinates
-        sourceView.getLocationInWindow(xy)
-        val startX = ceil(xy[0] + sourceView.width * normalizedPositionX)
-        val startY = ceil(xy[1] + sourceView.height * normalizedPositionY)
+        sourceView.getLocationOnScreen(xy)
+        val sourceX = xy[0]
+        val sourceY = xy[1]
+        val startX = ceil(sourceX + sourceView.width * normalizedPositionX)
+        val startY = ceil(sourceY + sourceView.height * normalizedPositionY)
 
         // Get end coordinates
-        targetView.getLocationInWindow(xy)
-        val endX = ceil(xy[0] + targetView.width * normalizedTargetPositionX)
-        val endY = ceil(xy[1] + targetView.height * normalizedTargetPositionY)
+        targetView.getLocationOnScreen(xy)
+        val targetX = xy[0]
+        val targetY = xy[1]
+        val endX = ceil(targetX + targetView.width * normalizedTargetPositionX)
+        val endY = ceil(targetY + targetView.height * normalizedTargetPositionY)
 
         Log.d(
             "LongPressAndDragAction",
-            "startX: $startX, startY: $startY, endX: $endX, endY: $endY, duration: $duration, holdDuration: $holdDuration"
+            "start:($startX,$startY), end:($endX,$endY) duration: $duration, holdDuration: $holdDuration, scrollMotions: $scrollMotions, source:($sourceX,$sourceY,${sourceView.width},${sourceView.height}), target:($targetX,$targetY,${targetView.width},${targetView.height})"
         )
 
-        val swiper = LinearSwiper(SCROLL_MOTIONS, uiController, ViewConfiguration.get(sourceView.context))
+        val swiper = LinearSwiper(uiController)
         val swipe = DetoxSwipeWithLongPress(
             duration,
             holdDuration,
@@ -67,9 +69,16 @@ class LongPressAndDragAction(
             startY.toFloat(),
             endX.toFloat(),
             endY.toFloat(),
-            SCROLL_MOTIONS,
+            scrollMotions,
             swiper
         )
         swipe.perform()
+
+        sourceView.getLocationOnScreen(xy)
+
+        Log.d(
+            "LongPressAndDragAction",
+            "Performed swipe. Actual coordinates x=${xy[0]}, y=${xy[1]}. Normalized position x=${xy[0] + sourceView.width * normalizedTargetPositionX}, y=${xy[1] + sourceView.height * normalizedTargetPositionX}"
+        )
     }
 }

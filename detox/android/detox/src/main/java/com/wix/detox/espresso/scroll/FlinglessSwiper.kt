@@ -33,7 +33,6 @@ class FlinglessSwiper @JvmOverloads constructor(
         assertNotStarted()
 
         downEvent = motionEvents.obtainDownEvent(touchX, touchY)
-        Log.d("FlinglessSwiper", "downEvent: $downEvent")
         events.add(downEvent!!)
     }
 
@@ -42,7 +41,6 @@ class FlinglessSwiper @JvmOverloads constructor(
 
         val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(targetX, targetY), targetX, targetY)
         events.add(moveEvent)
-        Log.d("FlinglessSwiper", "moveEvent: $moveEvent")
         motionsCount++
         return true
     }
@@ -53,7 +51,6 @@ class FlinglessSwiper @JvmOverloads constructor(
         val lastEvent = events.last()
         // Insert a fake move event without actually moving, just to wait for the given duration.
         val waitEvent = motionEvents.obtainMoveEvent(downEvent!!, lastEvent.eventTime + duration, lastEvent.x, lastEvent.y)
-        Log.d("FlinglessSwiper", "waitEvent: $waitEvent")
         motionsCount++
         events.add(waitEvent)
     }
@@ -64,8 +61,6 @@ class FlinglessSwiper @JvmOverloads constructor(
         try {
             val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(releaseX, releaseY), releaseX, releaseY)
             events.add(upEvent)
-
-            Log.d("FlinglessSwiper", "upEvent: $upEvent")
 
             // Flush!
             uiController.injectMotionEventSequence(events)

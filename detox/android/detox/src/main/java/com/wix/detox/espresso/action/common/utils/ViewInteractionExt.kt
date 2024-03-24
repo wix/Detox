@@ -3,8 +3,6 @@ package com.wix.detox.espresso.action.common.utils
 import android.view.View
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 

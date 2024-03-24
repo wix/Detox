@@ -148,8 +148,6 @@ dependencies {
     api('androidx.test.uiautomator:uiautomator:2.2.0') {
         because 'Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
-
-    api('org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2')
 }
 
 // Third-party/extension deps.
