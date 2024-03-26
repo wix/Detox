@@ -122,7 +122,7 @@ DTXAssert(NO, @"Bad normalized starting point provided."); \
 		[points addObject:@(point)];
 	}
 	
-
+	// Add end point
 	[points addObject:@(endPoint)];
 	// This is an ugly hack needed to solve a mystery with a missing last point in the trajectory. We add one more point with the same delta after the end. The OS will happily ignore it.
 	// It is criticul to add a point with the same pace in order to insure it works for all cases. If you use point with a different direction or just (0,0) the OS will not ignore it.

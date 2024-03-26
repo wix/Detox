@@ -1,13 +1,17 @@
 package com.wix.detox.espresso.scroll
 
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
 import com.wix.detox.espresso.action.common.MotionEvents
 
 /**
- *
- * @see DetoxSwipe
+ * The delay between each motion event.
+ * Reducing this value may fail the swipe on different devices. Please change with caution.
+ */
+private const val EVENT_DELAY = 20L
+
+/**
+  * Implementation of @see DetoxSwiper that swipes in a linear fashion uses const delay between events.
  */
 class LinearSwiper @JvmOverloads constructor(
         private val uiController: UiController,
@@ -18,10 +22,6 @@ class LinearSwiper @JvmOverloads constructor(
 
     private var events = mutableListOf<MotionEvent>()
 
-    /**
-     * The delay between each motion event.
-     */
-    private val eventDuration = 30L
 
     override fun startAt(touchX: Float, touchY: Float) {
         assertNotStarted()
@@ -66,7 +66,7 @@ class LinearSwiper @JvmOverloads constructor(
     private fun calcEventTime(): Long {
         val lastEvent = events.last()
 
-        return lastEvent.eventTime + eventDuration
+        return lastEvent.eventTime + EVENT_DELAY
     }
 
     private fun assertStarted() {
