@@ -1,21 +1,34 @@
 package com.wix.detox.espresso;
 
+import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static org.hamcrest.Matchers.allOf;
+
 import android.util.Log;
 import android.view.View;
-import android.os.Build;
 
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.CoordinatesProvider;
+import androidx.test.espresso.action.GeneralClickAction;
+import androidx.test.espresso.action.GeneralLocation;
+import androidx.test.espresso.action.Press;
+import androidx.test.espresso.contrib.PickerActions;
+
+import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
-import com.wix.detox.espresso.action.LongPressAndDragAction;
-import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
+import com.wix.detox.espresso.action.GetAttributesAction;
+import com.wix.detox.espresso.action.LongPressAndDragAction;
 import com.wix.detox.espresso.action.RNClickAction;
+import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
-import com.wix.detox.espresso.action.GetAttributesAction;
-import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.espresso.action.common.utils.ViewInteractionExtKt;
 import com.wix.detox.espresso.scroll.DetoxScrollAction;
 import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
@@ -27,31 +40,8 @@ import org.hamcrest.Matcher;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
-
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.action.CoordinatesProvider;
-import androidx.test.espresso.action.GeneralClickAction;
-import androidx.test.espresso.action.GeneralLocation;
-import androidx.test.espresso.action.GeneralSwipeAction;
-import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Swipe;
-import androidx.test.espresso.action.Swiper;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.contrib.PickerActions;
-
-import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
-import static androidx.test.espresso.action.ViewActions.longClick;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withTagKey;
-
-import static org.hamcrest.Matchers.allOf;
 
 
 /**

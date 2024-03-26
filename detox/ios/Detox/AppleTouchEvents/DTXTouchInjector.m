@@ -300,7 +300,6 @@ DTX_CREATE_LOG(DTXTouchInjector)
 		
 		@try
 		{
-			dtx_log_info(@"About to inject event %@", event);
 			[[UIApplication sharedApplication] sendEvent:event];
 			
 			if (currentTouchView)

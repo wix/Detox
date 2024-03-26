@@ -2,10 +2,8 @@
 
 package com.wix.detox.espresso.action.common.utils
 
-import android.view.View
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewInteraction
 import org.hamcrest.core.IsAnything
 import org.joor.Reflect
 

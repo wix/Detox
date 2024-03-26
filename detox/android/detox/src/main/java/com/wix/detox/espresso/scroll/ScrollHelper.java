@@ -100,7 +100,7 @@ public class ScrollHelper {
         swipe.perform();
     }
 
-    public static void waitForFlingToFinish(View view, UiController uiController) {
+    private static void waitForFlingToFinish(View view, UiController uiController) {
         int waitTimeMS = 100; // Note: experimentation shows initial lookahead window should be large or we could miss out on future-pending events.
         int iteration = 0;
         int startX;
