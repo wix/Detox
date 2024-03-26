@@ -110,9 +110,9 @@
     }
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=14"
   },
   "browserslist": [
-    "node 18"
+    "node 14"
   ]
 }
