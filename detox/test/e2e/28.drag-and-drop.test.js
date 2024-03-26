@@ -16,19 +16,22 @@ describe('Drag And Drop', () => {
   }
 
   async function performLongPressAndDrag(normalizedPositionX, normalizedPositionY, normalizedTargetPositionX, normalizedTargetPositionY) {
-    await element(by.id('draggable')).longPressAndDrag(
+
+    const dragAndDropTargetElement = element(by.id('DragAndDropTarget'));
+    const draggableElement = element(by.id('draggable'));
+
+    await draggableElement.longPressAndDrag(
       1000,
       normalizedPositionX,
       normalizedPositionY,
-      element(by.id('DragAndDropTitle')),
+      dragAndDropTargetElement,
       normalizedTargetPositionX,
       normalizedTargetPositionY,
       'fast',
       0);
 
-    const targetElementAttributes = await element(by.id('DragAndDropTitle')).getAttributes();
-    const draggableElementAttributes = await element(by.id('draggable')).getAttributes();
-
+    const targetElementAttributes = await dragAndDropTargetElement.getAttributes();
+    const draggableElementAttributes = await draggableElement.getAttributes();
 
     const expectedTargetX = Math.ceil(targetElementAttributes.frame.x +
       targetElementAttributes.frame.width * normalizedTargetPositionX -

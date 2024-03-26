@@ -24,6 +24,9 @@
 #import "DTXRunLoopSpinner.h"
 #import "DTXTouchInfo-Private.h"
 
+DTX_CREATE_LOG(DTXTouchInjector)
+
+
 @implementation DTXTouchInjector
 {
 	// Window to which touches will be delivered.
@@ -297,6 +300,7 @@
 		
 		@try
 		{
+			dtx_log_info(@"About to inject event %@", event);
 			[[UIApplication sharedApplication] sendEvent:event];
 			
 			if (currentTouchView)
