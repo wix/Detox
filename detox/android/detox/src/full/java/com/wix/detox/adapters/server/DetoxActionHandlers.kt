@@ -6,6 +6,7 @@ import com.wix.detox.TestEngineFacade
 import com.wix.detox.common.extractRootCause
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
+import com.wix.detox.reactnative.ReactNativeExtension
 import com.wix.invoke.MethodInvocation
 import org.json.JSONObject
 import java.lang.reflect.InvocationTargetException
@@ -40,6 +41,17 @@ open class ReactNativeReloadActionHandler(
     }
 }
 
+class BackdoorActionHandler(
+        private val appContext: Context,
+        private val outboundServerAdapter: OutboundServerAdapter,
+        private val testEngineFacade: TestEngineFacade)
+    : DetoxActionHandler {
+
+    override fun handle(params: String, messageId: Long) {
+        ReactNativeExtension.emitBackdoorEvent(appContext, params)
+        outboundServerAdapter.sendMessage("backdoorDone", emptyMap(), messageId)
+    }
+}
 
 class InvokeActionHandler @JvmOverloads constructor(
         private val methodInvocation: MethodInvocation,
