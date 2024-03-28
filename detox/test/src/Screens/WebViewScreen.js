@@ -80,7 +80,7 @@ const webViewFormWithScrolling = `
               margin: 20px;
             }
 
-            input[type=text] {
+            input[type=text], input[type=email] {
               width: 100%;
               padding: 12px 20px;
               margin: 8px 0;
