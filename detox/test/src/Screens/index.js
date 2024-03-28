@@ -29,6 +29,7 @@ import WebViewScreen from './WebViewScreen';
 import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
+import DragNDropScreen  from './DragNDropScreen';
 
 export {
   SanityScreen,
@@ -62,4 +63,5 @@ export {
   VisibilityExpectationScreen,
   VisibilityScreen,
   AttributesScreen,
+  DragNDropScreen
 };

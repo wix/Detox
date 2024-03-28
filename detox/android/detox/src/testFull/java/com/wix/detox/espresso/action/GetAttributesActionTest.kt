@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -133,11 +134,21 @@ class GetAttributesActionTest {
             on { elevation } doReturn 0.314f
         }
 
+        doAnswer { invocation ->
+            val location = invocation.getArgument<IntArray>(0)
+            location[0] = 10
+            location[1] = 20
+        }.whenever(view).getLocationOnScreen(any())
+
         val resultJson = perform()
         assertThat(resultJson.opt("alpha")).isEqualTo(0.42f)
         assertThat(resultJson.opt("width")).isEqualTo(123)
         assertThat(resultJson.opt("height")).isEqualTo(456)
         assertThat(resultJson.opt("elevation")).isEqualTo(0.314f)
+        assertThat(resultJson.optJSONObject("frame")?.opt("x")).isEqualTo(10)
+        assertThat(resultJson.optJSONObject("frame")?.opt("y")).isEqualTo(20)
+        assertThat(resultJson.optJSONObject("frame")?.opt("width")).isEqualTo(123)
+        assertThat(resultJson.optJSONObject("frame")?.opt("height")).isEqualTo(456)
     }
 
     @Test

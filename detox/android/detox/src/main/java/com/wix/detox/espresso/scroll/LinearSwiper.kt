@@ -1,33 +1,27 @@
 package com.wix.detox.espresso.scroll
 
-import android.util.Log
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
 import com.wix.detox.espresso.action.common.MotionEvents
 
 /**
- * A detox-swiper that, given the total expected motions, tries to swipe fast and yet avoid an
- * undesired fling, typically triggered at the end of a swipe motion over scrollable views. It mostly
- * relies on [ViewConfiguration.getScaledMinimumFlingVelocity] (i.e. tries to keep swiping below
- * that velocity, at least at the end).
- *
- * @see DetoxSwipe
+ * The delay between each motion event.
+ * Reducing this value may fail the swipe on different devices. Please change with caution.
  */
-class FlinglessSwiper @JvmOverloads constructor(
-        expectedMotions: Int,
+private const val EVENT_DELAY = 20L
+
+/**
+  * Implementation of @see DetoxSwiper that swipes in a linear fashion uses const delay between events.
+ */
+class LinearSwiper @JvmOverloads constructor(
         private val uiController: UiController,
-        viewConfig: ViewConfiguration,
         private val motionEvents: MotionEvents = MotionEvents())
     : DetoxSwiper {
-
-    private val pixelsPerSecond = viewConfig.scaledMinimumFlingVelocity * VELOCITY_SAFETY_RATIO
-    private val fastEventsCountLimit = expectedMotions * FAST_EVENTS_RATIO
 
     private var downEvent: MotionEvent? = null
 
     private var events = mutableListOf<MotionEvent>()
-    private var motionsCount = 0
+
 
     override fun startAt(touchX: Float, touchY: Float) {
         assertNotStarted()
@@ -39,9 +33,8 @@ class FlinglessSwiper @JvmOverloads constructor(
     override fun moveTo(targetX: Float, targetY: Float): Boolean {
         assertStarted()
 
-        val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(targetX, targetY), targetX, targetY)
+        val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(), targetX, targetY)
         events.add(moveEvent)
-        motionsCount++
         return true
     }
 
@@ -51,7 +44,7 @@ class FlinglessSwiper @JvmOverloads constructor(
         val lastEvent = events.last()
         // Insert a fake move event without actually moving, just to wait for the given duration.
         val waitEvent = motionEvents.obtainMoveEvent(downEvent!!, lastEvent.eventTime + duration, lastEvent.x, lastEvent.y)
-        motionsCount++
+
         events.add(waitEvent)
     }
 
@@ -59,7 +52,7 @@ class FlinglessSwiper @JvmOverloads constructor(
         assertStarted()
 
         try {
-            val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(releaseX, releaseY), releaseX, releaseY)
+            val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(), releaseX, releaseY)
             events.add(upEvent)
 
             // Flush!
@@ -67,25 +60,13 @@ class FlinglessSwiper @JvmOverloads constructor(
         } finally {
             events.forEach { event -> event.recycle() }
             downEvent = null
-            motionsCount = 0
         }
     }
 
-    private fun calcEventTime(targetX: Float, targetY: Float): Long {
+    private fun calcEventTime(): Long {
         val lastEvent = events.last()
-        var dt = 10
 
-        if (motionsCount >= fastEventsCountLimit) {
-            val dx = Math.abs((targetX - lastEvent.x))
-            val dy = Math.abs((targetY - lastEvent.y))
-
-            val dtX = ((dx / pixelsPerSecond) * 1000).toInt()
-            val dtY = ((dy / pixelsPerSecond) * 1000).toInt()
-
-            dt = Math.max(dtX, dtY)
-        }
-
-        return lastEvent.eventTime + Math.max(dt, 10)
+        return lastEvent.eventTime + EVENT_DELAY
     }
 
     private fun assertStarted() {
@@ -98,11 +79,5 @@ class FlinglessSwiper @JvmOverloads constructor(
         if (downEvent != null) {
             throw IllegalStateException("Swiper already started")
         }
-    }
-
-    companion object {
-//        private const val LOG_TAG = "DetoxBatchedSwiper"
-        private const val VELOCITY_SAFETY_RATIO = .99f
-        private const val FAST_EVENTS_RATIO = .75f
     }
 }

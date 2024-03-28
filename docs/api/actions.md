@@ -286,13 +286,13 @@ Retrieved attributes are:
 - `identifier`: The identifier of the element. Matches `accessibilityIdentifier` on iOS, and the main view tag, on Android - both commonly **holding the component’s test ID in React Native apps**.
 - `visible`: Whether the element is visible. On iOS, visibility is calculated for the [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint). On Android, the attribute directly holds the value returned by [View.getLocalVisibleRect()](https://developer.android.com/reference/kotlin/android/view/View#getglobalvisiblerect)).
 - `value`: The value of the element, where applicable. For example: the position of a slider, or whether a checkbox has been marked. Matches `accessibilityValue`, on iOS.
+- `frame`: The frame of the element, in screen coordinate space.
 
 #### iOS-Only
 
 - `activationPoint`: The [activation point](https://developer.apple.com/documentation/objectivec/nsobject/1615179-accessibilityactivationpoint) of the element, in element coordinate space.
 - `normalizedActivationPoint`: The activation point of the element, in normalized percentage (\[0.0, 1.0]).
 - `hittable`: Whether the element is hittable at the activation point.
-- `frame`: The frame of the element, in screen coordinate space.
 - `elementFrame`: The frame of the element, in container coordinate space.
 - `elementBounds`: The bounds of the element, in element coordinate space.
 - `safeAreaInsets`: The safe area insets of the element, in element coordinate space.
@@ -306,8 +306,8 @@ Retrieved attributes are:
 #### Android-Only
 
 - `visibility`: The OS visibility type associated with the element: `visible`, `invisible` or `gone`.
-- `width`: Width of the element, in pixels.
-- `height`: Height of the element, in pixels.
+- `width`: Width of the element, in pixels (deprecated).
+- `height`: Height of the element, in pixels (deprecated).
 - `elevation`: Elevation of the element.
 - `alpha`: Alpha value for the element.
 - `focused`: Whether the element is the one currently in focus.

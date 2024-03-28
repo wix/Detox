@@ -22,10 +22,6 @@
 		39B044651DAED76E00431EC5 /* Detox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B044621DAED76400431EC5 /* Detox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39B71FCC24643AEA00CC9A88 /* exampleUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B71FCB24643AEA00CC9A88 /* exampleUITests.m */; };
 		39ED92302291643E005EDB56 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39ED920022916437005EDB56 /* JavaScriptCore.framework */; };
-		39F5268625C725BF00BA644D /* DragDropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F5268525C725BF00BA644D /* DragDropViewController.m */; };
-		39F5268725C725BF00BA644D /* DragDropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F5268525C725BF00BA644D /* DragDropViewController.m */; };
-		39F5268D25C7429E00BA644D /* DragDropTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F5268C25C7429E00BA644D /* DragDropTableViewController.m */; };
-		39F5268E25C7429E00BA644D /* DragDropTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F5268C25C7429E00BA644D /* DragDropTableViewController.m */; };
 		4FB97BDF2636490900B7B57C /* CustomKeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FB97BDE2636490800B7B57C /* CustomKeyboardViewController.m */; };
 		4FB97BE02636490900B7B57C /* CustomKeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FB97BDE2636490800B7B57C /* CustomKeyboardViewController.m */; };
 		A6246A8AF2D035D89BA61CA6 /* libPods-example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86172A40F266BB07F101EB18 /* libPods-example.a */; };
@@ -102,10 +98,6 @@
 		39B71FCB24643AEA00CC9A88 /* exampleUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = exampleUITests.m; sourceTree = "<group>"; };
 		39B71FCD24643AEA00CC9A88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39ED920022916437005EDB56 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		39F5268425C725BF00BA644D /* DragDropViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DragDropViewController.h; path = example/DragDropViewController.h; sourceTree = "<group>"; };
-		39F5268525C725BF00BA644D /* DragDropViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DragDropViewController.m; path = example/DragDropViewController.m; sourceTree = "<group>"; };
-		39F5268B25C7429E00BA644D /* DragDropTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragDropTableViewController.h; sourceTree = "<group>"; };
-		39F5268C25C7429E00BA644D /* DragDropTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DragDropTableViewController.m; sourceTree = "<group>"; };
 		39FC9D23202899F90033C11A /* e2e */ = {isa = PBXFileReference; lastKnownFileType = folder; name = e2e; path = ../e2e; sourceTree = "<group>"; };
 		39FC9D24202899F90033C11A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../src; sourceTree = "<group>"; };
 		4FB97BDD2636490800B7B57C /* CustomKeyboardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomKeyboardViewController.h; path = example/CustomKeyboardViewController.h; sourceTree = "<group>"; };
@@ -246,10 +238,6 @@
 			children = (
 				4FB97BDD2636490800B7B57C /* CustomKeyboardViewController.h */,
 				4FB97BDE2636490800B7B57C /* CustomKeyboardViewController.m */,
-				39F5268425C725BF00BA644D /* DragDropViewController.h */,
-				39F5268525C725BF00BA644D /* DragDropViewController.m */,
-				39F5268B25C7429E00BA644D /* DragDropTableViewController.h */,
-				39F5268C25C7429E00BA644D /* DragDropTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -538,9 +526,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC17D3321D60A24300267B0C /* NativeModule.m in Sources */,
-				39F5268625C725BF00BA644D /* DragDropViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				39F5268D25C7429E00BA644D /* DragDropTableViewController.m in Sources */,
 				4FB97BDF2636490900B7B57C /* CustomKeyboardViewController.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -551,9 +537,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				399B4DEC1ED587120098D2AC /* NativeModule.m in Sources */,
-				39F5268725C725BF00BA644D /* DragDropViewController.m in Sources */,
 				399B4DED1ED587120098D2AC /* AppDelegate.m in Sources */,
-				39F5268E25C7429E00BA644D /* DragDropTableViewController.m in Sources */,
 				4FB97BE02636490900B7B57C /* CustomKeyboardViewController.m in Sources */,
 				399B4DEE1ED587120098D2AC /* main.m in Sources */,
 			);

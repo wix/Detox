@@ -53,6 +53,7 @@ private class CommonAttributes : AttributeExtractor {
         getAccessibilityLabel(json, view)
         getAlpha(json, view)
         getElevation(json, view)
+        getFrame(json, view)
         getHeight(json, view)
         getWidth(json, view)
         getHasFocus(json, view)
@@ -63,6 +64,17 @@ private class CommonAttributes : AttributeExtractor {
             view.tag?.let {
                 json.put("identifier", it.toString())
             }
+
+    private fun getFrame(json: JSONObject, view: View) {
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        json.put("frame", JSONObject().apply {
+            put("x", location[0])
+            put("y", location[1])
+            put("width", view.width)
+            put("height", view.height)
+        })
+    }
 
     private fun getVisibility(json: JSONObject, view: View) {
         json.put("visibility", visibilityMap[view.visibility])

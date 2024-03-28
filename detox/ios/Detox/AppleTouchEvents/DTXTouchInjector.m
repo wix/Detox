@@ -24,6 +24,9 @@
 #import "DTXRunLoopSpinner.h"
 #import "DTXTouchInfo-Private.h"
 
+DTX_CREATE_LOG(DTXTouchInjector)
+
+
 @implementation DTXTouchInjector
 {
 	// Window to which touches will be delivered.

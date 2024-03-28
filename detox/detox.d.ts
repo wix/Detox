@@ -1740,9 +1740,11 @@ declare global {
             value?: unknown;
         }
 
-        interface IosElementAttributeFrame {
-            y: number;
+        interface IosElementAttributeFrame extends ElementAttributeFrame { }
+
+        interface ElementAttributeFrame {
             x: number;
+            y: number;
             width: number;
             height: number;
         }
@@ -1821,10 +1823,12 @@ declare global {
              */
             visibility: 'visible' | 'invisible' | 'gone';
             /**
+             * @deprecated
              * Width of the element, in pixels.
              */
             width: number;
             /**
+             * @deprecated
              * Height of the element, in pixels.
              */
             height: number;
@@ -1840,6 +1844,10 @@ declare global {
              * Whether the element is the one currently in focus.
              */
             focused: boolean;
+            /**
+             * The frame of the element, in screen coordinate space.
+             */
+            frame: ElementAttributeFrame;
             /**
              * The text size for the text element.
              */
