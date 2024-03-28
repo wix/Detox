@@ -1,8 +1,8 @@
 package com.wix.detox.espresso.action
 
+import android.graphics.Point
 import android.util.Log
 import android.view.View
-import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
@@ -46,31 +46,33 @@ class LongPressAndDragAction(
 
         // Get start coordinates
         sourceView.getLocationOnScreen(xy)
-        val sourceX = xy[0]
-        val sourceY = xy[1]
-        val startX = ceil(sourceX + sourceView.width * normalizedPositionX)
-        val startY = ceil(sourceY + sourceView.height * normalizedPositionY)
+        val sourceViewPoint = Point(xy[0], xy[1])
+        val startPoint = Point(
+            ceil(sourceViewPoint.x + sourceView.width * normalizedPositionX).toInt(),
+            ceil(sourceViewPoint.y + sourceView.height * normalizedPositionY).toInt()
+        )
 
         // Get end coordinates
         targetView.getLocationOnScreen(xy)
-        val targetX = xy[0]
-        val targetY = xy[1]
-        val endX = ceil(targetX + targetView.width * normalizedTargetPositionX)
-        val endY = ceil(targetY + targetView.height * normalizedTargetPositionY)
+        val targetViewPoint = Point(xy[0], xy[1])
+        val endPoint = Point(
+            ceil(targetViewPoint.x + targetView.width * normalizedTargetPositionX).toInt(),
+            ceil(targetViewPoint.y + targetView.height * normalizedTargetPositionY).toInt()
+        )
 
         Log.d(
             "LongPressAndDragAction",
-            "start:($startX,$startY), end:($endX,$endY) duration: $duration, holdDuration: $holdDuration, scrollMotions: $scrollMotions, source:($sourceX,$sourceY,${sourceView.width},${sourceView.height}), target:($targetX,$targetY,${targetView.width},${targetView.height})"
+            "start:$startPoint, end:$endPoint duration: $duration, holdDuration: $holdDuration, scrollMotions: $scrollMotions, source:[$sourceViewPoint,${sourceView.width}x${sourceView.height}], target:[$targetViewPoint,${targetView.width}x${targetView.height}]"
         )
 
         val swiper = LinearSwiper(uiController)
         val swipe = DetoxSwipeWithLongPress(
             duration,
             holdDuration,
-            startX.toFloat(),
-            startY.toFloat(),
-            endX.toFloat(),
-            endY.toFloat(),
+            startPoint.x.toFloat(),
+            startPoint.y.toFloat(),
+            endPoint.x.toFloat(),
+            endPoint.y.toFloat(),
             scrollMotions,
             swiper
         )

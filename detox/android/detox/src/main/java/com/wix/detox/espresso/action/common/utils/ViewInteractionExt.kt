@@ -1,3 +1,4 @@
+@file:JvmName("ViewInteractionExt")
 package com.wix.detox.espresso.action.common.utils
 
 import android.view.View

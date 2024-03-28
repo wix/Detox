@@ -24,8 +24,6 @@
 #import "DTXRunLoopSpinner.h"
 #import "DTXTouchInfo-Private.h"
 
-DTX_CREATE_LOG(DTXTouchInjector)
-
 
 @implementation DTXTouchInjector
 {
@@ -45,7 +43,7 @@ DTX_CREATE_LOG(DTXTouchInjector)
 	// whether an injected touch needs to be stationary or not.
 	// May be nil.
 	DTXTouchInfo* _previousTouchInfo;
-	
+
 	BOOL (^_callback)(UITouchPhase);
 	BOOL _abortedByCallback;
 }
@@ -53,7 +51,7 @@ DTX_CREATE_LOG(DTXTouchInjector)
 - (instancetype)initWithWindow:(UIWindow *)window onTouchInectCallback:(nullable BOOL(^)(UITouchPhase))callback
 {
 	NSParameterAssert(window != nil);
-	
+
 	self = [super init];
 	if (self)
 	{
@@ -69,10 +67,10 @@ DTX_CREATE_LOG(DTXTouchInjector)
 - (void)enqueueTouchInfoForDelivery:(DTXTouchInfo *)touchInfo
 {
 	NSParameterAssert(NSThread.isMainThread);
-	
+
 	touchInfo.enqueuedMediaTime = _enqueuedTouchInfoList.count == 0 ? CACurrentMediaTime() : _enqueuedTouchInfoList.lastObject.fireMediaTime;
 	[_enqueuedTouchInfoList addObject:touchInfo];
-	
+
 	[_enqueuedTouchInfoList sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"fireMediaTime" ascending:YES]]];
 }
 
@@ -84,12 +82,12 @@ DTX_CREATE_LOG(DTXTouchInjector)
 - (void)startInjecting
 {
 	NSParameterAssert(NSThread.isMainThread);
-	
+
 	if (_state == kDTXTouchInjectorStarted)
 	{
 		return;
 	}
-	
+
 	_state = kDTXTouchInjectorStarted;
 	if(_displayLink == nil)
 	{
@@ -101,13 +99,13 @@ DTX_CREATE_LOG(DTXTouchInjector)
 - (void)waitUntilAllTouchesAreDeliveredUsingInjector
 {
 	NSParameterAssert(NSThread.isMainThread);
-	
+
 	// Start if necessary.
 	if (_state == kDTXTouchInjectorPendingStart || _state == kDTXTouchInjectorStopped)
 	{
 		[self startInjecting];
 	}
-	
+
 	// Now wait for it to finish.
 	DTXRunLoopSpinner *runLoopSpinner = [DTXRunLoopSpinner new];
 	runLoopSpinner.timeout = DBL_MAX;
@@ -124,7 +122,7 @@ DTX_CREATE_LOG(DTXTouchInjector)
 - (void)displayLinkDidTick
 {
 	NSParameterAssert(NSThread.isMainThread);
-	
+
 	DTXTouchInfo *touchInfo = [self dtx_dequeueTouchInfoForDeliveryWithCurrentTime:CACurrentMediaTime()];
 	if (!touchInfo)
 	{
@@ -135,9 +133,9 @@ DTX_CREATE_LOG(DTXTouchInjector)
 		}
 		return;
 	}
-	
+
 	UITouchPhase reportedPhase;
-	
+
 	if ([_ongoingUITouches count] == 0)
 	{
 		reportedPhase = UITouchPhaseBegan;
@@ -157,11 +155,11 @@ DTX_CREATE_LOG(DTXTouchInjector)
 		}
 	}
 	[self dtx_injectTouches:touchInfo];
-	
+
 	if(_callback && _abortedByCallback == NO)
 	{
 		_abortedByCallback = _callback(reportedPhase) == NO;
-		
+
 		if(_abortedByCallback)
 		{
 			//Clean up the pending touches list from any subsequent non -Ended touches.
@@ -253,15 +251,15 @@ DTX_CREATE_LOG(DTXTouchInjector)
 	UITouchesEvent *event = [[UIApplication sharedApplication] _touchesEvent];
 	// Clean up before injecting touches.
 	[event _clearTouches];
-	
+
 	// Array to store all hidEvent references to be released later.
 	NSMutableArray *hidEvents = [NSMutableArray arrayWithCapacity:[_ongoingUITouches count]];
-	
+
 	uint64_t machAbsoluteTime = mach_absolute_time();
 	AbsoluteTime timeStamp;
 	timeStamp.hi = (UInt32)(machAbsoluteTime >> 32);
 	timeStamp.lo = (UInt32)(machAbsoluteTime);
-	
+
 	UIView *currentTouchView = nil;
 	for (NSUInteger i = 0; i < [_ongoingUITouches count]; i++)
 	{
@@ -271,25 +269,25 @@ DTX_CREATE_LOG(DTXTouchInjector)
 			currentTouchView = currentTouch.view;
 		}
 		[currentTouch setTimestamp:[[NSProcessInfo processInfo] systemUptime]];
-		
+
 		IOHIDDigitizerEventMask eventMask = currentTouch.phase == UITouchPhaseMoved ? kIOHIDDigitizerEventPosition : (kIOHIDDigitizerEventRange | kIOHIDDigitizerEventTouch);
-		
+
 		CGPoint touchLocation = [currentTouch locationInView:currentTouch.window];
-		
+
 		// Both range and touch are set to 0 if phase is UITouchPhaseEnded, 1 otherwise.
 		Boolean isRangeAndTouch = (currentTouch.phase != UITouchPhaseEnded);
 		IOHIDEventRef hidEvent = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, timeStamp, 0, 2, eventMask, touchLocation.x, touchLocation.y, 0, 0, 0, isRangeAndTouch, isRangeAndTouch, 0);
-		
+
 		[hidEvents addObject:[NSValue valueWithPointer:hidEvent]];
-		
+
 		if ([currentTouch respondsToSelector:@selector(_setHidEvent:)])
 		{
 			[currentTouch _setHidEvent:hidEvent];
 		}
-		
+
 		[event _addTouch:currentTouch forDelayedDelivery:NO];
 	}
-	
+
 	[event _setHIDEvent:[[hidEvents objectAtIndex:0] pointerValue]];
 	// iOS adds an autorelease pool around every event-based interaction.
 	// We should mimic that if we want to relinquish bits in a timely manner.
@@ -297,11 +295,11 @@ DTX_CREATE_LOG(DTXTouchInjector)
 	{
 		_previousTouchInfo = touchInfo;
 		BOOL touchViewContainsWKWebView = NO;
-		
+
 		@try
 		{
 			[[UIApplication sharedApplication] sendEvent:event];
-			
+
 			if (currentTouchView)
 			{
 				// If a WKWebView is being tapped, don't call [event _clearTouches], as this causes long
@@ -367,13 +365,13 @@ DTX_CREATE_LOG(DTXTouchInjector)
 	{
 		return nil;
 	}
-	
+
 	DTXTouchInfo* rv = [_enqueuedTouchInfoList firstObject];
 	if(rv != nil)
 	{
 		[_enqueuedTouchInfoList removeObjectAtIndex:0];
 	}
-	
+
 	return rv;
 }
 

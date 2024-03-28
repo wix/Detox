@@ -6,10 +6,6 @@ describe('Drag And Drop', () => {
     await element(by.text('Drag And Drop')).tap();
   });
 
-  afterEach(async () => {
-  });
-
-
   function expectWithEpsilon(actual, expected, epsilon) {
     jestExpect(actual).toBeGreaterThanOrEqual(expected - epsilon);
     jestExpect(actual).toBeLessThanOrEqual(expected + epsilon);

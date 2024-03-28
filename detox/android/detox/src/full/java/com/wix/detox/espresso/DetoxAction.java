@@ -5,7 +5,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.test.espresso.UiController;
@@ -29,7 +28,7 @@ import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
 import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
-import com.wix.detox.espresso.action.common.utils.ViewInteractionExtKt;
+import com.wix.detox.espresso.action.common.utils.ViewInteractionExt;
 import com.wix.detox.espresso.scroll.DetoxScrollAction;
 import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
@@ -193,9 +192,9 @@ public class DetoxAction {
                                               boolean isFast,
                                               Integer holdDuration) {
 
-        Log.d("DetoxAction", "Current thread is: " + Thread.currentThread().getName());
-
-        View targetView = ViewInteractionExtKt.getView(targetElement);
+        // We receive a ViewInteraction which represents an interactions of the target view. We need to extract the view
+        // from it in order to get the coordinates of the target view.
+        View targetView = ViewInteractionExt.getView(targetElement);
 
         return actionWithAssertions(new LongPressAndDragAction(
             duration,
