@@ -36,10 +36,10 @@ extension WebCodeBuilder {
 				var frameElements = getAllElements(frameDoc, selector);
 				elements = elements.concat(frameElements);
 			} catch(e) {
-				throw e;
 				/* Probably issues accessing iframe documents (CORS restrictions) */
 			}
 		}
+
 		return elements;
 	};
 	var allElements = getAllElements(document, '\(baseSelector)');

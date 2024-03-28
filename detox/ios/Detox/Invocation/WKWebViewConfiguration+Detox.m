@@ -62,9 +62,15 @@ void DTXPreferencesSetWebSecurityEnabled(WKPreferences* prefs, bool enabled) {
 }
 
 - (void)dtx_setPreferences:(WKPreferences *)preferences {
-	DTXPreferencesSetWebSecurityEnabled(preferences, NO);
+	if ([self shouldDisableWebSecurity]) {
+		DTXPreferencesSetWebSecurityEnabled(preferences, NO);
+	}
 
 	[self dtx_setPreferences:preferences];
+}
+
+- (BOOL)shouldDisableWebSecurity {
+	return [NSUserDefaults.standardUserDefaults boolForKey:@"DTXDisableWebKitSecurity"];
 }
 
 @end
