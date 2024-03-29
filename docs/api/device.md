@@ -272,7 +272,7 @@ Disabling WebKit security may cause errors when loading pages that have strict s
 
 ```js
 await device.launchApp({
-    launchArgs: { detoxDisableWebKitSecurity: true }
+  launchArgs: { detoxDisableWebKitSecurity: true }
 });
 ```
 
