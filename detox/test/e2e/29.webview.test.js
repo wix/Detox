@@ -95,6 +95,14 @@ describe('Web View', () => {
             await expect(inputElement).toHaveText('Tester');
           });
 
+          it('should type text in input with `email` type', async () => {
+            await inputElement.runScript((el) => { el.type = 'email'; });
+
+            await inputElement.typeText('Tester');
+
+            await expect(inputElement).toHaveText('Tester');
+          });
+
           it('should keep cursor position on end while typing', async () => {
             await inputElement.typeText('Test');
             await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-input-1');
