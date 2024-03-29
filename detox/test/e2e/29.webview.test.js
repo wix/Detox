@@ -369,7 +369,7 @@ describe(':ios: WebView CORS (inner frame)', () => {
     await device.launchApp({
       newInstance: true,
       launchArgs: {
-        DTXDisableWebKitSecurity:
+          detoxDisableWebKitSecurity:
           shouldDisableWebKitSecurity !== undefined ? (shouldDisableWebKitSecurity ? 'true' : 'false') : undefined,
       },
     });
@@ -380,20 +380,20 @@ describe(':ios: WebView CORS (inner frame)', () => {
     webview = web(by.id('webView'));
   };
 
-  it('should find element in cross-origin frame when `DTXDisableWebKitSecurity` is `true`', async () => {
+  it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
     await launchAndNavigateToInnerFrame(true);
 
     await expect(webview.element(by.web.tag('h1'))).toExist();
     await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
   });
 
-  it('should not find element in cross-origin frame when `DTXDisableWebKitSecurity` is `false`', async () => {
+  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
     await launchAndNavigateToInnerFrame(false);
 
     await expect(webview.element(by.web.tag('h1'))).not.toExist();
   });
 
-  it('should not find element in cross-origin frame when `DTXDisableWebKitSecurity` is not set', async () => {
+  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
     await launchAndNavigateToInnerFrame();
 
     await expect(webview.element(by.web.tag('h1'))).not.toExist();
