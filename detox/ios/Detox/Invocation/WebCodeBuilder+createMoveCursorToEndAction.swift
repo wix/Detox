@@ -30,7 +30,14 @@ extension WebCodeBuilder {
 
 	if (typeof element.setSelectionRange === 'function') {
 		const length = getLength(element);
+
+		/* This is a workaround. See: https://w3.org/Bugs/Public/show_bug.cgi?id=24796 */
+		const originalType = element.getAttribute('type');
+		element.setAttribute('type', 'text');
+
 		element.setSelectionRange(length, length);
+
+		element.setAttribute('type', originalType);
 	} else {
 		var range = element.ownerDocument.createRange();
 
