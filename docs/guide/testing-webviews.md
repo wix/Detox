@@ -70,6 +70,18 @@ const elementByCSSSelector = web.element(by.web.cssSelector('#cssSelector'));
 const elementAtIndex = web.element(by.web.id('identifier').atIndex(1));
 ```
 
+### Bypass CORS Restrictions (iOS Only)
+
+When testing web views, you may encounter Cross-Origin Resource Sharing (CORS) restrictions that prevent you from interacting with elements inside the web view.
+
+At the moment, Detox is able to bypass CORS restrictions and other browser security features only on iOS, allowing you to interact with inner elements in cases of CORS restrictions (in most cases).
+
+To bypass CORS restrictions on iOS, you can pass the [`detoxDisableWebKitSecurity`] launch argument. This argument will disable the WebKit security features, allowing Detox to interact with the WebView in a "Sandbox" environment.
+
+```javascript
+await device.launchApp({ launchArgs: { detoxDisableWebKitSecurity: true } });
+```
+
 ## Step 3: Perform Actions
 
 Actions allow you to interact with elements within a web view. The [Detox WebView APIs][actions-apis] provide various actions that can be invoked on inner elements.
@@ -165,3 +177,4 @@ it('should login successfully', async () => {
 [run-script-api]: ../api/webviews.md#runscriptscript-args
 [finding-inner-elements]: #step-2-finding-inner-elements
 [at-index-api]: ../api/webviews.md#webnativematcheratindexindexelementmatcher
+[`detoxDisableWebKitSecurity`]: ../api/device.md#12-detoxdisablewebkitsecuritydisable-webkit-security-ios-only

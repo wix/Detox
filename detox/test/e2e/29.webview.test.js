@@ -1,10 +1,12 @@
 const {expectElementSnapshotToMatch} = require("./utils/snapshot");
 const {waitForCondition} = require("./utils/waitForCondition");
+const {expectToThrow} = require('./utils/custom-expects');
+
 const jestExpect = require('expect').default;
 
 const MockServer = require('../mock-server/mock-server');
 
-describe('Web View', () => {
+describe('WebView', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('WebView')).tap();
@@ -31,15 +33,15 @@ describe('Web View', () => {
         });
 
         it('should raise an error when element does not exists but expect to exist', async () => {
-          await jestExpect(async () => {
+          await expectToThrow(async () => {
             await expect(web.element(by.web.id('nonExistentElement'))).toExist();
-          }).rejects.toThrowError();
+          });
         });
 
         it('should raise an error when does element not exists at index', async () => {
-          await jestExpect(async () => {
+          await expectToThrow(async () => {
             await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
-          }).rejects.toThrowError();
+          });
         });
       });
 
@@ -266,9 +268,9 @@ describe('Web View', () => {
       it('should raise error when script fails', async () => {
         const headline = web.element(by.web.id('pageHeadline'));
 
-        await jestExpect(async () => {
+        await expectToThrow(async () => {
           await headline.runScript('(el) => { el.textContent = "Changed"; throw new Error("Error"); }');
-        }).rejects.toThrowError();
+        });
       });
     });
 
@@ -292,35 +294,6 @@ describe('Web View', () => {
         const source = await web.element(by.web.id('pageHeadline')).getText();
         await jestExpect(source).toBe('First Webview');
       });
-    });
-  });
-
-  describe(':ios: inner frame', () => {
-    /** @type {Detox.WebViewElement} */
-    let webview;
-    const mockServer = new MockServer();
-
-    beforeAll(async () => {
-      mockServer.init();
-
-      if (device.getPlatform() === 'android') {
-        // Android needs to reverse the port in order to access the mock server
-        await device.reverseTcpPort(mockServer.port);
-      }
-    });
-
-    afterAll(async () => {
-      await mockServer.close();
-    });
-
-    beforeEach(async () => {
-      await element(by.id('toggle3rdWebviewButton')).tap();
-      webview = web(by.id('webView'));
-    });
-
-    it('should find element in inner frame', async () => {
-      await expect(webview.element(by.web.tag('h1'))).toExist();
-      await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
     });
   });
 
@@ -366,18 +339,71 @@ describe('Web View', () => {
         });
 
         it('should throw on index out of bounds', async () => {
-          await jestExpect(async () => {
+          await expectToThrow(async () => {
             await expect(web(by.id('webView')).atIndex(2).element(by.web.id('message'))).toExist();
-          }).rejects.toThrowError();
+          });
         });
       });
 
       // Not implemented yet
       it(':android: should throw on usage of atIndex', async () => {
-        await jestExpect(async () => {
+        await expectToThrow(async () => {
           await expect(web(by.id('webView')).atIndex(0).element(by.web.id('message'))).toExist();
-        }).rejects.toThrowError();
+        });
       });
     });
+  });
+});
+
+describe(':ios: WebView CORS (inner frame)', () => {
+  /** @type {Detox.WebViewElement} */
+  let webview;
+  const mockServer = new MockServer();
+
+  beforeAll(async () => {
+    mockServer.init();
+
+    if (device.getPlatform() === 'android') {
+      // Android needs to reverse the port in order to access the mock server
+      await device.reverseTcpPort(mockServer.port);
+    }
+  });
+
+  afterAll(async () => {
+    await mockServer.close();
+  });
+
+  const launchAndNavigateToInnerFrame = async (shouldDisableWebKitSecurity) => {
+    await device.launchApp({
+      newInstance: true,
+      launchArgs: {
+          detoxDisableWebKitSecurity:
+          shouldDisableWebKitSecurity !== undefined ? (shouldDisableWebKitSecurity ? 'true' : 'false') : undefined,
+      },
+    });
+
+    await element(by.text('WebView')).tap();
+    await element(by.id('toggle3rdWebviewButton')).tap();
+
+    webview = web(by.id('webView'));
+  };
+
+  it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
+    await launchAndNavigateToInnerFrame(true);
+
+    await expect(webview.element(by.web.tag('h1'))).toExist();
+    await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+  });
+
+  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
+    await launchAndNavigateToInnerFrame(false);
+
+    await expect(webview.element(by.web.tag('h1'))).not.toExist();
+  });
+
+  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
+    await launchAndNavigateToInnerFrame();
+
+    await expect(webview.element(by.web.tag('h1'))).not.toExist();
   });
 });
