@@ -257,6 +257,25 @@ await device.launchApp({
 });
 ```
 
+#### 12. `detoxDisableWebKitSecurity`—Disable WebKit Security (iOS Only)
+
+Disables WebKit security on iOS. Default is `false`.
+
+This is useful for testing web views with iframes that loads CORS-protected content.
+
+:::caution Important
+
+Some pages may not load correctly when WebKit security is disabled (for example, PCI DSS-compliant pages).
+Disabling WebKit security may cause errors when loading pages that have strict security policies.
+
+:::
+
+```js
+await device.launchApp({
+  launchArgs: { detoxDisableWebKitSecurity: true }
+});
+```
+
 ### `device.terminateApp()`
 
 By default, `terminateApp()` with no params will terminate the app file defined in the current [`configuration`](../config/overview.mdx).
