@@ -20,7 +20,6 @@
 #import "UIImage+DetoxUtils.h"
 
 @implementation NSObject (DetoxActions)
-@implementation NSObject (DetoxActions)
 
 - (void)dtx_tapAtAccessibilityActivationPoint
 {
