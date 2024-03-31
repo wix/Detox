@@ -36,7 +36,7 @@ export default class DragNDropScreen extends Component {
                     marginTop: 32,
                     paddingHorizontal: 24
                 }}>
-                    <Image testID="DragAndDropTarget" source={require('../../img/basket.png')} style={{ width: 100, height: 100, alignSelf: 'center' }} />
+                    <View testID="DragAndDropTarget" style={{ width: 100, height: 100, alignSelf: 'center', backgroundColor: 'yellow' }} />
 
                     <View style={{ flex: 1, justifyContent: 'flex-end'}}>
                         <DragNDropComponent />
