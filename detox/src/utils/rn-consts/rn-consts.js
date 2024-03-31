@@ -1,4 +1,4 @@
-const DEFAULT_RN_VERSION = '99.9999.9999'
+const DEFAULT_RN_VERSION = '99.9999.9999';
 
 const rnVersion = (function parseRNVersion() {
   let raw;
