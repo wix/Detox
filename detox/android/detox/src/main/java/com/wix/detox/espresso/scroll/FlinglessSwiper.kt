@@ -1,6 +1,5 @@
 package com.wix.detox.espresso.scroll
 
-import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.test.espresso.UiController
 import com.wix.detox.espresso.action.common.MotionEvents
@@ -15,55 +14,19 @@ import com.wix.detox.espresso.action.common.MotionEvents
  */
 class FlinglessSwiper @JvmOverloads constructor(
         expectedMotions: Int,
-        private val uiController: UiController,
+        uiController: UiController,
         viewConfig: ViewConfiguration,
-        private val motionEvents: MotionEvents = MotionEvents())
-    : DetoxSwiper {
+        motionEvents: MotionEvents = MotionEvents())
+    : DetoxSwiper(uiController, motionEvents) {
 
     private val pixelsPerSecond = viewConfig.scaledMinimumFlingVelocity * VELOCITY_SAFETY_RATIO
     private val fastEventsCountLimit = expectedMotions * FAST_EVENTS_RATIO
 
-    private var downEvent: MotionEvent? = null
-
-    private var events = mutableListOf<MotionEvent>()
-    private var motionsCount = 0
-
-    override fun startAt(touchX: Float, touchY: Float) {
-        assertNotStarted()
-
-        downEvent = motionEvents.obtainDownEvent(touchX, touchY)
-        events.add(downEvent!!)
-    }
-
-    override fun moveTo(targetX: Float, targetY: Float): Boolean {
-        assertStarted()
-
-        val moveEvent = motionEvents.obtainMoveEvent(downEvent!!, calcEventTime(targetX, targetY), targetX, targetY)
-        events.add(moveEvent)
-
-        motionsCount++
-        return true
-    }
-
-    override fun finishAt(releaseX: Float, releaseY: Float) {
-        assertStarted()
-
-        try {
-            val upEvent = motionEvents.obtainUpEvent(downEvent!!, calcEventTime(releaseX, releaseY), releaseX, releaseY)
-            events.add(upEvent)
-
-            // Flush!
-            uiController.injectMotionEventSequence(events)
-        } finally {
-            events.forEach { event -> event.recycle() }
-            downEvent = null
-            motionsCount = 0
-        }
-    }
-
-    private fun calcEventTime(targetX: Float, targetY: Float): Long {
+    override fun calcEventTime(targetX: Float, targetY: Float): Long {
         val lastEvent = events.last()
         var dt = 10
+
+        val motionsCount = events.size
 
         if (motionsCount >= fastEventsCountLimit) {
             val dx = Math.abs((targetX - lastEvent.x))
@@ -78,17 +41,6 @@ class FlinglessSwiper @JvmOverloads constructor(
         return lastEvent.eventTime + Math.max(dt, 10)
     }
 
-    private fun assertStarted() {
-        if (downEvent == null) {
-            throw IllegalStateException("Swiper not initialized - did you forget to call startAt()?")
-        }
-    }
-
-    private fun assertNotStarted() {
-        if (downEvent != null) {
-            throw IllegalStateException("Swiper already started")
-        }
-    }
 
     companion object {
 //        private const val LOG_TAG = "DetoxBatchedSwiper"

@@ -1,35 +1,73 @@
-describe(':ios: Drag And Drop', () => {
+const jestExpect = require('@jest/globals').expect;
+
+describe('Drag And Drop', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('Drag And Drop')).tap();
   });
 
-  afterEach(async () => {
-    await element(by.id('closeButton')).tap();
-  });
-
-  it('should drag the ten cell and drop "on" the second cell position', async () => {
-    await assertCellText(2, '2');
-    await element(by.id('cell10')).longPressAndDrag(1000, 0.9, NaN, element(by.id('cell2')), 0.9, NaN, 'fast', 0);
-    await assertCellText(2, '10');
-  });
-
-  it('should drag the second cell and drop on the ten cell position', async () => {
-    await assertCellText(2, '2');
-    await assertCellText(10, '10');
-
-    await element(by.id('cell2')).longPressAndDrag(1000, 0.9, NaN, element(by.id('cell10')), 0.9, 0.01, 'slow', 0);
-
-    await assertCellText(2, '3');
-    await assertCellText(10, '2');
-  });
-
-  async function assertCellText(idx, value) {
-    const attribs = await element(by.id('cellTextLabel')).getAttributes();
-    const cellStrings = attribs.elements.map(x => x.text);
-
-    if(cellStrings[idx - 1] !== value) {
-      throw new Error("Failed!");
-    }
+  function expectWithEpsilon(actual, expected, epsilon) {
+    jestExpect(actual).toBeGreaterThanOrEqual(expected - epsilon);
+    jestExpect(actual).toBeLessThanOrEqual(expected + epsilon);
   }
+
+  async function performLongPressAndDrag(normalizedPositionX, normalizedPositionY, normalizedTargetPositionX, normalizedTargetPositionY) {
+
+    const dragAndDropTargetElement = element(by.id('DragAndDropTarget'));
+    const draggableElement = element(by.id('draggable'));
+
+    await draggableElement.longPressAndDrag(
+      1000,
+      normalizedPositionX,
+      normalizedPositionY,
+      dragAndDropTargetElement,
+      normalizedTargetPositionX,
+      normalizedTargetPositionY,
+      'fast',
+      0);
+
+    const targetElementAttributes = await dragAndDropTargetElement.getAttributes();
+    const draggableElementAttributes = await draggableElement.getAttributes();
+
+    const expectedTargetX = Math.ceil(targetElementAttributes.frame.x +
+      targetElementAttributes.frame.width * normalizedTargetPositionX -
+      draggableElementAttributes.frame.width * normalizedPositionX);
+    const expectedTargetY = Math.ceil(targetElementAttributes.frame.y +
+      targetElementAttributes.frame.height * normalizedTargetPositionY -
+      draggableElementAttributes.frame.height * normalizedPositionY);
+    const actualX = draggableElementAttributes.frame.x;
+    const actualY = draggableElementAttributes.frame.y;
+
+    expectWithEpsilon(actualX, expectedTargetX, 1);
+    expectWithEpsilon(actualY, expectedTargetY, 1);
+  }
+
+  it('should drag pan from left to left of the title', async () => {
+    await performLongPressAndDrag(0, 0, 0, 0);
+  });
+
+  it('should drag pan from left to right of the title', async () => {
+    await performLongPressAndDrag(0, 0, 1, 0);
+  });
+
+  it('should drag pan from right to left of the title', async () => {
+    await performLongPressAndDrag(1, 0, 0, 0);
+  });
+
+  it('should drag pan from right to right of the title', async () => {
+    await performLongPressAndDrag(1, 0, 1, 0);
+  });
+
+  it('should drag pan from center to center of the title', async () => {
+    await performLongPressAndDrag(0.5, 0.5, 0.5, 0.5);
+  });
+
+  it('should drag pan from center to left of the title', async () => {
+    await performLongPressAndDrag(0.5, 0.5, 0, 0);
+  });
+
+  it('should drag pan from left to center of the title', async () => {
+    await performLongPressAndDrag(0, 0, 0.5, 0.5);
+  });
+
 });

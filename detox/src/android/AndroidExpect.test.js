@@ -284,6 +284,11 @@ describe('AndroidExpect', () => {
         await e.element(e.by.id('ScrollView799')).swipe('up', 'slow', 0.9, 0.5, 0.5);
       });
 
+      it('should long press and drag', async () => {
+        await e.element(e.by.id('draggable')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('DragAndDropTarget')), 0.5, 0.5, 'fast', 0);
+        await e.element(e.by.id('draggable')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('DragAndDropTarget')), 0.5, 0.5, 'slow', 0);
+      });
+
       it('should not swipe given bad args', async () => {
         await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe(4, 'fast')).rejects.toThrow();
         await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0)).rejects.toThrow();
