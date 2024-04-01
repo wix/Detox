@@ -1,5 +1,5 @@
 import React, { Component, useRef } from 'react';
-import { Animated, Image, PanResponder, SafeAreaView, View } from 'react-native';
+import { Animated, PanResponder, SafeAreaView, View } from 'react-native';
 
 
 const DragNDropComponent = () => {
