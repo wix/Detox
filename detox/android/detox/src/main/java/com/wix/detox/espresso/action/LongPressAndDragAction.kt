@@ -12,7 +12,7 @@ import kotlin.math.ceil
 
 
 private const val SLOW_SCROLL_MOTIONS = 50
-private const val FAST_SCROLL_MOTIONS = 15
+private const val FAST_SCROLL_MOTIONS = 20
 
 class LongPressAndDragAction(
     private val duration: Int,
