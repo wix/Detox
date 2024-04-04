@@ -1,0 +1,72 @@
+name: Android
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: macos-12
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Set up JDK 11, Use specific Java version for sdkmanager to work
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'zulu'
+          architecture: 'x64'
+
+      - name: Download Android Emulator Image
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install $PACKAGE
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name Pixel_5 --device "pixel_5" --package $PACKAGE --sdcard 256M
+          # adb start-server
+          $ANDROID_HOME/emulator/emulator -list-avds
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list device
+          $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd
+        env:
+          PACKAGE: 'system-images;android-29;default;x86_64'
+
+      - name: Change Android Emulator settings
+        run: |
+          echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
+          mkdir -p /root/.android && touch /root/.android/repositories.cfg
+          echo "vm.heapSize=576" >> $AVD_PATH/config.ini
+          echo "hw.ramSize=2048" >> $AVD_PATH/config.ini
+          echo "disk.dataPartition.size=2048m" >> $AVD_PATH/config.ini
+          grep "size" $AVD_PATH/config.ini
+        env:
+          AVD_NAME: Pixel_5
+          AVD_PATH: /Users/runner/.android/avd/Pixel_5.avd
+
+      - name: Install node_modules
+        run: |
+          npm install
+
+      - name: Android Emulator
+        timeout-minutes: 10
+        continue-on-error: true
+        run: |
+          echo "Starting emulator"
+          nohup $ANDROID_HOME/emulator/emulator -verbose -no-audio -no-snapshot -no-window -gpu swiftshader_indirect @Pixel_5 &
+          # nohup $ANDROID_HOME/emulator/emulator -verbose -no-audio -no-snapshot -no-window -partition-size 2048 @Pixel_5 &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          $ANDROID_HOME/platform-tools/adb devices
+          echo "Emulator started"
+
+      - name: Build for detox
+        run: |
+          npm run build:android-debug
+
+      - name: Android Detox
+        run: npm run test:android-debug
