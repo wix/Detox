@@ -7,3 +7,5 @@
     artifact_paths:
       - "/Users/builder/work/coverage/**/*.lcov"
       - "/Users/builder/work/artifacts*.tar.gz"
+    agents:
+      queue: m2-oss
