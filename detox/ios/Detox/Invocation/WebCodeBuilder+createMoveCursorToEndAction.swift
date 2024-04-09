@@ -27,17 +27,21 @@ extension WebCodeBuilder {
 		}
 	};
 
+	if (document.activeElement !== element) {
+		element.focus();
+	}
 
 	if (typeof element.setSelectionRange === 'function') {
+		if (element.nodeName.toLowerCase() === 'input' &&
+			['text', 'search', 'tel', 'url', 'password'].includes(element.type.toLowerCase()) === false) {
+		  /* Some input types do not support `setSelectionRange`. See:
+		  * https://html.spec.whatwg.org/multipage/input.html#:~:text=%C2%B7-,setSelectionRange(),-%C2%B7
+		  */
+		  return;
+		}
+
 		const length = getLength(element);
-
-		/* This is a workaround. See: https://w3.org/Bugs/Public/show_bug.cgi?id=24796 */
-		const originalType = element.getAttribute('type');
-		element.setAttribute('type', 'text');
-
 		element.setSelectionRange(length, length);
-
-		element.setAttribute('type', originalType);
 	} else {
 		var range = element.ownerDocument.createRange();
 
