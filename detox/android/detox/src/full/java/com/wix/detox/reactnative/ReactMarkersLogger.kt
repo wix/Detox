@@ -4,7 +4,6 @@ import android.util.Log
 import com.facebook.react.bridge.ReactMarker
 import com.facebook.react.bridge.ReactMarkerConstants
 import com.facebook.react.bridge.ReactMarkerConstants.*
-import com.facebook.react.modules.core.ReactChoreographer
 
 object ReactMarkersLogger : ReactMarker.MarkerListener {
 
@@ -13,8 +12,7 @@ object ReactMarkersLogger : ReactMarker.MarkerListener {
     }
 
     override fun logMarker(marker: ReactMarkerConstants, p1: String?, p2: Int) {
-        val rnVersion = ReactChoreographer.getReactNativeVersion()
-        if (rnVersion != null && rnVersion >= 71000) {
+        if (ReactNativeInfo.rnVersion().minor >= 71000) {
             when (marker) {
                 DOWNLOAD_START,
                 DOWNLOAD_END,
