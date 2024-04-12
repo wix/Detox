@@ -7,12 +7,18 @@ import com.facebook.react.bridge.ReactMarkerConstants.*
 
 object ReactMarkersLogger : ReactMarker.MarkerListener {
 
+    private var isLoggerEnabled = false
+    
     fun attach() {
-        ReactMarker.addListener(this)
+        if (ReactNativeInfo.rnVersion().minor >= 71) {
+            isLoggerEnabled = true
+        } else {
+            ReactMarker.addListener(this)
+        }
     }
 
     override fun logMarker(marker: ReactMarkerConstants, p1: String?, p2: Int) {
-        if (ReactNativeInfo.rnVersion().minor >= 71000) {
+        if (isLoggerEnabled) {
             when (marker) {
                 DOWNLOAD_START,
                 DOWNLOAD_END,
