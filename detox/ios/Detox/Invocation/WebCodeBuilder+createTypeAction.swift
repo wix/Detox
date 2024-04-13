@@ -70,6 +70,9 @@ extension WebCodeBuilder {
 				element.value += textToType.charAt(currentIndex);
 			}
 
+			const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+			element.dispatchEvent(inputEvent);
+
 			\(createMoveCursorToEndAction(selector: selector))
 
 			currentIndex++;
