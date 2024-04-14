@@ -15,6 +15,7 @@ const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
+const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
@@ -405,6 +406,10 @@ class By {
   get web() {
     return webMatcher();
   }
+
+  get system() {
+    return systemMatcher();
+  }
 }
 
 class Matcher {
@@ -762,6 +767,8 @@ class IosExpect {
     this.by = new By();
     this.web = this.web.bind(this);
     this.web.element = this.web().element;
+    this.system = this.system.bind(this);
+    this.system.element = this.system().element;
   }
 
   element(matcher) {
@@ -769,6 +776,10 @@ class IosExpect {
   }
 
   expect(element) {
+    if (isSystemElement(element)) {
+      return systemExpect(this._invocationManager, element);
+    }
+
     if (isWebElement(element)) {
       return webExpect(this._invocationManager, element);
     }
@@ -795,6 +806,14 @@ class IosExpect {
 
         const webViewElement = matcher ? element(this._invocationManager, this._emitter, matcher) : undefined;
         return webElement(this._invocationManager, this._emitter, webViewElement, webMatcher);
+      }
+    };
+  }
+
+  system() {
+    return {
+      element: systemMatcher => {
+        return systemElement(this._invocationManager, this._emitter, systemMatcher);
       }
     };
   }

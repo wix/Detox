@@ -9,6 +9,8 @@ declare global {
   const by: Detox.DetoxExportWrapper['by'];
   const web: Detox.DetoxExportWrapper['web'];
 
+  const system: Detox.DetoxExportWrapper['system'];
+
   namespace NodeJS {
     interface Global {
       detox: Detox.DetoxExportWrapper;
@@ -18,6 +20,7 @@ declare global {
       expect: Detox.DetoxExportWrapper['expect'];
       by: Detox.DetoxExportWrapper['by'];
       web: Detox.DetoxExportWrapper['web'];
+      system: Detox.DetoxExportWrapper['system'];
     }
   }
 }
