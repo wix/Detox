@@ -13,11 +13,9 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
-          cache: 'npm'
+          node-version-file: '.nvmrc'
 
       - name: Set up JDK 11, Use specific Java version for sdkmanager to work
         uses: actions/setup-java@v3
