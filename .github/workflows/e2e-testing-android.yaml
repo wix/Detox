@@ -65,8 +65,10 @@ jobs:
           echo "Emulator started"
 
       - name: Build for detox
+        working-directory: examples/demo-react-native
         run: |
           npm run build:android-debug
 
       - name: Android Detox
+        working-directory: examples/demo-react-native
         run: npm run test:android-debug

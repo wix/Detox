@@ -322,5 +322,4 @@ class DetoxWorker {
  * @type {NodeJS.Global | {}}
  */
 DetoxWorker.global = global;
-
 module.exports = DetoxWorker;
