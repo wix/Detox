@@ -9,7 +9,7 @@ Use [expectations](expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
-- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration--ios-only)
+- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
 - [`.scrollToIndex()`](#scrolltoindexindex--android-only) **Android only**
