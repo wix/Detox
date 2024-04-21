@@ -9,7 +9,7 @@ module.exports.desc = 'Builds a cached Detox framework for the current environme
 
 module.exports.handler = async function buildFrameworkCache() {
   if (os.platform() === 'darwin') {
-    cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), { stdio: 'inherit' });
+    cp.execSync(path.join(__dirname, '../scripts/build_local_framework.ios.sh'), { stdio: 'inherit' });
   } else {
     detox.log.info(`The command is supported only on macOS, skipping the execution.`);
   }

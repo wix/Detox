@@ -10,7 +10,7 @@ module.exports.desc = "Deletes all Detox cached frameworks from ~/Library/Detox.
 
 module.exports.handler = async function cleanFrameworkCache() {
   if (os.platform() === 'darwin') {
-    const frameworkPath = path.join(os.homedir(), '/Library/Detox');
+    const frameworkPath = path.join(os.homedir(), '/Library/Detox/ios/framework');
     detox.log.info(`Removing framework binaries from ${frameworkPath}`);
     await fs.remove(frameworkPath);
   } else {
