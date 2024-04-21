@@ -40,7 +40,9 @@ npm run unit:android-release
 
 The native unit tests can also be run in [Android Studio](https://developer.android.com/studio) (i.e. the IDE for Android apps development). Most tests can be run seamlessly using Android Studio's build-in support for unit-tests, but some require a plugin called [Spek](https://plugins.jetbrains.com/plugin/10915-spek-framework), which can be installed from within Android Studio itself - under the Plugins marketplace.
 
-## iOS: Rebuilding the Framework
+## iOS: Rebuilding the Native Code
+
+### Detox Framework
 
 After changing the native code of Detox iOS, you need to rebuild the Detox framework. This is done when running:
 
@@ -50,6 +52,16 @@ detox build-framework-cache
 
 Note that it is only required when you change the native code of Detox, or one of its dependencies (e.g. [DetoxSync]).
 If you are only changing the JavaScript code, you don't need to rebuild the framework.
+
+### XCUITest Runner
+
+Detox iOS also has a separate XCUITest runner (`DetoxXCUITestRunner`), which is built using the following command:
+
+```bash
+detox build-xcuitest-cache
+```
+
+Make sure to run this command after changing the native code of the XCUITest runner.
 
 ## Building the Detox Test App
 
