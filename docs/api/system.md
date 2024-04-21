@@ -16,6 +16,7 @@ System matchers are used to find elements within the system:
 - [`by.system.type(type)`]
 
 ### `by.system.label(label)`
+
 Match elements with the specified label.
 
 ```js
