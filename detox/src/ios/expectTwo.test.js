@@ -6,6 +6,7 @@ describe('expectTwo', () => {
   let e;
   let emitter;
   let invocationManager;
+  let xcuitestRunner;
   let fs;
 
   beforeEach(() => {
@@ -17,10 +18,12 @@ describe('expectTwo', () => {
     const IosExpect = require('./expectTwo');
     const AsyncEmitter = jest.genMockFromModule('../utils/AsyncEmitter');
     invocationManager = new MockExecutor();
+    xcuitestRunner = new MockExecutor();
     emitter = new AsyncEmitter();
 
     e = new IosExpect({
       invocationManager,
+      xcuitestRunner,
       emitter,
     });
   });

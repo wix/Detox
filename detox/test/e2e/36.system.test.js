@@ -1,34 +1,35 @@
 const {expectToThrow} = require('./utils/custom-expects');
 
 describe('System Dialogs', () => {
-  describe(':ios:', () => {
-    beforeEach(async () => {
-      await device.launchApp({delete: true});
-      await element(by.text('System Dialogs')).tap();
-    });
-
-    afterEach(async () => {
-      await device.terminateApp();
+  describe(':ios: supported', () => {
+    beforeAll(async () => {
+      await device.reloadReactNative();
     });
 
     describe('request permission dialog', () => {
+      beforeEach(async () => {
+        await device.launchApp({
+          delete: true,
+          newInstance: true,
+        });
+
+        await element(by.text('System Dialogs')).tap();
+      });
+
       const permissionStatus = element(by.id('permissionStatus'));
       const requestPermissionButton = element(by.id('requestPermissionButton'));
 
-      it('should start with unavailable permission status', async () => {
-        await expect(permissionStatus).toHaveText('unavailable');
-      });
-
-      it('should find system alert button', async () => {
-        await requestPermissionButton.tap();
-
-        await expect(system.element(by.system.label('Allow'))).toExist();
+      it('should start with `denied` permission status', async () => {
+        await expect(permissionStatus).toHaveText('denied');
       });
 
       it('should tap on permission request alert button by label ("Allow")', async () => {
         await requestPermissionButton.tap();
 
-        await system.element(by.system.label('Allow')).tap();
+        const allowButton = system.element(by.system.label('Allow'));
+
+        await expect(allowButton).toExist();
+        await allowButton.tap();
 
         await expect(permissionStatus).toHaveText('granted');
       });
@@ -36,9 +37,12 @@ describe('System Dialogs', () => {
       it('should tap on permission request alert button by type and index ("Deny")', async () => {
         await requestPermissionButton.tap();
 
-        await system.element(by.system.type('button')).atIndex(1).tap();
+        const denyButton = system.element(by.system.type('button')).atIndex(0);
 
-        await expect(permissionStatus).toHaveText('denied');
+        await expect(denyButton).toExist();
+        await denyButton.tap();
+
+        await expect(permissionStatus).toHaveText('blocked');
       });
     });
 
@@ -49,13 +53,13 @@ describe('System Dialogs', () => {
     it('should raise when trying to match system element that does not exist', async () => {
       await expectToThrow(async () => {
         await expect(system.element(by.system.label('NonExistent'))).toExist();
-      }, 'Error: Cannot find system element by label: NonExistent');
+      }, 'Expectation failed, element with matcher `label == "NonExistent"` does not exist');
     });
 
     it('should raise when trying to tap on system element that does not exist', async () => {
       await expectToThrow(async () => {
         await system.element(by.system.label('NonExistent')).tap();
-      }, 'Error: Cannot find system element by label: NonExistent');
+      }, 'Tap failed, element with matcher `label == "NonExistent"` does not exist');
     });
   });
 

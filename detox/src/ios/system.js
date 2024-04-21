@@ -9,8 +9,8 @@ const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, l
 
 
 class SystemExpect {
-  constructor(invocationManager, element) {
-    this._invocationManager = invocationManager;
+  constructor(xcuitestRunner, element) {
+    this._xcuitestRunner = xcuitestRunner;
     this.element = element;
     this.modifiers = [];
   }
@@ -42,14 +42,13 @@ class SystemExpect {
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
-    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+    return _executeInvocation(this._xcuitestRunner, invocation, traceDescription);
   }
 }
 
 class SystemElement {
-  constructor(invocationManager, emitter, matcher, index) {
-    this._invocationManager = invocationManager;
-    this._emitter = emitter;
+  constructor(xcuitestRunner, matcher, index) {
+    this._xcuitestRunner = xcuitestRunner;
     this.matcher = matcher;
     this.index = index;
   }
@@ -76,7 +75,7 @@ class SystemElement {
       ...(params.length !== 0 && { params }),
     };
     traceDescription = systemActionDescription.full(traceDescription);
-    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+    return _executeInvocation(this._xcuitestRunner, invocation, traceDescription);
   }
 }
 
@@ -98,12 +97,12 @@ function systemMatcher() {
   return new SystemElementMatcher();
 }
 
-function systemElement(invocationManager, emitter, matcher) {
+function systemElement(xcuitestRunner, matcher) {
   if (!(matcher instanceof SystemElementMatcher)) {
     throwSystemMatcherError(matcher);
   }
 
-  return new SystemElement(invocationManager, emitter, matcher);
+  return new SystemElement(xcuitestRunner, matcher);
 }
 
 function throwSystemMatcherError(param) {
@@ -111,12 +110,12 @@ function throwSystemMatcherError(param) {
   throw new DetoxRuntimeError(`${paramDescription} is not a Detox system matcher. More about system matchers here: https://wix.github.io/Detox/docs/api/system`);
 }
 
-function systemExpect(invocationManager, element) {
-  return new SystemExpect(invocationManager, element);
+function systemExpect(xcuitestRunner, element) {
+  return new SystemExpect(xcuitestRunner, element);
 }
 
-function _executeInvocation(invocationManager, invocation, traceDescription) {
-  return traceInvocationCall(traceDescription, invocation, invocationManager.execute(invocation));
+function _executeInvocation(xcuitestRunner, invocation, traceDescription) {
+  return traceInvocationCall(traceDescription, invocation, xcuitestRunner.execute(invocation));
 }
 
 function isSystemElement(element) {

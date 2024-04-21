@@ -7,6 +7,7 @@ describe('expectTwo API Coverage', () => {
 
     e = new IosExpect({
       invocationManager: new MockExecutor(),
+      xcuitestRunner: new MockExecutor(),
     });
   });
 

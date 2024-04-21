@@ -15,8 +15,10 @@ const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
+const XCUITestRunner = require('./XCUITestRunner');
 const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
+
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
@@ -740,6 +742,7 @@ function element(invocationManager, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
+
   return new Element(invocationManager, emitter, matcher);
 }
 
@@ -747,6 +750,7 @@ function expect(invocationManager, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
+
   return new Expect(invocationManager, element);
 }
 
@@ -758,8 +762,9 @@ function waitFor(invocationManager, emitter, element) {
 }
 
 class IosExpect {
-  constructor({ invocationManager, emitter }) {
+  constructor({ invocationManager, runtimeDevice, emitter }) {
     this._invocationManager = invocationManager;
+    this._xcuitestRunner = new XCUITestRunner({ simulatorId: runtimeDevice.id });
     this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
@@ -777,7 +782,7 @@ class IosExpect {
 
   expect(element) {
     if (isSystemElement(element)) {
-      return systemExpect(this._invocationManager, element);
+      return systemExpect(this._xcuitestRunner, element);
     }
 
     if (isWebElement(element)) {
@@ -813,7 +818,7 @@ class IosExpect {
   system() {
     return {
       element: systemMatcher => {
-        return systemElement(this._invocationManager, this._emitter, systemMatcher);
+        return systemElement(this._xcuitestRunner, systemMatcher);
       }
     };
   }

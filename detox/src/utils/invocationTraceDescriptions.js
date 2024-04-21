@@ -45,6 +45,7 @@ module.exports = {
   },
   systemActionDescription: {
     tap: () => `tap`,
+    full: (actionDescription) => `perform system action: ${actionDescription}`
   },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,
