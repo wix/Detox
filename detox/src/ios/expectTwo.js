@@ -30,6 +30,11 @@ class Expect {
     this.modifiers = [];
   }
 
+  get not() {
+    this.modifiers.push('not');
+    return this;
+  }
+
   toBeVisible(percent) {
     if (percent !== undefined && (!Number.isSafeInteger(percent) || percent < 1 || percent > 100)) {
       throw new Error('`percent` must be an integer between 1 and 100, but got '
@@ -105,11 +110,6 @@ class Expect {
 
   toHaveToggleValue(value) {
     return this.toHaveValue(`${Number(value)}`);
-  }
-
-  get not() {
-    this.modifiers.push('not');
-    return this;
   }
 
   createInvocation(expectation, ...params) {
@@ -377,6 +377,14 @@ class InternalElement extends Element {
 }
 
 class By {
+  get web() {
+    return webMatcher();
+  }
+
+  get system() {
+    return systemMatcher();
+  }
+
   id(id) {
     return new Matcher().id(id);
   }
@@ -404,17 +412,18 @@ class By {
   value(value) {
     return new Matcher().value(value);
   }
-
-  get web() {
-    return webMatcher();
-  }
-
-  get system() {
-    return systemMatcher();
-  }
 }
 
 class Matcher {
+  /** @private */
+  static *predicates(matcher) {
+    if (matcher.predicate.type === 'and') {
+      yield* matcher.predicate.predicates;
+    } else {
+      yield matcher.predicate;
+    }
+  }
+
   accessibilityLabel(label) {
     return this.label(label);
   }
@@ -484,15 +493,6 @@ class Matcher {
 
     return result;
   }
-
-  /** @private */
-  static *predicates(matcher) {
-    if (matcher.predicate.type === 'and') {
-      yield* matcher.predicate.predicates;
-    } else {
-      yield matcher.predicate;
-    }
-  }
 }
 
 class WaitFor {
@@ -501,6 +501,11 @@ class WaitFor {
     this.element = new InternalElement(invocationManager, emitter, element.matcher, element.index);
     this.expectation = new InternalExpect(invocationManager, this.element);
     this._emitter = emitter;
+  }
+
+  get not() {
+    this.expectation.not;
+    return this;
   }
 
   toBeVisible(percent) {
@@ -570,11 +575,6 @@ class WaitFor {
 
   toBeNotFocused() {
     this.expectation = this.expectation.toBeNotFocused();
-    return this;
-  }
-
-  get not() {
-    this.expectation.not;
     return this;
   }
 
@@ -762,9 +762,9 @@ function waitFor(invocationManager, emitter, element) {
 }
 
 class IosExpect {
-  constructor({ invocationManager, runtimeDevice, emitter }) {
+  constructor({ invocationManager, xcuitestRunner, emitter }) {
     this._invocationManager = invocationManager;
-    this._xcuitestRunner = new XCUITestRunner({ simulatorId: runtimeDevice.id });
+    this._xcuitestRunner = xcuitestRunner;
     this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
