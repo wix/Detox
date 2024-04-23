@@ -1,6 +1,7 @@
-const { DetoxRuntimeError } = require('../errors');
-const { execWithRetriesAndLogs } = require('../utils/childProcess/exec');
-const environment = require('../utils/environment');
+const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+
+const { execWithRetriesAndLogs } = require('./childProcess/exec');
+const environment = require('./environment');
 
 class XCUITestRunner {
     constructor({ simulatorId }) {
@@ -11,6 +12,12 @@ class XCUITestRunner {
         const base64InvocationParams = Buffer.from(JSON.stringify(invocationParams)).toString('base64');
 
         const runnerPath = await environment.getXCUITestRunnerPath();
+        if (!runnerPath) {
+            throw new DetoxRuntimeError({
+                message: 'XCUITest runner path could not be found',
+                hint: DetoxRuntimeError.reportIssue,
+            });
+        }
 
         const flags = [
             '-xctestrun', runnerPath,

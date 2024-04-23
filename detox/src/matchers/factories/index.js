@@ -1,5 +1,5 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const XCUITestRunner = require('../../ios/XCUITestRunner');
+const XCUITestRunner = require('../../utils/XCUITestRunner');
 
 class MatchersFactory {
   createMatchers() {}
