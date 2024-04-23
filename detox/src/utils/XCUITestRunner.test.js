@@ -32,8 +32,7 @@ describe('XCUITestRunner', () => {
     it('should throw error when runner path is not found', async () => {
         environment.getXCUITestRunnerPath.mockResolvedValue(null);
 
-        await expect(runner.execute(invocationParams)).rejects
-            .toThrowError(/XCUITest runner path could not be found/);
+        await expect(runner.execute(invocationParams)).rejects.toThrow(/XCUITest runner path could not be found/);
     });
 
     it('should handle execution errors and throw error with an extracted inner error', async () => {
@@ -41,7 +40,7 @@ describe('XCUITestRunner', () => {
         const execError = { stdout: Buffer.from(errorOutput) };
         execWithRetriesAndLogs.mockRejectedValue(execError);
 
-        await expect(runner.execute(invocationParams)).rejects.toThrowError(/Test failure/);
+        await expect(runner.execute(invocationParams)).rejects.toThrow(/Test failure/);
     });
 
     it('should handle execution errors with no specific error message', async () => {
@@ -50,6 +49,6 @@ describe('XCUITestRunner', () => {
         execWithRetriesAndLogs.mockRejectedValue(execError);
 
         await expect(runner.execute(invocationParams)).rejects
-            .toThrowError(/XCUITest runner failed with no error message. Runner stdout: Unknown error occurred/);
+            .toThrow(/XCUITest runner failed with no error message. Runner stdout: Unknown error occurred/);
     });
 });

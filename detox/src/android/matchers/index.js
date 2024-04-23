@@ -24,7 +24,7 @@ module.exports = {
   },
 
   system: {
-    label: (_) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
-    type: (_) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+    label: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+    type: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
   }
 };
