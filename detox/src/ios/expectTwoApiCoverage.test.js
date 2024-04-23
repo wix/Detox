@@ -102,8 +102,8 @@ describe('expectTwo API Coverage', () => {
 
     describe('System', () => {
       it('should throw for invalid matcher parameters', async () => {
-        await expectToThrow(() => e.system.element(e.by.label(5)));
-        await expectToThrow(() => e.system.element(e.by.type(5)));
+        await expectToThrow(() => e.system.element(e.by.system.label(5)));
+        await expectToThrow(() => e.system.element(e.by.system.type(5)));
       });
 
       it('should throw for invalid matchers', async () => {
@@ -185,10 +185,6 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).performAccessibilityAction('activate');
     });
 
-    it('should not throw on system actions', async () => {
-      await e.system.element(e.by.system.label('Tap Me')).atIndex(2).tap();
-    });
-
     it(`interactions with wrong parameters should throw`, async () => {
       await [null, undefined, 0, -1, 'NaN'].forEach(item => {
         expectToThrow(() => e.element(e.by.id('someId')).multiTap(item));
@@ -250,6 +246,14 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, 'slow', 'notANumber'));
 
       await expectToThrow(() => e.element(e.by.id('someId')).performAccessibilityAction());
+    });
+
+    it('should properly call system interactions', async () => {
+      await e.system.element(e.by.system.label('Tap Me')).atIndex(2).tap();
+    });
+
+    it('should throw for invalid element-index for system interactions', async () => {
+      await expectToThrow(() => e.system.element(e.by.system.label('tapMe')).atIndex('NaN'));
     });
   });
 
