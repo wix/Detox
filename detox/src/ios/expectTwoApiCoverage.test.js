@@ -123,6 +123,11 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.web.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element(e.by.web.id('id'))).toHaveText(0));
     });
+
+    it('should not throw on system assertions', async () => {
+      await e.expect(e.system.element(e.by.system.label('Tap Me')).atIndex(2)).toExist();
+      await e.expect(e.system.element(e.by.system.type('button'))).not.toExist();
+    });
   });
 
   describe('Actions', () => {
