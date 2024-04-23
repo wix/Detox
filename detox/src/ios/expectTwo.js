@@ -15,7 +15,6 @@ const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
-const XCUITestRunner = require('./XCUITestRunner');
 const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
 
