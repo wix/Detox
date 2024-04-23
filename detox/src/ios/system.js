@@ -1,7 +1,5 @@
 const assert = require('assert');
 
-const _ = require('lodash');
-
 const { DetoxRuntimeError } = require('../errors');
 const { systemActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
@@ -25,22 +23,20 @@ class SystemExpect {
     return this;
   }
 
-  createInvocation(systemExpectation, ...params) {
-    const definedParams = _.without(params, undefined);
+  createInvocation(systemExpectation) {
     return {
       type: 'systemExpectation',
       systemPredicate: this.element.matcher.predicate,
       ...(this.element.index !== undefined && { systemAtIndex: this.element.index }),
       ...(this.modifiers.length !== 0 && { systemModifiers: this.modifiers }),
-      systemExpectation,
-      ...(definedParams.length !== 0 && { params: definedParams })
+      systemExpectation
     };
   }
 
-  expect(expectation, traceDescription, ...params) {
+  expect(expectation, traceDescription) {
     assert(traceDescription, `must provide trace description for expectation: \n ${JSON.stringify(expectation)}`);
 
-    const invocation = this.createInvocation(expectation, ...params);
+    const invocation = this.createInvocation(expectation);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
     return _executeInvocation(this._xcuitestRunner, invocation, traceDescription);
   }
