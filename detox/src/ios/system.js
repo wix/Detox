@@ -60,15 +60,14 @@ class SystemElement {
     return this.withAction('tap', traceDescription);
   }
 
-  withAction(action, traceDescription, ...params) {
+  withAction(action, traceDescription) {
     assert(traceDescription, `must provide trace description for action: \n ${JSON.stringify(action)}`);
 
     const invocation = {
       type: 'systemAction',
       systemPredicate: this.matcher.predicate,
       ...(this.index !== undefined && { systemAtIndex: this.index }),
-      systemAction: action,
-      ...(params.length !== 0 && { params }),
+      systemAction: action
     };
     traceDescription = systemActionDescription.full(traceDescription);
     return _executeInvocation(this._xcuitestRunner, invocation, traceDescription);
