@@ -617,16 +617,16 @@ describe('expectTwo', () => {
       const testCall = await e.waitFor(e.element(e.by.id('createdAndVisibleText'))).toExist().withTimeout(2000);
       const jsonOutput = {
         invocation:
-          {
-            type: 'expectation',
-            predicate: {
-              type: 'id',
-              value: 'createdAndVisibleText',
-              isRegex: false,
-            },
-            expectation: 'toExist',
-            timeout: 2000
-          }
+            {
+              type: 'expectation',
+              predicate: {
+                type: 'id',
+                value: 'createdAndVisibleText',
+                isRegex: false,
+              },
+              expectation: 'toExist',
+              timeout: 2000
+            }
       };
 
       expect(testCall).toDeepEqual(jsonOutput);
@@ -636,17 +636,17 @@ describe('expectTwo', () => {
       const testCall = await e.waitFor(e.element(e.by.text('Item')).atIndex(1)).toExist().withTimeout(2000);
       const jsonOutput = {
         invocation:
-          {
-            type: 'expectation',
-            atIndex: 1,
-            predicate: {
-              type: 'text',
-              value: 'Item',
-              isRegex: false,
-            },
-            expectation: 'toExist',
-            timeout: 2000
-          }
+            {
+              type: 'expectation',
+              atIndex: 1,
+              predicate: {
+                type: 'text',
+                value: 'Item',
+                isRegex: false,
+              },
+              expectation: 'toExist',
+              timeout: 2000
+            }
       };
 
       expect(testCall).toDeepEqual(jsonOutput);
@@ -757,6 +757,42 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
+  describe('system', () => {
+    it(`should parse system.element(by.system.label('tapMe')).atIndex(1).tap()`, async () => {
+      const testCall = await e.system.element(e.by.system.label('tapMe')).atIndex(1).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'systemAction',
+          systemAction: 'tap',
+          systemPredicate: {
+            type: 'label',
+            value: 'tapMe'
+          },
+          systemAtIndex: 1
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should parse expect(system.element(by.system.type('button'))).not.toExist()`, async () => {
+      const testCall = await e.expect(e.system.element(e.by.system.type('button'))).not.toExist();
+      const jsonOutput = {
+        invocation: {
+          type: 'systemExpectation',
+          systemExpectation: 'toExist',
+          systemModifiers: ['not'],
+          systemPredicate: {
+            type: 'type',
+            value: 'button'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+  });
+
   describe('web views', () => {
     it(`should parse expect(web(by.id('webViewId').element(web(by.label('tapMe')))).toExist()`, async () => {
       const testCall = await e.expect(e.web(e.by.id('webViewId')).atIndex(1).element(e.by.web.label('tapMe')).atIndex(2)).toExist();
@@ -807,11 +843,11 @@ describe('expectTwo', () => {
     });
 
     it('should throw when passing non-web-element matcher to element()', async () => {
-        const expectedErrorMsg = 'is not a Detox web-view matcher';
+      const expectedErrorMsg = 'is not a Detox web-view matcher';
 
-        jestExpect(() => e.expect(
-            e.web(e.by.id('webViewId')).element(e.by.label('tapMe'))
-        ).toExist()).toThrow(expectedErrorMsg);
+      jestExpect(() => e.expect(
+          e.web(e.by.id('webViewId')).element(e.by.label('tapMe'))
+      ).toExist()).toThrow(expectedErrorMsg);
     });
 
     it('should throw when not passing matcher to web()', async () => {
@@ -1107,7 +1143,7 @@ describe('expectTwo', () => {
 
     it('should throw when invocation returns an error', async () => {
       invocationManager.execute.mockResolvedValueOnce({
-          error: 'some error'
+        error: 'some error'
       });
 
       await expect(() => e.web.element(e.by.web.id('uniqueId')).getTitle()).rejects.toThrow('some error');
@@ -1115,7 +1151,7 @@ describe('expectTwo', () => {
 
     it('should extract return value (`return`) when exists on getter', async () => {
       invocationManager.execute.mockResolvedValueOnce({
-          result: 'some result'
+        result: 'some result'
       });
 
       const result = await e.web.element(e.by.web.id('uniqueId')).getTitle();

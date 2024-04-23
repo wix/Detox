@@ -91,6 +91,10 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.web.element(e.by.web.hrefContains(1)));
       await expectToThrow(() => e.web.element(e.by.web.tag(1)));
       await expectToThrow(() => e.web.element(e.by.web.value(1)));
+
+      // System matchers
+      await expectToThrow(() => e.system.element(e.by.label(5)));
+      await expectToThrow(() => e.system.element(e.by.type(5)));
     });
 
     it(`should throw for invalid toBeVisible parameters`, async () => {
@@ -111,6 +115,7 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element(e.by.web.id('id'))).toHaveText(0));
+      await expectToThrow(() => e.expect(e.system.element('notAMatcher')).toExist());
     });
   });
 
