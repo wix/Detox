@@ -91,10 +91,6 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.web.element(e.by.web.hrefContains(1)));
       await expectToThrow(() => e.web.element(e.by.web.tag(1)));
       await expectToThrow(() => e.web.element(e.by.web.value(1)));
-
-      // System matchers
-      await expectToThrow(() => e.system.element(e.by.label(5)));
-      await expectToThrow(() => e.system.element(e.by.type(5)));
     });
 
     it(`should throw for invalid toBeVisible parameters`, async () => {
@@ -102,6 +98,17 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() =>e.expect(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
       await expectToThrow(() =>e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
       await expectToThrow(() =>e.e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
+    });
+
+    describe('System', () => {
+      it('should throw for invalid matcher parameters', async () => {
+        await expectToThrow(() => e.system.element(e.by.label(5)));
+        await expectToThrow(() => e.system.element(e.by.type(5)));
+      });
+
+      it('should throw for invalid matchers', async () => {
+        await expectToThrow(() => e.system.element(e.by.value('test')));
+      });
     });
   });
 
@@ -115,12 +122,10 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element(e.by.web.id('id'))).toHaveText(0));
-      await expectToThrow(() => e.expect(e.system.element('notAMatcher')).toExist());
     });
   });
 
   describe('Actions', () => {
-
     it(`setColumnToValue()`, async () => {
       await e.element(e.by.id('pickerView')).setColumnToValue(1, '6');
       await expectToThrow(() => e.element(e.by.id('pickerView')).setColumnToValue('notAColumn', 1));
@@ -173,6 +178,10 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.id('someId')).setDatePickerDate('2019-2-8T05:10:00-08:00', 'yyyy-MM-dd\'T\'HH:mm:ssZZZZZ');
       await e.element(e.by.id('slider')).adjustSliderToPosition(0.5);
       await e.element(e.by.id('someId')).performAccessibilityAction('activate');
+    });
+
+    it('should not throw on system actions', async () => {
+      await e.system.element(e.by.system.label('Tap Me')).atIndex(2).tap();
     });
 
     it(`interactions with wrong parameters should throw`, async () => {
@@ -237,7 +246,6 @@ describe('expectTwo API Coverage', () => {
 
       await expectToThrow(() => e.element(e.by.id('someId')).performAccessibilityAction());
     });
-
   });
 
   describe('WaitFor', () => {
