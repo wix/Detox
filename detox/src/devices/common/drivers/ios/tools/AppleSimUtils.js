@@ -272,7 +272,7 @@ class AppleSimUtils {
       // want to make sure it isn't now.
       if (err.code === 3 &&
           (err.stderr.includes(`the app is not currently running`) ||
-           err.stderr.includes(`The operation couldn’t be completed. found nothing to terminate`))) {
+           err.stderr.includes(`found nothing to terminate`))) {
         return;
       }
 
