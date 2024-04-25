@@ -218,7 +218,7 @@ public class DetoxAction {
     }
 
     public static ViewAction longPress(Integer x, Integer y) {
-        return actionWithAssertions(new LongPressAction(null, x, y));
+        return longPress(null, x, y);
     }
 
     public static ViewAction longPress(Integer duration, Integer x, Integer y) {

@@ -23,17 +23,21 @@ import java.util.Locale
  * @param y The y-coordinate of the long press relative to the view. Default is the center of the view.
  */
 class LongPressAction(
-    private val duration: Int = ViewConfiguration.getLongPressTimeout(),
+    private val duration: Int? = null,
     private val x: Int? = null,
     private val y: Int? = null
 ) : ViewAction {
-
     override fun getConstraints(): Matcher<View> = isDisplayingAtLeast(90)
 
     override fun getDescription(): String =
         String.format("long press for %d milliseconds, at coordinates (%s, %s).", duration, x, y)
 
     override fun perform(uiController: UiController, view: View) {
+        val minDuration = duration ?: ViewConfiguration.getLongPressTimeout()
+
+        // Wait for the specified duration to mimic a long press, at least until the press state timeout
+        val finalDuration = maxOf(minDuration, ViewConfiguration.getPressedStateDuration()).toLong()
+
         val finalX = if (x != null) x.toFloat() else (view.width / 2f + view.left)
         val finalY = if (y != null) y.toFloat() else (view.height / 2f + view.top)
 
@@ -47,8 +51,6 @@ class LongPressAction(
                 )
             )
 
-            // Wait for the specified duration to mimic a long press, at least until the press state timeout
-            val finalDuration = minOf(duration, ViewConfiguration.getPressedStateDuration()).toLong()
             uiController.loopMainThreadForAtLeast(finalDuration)
 
             uiController.injectMotionEvent(
