@@ -25,9 +25,16 @@ class TapAtPointAction extends Action {
 }
 
 class LongPressAction extends Action {
-  constructor() {
+  constructor(duration, point) {
     super();
-    this._call = invoke.callDirectly(ViewActionsApi.longClick());
+
+    let x, y;
+    if (typeof point === 'object') {
+      x = point.x;
+      y = point.y;
+    }
+
+    this._call = invoke.callDirectly(DetoxActionApi.longPress(duration, x, y));
   }
 }
 

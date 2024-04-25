@@ -174,8 +174,8 @@ class Element {
       this._assertValidPoint(arg1);
       point = arg1;
     } else {
-      throw new Error('longPress accepts either a duration (number) or a point (object) as its first ' +
-          'argument, and optionally a point as its second argument (if the first argument is a duration).');
+      throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) ' +
+          'as its first argument, and optionally a point as its second argument (if the first argument is a duration).');
     }
 
     const traceDescription = actionDescription.longPress(duration, point);

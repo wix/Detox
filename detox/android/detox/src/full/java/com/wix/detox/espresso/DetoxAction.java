@@ -209,6 +209,10 @@ public class DetoxAction {
         ));
     }
 
+    public static ViewAction longPress() {
+        return longPress(null, null, null);
+    }
+
     public static ViewAction longPress(Integer duration) {
         return longPress(duration, null, null);
     }

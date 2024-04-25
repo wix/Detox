@@ -271,7 +271,18 @@ class DetoxAction {
     };
   }
 
-  static longPress(duration) {
+  static longPress() {
+    function longPress0() {
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.DetoxAction"
+        },
+        method: "longPress",
+        args: []
+      };
+    }
+
     function longPress1(duration) {
       if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
       return {
@@ -308,6 +319,10 @@ class DetoxAction {
           value: y
         }]
       };
+    }
+
+    if (arguments.length === 0) {
+      return longPress0.apply(null, arguments);
     }
 
     if (arguments.length === 1) {

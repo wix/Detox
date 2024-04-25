@@ -42,10 +42,29 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
-  async longPress() {
-    const action = new actions.LongPressAction();
-    const traceDescription = actionDescription.longPress();
+  async longPress(arg1, arg2) {
+    let duration = null;
+    let point = null;
+
+    if (typeof arg1 === 'number' && arg2 === undefined) {
+      duration = arg1;
+    } else if (typeof arg1 === 'object' && this._checkIfPointIsValid(arg1) && arg2 === undefined) {
+      point = arg1;
+    } else if (typeof arg1 === 'number' && typeof arg2 === 'object' && this._checkIfPointIsValid(arg2)) {
+      duration = arg1;
+      point = arg2;
+    } else if (arg1 !== undefined && arg2 !== undefined) {
+      throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) as ' +
+          'its first argument, and optionally a point as its second argument (if the first argument is a duration).');
+    }
+
+    const action = new actions.LongPressAction(duration, point);
+    const traceDescription = actionDescription.longPress(duration, point);
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
+  }
+
+  _checkIfPointIsValid(point) {
+    return typeof point === 'object' && typeof point.x === 'number' && typeof point.y === 'number';
   }
 
   async longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {
