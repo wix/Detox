@@ -155,21 +155,42 @@ class Element {
   }
 
   tap(point) {
-    if (point) {
-      if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
-      if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
-      if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
-    }
+    this._assertValidPoint(point);
 
     const traceDescription = actionDescription.tapAtPoint(point);
     return this.withAction('tap', traceDescription, point);
   }
 
-  longPress(duration = 1000) {
-    if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
+  longPress(arg1, arg2) {
+    let duration = 1000;
+    let point = null;
 
-    const traceDescription = actionDescription.longPress(duration);
-    return this.withAction('longPress', traceDescription, duration);
+    if (typeof arg1 === 'number' || arg1 === undefined) {
+      duration = arg1;
+
+      this._assertValidPoint(arg2);
+      point = arg2;
+    } else if (typeof arg1 === 'object' && arg2 === undefined) {
+      this._assertValidPoint(arg1);
+      point = arg1;
+    } else {
+      throw new Error('longPress accepts either a duration (number) or a point (object) as its first ' +
+          'argument, and optionally a point as its second argument (if the first argument is a duration).');
+    }
+
+    const traceDescription = actionDescription.longPress(duration, point);
+    return this.withAction('longPress', traceDescription, duration, point);
+  }
+
+  _assertValidPoint(point) {
+    if (!point) {
+      // point is optional
+      return;
+    }
+
+    if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
+    if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
+    if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,

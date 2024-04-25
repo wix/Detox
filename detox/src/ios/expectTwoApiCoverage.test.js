@@ -128,6 +128,8 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 10, y: 10 });
       await e.element(e.by.label('Tap Me')).longPress();
       await e.element(e.by.label('Tap Me')).longPress(2000);
+      await e.element(e.by.label('Tap Me')).longPress(2000, { x: 10, y: 10 });
+      await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 });
       await e.element(e.by.id('someId')).multiTap(3);
       await e.element(e.by.id('someId')).typeText('passcode');
       await e.element(e.by.id('someId')).tapBackspaceKey();
@@ -252,6 +254,9 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAMatcher'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress('notANumber'));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, 'notAnObject'));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 43, y: 'notANumber' }));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 'notANumber', y: 43 }));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap('notANumber'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint('notAPoint'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ notx: 1, y: 3 }));
