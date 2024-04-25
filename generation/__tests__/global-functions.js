@@ -96,7 +96,7 @@ describe('globals', () => {
         'adjustable',
         'allowsDirectInteraction',
         'pageTurn'
-      ].forEach(trait => {
+      ].forEach((trait) => {
         expect(typeof globals.sanitize_uiAccessibilityTraits([trait])).toBe('number');
       });
     });
@@ -140,9 +140,9 @@ describe('globals', () => {
     });
 
     it('should not get _call property if it is not present', () => {
-      const unwrappedMatcher = "I am a call";
+      const unwrappedMatcher = 'I am a call';
       expect(globals.sanitize_matcher(unwrappedMatcher)).toBe('I am a call');
-    })
+    });
   });
 
   describe('sanitize_greyElementInteraction', () => {
