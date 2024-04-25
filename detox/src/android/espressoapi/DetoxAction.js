@@ -271,6 +271,54 @@ class DetoxAction {
     };
   }
 
+  static longPress(duration) {
+    function longPress1(duration) {
+      if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.DetoxAction"
+        },
+        method: "longPress",
+        args: [{
+          type: "Integer",
+          value: duration
+        }]
+      };
+    }
+
+    function longPress3(duration, x, y) {
+      if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+      if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
+      if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.DetoxAction"
+        },
+        method: "longPress",
+        args: [{
+          type: "Integer",
+          value: duration
+        }, {
+          type: "Integer",
+          value: x
+        }, {
+          type: "Integer",
+          value: y
+        }]
+      };
+    }
+
+    if (arguments.length === 1) {
+      return longPress1.apply(null, arguments);
+    }
+
+    if (arguments.length === 3) {
+      return longPress3.apply(null, arguments);
+    }
+  }
+
   static takeViewScreenshot() {
     return {
       target: {
