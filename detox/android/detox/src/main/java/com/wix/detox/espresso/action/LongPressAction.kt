@@ -31,7 +31,7 @@ class LongPressAction(
     override fun getConstraints(): Matcher<View> = isDisplayingAtLeast(90)
 
     override fun getDescription(): String =
-        "long press at: (${x?.let { "%.2f".format(Locale.US, it) } ?: "center"}, ${y?.let { "%.2f".format(Locale.US, it) } ?: "center"}) for $duration milliseconds"
+        String.format("long press for %d milliseconds, at coordinates (%s, %s).", duration, x, y)
 
     override fun perform(uiController: UiController, view: View) {
         val finalX = if (x != null) x.toFloat() else (view.width / 2f + view.left)
