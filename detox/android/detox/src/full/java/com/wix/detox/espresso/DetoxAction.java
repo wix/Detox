@@ -22,6 +22,7 @@ import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.GetAttributesAction;
+import com.wix.detox.espresso.action.LongPressAction;
 import com.wix.detox.espresso.action.LongPressAndDragAction;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
@@ -206,6 +207,10 @@ public class DetoxAction {
             isFast,
             holdDuration
         ));
+    }
+
+    public static ViewAction longPress(Integer? duration, Integer? x, Integer? y) {
+        return actionWithAssertions(new LongPressAction(duration, x, y));
     }
 
     public static ViewAction takeViewScreenshot() {
