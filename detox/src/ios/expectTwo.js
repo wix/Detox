@@ -155,42 +155,16 @@ class Element {
   }
 
   tap(point) {
-    this._assertValidPoint(point);
+    _assertValidPoint(point);
 
     const traceDescription = actionDescription.tapAtPoint(point);
     return this.withAction('tap', traceDescription, point);
   }
 
   longPress(arg1, arg2) {
-    let duration = 1000;
-    let point = null;
-
-    if (typeof arg1 === 'number' || arg1 === undefined) {
-      duration = arg1;
-
-      this._assertValidPoint(arg2);
-      point = arg2;
-    } else if (typeof arg1 === 'object' && arg2 === undefined) {
-      this._assertValidPoint(arg1);
-      point = arg1;
-    } else {
-      throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) ' +
-          'as its first argument, and optionally a point as its second argument (if the first argument is a duration).');
-    }
-
+    let { duration, point } = _longPressPointAndDuration(arg1, arg2);
     const traceDescription = actionDescription.longPress(duration, point);
     return this.withAction('longPress', traceDescription, duration, point);
-  }
-
-  _assertValidPoint(point) {
-    if (!point) {
-      // point is optional
-      return;
-    }
-
-    if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
-    if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
-    if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
@@ -616,9 +590,12 @@ class WaitFor {
     return this.waitForWithAction(traceDescription);
   }
 
-  longPress(duration) {
-    this.action = this.actionableElement.longPress(duration);
-    const traceDescription = actionDescription.longPress(duration);
+  longPress(arg1, arg2) {
+    this.action = this.actionableElement.longPress(arg1, arg2);
+
+    let { duration, point } = _longPressPointAndDuration(arg1, arg2);
+    const traceDescription = actionDescription.longPress(duration, point);
+
     return this.waitForWithAction(traceDescription);
   }
 
@@ -819,6 +796,37 @@ class IosExpect {
       }
     };
   }
+}
+
+function _longPressPointAndDuration(arg1, arg2) {
+  let duration = null;
+  let point = null;
+
+  if (typeof arg1 === 'number' || arg1 === undefined) {
+    duration = arg1;
+
+    _assertValidPoint(arg2);
+    point = arg2;
+  } else if (typeof arg1 === 'object' && arg2 === undefined) {
+    _assertValidPoint(arg1);
+    point = arg1;
+  } else {
+    throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) ' +
+        'as its first argument, and optionally a point as its second argument (if the first argument is a duration).');
+  }
+
+  return { duration, point };
+}
+
+function _assertValidPoint(point) {
+  if (!point) {
+    // point is optional
+    return;
+  }
+
+  if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
+  if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
+  if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
 }
 
 function throwMatcherError(param) {

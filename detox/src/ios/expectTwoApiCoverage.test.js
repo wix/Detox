@@ -219,6 +219,11 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(-1));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(NaN));
 
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress('notANumber'));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress(1000, 1000));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress(1000, { x: 'notANumber', y: 10 }));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress(1000, { x: 10, y: 'notANumber' }));
+
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.by.id('matcherNotElement')));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag('notANumber', 0.5, 0.5, e.element(e.by.id('targetElement'))));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, 'slow', 'notANumber'));
@@ -254,7 +259,7 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAMatcher'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress('notANumber'));
-      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, 'notAnObject'));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, 40));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 43, y: 'notANumber' }));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 'notANumber', y: 43 }));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap('notANumber'));
@@ -276,6 +281,9 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).not.toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress();
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(20);
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(20, { x: 15, y: 100 });
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress({ x: 15, y: 100 });
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap(2);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ x: 1, y: 1 });
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapBackspaceKey();
