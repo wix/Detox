@@ -82,7 +82,7 @@ export default class ActionsScreen extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity
-          delayLongPress={1500}
+          delayLongPress={1200}
           onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
         >
           <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press Me 1.5s</Text>
