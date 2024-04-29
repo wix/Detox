@@ -218,10 +218,7 @@ class LongPressAction : Action {
 			}
 		}
 
-		if let point {
-			element.longPress(at: point, duration: duration)
-		}
-
+		element.longPress(at: point, duration: duration)
 		return nil
 	}
 
