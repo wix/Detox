@@ -1295,7 +1295,7 @@ declare global {
 
             /**
              * Simulate long press on an element
-             * @param duration custom press duration time, in milliseconds. Optional (default is 1000ms).
+             * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
              * @param point coordinates in the element's coordinate space. Optional (default is the center of the element).
              * @example await element(by.id('tappable')).longPress();
              * @example await element(by.id('tappable')).longPress(2000);
