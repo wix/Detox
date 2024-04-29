@@ -9,6 +9,16 @@ private const val LOG_TAG = "Detox-ViewConfig"
 
 object DetoxViewConfigurations {
 
+    /**
+     * Duration before a press turns into a long press.
+     * Due to `Tap.LONG`, factor 1.5 is needed, otherwise a long press is not safely detected.
+     *
+     * @see androidx.test.espresso.action.Tap.LONG
+     * @see android.test.TouchUtils.longClickView
+     */
+    @JvmStatic
+    fun getLongPressTimeout(): Long = (ViewConfiguration.getLongPressTimeout() * 1.5).toLong()
+
     fun getPostTapCoolDownTime() = ViewConfiguration.getDoubleTapTimeout().toLong()
 
     /**

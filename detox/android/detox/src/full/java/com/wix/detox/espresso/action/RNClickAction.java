@@ -21,21 +21,21 @@ public class RNClickAction implements ViewAction {
     private final GeneralClickAction clickAction;
 
     public RNClickAction() {
-        clickAction = new GeneralClickAction(
-                        new DetoxSingleTap(),
-                        GeneralLocation.VISIBLE_CENTER,
-                        Press.FINGER,
-                        InputDevice.SOURCE_UNKNOWN,
-                        MotionEvent.BUTTON_PRIMARY);
+        this(null);
     }
 
     public RNClickAction(CoordinatesProvider coordinatesProvider) {
+        this(coordinatesProvider, null);
+    }
+
+    public RNClickAction(CoordinatesProvider coordinatesProvider, Long duration) {
         clickAction = new GeneralClickAction(
-                        new DetoxSingleTap(),
-                        coordinatesProvider,
-                        Press.FINGER,
-                        InputDevice.SOURCE_UNKNOWN,
-                        MotionEvent.BUTTON_PRIMARY);
+            new DetoxSingleTap(duration),
+            coordinatesProvider != null ? coordinatesProvider : GeneralLocation.VISIBLE_CENTER,
+            Press.FINGER,
+            InputDevice.SOURCE_UNKNOWN,
+            MotionEvent.BUTTON_PRIMARY
+        );
     }
 
     @Override

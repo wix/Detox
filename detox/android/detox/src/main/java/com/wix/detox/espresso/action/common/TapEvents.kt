@@ -19,12 +19,20 @@ private const val EVENTS_TIME_GAP_MS = 30
 
 class TapEvents(private val motionEvents: MotionEvents = MotionEvents()) {
     fun createEventsSeq(coordinates: FloatArray, precision: FloatArray)
-            = createEventsSeq(coordinates, precision, null)
+            = createEventsSeq(coordinates, precision, null, null)
 
-    fun createEventsSeq(coordinates: FloatArray, precision: FloatArray, downTimestamp: Long?): List<MotionEvent> {
+    fun createEventsSeq(
+        coordinates: FloatArray,
+        precision: FloatArray,
+        downTimestamp: Long?,
+        duration: Long?
+    ): List<MotionEvent> {
         val (x, y) = coordinates
         val downEvent = motionEvents.obtainDownEvent(x, y, precision, downTimestamp)
-        val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + EVENTS_TIME_GAP_MS, x, y)
+
+        val upEventDuration = (duration ?: EVENTS_TIME_GAP_MS).toLong()
+        val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + upEventDuration, x, y)
+
         return arrayListOf(downEvent, upEvent)
     }
 }

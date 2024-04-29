@@ -82,11 +82,21 @@ export default class ActionsScreen extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity
-          delayLongPress={1200}
+          delayLongPress={1500}
           onLongPress={this.onButtonPress.bind(this, 'Long Press With Duration Working')}
         >
           <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
+
+        <View
+          onStartShouldSetResponder={(event) => {
+            const nativeEvent = event.nativeEvent;
+            return nativeEvent.locationX < 10 && nativeEvent.locationY < 10;
+          }}
+          onResponderRelease={() => this.onButtonPress('Long Press on Top Left Working')}
+        >
+          <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press on Top Left</Text>
+        </View>
 
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
         >

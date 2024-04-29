@@ -6,7 +6,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
-import android.view.ViewConfiguration;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -30,6 +29,7 @@ import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.common.utils.ViewInteractionExt;
+import com.wix.detox.espresso.action.common.DetoxViewConfigurations;
 import com.wix.detox.espresso.scroll.DetoxScrollAction;
 import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
@@ -42,9 +42,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import android.view.InputDevice;
-import android.view.MotionEvent;
 
 /**
  * Created by simonracz on 10/07/2017.
@@ -64,20 +61,25 @@ public class DetoxAction {
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
+        CoordinatesProvider coordinatesProvider = createCoordinatesProvider(x, y);
+        return actionWithAssertions(new RNClickAction(coordinatesProvider));
+    }
+
+    private static CoordinatesProvider createCoordinatesProvider(final int x, final int y) {
         final int px = DeviceDisplay.convertDpiToPx(x);
         final int py = DeviceDisplay.convertDpiToPx(y);
-        CoordinatesProvider c = new CoordinatesProvider() {
-            @Override
-            public float[] calculateCoordinates(View view) {
-                final int[] xy = new int[2];
-                view.getLocationOnScreen(xy);
-                final float fx = xy[0] + px;
-                final float fy = xy[1] + py;
-                return new float[]{fx, fy};
-            }
-        };
-        return actionWithAssertions(new RNClickAction(c));
-    }
+
+        return new CoordinatesProvider() {
+             @Override
+             public float[] calculateCoordinates(View view) {
+                 final int[] xy = new int[2];
+                 view.getLocationOnScreen(xy);
+                 final float fx = xy[0] + px;
+                 final float fy = xy[1] + py;
+                 return new float[]{fx, fy};
+             }
+         };
+     };
 
     /**
      * Scrolls to the edge of the given scrollable view.
@@ -224,30 +226,10 @@ public class DetoxAction {
     }
 
     public static ViewAction longPress(Integer duration, Integer x, Integer y) {
-        CoordinatesProvider coordinatesProvider = new CoordinatesProvider() {
-            @Override
-            public float[] calculateCoordinates(View view) {
-                final int[] xy = new int[2];
-                view.getLocationOnScreen(xy);
+        Long finalDuration = duration == null ? DetoxViewConfigurations.getLongPressTimeout() : duration;
+        CoordinatesProvider coordinatesProvider = x == null || y == null ? null : createCoordinatesProvider(x, y);
 
-                final int px = DeviceDisplay.convertDpiToPx(x == null ? view.getWidth() / 2 : x);
-                final float fx = xy[0] + px;
-
-
-                final int py = DeviceDisplay.convertDpiToPx(y == null ? view.getHeight() / 2 : y);
-                final float fy = xy[1] + py;
-
-                return new float[]{fx, fy};
-            }
-        };
-
-        return actionWithAssertions(new GeneralClickAction(
-            new LongPressCustomTapper(duration == null ? ViewConfiguration.getLongPressTimeout() : duration),
-            coordinatesProvider,
-            Press.FINGER,
-            InputDevice.SOURCE_UNKNOWN,
-            MotionEvent.BUTTON_PRIMARY
-        ));
+        return actionWithAssertions(new RNClickAction(coordinatesProvider, finalDuration));
     }
 
     public static ViewAction takeViewScreenshot() {
