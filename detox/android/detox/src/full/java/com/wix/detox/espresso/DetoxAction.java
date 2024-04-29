@@ -6,6 +6,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -22,7 +23,6 @@ import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
 import com.wix.detox.espresso.action.DetoxMultiTap;
 import com.wix.detox.espresso.action.GetAttributesAction;
-import com.wix.detox.espresso.action.LongPressAction;
 import com.wix.detox.espresso.action.LongPressAndDragAction;
 import com.wix.detox.espresso.action.RNClickAction;
 import com.wix.detox.espresso.action.RNDetoxAccessibilityAction;
@@ -43,6 +43,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.view.InputDevice;
+import android.view.MotionEvent;
 
 /**
  * Created by simonracz on 10/07/2017.
@@ -222,7 +224,30 @@ public class DetoxAction {
     }
 
     public static ViewAction longPress(Integer duration, Integer x, Integer y) {
-        return actionWithAssertions(new LongPressAction(duration, x, y));
+        CoordinatesProvider coordinatesProvider = new CoordinatesProvider() {
+            @Override
+            public float[] calculateCoordinates(View view) {
+                final int[] xy = new int[2];
+                view.getLocationOnScreen(xy);
+
+                final int px = DeviceDisplay.convertDpiToPx(x == null ? view.getWidth() / 2 : x);
+                final float fx = xy[0] + px;
+
+
+                final int py = DeviceDisplay.convertDpiToPx(y == null ? view.getHeight() / 2 : y);
+                final float fy = xy[1] + py;
+
+                return new float[]{fx, fy};
+            }
+        };
+
+        return actionWithAssertions(new GeneralClickAction(
+            new LongPressCustomTapper(duration == null ? ViewConfiguration.getLongPressTimeout() : duration),
+            coordinatesProvider,
+            Press.FINGER,
+            InputDevice.SOURCE_UNKNOWN,
+            MotionEvent.BUTTON_PRIMARY
+        ));
     }
 
     public static ViewAction takeViewScreenshot() {
