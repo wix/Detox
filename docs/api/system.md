@@ -1,10 +1,14 @@
 # System
 
-System APIs allows you to interact with elements in the system-level, such as dialogs, alerts, OS browser, push notifications, etc.
+System APIs allows you to interact with dialogs in the system-level (e.g. permissions, alerts, etc.).
 
 ::: note
 
 **System APIs are only available on iOS**. Android support is coming soon.
+
+At the moment, System APIs are limited to system dialogs (e.g. permissions, alerts, etc.).
+We plan to expand the System APIs to include more system-level interactions in the future,
+such as OS browser (Safari / Chrome), interactions with push notifications, photo library, etc.
 
 :::
 
