@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -171,48 +172,36 @@ function throwMissingGmsaasError() {
   throw new DetoxRuntimeError(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`);
 }
 
-function getDetoxVersion() {
+const getDetoxVersion = _.memoize(() => {
   return require(path.join(__dirname, '../../package.json')).version;
-}
+});
 
-let _iosFrameworkPath;
-async function getFrameworkPath() {
-  if (!_iosFrameworkPath) {
-    _iosFrameworkPath = _doGetFrameworkPath();
-  }
-
-  return _iosFrameworkPath;
-}
-
-async function _doGetFrameworkPath() {
+const getBuildFolderName = _.memoize(async () => {
   const detoxVersion = getDetoxVersion();
-  const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
-  return `${DETOX_LIBRARY_ROOT_PATH}/ios/framework/${sha1}/Detox.framework`;
-}
+  const xcodeVersion = await exec('xcodebuild -version').then(result => result.stdout.trim());
 
-let _iosXCUITestRunnerPath;
+  return crypto.createHash('sha1')
+      .update(`${detoxVersion}\n${xcodeVersion}\n`)
+      .digest('hex');
+});
 
-async function getXCUITestRunnerPath() {
-  if (!_iosXCUITestRunnerPath) {
-    _iosXCUITestRunnerPath = _doGetXCUITestRunnerPath();
-  }
+const getFrameworkPath = _.memoize(async () => {
+  const buildFolder = await getBuildFolderName();
+  return `${DETOX_LIBRARY_ROOT_PATH}/ios/framework/${buildFolder}/Detox.framework`;
+});
 
-  return _iosXCUITestRunnerPath;
-}
+const getXCUITestRunnerPath = _.memoize(async () => {
+  const buildFolder = await getBuildFolderName();
+  const derivedDataPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner/${buildFolder}`;
+  const xctestrunPath = await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)
+      .then(result => result.stdout.trim());
 
-async function _doGetXCUITestRunnerPath() {
-  const detoxVersion = getDetoxVersion();
-  const sha1 = (await exec(`(echo "${detoxVersion}" && xcodebuild -version) | shasum | awk '{print $1}'`)).stdout.trim();
-
-  const derivedDataPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner/${sha1}`;
-
-  const xctestrunPath = (await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)).stdout.trim();
   if (!xctestrunPath) {
     throw new DetoxRuntimeError(`Failed to find .xctestrun file in ${derivedDataPath}`);
   }
 
   return xctestrunPath;
-}
+});
 
 function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
