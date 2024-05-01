@@ -1,6 +1,8 @@
+const { exec } = require('child-process-promise');
+
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-const { execWithRetriesAndLogs } = require('../utils/childProcess/exec');
 const environment = require('../utils/environment');
+const log = require('../utils/logger').child({ cat: 'xcuitest-runner' });
 
 class XCUITestRunner {
     constructor({ simulatorId }) {
@@ -8,6 +10,8 @@ class XCUITestRunner {
     }
 
     async execute(invocationParams) {
+        log.trace({ event: 'XCUITEST_RUNNER' }, `invocation params: ${JSON.stringify(invocationParams)}`);
+
         const base64InvocationParams = Buffer.from(JSON.stringify(invocationParams)).toString('base64');
 
         const runnerPath = await environment.getXCUITestRunnerPath();
@@ -26,12 +30,7 @@ class XCUITestRunner {
         ];
 
         try {
-            return await execWithRetriesAndLogs(
-                `TEST_RUNNER_PARAMS="${base64InvocationParams}" xcodebuild`, {
-                    retries: 0,
-                    verbosity: 'low',
-                    args: `${flags.join(' ')}`
-                });
+            return await exec(`TEST_RUNNER_PARAMS="${base64InvocationParams}" xcodebuild ${flags.join(' ')}`);
         } catch (e) {
             const stdout = e.stdout.toString();
             const innerError = this.findInnerError(stdout);
