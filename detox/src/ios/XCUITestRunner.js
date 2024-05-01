@@ -1,7 +1,6 @@
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
-
-const { execWithRetriesAndLogs } = require('./childProcess/exec');
-const environment = require('./environment');
+const { execWithRetriesAndLogs } = require('../utils/childProcess/exec');
+const environment = require('../utils/environment');
 
 class XCUITestRunner {
     constructor({ simulatorId }) {

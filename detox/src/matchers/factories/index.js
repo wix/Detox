@@ -1,5 +1,4 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
-const XCUITestRunner = require('../../utils/XCUITestRunner');
 
 class MatchersFactory {
   createMatchers() {}
@@ -15,6 +14,7 @@ class Android extends MatchersFactory {
 class Ios extends MatchersFactory {
   createMatchers({ invocationManager, runtimeDevice, eventEmitter }) {
     const IosExpect = require('../../ios/expectTwo');
+    const XCUITestRunner = require('../../ios/XCUITestRunner');
     const xcuitestRunner = new XCUITestRunner({ simulatorId: runtimeDevice.id });
 
     return new IosExpect({
