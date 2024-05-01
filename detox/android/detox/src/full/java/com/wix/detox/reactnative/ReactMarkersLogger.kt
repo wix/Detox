@@ -8,7 +8,9 @@ import com.facebook.react.bridge.ReactMarkerConstants.*
 object ReactMarkersLogger : ReactMarker.MarkerListener {
 
     fun attach() {
-        ReactMarker.addListener(this)
+        if (ReactNativeInfo.rnVersion().minor >= 71) {
+            ReactMarker.addListener(this)
+        }
     }
 
     override fun logMarker(marker: ReactMarkerConstants, p1: String?, p2: Int) {

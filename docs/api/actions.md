@@ -9,7 +9,7 @@ Use [expectations](expect.md) to verify element states.
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
 - [`.longPress()`](#longpressduration)
-- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration--ios-only) **iOS only**
+- [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
 - [`.scrollToIndex()`](#scrolltoindexindex--android-only) **Android only**
@@ -62,7 +62,7 @@ await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress(1500);
 ```
 
-### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`  iOS only
+### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`
 
 Simulates a long press on the element and then drag it to a position of another element.
 
