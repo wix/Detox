@@ -4,7 +4,7 @@
     command:
       - "nvm install"
       - "npm run package:ios"
-    artifact_paths: "/Users/builder/work/detox/*.tbz"
+    artifact_paths: "/Users/builder/uibuilder/work/detox/*.tbz"
 
   - label: ":android: Package android"
     key: 'android_package'
@@ -15,8 +15,8 @@
     env:
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
-      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
-    artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
+      JAVA_HOME: /opt/openjdk/openlogic-openjdk-17.0.9+9-mac-x64/jdk-17.0.9.jdk/Contents/Home
+    artifact_paths: "/Users/builder/uibuilder/work/detox/Detox-android/**/*"
 
   - label: ":android: Package android Legacy"
     key: 'android_package_legacy'
@@ -28,7 +28,7 @@
       REACT_NATIVE_VERSION: 0.71.10
       DETOX_DISABLE_POSTINSTALL: true
       DETOX_DISABLE_POD_INSTALL: true
-    artifact_paths: "/Users/builder/work/detox/Detox-android/**/*"
+    artifact_paths: "/Users/builder/uibuilder/work/detox/Detox-android/**/*"
 
   - label: ":shipit: Publish"
     depends_on:

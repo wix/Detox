@@ -23,7 +23,8 @@
       "simulator": {
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 15 Pro Max"
+          "type": "iPhone 15 Pro Max",
+          "os": "17.0.1"
         }
       }
     },
