@@ -69,7 +69,7 @@ async function handleCleaning(cleanOption, frameworkPath, frameworkDesc, xcuites
 }
 
 async function cleanCache(targetPath, descriptor) {
-  detox.log.info(`Cleaning ${descriptor} cache at ${targetPath}`);
+  detox.log.info(`Cleaning ${descriptor} cache at ${targetPath}\n`);
   await fs.remove(targetPath);
 }
 

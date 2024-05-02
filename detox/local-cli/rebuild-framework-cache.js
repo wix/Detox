@@ -5,7 +5,7 @@ const yargs = require('yargs/yargs');
 
 const detox = require('../internals');
 
-module.exports.command = 'clean-framework-cache';
+module.exports.command = 'rebuild-framework-cache';
 module.exports.desc = `Alias for 'detox build-framework-cache --clean="all" --build="all"'. ` +
   `Deletes all Detox cached frameworks and XCUITest-runners from ~/Library/Detox, and rebuilds a new one for the ` +
   `current environment. (macOS only)`;
