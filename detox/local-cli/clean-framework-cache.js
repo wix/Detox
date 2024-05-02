@@ -1,19 +1,24 @@
 const os = require('os');
-const path = require('path');
 
-const fs = require('fs-extra');
+const { hideBin } = require('yargs/helpers');
+const yargs = require('yargs/yargs');
 
 const detox = require('../internals');
 
 module.exports.command = 'clean-framework-cache';
-module.exports.desc = "Deletes all Detox cached frameworks from ~/Library/Detox. Cached framework can be rebuilt using the 'build-framework-cache' command. (macOS only)";
+module.exports.desc = `Alias for 'detox build-framework-cache --clean="all" --build="none"'. ` +
+  `Deletes all Detox cached frameworks and XCUITest-runners from ~/Library/Detox. (macOS only)`;
 
 module.exports.handler = async function cleanFrameworkCache() {
-  if (os.platform() === 'darwin') {
-    const frameworkPath = path.join(os.homedir(), '/Library/Detox/ios/framework');
-    detox.log.info(`Removing framework binaries from ${frameworkPath}`);
-    await fs.remove(frameworkPath);
-  } else {
+  if (os.platform() !== 'darwin') {
     detox.log.info(`The command is supported only on macOS, skipping the execution.`);
+    return;
   }
+
+  detox.log.info(`This command is an alias to 'detox build-framework-cache --clean="all" --build="none"'. Executing it now.`);
+
+  const argv = hideBin(process.argv);
+  yargs(argv)
+    .command(require('./build-framework-cache'))
+    .parse(['build-framework-cache', '--clean="all"', '--build="none"']);
 };

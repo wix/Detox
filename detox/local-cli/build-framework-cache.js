@@ -7,29 +7,23 @@ const fs = require('fs-extra');
 const detox = require('../internals');
 
 module.exports.command = 'build-framework-cache';
-
 module.exports.desc = 'Builds or rebuilds a cached Detox framework and/or XCUITest-runner for the current ' +
-  'environment in ~/Library/Detox. Supports flags --xcuitest, --detox, and --clean to specify what to build or ' +
-  'clean. By default, builds both the framework and the runner. (MacOS only)';
+  'environment in ~/Library/Detox. Supports --build and --clean options to specify what to build or ' +
+  'clean. Defaults to building all. (MacOS only)';
 
 module.exports.builder = (yargs) => {
   return yargs
-    .option('xcuitest', {
-      describe: 'Build only the XCUITest runner (default: false). If neither --xcuitest nor --detox is specified, ' +
-        'both the framework and the runner will be built.',
-      type: 'boolean',
-      default: false
-    })
-    .option('detox', {
-      describe: 'Build only the Detox framework (default: false). If neither --xcuitest nor --detox is specified, ' +
-        'both the framework and the runner will be built.',
-      type: 'boolean',
-      default: false
+    .option('build', {
+      describe: 'Specifies what to build (if any): "all", "detox", "xcuitest", or "none"',
+      type: 'string',
+      default: 'all',
+      choices: ['all', 'detox', 'xcuitest', 'none']
     })
     .option('clean', {
-      describe: 'Clean the cache before building (default: false)',
-      type: 'boolean',
-      default: false
+      describe: 'Specifies what to clean before building (if any): "all", "detox", "xcuitest", or "none"',
+      type: 'string',
+      default: 'all',
+      choices: ['all', 'detox', 'xcuitest', 'none']
     });
 };
 
@@ -39,44 +33,63 @@ module.exports.handler = async function buildFrameworkCache(argv) {
     return;
   }
 
-  if (argv.detox || (!argv.xcuitest && !argv.detox)) {
-    await _buildCache({
-      targetPath: path.join(os.homedir(), '/Library/Detox/ios/framework'),
-      scriptPath: '../scripts/build_local_framework.ios.sh',
-      descriptor: 'Detox framework',
-      shouldClean: argv.clean
-    });
-  }
+  const frameworkPath = path.join(os.homedir(), '/Library/Detox/ios/framework');
+  const xcuitestPath = path.join(os.homedir(), '/Library/Detox/ios/xcuitest-runner');
 
-  if (argv.xcuitest || (!argv.xcuitest && !argv.detox)) {
-    await _buildCache({
-      targetPath: path.join(os.homedir(), '/Library/Detox/ios/xcuitest-runner'),
-      scriptPath: '../scripts/build_local_xcuitest.ios.sh',
-      descriptor: 'XCUITest runner',
-      shouldClean: argv.clean
-    });
-  }
+  await handleCleaning(
+    argv.clean,
+    frameworkPath,
+    'Detox framework',
+    xcuitestPath,
+    'XCUITest runner'
+  );
+
+  await handleBuilding(
+    argv.build,
+    frameworkPath,
+    '../scripts/build_local_framework.ios.sh',
+    'Detox framework',
+    xcuitestPath,
+    '../scripts/build_local_xcuitest.ios.sh',
+    'XCUITest runner'
+  );
 };
 
 function isMacOS() {
   return os.platform() === 'darwin';
 }
 
-
-async function _buildCache(options) {
-  const { targetPath, scriptPath, descriptor, shouldClean } = options;
-
-  if (shouldClean) {
-    detox.log.info(`Cleaning ${descriptor} cache at ${targetPath}`);
-    await fs.remove(targetPath);
+async function handleCleaning(cleanOption, frameworkPath, frameworkDesc, xcuitestPath, xcuitestDesc) {
+  if (cleanOption === 'all' || cleanOption === 'detox') {
+    await cleanCache(frameworkPath, frameworkDesc);
   }
+  if (cleanOption === 'all' || cleanOption === 'xcuitest') {
+    await cleanCache(xcuitestPath, xcuitestDesc);
+  }
+}
 
+async function cleanCache(targetPath, descriptor) {
+  detox.log.info(`Cleaning ${descriptor} cache at ${targetPath}`);
+  await fs.remove(targetPath);
+}
+
+async function handleBuilding(buildOption, frameworkPath, frameworkScript, frameworkDesc, xcuitestPath, xcuitestScript, xcuitestDesc) {
+  if (buildOption === 'all' || buildOption === 'detox') {
+    await buildCache(frameworkPath, frameworkScript, frameworkDesc);
+  }
+  if (buildOption === 'all' || buildOption === 'xcuitest') {
+    await buildCache(xcuitestPath, xcuitestScript, xcuitestDesc);
+  }
+}
+
+async function buildCache(targetPath, scriptPath, descriptor) {
   detox.log.info(`Building ${descriptor} at ${targetPath}`);
+
   try {
     const result = await exec(path.join(__dirname, scriptPath), { capture: ['stdout', 'stderr'] });
     detox.log.info(result.stdout);
   } catch (error) {
-    detox.log.error(`Error while building ${descriptor} at ${targetPath}: ${error.stderr}`);
+    detox.log.error(`Error while building ${descriptor}: ${error.stderr}`);
     throw new Error(`Failed to build ${descriptor}`);
   }
 }
