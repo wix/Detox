@@ -4,4 +4,7 @@
 detox clean-framework-cache
 ```
 
-**MacOS only.** Cleans cached versions of Detox XCUITest-runner in `~/Library/Detox/ios/xcuitest-runner/*`.
+**MacOS only.**
+Alias for `detox build-framework-cache --clean="all" --build="none"`. Deletes all Detox cached frameworks and XCUITest-runners from `~/Library/Detox`.
+
+See also: [`detox build-framework-cache`](build-framework-cache.md)

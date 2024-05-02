@@ -53,16 +53,6 @@ detox build-framework-cache
 Note that it is only required when you change the native code of Detox, or one of its dependencies (e.g. [DetoxSync]).
 If you are only changing the JavaScript code, you don't need to rebuild the framework.
 
-### XCUITest Runner
-
-Detox iOS also has a separate XCUITest runner (`DetoxXCUITestRunner`), which is built using the following command:
-
-```bash
-detox build-xcuitest-cache
-```
-
-Make sure to run this command after changing the native code of the XCUITest runner.
-
 ## Building the Detox Test App
 
 The Detox self-test app is a full-feature React Native app for testing Detox end-to-end.
