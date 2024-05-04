@@ -10,5 +10,3 @@
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
-    agents:
-      queue: m2-oss
