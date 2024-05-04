@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+echo "agents:
+    queue: m2-oss"
+echo "env:
+    JAVA_HOME: /opt/openjdk/openlogic-openjdk-17.0.9+9-mac-x64/jdk-17.0.9.jdk/Contents/Home"
+
 if [[ "$1" == 'start' ]];then
   if [[ $(echo $BUILDKITE_MESSAGE | tr '[:upper:]' '[:lower:]') =~ ^release$ ]];then
     cat .buildkite/pipeline.release.yml
