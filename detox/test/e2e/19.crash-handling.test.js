@@ -29,11 +29,11 @@ describe('Crash Handling', () => {
     await expect(element(by.text('Sanity'))).toBeVisible();
   });
 
+  /**
+   * @issue https://github.com/wix/Detox/issues/4377
+   * @tag flaky
+   */
   it('Should print generic connectivity error when the app was terminated intentionally', async () => {
-    /**
-     * @issue https://github.com/wix/Detox/issues/4377
-     * @tag flaky
-     */
     await device.terminateApp();
     await new Promise((resolve) => setTimeout(resolve, 2000)); // see the issue for details
     await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
