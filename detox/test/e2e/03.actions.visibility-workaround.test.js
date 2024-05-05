@@ -32,7 +32,7 @@ describe(':android: Visibility-bug workaround actions', () => {
     await expect(scrollViewDriver.firstItem()).toBeVisible();
     await expect(scrollViewDriver.lastItem()).not.toBeVisible();
 
-    await expectToThrow(() => scrollViewDriver.scrollBy(1000));
+    await scrollViewDriver.scrollBy(3000);
 
     await expect(scrollViewDriver.firstItem()).not.toBeVisible();
     await expect(scrollViewDriver.lastItem()).toBeVisible();
