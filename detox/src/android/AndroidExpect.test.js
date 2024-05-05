@@ -184,6 +184,10 @@ describe('AndroidExpect', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50, 'down');
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).scroll(50);
 
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('down');
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('down', 'fast');
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).swipe('down', 'fast', 0.4, 0.5);
+
       await e.waitFor(e.element(e.by.id('id'))).toBeFocused().withTimeout(0);
       await e.waitFor(e.element(e.by.id('id'))).toBeNotFocused().withTimeout(0);
     });
