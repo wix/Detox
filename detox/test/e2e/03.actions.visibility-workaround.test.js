@@ -1,5 +1,4 @@
 const {scrollViewDriver} = require('./drivers/fs-scroll-driver');
-const {expectToThrow} = require('./utils/custom-expects');
 
 /**
  * A mini suite providing an alternative to tests failing due to issues found in RN 58+ on Android (see
