@@ -18,7 +18,7 @@ describe('Actions - Scroll', () => {
     await expect(element(by.text('Text4'))).not.toBeVisible();
   });
 
-  custom.it.withFailureIf.android('should scroll for a large amount in direction', async () => {
+  it('should scroll for a large amount in direction', async () => {
     await expect(element(by.text('Text12'))).not.toBeVisible();
     await element(by.id('ScrollView161')).scroll(1000, 'down');
     await expect(element(by.text('Text12'))).toBeVisible();
