@@ -38,9 +38,7 @@ describe(':android: Visibility-bug workaround actions', () => {
     await expect(scrollViewDriver.lastItem()).toBeVisible();
   });
 
-  it('should be able to wait for element to be visible after swipe', async () => {
-    const targetItem = scrollViewDriver.listItem(49);
-
+  async function waitForSwipeToItem(targetItem) {
     await expect(scrollViewDriver.element()).toBeVisible();
     await expect(scrollViewDriver.firstItem()).toBeVisible();
     await expect(targetItem).not.toBeVisible();
@@ -48,6 +46,17 @@ describe(':android: Visibility-bug workaround actions', () => {
     await waitFor(targetItem)
       .toBeVisible()
       .whileElement(scrollViewDriver.byId())
-      .swipe( 'up', 'fast', 0.3);
+      .swipe('up', 'fast', 0.3);
+  }
+
+  it('should be able to wait for element to be visible after swipe when the target item is not last', async () => {
+    const targetItem = scrollViewDriver.listItem(25);
+    await waitForSwipeToItem(targetItem);
+  });
+
+
+  it('should be able to wait for element to be visible after swipe when the target item is last', async () => {
+    const targetItem = scrollViewDriver.lastItem()
+    await waitForSwipeToItem(targetItem);
   });
 });
