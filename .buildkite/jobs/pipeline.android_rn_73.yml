@@ -10,5 +10,3 @@
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
       - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
-    agents:
-      queue: m2-oss
