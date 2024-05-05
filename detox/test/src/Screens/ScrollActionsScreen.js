@@ -22,7 +22,7 @@ export default class ScrollActionsScreen extends Component {
       <View style={{ flex: 1, justifyContent: 'flex-start', borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }}>
         <ScrollView testID='FSScrollActions.scrollView'>
           {
-            Array.from({length: 20}, (_, index) => this.renderItem(index + 1))
+            Array.from({length: 50}, (_, index) => this.renderItem(index + 1))
           }
         </ScrollView>
       </View>

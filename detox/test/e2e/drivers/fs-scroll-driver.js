@@ -6,7 +6,7 @@ const scrollViewDriver = {
   secondItem: () => scrollViewDriver.listItem(2),
   secondPageItemIndex: () => 16,
   secondPageItem: () => scrollViewDriver.listItem(scrollViewDriver.secondPageItemIndex()),
-  lastItem: () => scrollViewDriver.listItem(20),
+  lastItem: () => scrollViewDriver.listItem(50),
   fakeItem: () => scrollViewDriver.listItem(1000),
   scrollBy: (amount) => scrollViewDriver.element().scroll(Math.abs(amount), (amount > 0 ? 'down' : 'up')),
 };
