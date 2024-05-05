@@ -31,7 +31,6 @@ module.exports = async () => {
       'version.jest': await $.manifest('jest', 'version'),
       'version.jest-metadata': await $.manifest('jest-metadata', 'version'),
       'version.allure-reporter': await $.manifest('jest-allure2-reporter', 'version'),
-      'version.allure-adapter': await $.manifest('detox-allure2-adapter', 'version'),
       ..._(process.env)
         .pickBy((_1, key) => key.match(/detox/i))
         .mapKeys((_1, key) => 'env.' + key)
