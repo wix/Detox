@@ -9,8 +9,8 @@ steps:
         hint: "hey Chef, what are we cooking today?"
         options:
           - label: "iOS RN 71"
-            value: "ios_rn_73"
-          - label: "iOS RN 71"
+            value: "ios_rn_71"
+          - label: "iOS RN 73"
             value: "ios_rn_73"
           - label: "iOS Demo App RN 71"
             value: "ios_demo_app_rn_71"
