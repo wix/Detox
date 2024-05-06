@@ -9,14 +9,14 @@ import com.wix.detox.action.common.MOTION_DIR_DOWN
 import com.wix.detox.action.common.MOTION_DIR_LEFT
 import com.wix.detox.action.common.MOTION_DIR_RIGHT
 import com.wix.detox.action.common.MOTION_DIR_UP
-import com.wix.detox.espresso.action.DetoxMultiTap
+import com.wix.detox.espresso.action.DetoxCustomTapper
 import com.wix.detox.espresso.scroll.DetoxScrollAction
 
 public object DetoxViewActions {
     public fun tap() = multiTap(1)
     public fun doubleTap() = multiTap(2)
     public fun multiTap(times: Int): ViewAction =
-        actionWithAssertions(GeneralClickAction(DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0))
+        actionWithAssertions(GeneralClickAction(DetoxCustomTapper(times), GeneralLocation.CENTER, Press.FINGER, 0, 0))
 
     public fun scrollUpBy(amountInDp: Double, startOffsetPercentX: Float? = null, startOffsetPercentY: Float? = null): ViewAction =
         actionWithAssertions(DetoxScrollAction(MOTION_DIR_UP, amountInDp, startOffsetPercentX, startOffsetPercentY))

@@ -14,8 +14,8 @@ import org.spekframework.spek2.style.specification.describe
 import java.lang.NullPointerException
 import kotlin.test.assertFailsWith
 
-object DetoxMultiTapSpec: Spek({
-    describe("Detox multi-tapper replacement for Espresso") {
+object DetoxCustomTapperSpec: Spek({
+    describe("Detox custom-tapper replacement for Espresso") {
 
         val coolDownTimeMs = 111L
         val interTapsDelayMs = 667L
@@ -66,9 +66,9 @@ object DetoxMultiTapSpec: Spek({
         fun givenInjectionCallsHistory(injectionsHistory: List<CallInfo?>) =
                 whenever(uiControllerCallSpy.eventInjectionsIterator()).thenReturn(injectionsHistory.iterator())
 
-        fun uut(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, log)
-        fun sendOneTap(uut: DetoxMultiTap = uut(1)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
-        fun sendTwoTaps(uut: DetoxMultiTap = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
+        fun uut(times: Int) = DetoxCustomTapper(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, log)
+        fun sendOneTap(uut: DetoxCustomTapper = uut(1)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
+        fun sendTwoTaps(uut: DetoxCustomTapper = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
 
         it("should generate a single-tap events sequence using tap-events helper") {
             sendOneTap()

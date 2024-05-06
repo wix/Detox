@@ -29,7 +29,7 @@ import com.wix.detox.espresso.action.common.TapEvents
  *
  * This should be Espresso's default implementation IMO.
  */
-open class DetoxMultiTap
+open class DetoxCustomTapper
     @JvmOverloads constructor(
             private val times: Int,
             private val interTapsDelayMs: Long = getDoubleTapMinTime(),

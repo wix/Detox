@@ -20,7 +20,7 @@ import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
-import com.wix.detox.espresso.action.DetoxMultiTap;
+import com.wix.detox.espresso.action.DetoxCustomTapper;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.espresso.action.LongPressAndDragAction;
 import com.wix.detox.espresso.action.RNClickAction;
@@ -57,7 +57,7 @@ public class DetoxAction {
     }
 
     public static ViewAction multiClick(int times) {
-        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+        return actionWithAssertions(new GeneralClickAction(new DetoxCustomTapper(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
