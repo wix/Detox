@@ -20,7 +20,7 @@ abstract class DetoxScrollActionBase internal constructor(
     : ViewAction {
     override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(View::class.java), isDisplayed())
     override fun perform(uiController: UiController?, view: View?) =
-            ScrollHelper.perform(uiController, view, direction, amountInDp, startOffsetPercentX, startOffsetPercentY)
+        ScrollHelper.perform(uiController, view, direction, amountInDp, startOffsetPercentX, startOffsetPercentY)
 }
 
 class DetoxScrollAction(@MotionDir direction: Int, amountInDp: Double, startOffsetPercentX: Float?, startOffsetPercentY: Float?)
@@ -30,6 +30,8 @@ class DetoxScrollAction(@MotionDir direction: Int, amountInDp: Double, startOffs
     override fun perform(uiController: UiController?, view: View?) {
         try {
             super.perform(uiController, view)
+        } catch (e: ScrollEdgeException) {
+            // Hit the edge
         } catch (e: Exception) {
             throw DetoxRuntimeException(e)
         }

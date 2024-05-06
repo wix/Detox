@@ -1,7 +1,7 @@
 package com.wix.detox.espresso.scroll
 
 /**
- * Along with [FlinglessSwiper], this is based on from Espresso's implementation of Swiping
+ * Along with [LinearSwiper], this is based on from Espresso's implementation of Swiping
  * (i.e. in [androidx.test.espresso.action.Swipe] - typically dispatched via the
  * [androidx.test.espresso.action.GeneralSwipeAction] action class).
  *

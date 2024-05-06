@@ -29,7 +29,7 @@ import static com.wix.detox.espresso.scroll.ScrollProbes.getScrollableProbe;
 public class ScrollHelper {
     private static final String LOG_TAG = "DetoxScrollHelper";
 
-    private static final int SCROLL_MOTIONS = 70;
+    private static final int SCROLL_MOTIONS = 40;
     private static final int MAX_FLING_WAITS = 3;
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;
@@ -95,7 +95,7 @@ public class ScrollHelper {
     }
 
     private static void doScroll(final Context context, final UiController uiController, int downX, int downY, int upX, int upY) {
-        final DetoxSwiper swiper = new FlinglessSwiper(SCROLL_MOTIONS, uiController, ViewConfiguration.get(context));
+        final DetoxSwiper swiper = new LinearSwiper(uiController);
         final DetoxSwipe swipe = new DetoxSwipe(downX, downY, upX, upY, SCROLL_MOTIONS, swiper);
         swipe.perform();
     }
