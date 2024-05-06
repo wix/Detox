@@ -68,6 +68,25 @@ class DetoxAction {
     };
   }
 
+  static createCoordinatesProvider(x, y) {
+    if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
+    if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.DetoxAction"
+      },
+      method: "createCoordinatesProvider",
+      args: [{
+        type: "Integer",
+        value: x
+      }, {
+        type: "Integer",
+        value: y
+      }]
+    };
+  }
+
   static scrollToEdge(edge, startOffsetPercentX, startOffsetPercentY) {
     if (typeof edge !== "string") throw new Error("edge should be a string, but got " + (edge + (" (" + (typeof edge + ")"))));
     if (typeof startOffsetPercentX !== "number") throw new Error("startOffsetPercentX should be a number, but got " + (startOffsetPercentX + (" (" + (typeof startOffsetPercentX + ")"))));
@@ -317,10 +336,10 @@ class DetoxAction {
       };
     }
 
-    function longPress3(duration, x, y) {
-      if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+    function longPress3(x, y, duration) {
       if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
       if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+      if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
       return {
         target: {
           type: "Class",
@@ -329,13 +348,13 @@ class DetoxAction {
         method: "longPress",
         args: [{
           type: "Integer",
-          value: duration
-        }, {
-          type: "Integer",
           value: x
         }, {
           type: "Integer",
           value: y
+        }, {
+          type: "Integer",
+          value: duration
         }]
       };
     }

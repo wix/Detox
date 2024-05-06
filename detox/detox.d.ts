@@ -1295,15 +1295,17 @@ declare global {
 
             /**
              * Simulate long press on an element
-             * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
              * @param point coordinates in the element's coordinate space. Optional (default is the center of the element).
+             * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
              * @example await element(by.id('tappable')).longPress();
              * @example await element(by.id('tappable')).longPress(2000);
-             * @example await element(by.id('tappable')).longPress(1500, { x:5, y:10 });
              * @example await element(by.id('tappable')).longPress({ x:5, y:10 });
+             * @example await element(by.id('tappable')).longPress({ x:5, y:10 }, 1500);
              */
-            longPress(duration?: number, point?: Point2D): Promise<void>;
+            longPress(): Promise<void>;
             longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
+            longPress(point: Point2D, duration: number): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)

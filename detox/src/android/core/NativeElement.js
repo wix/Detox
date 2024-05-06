@@ -43,8 +43,8 @@ class NativeElement {
   }
 
   async longPress(arg1, arg2) {
-    let duration = null;
     let point = null;
+    let duration = null;
 
     if (arg1 !== undefined && typeof arg1 === 'number' && arg2 === undefined) {
       duration = arg1;
@@ -58,8 +58,8 @@ class NativeElement {
           'its first argument, and optionally a point as its second argument (if the first argument is a duration).');
     }
 
-    const action = new actions.LongPressAction(duration, point && point.x, point && point.y);
-    const traceDescription = actionDescription.longPress(duration, point);
+    const action = new actions.LongPressAction(point && point.x, point && point.y, duration);
+    const traceDescription = actionDescription.longPress(point, duration);
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 

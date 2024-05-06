@@ -162,9 +162,9 @@ class Element {
   }
 
   longPress(arg1, arg2) {
-    let { duration, point } = _longPressPointAndDuration(arg1, arg2);
-    const traceDescription = actionDescription.longPress(duration, point);
-    return this.withAction('longPress', traceDescription, duration, point);
+    let { point, duration } = _longPressPointAndDuration(arg1, arg2);
+    const traceDescription = actionDescription.longPress(point, duration);
+    return this.withAction('longPress', traceDescription, point, duration);
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
@@ -593,8 +593,8 @@ class WaitFor {
   longPress(arg1, arg2) {
     this.action = this.actionableElement.longPress(arg1, arg2);
 
-    let { duration, point } = _longPressPointAndDuration(arg1, arg2);
-    const traceDescription = actionDescription.longPress(duration, point);
+    let { point, duration } = _longPressPointAndDuration(arg1, arg2);
+    const traceDescription = actionDescription.longPress(point, duration);
 
     return this.waitForWithAction(traceDescription);
   }
@@ -799,8 +799,8 @@ class IosExpect {
 }
 
 function _longPressPointAndDuration(arg1, arg2) {
-  let duration = null;
   let point = null;
+  let duration = null;
 
   if (typeof arg1 === 'number' || arg1 === undefined) {
     duration = arg1;
@@ -815,7 +815,7 @@ function _longPressPointAndDuration(arg1, arg2) {
         'as its first argument, and optionally a point as its second argument (if the first argument is a duration).');
   }
 
-  return { duration, point };
+  return { point, duration };
 }
 
 function _assertValidPoint(point) {

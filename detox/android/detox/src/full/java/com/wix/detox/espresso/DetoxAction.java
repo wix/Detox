@@ -218,14 +218,14 @@ public class DetoxAction {
     }
 
     public static ViewAction longPress(Integer duration) {
-        return longPress(duration, null, null);
+        return longPress(null, null, duration);
     }
 
     public static ViewAction longPress(Integer x, Integer y) {
-        return longPress(null, x, y);
+        return longPress(x, y, null);
     }
 
-    public static ViewAction longPress(Integer duration, Integer x, Integer y) {
+    public static ViewAction longPress(Integer x, Integer y, Integer duration) {
         Long finalDuration = duration == null ? DetoxViewConfigurations.getLongPressTimeout() : duration;
         CoordinatesProvider coordinatesProvider = x == null || y == null ? null : createCoordinatesProvider(x, y);
 

@@ -8,7 +8,7 @@ Use [expectations](expect.md) to verify element states.
 
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
-- [`.longPress()`](#longpressduration-point)
+- [`.longPress()`](#longpresspoint-duration)
 - [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
@@ -51,18 +51,18 @@ Simulates multiple taps on the element at its activation point. All taps are app
 await element(by.id('tappable')).multiTap(3);
 ```
 
-### `longPress(duration, point)`
+### `longPress(point, duration)`
 
 Simulates a long press on the element at its activation point or at the specified point.
 
-`duration` — press during time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
 `point` — a point in the element’s coordinate space (optional, object with `x` and `y` numerical values, default is `null`).
+`duration` — press during time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
 
 ```js
 await element(by.id('tappable')).longPress();
 await element(by.id('tappable')).longPress({x:5, y:10});
 await element(by.id('tappable')).longPress(1500);
-await element(by.id('tappable')).longPress(1500, {x:5, y:10});
+await element(by.id('tappable')).longPress({x:5, y:10}, 1500);
 ```
 
 ### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`

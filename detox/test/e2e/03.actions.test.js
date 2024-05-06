@@ -32,7 +32,7 @@ describe('Actions', () => {
   });
 
   it('should not succeed in long pressing with point outside the target area', async () => {
-    await element(by.text('Long Press on Top Left')).longPress({ x: 50, y: 50 });
+    await element(by.text('Long Press on Top Left')).longPress({ x: 15, y: 15 });
     await expect(element(by.text('Long Press on Top Left Working!!!'))).not.toBeVisible();
   });
 
