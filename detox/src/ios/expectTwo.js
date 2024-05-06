@@ -8,10 +8,10 @@ const tempfile = require('tempfile');
 
 
 const { assertEnum, assertNormalized } = require('../utils/assertArgument');
-const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
+const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
@@ -162,7 +162,8 @@ class Element {
   }
 
   longPress(arg1, arg2) {
-    let { point, duration } = _longPressPointAndDuration(arg1, arg2);
+    let { point, duration } = mapLongPressArguments(arg1, arg2);
+
     const traceDescription = actionDescription.longPress(point, duration);
     return this.withAction('longPress', traceDescription, point, duration);
   }
@@ -593,7 +594,7 @@ class WaitFor {
   longPress(arg1, arg2) {
     this.action = this.actionableElement.longPress(arg1, arg2);
 
-    let { point, duration } = _longPressPointAndDuration(arg1, arg2);
+    let { point, duration } = mapLongPressArguments(arg1, arg2);
     const traceDescription = actionDescription.longPress(point, duration);
 
     return this.waitForWithAction(traceDescription);
@@ -796,26 +797,6 @@ class IosExpect {
       }
     };
   }
-}
-
-function _longPressPointAndDuration(arg1, arg2) {
-  let point = null;
-  let duration = null;
-
-  if (typeof arg1 === 'number' || arg1 === undefined) {
-    duration = arg1;
-
-    _assertValidPoint(arg2);
-    point = arg2;
-  } else if (typeof arg1 === 'object' && arg2 === undefined) {
-    _assertValidPoint(arg1);
-    point = arg1;
-  } else {
-    throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) ' +
-        'as its first argument, and optionally a point as its second argument (if the first argument is a duration).');
-  }
-
-  return { point, duration };
 }
 
 function _assertValidPoint(point) {

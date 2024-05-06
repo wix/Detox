@@ -7,6 +7,7 @@ const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
 const { removeMilliseconds } = require('../../utils/dateUtils');
 const { actionDescription } = require('../../utils/invocationTraceDescriptions');
+const mapLongPressArguments = require('../../utils/mapLongPressArguments');
 const actions = require('../actions/native');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { ActionInteraction } = require('../interactions/native');
@@ -42,29 +43,12 @@ class NativeElement {
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
   }
 
-  async longPress(arg1, arg2) {
-    let point = null;
-    let duration = null;
+  async longPress(optionalPointOrDuration, optionalDuration) {
+    const { point, duration } = mapLongPressArguments(optionalPointOrDuration, optionalDuration);
 
-    if (arg1 !== undefined && typeof arg1 === 'number' && arg2 === undefined) {
-      duration = arg1;
-    } else if (arg1 !== undefined && this._checkIfPointIsValid(arg1) && arg2 === undefined) {
-      point = arg1;
-    } else if (arg1 !== undefined && typeof arg1 === 'number' && this._checkIfPointIsValid(arg2)) {
-      duration = arg1;
-      point = arg2;
-    } else if (arg1 !== undefined || arg2 !== undefined) {
-      throw new Error('longPress accepts either a duration (number) or a point ({x: number, y: number}) as ' +
-          'its first argument, and optionally a point as its second argument (if the first argument is a duration).');
-    }
-
-    const action = new actions.LongPressAction(point && point.x, point && point.y, duration);
+    const action = new actions.LongPressAction(point, duration);
     const traceDescription = actionDescription.longPress(point, duration);
     return await new ActionInteraction(this._invocationManager, this._matcher, action, traceDescription).execute();
-  }
-
-  _checkIfPointIsValid(point) {
-    return typeof point === 'object' && typeof point.x === 'number' && typeof point.y === 'number';
   }
 
   async longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration) {

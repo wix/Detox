@@ -73,3 +73,41 @@ describe('assertString', () => {
     expect(() => assertString({ invalidString })).toThrowErrorMatchingSnapshot();
   });
 });
+
+describe('assertDuration', () => {
+  const { assertDuration } = assertions;
+
+  it.each([
+    42,
+    NaN,
+    Infinity,
+    -Infinity,
+  ])('should pass for %d', (validNumber) => {
+    expect(() => assertDuration(validNumber)).toBe(true);
+  });
+
+  it.each([
+    '42',
+    false,
+  ])('should throw for %j', (invalidNumber) => {
+    expect(() => assertDuration(invalidNumber)).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('assertPoint', () => {
+  const { assertPoint } = assertions;
+
+  it('should pass for valid point', () => {
+    expect(() => assertPoint({ x: 0, y: 0 })).toBe(true);
+  });
+
+  it.each([
+    { x: 0 },
+    { y: 0 },
+    { x: '0', y: 0 },
+    { x: 0, y: '0' },
+    { x: 0, y: 0, z: 0 },
+  ])('should throw for %j', (invalidPoint) => {
+    expect(() => assertPoint(invalidPoint)).toThrowErrorMatchingSnapshot();
+  });
+});
