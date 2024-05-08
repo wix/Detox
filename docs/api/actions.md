@@ -65,6 +65,13 @@ await element(by.id('tappable')).longPress(1500);
 await element(by.id('tappable')).longPress({x:5, y:10}, 1500);
 ```
 
+:::note Important
+
+Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
+
+:::
+
 ### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`
 
 Simulates a long press on the element and then drag it to a position of another element.

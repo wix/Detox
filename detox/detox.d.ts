@@ -1297,6 +1297,8 @@ declare global {
              * Simulate long press on an element
              * @param point coordinates in the element's coordinate space. Optional (default is the center of the element).
              * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
+             *      Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+             *      They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
              * @example await element(by.id('tappable')).longPress();
              * @example await element(by.id('tappable')).longPress(2000);
              * @example await element(by.id('tappable')).longPress({ x:5, y:10 });
@@ -1323,7 +1325,7 @@ declare global {
 
             /**
              * Simulate tap at a specific point on an element.
-             * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
+             * Note: The point coordinates are relative to the matched element and the element size could change on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
              * @deprecated Use `.tap()` instead.
              */
