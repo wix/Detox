@@ -21,7 +21,7 @@ public class RNClickAction implements ViewAction {
     private final GeneralClickAction clickAction;
 
     public RNClickAction() {
-        this(null);
+        this(GeneralLocation.VISIBLE_CENTER);
     }
 
     public RNClickAction(CoordinatesProvider coordinatesProvider) {
@@ -31,7 +31,7 @@ public class RNClickAction implements ViewAction {
     public RNClickAction(CoordinatesProvider coordinatesProvider, Long duration) {
         clickAction = new GeneralClickAction(
             new DetoxSingleTap(duration),
-            coordinatesProvider != null ? coordinatesProvider : GeneralLocation.VISIBLE_CENTER,
+            coordinatesProvider,
             Press.FINGER,
             InputDevice.SOURCE_UNKNOWN,
             MotionEvent.BUTTON_PRIMARY
