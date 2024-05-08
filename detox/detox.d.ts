@@ -1409,20 +1409,6 @@ declare global {
             adjustSliderToPosition(newPosition: number): Promise<void>;
 
             /**
-             * Swipes in the provided direction at the provided speed, started from percentage.
-             * @param speed default: `fast`
-             * @param percentage screen percentage to swipe; valid input: `[0.0, 1.0]`
-             * @param optional normalizedStartingPointX X coordinate of swipe starting point, relative to the view width; valid input: `[0.0, 1.0]`
-             * @param normalizedStartingPointY Y coordinate of swipe starting point, relative to the view height; valid input: `[0.0, 1.0]`
-             * @example await element(by.id('scrollView')).swipe('down');
-             * @example await element(by.id('scrollView')).swipe('down', 'fast');
-             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
-             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
-             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
-             */
-            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
-
-            /**
              * Sets a picker view’s column to the given value. This function supports both date pickers and general picker views. (iOS Only)
              * Note: When working with date pickers, you should always set an explicit locale when launching your app in order to prevent flakiness from different date and time styles.
              * See [here](https://wix.github.io/Detox/docs/api/device-object-api#9-launch-with-a-specific-language-ios-only) for more information.
