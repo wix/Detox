@@ -18,12 +18,6 @@ exports[`assertNormalized should throw for null 2`] = `"invalidNumber should be 
 
 exports[`assertNormalized should throw for undefined 1`] = `"invalidNumber should be a number, but got undefined (undefined)"`;
 
-exports[`assertNull should throw for "str" 1`] = `"0 expected to be null, but got s (string)"`;
-
-exports[`assertNull should throw for {"key":"val"} 1`] = `"key expected to be null, but got val (string)"`;
-
-exports[`assertNull should throw for 1 1`] = `"undefined is not iterable (cannot read property Symbol(Symbol.iterator))"`;
-
 exports[`assertNumber should throw for "42" 1`] = `"invalidNumber should be a number, but got 42 (string)"`;
 
 exports[`assertNumber should throw for false 1`] = `"invalidNumber should be a number, but got false (boolean)"`;
