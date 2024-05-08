@@ -1285,19 +1285,22 @@ declare global {
         }
 
         interface NativeElementWaitableActions {
+
           /**
-           * Swipes in the provided direction at the provided speed, started from percentage.
-           * @param speed default: `fast`
-           * @param percentage screen percentage to swipe; valid input: `[0.0, 1.0]`
-           * @param optional normalizedStartingPointX X coordinate of swipe starting point, relative to the view width; valid input: `[0.0, 1.0]`
-           * @param normalizedStartingPointY Y coordinate of swipe starting point, relative to the view height; valid input: `[0.0, 1.0]`
-           * @example await element(by.id('scrollView')).swipe('down');
-           * @example await element(by.id('scrollView')).swipe('down', 'fast');
-           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
-           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
-           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
+           * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
+           * @param pixels - independent device pixels
+           * @param direction - left/right/up/down
+           * @param startPositionX - the X starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+           * @param startPositionY - the Y starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+           * @example await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
+           * @example await element(by.id('scrollView')).scroll(100, 'up');
            */
-          swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
+          scroll(
+            pixels: number,
+            direction: Direction,
+            startPositionX?: number,
+            startPositionY?: number
+          ): Promise<void>;
         }
 
         interface NativeElementActions extends NativeElementWaitableActions{
@@ -1369,20 +1372,18 @@ declare global {
             tapReturnKey(): Promise<void>;
 
             /**
-             * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
-             * @param pixels - independent device pixels
-             * @param direction - left/right/up/down
-             * @param startPositionX - the X starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
-             * @param startPositionY - the Y starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
-             * @example await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
-             * @example await element(by.id('scrollView')).scroll(100, 'up');
+             * Swipes in the provided direction at the provided speed, started from percentage.
+             * @param speed default: `fast`
+             * @param percentage screen percentage to swipe; valid input: `[0.0, 1.0]`
+             * @param optional normalizedStartingPointX X coordinate of swipe starting point, relative to the view width; valid input: `[0.0, 1.0]`
+             * @param normalizedStartingPointY Y coordinate of swipe starting point, relative to the view height; valid input: `[0.0, 1.0]`
+             * @example await element(by.id('scrollView')).swipe('down');
+             * @example await element(by.id('scrollView')).swipe('down', 'fast');
+             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
+             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
+             * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
              */
-            scroll(
-                pixels: number,
-                direction: Direction,
-                startPositionX?: number,
-                startPositionY?: number
-            ): Promise<void>;
+            swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
 
             /**
              * Scroll to index.
