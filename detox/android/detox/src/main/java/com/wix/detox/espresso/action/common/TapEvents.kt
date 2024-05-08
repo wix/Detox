@@ -15,7 +15,7 @@ import android.view.MotionEvent
  * Lastly, With the case of _that_ specific bug, we implicitly indirectly work around it with this approach, because we highly increase
  * the chance of allowing a frame to be drawn in between the _down_ and _up_ events.
  */
-private const val EVENTS_TIME_GAP_MS = 30
+private const val EVENTS_TIME_GAP_MS = 30L
 
 class TapEvents(private val motionEvents: MotionEvents = MotionEvents()) {
     fun createEventsSeq(coordinates: FloatArray, precision: FloatArray)
@@ -30,7 +30,7 @@ class TapEvents(private val motionEvents: MotionEvents = MotionEvents()) {
         val (x, y) = coordinates
         val downEvent = motionEvents.obtainDownEvent(x, y, precision, downTimestamp)
 
-        val upEventDuration = (duration ?: EVENTS_TIME_GAP_MS).toLong()
+        val upEventDuration = duration ?: EVENTS_TIME_GAP_MS
         val upEvent = motionEvents.obtainUpEvent(downEvent, downEvent.eventTime + upEventDuration, x, y)
 
         return arrayListOf(downEvent, upEvent)

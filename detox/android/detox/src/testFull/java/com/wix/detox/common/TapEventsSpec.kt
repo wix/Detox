@@ -90,16 +90,28 @@ object TapEventsSpec: Spek({
             val precision = fancyPrecision()
             val downTimestamp = 10203040L
 
-            uut().createEventsSeq(coordinates, precision, downTimestamp)
+            uut().createEventsSeq(coordinates, precision, downTimestamp, null)
 
             verifyDownEventObtainedWithDownTimestamp(coordinates, precision, downTimestamp)
         }
 
-        it("should allow for down-time to be null") {
+        it("should allow for duration to be set") {
+            val duration = 1000L
+            val expectedUpEventTime = DEFAULT_EVENT_TIME + duration
             val coordinates = dontCareCoordinates()
             val precision = dontCarePrecision()
 
-            uut().createEventsSeq(coordinates, precision, downTimestamp = null as Long?)
+            uut().createEventsSeq(coordinates, precision, null, duration)
+
+            verifyDownEventObtainedWithDownTimestamp(coordinates, precision, null)
+            verifyUpEventObtainedWithTimestamp(expectedUpEventTime)
+        }
+
+        it("should allow for down-time and duration to be null") {
+            val coordinates = dontCareCoordinates()
+            val precision = dontCarePrecision()
+
+            uut().createEventsSeq(coordinates, precision, null, null)
 
             verifyDownEventObtainedWithDownTimestamp(coordinates, precision, null)
         }
