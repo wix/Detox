@@ -128,7 +128,7 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 10, y: 10 });
       await e.element(e.by.label('Tap Me')).longPress();
       await e.element(e.by.label('Tap Me')).longPress(2000);
-      await e.element(e.by.label('Tap Me')).longPress(2000, { x: 10, y: 10 });
+      await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 }, 2000);
       await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 });
       await e.element(e.by.id('someId')).multiTap(3);
       await e.element(e.by.id('someId')).typeText('passcode');
@@ -282,7 +282,7 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).not.toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(20);
-      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(20, { x: 15, y: 100 });
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress({ x: 15, y: 100 }, 20);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress({ x: 15, y: 100 });
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap(2);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ x: 1, y: 1 });

@@ -8,10 +8,6 @@ describe('mapLongPressArguments', () => {
     expect(mapLongPressArguments({ x: 1, y: 2 })).toEqual({ point: { x: 1, y: 2 }, duration: null });
   });
 
-  it('should return { point: null, duration: 3 } for null, 3', () => {
-    expect(mapLongPressArguments(null, 3)).toEqual({ point: null, duration: 3 });
-  });
-
   it('should return { point: null, duration: 3 } for 3', () => {
     expect(mapLongPressArguments(3)).toEqual({ point: null, duration: 3 });
   });

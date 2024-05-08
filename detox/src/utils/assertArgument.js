@@ -52,6 +52,15 @@ function assertPoint(point) {
   throw new DetoxRuntimeError(`point should be an object with x and y properties, but got ${JSON.stringify(point)}`);
 }
 
+function assertUndefined(arg) {
+  if (arg === undefined) {
+    return true;
+  }
+
+  const [key, value] = firstEntry(arg);
+  throw new DetoxRuntimeError(`${key} should be undefined, but got ${value} (${typeof value})`);
+}
+
 module.exports = {
   assertEnum,
   assertNormalized,
@@ -59,4 +68,5 @@ module.exports = {
   assertString,
   assertDuration,
   assertPoint,
+  assertUndefined
 };
