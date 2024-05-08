@@ -1,59 +1,42 @@
-package com.example;
+package com.example
 
-import android.os.Bundle;
+import android.app.Activity
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
+import com.wix.detox.Detox
+import org.junit.Test
+import org.junit.runner.RunWith
 
-import com.wix.detox.Detox;
+/**
+ * A selector arg that when set 'true', will launch the [SingleInstanceActivity] rather than the default [MainActivity].
+ * Important so as to allow for some testing of Detox in this particular mode, which has been proven to introduce caveats.
+ * Here for internal usage; Not external-API related.
+ */
+private const val USE_SINGLE_INSTANCE_ACTIVITY_ARG = "detoxAndroidSingleInstanceActivity"
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+/** Similar concept to that of [.USE_SINGLE_INSTANCE_ACTIVITY_ARG].  */
+private const val USE_CRASHING_ACTIVITY_ARG = "detoxAndroidCrashingActivity"
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule;
-
-@RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4::class)
 @LargeTest
-public class DetoxTest {
-
-    /**
-     * A selector arg that when set 'true', will launch the {@link SingleInstanceActivity} rather than the default {@link MainActivity}.
-     * Important so as to allow for some testing of Detox in this particular mode, which has been proven to introduce caveats.
-     * </br>Here for internal usage; Not external-API related.
-     */
-    private static final String USE_SINGLE_INSTANCE_ACTIVITY_ARG = "detoxAndroidSingleInstanceActivity";
-
-    /** Similar concept to that of {@link #USE_SINGLE_INSTANCE_ACTIVITY_ARG}. */
-    private static final String USE_CRASHING_ACTIVITY_ARG = "detoxAndroidCrashingActivity";
-
-    @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class, false, false);
-
-    @Rule
-    public ActivityTestRule<SingleInstanceActivity> mSingleInstanceActivityRule = new ActivityTestRule<>(SingleInstanceActivity.class, false, false);
-
-    @Rule
-    public ActivityTestRule<CrashingActivity> mCrashingActivityTestRule = new ActivityTestRule<>(CrashingActivity.class, false, false);
+class DetoxTest {
 
     @Test
-    public void runDetoxTests() {
-        TestButlerProbe.assertReadyIfInstalled();
-
-        final ActivityTestRule<?> rule = resolveTestRule();
-        Detox.runTests(rule);
+    fun runDetoxTests() {
+        TestButlerProbe.assertReadyIfInstalled()
+        val activityClass = resolveTestRule()
+        Detox.runTests(activityClass)
     }
 
-    private ActivityTestRule<?> resolveTestRule() {
-        final Bundle arguments = InstrumentationRegistry.getArguments();
-        final boolean useSingleTaskActivity = Boolean.parseBoolean(arguments.getString(USE_SINGLE_INSTANCE_ACTIVITY_ARG, "false"));
-        final boolean useCrashingActivity = Boolean.parseBoolean(arguments.getString(USE_CRASHING_ACTIVITY_ARG, "false"));
-        final ActivityTestRule<?> rule =
-                useSingleTaskActivity
-                        ? mSingleInstanceActivityRule
-                        : useCrashingActivity
-                            ? mCrashingActivityTestRule
-                            : mActivityRule;
-        return rule;
+    private fun resolveTestRule(): Class<out Activity> {
+        val arguments =
+            InstrumentationRegistry.getArguments()
+        val useSingleTaskActivity =
+            arguments.getString(USE_SINGLE_INSTANCE_ACTIVITY_ARG, "false")
+                .toBoolean()
+        val useCrashingActivity =
+            arguments.getString(USE_CRASHING_ACTIVITY_ARG, "false").toBoolean()
+        return if (useSingleTaskActivity) SingleInstanceActivity::class.java else if (useCrashingActivity) CrashingActivity::class.java else MainActivity::class.java
     }
 }

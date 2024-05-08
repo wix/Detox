@@ -1,26 +1,30 @@
 package com.wix.detox
 
+import android.app.Activity
 import android.app.Instrumentation.ActivityMonitor
 import android.content.Context
 import android.content.Intent
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.ActivityTestRule
+import java.io.Closeable
 
 class ActivityLaunchHelper
-    @JvmOverloads constructor(
-        private val activityTestRule: ActivityTestRule<*>,
-        private val launchArgs: LaunchArgs = LaunchArgs(),
-        private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
-        private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
-) {
+@JvmOverloads constructor(
+    private val clazz: Class<out Activity>,
+    private val launchArgs: LaunchArgs = LaunchArgs(),
+    private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
+    private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
+) : Closeable {
+    private val activityScenarios: MutableList<ActivityScenario<Activity>> = mutableListOf()
+
     fun launchActivityUnderTest() {
         val intent = extractInitialIntent()
-        activityTestRule.launchActivity(intent)
+        intent.setClass(appContext, clazz)
+        activityScenarios.add(ActivityScenario.launch(intent))
     }
 
     fun launchMainActivity() {
-        val activity = activityTestRule.activity
-        launchActivitySync(intentsFactory.activityLaunchIntent(activity))
+        launchActivitySync(intentsFactory.activityLaunchIntent(appContext, clazz))
     }
 
     fun startActivityFromUrl(url: String) {
@@ -58,9 +62,12 @@ class ActivityLaunchHelper
         // 1. Launch the activity by "ourselves" from the OS (i.e. using context.startActivity()).
         // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
         // ^ Hence the code below.
-        val activity = activityTestRule.activity
-        val activityMonitor = ActivityMonitor(activity.javaClass.name, null, true)
-        activity.startActivity(intent)
+        val activityMonitor = ActivityMonitor(clazz.name, null, true)
+        val activityScenario = ActivityScenario.launch<Activity>(intent)
+        activityScenario.onActivity {
+            it.startActivity(intent)
+        }
+        activityScenarios.add(activityScenario)
 
         InstrumentationRegistry.getInstrumentation().run {
             addMonitor(activityMonitor)
@@ -74,5 +81,9 @@ class ActivityLaunchHelper
     companion object {
         private const val INTENT_LAUNCH_ARGS_KEY = "launchArgs"
         private const val ACTIVITY_LAUNCH_TIMEOUT = 10000L
+    }
+
+    override fun close() {
+        activityScenarios.forEach { it.close() }
     }
 }

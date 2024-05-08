@@ -27,7 +27,7 @@ object DetoxMain {
         initEspresso()
         initReactNative()
 
-        setupActionHandlers(actionsDispatcher, serverAdapter, testEngineFacade, rnHostHolder)
+        setupActionHandlers(actionsDispatcher, serverAdapter, testEngineFacade, rnHostHolder, activityLaunchHelper)
         serverAdapter.connect()
 
         launchActivityOnCue(rnHostHolder, activityLaunchHelper)
@@ -61,14 +61,21 @@ object DetoxMain {
         handshakeLock.countDown()
     }
 
-    private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade) {
+    private fun doTeardown(serverAdapter: DetoxServerAdapter, actionsDispatcher: DetoxActionsDispatcher, testEngineFacade: TestEngineFacade, activityLaunchHelper: ActivityLaunchHelper) {
         testEngineFacade.resetReactNative()
 
         serverAdapter.teardown()
         actionsDispatcher.teardown()
+        activityLaunchHelper.close()
     }
 
-    private fun setupActionHandlers(actionsDispatcher: DetoxActionsDispatcher, serverAdapter: DetoxServerAdapter, testEngineFacade: TestEngineFacade, rnHostHolder: Context) {
+    private fun setupActionHandlers(
+        actionsDispatcher: DetoxActionsDispatcher,
+        serverAdapter: DetoxServerAdapter,
+        testEngineFacade: TestEngineFacade,
+        rnHostHolder: Context,
+        activityLaunchHelper: ActivityLaunchHelper
+    ) {
         class SynchronizedActionHandler(private val actionHandler: DetoxActionHandler): DetoxActionHandler {
             override fun handle(params: String, messageId: Long) {
                 synchronized(this@DetoxMain) {
@@ -89,7 +96,7 @@ object DetoxMain {
             associateActionHandler("cleanup", CleanupActionHandler(serverAdapter, testEngineFacade) {
                 dispatchAction(TERMINATION_ACTION, "", 0)
             })
-            associateActionHandler(TERMINATION_ACTION) { -> doTeardown(serverAdapter, actionsDispatcher, testEngineFacade) }
+            associateActionHandler(TERMINATION_ACTION) { -> doTeardown(serverAdapter, actionsDispatcher, testEngineFacade, activityLaunchHelper) }
 
             if (DetoxInstrumentsManager.supports()) {
                 val instrumentsManager = DetoxInstrumentsManager(rnHostHolder)

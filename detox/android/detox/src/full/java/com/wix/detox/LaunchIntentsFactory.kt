@@ -15,9 +15,9 @@ class LaunchIntentsFactory {
      *
      * @return The resulting intent.
      */
-    fun activityLaunchIntent(activity: Activity)
-        = Intent(activity.applicationContext,
-                 activity.javaClass).apply {
+    fun activityLaunchIntent(context: Context, klass: Class<out Activity>)
+        = Intent(context.applicationContext,
+                 klass).apply {
             flags = coreFlags
         }
 

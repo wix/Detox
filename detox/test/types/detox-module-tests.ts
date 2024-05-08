@@ -73,7 +73,7 @@ describe('Test', () => {
     await waitFor(element(by.text('Text5')))
       .toBeVisible()
       .whileElement(by.id('ScrollView630'))
-      .scroll(50, 'down');
+      .scroll(50, 'down', 0.5, 0.5);
 
     await expect(element(by.id('element'))).not.toBeVisible();
     await expect(element(by.id('element'))).not.toExist();
