@@ -1279,12 +1279,28 @@ declare global {
              * Performs the action repeatedly on the element until an expectation is met
              * @example await waitFor(element(by.text('Item #5'))).toBeVisible().whileElement(by.id('itemsList')).scroll(50, 'down');
              */
-            whileElement(by: NativeMatcher): NativeElement & WaitFor;
+            whileElement(by: NativeMatcher): NativeElementWaitableActions & WaitFor;
 
             // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
-        interface NativeElementActions {
+        interface NativeElementWaitableActions {
+          /**
+           * Swipes in the provided direction at the provided speed, started from percentage.
+           * @param speed default: `fast`
+           * @param percentage screen percentage to swipe; valid input: `[0.0, 1.0]`
+           * @param optional normalizedStartingPointX X coordinate of swipe starting point, relative to the view width; valid input: `[0.0, 1.0]`
+           * @param normalizedStartingPointY Y coordinate of swipe starting point, relative to the view height; valid input: `[0.0, 1.0]`
+           * @example await element(by.id('scrollView')).swipe('down');
+           * @example await element(by.id('scrollView')).swipe('down', 'fast');
+           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5);
+           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2);
+           * @example await element(by.id('scrollView')).swipe('down', 'fast', 0.5, 0.2, 0.5);
+           */
+          swipe(direction: Direction, speed?: Speed, percentage?: number, normalizedStartingPointX?: number, normalizedStartingPointY?: number): Promise<void>;
+        }
+
+        interface NativeElementActions extends NativeElementWaitableActions{
             /**
              * Simulate tap on an element
              * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
