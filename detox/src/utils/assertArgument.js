@@ -58,7 +58,7 @@ function assertUndefined(arg) {
   }
 
   const [key, value] = firstEntry(arg);
-  throw new DetoxRuntimeError(`${key} should be undefined, but got ${value} (${typeof value})`);
+  throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
 }
 
 module.exports = {

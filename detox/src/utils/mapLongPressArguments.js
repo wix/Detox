@@ -1,16 +1,18 @@
 const { DetoxRuntimeError } = require('../errors');
 
-const { assertPoint, assertDuration, assertUndefined} = require('./assertArgument');
+const { assertPoint, assertDuration, assertUndefined } = require('./assertArgument');
 
 function mapLongPressArguments(optionalPointOrDuration, optionalDuration) {
   let point = null;
   let duration = null;
 
   try {
-    if (optionalPointOrDuration !== undefined && typeof optionalPointOrDuration === 'number') {
+    if (optionalPointOrDuration === undefined) {
+      // Do nothing.
+    } else if (typeof optionalPointOrDuration === 'number') {
       duration = optionalPointOrDuration;
       assertUndefined(optionalDuration);
-    } else if (optionalPointOrDuration !== undefined) {
+    } else {
       assertPoint(optionalPointOrDuration);
       point = optionalPointOrDuration;
 
@@ -18,9 +20,6 @@ function mapLongPressArguments(optionalPointOrDuration, optionalDuration) {
         assertDuration(optionalDuration);
         duration = optionalDuration;
       }
-    } else if (optionalDuration !== undefined) {
-      assertDuration(optionalDuration);
-      duration = optionalDuration;
     }
   } catch (e) {
     throw new DetoxRuntimeError(`longPress accepts either a duration (number) or a point ({x: number, y: number}) as ` +

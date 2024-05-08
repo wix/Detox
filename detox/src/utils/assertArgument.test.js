@@ -1,5 +1,5 @@
 const assertions = require('./assertArgument');
-const {assertUndefined} = require("./assertArgument");
+const { assertUndefined } = require('./assertArgument');
 
 describe('assertEnum', () => {
   const { assertEnum } = assertions;
