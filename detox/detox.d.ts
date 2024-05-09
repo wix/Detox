@@ -1279,12 +1279,31 @@ declare global {
              * Performs the action repeatedly on the element until an expectation is met
              * @example await waitFor(element(by.text('Item #5'))).toBeVisible().whileElement(by.id('itemsList')).scroll(50, 'down');
              */
-            whileElement(by: NativeMatcher): NativeElement & WaitFor;
+            whileElement(by: NativeMatcher): NativeElementWaitableActions & WaitFor;
 
             // TODO: not sure about & WaitFor - check if we can chain whileElement multiple times
         }
 
-        interface NativeElementActions {
+        interface NativeElementWaitableActions {
+
+          /**
+           * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
+           * @param pixels - independent device pixels
+           * @param direction - left/right/up/down
+           * @param startPositionX - the X starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+           * @param startPositionY - the Y starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
+           * @example await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
+           * @example await element(by.id('scrollView')).scroll(100, 'up');
+           */
+          scroll(
+            pixels: number,
+            direction: Direction,
+            startPositionX?: number,
+            startPositionY?: number
+          ): Promise<void>;
+        }
+
+        interface NativeElementActions extends NativeElementWaitableActions{
             /**
              * Simulate tap on an element
              * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
@@ -1351,22 +1370,6 @@ declare global {
              * @example await element(by.id('textField')).tapReturnKey();
              */
             tapReturnKey(): Promise<void>;
-
-            /**
-             * Scrolls a given amount of pixels in the provided direction, starting from the provided start positions.
-             * @param pixels - independent device pixels
-             * @param direction - left/right/up/down
-             * @param startPositionX - the X starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
-             * @param startPositionY - the Y starting scroll position, in percentage; valid input: `[0.0, 1.0]`, `NaN`; default: `NaN`—choose the best value automatically
-             * @example await element(by.id('scrollView')).scroll(100, 'down', NaN, 0.85);
-             * @example await element(by.id('scrollView')).scroll(100, 'up');
-             */
-            scroll(
-                pixels: number,
-                direction: Direction,
-                startPositionX?: number,
-                startPositionY?: number
-            ): Promise<void>;
 
             /**
              * Scroll to index.
