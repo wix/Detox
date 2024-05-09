@@ -92,6 +92,14 @@ describe("Test", () => {
             .whileElement(by.id("ScrollView630"))
             .scroll(50, "down");
 
+        await waitFor(element(by.text("Text5")))
+          .toBeVisible()
+          .whileElement(by.id("ScrollView630"))
+          .scroll(50, "down", 0.5, 0.5);
+
+        // @ts-expect-error
+        await waitFor(element(by.text("Text5"))).toBeVisible().whileElement(by.id("ScrollView630")).tap();
+
         await web.element(by.web.id("btnSave")).tap();
         await web.element(by.web.id("btnSave")).runScript('(el) => el.click()');
         const scriptResult = await web.element(by.web.id("btnSave")).runScript(function (el: any, text: string) {
