@@ -7,7 +7,6 @@
       REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
-      JAVA_HOME: /opt/openjdk/jdk-17.0.9.jdk/Contents/Home/
     artifact_paths:
-      - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/artifacts*.tar.gz"
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

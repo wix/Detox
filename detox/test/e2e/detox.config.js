@@ -8,6 +8,7 @@ const launchArgs = {
 
 /** @type {Detox.DetoxConfig} */
 const config = {
+  extends: 'detox-allure2-adapter/preset-detox',
   testRunner: {
     args: {
       $0: process.env.CI ? 'nyc jest' : 'jest',
@@ -42,11 +43,9 @@ const config = {
     plugins: {
       log: 'all',
       screenshot: {
-        shouldTakeAutomaticSnapshots: true,
-        takeWhen: {}
+        keepOnlyFailedTestsArtifacts: false,
       },
-      uiHierarchy: 'enabled'
-    }
+    },
   },
 
   apps: {
@@ -100,7 +99,7 @@ const config = {
       headless: Boolean(process.env.CI),
       device: {
         type: 'iPhone 15 Pro Max',
-        os: "17.2",
+        os: '17.0.1'
       },
     },
 

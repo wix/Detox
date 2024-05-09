@@ -1,5 +1,4 @@
 const {scrollViewDriver} = require('./drivers/fs-scroll-driver');
-const {expectToThrow} = require('./utils/custom-expects');
 
 /**
  * A mini suite providing an alternative to tests failing due to issues found in RN 58+ on Android (see
@@ -32,7 +31,7 @@ describe(':android: Visibility-bug workaround actions', () => {
     await expect(scrollViewDriver.firstItem()).toBeVisible();
     await expect(scrollViewDriver.lastItem()).not.toBeVisible();
 
-    await expectToThrow(() => scrollViewDriver.scrollBy(1000));
+    await scrollViewDriver.scrollBy(3000);
 
     await expect(scrollViewDriver.firstItem()).not.toBeVisible();
     await expect(scrollViewDriver.lastItem()).toBeVisible();

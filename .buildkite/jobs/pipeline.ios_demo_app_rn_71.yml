@@ -5,5 +5,5 @@
     env:
       REACT_NATIVE_VERSION: 0.71.10
     artifact_paths:
-      - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/artifacts*.tar.gz"
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

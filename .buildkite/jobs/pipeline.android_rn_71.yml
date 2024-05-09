@@ -8,6 +8,6 @@
       DETOX_DISABLE_POSTINSTALL: true
       SKIP_UNIT_TESTS: true
     artifact_paths:
-      - "/Users/builder/work/coverage/**/*.lcov"
-      - "/Users/builder/work/**/allure-report-*.html"
-      - "/Users/builder/work/artifacts*.tar.gz"
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/**/allure-report-*.html"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
