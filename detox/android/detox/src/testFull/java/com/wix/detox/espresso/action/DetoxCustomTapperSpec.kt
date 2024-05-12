@@ -14,8 +14,8 @@ import org.spekframework.spek2.style.specification.describe
 import java.lang.NullPointerException
 import kotlin.test.assertFailsWith
 
-object DetoxMultiTapSpec: Spek({
-    describe("Detox multi-tapper replacement for Espresso") {
+object DetoxCustomTapperSpec: Spek({
+    describe("Detox custom-tapper replacement for Espresso") {
 
         val coolDownTimeMs = 111L
         val interTapsDelayMs = 667L
@@ -41,8 +41,10 @@ object DetoxMultiTapSpec: Spek({
             mock1stTapEventsSeq = arrayListOf(downEvent, upEvent)
             mock2ndTapEventsSeq = arrayListOf(mock(name = "mockSeq2Event1"), mock(name = "mockSeq2Event2"))
             tapEvents = mock {
-                on { createEventsSeq(any(), any(), isNull()) }.doReturn(mock1stTapEventsSeq)
-                on { createEventsSeq(any(), any(), any()) }.doReturn(mock2ndTapEventsSeq)
+                on { createEventsSeq(any(), any(), isNull(), isNull()) }.doReturn(mock1stTapEventsSeq)
+                on { createEventsSeq(any(), any(), isNull(), any()) }.doReturn(mock1stTapEventsSeq)
+                on { createEventsSeq(any(), any(), any(), isNull()) }.doReturn(mock2ndTapEventsSeq)
+                on { createEventsSeq(any(), any(), any(), any()) }.doReturn(mock2ndTapEventsSeq)
             }
 
             uiControllerCallSpy = mock() {
@@ -52,9 +54,10 @@ object DetoxMultiTapSpec: Spek({
             log = mock()
         }
 
-        fun verify1stTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(coordinates, precision, null)
-        fun verify2ndTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(eq(coordinates), eq(precision), any())
-        fun verify2ndTapEventsGenerateWithTimestamp(downTimestamp: Long) = verify(tapEvents).createEventsSeq(any(), any(), eq(downTimestamp))
+        fun verify1stTapEventsSeqGenerated(duration: Long? = null) = verify(tapEvents).createEventsSeq(eq(coordinates), eq(precision), isNull(), eq(duration))
+        fun verify2ndTapEventsSeqGenerated() = verify(tapEvents).createEventsSeq(eq(coordinates), eq(precision), isNull(), isNull())
+        fun verify2ndTapEventsGenerateWithTimestamp(downTimestamp: Long) = verify(tapEvents).createEventsSeq(eq(coordinates), eq(precision), eq(downTimestamp), isNull())
+
         fun verifyAllTapEventsInjected() = verify(uiController).injectMotionEventSequence(arrayListOf(mock1stTapEventsSeq, mock2ndTapEventsSeq).flatten())
         fun verifyMainThreadSynced() = verify(uiController).loopMainThreadForAtLeast(eq(coolDownTimeMs))
         fun verifyMainThreadNeverSynced() = verify(uiController, never()).loopMainThreadForAtLeast(any())
@@ -64,15 +67,22 @@ object DetoxMultiTapSpec: Spek({
         fun givenInjectionError() = whenever(uiController.injectMotionEventSequence(any())).doThrow(RuntimeException("exceptionMock"))
 
         fun givenInjectionCallsHistory(injectionsHistory: List<CallInfo?>) =
-                whenever(uiControllerCallSpy.eventInjectionsIterator()).thenReturn(injectionsHistory.iterator())
+            whenever(uiControllerCallSpy.eventInjectionsIterator()).thenReturn(injectionsHistory.iterator())
 
-        fun uut(times: Int) = DetoxMultiTap(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, log)
-        fun sendOneTap(uut: DetoxMultiTap = uut(1)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
-        fun sendTwoTaps(uut: DetoxMultiTap = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
+        fun uut(times: Int, duration: Long? = null) =
+            DetoxCustomTapper(times, interTapsDelayMs, coolDownTimeMs, longTapMinTimeMs, tapEvents, uiControllerCallSpy, log, duration)
+
+        fun sendOneTap(duration: Long? = null) = uut(1, duration).sendTap(uiController, coordinates, precision, -1, -1)
+        fun sendTwoTaps(uut: DetoxCustomTapper = uut(2)) = uut.sendTap(uiController, coordinates, precision, -1, -1)
 
         it("should generate a single-tap events sequence using tap-events helper") {
             sendOneTap()
             verify1stTapEventsSeqGenerated()
+        }
+
+        it("should generate a single-tap events sequence with a custom duration") {
+            sendOneTap(1000L)
+            verify1stTapEventsSeqGenerated(1000L)
         }
 
         it("should generate multiple sets of single-tap event sequences using tap-events helper") {

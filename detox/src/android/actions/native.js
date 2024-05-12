@@ -25,9 +25,11 @@ class TapAtPointAction extends Action {
 }
 
 class LongPressAction extends Action {
-  constructor() {
+  constructor(point, duration) {
     super();
-    this._call = invoke.callDirectly(ViewActionsApi.longClick());
+
+    const filteredArgs = (point ? [point.x, point.y] : []).concat(duration ? [duration] : []);
+    this._call = invoke.callDirectly(DetoxActionApi.longPress(...filteredArgs));
   }
 }
 

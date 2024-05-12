@@ -1306,7 +1306,7 @@ declare global {
         interface NativeElementActions extends NativeElementWaitableActions{
             /**
              * Simulate tap on an element
-             * @param point relative coordinates to the matched element (the element size could changes on different devices or even when changing the device font size)
+             * @param point coordinates in the element's coordinate space. Optional (default is the center of the element).
              * @example await element(by.id('tappable')).tap();
              * @example await element(by.id('tappable')).tap({ x:5, y:10 });
              */
@@ -1314,10 +1314,19 @@ declare global {
 
             /**
              * Simulate long press on an element
-             * @param duration (iOS only) custom press duration time, in milliseconds. Optional (default is 1000ms).
+             * @param point coordinates in the element's coordinate space. Optional (default is the center of the element).
+             * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
+             *      Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+             *      They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
              * @example await element(by.id('tappable')).longPress();
+             * @example await element(by.id('tappable')).longPress(2000);
+             * @example await element(by.id('tappable')).longPress({ x:5, y:10 });
+             * @example await element(by.id('tappable')).longPress({ x:5, y:10 }, 1500);
              */
-            longPress(duration?: number): Promise<void>;
+            longPress(): Promise<void>;
+            longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
+            longPress(point: Point2D, duration: number): Promise<void>;
 
             /**
              * Simulate long press on an element and then drag it to the position of the target element. (iOS Only)
@@ -1335,7 +1344,7 @@ declare global {
 
             /**
              * Simulate tap at a specific point on an element.
-             * Note: The point coordinates are relative to the matched element and the element size could changes on different devices or even when changing the device font size.
+             * Note: The point coordinates are relative to the matched element and the element size could change on different devices or even when changing the device font size.
              * @example await element(by.id('tappable')).tapAtPoint({ x:5, y:10 });
              * @deprecated Use `.tap()` instead.
              */

@@ -36,9 +36,37 @@ function assertEnum(allowedValues) {
   };
 }
 
+function assertDuration(duration) {
+  if (typeof duration === 'number') {
+    return true;
+  }
+
+  throw new DetoxRuntimeError('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
+}
+
+function assertPoint(point) {
+  if (typeof point === 'object' && typeof point.x === 'number' &&  typeof point.y === 'number') {
+    return true;
+  }
+
+  throw new DetoxRuntimeError(`point should be an object with x and y properties, but got ${JSON.stringify(point)}`);
+}
+
+function assertUndefined(arg) {
+  if (arg === undefined) {
+    return true;
+  }
+
+  const [key, value] = firstEntry(arg);
+  throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
+}
+
 module.exports = {
   assertEnum,
   assertNormalized,
   assertNumber,
   assertString,
+  assertDuration,
+  assertPoint,
+  assertUndefined
 };

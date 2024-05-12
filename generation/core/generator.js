@@ -81,7 +81,7 @@ module.exports = function getGenerator({
     const args = json.args.map(({ name }) => t.identifier(name));
 
     if (!json.static) {
-      const prefixedArgs = [ t.identifier('element') ];
+      const prefixedArgs = [t.identifier('element')];
       args.unshift(...prefixedArgs);
       json.prefixedArgs = prefixedArgs;
     }
@@ -107,13 +107,12 @@ module.exports = function getGenerator({
 
     const overloadFunctionExpressions = json.instances.map(({ args }) => {
       const params = [...(json.prefixedArgs || []), ...args];
-        return t.functionDeclaration(
-          t.identifier(sanitizedName + params.length),
-          params.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
-          createMethodBody(classJson, Object.assign({}, json, { args }))
-        )
-      }
-    );
+      return t.functionDeclaration(
+        t.identifier(sanitizedName + params.length),
+        params.filter(filterBlacklistedArguments).map(({ name }) => t.identifier(name)),
+        createMethodBody(classJson, Object.assign({}, json, { args }))
+      );
+    });
 
     const offset = (json.prefixedArgs || []).length;
     const returnStatementsForNumber = (num) =>
@@ -134,14 +133,16 @@ module.exports = function getGenerator({
   function hasProblematicOverloading(instances) {
     // Check if there are same lengthed argument sets
     const knownLengths = [];
-    return instances.map(({ args }) => args.length).reduce((carry, item) => {
-      if (carry || knownLengths.some((l) => l === item)) {
-        return true;
-      }
+    return instances
+      .map(({ args }) => args.length)
+      .reduce((carry, item) => {
+        if (carry || knownLengths.some((l) => l === item)) {
+          return true;
+        }
 
-      knownLengths.push(item);
-      return false;
-    }, false);
+        knownLengths.push(item);
+        return false;
+      }, false);
   }
 
   function sanitizeArgumentType(json) {
@@ -212,14 +213,13 @@ module.exports = function getGenerator({
   }
 
   function createReturnStatement(classJson, json) {
-    const args = json.args.map(
-      (arg) =>
-        shouldBeWrapped(arg)
-          ? t.objectExpression([
-              t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
-              t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
-            ])
-          : addArgumentContentSanitizerCall(arg, json.name)
+    const args = json.args.map((arg) =>
+      shouldBeWrapped(arg)
+        ? t.objectExpression([
+            t.objectProperty(t.identifier('type'), t.stringLiteral(addArgumentTypeSanitizer(arg))),
+            t.objectProperty(t.identifier('value'), addArgumentContentSanitizerCall(arg, json.name))
+          ])
+        : addArgumentContentSanitizerCall(arg, json.name)
     );
 
     return t.returnStatement(
@@ -247,8 +247,8 @@ module.exports = function getGenerator({
     return isListOfChecks
       ? typeCheckCreator.map((singleCheck) => singleCheck(json, functionName))
       : typeCheckCreator instanceof Function
-        ? typeCheckCreator(json, functionName)
-        : t.emptyStatement();
+      ? typeCheckCreator(json, functionName)
+      : t.emptyStatement();
   }
 
   function createLogImport(pathFragments) {
@@ -267,7 +267,7 @@ module.exports = function getGenerator({
 
       globalFunctionUsage = {};
       const input = fs.readFileSync(inputFile, 'utf8');
-      const json =  javaMethodParser(input);
+      const json = javaMethodParser(input);
 
       // set default name
       const pathFragments = outputFile.split('/');
