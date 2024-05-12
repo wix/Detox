@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import org.mockito.kotlin.*
-import androidx.test.rule.ActivityTestRule
 import org.junit.runner.RunWith
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -23,12 +22,13 @@ class ActivityLaunchHelperTest {
     private lateinit var intent: Intent
     private lateinit var launchArgsAsBundle: Bundle
     private lateinit var notificationDataAsBundle: Bundle
-    private lateinit var testRule: ActivityTestRule<Activity>
+    private lateinit var testClazz: Class<Activity>
     private lateinit var launchArgs: LaunchArgs
     private lateinit var intentsFactory: LaunchIntentsFactory
     private lateinit var notificationDataParser: NotificationDataParser
+    private lateinit var activityScenarioWrapperManager: ActivityScenarioWrapperManager
 
-    private fun uut() = ActivityLaunchHelper(testRule, launchArgs, intentsFactory, { notificationDataParser })
+    private fun uut() = ActivityLaunchHelper(testClazz, launchArgs, intentsFactory, { notificationDataParser }, activityScenarioWrapperManager)
 
     @Before
     fun setup() {
@@ -36,7 +36,7 @@ class ActivityLaunchHelperTest {
         launchArgsAsBundle = mock()
         notificationDataAsBundle = mock()
 
-        testRule = mock()
+        testClazz = Activity::class.java
         launchArgs = mock() {
             on { asIntentBundle() }.thenReturn(launchArgsAsBundle)
         }
@@ -44,13 +44,14 @@ class ActivityLaunchHelperTest {
         notificationDataParser = mock() {
             on { toBundle() }.thenReturn(notificationDataAsBundle)
         }
+        activityScenarioWrapperManager = mock()
     }
 
     @Test
     fun `default-activity -- should launch using test rule, with a clean intent`() {
         givenCleanLaunch()
         uut().launchActivityUnderTest()
-        verify(testRule).launchActivity(eq(intent))
+        verify(activityScenarioWrapperManager).launch(eq(intent))
     }
 
     @Test
@@ -64,7 +65,7 @@ class ActivityLaunchHelperTest {
     fun `default activity, with a url -- should launch based on the url`() {
         givenLaunchWithInitialURL()
         uut().launchActivityUnderTest()
-        verify(testRule).launchActivity(eq(intent))
+        verify(activityScenarioWrapperManager).launch(eq(intent))
         verify(intentsFactory).intentWithUrl(initialURL, true)
     }
 
@@ -79,7 +80,7 @@ class ActivityLaunchHelperTest {
     fun `default activity, with notification data -- should launch with the data as bundle`() {
         givenLaunchWithNotificationData()
         uut().launchActivityUnderTest()
-        verify(testRule).launchActivity(eq(intent))
+        verify(activityScenarioWrapperManager).launch(eq(intent))
         verify(intentsFactory).intentWithNotificationData(any(), eq(notificationDataAsBundle), eq(true))
     }
 

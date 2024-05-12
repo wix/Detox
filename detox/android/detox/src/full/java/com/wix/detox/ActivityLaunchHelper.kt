@@ -9,22 +9,20 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 
 private const val INTENT_LAUNCH_ARGS_KEY = "launchArgs"
-private const val ACTIVITY_LAUNCH_TIMEOUT = 10000L
 
-class ActivityLaunchHelper
-@JvmOverloads
-constructor(
+class ActivityLaunchHelper @JvmOverloads constructor(
     private val clazz: Class<out Activity>,
     private val launchArgs: LaunchArgs = LaunchArgs(),
     private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
-    private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
+    private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) },
+    private val activityScenarioWrapperManager: ActivityScenarioWrapperManager = ActivityScenarioWrapperManager()
 ) {
 
-    private val activityScenarioRules: MutableList<ActivityScenario<Activity>> = mutableListOf()
+    private val activityScenarioRules: MutableList<ActivityScenarioWrapper> = mutableListOf()
 
     fun launchActivityUnderTest() {
         val intent = extractInitialIntent()
-        activityScenarioRules.add(ActivityScenario.launch(intent))
+        activityScenarioRules.add(activityScenarioWrapperManager.launch(intent))
     }
 
     fun launchMainActivity() {
@@ -58,7 +56,7 @@ constructor(
         }
 
     private fun launchActivitySync(intent: Intent) {
-        activityScenarioRules.add(ActivityScenario.launch(intent))
+        activityScenarioRules.add(activityScenarioWrapperManager.launch(intent))
     }
 
     private val appContext: Context

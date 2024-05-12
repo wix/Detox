@@ -125,6 +125,7 @@ public final class Detox {
 
         sActivityLaunchHelper = new ActivityLaunchHelper(clazz);
         DetoxMain.run(context, sActivityLaunchHelper);
+        sActivityLaunchHelper.close();
     }
 
     public static void launchMainActivity() {
