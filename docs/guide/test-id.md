@@ -1,8 +1,3 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import Android from './partials/_find-test-id-android.mdx';
-import IOS from './partials/_find-test-id-ios.mdx';
-
 # Adding test ID's to your components
 
 :::info Note
