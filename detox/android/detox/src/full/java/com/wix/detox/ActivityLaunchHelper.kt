@@ -1,26 +1,34 @@
 package com.wix.detox
 
+import android.app.Activity
 import android.app.Instrumentation.ActivityMonitor
 import android.content.Context
 import android.content.Intent
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 
+private const val INTENT_LAUNCH_ARGS_KEY = "launchArgs"
+private const val ACTIVITY_LAUNCH_TIMEOUT = 10000L
+
 class ActivityLaunchHelper
-    @JvmOverloads constructor(
-        private val activityTestRule: ActivityTestRule<*>,
-        private val launchArgs: LaunchArgs = LaunchArgs(),
-        private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
-        private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
+@JvmOverloads
+constructor(
+    private val clazz: Class<out Activity>,
+    private val launchArgs: LaunchArgs = LaunchArgs(),
+    private val intentsFactory: LaunchIntentsFactory = LaunchIntentsFactory(),
+    private val notificationDataParserGen: (String) -> NotificationDataParser = { path -> NotificationDataParser(path) }
 ) {
+
+    private val activityScenarioRules: MutableList<ActivityScenario<Activity>> = mutableListOf()
+
     fun launchActivityUnderTest() {
         val intent = extractInitialIntent()
-        activityTestRule.launchActivity(intent)
+        activityScenarioRules.add(ActivityScenario.launch(intent))
     }
 
     fun launchMainActivity() {
-        val activity = activityTestRule.activity
-        launchActivitySync(intentsFactory.activityLaunchIntent(activity))
+        launchActivitySync(intentsFactory.activityLaunchIntent(clazz, context = appContext))
     }
 
     fun startActivityFromUrl(url: String) {
@@ -31,6 +39,10 @@ class ActivityLaunchHelper
         val notificationData = notificationDataParserGen(dataFilePath).toBundle()
         val intent = intentsFactory.intentWithNotificationData(appContext, notificationData, false)
         launchActivitySync(intent)
+    }
+
+    fun close() {
+        activityScenarioRules.forEach { it.close() }
     }
 
     private fun extractInitialIntent(): Intent =
@@ -46,33 +58,11 @@ class ActivityLaunchHelper
         }
 
     private fun launchActivitySync(intent: Intent) {
-        // Ideally, we would just call sActivityTestRule.launchActivity(intent) and get it over with.
-        // BUT!!! as it turns out, Espresso has an issue where doing this for an activity running in the background
-        // would have Espresso set up an ActivityMonitor which will spend its time waiting for the activity to load, *without
-        // ever being released*. It will finally fail after a 45 seconds timeout.
-        // Without going into full details, it seems that activity test rules were not meant to be used this way. However,
-        // the all-new ActivityScenario implementation introduced in androidx could probably support this (e.g. by using
-        // dedicated methods such as moveToState(), which give better control over the lifecycle).
-        // In any case, this is the core reason for this issue: https://github.com/wix/Detox/issues/1125
-        // What it forces us to do, then, is this -
-        // 1. Launch the activity by "ourselves" from the OS (i.e. using context.startActivity()).
-        // 2. Set up an activity monitor by ourselves -- such that it would block until the activity is ready.
-        // ^ Hence the code below.
-        val activity = activityTestRule.activity
-        val activityMonitor = ActivityMonitor(activity.javaClass.name, null, true)
-        activity.startActivity(intent)
-
-        InstrumentationRegistry.getInstrumentation().run {
-            addMonitor(activityMonitor)
-            waitForMonitorWithTimeout(activityMonitor, ACTIVITY_LAUNCH_TIMEOUT)
-        }
+        activityScenarioRules.add(ActivityScenario.launch(intent))
     }
 
     private val appContext: Context
         get() = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
 
-    companion object {
-        private const val INTENT_LAUNCH_ARGS_KEY = "launchArgs"
-        private const val ACTIVITY_LAUNCH_TIMEOUT = 10000L
-    }
+
 }
