@@ -2,11 +2,13 @@
 
 :::info Note
 
-This guide is optimized for React Native apps, but can be generalized for testing any app, including native apps.
+This guide was written primarily for React Native apps, but it can be generalized for testing any app, including native apps.
 
 :::
 
-While [view-element matching](../api/matchers.md) can be done in numerous ways, it is always the best idea to match based on something unique and decoupled, as it ensures that the test code would be clear, stable and sustainable over time. We recommend assigning unique test ID's to the elements you're aiming to interact with in your tests, and prefering matching based on those rather than on anything else. Test ID's are the least likely to change over time (compared with raw text, for example), and are locale-agnostic.
+While [view-element matching](../api/matchers.md) can be done in numerous ways, it is always the best idea to match based on something unique and decoupled, as it ensures that the test code is clear, stable and sustainable over time.
+
+We recommend assigning unique test ID's to the elements you're aiming to interact with in your tests, and prefering matching based on those rather than on anything else. Test ID's are the least likely to change over time (compared with raw text, for example), and are locale-agnostic. Furthermore, utilizing unique test ID's across the app not only simplifies the identification and interaction with specific elements but also enhances code navigability, making it easier to locate elements when traversing the codebase.
 
 In React Native applications, `View` components have a dedicated [test ID property](https://reactnative.dev/docs/view#testid) that can be utilized:
 
@@ -71,8 +73,8 @@ function YourCustomComponent(props) {
 That way, you could refer to specific elements in Detox tests via the most basic and least ambiguous `by.id` matchers, e.g.:
 
 ```js
-expect(element(by.id('YourCustomComponent'))).toBeVisible(); // the element is visible
-expect(element(by.id('YourCustomComponent.label'))).toHaveText('Some text'); // the label has some text
+expect(element(by.id('YourCustomComponent'))).toBeVisible();
+expect(element(by.id('YourCustomComponent.label'))).toHaveText('Some text');
 ```
 
 ### Repetitive components
