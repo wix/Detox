@@ -1,24 +1,24 @@
-const os = require('os');
+const { clean } = require('./utils/frameworkUtils');
 
-const { hideBin } = require('yargs/helpers');
-const yargs = require('yargs/yargs');
+module.exports = {
+  command: 'clean-framework-cache',
+  desc: 'Cleans cached versions of the Detox framework and XCUITest-runner in ~/Library/Detox. ' +
+    'Use the `--detox` and `--xcuitest` flags to selectively clean the framework components. ' +
+    'By default, both the injected Detox library and the XCUITest test runner are cleaned. (MacOS only)',
 
-const detox = require('../internals');
+  builder: yargs => yargs
+  .option('detox', {
+    describe: 'Clean only the injected Detox library',
+    type: 'boolean',
+    default: false
+  })
+  .option('xcuitest', {
+    describe: 'Clean only the XCUITest test runner',
+    type: 'boolean',
+    default: false
+  }),
 
-module.exports.command = 'clean-framework-cache';
-module.exports.desc = `Alias for 'detox build-framework-cache --clean="all" --build="none"'. ` +
-  `Deletes all Detox cached frameworks and XCUITest-runners from ~/Library/Detox. (macOS only)`;
-
-module.exports.handler = async function cleanFrameworkCache() {
-  if (os.platform() !== 'darwin') {
-    detox.log.info(`The command is supported only on macOS, skipping the execution.`);
-    return;
+  handler: async function(argv) {
+    await clean(argv.detox, argv.xcuitest);
   }
-
-  detox.log.info(`This command is an alias to 'detox build-framework-cache --clean="all" --build="none"'. Executing it now.`);
-
-  const argv = hideBin(process.argv);
-  yargs(argv)
-    .command(require('./build-framework-cache'))
-    .parse(['build-framework-cache', '--clean="all"', '--build="none"']);
 };
