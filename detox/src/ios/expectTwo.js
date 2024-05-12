@@ -12,6 +12,7 @@ const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
+const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
@@ -155,21 +156,17 @@ class Element {
   }
 
   tap(point) {
-    if (point) {
-      if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
-      if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
-      if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
-    }
+    _assertValidPoint(point);
 
     const traceDescription = actionDescription.tapAtPoint(point);
     return this.withAction('tap', traceDescription, point);
   }
 
-  longPress(duration = 1000) {
-    if (typeof duration !== 'number') throw new Error('duration should be a number, but got ' + (duration + (' (' + (typeof duration + ')'))));
+  longPress(arg1, arg2) {
+    let { point, duration } = mapLongPressArguments(arg1, arg2);
 
-    const traceDescription = actionDescription.longPress(duration);
-    return this.withAction('longPress', traceDescription, duration);
+    const traceDescription = actionDescription.longPress(point, duration);
+    return this.withAction('longPress', traceDescription, point, duration);
   }
 
   longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement,
@@ -595,9 +592,12 @@ class WaitFor {
     return this.waitForWithAction(traceDescription);
   }
 
-  longPress(duration) {
-    this.action = this.actionableElement.longPress(duration);
-    const traceDescription = actionDescription.longPress(duration);
+  longPress(arg1, arg2) {
+    this.action = this.actionableElement.longPress(arg1, arg2);
+
+    let { point, duration } = mapLongPressArguments(arg1, arg2);
+    const traceDescription = actionDescription.longPress(point, duration);
+
     return this.waitForWithAction(traceDescription);
   }
 
@@ -798,6 +798,17 @@ class IosExpect {
       }
     };
   }
+}
+
+function _assertValidPoint(point) {
+  if (!point) {
+    // point is optional
+    return;
+  }
+
+  if (typeof point !== 'object') throw new Error('point should be a object, but got ' + (point + (' (' + (typeof point + ')'))));
+  if (typeof point.x !== 'number') throw new Error('point.x should be a number, but got ' + (point.x + (' (' + (typeof point.x + ')'))));
+  if (typeof point.y !== 'number') throw new Error('point.y should be a number, but got ' + (point.y + (' (' + (typeof point.y + ')'))));
 }
 
 function throwMatcherError(param) {

@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`assertDuration should throw for "42" 1`] = `"duration should be a number, but got 42 (string)"`;
+
+exports[`assertDuration should throw for false 1`] = `"duration should be a number, but got false (boolean)"`;
+
 exports[`assertEnum should create an assertion function for enums 1`] = `"speed should be one of [fast, slow], but got medium (string)"`;
 
 exports[`assertNormalized should throw for "0.5" 1`] = `"invalidNumber should be a number, but got 0.5 (string)"`;
@@ -18,6 +22,20 @@ exports[`assertNumber should throw for "42" 1`] = `"invalidNumber should be a nu
 
 exports[`assertNumber should throw for false 1`] = `"invalidNumber should be a number, but got false (boolean)"`;
 
+exports[`assertPoint should throw for {"x":"0","y":0} 1`] = `"point should be an object with x and y properties, but got {"x":"0","y":0}"`;
+
+exports[`assertPoint should throw for {"x":0,"y":"0"} 1`] = `"point should be an object with x and y properties, but got {"x":0,"y":"0"}"`;
+
+exports[`assertPoint should throw for {"x":0} 1`] = `"point should be an object with x and y properties, but got {"x":0}"`;
+
+exports[`assertPoint should throw for {"y":0} 1`] = `"point should be an object with x and y properties, but got {"y":0}"`;
+
 exports[`assertString should throw for 123 1`] = `"invalidString should be a string, but got 123 (number)"`;
 
 exports[`assertString should throw for undefined 1`] = `"invalidString should be a string, but got undefined (undefined)"`;
+
+exports[`assertUndefined should throw for "str" 1`] = `"0 expected to be undefined, but got s (string)"`;
+
+exports[`assertUndefined should throw for {"key":"val"} 1`] = `"key expected to be undefined, but got val (string)"`;
+
+exports[`assertUndefined should throw for 1 1`] = `"undefined is not iterable (cannot read property Symbol(Symbol.iterator))"`;

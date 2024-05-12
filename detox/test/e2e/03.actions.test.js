@@ -2,6 +2,10 @@ const driver = require('./drivers/actions-driver').actionsScreenDriver;
 const custom = require('./utils/custom-it');
 
 describe('Actions', () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
   beforeEach(async () => {
     await device.reloadReactNative();
     await element(by.text('Actions')).tap();
@@ -20,6 +24,16 @@ describe('Actions', () => {
   it('should long press with duration on an element', async () => {
     await element(by.text('Long Press Me 1.5s')).longPress(1500);
     await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();
+  });
+
+  it('should long press with point', async () => {
+    await element(by.text('Long Press on Top Left')).longPress({ x: 5, y: 5 });
+    await expect(element(by.text('Long Press on Top Left Working!!!'))).toBeVisible();
+  });
+
+  it('should not succeed in long pressing with point outside the target area', async () => {
+    await element(by.text('Long Press on Top Left')).longPress({ x: 15, y: 15 });
+    await expect(element(by.text('Long Press on Top Left Working!!!'))).not.toBeVisible();
   });
 
   it(':android: should tap on an element at point', async () => {

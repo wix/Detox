@@ -88,6 +88,16 @@ export default class ActionsScreen extends Component {
           <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press Me 1.5s</Text>
         </TouchableOpacity>
 
+        <View
+          onStartShouldSetResponder={(event) => {
+            const nativeEvent = event.nativeEvent;
+            return nativeEvent.locationX < 10 && nativeEvent.locationY < 10;
+          }}
+          onResponderRelease={() => this.onButtonPress('Long Press on Top Left Working')}
+        >
+          <Text style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Long Press on Top Left</Text>
+        </View>
+
         <TouchableOpacity onPress={this.onLongTimeout.bind(this)}
         >
           <Text testID='WhyDoAllTheTestIDsHaveTheseStrangeNames' style={{ color: 'blue', marginBottom: 10, textAlign: 'center' }}>Tap Me For Long Timeout</Text>

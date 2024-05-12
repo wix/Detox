@@ -1,3 +1,3 @@
 package com.wix.detox.espresso.action
 
-open class DetoxSingleTap : DetoxMultiTap(1)
+class DetoxSingleTap(duration: Long? = null) : DetoxCustomTapper(1, duration = duration)

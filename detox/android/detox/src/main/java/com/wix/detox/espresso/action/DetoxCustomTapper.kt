@@ -29,7 +29,7 @@ import com.wix.detox.espresso.action.common.TapEvents
  *
  * This should be Espresso's default implementation IMO.
  */
-open class DetoxMultiTap
+open class DetoxCustomTapper
     @JvmOverloads constructor(
             private val times: Int,
             private val interTapsDelayMs: Long = getDoubleTapMinTime(),
@@ -37,8 +37,9 @@ open class DetoxMultiTap
             private val longTapMinTimeMs: Long = getLongTapMinTime(),
             private val tapEvents: TapEvents = TapEvents(),
             private val uiControllerCallSpy: UiControllerSpy = UiControllerSpy.instance,
-            private val log: DetoxLog = DetoxLog.instance)
-    : Tapper {
+            private val log: DetoxLog = DetoxLog.instance,
+            private val duration: Long? = null
+    ) : Tapper {
 
     override fun sendTap(uiController: UiController?, coordinates: FloatArray?, precision: FloatArray?)
             = sendTap(uiController, coordinates, precision, 0, 0)
@@ -69,11 +70,12 @@ open class DetoxMultiTap
         var downTimestamp: Long? = null
 
         for (i in 1..times) {
-            val tapEvents = tapEvents.createEventsSeq(coordinates, precision, downTimestamp)
+            val tapEvents = tapEvents.createEventsSeq(coordinates, precision, downTimestamp, duration)
             eventSequence.addAll(tapEvents)
 
             downTimestamp = tapEvents.last().eventTime + interTapsDelayMs
         }
+
         return eventSequence
     }
 
@@ -104,7 +106,7 @@ open class DetoxMultiTap
 
     private fun verifyTapEventTimes(upEvent: CallInfo, downEvent: CallInfo) {
         val delta: Long = (upEvent - downEvent)!!
-        if (delta >= longTapMinTimeMs) {
+        if (delta >= longTapMinTimeMs && duration == null) {
             log.warn(LOG_TAG, "Tap handled too slowly, and turned into a long-tap!") // TODO conditionally turn into an error, based on a global strict-mode detox config
         }
     }

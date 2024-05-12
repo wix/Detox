@@ -128,6 +128,8 @@ describe('expectTwo API Coverage', () => {
       await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 10, y: 10 });
       await e.element(e.by.label('Tap Me')).longPress();
       await e.element(e.by.label('Tap Me')).longPress(2000);
+      await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 }, 2000);
+      await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 });
       await e.element(e.by.id('someId')).multiTap(3);
       await e.element(e.by.id('someId')).typeText('passcode');
       await e.element(e.by.id('someId')).tapBackspaceKey();
@@ -217,6 +219,12 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(-1));
       await expectToThrow(() => e.element(e.by.id('slider')).adjustSliderToPosition(NaN));
 
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress('notANumber'));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress(1000, 1000));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress({ x: 'notANumber', y: 10 }, 1000));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress(1000, { x: 10, y: 5 }));
+      await expectToThrow(() => e.element(e.by.id('someId')).longPress({ x: 10, y: 'notANumber' }, 1000));
+
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.by.id('matcherNotElement')));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag('notANumber', 0.5, 0.5, e.element(e.by.id('targetElement'))));
       await expectToThrow(() => e.element(e.by.id('elementToDrag')).longPressAndDrag(1000, 0.5, 0.5, e.element(e.by.id('targetElement')), 0.5, 0.5, 'slow', 'notANumber'));
@@ -252,6 +260,9 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAMatcher'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress('notANumber'));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, 40));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 43, y: 'notANumber' }));
+      await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(40, { x: 'notANumber', y: 43 }));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap('notANumber'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint('notAPoint'));
       await expectToThrow(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ notx: 1, y: 3 }));
@@ -271,6 +282,9 @@ describe('expectTwo API Coverage', () => {
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).not.toBeVisible().whileElement(e.by.id('id2')).tap();
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress();
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress(20);
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress({ x: 15, y: 100 }, 20);
+      await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).longPress({ x: 15, y: 100 });
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).multiTap(2);
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapAtPoint({ x: 1, y: 1 });
       await e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement(e.by.id('id2')).tapBackspaceKey();

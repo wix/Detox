@@ -8,7 +8,7 @@ function dumpCertificate(url, port = 443) {
   const execOptions = {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'inherit'],
-    timeout: 5000,
+    timeout: 5000
   };
 
   let host = URL.parse(url).host;
@@ -25,7 +25,7 @@ function dumpCertificate(url, port = 443) {
 function downloadFileSync(url) {
   const flags = ['--silent', '--show-error', '-L'];
   const execOptions = {
-    encoding: 'utf8',
+    encoding: 'utf8'
   };
 
   try {

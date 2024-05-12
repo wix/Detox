@@ -213,6 +213,9 @@ describe('AndroidExpect', () => {
         await e.element(e.by.label('Tap Me')).tap({ x: 10, y: 10 });
         await e.element(e.by.label('Tap Me')).tapAtPoint({ x: 100, y: 200 });
         await e.element(e.by.label('Tap Me')).longPress();
+        await e.element(e.by.label('Tap Me')).longPress(1000);
+        await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 }, 1000);
+        await e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 10 });
         await e.element(e.by.id('UniqueId819')).multiTap(3);
       });
 
@@ -220,6 +223,11 @@ describe('AndroidExpect', () => {
         await [null, undefined, 0, -1, 'NaN'].forEach(item => {
           jestExpect(() => e.element(e.by.id('UniqueId819')).multiTap(item)).rejects.toThrow();
         });
+
+        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress('NaN')).rejects.toThrow();
+        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress('NaN', 1000)).rejects.toThrow();
+        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress({ x: 'NaN', y: 10 }, 1000)).rejects.toThrow();
+        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 'NaN' }, 1000)).rejects.toThrow();
       });
 
       it('should press special keys', async () => {

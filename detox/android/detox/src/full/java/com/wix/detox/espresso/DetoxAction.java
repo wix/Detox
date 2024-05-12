@@ -20,7 +20,7 @@ import com.wix.detox.action.common.MotionDir;
 import com.wix.detox.common.DetoxErrors.DetoxRuntimeException;
 import com.wix.detox.common.DetoxErrors.StaleActionException;
 import com.wix.detox.espresso.action.AdjustSliderToPositionAction;
-import com.wix.detox.espresso.action.DetoxMultiTap;
+import com.wix.detox.espresso.action.DetoxCustomTapper;
 import com.wix.detox.espresso.action.GetAttributesAction;
 import com.wix.detox.espresso.action.LongPressAndDragAction;
 import com.wix.detox.espresso.action.RNClickAction;
@@ -29,6 +29,7 @@ import com.wix.detox.espresso.action.ScreenshotResult;
 import com.wix.detox.espresso.action.ScrollToIndexAction;
 import com.wix.detox.espresso.action.TakeViewScreenshotAction;
 import com.wix.detox.espresso.action.common.utils.ViewInteractionExt;
+import com.wix.detox.espresso.action.common.DetoxViewConfigurations;
 import com.wix.detox.espresso.scroll.DetoxScrollAction;
 import com.wix.detox.espresso.scroll.DetoxScrollActionStaleAtEdge;
 import com.wix.detox.espresso.scroll.ScrollEdgeException;
@@ -41,7 +42,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 
 /**
  * Created by simonracz on 10/07/2017.
@@ -57,24 +57,29 @@ public class DetoxAction {
     }
 
     public static ViewAction multiClick(int times) {
-        return actionWithAssertions(new GeneralClickAction(new DetoxMultiTap(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
+        return actionWithAssertions(new GeneralClickAction(new DetoxCustomTapper(times), GeneralLocation.CENTER, Press.FINGER, 0, 0));
     }
 
     public static ViewAction tapAtLocation(final int x, final int y) {
+        CoordinatesProvider coordinatesProvider = createCoordinatesProvider(x, y);
+        return actionWithAssertions(new RNClickAction(coordinatesProvider));
+    }
+
+    private static CoordinatesProvider createCoordinatesProvider(final int x, final int y) {
         final int px = DeviceDisplay.convertDpiToPx(x);
         final int py = DeviceDisplay.convertDpiToPx(y);
-        CoordinatesProvider c = new CoordinatesProvider() {
-            @Override
-            public float[] calculateCoordinates(View view) {
-                final int[] xy = new int[2];
-                view.getLocationOnScreen(xy);
-                final float fx = xy[0] + px;
-                final float fy = xy[1] + py;
-                return new float[]{fx, fy};
-            }
-        };
-        return actionWithAssertions(new RNClickAction(c));
-    }
+
+        return new CoordinatesProvider() {
+             @Override
+             public float[] calculateCoordinates(View view) {
+                 final int[] xy = new int[2];
+                 view.getLocationOnScreen(xy);
+                 final float fx = xy[0] + px;
+                 final float fy = xy[1] + py;
+                 return new float[]{fx, fy};
+             }
+         };
+     };
 
     /**
      * Scrolls to the edge of the given scrollable view.
@@ -206,6 +211,25 @@ public class DetoxAction {
             isFast,
             holdDuration
         ));
+    }
+
+    public static ViewAction longPress() {
+        return longPress(null, null, null);
+    }
+
+    public static ViewAction longPress(Integer duration) {
+        return longPress(null, null, duration);
+    }
+
+    public static ViewAction longPress(Integer x, Integer y) {
+        return longPress(x, y, null);
+    }
+
+    public static ViewAction longPress(Integer x, Integer y, Integer duration) {
+        Long finalDuration = duration != null ? duration : DetoxViewConfigurations.getLongPressTimeout();
+        CoordinatesProvider coordinatesProvider = x == null || y == null ? null : createCoordinatesProvider(x, y);
+
+        return actionWithAssertions(new RNClickAction(coordinatesProvider, finalDuration));
     }
 
     public static ViewAction takeViewScreenshot() {

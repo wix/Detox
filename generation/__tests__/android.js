@@ -87,7 +87,10 @@ describe('Android generation', () => {
   describe('method overloading', () => {
     it('should distinguish between one and two argument call of method', () => {
       expect(ExampleClass.overloadable(true, 42)).toEqual({
-        args: [{ type: 'boolean', value: true }, { type: 'Integer', value: 42 }],
+        args: [
+          { type: 'boolean', value: true },
+          { type: 'Integer', value: 42 }
+        ],
         method: 'overloadable',
         target: { type: 'Class', value: 'com.wix.detox.espresso.DetoxAction' }
       });

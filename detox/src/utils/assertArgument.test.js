@@ -1,4 +1,5 @@
 const assertions = require('./assertArgument');
+const { assertUndefined } = require('./assertArgument');
 
 describe('assertEnum', () => {
   const { assertEnum } = assertions;
@@ -71,5 +72,56 @@ describe('assertString', () => {
     undefined,
   ])('should throw for %j', (invalidString) => {
     expect(() => assertString({ invalidString })).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('assertDuration', () => {
+  const { assertDuration } = assertions;
+
+  it.each([
+    42,
+    NaN,
+    Infinity,
+    -Infinity,
+  ])('should pass for %d', (validNumber) => {
+    expect(() => assertDuration(validNumber)).not.toThrow();
+  });
+
+  it.each([
+    '42',
+    false,
+  ])('should throw for %j', (invalidNumber) => {
+    expect(() => assertDuration(invalidNumber)).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('assertPoint', () => {
+  const { assertPoint } = assertions;
+
+  it('should pass for valid point', () => {
+    expect(() => assertPoint({ x: 0, y: 0 })).not.toThrow();
+  });
+
+  it.each([
+    { x: 0 },
+    { y: 0 },
+    { x: '0', y: 0 },
+    { x: 0, y: '0' },
+  ])('should throw for %j', (invalidPoint) => {
+    expect(() => assertPoint(invalidPoint)).toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('assertUndefined', () => {
+  it('should pass for undefined', () => {
+    expect(() => assertUndefined(undefined)).not.toThrow();
+  });
+
+  it.each([
+    'str',
+    1,
+    { key: 'val' }
+  ])('should throw for %j', (definedValue) => {
+    expect(() => assertUndefined(definedValue)).toThrowErrorMatchingSnapshot();
   });
 });
