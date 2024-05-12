@@ -22,8 +22,8 @@ In React Native applications, `View` components have a dedicated [test ID proper
 
 For native apps, test ID's can be assigned by setting a value for the following properties:
 
-* **iOS:** [`accessibilityIdentifier`](https://developer.apple.com/documentation/uikit/uiaccessibilityidentification/1623132-accessibilityidentifier)
-* **Android:** Default [viewTag](https://developer.android.com/reference/android/view/View#tags)
+- **iOS:** [`accessibilityIdentifier`](https://developer.apple.com/documentation/uikit/uiaccessibilityidentification/1623132-accessibilityidentifier)
+- **Android:** Default [viewTag](https://developer.android.com/reference/android/view/View#tags)
 
 ## Pass testID to your native components
 
@@ -124,7 +124,6 @@ That way, your assertion would become simpler and more deterministic:
 expect(element(by.id('listItem.3'))).toHaveText('Third Item');
 ```
 
-
 ![testID for repetitive components](../img/test-id/repetitiveComponentTestID.png)
 
 ## Finding your test ID
@@ -149,28 +148,20 @@ Decide upon a system by which test ID's are named, and stick with it.
 
 1. Use a consistent naming convention. An `ITEM_NAME_ALL_CAPS` convention and an `ItemNameUpperCamelCase` are both ok, but **don't use them either intermittently nor in conjunction:**
 
-   * `SITE_LIST_ROOT` & `SITE_LIST_ITEM_1` - :white_check_mark:
-
-   * `SITE_LIST_ROOT` & `SiteList_Item1` - :x:
-
-   * `SITE_LIST_Item1` - :x:
-
-2. Consistently apply notations for special items. For example:
-
-   * A `_ROOT` postfix for screen-root or list-root items (e.g. `SITE_LIST_ROOT`)
-
-   * A `_BTN` for button / CTA elements
-
-3. Apply consistent prefixes as categories in order to introduce a top-level context to the test ID, distinguishing it from similar ones in various places in the app. The name of the associated screen can be useful in that sense. For example: `EDIT_PROFILE_SCREEN.DONE_BTN` is better than just `DONE_BTN` for a button that is inside a user profile editing screen. Also, things such as `NAV_TABS.`, `TOP_TABS.` and `SIDE_MENU.` can be used as good context providers.
-
-4. As explained in the section on passing test ID's to *child* elements, drill down to the details of elements via a *chain of contexts*. Given the parent element-group of an element (for example, a card in a feed), use its own test ID as a prefix for the sub-items (e.g. an options "meatballs" / "kebab" CTA or an _edit_ button). For example:
-   * `SITE_LIST_ITEM1` ⇒
-     * `SITE_LIST_ITEM1.OPTIONS`
-     * `SITE_LIST_ITEM1.EDIT_BTN`
-     * `SITE_LIST_ITEM1.TITLE`
-
-5. In a large-scale, multi-module environment, apply a consistent module identifier as the module's test ID's prefix. For example:
-   * `AUTH.LOGIN_SCREEN.EDIT_PASSWORD` - the `AUTH.` prefix suggests that were are under the context of a module handling Authentication matters.
+   - `SITE_LIST_ROOT` & `SITE_LIST_ITEM_1` - :white\_check\_mark:
+   - `SITE_LIST_ROOT` & `SiteList_Item1` - :x:
+   - `SITE_LIST_Item1` - :x:
+1. Consistently apply notations for special items. For example:
+   - A `_ROOT` postfix for screen-root or list-root items (e.g. `SITE_LIST_ROOT`)
+   - A `_BTN` for buttons / touchable CTA elements
+1. Apply consistent prefixes as categories in order to introduce a top-level context to the test ID, distinguishing it from similar ones in various places in the app. The name of the associated screen can be useful in that sense. For example: `EDIT_PROFILE_SCREEN.DONE_BTN` is better than just `DONE_BTN` for a button that is inside a user profile editing screen. Also, things such as `NAV_TABS.`, `TOP_TABS.` and `SIDE_MENU.` can be used as good context providers.
+1. As explained in the section on passing test ID's to _child_ elements, drill down to the details of elements via a _chain of contexts_. Given the parent element-group of an element (for example, a card in a feed), use its own test ID as a prefix for the sub-items (e.g. an options "meatballs" / "kebab" CTA or an _edit_ button). For example:
+   - `SITE_LIST_ITEM1` ⇒
+     - `SITE_LIST_ITEM1.OPTIONS`
+     - `SITE_LIST_ITEM1.EDIT_BTN`
+     - `SITE_LIST_ITEM1.TITLE`
+1. In a large-scale, multi-module environment, apply a consistent module identifier as the module's test ID's prefix. For example:
+   - `AUTH.LOGIN_SCREEN.EDIT_PASSWORD` - the `AUTH.` prefix suggests that were are under the context of a module handling Authentication matters.
 
 :::tip
 
@@ -184,9 +175,9 @@ Stick to simple alpha-numeric characters, and simple separators. When it comes t
 
 In addition, use test ID that clearly describe the associated element, but are also concise. For example:
 
-* `SITE_LIST_ROOT` - :white_check_mark:
-* `MAIN_SITE_LIST_WRAPPER_ELEMENT` - :x:
-* `SITE_LIST@ITEM$1` - :x:
+- `SITE_LIST_ROOT` - :white\_check\_mark:
+- `MAIN_SITE_LIST_WRAPPER_ELEMENT` - :x:
+- `SITE_LIST@ITEM$1` - :x:
 
 ### Dissociate test ID names
 
@@ -202,7 +193,7 @@ Namely, a test ID should never use `text` or `label` props passed to a React Nat
 There are at least 2 reasons why this is a very important rule:
 
 1. Alternation of test ID's can lead to broken tests (test-ID based matchers become obsolete), and on-screen text can change frequently.
-2. In apps supporting multiple languages, the on-screen text is likely to be different in each language. You want the same test code to be compatible with any language set into the test device, and you therefore need it have as little awareness to it as possible. Using test ID's is the best means to keep it that way.
+1. In apps supporting multiple languages, the on-screen text is likely to be different in each language. You want the same test code to be compatible with any language set into the test device, and you therefore need it have as little awareness to it as possible. Using test ID's is the best means to keep it that way.
 
 ### Examples
 
