@@ -226,7 +226,7 @@ public class DetoxAction {
     }
 
     public static ViewAction longPress(Integer x, Integer y, Integer duration) {
-        Long finalDuration = duration == null ? DetoxViewConfigurations.getLongPressTimeout() : duration;
+        Long finalDuration = duration != null ? duration : DetoxViewConfigurations.getLongPressTimeout();
         CoordinatesProvider coordinatesProvider = x == null || y == null ? null : createCoordinatesProvider(x, y);
 
         return actionWithAssertions(new RNClickAction(coordinatesProvider, finalDuration));
