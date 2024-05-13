@@ -388,7 +388,7 @@ Simulates a pinch on the element with the provided options.
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```
 
-[`testID`]: ../guide/test-id.mdx
+[`testID`]: ../guide/test-id.md
 
 [`by.type`]: ../api/matchers.md#bytypeclassname
 
