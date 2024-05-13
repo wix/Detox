@@ -8,7 +8,6 @@ declare global {
   const expect: Detox.DetoxExportWrapper['expect'];
   const by: Detox.DetoxExportWrapper['by'];
   const web: Detox.DetoxExportWrapper['web'];
-
   const system: Detox.DetoxExportWrapper['system'];
 
   namespace NodeJS {

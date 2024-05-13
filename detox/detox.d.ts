@@ -1043,6 +1043,7 @@ declare global {
 
             /**
              * Collection of system-level matchers
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
              */
             readonly system: BySystemFacade;
         }
@@ -1116,6 +1117,7 @@ declare global {
         interface BySystemFacade {
             /**
              * Find an element on the System-level by its label
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
              * @example
              * system.element(by.system.text('Allow'))
              */
@@ -1123,6 +1125,7 @@ declare global {
 
             /**
              * Find an element on the System-level by its type
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
              * @example
              * system.element(by.system.type('button'))
              */
