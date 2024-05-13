@@ -172,11 +172,11 @@ function throwMissingGmsaasError() {
   throw new DetoxRuntimeError(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`);
 }
 
-const getDetoxVersion = _.memoize(() => {
+const getDetoxVersion = _.once(() => {
   return require(path.join(__dirname, '../../package.json')).version;
 });
 
-const getBuildFolderName = _.memoize(async () => {
+const getBuildFolderName = _.once(async () => {
   const detoxVersion = getDetoxVersion();
   const xcodeVersion = await exec('xcodebuild -version').then(result => result.stdout.trim());
 
@@ -185,12 +185,12 @@ const getBuildFolderName = _.memoize(async () => {
       .digest('hex');
 });
 
-const getFrameworkPath = _.memoize(async () => {
+const getFrameworkPath = _.once(async () => {
   const buildFolder = await getBuildFolderName();
   return `${DETOX_LIBRARY_ROOT_PATH}/ios/framework/${buildFolder}/Detox.framework`;
 });
 
-const getXCUITestRunnerPath = _.memoize(async () => {
+const getXCUITestRunnerPath = _.once(async () => {
   const buildFolder = await getBuildFolderName();
   const derivedDataPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner/${buildFolder}`;
   const xctestrunPath = await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)
