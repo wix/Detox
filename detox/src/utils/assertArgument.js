@@ -61,14 +61,16 @@ function assertUndefined(arg) {
   throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
 }
 
-function assertDefined(arg) {
+function assertTraceDescription(arg) {
+  return assertDefined(arg, 'traceDescription');
+}
+
+function assertDefined(arg, argName) {
   if (arg !== undefined) {
     return true;
   }
 
-  const [key] = firstEntry(arg);
-  /* istanbul ignore next */
-  throw new DetoxRuntimeError(`${key} expected to be defined, but got undefined`);
+  throw new DetoxRuntimeError(`${argName} expected to be defined, but got undefined`);
 }
 
 module.exports = {
@@ -79,5 +81,5 @@ module.exports = {
   assertDuration,
   assertPoint,
   assertUndefined,
-  assertDefined
+  assertTraceDescription
 };

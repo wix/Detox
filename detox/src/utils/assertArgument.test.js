@@ -126,18 +126,18 @@ describe('assertUndefined', () => {
   });
 });
 
-describe('assertDefined', () => {
-  const { assertDefined } = assertions;
+describe('assertTraceDescription', () => {
+  const { assertTraceDescription } = assertions;
 
   it.each([
     'str',
     1,
     { key: 'val' }
   ])('should return true for defined %j', (definedValue) => {
-    expect(assertDefined(definedValue)).toBe(true);
+    expect(assertTraceDescription(definedValue)).toBe(true);
   });
 
   it('should throw for undefined', () => {
-    expect(() => assertDefined(undefined)).toThrowErrorMatchingSnapshot();
+    expect(() => assertTraceDescription(undefined)).toThrowErrorMatchingSnapshot();
   });
 });

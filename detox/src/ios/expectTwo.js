@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
 
-const { assertDefined, assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
@@ -122,7 +122,7 @@ class Expect {
   }
 
   expect(expectation, traceDescription, ...params) {
-    assertDefined(traceDescription);
+    assertTraceDescription(traceDescription);
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));

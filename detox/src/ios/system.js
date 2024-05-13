@@ -1,5 +1,5 @@
 const { DetoxRuntimeError } = require('../errors');
-const { assertDefined } = require('../utils/assertArgument');
+const { assertTraceDescription } = require('../utils/assertArgument');
 const { systemActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -33,7 +33,7 @@ class SystemExpect {
   }
 
   expect(expectation, traceDescription) {
-    assertDefined(traceDescription);
+    assertTraceDescription(traceDescription);
 
     const invocation = this.createInvocation(expectation);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
@@ -60,7 +60,7 @@ class SystemElement {
   }
 
   withAction(action, traceDescription) {
-    assertDefined(traceDescription);
+    assertTraceDescription(traceDescription);
 
     const invocation = {
       type: 'systemAction',

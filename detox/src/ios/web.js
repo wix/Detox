@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const { DetoxRuntimeError } = require('../errors');
-const { assertDefined } = require('../utils/assertArgument');
+const { assertTraceDescription } = require('../utils/assertArgument');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -47,7 +47,7 @@ class WebExpect {
   }
 
   expect(expectation, traceDescription, ...params) {
-    assertDefined(traceDescription);
+    assertTraceDescription(traceDescription);
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
@@ -169,7 +169,7 @@ class WebElement {
   }
 
   withAction(action, traceDescription, ...params) {
-    assertDefined(traceDescription);
+    assertTraceDescription(traceDescription);
 
     const invocation = {
       type: 'webAction',
