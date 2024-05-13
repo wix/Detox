@@ -8,7 +8,7 @@ Use [expectations](expect.md) to verify element states.
 
 - [`.tap()`](#tappoint)
 - [`.multiTap()`](#multitaptimes)
-- [`.longPress()`](#longpressduration)
+- [`.longPress()`](#longpresspoint-duration)
 - [`.longPressAndDrag()`](#longpressanddragduration-normalizedpositionx-normalizedpositiony-targetelement-normalizedtargetpositionx-normalizedtargetpositiony-speed-holdduration)
 - [`.swipe()`](#swipedirection-speed-normalizedoffset-normalizedstartingpointx-normalizedstartingpointy)
 - [`.pinch()`](#pinchscale-speed-angle--ios-only) **iOS only**
@@ -51,16 +51,26 @@ Simulates multiple taps on the element at its activation point. All taps are app
 await element(by.id('tappable')).multiTap(3);
 ```
 
-### `longPress(duration)`
+### `longPress(point, duration)`
 
-Simulates a long press on the element at its activation point.
+Simulates a long press on the element at its activation point or at the specified point.
 
-`duration` (iOS only) — press during time, in milliseconds. Optional (default is 1000 ms).
+`point` — a point in the element’s coordinate space (optional, object with `x` and `y` numerical values, default is `null`).
+`duration` — press during time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
 
 ```js
 await element(by.id('tappable')).longPress();
+await element(by.id('tappable')).longPress({x:5, y:10});
 await element(by.id('tappable')).longPress(1500);
+await element(by.id('tappable')).longPress({x:5, y:10}, 1500);
 ```
+
+:::note Important
+
+Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
+
+:::
 
 ### `longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)`
 
@@ -378,7 +388,7 @@ Simulates a pinch on the element with the provided options.
 await element(by.id('PinchableScrollView')).pinchWithAngle('outward', 'slow', 0);
 ```
 
-[`testID`]: ../guide/test-id.mdx
+[`testID`]: ../guide/test-id.md
 
 [`by.type`]: ../api/matchers.md#bytypeclassname
 
