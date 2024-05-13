@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`assertDefined should throw for undefined 1`] = `"Cannot convert undefined or null to object"`;
+
 exports[`assertDuration should throw for "42" 1`] = `"duration should be a number, but got 42 (string)"`;
 
 exports[`assertDuration should throw for false 1`] = `"duration should be a number, but got false (boolean)"`;

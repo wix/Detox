@@ -61,6 +61,15 @@ function assertUndefined(arg) {
   throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
 }
 
+function assertDefined(arg) {
+  if (arg !== undefined) {
+    return true;
+  }
+
+  const [key] = firstEntry(arg);
+  throw new DetoxRuntimeError(`${key} expected to be defined, but got undefined`);
+}
+
 module.exports = {
   assertEnum,
   assertNormalized,
@@ -68,5 +77,6 @@ module.exports = {
   assertString,
   assertDuration,
   assertPoint,
-  assertUndefined
+  assertUndefined,
+  assertDefined
 };

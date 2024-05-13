@@ -125,3 +125,19 @@ describe('assertUndefined', () => {
     expect(() => assertUndefined(definedValue)).toThrowErrorMatchingSnapshot();
   });
 });
+
+describe('assertDefined', () => {
+  const { assertDefined } = assertions;
+
+  it.each([
+    'str',
+    1,
+    { key: 'val' }
+  ])('should return true for defined %j', (definedValue) => {
+    expect(assertDefined(definedValue)).toBe(true);
+  });
+
+  it('should throw for undefined', () => {
+    expect(() => assertDefined(undefined)).toThrowErrorMatchingSnapshot();
+  });
+});

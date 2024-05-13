@@ -1,13 +1,11 @@
 // @ts-nocheck
-const assert = require('assert');
 const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
 
-
-const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { assertDefined, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
@@ -124,7 +122,7 @@ class Expect {
   }
 
   expect(expectation, traceDescription, ...params) {
-    assert(traceDescription, `must provide trace description for expectation: \n ${JSON.stringify(expectation)}`);
+    assertDefined(traceDescription);
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
