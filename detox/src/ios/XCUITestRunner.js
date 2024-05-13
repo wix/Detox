@@ -10,7 +10,10 @@ class XCUITestRunner {
     }
 
     async execute(invocationParams) {
-        log.trace({ event: 'XCUITEST_RUNNER' }, `invocation params: ${JSON.stringify(invocationParams)}`);
+        log.trace(
+          { event: 'XCUITEST_RUNNER' },
+          'invocation params: %j, simulator id: %s', invocationParams, this.simulatorId
+        );
 
         const base64InvocationParams = Buffer.from(JSON.stringify(invocationParams)).toString('base64');
 
