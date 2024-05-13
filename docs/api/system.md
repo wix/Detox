@@ -2,7 +2,15 @@
 
 System APIs allows you to interact with dialogs in the system-level (e.g. permissions, alerts, etc.).
 
-::: note
+:::caution Experimental
+
+System APIs are currently in an experimental phase.
+This means that the API is not yet stable and may change in the near future.
+**Do not rely on the current API as it may change in future minor releases.**
+
+:::
+
+:::note
 
 **System APIs are only available on iOS**. Android support is coming soon.
 
