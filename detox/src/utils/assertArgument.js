@@ -67,6 +67,7 @@ function assertDefined(arg) {
   }
 
   const [key] = firstEntry(arg);
+  /* istanbul ignore next */
   throw new DetoxRuntimeError(`${key} expected to be defined, but got undefined`);
 }
 
