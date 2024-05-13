@@ -34,7 +34,11 @@ exports[`assertString should throw for 123 1`] = `"invalidString should be a str
 
 exports[`assertString should throw for undefined 1`] = `"invalidString should be a string, but got undefined (undefined)"`;
 
-exports[`assertTraceDescription should throw for undefined 1`] = `"traceDescription expected to be defined, but got undefined"`;
+exports[`assertTraceDescription should throw for undefined 1`] = `
+"traceDescription expected to be defined, but got undefined
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
+`;
 
 exports[`assertUndefined should throw for "str" 1`] = `"0 expected to be undefined, but got s (string)"`;
 
