@@ -388,6 +388,13 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 			case "loginSuccess":
 				log.info("Successfully logged in")
 				return
+
+			case "getUIHierarchy":
+				let recursiveDescription = (UIWindow.dtx_keyWindowScene() as! UIWindowScene).dtx_recursiveDescription()
+				let resultParams: [String: Any] = ["viewHierarchy": recursiveDescription]
+				self.webSocket.sendAction(done, params: resultParams, messageId: messageId)
+
+
 			case "captureViewHierarchy":
 				let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
 				precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")
