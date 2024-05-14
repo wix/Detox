@@ -306,7 +306,7 @@ class GetUIHierarchy extends Action {
   }
 
   async handle(response) {
-    this.expectResponseOfType(response, 'captureViewHierarchyDone');
+    this.expectResponseOfType(response, 'getUIHierarchyDone');
     return response.params.viewHierarchy;
   }
 }
