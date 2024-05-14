@@ -20,6 +20,7 @@ describe('Sanity', () => {
     await expect(element(by.text('Say World'))).toBeVisible();
 
     const viewHierarchy = await device.getUIHierarchy();
+
     console.log(viewHierarchy);
     console.error(viewHierarchy);
   });
