@@ -292,6 +292,25 @@ class SetInstrumentsRecordingState extends Action {
   }
 }
 
+class GetUIHierarchy extends Action {
+  constructor(params) {
+    super('getUIHierarchy', params);
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'captureViewHierarchyDone');
+    return response.params.viewHierarchy;
+  }
+}
+
 class CaptureViewHierarchy extends Action {
   constructor(params) {
     super('captureViewHierarchy', params);
@@ -336,4 +355,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
+  GetUIHierarchy
 };

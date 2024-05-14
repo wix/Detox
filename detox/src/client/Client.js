@@ -225,6 +225,10 @@ class Client {
     }));
   }
 
+  async getUIHierarchy() {
+    return await this.sendAction(new actions.GetUIHierarchy());
+  }
+
   async currentStatus() {
     return await this.sendAction(new actions.CurrentStatus());
   }
