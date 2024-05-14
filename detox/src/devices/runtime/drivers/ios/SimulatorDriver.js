@@ -195,7 +195,14 @@ class SimulatorDriver extends IosDriver {
   }
 
   async getUIHierarchy() {
-    await this.client.getUIHierarchy();
+    try {
+      await this.client.getUIHierarchy();
+    } catch (e) {
+      const stringError = e.toString();
+      return stringError.replace('Error: ', '');
+    }
+
+    return 'Failed to get UI hierarchy.';
   }
 
   async setStatusBar(flags) {
