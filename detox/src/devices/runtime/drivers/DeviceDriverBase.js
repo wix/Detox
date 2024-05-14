@@ -222,6 +222,10 @@ class DeviceDriverBase {
   async captureViewHierarchy() {
     return '';
   }
+
+  async getUIHierarchy() {
+    return '';
+  }
 }
 
 module.exports = DeviceDriverBase;

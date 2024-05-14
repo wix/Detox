@@ -905,6 +905,8 @@ declare global {
              */
             captureViewHierarchy(name?: string): Promise<string>;
 
+            getUIHierarchy(): Promise<string>;
+
             /**
              * Simulate shake (iOS Only)
              */
