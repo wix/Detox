@@ -30,7 +30,7 @@ describe('Crash Handling', () => {
   });
 
   /**
-   * @issue https://github.com/wix/Detox/issues/4377
+   * @issue 4377
    * @tag flaky
    */
   it('Should print generic connectivity error when the app was terminated intentionally', async () => {
