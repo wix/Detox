@@ -1,17 +1,15 @@
 const os = require('os');
 const path = require('path');
 
-const exec = require('child-process-promise').exec;
+const { spawn } = require('child-process-promise');
 const fs = require('fs-extra');
-const _ = require('lodash');
 
 const detox = require('../../internals');
+const { getFrameworkDirPath, getXCUITestRunnerDirPath } = require('../../src/utils/environment');
+
 
 const frameworkBuildScript = '../../scripts/build_local_framework.ios.sh';
 const xcuitestBuildScript = '../../scripts/build_local_xcuitest.ios.sh';
-
-const getFrameworkPath = _.once(() => path.join(os.homedir(), '/Library/Detox/ios/framework'));
-const getXcuitestPath = _.once(() => path.join(os.homedir(), '/Library/Detox/ios/xcuitest-runner'));
 
 function shouldSkipExecution() {
   if (os.platform() !== 'darwin') {
@@ -25,12 +23,13 @@ function shouldSkipExecution() {
 async function execBuildScript(targetPath, scriptPath, descriptor) {
   detox.log.info(`Building ${descriptor} cache at ${targetPath}..`);
 
+  const scriptFullPath = path.join(__dirname, scriptPath);
+
   try {
-    const result = await exec(path.join(__dirname, scriptPath), { capture: ['stdout', 'stderr'] });
-    detox.log.info(result.stdout);
+    await spawn(scriptFullPath, [], { stdio: 'inherit' });
   } catch (error) {
-    detox.log.error(`Error while building ${descriptor}: ${error.stderr}`);
-    throw new Error(`Failed to build ${descriptor}`);
+    detox.log.error(`Error while building ${descriptor}:\n${error}`);
+    throw error;
   }
 }
 
@@ -48,11 +47,11 @@ async function build(framework, xcuitest) {
   const shouldBuildBoth = !framework && !xcuitest;
 
   if (framework || shouldBuildBoth) {
-    await execBuildScript(getFrameworkPath(), frameworkBuildScript, 'Detox framework');
+    await execBuildScript(getFrameworkDirPath, frameworkBuildScript, 'Detox framework');
   }
 
   if (xcuitest || shouldBuildBoth) {
-    await execBuildScript(getXcuitestPath(), xcuitestBuildScript, 'XCUITest runner');
+    await execBuildScript(getXCUITestRunnerDirPath, xcuitestBuildScript, 'XCUITest runner');
   }
 }
 
@@ -64,11 +63,11 @@ async function clean(framework, xcuitest) {
   const shouldCleanBoth = !framework && !xcuitest;
 
   if (framework || shouldCleanBoth) {
-    await removeTarget(getFrameworkPath(), 'Detox framework');
+    await removeTarget(getXCUITestRunnerDirPath, 'Detox framework');
   }
 
   if (xcuitest || shouldCleanBoth) {
-    await removeTarget(getXcuitestPath(), 'XCUITest runner');
+    await removeTarget(getXCUITestRunnerDirPath, 'XCUITest runner');
   }
 }
 

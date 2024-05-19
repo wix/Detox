@@ -185,14 +185,18 @@ const getBuildFolderName = _.once(async () => {
       .digest('hex');
 });
 
+const getFrameworkDirPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/framework`;
+
 const getFrameworkPath = _.once(async () => {
   const buildFolder = await getBuildFolderName();
-  return `${DETOX_LIBRARY_ROOT_PATH}/ios/framework/${buildFolder}/Detox.framework`;
+  return `${getFrameworkDirPath}/${buildFolder}/Detox.framework`;
 });
+
+const getXCUITestRunnerDirPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner`;
 
 const getXCUITestRunnerPath = _.once(async () => {
   const buildFolder = await getBuildFolderName();
-  const derivedDataPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner/${buildFolder}`;
+  const derivedDataPath = `${getXCUITestRunnerDirPath}/${buildFolder}`;
   const xctestrunPath = await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)
       .then(result => result.stdout.trim());
 
@@ -232,7 +236,9 @@ module.exports = {
   getAndroidSdkManagerPath,
   getGmsaasPath,
   getDetoxVersion,
+  getFrameworkDirPath,
   getFrameworkPath,
+  getXCUITestRunnerDirPath,
   getXCUITestRunnerPath,
   getAndroidSDKPath,
   getAndroidEmulatorPath,
