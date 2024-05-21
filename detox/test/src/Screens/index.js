@@ -24,6 +24,7 @@ import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
 import OverlayScreen from './OverlayScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
+import CanvasScreenshotScreen from './CanvasScreenshotScreen';
 import VirtualizedListStressScreen from './VirtualizedListStressScreen';
 import WebViewScreen from './WebViewScreen';
 import VisibilityExpectationScreen from './VisibilityExpectationScreen';
@@ -58,6 +59,7 @@ export {
   DeviceScreen,
   OverlayScreen,
   ElementScreenshotScreen,
+  CanvasScreenshotScreen,
   WebViewScreen,
   VirtualizedListStressScreen,
   VisibilityExpectationScreen,

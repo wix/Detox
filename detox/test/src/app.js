@@ -115,7 +115,11 @@ export default class example extends Component {
         {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
-        {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+          {this.renderInlineSeparator()}
+          {isAndroid && this.renderScreenButton('Canvas-Screenshots', Screens.CanvasScreenshotScreen)}
+        </View>
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderScreenButton('Init URL', Screens.LaunchUrlScreen)}
