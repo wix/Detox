@@ -1,16 +1,24 @@
-const cp = require('child_process');
-const os = require('os');
-const path = require('path');
+const { build } = require('./utils/frameworkUtils');
 
-const detox = require('../internals');
+module.exports = {
+  command: 'build-framework-cache',
+  desc: 'Builds cached versions of the Detox framework and XCUITest-runner in ~/Library/Detox. ' +
+    'Use the `--detox` and `--xcuitest` flags to selectively build the framework components. ' +
+    'By default, both the injected Detox library and the XCUITest test runner are built. (MacOS only)',
 
-module.exports.command = 'build-framework-cache';
-module.exports.desc = 'Builds a cached Detox framework for the current environment in ~/Library/Detox. The cached framework is unique for each combination of Xcode and Detox version. (macOS only)';
+  builder: yargs => yargs
+  .option('detox', {
+    describe: 'Build only the injected Detox library',
+    type: 'boolean',
+    default: false
+  })
+  .option('xcuitest', {
+    describe: 'Build only the XCUITest test runner',
+    type: 'boolean',
+    default: false
+  }),
 
-module.exports.handler = async function buildFrameworkCache() {
-  if (os.platform() === 'darwin') {
-    cp.execSync(path.join(__dirname, '../scripts/build_framework.ios.sh'), { stdio: 'inherit' });
-  } else {
-    detox.log.info(`The command is supported only on macOS, skipping the execution.`);
+  handler: async function(argv) {
+    await build(argv.detox, argv.xcuitest);
   }
 };

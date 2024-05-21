@@ -43,6 +43,10 @@ module.exports = {
     getTitle: () => 'get title',
     full: (actionDescription) => `perform web view action: ${actionDescription}`
   },
+  systemActionDescription: {
+    tap: () => `tap`,
+    full: (actionDescription) => `perform system action: ${actionDescription}`
+  },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,
     waitForWithTimeout: (expectDescription, timeout) => `${expectDescription} with timeout (${timeout} ms)`,

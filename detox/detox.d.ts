@@ -431,6 +431,8 @@ declare global {
 
             readonly web: WebFacade;
 
+            readonly system: SystemFacade;
+
             readonly DetoxConstants: {
                 userNotificationTriggers: {
                     push: 'push';
@@ -1038,6 +1040,12 @@ declare global {
              * Collection of web matchers
              */
             readonly web: ByWebFacade;
+
+            /**
+             * Collection of system-level matchers
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             */
+            readonly system: BySystemFacade;
         }
 
         interface ByWebFacade {
@@ -1106,6 +1114,24 @@ declare global {
             tag(tagName: string): WebMatcher;
         }
 
+        interface BySystemFacade {
+            /**
+             * Find an element on the System-level by its label
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.text('Allow'))
+             */
+            label(text: string): SystemMatcher;
+
+            /**
+             * Find an element on the System-level by its type
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.type('button'))
+             */
+            type(type: string): SystemMatcher;
+        }
+
         interface NativeMatcher {
             /**
              * Find an element satisfying all the matchers
@@ -1127,13 +1153,19 @@ declare global {
         }
 
         interface WebMatcher {
-            __web__: any; // prevent type coersion
+            __web__: any; // prevent type coercion
+        }
+
+        interface SystemMatcher {
+          __system__: any; // prevent type coercion
         }
 
         interface ExpectFacade {
             (element: NativeElement): Expect;
 
             (webElement: WebElement): WebExpect;
+
+            (systemElement: SystemElement): SystemExpect;
         }
 
         interface WebViewElement {
@@ -1162,6 +1194,35 @@ declare global {
              * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
              */
             (matcher?: NativeMatcher): WebViewElement;
+        }
+
+        interface SystemFacade {
+            /**
+             * Find an element on the System-level using a system matcher.
+             * @param systemMatcher a system matcher for the system element.
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.label('Allow'))
+             */
+            element(systemMatcher: SystemMatcher): IndexableSystemElement;
+        }
+
+        interface IndexableSystemElement extends SystemElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await system.element(by.system.type('button')).atIndex(1).tap();
+             */
+            atIndex(index: number): SystemElement;
+        }
+
+        interface SystemElement {
+            /**
+             * Simulate a tap on the element.
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await system.element(by.system.label('Allow')).tap();
+             */
+            tap(): Promise<void>;
         }
 
         interface Expect<R = Promise<void>> {
@@ -1529,6 +1590,22 @@ declare global {
              * @example await expect(web.element(by.web.id('submitButton'))).toExist();
              */
             toExist(): R;
+        }
+
+        interface SystemExpect<R = Promise<void>> {
+          /**
+           * Negate the expectation.
+           * @note System APIs are still in experimental phase and are subject to changes in the near future.
+           * @example await expect(system.element(by.system.text('Allow'))).not.toExist();
+           */
+          not: this;
+
+          /**
+           * Expect the view to exist in the system-level.
+           * @note System APIs are still in experimental phase and are subject to changes in the near future.
+           * @example await expect(system.element(by.system.text('Allow'))).toExist();
+           */
+          toExist(): R;
         }
 
         interface IndexableWebElement extends WebElement {

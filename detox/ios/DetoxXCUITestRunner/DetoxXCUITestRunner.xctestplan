@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "C80674F4-8FF4-44FC-9217-568D50BF2A27",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:DetoxXCUITestRunner.xcodeproj",
+      "identifier" : "602735A52BCC0ACF00A9EE22",
+      "name" : "DetoxXCUITestRunnerApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:DetoxXCUITestRunner.xcodeproj",
+        "identifier" : "602735BA2BCC0C1500A9EE22",
+        "name" : "DetoxXCUITestRunner"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,7 +1,5 @@
 // @ts-nocheck
 
-const jestExpect = require('expect').default; // eslint-disable-line
-
 describe('AndroidExpect', () => {
   let e;
 
@@ -122,34 +120,34 @@ describe('AndroidExpect', () => {
       const stubMatcher = e.element(e.by.label('test'));
       const expectedErrorMsg = 'must be an integer between 1 and 100';
 
-      await jestExpect(() => e.expect(stubMatcher).toBeVisible(0)).rejects.toThrow(expectedErrorMsg);
-      await jestExpect(() => e.expect(stubMatcher).not.toBeVisible(0)).rejects.toThrow(expectedErrorMsg);
-      await jestExpect(() => e.expect(stubMatcher).toBeVisible(101)).rejects.toThrow(expectedErrorMsg);
-      await jestExpect(() => e.expect(stubMatcher).not.toBeVisible(101)).rejects.toThrow(expectedErrorMsg);
+      await expect(() => e.expect(stubMatcher).toBeVisible(0)).rejects.toThrow(expectedErrorMsg);
+      await expect(() => e.expect(stubMatcher).not.toBeVisible(0)).rejects.toThrow(expectedErrorMsg);
+      await expect(() => e.expect(stubMatcher).toBeVisible(101)).rejects.toThrow(expectedErrorMsg);
+      await expect(() => e.expect(stubMatcher).not.toBeVisible(101)).rejects.toThrow(expectedErrorMsg);
 
-      jestExpect(() => e.waitFor(stubMatcher).toBeVisible(0)).toThrow(expectedErrorMsg);
-      jestExpect(() => e.waitFor(stubMatcher).toBeVisible(101)).toThrow(expectedErrorMsg);
+      expect(() => e.waitFor(stubMatcher).toBeVisible(0)).toThrow(expectedErrorMsg);
+      expect(() => e.waitFor(stubMatcher).toBeVisible(101)).toThrow(expectedErrorMsg);
     });
 
     it(`expect with wrong parameters should throw`, async () => {
-      jestExpect(() => e.expect('notAnElement')).toThrow();
-      jestExpect(() => e.expect(e.element('notAMatcher'))).toThrow();
+      expect(() => e.expect('notAnElement')).toThrow();
+      expect(() => e.expect(e.element('notAMatcher'))).toThrow();
     });
 
     it(`matchers with wrong parameters should throw`, async () => {
-      jestExpect(() => e.by.label(5)).toThrow();
-      jestExpect(() => e.by.accessibilityLabel(5)).toThrow();
-      jestExpect(() => e.by.id(5)).toThrow();
-      jestExpect(() => e.by.type(0)).toThrow();
-      jestExpect(() => e.by.traits(1)).toThrow();
-      jestExpect(() => e.by.value(0)).toThrow();
-      jestExpect(() => e.by.text(0)).toThrow();
+      expect(() => e.by.label(5)).toThrow();
+      expect(() => e.by.accessibilityLabel(5)).toThrow();
+      expect(() => e.by.id(5)).toThrow();
+      expect(() => e.by.type(0)).toThrow();
+      expect(() => e.by.traits(1)).toThrow();
+      expect(() => e.by.value(0)).toThrow();
+      expect(() => e.by.text(0)).toThrow();
 
       const expectedErrorMsg = 'Expected a matcher, got: \'notAMatcher\'';
-      jestExpect(() => e.element(e.by.id('test').withAncestor('notAMatcher'))).toThrow(expectedErrorMsg);
-      jestExpect(() => e.element(e.by.id('test').withDescendant('notAMatcher'))).toThrow(expectedErrorMsg);
-      jestExpect(() => e.element(e.by.id('test').and('notAMatcher'))).toThrow(expectedErrorMsg);
-      jestExpect(() => e.element(e.by.id('test').or('notAMatcher'))).toThrow(expectedErrorMsg);
+      expect(() => e.element(e.by.id('test').withAncestor('notAMatcher'))).toThrow(expectedErrorMsg);
+      expect(() => e.element(e.by.id('test').withDescendant('notAMatcher'))).toThrow(expectedErrorMsg);
+      expect(() => e.element(e.by.id('test').and('notAMatcher'))).toThrow(expectedErrorMsg);
+      expect(() => e.element(e.by.id('test').or('notAMatcher'))).toThrow(expectedErrorMsg);
     });
 
     it(`waitFor (element)`, async () => {
@@ -189,15 +187,15 @@ describe('AndroidExpect', () => {
     });
 
     it(`waitFor (element) with wrong parameters should throw`, async () => {
-      jestExpect(() => e.waitFor('notAnElement')).toThrow();
-      jestExpect(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement')).toThrow();
+      expect(() => e.waitFor('notAnElement')).toThrow();
+      expect(() => e.waitFor(e.element(e.by.id('id'))).toBeVisible().whileElement('notAnElement')).toThrow();
 
-      await jestExpect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber')).rejects.toThrow();
-      await jestExpect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1)).rejects.toThrow();
+      await expect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout('notANumber')).rejects.toThrow();
+      await expect(() => e.waitFor(e.element(e.by.id('id'))).toExist().withTimeout(-1)).rejects.toThrow();
     });
 
     it(`waitFor (element) with non-elements should throw`, async () => {
-      jestExpect(() => e.waitFor('notAnElement')).toThrow();
+      expect(() => e.waitFor('notAnElement')).toThrow();
     });
 
     it('toHaveSliderPosition', async () => {
@@ -221,13 +219,13 @@ describe('AndroidExpect', () => {
 
       it('should not tap and long-press given bad args', async () => {
         await [null, undefined, 0, -1, 'NaN'].forEach(item => {
-          jestExpect(() => e.element(e.by.id('UniqueId819')).multiTap(item)).rejects.toThrow();
+          expect(() => e.element(e.by.id('UniqueId819')).multiTap(item)).rejects.toThrow();
         });
 
-        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress('NaN')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress('NaN', 1000)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress({ x: 'NaN', y: 10 }, 1000)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 'NaN' }, 1000)).rejects.toThrow();
+        await expect(() => e.element(e.by.label('Tap Me')).longPress('NaN')).rejects.toThrow();
+        await expect(() => e.element(e.by.label('Tap Me')).longPress('NaN', 1000)).rejects.toThrow();
+        await expect(() => e.element(e.by.label('Tap Me')).longPress({ x: 'NaN', y: 10 }, 1000)).rejects.toThrow();
+        await expect(() => e.element(e.by.label('Tap Me')).longPress({ x: 10, y: 'NaN' }, 1000)).rejects.toThrow();
       });
 
       it('should press special keys', async () => {
@@ -242,8 +240,8 @@ describe('AndroidExpect', () => {
       });
 
       it('should not edit text given bad args', async () => {
-        await jestExpect(() => e.element(e.by.id('UniqueId937')).typeText(0)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('UniqueId005')).replaceText(3)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('UniqueId937')).typeText(0)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('UniqueId005')).replaceText(3)).rejects.toThrow();
       });
 
       it('should scroll', async () => {
@@ -260,11 +258,11 @@ describe('AndroidExpect', () => {
       });
 
       it('should not scroll given bad args', async () => {
-        await jestExpect(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView161')).scroll(100, 0)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView161')).scrollTo(0)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView161')).scroll('NaN', 'down')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView161')).scroll(100, 'noDirection')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView161')).scroll(100, 0)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView161')).scrollTo(0)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView161')).scrollTo('noDirection')).rejects.toThrow();
       });
 
       it('should setDatePickerDate', async () => {
@@ -274,8 +272,8 @@ describe('AndroidExpect', () => {
       });
 
       it('should not setDatePickerDate given bad args', async () => {
-        await jestExpect(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate(2019, 'ISO8601')).rejects.toThrow();
+        await expect(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate('2019-02-06T05:10:00-08:00')).rejects.toThrow();
+        await expect(() => e.element(e.by.type('android.widget.DatePicker')).setDatePickerDate(2019, 'ISO8601')).rejects.toThrow();
       });
 
       it('should swipe', async () => {
@@ -298,11 +296,11 @@ describe('AndroidExpect', () => {
       });
 
       it('should not swipe given bad args', async () => {
-        await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe(4, 'fast')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0)).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow')).rejects.toThrow();
-        await jestExpect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView799')).swipe(4, 'fast')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 0)).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView799')).swipe('noDirection', 'fast')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow')).rejects.toThrow();
+        await expect(() => e.element(e.by.id('ScrollView799')).swipe('down', 'NotFastNorSlow', 0.9)).rejects.toThrow();
       });
 
       it('should allow for index-based element discrepancy resolution', async () => {
@@ -310,7 +308,7 @@ describe('AndroidExpect', () => {
       });
 
       it('should fail to find index-based element given invalid args', async () => {
-        jestExpect(() => e.element(e.by.id('ScrollView799')).atIndex('NaN')).toThrow();
+        expect(() => e.element(e.by.id('ScrollView799')).atIndex('NaN')).toThrow();
       });
 
       it('should retrieve attributes', async () => {
@@ -404,27 +402,27 @@ describe('AndroidExpect', () => {
       });
 
       it(`with wrong matcher arguments - should throw`, async () => {
-        jestExpect(() => e.web(e.by.web.className('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.cssSelector('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.id('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.href('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.name('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.hrefContains('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.tag('webMatcher'))).toThrow();
-        jestExpect(() => e.web(e.by.web.xpath('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.className('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.cssSelector('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.id('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.href('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.name('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.hrefContains('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.tag('webMatcher'))).toThrow();
+        expect(() => e.web(e.by.web.xpath('webMatcher'))).toThrow();
       });
 
       it('with at-index should throw', async () => {
-        jestExpect(() => e.web(e.by.id('webview_id')).atIndex(1).element(e.by.web.id('id')).tap()).toThrow();
+        expect(() => e.web(e.by.id('webview_id')).atIndex(1).element(e.by.web.id('id')).tap()).toThrow();
       });
 
       it(`inner element with wrong matcher should throw`, async () => {
-        jestExpect(() => e.web.element(e.by.accessibilityLabel('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.id('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.label('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.text('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.traits('nativeMatcher'))).toThrow();
-        jestExpect(() => e.web.element(e.by.value('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.accessibilityLabel('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.id('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.label('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.text('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.traits('nativeMatcher'))).toThrow();
+        expect(() => e.web.element(e.by.value('nativeMatcher'))).toThrow();
       });
     });
 
@@ -663,6 +661,23 @@ describe('AndroidExpect', () => {
         const webview = e.web();
         await e.expect(webview.element(e.by.web.id('id'))).toExist();
       });
+    });
+  });
+
+  describe('System (unsupported)', () => {
+    const unsupportedErrorMessage =
+        /System interactions are not supported on Android, use UiDevice APIs directly instead/;
+
+    it('should throw for system element call', async () => {
+      await expect(async () => e.system.element('anything')).rejects.toThrow(unsupportedErrorMessage);
+    });
+
+    it('should throw for system type matcher', async () => {
+      await expect(async () => e.by.system.type('type')).rejects.toThrow(unsupportedErrorMessage);
+    });
+
+    it('should throw for system label matcher', async () => {
+      await expect(async () => e.by.system.label('label')).rejects.toThrow(unsupportedErrorMessage);
     });
   });
 });

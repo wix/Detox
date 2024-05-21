@@ -105,6 +105,7 @@ const sidebars = {
         'api/actions',
         'api/expect',
         'api/webviews',
+        'api/system',
         'api/logger',
       ]
     },

@@ -21,6 +21,7 @@ class AndroidExpect {
     this.waitFor = this.waitFor.bind(this);
     this.web = this.web.bind(this);
     this.web.element = (...args) => this.web().element(...args);
+    this.system = { element: (...args) => this.systemElement(...args) };
   }
 
   element(matcher) {
@@ -43,6 +44,10 @@ class AndroidExpect {
     }
 
     throw new DetoxRuntimeError(`web() argument is invalid, expected a native matcher, but got ${typeof element}`);
+  }
+
+  systemElement(_matcher) {
+    throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead');
   }
 
   expect(element) {

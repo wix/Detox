@@ -31,6 +31,7 @@ import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
 import DragNDropScreen  from './DragNDropScreen';
+import SystemDialogsScreen from "./SystemDialogsScreen";
 
 export {
   SanityScreen,
@@ -65,5 +66,6 @@ export {
   VisibilityExpectationScreen,
   VisibilityScreen,
   AttributesScreen,
-  DragNDropScreen
+  DragNDropScreen,
+  SystemDialogsScreen
 };

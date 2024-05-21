@@ -1,4 +1,4 @@
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 
 function firstEntry(obj) {
   return Object.entries(obj)[0];
@@ -61,6 +61,14 @@ function assertUndefined(arg) {
   throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
 }
 
+function assertTraceDescription(arg) {
+  if (arg !== undefined) {
+    return true;
+  }
+
+  throw new DetoxInternalError(`traceDescription expected to be defined, but got undefined`);
+}
+
 module.exports = {
   assertEnum,
   assertNormalized,
@@ -68,5 +76,6 @@ module.exports = {
   assertString,
   assertDuration,
   assertPoint,
-  assertUndefined
+  assertUndefined,
+  assertTraceDescription
 };
