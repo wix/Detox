@@ -4,7 +4,13 @@
 detox rebuild-framework-cache
 ```
 
-**MacOS only.** This command is a shortcut for calling sequentially:
+**MacOS only.**
+Rebuilds cached versions of the Detox framework and XCUITest-runner.
+This command uses the `--detox` and `--xcuitest` flags to selectively rebuild components. By default, both components are rebuilt.
 
-1. [`detox clean-framework-cache`](clean-framework-cache.md)
-1. [`detox build-framework-cache`](build-framework-cache.md)
+## Options
+
+- `--detox` - Rebuilds **only** the Detox injected framework. Default is false (rebuild both).
+- `--xcuitest` - Rebuilds **only** the XCUITest runner. Default is false (rebuild both).
+
+See also: [`detox build-framework-cache`](build-framework-cache.md)

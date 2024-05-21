@@ -7,6 +7,7 @@ describe('expectTwo API Coverage', () => {
 
     e = new IosExpect({
       invocationManager: new MockExecutor(),
+      xcuitestRunner: new MockExecutor(),
     });
   });
 
@@ -98,6 +99,17 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() =>e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(0));
       await expectToThrow(() =>e.e.waitFor(e.element(e.by.accessibilityLabel('test'))).toBeVisible(120));
     });
+
+    describe('System', () => {
+      it('should throw for invalid matcher parameters', async () => {
+        await expectToThrow(() => e.system.element(e.by.system.label(5)));
+        await expectToThrow(() => e.system.element(e.by.system.type(5)));
+      });
+
+      it('should throw for invalid matchers', async () => {
+        await expectToThrow(() => e.system.element(e.by.value('test')));
+      });
+    });
   });
 
   describe('Expect', () => {
@@ -111,10 +123,14 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.expect(e.web.element('notAMatcher')));
       await expectToThrow(() => e.expect(e.web.element(e.by.web.id('id'))).toHaveText(0));
     });
+
+    it('should not throw on system assertions', async () => {
+      await e.expect(e.system.element(e.by.system.label('Tap Me')).atIndex(2)).toExist();
+      await e.expect(e.system.element(e.by.system.type('button'))).not.toExist();
+    });
   });
 
   describe('Actions', () => {
-
     it(`setColumnToValue()`, async () => {
       await e.element(e.by.id('pickerView')).setColumnToValue(1, '6');
       await expectToThrow(() => e.element(e.by.id('pickerView')).setColumnToValue('notAColumn', 1));
@@ -232,6 +248,13 @@ describe('expectTwo API Coverage', () => {
       await expectToThrow(() => e.element(e.by.id('someId')).performAccessibilityAction());
     });
 
+    it('should properly call system interactions', async () => {
+      await e.system.element(e.by.system.label('Tap Me')).atIndex(2).tap();
+    });
+
+    it('should throw for invalid element-index for system interactions', async () => {
+      await expectToThrow(() => e.system.element(e.by.system.label('tapMe')).atIndex('NaN'));
+    });
   });
 
   describe('WaitFor', () => {

@@ -1,3 +1,5 @@
+const { DetoxRuntimeError } = require('../../errors');
+
 const native = require('./native');
 const web = require('./web');
 
@@ -20,4 +22,9 @@ module.exports = {
     href: (value) => new web.LinkTextMatcher(value),
     hrefContains: (value) => new web.PartialLinkTextMatcher(value),
   },
+
+  system: {
+    label: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+    type: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+  }
 };

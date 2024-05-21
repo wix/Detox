@@ -64,7 +64,7 @@ export default class example extends Component {
 
   renderMainMenu() {
     return (
-      <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
@@ -92,6 +92,7 @@ export default class example extends Component {
         {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
         {this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
+        {isIos && this.renderScreenButton('System Dialogs', Screens.SystemDialogsScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderButton('Crash', () => {

@@ -1,13 +1,11 @@
 // @ts-nocheck
-const assert = require('assert');
 const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
 const tempfile = require('tempfile');
 
-
-const { assertEnum, assertNormalized } = require('../utils/assertArgument');
+const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
@@ -15,7 +13,9 @@ const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
+const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
+
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
@@ -25,6 +25,11 @@ class Expect {
     this._invocationManager = invocationManager;
     this.element = element;
     this.modifiers = [];
+  }
+
+  get not() {
+    this.modifiers.push('not');
+    return this;
   }
 
   toBeVisible(percent) {
@@ -104,11 +109,6 @@ class Expect {
     return this.toHaveValue(`${Number(value)}`);
   }
 
-  get not() {
-    this.modifiers.push('not');
-    return this;
-  }
-
   createInvocation(expectation, ...params) {
     const definedParams = _.without(params, undefined);
     return {
@@ -122,7 +122,7 @@ class Expect {
   }
 
   expect(expectation, traceDescription, ...params) {
-    assert(traceDescription, `must provide trace description for expectation: \n ${JSON.stringify(expectation)}`);
+    assertTraceDescription(traceDescription);
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
@@ -374,6 +374,14 @@ class InternalElement extends Element {
 }
 
 class By {
+  get web() {
+    return webMatcher();
+  }
+
+  get system() {
+    return systemMatcher();
+  }
+
   id(id) {
     return new Matcher().id(id);
   }
@@ -401,13 +409,18 @@ class By {
   value(value) {
     return new Matcher().value(value);
   }
-
-  get web() {
-    return webMatcher();
-  }
 }
 
 class Matcher {
+  /** @private */
+  static *predicates(matcher) {
+    if (matcher.predicate.type === 'and') {
+      yield* matcher.predicate.predicates;
+    } else {
+      yield matcher.predicate;
+    }
+  }
+
   accessibilityLabel(label) {
     return this.label(label);
   }
@@ -477,15 +490,6 @@ class Matcher {
 
     return result;
   }
-
-  /** @private */
-  static *predicates(matcher) {
-    if (matcher.predicate.type === 'and') {
-      yield* matcher.predicate.predicates;
-    } else {
-      yield matcher.predicate;
-    }
-  }
 }
 
 class WaitFor {
@@ -494,6 +498,11 @@ class WaitFor {
     this.element = new InternalElement(invocationManager, emitter, element.matcher, element.index);
     this.expectation = new InternalExpect(invocationManager, this.element);
     this._emitter = emitter;
+  }
+
+  get not() {
+    this.expectation.not;
+    return this;
   }
 
   toBeVisible(percent) {
@@ -563,11 +572,6 @@ class WaitFor {
 
   toBeNotFocused() {
     this.expectation = this.expectation.toBeNotFocused();
-    return this;
-  }
-
-  get not() {
-    this.expectation.not;
     return this;
   }
 
@@ -735,6 +739,7 @@ function element(invocationManager, emitter, matcher) {
   if (!(matcher instanceof Matcher)) {
     throwMatcherError(matcher);
   }
+
   return new Element(invocationManager, emitter, matcher);
 }
 
@@ -742,6 +747,7 @@ function expect(invocationManager, element) {
   if (!(element instanceof Element)) {
     throwMatcherError(element);
   }
+
   return new Expect(invocationManager, element);
 }
 
@@ -753,8 +759,9 @@ function waitFor(invocationManager, emitter, element) {
 }
 
 class IosExpect {
-  constructor({ invocationManager, emitter }) {
+  constructor({ invocationManager, xcuitestRunner, emitter }) {
     this._invocationManager = invocationManager;
+    this._xcuitestRunner = xcuitestRunner;
     this._emitter = emitter;
     this.element = this.element.bind(this);
     this.expect = this.expect.bind(this);
@@ -762,6 +769,8 @@ class IosExpect {
     this.by = new By();
     this.web = this.web.bind(this);
     this.web.element = this.web().element;
+    this.system = this.system.bind(this);
+    this.system.element = this.system().element;
   }
 
   element(matcher) {
@@ -769,6 +778,10 @@ class IosExpect {
   }
 
   expect(element) {
+    if (isSystemElement(element)) {
+      return systemExpect(this._xcuitestRunner, element);
+    }
+
     if (isWebElement(element)) {
       return webExpect(this._invocationManager, element);
     }
@@ -795,6 +808,14 @@ class IosExpect {
 
         const webViewElement = matcher ? element(this._invocationManager, this._emitter, matcher) : undefined;
         return webElement(this._invocationManager, this._emitter, webViewElement, webMatcher);
+      }
+    };
+  }
+
+  system() {
+    return {
+      element: systemMatcher => {
+        return systemElement(this._xcuitestRunner, systemMatcher);
       }
     };
   }

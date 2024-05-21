@@ -18,17 +18,17 @@ detox <command> [options]
 
 ## Commands
 
-| Command                   | Description                                                                                                                                                  |
-| ------------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [init]                    | Create initial E2E tests folder for Detox.                                                                                                                   |
-| [build]                   | Run the command defined in 'build' property of the specified configuration.                                                                                  |
-| [test]                    | Initiating your test suite.                                                                                                                                  |
-| [recorder]                | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording.                                                                                   |
-| [build-framework-cache]   | **MacOS only.** Builds Detox.framework to \~/Library/Detox. The framework cache is specific for each combination of Xcode and Detox versions.                |
-| [clean-framework-cache]   | **MacOS only.** Deletes all compiled framework binaries from \~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'. |
-| [rebuild-framework-cache] | **MacOS only.** Rebuilds the Detox cache.                                                                                                                    |
-| [reset-lock-file]         | Resets Detox lock file completely - all devices are marked as available after that.                                                                          |
-| [run-server]              | Starts a standalone Detox server.                                                                                                                            |
+| Command                   | Description                                                                                                                                                                       |
+| ------------------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [init]                    | Create initial E2E tests folder for Detox.                                                                                                                                        |
+| [build]                   | Run the command defined in 'build' property of the specified configuration.                                                                                                       |
+| [test]                    | Initiating your test suite.                                                                                                                                                       |
+| [recorder]                | Starts a [Detox Recorder](https://github.com/wix/DetoxRecorder) recording.                                                                                                        |
+| [build-framework-cache]   | **MacOS only.** Builds or rebuilds a cached Detox framework and/or XCUITest-runner in ~/Library/Detox. The cache is specific for each combination of Xcode and Detox versions.    |
+| [clean-framework-cache]   | **MacOS only.** Deletes all compiled framework and XCUITest-runner binaries from \~/Library/Detox, they will be rebuilt on 'npm install' or when running 'build-framework-cache'. |
+| [rebuild-framework-cache] | **MacOS only.** Cleans and builds a cached Detox framework and XCUITest-runner in \~/Library/Detox. The cache is specific for each combination of Xcode and Detox versions.       |
+| [reset-lock-file]         | Resets Detox lock file completely - all devices are marked as available after that.                                                                                               |
+| [run-server]              | Starts a standalone Detox server.                                                                                                                                                 |
 
 ## Options
 

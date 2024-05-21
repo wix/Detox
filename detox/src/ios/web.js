@@ -1,8 +1,7 @@
-const assert = require('assert');
-
 const _ = require('lodash');
 
 const { DetoxRuntimeError } = require('../errors');
+const { assertTraceDescription } = require('../utils/assertArgument');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
@@ -48,7 +47,7 @@ class WebExpect {
   }
 
   expect(expectation, traceDescription, ...params) {
-    assert(traceDescription, `must provide trace description for expectation: \n ${JSON.stringify(expectation)}`);
+    assertTraceDescription(traceDescription);
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
@@ -170,7 +169,7 @@ class WebElement {
   }
 
   withAction(action, traceDescription, ...params) {
-    assert(traceDescription, `must provide trace description for action: \n ${JSON.stringify(action)}`);
+    assertTraceDescription(traceDescription);
 
     const invocation = {
       type: 'webAction',
