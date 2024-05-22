@@ -63,7 +63,7 @@ async function clean(framework, xcuitest) {
   const shouldCleanBoth = !framework && !xcuitest;
 
   if (framework || shouldCleanBoth) {
-    await removeTarget(getXCUITestRunnerDirPath, 'Detox framework');
+    await removeTarget(getFrameworkDirPath, 'Detox framework');
   }
 
   if (xcuitest || shouldCleanBoth) {
