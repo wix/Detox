@@ -15,18 +15,22 @@ cd ..
 echo "Packaging iOS sources and prebuilt frameworks"
 
 # Create temp build directory
-mkdir build_temp
+mkdir build_temp_framework
 
 # Package prebuilt framework
-scripts/build_framework.ios.sh "ios/Detox.xcodeproj" "build_temp"
-
-# Package prebuilt XCUITest runner
-scripts/build_xcuitest.ios.sh "ios/DetoxXCUITestRunner/DetoxXCUITestRunner.xcodeproj" "build_temp"
-
-cd build_temp
-tar --exclude-from=../ios/.tbzignore -cjf ../Detox-ios-xcuitest.tbz .
+scripts/build_framework.ios.sh "ios/Detox.xcodeproj" "build_temp_framework"
+cd build_temp_framework
 tar --exclude-from=../ios/.tbzignore -cjf ../Detox-ios-framework.tbz .
 cd ..
+rm -rf build_temp_framework
 
-# Cleanup
-rm -fr build_temp
+
+# Create temp build directory
+mkdir build_temp_xcuitest
+
+# Package prebuilt XCUITest runner
+scripts/build_xcuitest.ios.sh "ios/DetoxXCUITestRunner/DetoxXCUITestRunner.xcodeproj" "build_temp_xcuitest"
+cd build_temp_xcuitest
+tar --exclude-from=../ios/.tbzignore -cjf ../Detox-ios-xcuitest.tbz .
+cd ..
+rm -rf build_temp_xcuitest
