@@ -1112,6 +1112,23 @@ declare global {
              * web.element(by.web.tag('mark'))
              */
             tag(tagName: string): WebMatcher;
+
+            /**
+             * (iOS Only) Find an element on the DOM tree by its value
+             * @param value
+             * @example
+             * web.element(by.web.value('hello'))
+             */
+            value(value: string): WebMatcher;
+
+            /**
+             * (iOS Only) Find an element or secured element on the web-view by its accessibility label.
+             * @param text
+             * @example
+             * web.securedElement(by.web.label('Submit'))
+             * web.element(by.web.label('Submit'))
+             */
+            label(text: string): SecuredWebMatcher;
         }
 
         interface BySystemFacade {
