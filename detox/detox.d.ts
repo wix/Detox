@@ -1136,7 +1136,14 @@ declare global {
              * web.securedElement(by.web.label('Submit'))
              * web.element(by.web.label('Submit'))
              */
-            label(text: string): SecuredWebMatcher;
+            label(text: string): MaybeSecuredWebMatcher;
+
+            /**
+             * (iOS Only) Find a secured element on the web-view by its accessibility type.
+             * @example
+             * web.securedElement(by.web.type('textField'))
+             */
+            type(type: string): SecuredWebMatcher;
         }
 
         interface BySystemFacade {
@@ -1181,6 +1188,14 @@ declare global {
             __web__: any; // prevent type coercion
         }
 
+        interface SecuredWebMatcher {
+            __securedWeb__: any; // prevent type coercion
+        }
+
+        interface MaybeSecuredWebMatcher {
+            __maybeSecuredWeb__: any; // prevent type coercion
+        }
+
         interface SystemMatcher {
           __system__: any; // prevent type coercion
         }
@@ -1190,15 +1205,22 @@ declare global {
 
             (webElement: WebElement): WebExpect;
 
+            (securedWebElement: SecuredWebElement): SecuredWebExpect;
+
             (systemElement: SystemElement): SystemExpect;
         }
+
+        type MaybeSecuredWebElement<T> = T extends MaybeSecuredWebMatcher ?
+            IndexableMaybeSecuredWebElement & SecuredWebElementFacade :
+            T extends SecuredWebMatcher ? IndexableSecuredWebElement & SecuredWebElementFacade :
+                IndexableWebElement;
 
         interface WebViewElement {
             /**
              * Find a web element by a matcher.
              * @param webMatcher a web matcher for the web element.
              */
-            element(webMatcher: WebMatcher): IndexableWebElement;
+            element<T extends WebMatcher>(webMatcher: T): MaybeSecuredWebElement<T>;
 
             /**
              * Returns the index-th web-view in the UI hierarchy that is matched by the given matcher.
@@ -1219,6 +1241,13 @@ declare global {
              * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
              */
             (matcher?: NativeMatcher): WebViewElement;
+        }
+
+        interface SecuredWebElementFacade {
+            /**
+             * Gets the secured webview element as a testing element.
+             */
+            asSecured(): IndexableSecuredWebElement;
         }
 
         interface SystemFacade {
@@ -1617,6 +1646,20 @@ declare global {
             toExist(): R;
         }
 
+        interface SecuredWebExpect<R = Promise<void>> {
+            /**
+             * (iOS Only) Negate the expectation.
+             * @example await expect(web.securedElement(by.web.id('sessionTimeout'))).not.toExist();
+             */
+            not: this;
+
+            /**
+             * (iOS Only) Expect the view to exist in the webview DOM tree.
+             * @example await expect(web.securedElement(by.web.id('submitButton'))).toExist();
+             */
+            toExist(): R;
+        }
+
         interface SystemExpect<R = Promise<void>> {
           /**
            * Negate the expectation.
@@ -1633,12 +1676,60 @@ declare global {
           toExist(): R;
         }
 
+        interface SecuredWebElement extends SecuredWebElementActions {
+        }
+
+        interface SecuredWebElementActions {
+            /**
+             * Tap on a secured web element.
+             * @example await web.securedElement(by.web.type('textField')).tap();
+             */
+            tap(): Promise<void>;
+
+            /**
+             * (iOS Only) Type text into a web element.
+             * @param text to type
+             * @param isContentEditable whether the element is content-editable, default is false. Ignored on iOS.
+             * @example await web.securedElement(by.web.type('textField')).typeText('passcode');
+             */
+            typeText(text: string, isContentEditable: boolean): Promise<void>;
+
+            /**
+             * (iOS Only) Replaces the input content with the new text.
+             * @param text to replace with the old content.
+             * @example await web.securedElement(by.web.type('textField')).replaceText('passcode');
+             */
+            replaceText(text: string): Promise<void>;
+
+            /**
+             * (iOS Only) Clears the input content.
+             * @note On Android, not working for content-editable elements.
+             * @example await web.securedElement(by.web.type('textField')).clearText();
+             */
+            clearText(): Promise<void>;
+        }
+
         interface IndexableWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index.
              * @example await web.element(by.web.tag('p')).atIndex(2).tap();
              */
             atIndex(index: number): WebElement;
+        }
+
+        interface IndexableSecuredWebElement extends SecuredWebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index.
+             * @example await web.securedElement(by.web.tag('p')).atIndex(2).tap();
+             */
+            atIndex(index: number): SecuredWebElement & SecuredWebElementFacade;
+        }
+
+        interface IndexableMaybeSecuredWebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             */
+            atIndex(index: number): WebElement & SecuredWebElementFacade;
         }
 
         interface WebElement extends WebElementActions {
