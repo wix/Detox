@@ -22,6 +22,8 @@
 		602735E92BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735E82BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift */; };
 		602735EB2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735EA2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift */; };
 		602735EE2BD5357D00A9EE22 /* DTXAssert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735ED2BD5357D00A9EE22 /* DTXAssert.swift */; };
+		609454422C07253100E858CA /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609454412C07253100E858CA /* Environment.swift */; };
+		609454452C07869900E858CA /* XCUIElement+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609454442C07869900E858CA /* XCUIElement+Extensions.swift */; };
 		60AEC8592C15F24D00570BCD /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AEC8582C15F24D00570BCD /* LogUtils.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +56,8 @@
 		602735E82BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+defaultTimeout.swift"; sourceTree = "<group>"; };
 		602735EA2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InvocationParams+matcherDescription.swift"; sourceTree = "<group>"; };
 		602735ED2BD5357D00A9EE22 /* DTXAssert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTXAssert.swift; sourceTree = "<group>"; };
+		609454412C07253100E858CA /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
+		609454442C07869900E858CA /* XCUIElement+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Extensions.swift"; sourceTree = "<group>"; };
 		60AEC8582C15F24D00570BCD /* LogUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -160,6 +164,8 @@
 			children = (
 				60AEC8582C15F24D00570BCD /* LogUtils.swift */,
 				602735ED2BD5357D00A9EE22 /* DTXAssert.swift */,
+				609454412C07253100E858CA /* Environment.swift */,
+				609454442C07869900E858CA /* XCUIElement+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -274,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				602735D22BCC22E400A9EE22 /* XCUIApplication+Extensions.swift in Sources */,
+				609454422C07253100E858CA /* Environment.swift in Sources */,
 				602735EB2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift in Sources */,
 				602735E32BD049FB00A9EE22 /* ActionHandler.swift in Sources */,
 				602735D52BCC24EE00A9EE22 /* ElementType+Extensions.swift in Sources */,
@@ -285,6 +292,7 @@
 				602735CA2BCC1C4500A9EE22 /* InvocationParams.swift in Sources */,
 				602735EE2BD5357D00A9EE22 /* DTXAssert.swift in Sources */,
 				60AEC8592C15F24D00570BCD /* LogUtils.swift in Sources */,
+				609454452C07869900E858CA /* XCUIElement+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
