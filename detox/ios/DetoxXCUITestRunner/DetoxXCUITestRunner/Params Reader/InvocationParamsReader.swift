@@ -8,9 +8,7 @@ import Foundation
 class InvocationParamsReader {
   static func readParams() throws -> InvocationParams {
     do {
-      let environment = ProcessInfo.processInfo.environment
-
-      guard let base64Params = environment["PARAMS"] else {
+      guard let base64Params = Environment.params else {
         throw Error.missingRunnerParams
       }
 

@@ -783,7 +783,7 @@ class IosExpect {
     }
 
     if (isWebElement(element)) {
-      return webExpect(this._invocationManager, element);
+      return webExpect(this._invocationManager, this._xcuitestRunner, element);
     }
 
     return expect(this._invocationManager, element);
@@ -807,7 +807,7 @@ class IosExpect {
         }
 
         const webViewElement = matcher ? element(this._invocationManager, this._emitter, matcher) : undefined;
-        return webElement(this._invocationManager, this._emitter, webViewElement, webMatcher);
+        return webElement(this._invocationManager, this._xcuitestRunner, this._emitter, webViewElement, webMatcher);
       }
     };
   }
