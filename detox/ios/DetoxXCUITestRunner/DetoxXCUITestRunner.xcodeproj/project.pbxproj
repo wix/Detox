@@ -22,6 +22,7 @@
 		602735E92BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735E82BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift */; };
 		602735EB2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735EA2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift */; };
 		602735EE2BD5357D00A9EE22 /* DTXAssert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602735ED2BD5357D00A9EE22 /* DTXAssert.swift */; };
+		60AEC8592C15F24D00570BCD /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AEC8582C15F24D00570BCD /* LogUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		602735E82BD4F24600A9EE22 /* TimeInterval+defaultTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+defaultTimeout.swift"; sourceTree = "<group>"; };
 		602735EA2BD5052600A9EE22 /* InvocationParams+matcherDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InvocationParams+matcherDescription.swift"; sourceTree = "<group>"; };
 		602735ED2BD5357D00A9EE22 /* DTXAssert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTXAssert.swift; sourceTree = "<group>"; };
+		60AEC8582C15F24D00570BCD /* LogUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		602735EC2BD534DD00A9EE22 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				60AEC8582C15F24D00570BCD /* LogUtils.swift */,
 				602735ED2BD5357D00A9EE22 /* DTXAssert.swift */,
 			);
 			path = Utils;
@@ -281,6 +284,7 @@
 				602735CD2BCC1F9C00A9EE22 /* InvocationParamsReader.swift in Sources */,
 				602735CA2BCC1C4500A9EE22 /* InvocationParams.swift in Sources */,
 				602735EE2BD5357D00A9EE22 /* DTXAssert.swift in Sources */,
+				60AEC8592C15F24D00570BCD /* LogUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

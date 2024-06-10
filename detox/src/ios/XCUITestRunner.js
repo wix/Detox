@@ -32,6 +32,10 @@ class XCUITestRunner {
             'test-without-building',
         ];
 
+        log.info(`Running XUICTest runner. See target logs using:\n` +
+          `\t/usr/bin/xcrun simctl spawn ${this.runtimeDevice.id} log stream --level debug --style compact ` +
+          `--predicate 'process == "DetoxXCUITestRunner-Runner" && subsystem == "com.wix.DetoxXCUITestRunner.xctrunner"'`);
+
         try {
             return await exec(`TEST_RUNNER_PARAMS="${base64InvocationParams}" xcodebuild ${flags.join(' ')}`);
         } catch (e) {
