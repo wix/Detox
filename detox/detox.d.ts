@@ -1181,11 +1181,11 @@ declare global {
         }
 
         interface SecuredWebMatcher {
-            __securedWeb__: any; // prevent type coercion
+            __web__: any; // prevent type coercion
         }
 
         interface MaybeSecuredWebMatcher {
-            __maybeSecuredWeb__: any; // prevent type coercion
+            __web__: any; // prevent type coercion
         }
 
         interface SystemMatcher {
