@@ -17,14 +17,19 @@ final class DetoxXCUITestRunner: XCTestCase {
 
   func testRunner() throws {
     let params = try InvocationParamsReader.readParams()
-    let predicateHandler = PredicateHandler(springboardApp: XCUIApplication.springboard)
+
+    let predicateHandler = PredicateHandler(
+      springboardApp: XCUIApplication.springboard,
+      appUnderTest: try XCUIApplication.appUnderTest()
+    )
+
     let element = predicateHandler.findElement(using: params)
 
     switch params.type {
-      case .action:
+      case .systemAction, .webAction:
         try actionHandler.handle(from: params, on: element)
 
-      case .expectation:
+      case .systemExpectation, .webExpectation:
         try expectationHandler.handle(from: params, on: element)
     }
   }
