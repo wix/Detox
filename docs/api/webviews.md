@@ -63,6 +63,8 @@ Web view matchers are used to find elements within a web view:
 - [`by.web.href()`]
 - [`by.web.hrefContains()`]
 - [`by.web.tag()`]
+- [`by.web.value()`] (iOS only)
+- [`by.web.label()`] (iOS only)
 - [`atIndex()`]
 
 ### `by.web.id(id)`
@@ -139,6 +141,34 @@ Match elements with the specified tag.
 
 ```js
 web.element(by.web.tag('h1'));
+```
+
+### `by.web.value(value)`
+
+:::note
+
+This matcher is available for **iOS only** at the moment.
+
+:::
+
+Match elements with the specified value.
+
+```js
+web.element(by.web.value('value'));
+```
+
+### `by.web.label(label)`
+
+:::note
+
+This matcher is available for **iOS only** at the moment.
+
+:::
+
+Match elements with the specified label.
+
+```js
+web.element(by.web.label('label'));
 ```
 
 ### `atIndex(index)`
@@ -396,6 +426,10 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`by.web.hrefContains()`]: webviews.md#bywebhrefcontainshref
 
 [`by.web.tag()`]: webviews.md#bywebtagtag
+
+[`by.web.value()`]: webviews.md#bywebvaluevalue
+
+[`by.web.label()`]: webviews.md#byweblabellabel
 
 [`atIndex()`]: webviews.md#atindexindex
 
