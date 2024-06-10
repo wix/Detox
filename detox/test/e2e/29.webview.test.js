@@ -43,6 +43,10 @@ describe('WebView', () => {
             await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
           });
         });
+
+        it('should find element by label', async () => {
+          await expect(web.element(by.web.label('first-webview'))).toExist();
+        });
       });
 
       it('should find element by id', async () => {
@@ -388,22 +392,58 @@ describe(':ios: WebView CORS (inner frame)', () => {
     webview = web(by.id('webView'));
   };
 
-  it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
-    await launchAndNavigateToInnerFrame(true);
+  describe('detoxDisableWebKitSecurity', () => {
+    it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
+      await launchAndNavigateToInnerFrame(true);
 
-    await expect(webview.element(by.web.tag('h1'))).toExist();
-    await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+      await expect(webview.element(by.web.tag('h1'))).toExist();
+      await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
+      await launchAndNavigateToInnerFrame(false);
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
+      await launchAndNavigateToInnerFrame();
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
   });
 
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
-    await launchAndNavigateToInnerFrame(false);
+  describe('webview.securedElement', () => {
+    beforeEach(async () => {
+      await launchAndNavigateToInnerFrame();
+    });
 
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
-  });
+    it('should find elements in cross-origin frame with `webview.asSecured`', async () => {
+      await expect(webview.element(by.web.label('Hello World!')).asSecured()).toExist();
+      await expect(webview.element(by.web.type('textField')).asSecured()).toExist(); // textView
+    });
 
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
-    await launchAndNavigateToInnerFrame();
+    it('should not find non-existing element in cross-origin frame with `webview.asSecured`', async () => {
+      await expect(webview.element(by.web.label('Hello World!')).asSecured().atIndex(1)).not.toExist();
+      await expect(webview.element(by.web.label('Non-existing element')).atIndex(3).asSecured()).not.toExist();
+    });
 
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    it('should type text in cross-origin frame with `webview.asSecured`', async () => {
+      await webview.element(by.web.type('textField')).asSecured().typeText('Test');
+      await expectElementSnapshotToMatch(webview, 'type-text-in-cross-origin-frame');
+
+      await webview.element(by.web.type('textField')).asSecured().replaceText('Test 2');
+      await expectElementSnapshotToMatch(webview, 'replace-text-in-cross-origin-frame');
+
+      await webview.element(by.web.type('textField')).asSecured().clearText();
+      await expectElementSnapshotToMatch(webview, 'clear-text-in-cross-origin-frame');
+    });
+
+    it('should tap on cross-origin frame element with `webview.asSecured`', async () => {
+      await webview.element(by.web.type('textField')).asSecured().typeText('Test');
+      await webview.element(by.web.label('Submit')).asSecured().tap();
+
+      await expectElementSnapshotToMatch(webview, 'tap-on-cross-origin-frame-element');
+    });
   });
 });
