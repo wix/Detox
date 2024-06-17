@@ -1133,15 +1133,16 @@ declare global {
              * (iOS Only) Find an element or secured element on the web-view by its accessibility label.
              * @param text
              * @example
-             * web.securedElement(by.web.label('Submit'))
+             * web.element(by.web.label('Submit')).asSecured()
              * web.element(by.web.label('Submit'))
              */
             label(text: string): MaybeSecuredWebMatcher;
 
             /**
              * (iOS Only) Find a secured element on the web-view by its accessibility type.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
              * @example
-             * web.securedElement(by.web.type('textField'))
+             * web(by.web.type('textField')).asSecured()
              */
             type(type: string): SecuredWebMatcher;
         }
@@ -1245,7 +1246,8 @@ declare global {
 
         interface SecuredWebElementFacade {
             /**
-             * Gets the secured webview element as a testing element.
+             * (iOS Only) Gets the secured webview element as a testing element.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
              */
             asSecured(): IndexableSecuredWebElement;
         }
@@ -1649,13 +1651,15 @@ declare global {
         interface SecuredWebExpect<R = Promise<void>> {
             /**
              * (iOS Only) Negate the expectation.
-             * @example await expect(web.securedElement(by.web.id('sessionTimeout'))).not.toExist();
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await expect(web.element(by.web.id('sessionTimeout')).asSecured()).not.toExist();
              */
             not: this;
 
             /**
              * (iOS Only) Expect the view to exist in the webview DOM tree.
-             * @example await expect(web.securedElement(by.web.id('submitButton'))).toExist();
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await expect(web.element(by.web.id('submitButton')).asSecured()).toExist();
              */
             toExist(): R;
         }
@@ -1681,8 +1685,9 @@ declare global {
 
         interface SecuredWebElementActions {
             /**
-             * Tap on a secured web element.
-             * @example await web.securedElement(by.web.type('textField')).tap();
+             * (iOS Only) Tap on a secured web element.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().tap();
              */
             tap(): Promise<void>;
 
@@ -1690,21 +1695,24 @@ declare global {
              * (iOS Only) Type text into a web element.
              * @param text to type
              * @param isContentEditable whether the element is content-editable, default is false. Ignored on iOS.
-             * @example await web.securedElement(by.web.type('textField')).typeText('passcode');
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().typeText('passcode');
              */
             typeText(text: string, isContentEditable: boolean): Promise<void>;
 
             /**
              * (iOS Only) Replaces the input content with the new text.
              * @param text to replace with the old content.
-             * @example await web.securedElement(by.web.type('textField')).replaceText('passcode');
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().replaceText('passcode');
              */
             replaceText(text: string): Promise<void>;
 
             /**
              * (iOS Only) Clears the input content.
              * @note On Android, not working for content-editable elements.
-             * @example await web.securedElement(by.web.type('textField')).clearText();
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().clearText();
              */
             clearText(): Promise<void>;
         }
@@ -1712,15 +1720,16 @@ declare global {
         interface IndexableWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index.
-             * @example await web.element(by.web.tag('p')).atIndex(2).tap();
+             * @example await web.element(by.web.tag('p')).asSecured().atIndex(2).tap();
              */
             atIndex(index: number): WebElement;
         }
 
         interface IndexableSecuredWebElement extends SecuredWebElement {
             /**
-             * Choose from multiple elements matching the same matcher using index.
-             * @example await web.securedElement(by.web.tag('p')).atIndex(2).tap();
+             * (iOS Only) Choose from multiple elements matching the same matcher using index.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.tag('p')).asSecured().atIndex(2).tap();
              */
             atIndex(index: number): SecuredWebElement & SecuredWebElementFacade;
         }
