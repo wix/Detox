@@ -43,6 +43,10 @@ describe('WebView', () => {
             await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
           });
         });
+
+        it('should find element by label', async () => {
+          await expect(web.element(by.web.label('first-webview'))).toExist();
+        });
       });
 
       it('should find element by id', async () => {
@@ -388,22 +392,22 @@ describe(':ios: WebView CORS (inner frame)', () => {
     webview = web(by.id('webView'));
   };
 
-  it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
-    await launchAndNavigateToInnerFrame(true);
+    it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
+      await launchAndNavigateToInnerFrame(true);
 
-    await expect(webview.element(by.web.tag('h1'))).toExist();
-    await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+      await expect(webview.element(by.web.tag('h1'))).toExist();
+      await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
+      await launchAndNavigateToInnerFrame(false);
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
+      await launchAndNavigateToInnerFrame();
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
   });
-
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
-    await launchAndNavigateToInnerFrame(false);
-
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
-  });
-
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
-    await launchAndNavigateToInnerFrame();
-
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
-  });
-});
