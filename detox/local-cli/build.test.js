@@ -62,6 +62,26 @@ describe('build', () => {
     expect(detox.log.info).toHaveBeenCalledWith('Skipping build for "default" app...');
   });
 
+  it('does not skip building the second app if its build command is the same', async () => {
+    detox.config.apps.app1 = { build: 'same command', binaryPath: __filename };
+    detox.config.apps.app2 = { build: 'same command', binaryPath: __filename };
+
+    await callCli('./build', 'build');
+    expect(execSync).toHaveBeenCalledTimes(2);
+    expect(detox.log.info).toHaveBeenCalledWith('Building "app1" app...');
+    expect(detox.log.info).toHaveBeenCalledWith('Building "app2" app...');
+  });
+
+  it('skips building the second app if its build command is the same and --dedupe option is on', async () => {
+    detox.config.apps.app1 = { build: 'same command', binaryPath: __filename };
+    detox.config.apps.app2 = { build: 'same command', binaryPath: __filename };
+
+    await callCli('./build', 'build --dedupe');
+    expect(execSync).toHaveBeenCalledTimes(1);
+    expect(detox.log.info).toHaveBeenCalledWith('Building "app1" app...');
+    expect(detox.log.info).toHaveBeenCalledWith('Skipping duplicate build for "app2" app...');
+  });
+
   it('fails with an error if a build script has not been found', async () => {
     detox.config.apps.default = {};
     await expect(callCli('./build', 'build')).rejects.toThrowError(/Failed to build/);

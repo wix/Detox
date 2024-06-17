@@ -27,6 +27,12 @@ module.exports.builder = {
     describe:
       'Execute the build command only if the app binary is missing.',
   },
+  dedupe: {
+    group: 'Configuration:',
+    boolean: true,
+    describe:
+      'Do not execute duplicate build commands in multi-app configurations.',
+  },
   s: {
     alias: 'silent',
     group: 'Configuration:',
@@ -39,6 +45,7 @@ module.exports.builder = {
 module.exports.handler = async function build(argv) {
   const { apps: appsConfig, errorComposer } = await detox.resolveConfig({ argv });
   const apps = _.entries(appsConfig);
+  const executedBuildScripts = new Set();
 
   for (const [appName, app] of apps) {
     const buildScript = app.build;
@@ -49,6 +56,13 @@ module.exports.handler = async function build(argv) {
     }
 
     if (buildScript) {
+      if (executedBuildScripts.has(buildScript) && argv.dedupe) {
+        detox.log.info(`Skipping duplicate build for "${appName}" app...`);
+        continue;
+      }
+
+      executedBuildScripts.add(buildScript);
+
       try {
         if (apps.length > 1) {
           detox.log.info(`Building "${appName}" app...`);
