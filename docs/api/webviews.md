@@ -229,7 +229,7 @@ Tap the element.
 await web.element(by.web.id('identifier')).tap();
 ```
 
-Supports [`asSecured()`] on **iOS only**: 
+Supports [`asSecured()`] on **iOS only**:
 
 ```js
 await web.element(by.web.label('Submit')).asSecured().tap();
