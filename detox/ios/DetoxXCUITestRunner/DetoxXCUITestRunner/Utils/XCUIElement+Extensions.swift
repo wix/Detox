@@ -13,7 +13,7 @@ extension XCUIElement {
   }
 
   public func typeTextOnEnd(_ text: String) {
-    let end = coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 0))
+    let end = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
     end.tap()
 
     typeText(text)
