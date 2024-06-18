@@ -33,8 +33,9 @@ class Mockserver {
             </header>
             <main>
                 <form>
-                    <label for="input-box" id="input-label">Your input:</label>
-                    <input type="text" id="input-box" aria-labelledby="input-label" aria-required="true">
+                    <label for="input-box" id="input-label">Your input:</label><br>
+                    <input type="text" id="input-box" aria-labelledby="input-label" aria-required="true"><br>
+                    <input type="submit" value="Send">
                 </form>
             </main>
         </body>
