@@ -13,20 +13,40 @@ extension XCUIElement {
   }
 
   public func typeTextOnEnd(_ text: String) {
-    let end = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-    end.tap()
+    let content = value as? String ?? ""
+    let shouldSkipFocus = hasKeyboardFocus && content.count == 0
+
+    if (!shouldSkipFocus) {
+      let end = coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5))
+      end.tap()
+    }
 
     typeText(text)
   }
 
   public func clearText() {
-    tap()
+    guard var content = value as? String else {
+      XCTFail("The text field does not contain a string value.")
+      return
+    }
 
-    // Select all text by tapping and holding, then dragging to select all
-    let start = coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
-    let end = coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 0))
-    start.press(forDuration: 1.5, thenDragTo: end)
+    while content.count > 0 {
+      let deleteString = String(repeating: "\u{8}", count: content.count)
+      typeText(deleteString)
 
-    typeText(XCUIKeyboardKey.delete.rawValue)
+      let newContent = value as? String ?? ""
+
+      if (newContent == content) {
+        break
+      } else {
+        content = newContent
+      }
+    }
+  }
+}
+
+extension XCUIElement {
+  var hasKeyboardFocus: Bool {
+    return (self.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
   }
 }
