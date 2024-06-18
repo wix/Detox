@@ -83,12 +83,6 @@ class WebElement {
     return this;
   }
 
-  assertUnsecured() {
-    if (this.isSecured) {
-      throw new DetoxRuntimeError('This action is not supported on secured elements');
-    }
-  }
-
   atIndex(index) {
     if (typeof index !== 'number' || index < 0) throw new DetoxRuntimeError(`index should be an integer, got ${index} (${typeof index})`);
     this.index = index;
@@ -116,15 +110,11 @@ class WebElement {
   }
 
   selectAllText() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.selectAllText();
     return this.withAction('selectAllText', traceDescription);
   }
 
   async getText() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.getText();
     let result = await this.withAction('getText', traceDescription);
     return this.extractResult(result, { type: 'text' });
@@ -147,29 +137,21 @@ class WebElement {
   }
 
   scrollToView() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.scrollToView();
     return this.withAction('scrollToView', traceDescription);
   }
 
   focus() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.focus();
     return this.withAction('focus', traceDescription);
   }
 
   moveCursorToEnd() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.moveCursorToEnd();
     return this.withAction('moveCursorToEnd', traceDescription);
   }
 
   async runScript(script, args) {
-    this.assertUnsecured();
-
     if (args !== undefined && args.length !== 0) {
       return await this.runScriptWithArgs(script, args);
     }
@@ -184,8 +166,6 @@ class WebElement {
   }
 
   async runScriptWithArgs(script, args) {
-    this.assertUnsecured();
-
     if (typeof script === 'function') {
       script = script.toString();
     }
@@ -196,16 +176,12 @@ class WebElement {
   }
 
   async getCurrentUrl() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.getCurrentUrl();
     let result = await this.withAction('getCurrentUrl', traceDescription);
     return this.extractResult(result, { type: 'url' });
   }
 
   async getTitle() {
-    this.assertUnsecured();
-
     const traceDescription = webViewActionDescription.getTitle();
     let result = await this.withAction('getTitle', traceDescription);
     return this.extractResult(result, { type: 'title' });
