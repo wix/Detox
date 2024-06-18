@@ -421,13 +421,16 @@ describe(':ios: WebView CORS (inner frame)', () => {
       await launchAndNavigateToInnerFrame();
     });
 
-    it('should find elements in cross-origin frame with `asSecured()`', async () => {
-      await expect(web.element(by.web.label('Hello World!')).asSecured()).toExist();
+    it('should find elements in cross-origin frame by type with `asSecured()`', async () => {
       await expect(web.element(by.web.type('textField')).atIndex(1).asSecured()).toExist();
     });
 
+    it('should find elements in cross-origin frame by label with `asSecured()`', async () => {
+      await expect(web.element(by.web.label('Hello World!')).asSecured()).toExist();
+    });
+
     it('should not find non-existing element in cross-origin frame with `asSecured()`', async () => {
-      await expect(web.element(by.web.label('Hello World!')).asSecured().atIndex(1)).not.toExist();
+      await expect(web.element(by.web.label('Hello Worldd!')).asSecured()).not.toExist();
       await expect(web.element(by.web.label('Non-existing element')).atIndex(3).asSecured()).not.toExist();
     });
 

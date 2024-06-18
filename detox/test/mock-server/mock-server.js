@@ -29,7 +29,7 @@ class Mockserver {
         </head>
         <body>
             <header>
-                <h1 aria-label="hello-world-heading">Hello World!</h1>
+                <h1>Hello World!</h1>
             </header>
             <main>
                 <form>
