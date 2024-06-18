@@ -19,7 +19,27 @@ class Mockserver {
     });
 
     router.get('/hello-world.html', (_, res) => {
-      res.send('<html><body><h1>Hello World!</h1><input type="text" aria-label="input-box"></body></html>');
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Hello World</title>
+        </head>
+        <body>
+            <header>
+                <h1 aria-label="hello-world-heading">Hello World!</h1>
+            </header>
+            <main>
+                <form>
+                    <label for="input-box" id="input-label">Your input:</label>
+                    <input type="text" id="input-box" aria-labelledby="input-label" aria-required="true">
+                </form>
+            </main>
+        </body>
+        </html>
+    `);
     });
 
     router.route('/delay/:delay')
