@@ -16,7 +16,6 @@ class WebExpect {
   }
 
   toHaveText(text) {
-    if (this.element.isSecured) throw new DetoxRuntimeError('toHaveText cannot be used with secured elements');
     if (typeof text !== 'string') throw new DetoxRuntimeError('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
 
     const traceDescription = expectDescription.toHaveText(text);
