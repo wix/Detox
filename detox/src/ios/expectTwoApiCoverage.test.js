@@ -271,6 +271,10 @@ describe('expectTwo API Coverage', () => {
     it('should throw for invalid element-index for system interactions', async () => {
       await expectToThrow(() => e.system.element(e.by.system.label('tapMe')).atIndex('NaN'));
     });
+
+    it('should properly call secured web interactions', async () => {
+      await e.web.element(e.by.web.label('Tap Me')).atIndex(0).asSecured().tap();
+    });
   });
 
   describe('WaitFor', () => {
