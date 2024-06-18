@@ -110,6 +110,17 @@ describe('expectTwo API Coverage', () => {
         await expectToThrow(() => e.system.element(e.by.value('test')));
       });
     });
+
+    describe('Secured Web', () => {
+      it('should throw for invalid matcher parameters', async () => {
+        await expectToThrow(() => e.web.element(e.by.web.label(5)).asSecured());
+        await expectToThrow(() => e.web.element(e.by.web.type(5)).asSecured());
+      });
+
+      it('should throw for invalid matchers', async () => {
+        await expectToThrow(() => e.web.element(e.by.web.value('test')).asSecured());
+      });
+    });
   });
 
   describe('Expect', () => {
@@ -127,6 +138,11 @@ describe('expectTwo API Coverage', () => {
     it('should not throw on system assertions', async () => {
       await e.expect(e.system.element(e.by.system.label('Tap Me')).atIndex(2)).toExist();
       await e.expect(e.system.element(e.by.system.type('button'))).not.toExist();
+    });
+
+    it('should not throw on secured web assertions', async () => {
+      await e.expect(e.web.element(e.by.web.label('Tap Me')).atIndex(0).asSecured()).toExist();
+      await e.expect(e.web.element(e.by.web.type('button')).asSecured()).not.toExist();
     });
   });
 
