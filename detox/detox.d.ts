@@ -1729,7 +1729,7 @@ declare global {
             /**
              * (iOS Only) Choose from multiple elements matching the same matcher using index.
              * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
-             * @example await web.element(by.web.tag('p')).asSecured().atIndex(2).tap();
+             * @example await web.element(by.web.type('textField')).asSecured().atIndex(2).tap();
              */
             atIndex(index: number): SecuredWebElement & SecuredWebElementFacade;
         }
