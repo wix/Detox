@@ -362,6 +362,8 @@ describe('WebView', () => {
 describe(':ios: WebView CORS (inner frame)', () => {
   /** @type {Detox.WebViewElement} */
   let webview;
+  let webviewElement;
+
   const mockServer = new MockServer();
 
   beforeAll(async () => {
@@ -390,6 +392,7 @@ describe(':ios: WebView CORS (inner frame)', () => {
     await element(by.id('toggle3rdWebviewButton')).tap();
 
     webview = web(by.id('webView'));
+    webviewElement = element(by.id('webView'));
   };
 
   describe('detoxDisableWebKitSecurity', () => {
@@ -430,20 +433,20 @@ describe(':ios: WebView CORS (inner frame)', () => {
 
     it('should type text in cross-origin frame with `asSecured()`', async () => {
       await webview.element(by.web.type('textField')).asSecured().typeText('Test');
-      await expectElementSnapshotToMatch(webview, 'type-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'type-text-in-cross-origin-frame');
 
       await webview.element(by.web.type('textField')).asSecured().replaceText('Test 2');
-      await expectElementSnapshotToMatch(webview, 'replace-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'replace-text-in-cross-origin-frame');
 
       await webview.element(by.web.type('textField')).asSecured().clearText();
-      await expectElementSnapshotToMatch(webview, 'clear-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'clear-text-in-cross-origin-frame');
     });
 
     it('should tap on cross-origin frame element with `asSecured()`', async () => {
       await webview.element(by.web.type('textField')).asSecured().typeText('Test');
       await webview.element(by.web.label('Submit')).asSecured().tap();
 
-      await expectElementSnapshotToMatch(webview, 'tap-on-cross-origin-frame-element');
+      await expectElementSnapshotToMatch(webviewElement, 'tap-on-cross-origin-frame-element');
     });
   });
 });
