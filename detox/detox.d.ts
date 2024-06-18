@@ -1734,7 +1734,7 @@ declare global {
             atIndex(index: number): SecuredWebElement & SecuredWebElementFacade;
         }
 
-        interface IndexableMaybeSecuredWebElement {
+        interface IndexableMaybeSecuredWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index
              */
