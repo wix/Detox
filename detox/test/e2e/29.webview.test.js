@@ -418,17 +418,17 @@ describe(':ios: WebView CORS (inner frame)', () => {
       await launchAndNavigateToInnerFrame();
     });
 
-    it('should find elements in cross-origin frame with `webview.asSecured`', async () => {
+    it('should find elements in cross-origin frame with `asSecured()`', async () => {
       await expect(webview.element(by.web.label('Hello World!')).asSecured()).toExist();
-      await expect(webview.element(by.web.type('textField')).asSecured()).toExist(); // textView
+      await expect(webview.element(by.web.type('textField')).asSecured()).toExist();
     });
 
-    it('should not find non-existing element in cross-origin frame with `webview.asSecured`', async () => {
+    it('should not find non-existing element in cross-origin frame with `asSecured()`', async () => {
       await expect(webview.element(by.web.label('Hello World!')).asSecured().atIndex(1)).not.toExist();
       await expect(webview.element(by.web.label('Non-existing element')).atIndex(3).asSecured()).not.toExist();
     });
 
-    it('should type text in cross-origin frame with `webview.asSecured`', async () => {
+    it('should type text in cross-origin frame with `asSecured()`', async () => {
       await webview.element(by.web.type('textField')).asSecured().typeText('Test');
       await expectElementSnapshotToMatch(webview, 'type-text-in-cross-origin-frame');
 
@@ -439,7 +439,7 @@ describe(':ios: WebView CORS (inner frame)', () => {
       await expectElementSnapshotToMatch(webview, 'clear-text-in-cross-origin-frame');
     });
 
-    it('should tap on cross-origin frame element with `webview.asSecured`', async () => {
+    it('should tap on cross-origin frame element with `asSecured()`', async () => {
       await webview.element(by.web.type('textField')).asSecured().typeText('Test');
       await webview.element(by.web.label('Submit')).asSecured().tap();
 
