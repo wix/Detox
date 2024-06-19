@@ -38,6 +38,7 @@
     "@react-native-community/slider": "4.5.0",
     "@react-native-picker/picker": "^2.1.0",
     "@react-native-segmented-control/segmented-control": "2.3.0",
+    "@shopify/react-native-skia": "^1.2.3",
     "moment": "^2.24.0",
     "react": "18.2.0",
     "react-native": "0.73.2",
