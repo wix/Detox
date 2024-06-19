@@ -86,6 +86,7 @@ object DetoxMain {
             associateActionHandler("isReady", readyHandler)
             associateActionHandler("reactNativeReload", rnReloadHandler)
             associateActionHandler("invoke", InvokeActionHandler(MethodInvocation(), serverAdapter))
+            associateActionHandler("backdoor", BackdoorActionHandler(rnHostHolder, serverAdapter, testEngineFacade))
             associateActionHandler("cleanup", CleanupActionHandler(serverAdapter, testEngineFacade) {
                 dispatchAction(TERMINATION_ACTION, "", 0)
             })

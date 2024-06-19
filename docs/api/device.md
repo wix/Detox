@@ -420,9 +420,58 @@ if (device.getPlatform() === 'ios') {
 
 Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](../guide/taking-screenshots.md).
 
-### `device.captureViewHierarchy([name])`
+### `device.backdoor(message)`
 
-**iOS Only.** Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
+:::tip
+
+Learn how to use Backdoor API in our [Mocking Guide](../guide/mocking.md#dynamic-mocking-with-backdoor-api).
+
+:::
+
+Sends a backdoor message to the app being tested.
+The message should be an object with `action` property and any other custom data.
+
+```js
+await device.backdoor({
+  action: 'my-testing-action',
+  // the rest is optional and arbitrary
+  arg1: 'value1',
+  arg2: 2
+});
+```
+
+On the application side, you have to implement a handler for the backdoor message, e.g.:
+
+```js
+import { detoxBackdoor } from 'detox/react-native'; // to be used only from React Native
+
+detoxBackdoor.registerActionHandler('my-testing-action', ({ arg1, arg2 }) => {
+  // ...
+});
+
+// There can be only one handler per action, so you're advised to remove it when it's no longer needed
+detoxBackdoor.clearActionHandler('my-testing-action');
+
+// You can supress errors about overwriting existing handlers
+detoxBackdoor.strict = false;
+
+// If you want to have multiple listeners for the same action, you can use `addActionListener` instead
+const listener = ({ arg1, arg2 }) => { /* Note that you can't return a value from a listener */ };
+detoxBackdoor.addActionListener('my-testing-action', listener);
+// You can remove a listener in a similar way
+detoxBackdoor.removeActionListener('my-testing-action', listener);
+
+// You can set a global handler for all actions without a handler and listeners
+detoxBackdoor.onUnhandledAction = ({ action, ...params }) => {
+  // By default, it throws an error or logs a warning (in non-strict mode)
+};
+```
+
+Make sure your code using `detoxBackdoor` is not included in production builds.
+
+### `device.captureViewHierarchy([name])` **iOS Only**
+
+Saves a view hierarchy snapshot (`*.viewhierarchy`) of the
 currently opened application to a temporary folder and schedules putting it to
 the artifacts' folder upon the completion of the current test. The file can be
 opened later in Xcode 12.0 and above.
