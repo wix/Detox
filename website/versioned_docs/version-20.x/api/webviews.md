@@ -63,6 +63,9 @@ Web view matchers are used to find elements within a web view:
 - [`by.web.href()`]
 - [`by.web.hrefContains()`]
 - [`by.web.tag()`]
+- [`by.web.value()`] (iOS only)
+- [`by.web.label()`] (iOS only, supports [`asSecured()`])
+- [`by.web.type()`] (iOS only, [`asSecured()`] only)
 - [`atIndex()`]
 
 ### `by.web.id(id)`
@@ -141,6 +144,56 @@ Match elements with the specified tag.
 web.element(by.web.tag('h1'));
 ```
 
+### `by.web.value(value)`
+
+:::note
+
+This matcher is available for **iOS only** at the moment.
+
+:::
+
+Match elements with the specified value.
+
+```js
+web.element(by.web.value('value'));
+```
+
+### `by.web.label(label)`
+
+:::note
+
+This matcher is available for **iOS only** at the moment and supports [`asSecured()`].
+
+:::
+
+Match elements with the specified label.
+
+```js
+web.element(by.web.label('label'));
+```
+
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+web.element(by.web.label('label')).asSecured();
+```
+
+### `by.web.type(accessibilityType)`
+
+:::note
+
+This matcher is available for **iOS only** at the moment and supported with [`asSecured()`] only.
+
+:::
+
+Match elements with the specified type.
+
+```js
+web.element(by.web.type('textField')).asSecured();
+```
+
+The type value can be any of XCUIElement.ElementType values, such as 'button' or 'textField'. See [XCUIElement.ElementType](https://developer.apple.com/documentation/xctest/xcuielement/elementtype).
+
 ### `atIndex(index)`
 
 Choose the element at the specified index.
@@ -155,10 +208,10 @@ Use it sparingly for those rare cases when you cannot make your matcher less amb
 
 Web view actions are used to interact with elements within a web view:
 
-- [`tap()`]
-- [`typeText()`]
-- [`replaceText()`]
-- [`clearText()`]
+- [`tap()`] (supports [`asSecured()`])
+- [`typeText()`] (supports [`asSecured()`])
+- [`replaceText()`] (supports [`asSecured()`])
+- [`clearText()`] (supports [`asSecured()`])
 - [`selectAllText()`]
 - [`getText()`]
 - [`scrollToView()`]
@@ -176,6 +229,12 @@ Tap the element.
 await web.element(by.web.id('identifier')).tap();
 ```
 
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+await web.element(by.web.label('Submit')).asSecured().tap();
+```
+
 ### `typeText(text[, isContentEditable])`
 
 Type the specified text into the element.
@@ -184,6 +243,12 @@ Type the specified text into the element.
 
 ```js
 await web.element(by.web.id('identifier')).typeText('Hello World!');
+```
+
+Supports [`asSecured()`] on **iOS only**:  
+
+```js
+await web.element(by.web.type('textField')).asSecured().typeText('Hello World!');
 ```
 
 :::note
@@ -202,6 +267,12 @@ Replace the text of the element with the specified text.
 await web.element(by.web.id('identifier')).replaceText('Hello World!');
 ```
 
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+await web.element(by.web.type('textField')).asSecured().replaceText('Hello World!');
+```
+
 :::note
 
 This action is currently not supported for content-editable elements on Android.
@@ -216,6 +287,12 @@ Clear the text of the element.
 
 ```js
 await web.element(by.web.id('identifier')).clearText();
+```
+
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+await web.element(by.web.type('textField')).asSecured().clearText();
 ```
 
 :::note
@@ -338,8 +415,8 @@ const title = await web.element(by.web.id('identifier')).getTitle();
 Web view expectations are used to assert the state of elements within a web view:
 
 - [`toHaveText()`]
-- [`toExist()`]
-- [`not`]
+- [`toExist()`] (supports [`asSecured()`])
+- [`not`] (supports [`asSecured()`])
 
 ### `toHaveText(text)`
 
@@ -357,6 +434,12 @@ Assert that the element exists.
 await expect(web.element(by.web.id('identifier'))).toExist();
 ```
 
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+await expect(web.element(by.web.label('Hello World!')).asSecured()).toExist();
+```
+
 :::note
 
 You might face issues with this expectation on Android. Check [this GitHub issue](https://github.com/wix/Detox/issues/4398) for more information.
@@ -370,6 +453,32 @@ Negate the expectation.
 ```js
 await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!');
 ```
+
+Supports [`asSecured()`] on **iOS only**:
+
+```js
+await expect(web.element(by.web.label('Hello World!')).asSecured().atIndex(1)).not.toExist();
+```
+
+## `asSecured()`
+
+:::note experimental
+
+This API is available only on **iOS** and is currently in the experimental phase. It is subject to changes in the near future.
+
+:::
+
+The `asSecured()` API is designed for interacting with web pages that use secured protocols, such as PCI DSS for payment pages. Use it when the regular API fails to interact with such pages. Detox uses system-level interactions with the webview in these scenarios. This approach is less performant and has fewer APIs.
+
+Example:
+
+```js
+await web.element(by.web.label('Submit')).asSecured().tap();
+```
+
+### Why use `asSecured()`?
+
+Use `asSecured()` for web pages with secured protocols when regular Detox interactions fail. For CORS issues, consider passing the [`detoxDisableWebKitSecurity`] launch argument to enable less strict security limitations for interacting with secured web views.
 
 [native matchers]: matchers.md
 
@@ -396,6 +505,12 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`by.web.hrefContains()`]: webviews.md#bywebhrefcontainshref
 
 [`by.web.tag()`]: webviews.md#bywebtagtag
+
+[`by.web.value()`]: webviews.md#bywebvaluevalue
+
+[`by.web.label()`]: webviews.md#byweblabellabel
+
+[`by.web.type()`]: webviews.md#bywebtypeaccessibilitytype
 
 [`atIndex()`]: webviews.md#atindexindex
 
@@ -432,3 +547,7 @@ await expect(web.element(by.web.id('identifier'))).not.toHaveText('Hello World!'
 [`toExist()`]: webviews.md#toexist
 
 [`not`]: webviews.md#not
+
+[`asSecured()`]: webviews.md#assecured
+
+[`detoxDisableWebKitSecurity`]: device.md#12-detoxdisablewebkitsecuritydisable-webkit-security-ios-only
