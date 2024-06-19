@@ -12,8 +12,8 @@ const environment = jest.requireMock('../utils/environment');
 jest.mock('../utils/environment');
 
 describe('XCUITestRunner', () => {
-    const simulatorId = 'simulator-id';
-    const runner = new XCUITestRunner({ simulatorId });
+    const runtimeDevice = { id: 'simulator-id', _bundleId: 'bundle-id' };
+    const runner = new XCUITestRunner({ runtimeDevice });
     const invocationParams = { key: 'value' };
     const base64InvocationParams = Buffer.from(JSON.stringify(invocationParams)).toString('base64');
     const runnerPath = '/path/to/xcuitest-runner';
@@ -24,7 +24,7 @@ describe('XCUITestRunner', () => {
     });
 
     it('should execute XCUITest runner with given invocation params', async () => {
-        const command = `TEST_RUNNER_PARAMS="${base64InvocationParams}" xcodebuild -xctestrun ${runnerPath} -sdk iphonesimulator -destination "platform=iOS Simulator,id=${simulatorId}" test-without-building`;
+        const command = `TEST_RUNNER_PARAMS="${base64InvocationParams}" TEST_RUNNER_BUNDLE_ID="${runtimeDevice._bundleId}" xcodebuild -xctestrun ${runnerPath} -sdk iphonesimulator -destination "platform=iOS Simulator,id=${runtimeDevice.id}" test-without-building`;
         exec.mockResolvedValue({ stdout: 'success' });
 
         await runner.execute(invocationParams);

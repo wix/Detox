@@ -59,7 +59,7 @@ describe('System Dialogs', () => {
     it('should raise when trying to tap on system element that does not exist', async () => {
       await expectToThrow(async () => {
         await system.element(by.system.label('NonExistent')).tap();
-      }, 'Tap failed, element with matcher `label == "NonExistent"` does not exist');
+      }, 'Action failed, element with matcher `label == "NonExistent"` does not exist');
     });
   });
 

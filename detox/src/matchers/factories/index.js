@@ -15,7 +15,7 @@ class Ios extends MatchersFactory {
   createMatchers({ invocationManager, runtimeDevice, eventEmitter }) {
     const IosExpect = require('../../ios/expectTwo');
     const XCUITestRunner = require('../../ios/XCUITestRunner');
-    const xcuitestRunner = new XCUITestRunner({ simulatorId: runtimeDevice.id });
+    const xcuitestRunner = new XCUITestRunner({ runtimeDevice });
 
     return new IosExpect({
       invocationManager,

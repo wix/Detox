@@ -662,6 +662,10 @@ describe('AndroidExpect', () => {
         await e.expect(webview.element(e.by.web.id('id'))).toExist();
       });
     });
+
+    it('should throw for secured web interactions (`asSecured()` in unsupported)', async () => {
+      expect(() => e.web.element(e.by.web.id('id')).asSecured().tap()).toThrow();
+    });
   });
 
   describe('System (unsupported)', () => {

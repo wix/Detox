@@ -21,6 +21,8 @@ module.exports = {
     xpath: (value) => new web.XPathMatcher(value),
     href: (value) => new web.LinkTextMatcher(value),
     hrefContains: (value) => new web.PartialLinkTextMatcher(value),
+    label: (_value) => { throw new DetoxRuntimeError('Label matcher is not supported on Android'); },
+    value: (_value) => { throw new DetoxRuntimeError('Value matcher is not supported on Android'); },
   },
 
   system: {

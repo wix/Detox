@@ -8,14 +8,16 @@ const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, l
 
 
 class WebExpect {
-  constructor(invocationManager, element) {
+  constructor(invocationManager, xcuitestRunner, element) {
     this._invocationManager = invocationManager;
+    this._xcuitestRunner = xcuitestRunner;
     this.element = element;
     this.modifiers = [];
   }
 
   toHaveText(text) {
     if (typeof text !== 'string') throw new DetoxRuntimeError('text should be a string, but got ' + (text + (' (' + (typeof text + ')'))));
+
     const traceDescription = expectDescription.toHaveText(text);
     return this.expect('toHaveText', traceDescription, text);
   }
@@ -51,17 +53,33 @@ class WebExpect {
 
     const invocation = this.createInvocation(expectation, ...params);
     traceDescription = expectDescription.full(traceDescription, this.modifiers.includes('not'));
-    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+
+    const invocationRunner = this.element.isSecured ? this._xcuitestRunner : this._invocationManager;
+    return _executeInvocation(invocationRunner, invocation, traceDescription);
   }
 }
 
 class WebElement {
-  constructor(invocationManager, emitter, webViewElement, matcher, index) {
+  constructor(invocationManager, xcuitestRunner, emitter, webViewElement, matcher, index) {
     this._invocationManager = invocationManager;
+    this._xcuitestRunner = xcuitestRunner;
     this._emitter = emitter;
     this.webViewElement = webViewElement;
     this.matcher = matcher;
     this.index = index;
+    this.isSecured = false;
+  }
+
+  asSecured() {
+    const supportedMatcherTypes = ['label', 'type'];
+    const matcherType = this.matcher.predicate.type;
+
+    if (!supportedMatcherTypes.includes(matcherType)) {
+      throw new DetoxRuntimeError(`Only matchers of type ${supportedMatcherTypes.join(', ')} can be secured, got ${matcherType}`);
+    }
+
+    this.isSecured = true;
+    return this;
   }
 
   atIndex(index) {
@@ -183,7 +201,9 @@ class WebElement {
       ...(params.length !== 0 && { params }),
     };
     traceDescription = webViewActionDescription.full(traceDescription);
-    return _executeInvocation(this._invocationManager, invocation, traceDescription);
+
+    const invocationRunner = this.isSecured ? this._xcuitestRunner : this._invocationManager;
+    return _executeInvocation(invocationRunner, invocation, traceDescription);
   }
 }
 
@@ -247,18 +267,24 @@ class WebElementMatcher {
     this.predicate = { type: 'value', value: value.toString() };
     return this;
   }
+
+  type(type) {
+    if (typeof type !== 'string') throw new DetoxRuntimeError('type should be a string, but got ' + (type + (' (' + (typeof type + ')'))));
+    this.predicate = { type: 'type', value: type.toString() };
+    return this;
+  }
 }
 
 function webMatcher() {
   return new WebElementMatcher();
 }
 
-function webElement(invocationManager, emitter, webViewElement, matcher) {
+function webElement(invocationManager, xcuitestRunner, emitter, webViewElement, matcher) {
   if (!(matcher instanceof WebElementMatcher)) {
     throwWebViewMatcherError(matcher);
   }
 
-  return new WebElement(invocationManager, emitter, webViewElement, matcher);
+  return new WebElement(invocationManager, xcuitestRunner, emitter, webViewElement, matcher);
 }
 
 function throwWebViewMatcherError(param) {
@@ -266,8 +292,8 @@ function throwWebViewMatcherError(param) {
   throw new DetoxRuntimeError(`${paramDescription} is not a Detox web-view matcher. More about web-view matchers here: https://wix.github.io/Detox/docs/api/webviews`);
 }
 
-function webExpect(invocationManager, element) {
-  return new WebExpect(invocationManager, element);
+function webExpect(invocationManager, xcuitestRunner, element) {
+  return new WebExpect(invocationManager, xcuitestRunner, element);
 }
 
 function _executeInvocation(invocationManager, invocation, traceDescription) {
