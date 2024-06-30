@@ -25,6 +25,9 @@ export default class ScrollActionsScreen extends Component {
             Array.from({length: 20}, (_, index) => this.renderItem(index + 1))
           }
         </ScrollView>
+        <View style={{height: 100, backgroundColor: "yellow"}}>
+          <Text>Bottom Sheet</Text>
+        </View>
       </View>
     );
   }
