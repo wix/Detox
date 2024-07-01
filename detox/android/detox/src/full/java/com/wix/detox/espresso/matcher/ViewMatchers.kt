@@ -66,6 +66,9 @@ fun toHaveSliderPosition(expectedValuePct: Double, tolerance: Double): Matcher<V
         }
     }
 
+fun isDisplayingAtLeastCustom(percents: Int): Matcher<View> =
+    IsDisplayingAtLeastDetox(percents)
+
 /**
  * Same as [androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom], but accepts any class. Needed
  * in order to avoid warning when passing 'any' class.
