@@ -40,7 +40,7 @@ describe('visibility expectation in ScrollView', () => {
   });
 
   it(`should be truthy when at least 50% visibility is required`, async () => {
-    const item = scrollViewDriver.listItem(14);
+    const item = scrollViewDriver.listItem(16);
     await waitFor(item).toBeVisible(50).whileElement(scrollViewDriver.byId()).scroll(10, 'down');
 
     // We are not sure how much percentage of the item is visible because of the scrolling speed. It shouldn't be visible after scrolling for 100%.
@@ -48,7 +48,7 @@ describe('visibility expectation in ScrollView', () => {
   });
 
   it(`should be truthy when at least 100% visibility is required`, async () => {
-    const item = scrollViewDriver.listItem(14);
+    const item = scrollViewDriver.listItem(16);
     await waitFor(item).toBeVisible(100).whileElement(scrollViewDriver.byId()).scroll(10, 'down');
   });
 });
