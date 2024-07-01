@@ -1,4 +1,3 @@
-const custom = require('./utils/custom-it');
 const {expectToThrow} = require('./utils/custom-expects');
 
 const expectToFinishBeforeTimeout = async (block, timeout) => {

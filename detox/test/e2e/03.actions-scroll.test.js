@@ -1,5 +1,3 @@
-const custom = require('./utils/custom-it');
-
 describe('Actions - Scroll', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
