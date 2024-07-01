@@ -55,7 +55,7 @@ describe('WaitFor', () => {
     }, timeout);
   });
 
-  custom.it.withFailureIf.android('should find element by scrolling until it is visible', async () => {
+  it('should find element by scrolling until it is visible', async () => {
     await expect(element(by.text('Text5'))).not.toBeVisible();
 
     await goButton.tap();

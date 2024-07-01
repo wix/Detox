@@ -6,7 +6,7 @@ describe('Actions - Scroll', () => {
     await element(by.text('Actions')).tap();
   });
 
-  custom.it.withFailureIf.android('should scroll for a small amount in direction', async () => {
+  it('should scroll for a small amount in direction', async () => {
     await expect(element(by.text('Text1'))).toBeVisible();
     await expect(element(by.text('Text4'))).not.toBeVisible();
     await expect(element(by.id('ScrollView161'))).toBeVisible();
