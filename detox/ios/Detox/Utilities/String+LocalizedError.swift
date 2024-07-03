@@ -6,6 +6,13 @@
 //  Copyright © 2020 Wix. All rights reserved.
 //
 
+#if hasFeature(RetroactiveAttribute)
+extension String: @retroactive Error {}
+extension String: @retroactive LocalizedError {
+    public var errorDescription: String? { return self }
+}
+#else
 extension String: LocalizedError {
     public var errorDescription: String? { return self }
 }
+#endif
