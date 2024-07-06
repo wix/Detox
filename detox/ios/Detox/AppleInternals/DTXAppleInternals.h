@@ -104,18 +104,18 @@ typedef UInt32 IOOptionBits;
  *  state will be transferred on to the parent.
  */
 typedef enum {
-  /**
-   *  Issued when the range state has changed.
-   */
-  kIOHIDDigitizerEventRange = 0x00000001,
-  /**
-   *  Issued when the touch state has changed.
-   */
-  kIOHIDDigitizerEventTouch = 0x00000002,
-  /**
-   *  Issued when the position has changed.
-   */
-  kIOHIDDigitizerEventPosition = 0x00000004,
+    /**
+     *  Issued when the range state has changed.
+     */
+    kIOHIDDigitizerEventRange = 0x00000001,
+    /**
+     *  Issued when the touch state has changed.
+     */
+    kIOHIDDigitizerEventTouch = 0x00000002,
+    /**
+     *  Issued when the position has changed.
+     */
+    kIOHIDDigitizerEventPosition = 0x00000004,
 } IOHIDDigitizerEventMask;
 
 /**
@@ -184,8 +184,8 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
  */
 @interface UIMotionEvent : UIEvent
 {
-  // The motion accelerometer of the event.
-  BKSAccelerometer *_motionAccelerometer;
+    // The motion accelerometer of the event.
+    BKSAccelerometer *_motionAccelerometer;
 }
 
 /**
@@ -423,7 +423,7 @@ IOHIDEventRef IOHIDEventCreateDigitizerFingerEvent(CFAllocatorRef allocator,
 - (void)showKeyboard;
 
 @property(readonly, nonatomic) UIKeyboardTaskQueue *taskQueue;
-- (void)handleKeyWithString:(id)arg1 forKeyEvent:(id)arg2 executionContext:(id)arg3;
+- (void)_handleKeyEvent:(id)arg1 executionContext:(id)arg2;
 - (void)setShift:(_Bool)arg1 autoshift:(_Bool)arg2;
 - (void)removeCandidateList;
 
