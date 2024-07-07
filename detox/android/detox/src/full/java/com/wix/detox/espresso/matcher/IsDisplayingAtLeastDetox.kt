@@ -92,20 +92,22 @@ class IsDisplayingAtLeastDetox(private val areaPercentage: Int) : TypeSafeDiagno
      * @return The actual visible rectangle of the view.
      */
     private fun getGlobalVisibleRectWorkaround(view: View): Rect {
-        var current = view.parent as? View
+        var parent = view.parent as? View
 
         val viewVisibleRect = Rect()
         view.getGlobalVisibleRect(viewVisibleRect)
 
-        while (current != null) {
-            val rootVisibleRect = Rect()
-            current.getGlobalVisibleRect(rootVisibleRect)
+        while (parent != null) {
+            val parentVisibleRectangle = Rect()
+            // Fill the visible rectangle of the parent view
+            parent.getGlobalVisibleRect(parentVisibleRectangle)
 
-            if (!viewVisibleRect.intersect(rootVisibleRect)) {
+            // The viewVisibleRect will be replaced with the intersection of the viewVisibleRect and the parentVisibleRectangle
+            if (!viewVisibleRect.intersect(parentVisibleRectangle)) {
                 return Rect()
             }
 
-            current = current.parent as? View
+            parent = parent.parent as? View
         }
 
         return viewVisibleRect
