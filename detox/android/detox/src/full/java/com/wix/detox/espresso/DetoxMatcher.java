@@ -8,7 +8,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isFocused;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
-import static com.wix.detox.espresso.matcher.ViewMatchers.isDisplayingAtLeastCustom;
+import static com.wix.detox.espresso.matcher.ViewMatchers.matcherForDisplayingAtLeast;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isMatchingAtIndex;
 import static com.wix.detox.espresso.matcher.ViewMatchers.isOfClassName;
 import static com.wix.detox.espresso.matcher.ViewMatchers.toHaveSliderPosition;
@@ -89,7 +89,7 @@ public class DetoxMatcher {
     }
 
     public static Matcher<View> matcherForSufficientlyVisible(int pct) {
-        return isDisplayingAtLeastCustom(pct);
+        return matcherForDisplayingAtLeast(pct);
     }
 
     public static Matcher<View> matcherForNotVisible() {

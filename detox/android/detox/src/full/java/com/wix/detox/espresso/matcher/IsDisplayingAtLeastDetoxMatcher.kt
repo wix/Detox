@@ -19,10 +19,11 @@ import kotlin.math.min
  * Because of an issue with [View.getGlobalVisibleRect], the `isDisplayingAtLeast` matcher does not work
  * as expected with React Native views.
  * @see [React Native Issue](https://github.com/facebook/react-native/issues/23870)
+ * The implementation of this matcher is based on the [isDisplayingAtLeast] matcher.
  *
  * This hack can be removed after proper fix in React Native.
  */
-class IsDisplayingAtLeastDetox(private val areaPercentage: Int) : TypeSafeDiagnosingMatcher<View>() {
+class IsDisplayingAtLeastDetoxMatcher(private val areaPercentage: Int) : TypeSafeDiagnosingMatcher<View>() {
 
     private val visibilityMatchers = ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
 
@@ -92,25 +93,25 @@ class IsDisplayingAtLeastDetox(private val areaPercentage: Int) : TypeSafeDiagno
      * @return The actual visible rectangle of the view.
      */
     private fun getGlobalVisibleRectWorkaround(view: View): Rect {
-        var parent = view.parent as? View
+        var currentParent = view.parent as? View
 
-        val viewVisibleRect = Rect()
-        view.getGlobalVisibleRect(viewVisibleRect)
+        val calculatedVisibleRect = Rect()
+        view.getGlobalVisibleRect(calculatedVisibleRect)
 
-        while (parent != null) {
+        while (currentParent != null) {
             val parentVisibleRectangle = Rect()
             // Fill the visible rectangle of the parent view
-            parent.getGlobalVisibleRect(parentVisibleRectangle)
+            currentParent.getGlobalVisibleRect(parentVisibleRectangle)
 
             // The viewVisibleRect will be replaced with the intersection of the viewVisibleRect and the parentVisibleRectangle
-            if (!viewVisibleRect.intersect(parentVisibleRectangle)) {
+            if (!calculatedVisibleRect.intersect(parentVisibleRectangle)) {
                 return Rect()
             }
 
-            parent = parent.parent as? View
+            currentParent = currentParent.parent as? View
         }
 
-        return viewVisibleRect
+        return calculatedVisibleRect
     }
 
     private fun getScreenWithoutStatusBarActionBar(view: View): Rect {
