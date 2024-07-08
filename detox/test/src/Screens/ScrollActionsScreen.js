@@ -4,7 +4,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Alert,
+  Alert, SafeAreaView
 } from 'react-native';
 
 export default class ScrollActionsScreen extends Component {
@@ -19,13 +19,24 @@ export default class ScrollActionsScreen extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start', borderColor: '#c0c0c0', borderWidth: 1, backgroundColor: '#f8f8ff' }} testID='root'>
-        <ScrollView testID='FSScrollActions.scrollView'>
-          {
-            Array.from({length: 20}, (_, index) => this.renderItem(index + 1))
-          }
-        </ScrollView>
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+          borderColor: '#c0c0c0',
+          borderWidth: 1,
+          backgroundColor: '#f8f8ff'
+        }} testID='root'>
+          <ScrollView testID='FSScrollActions.scrollView'>
+            {
+              Array.from({ length: 20 }, (_, index) => this.renderItem(index + 1))
+            }
+          </ScrollView>
+          <View style={{ height: 100, backgroundColor: 'yellow' }}>
+            <Text>Bottom Sheet</Text>
+          </View>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -44,13 +55,13 @@ export default class ScrollActionsScreen extends Component {
   }
 
   onPress(id) {
-    Alert.alert('Alert', `Alert(Item #${id})`)
+    Alert.alert('Alert', `Alert(Item #${id})`);
   }
 
   onLongPress(id) {
     // DO NOT REMOVE THIS!
     // While there are no tests that actually trigger this, it's important nonetheless -- for *negative* testing of bugs
     // such as this one: https://github.com/wix/Detox/issues/1406 (i.e. long-press invoked unwillingly)
-    Alert.alert('Alert', `Alert-LongPress(Item #${id})`)
+    Alert.alert('Alert', `Alert-LongPress(Item #${id})`);
   }
 }
