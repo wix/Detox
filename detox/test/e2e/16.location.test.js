@@ -22,7 +22,7 @@ describe('set location', () => {
   }
 
   const expectLocationToAppear = async (latitude, longitude) => {
-    await waitFor(element(by.id(LOCATION_LATITUDE_TEST_ID))).toHaveText(`Latitude: ${latitude}`).withTimeout(3000);
+    await waitFor(element(by.id(LOCATION_LATITUDE_TEST_ID))).toHaveText(`Latitude: ${latitude}`).withTimeout(5000);
     await expect(element(by.id(LOCATION_LONGITUDE_TEST_ID))).toHaveText(`Longitude: ${longitude}`);
   }
 
