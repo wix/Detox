@@ -26,13 +26,13 @@ class TestRunnerCommand {
     const cliConfig = opts.config.cli;
     const deviceConfig = opts.config.device;
     const runnerConfig = opts.config.testRunner;
-    const appsConfig = opts.config.apps;
+    const commands = opts.config.commands;
 
     this._argv = runnerConfig.args;
     this._detached = runnerConfig.detached;
     this._retries = runnerConfig.retries;
     this._envHint = this._buildEnvHint(opts.env);
-    this._startCommands = this._prepareStartCommands(appsConfig, cliConfig);
+    this._startCommands = this._prepareStartCommands(commands, cliConfig);
     this._envFwd = {};
     this._terminating = false;
 
@@ -103,15 +103,14 @@ class TestRunnerCommand {
       .value();
   }
 
-  _prepareStartCommands(appsConfig, cliConfig) {
+  _prepareStartCommands(commands, cliConfig) {
     if (`${cliConfig.start}` === 'false') {
       return [];
     }
 
-    return _.values(appsConfig)
-      .filter(app => app.start)
-      .map(app => new AppStartCommand({
-        cmd: app.start,
+    return _.filter(commands, 'start')
+      .map(commands => new AppStartCommand({
+        cmd: commands.start,
         forceSpawn: cliConfig.start === 'force',
       }));
   }

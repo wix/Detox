@@ -245,6 +245,7 @@ declare global {
 
     type RuntimeConfig = Readonly<{
       configurationName: string;
+      commands: Readonly<RuntimeCommandsGroup>[];
 
       /**
        * Dictionary of app configurations,
@@ -272,6 +273,12 @@ declare global {
         uiHierarchy: Readonly<Detox.DetoxUIHierarchyArtifactsPluginConfig>;
         [pluginId: string]: unknown;
       }>;
+    };
+
+    type RuntimeCommandsGroup = {
+      appName?: string;
+      build?: string;
+      start?: string;
     };
 
     type CLIConfig = Readonly<Partial<{

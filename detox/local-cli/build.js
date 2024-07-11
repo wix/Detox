@@ -2,8 +2,6 @@
 const cp = require('child_process');
 const fs = require('fs');
 
-const _ = require('lodash');
-
 const detox = require('../internals');
 
 module.exports.command = 'build';
@@ -37,35 +35,40 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function build(argv) {
-  const { apps: appsConfig, errorComposer } = await detox.resolveConfig({ argv });
-  const apps = _.entries(appsConfig);
+  const { apps, commands, errorComposer } = await detox.resolveConfig({ argv });
 
-  for (const [appName, app] of apps) {
-    const buildScript = app.build;
+  let seenBuildCommands = false;
 
-    if (argv['if-missing'] && app.binaryPath && fs.existsSync(app.binaryPath)) {
-      detox.log.info(`Skipping build for "${appName}" app...`);
-      continue;
-    }
+  for (const { appName, build } of commands) {
+    const app = apps[appName] || {};
 
-    if (buildScript) {
+    if (build) {
+      seenBuildCommands = true;
+
+      if (argv['if-missing'] && app.binaryPath && fs.existsSync(app.binaryPath)) {
+        detox.log.info(`Skipping build for "${appName}" app...`);
+        continue;
+      }
+
       try {
-        if (apps.length > 1) {
+        if (appName && commands.length > 1) {
           detox.log.info(`Building "${appName}" app...`);
         }
 
-        detox.log.info(buildScript);
-        cp.execSync(buildScript, { stdio: 'inherit' });
+        detox.log.info(build);
+        cp.execSync(build, { stdio: 'inherit' });
       } catch (e) {
         detox.log.warn("\n\nImportant: 'detox build' is a convenience shortcut for calling your own build command, as provided in the config file.\nFailures in this build command are not the responsibility of Detox. You are responsible for maintaining this command.\n");
         throw e;
       }
-    } else if (!argv.silent) {
-      throw errorComposer.missingBuildScript(app);
     }
 
     if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
       detox.log.warn('After running the build command, Detox could not find your app at the given binary path:\n\t' + app.binaryPath + "\nMake sure it is correct, otherwise you'll get an error on an attempt to install your app.\n");
     }
+  }
+
+  if (!seenBuildCommands && !argv.silent) {
+    throw errorComposer.missingBuildScript(Object.values(apps)[0]);
   }
 };
