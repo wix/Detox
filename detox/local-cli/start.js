@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const detox = require('../internals');
 
 const AppStartCommand = require('./startCommand/AppStartCommand');
@@ -24,17 +22,13 @@ module.exports.builder = {
 };
 
 module.exports.handler = async function start(argv) {
-  const { apps: appsConfig } = await detox.resolveConfig({ argv });
-  const startCommands = _(appsConfig)
-    .values()
-    .map(app => app.start)
-    .filter(Boolean)
+  const { commands } = await detox.resolveConfig({ argv });
+  const startCommands = commands.map(s => s.start).filter(Boolean)
     .map(cmd => new AppStartCommand({
       cmd,
       passthrough: argv['--'],
       forceSpawn: argv.force,
-    }))
-    .value();
+    }));
 
   if (startCommands.length) {
     try {

@@ -33,6 +33,10 @@ declare global {
             logger?: DetoxLoggerConfig;
             session?: DetoxSessionConfig;
             testRunner?: DetoxTestRunnerConfig;
+            /** Build command for the entire configuration, overriding individual app build commands. */
+            build?: string;
+            /** Start command for the entire configuration, overriding individual app start commands. */
+            start?: string;
         };
 
         interface DetoxArtifactsConfig {
@@ -268,6 +272,18 @@ declare global {
              * @see Device#selectApp
              */
             name?: string;
+            /**
+             * Build command to be executed when you run `detox build`
+             * @example 'cd ios && xcodebuild -workspace example.xcworkspace ...'
+             * @example 'cd android && ./gradlew assembleDebug ...'
+             */
+            build?: string;
+            /**
+             * Development server start command to be executed when you run `detox start`
+             * Usually used in debug mode, but it depends on your application setup.
+             * @example 'react-native start'
+             */
+            start?: string;
         };
 
         type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
@@ -317,8 +333,6 @@ declare global {
             type: 'ios.app';
             binaryPath: string;
             bundleId?: string;
-            build?: string;
-            start?: string;
             launchArgs?: Record<string, any>;
         }
 
@@ -326,8 +340,6 @@ declare global {
             type: 'android.apk';
             binaryPath: string;
             bundleId?: string;
-            build?: string;
-            start?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
             /**

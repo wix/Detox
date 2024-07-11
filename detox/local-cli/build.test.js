@@ -17,6 +17,7 @@ describe('build', () => {
         apps: {},
         artifacts: {},
         behavior: {},
+        commands: [],
         errorComposer: new DetoxConfigErrorComposer(),
         device: {},
         session: {}
@@ -44,14 +45,15 @@ describe('build', () => {
   });
 
   it('runs the build script from the composed device config', async () => {
-    detox.config.apps.default = { build: 'yet another command' };
+    detox.config.commands = [{ appName: 'default', build: 'yet another command' }];
 
     await callCli('./build', 'build');
     expect(execSync).toHaveBeenCalledWith('yet another command', expect.anything());
   });
 
   it('skips building the app if the binary exists and --if-missing flag is set', async () => {
-    detox.config.apps.default = { build: 'yet another command', binaryPath: __filename };
+    detox.config.apps.default = { binaryPath: __filename };
+    detox.config.commands = [{ appName: 'default', build: 'yet another command' }];
 
     await callCli('./build', 'build -i');
     expect(execSync).not.toHaveBeenCalled();
@@ -64,6 +66,7 @@ describe('build', () => {
 
   it('fails with an error if a build script has not been found', async () => {
     detox.config.apps.default = {};
+    detox.config.commands = [{ appName: 'default', start: 'a command' }];
     await expect(callCli('./build', 'build')).rejects.toThrowError(/Failed to build/);
   });
 
@@ -74,7 +77,7 @@ describe('build', () => {
   });
 
   it('should print a warning upon user build script failure', async () => {
-    detox.config.apps.default = { build: 'a command' };
+    detox.config.commands = [{ appName: 'default', build: 'a command' }];
     execSync.mockImplementation(() => { throw new Error('Build failure'); });
     await expect(callCli('./build', 'build')).rejects.toThrowError(/Build failure/);
     expect(detox.log.warn).toHaveBeenCalledWith(expect.stringContaining('You are responsible'));
@@ -82,13 +85,16 @@ describe('build', () => {
 
   it('should print a warning if app is not found at binary path', async () => {
     detox.config.apps.default = { binaryPath: tempfile() };
+    detox.config.commands = [{ appName: 'default', build: ':' }];
+
     await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
     expect(detox.log.warn).toHaveBeenCalledWith(expect.stringContaining('could not find your app at the given binary path'));
   });
 
   it('should print extra message with the app name before building (in a multi-app configuration)', async () => {
-    detox.config.apps.app1 = { binaryPath: tempfile(), build: ':' };
-    detox.config.apps.app2 = { binaryPath: tempfile(), build: ':' };
+    detox.config.apps.app1 = { binaryPath: tempfile() };
+    detox.config.apps.app2 = { binaryPath: tempfile() };
+    detox.config.commands = [{ appName: 'app1', build: 'app1 build' }, { appName: 'app2', build: 'app2 build' }];
 
     await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
     expect(detox.log.info).toHaveBeenCalledWith(expect.stringContaining('app1'));
@@ -96,7 +102,8 @@ describe('build', () => {
   });
 
   it('should not print that extra message when the app is single', async () => {
-    detox.config.apps.default = { binaryPath: tempfile(), build: ':' };
+    detox.config.apps.default = { binaryPath: tempfile() };
+    detox.config.commands = [{ appName: 'default', build: ':' }];
 
     await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
     expect(detox.log.info).not.toHaveBeenCalledWith(expect.stringContaining('default'));
