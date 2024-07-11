@@ -133,61 +133,71 @@ DTX_DIRECT_MEMBERS
 
 - (UIImage*)_dtx_imageForVisibilityTestingInWindow:(UIWindow*)windowToUse testedView:(UIView*)testedView inRect:(CGRect)testedRect drawTestedRect:(BOOL)drawTestedRect
 {
-	UIGraphicsBeginImageContextWithOptions(windowToUse.bounds.size, NO, windowToUse.screen.scale);
+    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+    format.scale = windowToUse.screen.scale;
 
-	UIWindowScene* scene = windowToUse.windowScene;
-	NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:scene];
-	NSUInteger indexOfTestedWindow = [windows indexOfObject:windowToUse];
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:windowToUse.bounds.size format:format];
 
-	DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
+    UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext * _Nonnull context) {
+        [self drawWindowHierarchy:windowToUse testedView:testedView];
+        [self drawKeyboardWindowsForWindow:windowToUse];
 
-	if(testedView == nil)
-	{
-		[UIColor.blackColor setFill];
-		[[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
-	}
+        if (drawTestedRect && testedView != nil) {
+            [self drawTestRectangle:testedRect inContext:context.CGContext];
+        }
+    }];
 
-	[windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
+    return image;
+}
 
-	for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
-		UIWindow* currentWindow = windows[idx];
+- (void)drawWindowHierarchy:(UIWindow *)windowToUse testedView:(UIView *)testedView
+{
+    UIWindowScene *scene = windowToUse.windowScene;
+    NSArray<UIWindow *> *windows = [UIWindow dtx_allWindowsForScene:scene];
+    NSUInteger indexOfTestedWindow = [windows indexOfObject:windowToUse];
 
-		[currentWindow dtx_drawViewHierarchyUpToSubview:nil inRect:currentWindow.bounds afterScreenUpdates:NO];
-	}
+    DTXAssert(indexOfTestedWindow != NSNotFound, @"Window hierarchy mutated while iterated; should not happen");
 
-	//Overlay the keyboard scene windows on top
-	scene = [UIWindowScene _keyboardWindowSceneForScreen:windowToUse.screen create:NO];
-	if(scene != nil)
-	{
-		windows = [UIWindow dtx_allWindowsForScene:scene];
+    if (testedView == nil) {
+        [UIColor.blackColor setFill];
+        [[UIBezierPath bezierPathWithRect:windowToUse.bounds] fill];
+    }
 
-		for (UIWindow* keyboardSceneWindow in windows) {
-			if (![keyboardSceneWindow isEqual: windowToUse]) {
-				[keyboardSceneWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardSceneWindow.bounds afterScreenUpdates:NO];
-			}
-		}
-	}
+    [windowToUse dtx_drawViewHierarchyUpToSubview:testedView inRect:windowToUse.bounds afterScreenUpdates:NO];
 
-	if(drawTestedRect && testedView != nil)
-	{
-		CGContextRef ctx = UIGraphicsGetCurrentContext();
-		CGContextSetLineWidth(ctx, 1);
-		CGContextSetAllowsAntialiasing(ctx, NO);
+    for (NSUInteger idx = indexOfTestedWindow + 1; idx < windows.count; idx++) {
+        UIWindow *currentWindow = windows[idx];
+        [currentWindow dtx_drawViewHierarchyUpToSubview:nil inRect:currentWindow.bounds afterScreenUpdates:NO];
+    }
+}
 
-		CGFloat* lengths = (CGFloat[]){2.0, 2.0};
-		[@[UIColor.systemRedColor, UIColor.whiteColor] enumerateObjectsUsingBlock:^(UIColor * _Nonnull color, NSUInteger idx, BOOL * _Nonnull stop) {
-			CGContextSetLineDash(ctx, idx * 2.0, lengths, 2);
-			[color setStroke];
-			CGContextStrokeRect(ctx, testedRect);
+- (void)drawKeyboardWindowsForWindow:(UIWindow *)windowToUse
+{
+    UIWindowScene *keyboardScene = [UIWindowScene _keyboardWindowSceneForScreen:windowToUse.screen create:NO];
+    if (keyboardScene != nil) {
+        NSArray<UIWindow *> *keyboardWindows = [UIWindow dtx_allWindowsForScene:keyboardScene];
+        for (UIWindow *keyboardWindow in keyboardWindows) {
+            if (![keyboardWindow isEqual:windowToUse]) {
+                [keyboardWindow dtx_drawViewHierarchyUpToSubview:nil inRect:keyboardWindow.bounds afterScreenUpdates:NO];
+            }
+        }
+    }
+}
 
-			//			*stop = YES;
-		}];
-	}
+- (void)drawTestRectangle:(CGRect)rect inContext:(CGContextRef)context
+{
+    CGContextSetLineWidth(context, 1);
+    CGContextSetAllowsAntialiasing(context, NO);
 
-	UIImage* rv = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
+    NSArray<NSNumber *> *lengths = @[@2.0, @2.0];
+    NSArray *colors = @[UIColor.systemRedColor, UIColor.whiteColor];
 
-	return rv;
+    [colors enumerateObjectsUsingBlock:^(UIColor *color, NSUInteger idx, BOOL *stop) {
+        CGFloat dashLengths[] = {[lengths[0] floatValue], [lengths[1] floatValue]};
+        CGContextSetLineDash(context, idx * 2.0, dashLengths, 2);
+        [color setStroke];
+        CGContextStrokeRect(context, rect);
+    }];
 }
 
 - (BOOL)_dtx_isTestedRegionObscuredWithVisiblePixels:(NSUInteger)visible
