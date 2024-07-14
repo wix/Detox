@@ -17,7 +17,11 @@ class ADB {
   }
 
   async startDaemon() {
-    await this.adbCmd('', 'start-server');
+    await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
+  }
+
+  async killDaemon() {
+    await this.adbCmd('', 'kill-server', { retries: 0, verbosity: 'high' });
   }
 
   async devices() {

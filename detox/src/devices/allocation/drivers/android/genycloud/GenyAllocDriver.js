@@ -41,7 +41,7 @@ class GenyAllocDriver {
   }
 
   async init() {
-    await this._adb.startDaemon();
+    await this._startAdbDaemon();
   }
 
   /**
@@ -119,6 +119,8 @@ class GenyAllocDriver {
 
     const deletionLeaks = (await Promise.all(killPromises)).filter(Boolean);
     this._reportGlobalCleanupSummary(deletionLeaks);
+
+    await this._killAdbDaemon();
   }
 
   emergencyCleanup() {
@@ -150,6 +152,22 @@ class GenyAllocDriver {
       log.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed with warnings');
     } else {
       log.info(events.GENYCLOUD_TEARDOWN, 'Instances teardown completed successfully');
+    }
+  }
+
+  async _startAdbDaemon() {
+    try {
+      await this._adb.startDaemon();
+    } catch (e) {
+      log.warn('ADB daemon start failed; error ignored', e);
+    }
+  }
+
+  async _killAdbDaemon() {
+    try {
+      await this._adb.killDaemon();
+    } catch (e) {
+      log.warn('ADB daemon kill failed; error ignored', e);
     }
   }
 }
