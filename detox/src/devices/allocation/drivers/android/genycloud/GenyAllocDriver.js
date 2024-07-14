@@ -40,6 +40,10 @@ class GenyAllocDriver {
     this._instanceCounter = 0;
   }
 
+  async init() {
+    await this._adb.startDaemon();
+  }
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}

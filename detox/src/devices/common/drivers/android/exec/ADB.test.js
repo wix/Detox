@@ -83,6 +83,13 @@ describe('ADB', () => {
     });
   });
 
+  describe('ADB Daemon (server)', () => {
+    it('should start the daemon', async () => {
+      await adb.startDaemon();
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  start-server`, { retries: 1 });
+    });
+  });
+
   it('should await device boot', async () => {
     await adb.waitForDevice(deviceId);
 
