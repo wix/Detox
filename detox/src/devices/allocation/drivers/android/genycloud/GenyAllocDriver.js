@@ -55,7 +55,7 @@ class GenyAllocDriver {
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
 
-    await this._startAdbDaemon();
+    await this._initAdbDaemon();
 
     let instance = this._genyRegistry.findFreeInstance(recipe);
     if (!instance) {
@@ -156,7 +156,7 @@ class GenyAllocDriver {
     }
   }
 
-  async _startAdbDaemon() {
+  async _initAdbDaemon() {
     const _startDaemon = async () => {
       try {
         log.info(events.GENYCLOUD_INIT, 'Starting ADB daemon...');
