@@ -54,7 +54,6 @@ class GenyAllocDriver {
    * @return {Promise<GenycloudEmulatorCookie>}
    */
   async allocate(deviceConfig) {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
