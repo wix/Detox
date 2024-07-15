@@ -16,6 +16,14 @@ class ADB {
     this.adbBin = getAdbPath();
   }
 
+  async startDaemon() {
+    await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
+  }
+
+  async killDaemon() {
+    await this.adbCmd('', 'kill-server', { retries: 0, verbosity: 'high' });
+  }
+
   async devices() {
     const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high' });
     /** @type {DeviceHandle[]} */

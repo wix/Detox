@@ -10,6 +10,7 @@ const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenyRegistry = require('./GenyRegistry');
 
 const events = {
+  GENYCLOUD_INIT: { event: 'GENYCLOUD_INIT' },
   GENYCLOUD_TEARDOWN: { event: 'GENYCLOUD_TEARDOWN' },
 };
 
@@ -40,12 +41,19 @@ class GenyAllocDriver {
     this._instanceCounter = 0;
   }
 
+  async init() {
+    try {
+      await this._adb.startDaemon();
+    } catch (error) {
+      log.warn({ ...events.GENYCLOUD_INIT, error }, 'ADB server start failed; error ignored');
+    }
+  }
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}
    */
   async allocate(deviceConfig) {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);

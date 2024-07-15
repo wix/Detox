@@ -26,6 +26,7 @@ const _logFinalError = Symbol('logFinalError');
 const _cookieAllocators = Symbol('cookieAllocators');
 const _deviceAllocators = Symbol('deviceAllocators');
 const _createDeviceAllocator = Symbol('createDeviceAllocator');
+const _createDeviceAllocatorInstance = Symbol('createDeviceAllocatorInstance');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -272,29 +273,41 @@ class DetoxPrimaryContext extends DetoxContext {
   /** @param {Detox.DetoxDeviceConfig} deviceConfig */
   [_createDeviceAllocator] = async (deviceConfig) => {
     const deviceType = deviceConfig.type;
+    const deviceAllocator = this[_createDeviceAllocatorInstance](deviceConfig);
+
+    try {
+      await deviceAllocator.init();
+    } catch (e) {
+      try {
+        delete this[_deviceAllocators][deviceType];
+        await deviceAllocator.cleanup();
+      } catch (e2) {
+        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to cleanup the device allocation driver for ${deviceType} after a failed initialization`);
+      }
+
+      throw e;
+    }
+
+    return this[_deviceAllocators][deviceType];
+  };
+
+  /**
+   * @param {Detox.DetoxDeviceConfig} deviceConfig
+   * @returns { DeviceAllocator }
+   */
+  [_createDeviceAllocatorInstance] = (deviceConfig) => {
+    const deviceType = deviceConfig.type;
+
     if (!this[_deviceAllocators][deviceType]) {
       const environmentFactory = require('../environmentFactory');
       const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
       const { detoxConfig } = this[$sessionState];
-      const deviceAllocator = deviceAllocatorFactory.createDeviceAllocator({
+
+      this[_deviceAllocators][deviceType] = deviceAllocatorFactory.createDeviceAllocator({
         detoxConfig,
-        detoxSession: this[$sessionState],
+        detoxSession: this[$sessionState]
       });
-
-      try {
-        await deviceAllocator.init();
-        this[_deviceAllocators][deviceType] = deviceAllocator;
-      } catch (e) {
-        try {
-          await deviceAllocator.cleanup();
-        } catch (e2) {
-          this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to cleanup the device allocation driver for ${deviceType} after a failed initialization`);
-        }
-
-        throw e;
-      }
     }
-
     return this[_deviceAllocators][deviceType];
   };
 

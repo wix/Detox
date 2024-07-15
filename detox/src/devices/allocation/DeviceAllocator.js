@@ -4,6 +4,8 @@
  * @typedef {import('../common/drivers/DeviceCookie').DeviceCookie} DeviceCookie
  */
 
+const _ = require('lodash');
+
 const log = require('../../utils/logger').child({ cat: 'device,device-allocation' });
 const traceMethods = require('../../utils/traceMethods');
 
@@ -16,6 +18,11 @@ class DeviceAllocator {
     this._counter = 0;
     this._ids = new Map();
     traceMethods(log, this, ['init', 'cleanup', 'emergencyCleanup']);
+
+    // Init and cleanup should be called once for each allocation driver type
+    this.init = _.once(this.init.bind(this));
+    this.cleanup = _.once(this.cleanup.bind(this));
+    this.emergencyCleanup = _.once(this.emergencyCleanup.bind(this));
   }
 
   /**
