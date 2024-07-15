@@ -10,7 +10,6 @@ const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenyRegistry = require('./GenyRegistry');
 
 const events = {
-  GENYCLOUD_INIT: { event: 'GENYCLOUD_INIT' },
   GENYCLOUD_TEARDOWN: { event: 'GENYCLOUD_TEARDOWN' },
 };
 
@@ -18,10 +17,6 @@ const events = {
  * @implements {AllocationDriverBase}
  */
 class GenyAllocDriver {
-
-  /** @type { Promise<any> | null } */
-  static _adbDaemonStart = null;
-
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
@@ -45,6 +40,10 @@ class GenyAllocDriver {
     this._instanceCounter = 0;
   }
 
+  async init() {
+    await this._startAdbDaemon();
+  }
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}
@@ -54,8 +53,6 @@ class GenyAllocDriver {
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
-
-    await this._initAdbDaemon();
 
     let instance = this._genyRegistry.findFreeInstance(recipe);
     if (!instance) {
@@ -122,6 +119,8 @@ class GenyAllocDriver {
 
     const deletionLeaks = (await Promise.all(killPromises)).filter(Boolean);
     this._reportGlobalCleanupSummary(deletionLeaks);
+
+    await this._killAdbDaemon();
   }
 
   emergencyCleanup() {
@@ -156,20 +155,20 @@ class GenyAllocDriver {
     }
   }
 
-  async _initAdbDaemon() {
-    const _startDaemon = async () => {
-      try {
-        log.info(events.GENYCLOUD_INIT, 'Starting ADB daemon...');
-        await this._adb.startDaemon();
-      } catch (e) {
-        log.warn('ADB daemon start failed; error ignored', e);
-      }
-    };
-
-    if (GenyAllocDriver._adbDaemonStart === null) {
-      GenyAllocDriver._adbDaemonStart = _startDaemon();
+  async _startAdbDaemon() {
+    try {
+      await this._adb.startDaemon();
+    } catch (e) {
+      log.warn('ADB daemon start failed; error ignored', e);
     }
-    await GenyAllocDriver._adbDaemonStart;
+  }
+
+  async _killAdbDaemon() {
+    try {
+      await this._adb.killDaemon();
+    } catch (e) {
+      log.warn('ADB daemon kill failed; error ignored', e);
+    }
   }
 }
 
