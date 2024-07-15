@@ -26,6 +26,7 @@ const _logFinalError = Symbol('logFinalError');
 const _cookieAllocators = Symbol('cookieAllocators');
 const _deviceAllocators = Symbol('deviceAllocators');
 const _createDeviceAllocator = Symbol('createDeviceAllocator');
+const _createDeviceAllocatorInstance = Symbol('createDeviceAllocatorInstance');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -272,21 +273,7 @@ class DetoxPrimaryContext extends DetoxContext {
   /** @param {Detox.DetoxDeviceConfig} deviceConfig */
   [_createDeviceAllocator] = async (deviceConfig) => {
     const deviceType = deviceConfig.type;
-    let deviceAllocator;
-
-    if (this[_deviceAllocators][deviceType]) {
-      deviceAllocator = this[_deviceAllocators][deviceType];
-    } else {
-      const environmentFactory = require('../environmentFactory');
-      const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
-      const { detoxConfig } = this[$sessionState];
-      deviceAllocator = deviceAllocatorFactory.createDeviceAllocator({
-        detoxConfig,
-        detoxSession: this[$sessionState]
-      });
-
-      this[_deviceAllocators][deviceType] = deviceAllocator;
-    }
+    const deviceAllocator = this[_createDeviceAllocatorInstance](deviceConfig);
 
     try {
       await deviceAllocator.init();
@@ -301,6 +288,26 @@ class DetoxPrimaryContext extends DetoxContext {
       throw e;
     }
 
+    return this[_deviceAllocators][deviceType];
+  };
+
+  /**
+   * @param {Detox.DetoxDeviceConfig} deviceConfig
+   * @returns { DeviceAllocator }
+   */
+  [_createDeviceAllocatorInstance] = (deviceConfig) => {
+    const deviceType = deviceConfig.type;
+
+    if (!this[_deviceAllocators][deviceType]) {
+      const environmentFactory = require('../environmentFactory');
+      const { deviceAllocatorFactory } = environmentFactory.createFactories(deviceConfig);
+      const { detoxConfig } = this[$sessionState];
+
+      this[_deviceAllocators][deviceType] = deviceAllocatorFactory.createDeviceAllocator({
+        detoxConfig,
+        detoxSession: this[$sessionState]
+      });
+    }
     return this[_deviceAllocators][deviceType];
   };
 
