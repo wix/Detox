@@ -46,9 +46,9 @@ describe('Genymotion-cloud executable', () => {
     ['Get Instance', () => uut.getInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances get ${instanceUUID}`],
     ['Get Instances', () => uut.getInstances(), `"mock/path/to/gmsaas" --format compactjson instances list -q`],
     ['Start Instance', () => uut.startInstance(recipeUUID, instanceName), `"mock/path/to/gmsaas" --format compactjson instances start --no-wait ${recipeUUID} "${instanceName}"`, { retries: 0 }],
-    ['ADB Connect', () => uut.adbConnect(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances adbconnect ${instanceUUID}`],
+    ['ADB Connect', () => uut.adbConnect(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances adbconnect ${instanceUUID}`, { retries: 0 }],
     ['Stop Instance', () => uut.stopInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances stop ${instanceUUID}`, { retries: 3 }],
-])(`%s command`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
+  ])(`%s command`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
     it('should execute command by name', async () => {
       givenSuccessResult();
 

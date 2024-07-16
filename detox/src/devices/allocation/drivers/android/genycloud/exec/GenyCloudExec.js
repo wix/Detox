@@ -28,7 +28,7 @@ class GenyCloudExec {
   }
 
   adbConnect(instanceUUID) {
-    return this._exec(`instances adbconnect ${instanceUUID}`);
+    return this._exec(`instances adbconnect ${instanceUUID}`, { retries: 0 });
   }
 
   stopInstance(instanceUUID) {

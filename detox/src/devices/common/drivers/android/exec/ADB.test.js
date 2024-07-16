@@ -81,17 +81,22 @@ describe('ADB', () => {
       const { devices } = await adb.devices();
       expect(devices.length).toEqual(0);
     });
+
+    it(`should allow for option overrides`, async () => {
+      const options = {
+        retries: 100,
+        verbosity: 'low',
+      };
+
+      await adb.devices(options);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), options);
+    });
   });
 
   describe('ADB Daemon (server)', () => {
     it('should start the daemon', async () => {
       await adb.startDaemon();
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  start-server`, { retries: 0, verbosity: 'high' });
-    });
-
-    it('should kill the daemon', async () => {
-      await adb.killDaemon();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  kill-server`, { retries: 0, verbosity: 'high' });
     });
   });
 
