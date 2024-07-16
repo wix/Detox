@@ -66,7 +66,7 @@ class Genycloud extends DeviceAllocatorFactory {
     const recipeService = new RecipesService(exec);
 
     const InstanceLifecycleService = require('../drivers/android/genycloud/services/GenyInstanceLifecycleService');
-    const instanceLifecycleService = new InstanceLifecycleService(exec);
+    const instanceLifecycleService = new InstanceLifecycleService(exec, adb);
 
     const RecipeQuerying = require('../drivers/android/genycloud/GenyRecipeQuerying');
     const recipeQuerying = new RecipeQuerying(recipeService);

@@ -20,12 +20,8 @@ class ADB {
     await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
   }
 
-  async killDaemon() {
-    await this.adbCmd('', 'kill-server', { retries: 0, verbosity: 'high' });
-  }
-
-  async devices() {
-    const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high' });
+  async devices(options) {
+    const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high', ...options });
     /** @type {DeviceHandle[]} */
     const devices = _.chain(stdout)
       .trim()
