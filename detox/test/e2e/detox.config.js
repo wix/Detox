@@ -122,7 +122,7 @@ const config = {
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {
-        recipeUUID: '9baf12f9-a645-4ffa-a688-0e92584d6194',
+        recipeUUID: 'ba2c588d-744f-473c-b72d-a2c467988f04',
       },
     },
 
