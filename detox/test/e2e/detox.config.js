@@ -16,7 +16,7 @@ const config = {
       forceExit: process.env.CI ? true : undefined,
       _: ['e2e/'],
     },
-    detached: false,
+    detached: !!process.env.CI,
     retries: process.env.CI ? 1 : undefined,
     jest: {
       setupTimeout: +`${process.env.DETOX_JEST_SETUP_TIMEOUT || 300000}`,
