@@ -108,7 +108,7 @@ const config = {
       headless: Boolean(process.env.CI),
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'Pixel_3A_API_29'
+        avdName: 'Pixel_3a_API_34'
       },
     },
 
@@ -122,14 +122,14 @@ const config = {
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {
-        recipeUUID: '90450ce0-cdd8-4229-8618-18a1fc195b62',
+        recipeUUID: 'ba2c588d-744f-473c-b72d-a2c467988f04',
       },
     },
 
     'android.genycloud.name': {
       type: 'android.genycloud',
       device: {
-        recipeName: 'Detox_Pixel_3A_API_29',
+        recipeName: 'Detox_Pixel_3a_API_34',
       },
     },
   },

@@ -208,10 +208,10 @@ describe('Actions', () => {
   it('should swipe horizontally by offset from specified positions ', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
 
-    await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.25, 0.85, 0.75);
+    await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.28, 0.85, 0.75);
     await expect(element(by.text('HText1'))).not.toBeVisible(1);
 
-    await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.25, 0.15, 0.25);
+    await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.28, 0.15, 0.25);
     await expect(element(by.text('HText1'))).toBeVisible(1);
   });
 
