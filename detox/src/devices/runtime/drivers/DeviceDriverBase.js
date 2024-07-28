@@ -51,6 +51,10 @@ class DeviceDriverBase {
     return '';
   }
 
+  async tap(point) {
+    return '';
+  }
+
   async sendToHome() {
     return '';
   }

@@ -278,6 +278,10 @@ class RuntimeDevice {
     await this.deviceDriver.setOrientation(orientation);
   }
 
+  async tap(point) {
+    await this.deviceDriver.tap(point);
+  }
+
   async setLocation(lat, lon) {
     lat = String(lat);
     lon = String(lon);

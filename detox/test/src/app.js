@@ -90,6 +90,7 @@ export default class example extends Component {
         {this.renderScreenButton('Network', Screens.NetworkScreen)}
         {this.renderAnimationScreenButtons()}
         {this.renderScreenButton('Device', Screens.DeviceScreen)}
+        {this.renderScreenButton('Device Tap', Screens.DeviceTapScreen)}
         {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}

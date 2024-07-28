@@ -84,4 +84,11 @@ describe('Device', () => {
     await device.pressBack();
     await expect(element(by.text('Back pressed !'))).toBeVisible();
   });
+
+  it.only(':android: tap on screen', async () => {
+    await element(by.text('Device Tap')).tap();
+    const point = {x: 200, y: 200}
+    await device.tap(point);
+    await expect(element(by.text('Screen Tapped'))).toBeVisible();
+  });
 });

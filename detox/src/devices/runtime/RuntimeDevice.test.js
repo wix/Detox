@@ -816,6 +816,13 @@ describe('Device', () => {
     expect(driverMock.driver.setOrientation).toHaveBeenCalledWith('param');
   });
 
+  it(`tap() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    await device.tap('param');
+
+    expect(driverMock.driver.tap).toHaveBeenCalledWith('param');
+  });
+
   it(`sendUserNotification() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.sendUserNotification('notif');
