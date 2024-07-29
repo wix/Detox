@@ -85,7 +85,7 @@ describe('Device', () => {
     await expect(element(by.text('Back pressed !'))).toBeVisible();
   });
 
-  it.only(':android: tap on screen', async () => {
+  it(':android: tap on screen', async () => {
     await element(by.text('Device Tap')).tap();
     await device.tap();
     await expect(element(by.text('Screen Tapped'))).toBeVisible();
