@@ -110,7 +110,7 @@ dependencies {
     implementation project(':react-native-permissions')
 
     androidTestImplementation(project(path: ':detox'))
-    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.3'
+    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }
 
 // Apply Hermes as our JS engine
