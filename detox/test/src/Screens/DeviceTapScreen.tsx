@@ -1,16 +1,25 @@
-import React, {useCallback, useState} from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Button, Text, TouchableOpacity, View } from 'react-native';
 
 const DeviceTapScreen = () => {
-  const [shouldShowText, setShouldShowText] = useState(false);
+  const [shouldShowScreenText, setShouldShowScreenText] = useState(false);
+  const [shouldShowButtonText, setShouldShowButtonText] = useState(false);
+
+  const onPressScreen = useCallback(() => {
+    setShouldShowScreenText(true);
+  }, [setShouldShowScreenText]);
 
   const onPressButton = useCallback(() => {
-    setShouldShowText(true);
-  }, [setShouldShowText]);
+    setShouldShowButtonText(true);
+  }, [setShouldShowScreenText]);
 
   return (
-    <TouchableOpacity onPress={onPressButton} style={{flex: 1}}>
-      {shouldShowText && <Text>{'Screen Tapped'}</Text>}
+    <TouchableOpacity onPress={onPressScreen} style={{ flex: 1 }}>
+      <View style={{ left: 40, top: 25, position: 'absolute' }}>
+        <Button onPress={onPressButton} title="TAP ME" />
+      </View>
+      {shouldShowScreenText && <Text>{'Screen Tapped'}</Text>}
+      {shouldShowButtonText && <Text>{'Button Tapped'}</Text>}
     </TouchableOpacity>
   );
 };

@@ -781,12 +781,10 @@ declare global {
              */
             setOrientation(orientation: Orientation): Promise<void>;
 
-            
             /**
              * Perform a click at arbitrary coordinates on the default display specified by the user. Currently only available in the Android Simulator.
              */
             tap(point?: Point2D): Promise<void>;
-
 
             /**
              * Sets the simulator/emulator location to the given latitude and longitude.

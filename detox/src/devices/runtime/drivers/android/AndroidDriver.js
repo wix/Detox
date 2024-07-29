@@ -246,7 +246,9 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async tap(point) {
-    await this.uiDevice.click(point.x, point.y);
+    let x = point?.x || await this.uiDevice.getDisplayWidth() / 2;
+    let y = point?.y || await this.uiDevice.getDisplayHeight() / 2;
+    await this.uiDevice.click(x, y);
   }
 
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {

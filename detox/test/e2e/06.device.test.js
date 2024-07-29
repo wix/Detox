@@ -87,8 +87,14 @@ describe('Device', () => {
 
   it.only(':android: tap on screen', async () => {
     await element(by.text('Device Tap')).tap();
+    await device.tap();
+    await expect(element(by.text('Screen Tapped'))).toBeVisible();
+  });
+
+  it(':android: tap on screen by coordinates', async () => {
+    await element(by.text('Device Tap')).tap();
     const point = {x: 200, y: 200}
     await device.tap(point);
-    await expect(element(by.text('Screen Tapped'))).toBeVisible();
+    await expect(element(by.text('Button Tapped'))).toBeVisible();
   });
 });
