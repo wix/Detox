@@ -123,7 +123,7 @@ const config = {
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {
-        recipeUUID: 'ba2c588d-744f-473c-b72d-a2c467988f04',
+        recipeUUID: '9baf12f9-a645-4ffa-a688-0e92584d6194',
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
