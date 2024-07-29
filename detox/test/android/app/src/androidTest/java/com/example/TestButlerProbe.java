@@ -34,11 +34,11 @@ class TestButlerProbe {
         try {
             isEnabled = DetoxButler.tryToWaitForDetoxButlerServiceToBeEnabled(15);
         } catch (Exception e) {
-            throw new RuntimeException("Test butler service is NOT ready!", e);
+            throw new RuntimeException("Detox butler service is NOT ready!", e);
         }
 
         if (!isEnabled) {
-            throw new RuntimeException("Test butler service is NOT ready!");
+            throw new RuntimeException("Detox butler service is NOT ready!");
         }
     }
 }
