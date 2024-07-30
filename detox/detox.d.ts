@@ -762,7 +762,7 @@ declare global {
             uninstallApp(bundle?: string): Promise<void>;
 
             /**
-             * Mock opening the app from URL. sourceApp is an optional parameter to specify source application bundle id.
+             * Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id (iOS only).
              */
             openURL(url: { url: string; sourceApp?: string }): Promise<void>;
 
@@ -1905,7 +1905,11 @@ declare global {
              * Launch from URL
              * Mock opening the app from URL to test your app's deep link handling mechanism.
              */
-            url?: any;
+            url?: string;
+            /**
+             * Optional parameter to specify source application bundle id when opening the app from URL (iOS Only).
+             */
+            sourceApp?: string;
             /**
              * Launch with user notifications
              */
