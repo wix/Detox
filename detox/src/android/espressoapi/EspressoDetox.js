@@ -73,6 +73,77 @@ class EspressoDetox {
     };
   }
 
+  static tap(x, y) {
+    if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
+    if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.espresso.EspressoDetox"
+      },
+      method: "tap",
+      args: [{
+        type: "Integer",
+        value: x
+      }, {
+        type: "Integer",
+        value: y
+      }]
+    };
+  }
+
+  static longPress(x, y) {
+    function longPress2(x, y) {
+      if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
+      if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.EspressoDetox"
+        },
+        method: "longPress",
+        args: [{
+          type: "Integer",
+          value: x
+        }, {
+          type: "Integer",
+          value: y
+        }]
+      };
+    }
+
+    function longPress3(x, y, duration) {
+      if (typeof x !== "number") throw new Error("x should be a number, but got " + (x + (" (" + (typeof x + ")"))));
+      if (typeof y !== "number") throw new Error("y should be a number, but got " + (y + (" (" + (typeof y + ")"))));
+      if (typeof duration !== "number") throw new Error("duration should be a number, but got " + (duration + (" (" + (typeof duration + ")"))));
+      return {
+        target: {
+          type: "Class",
+          value: "com.wix.detox.espresso.EspressoDetox"
+        },
+        method: "longPress",
+        args: [{
+          type: "Integer",
+          value: x
+        }, {
+          type: "Integer",
+          value: y
+        }, {
+          type: "Integer",
+          value: duration
+        }]
+      };
+    }
+
+    if (arguments.length === 2) {
+      return longPress2.apply(null, arguments);
+    }
+
+    if (arguments.length === 3) {
+      return longPress3.apply(null, arguments);
+    }
+  }
+
 }
 
 module.exports = EspressoDetox;

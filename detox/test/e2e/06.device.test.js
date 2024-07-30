@@ -86,15 +86,33 @@ describe('Device', () => {
   });
 
   it(':android: tap on screen', async () => {
+    await device.launchApp({ newInstance: true });
     await element(by.text('Device Tap')).tap();
     await device.tap();
     await expect(element(by.text('Screen Tapped'))).toBeVisible();
   });
 
   it(':android: tap on screen by coordinates', async () => {
+    await device.launchApp({ newInstance: true });
     await element(by.text('Device Tap')).tap();
-    const point = {x: 200, y: 200}
+    const point = {x: 200, y: 243}
     await device.tap(point);
     await expect(element(by.text('Button Tapped'))).toBeVisible();
+  });
+
+  it(':android: long press on screen by coordinates', async () => {
+    await device.launchApp({ newInstance: true });
+    await element(by.text('Device Tap')).tap();
+    const point = {x: 150, y: 300}
+    await device.longPress(point);
+    await expect(element(by.text('Screen Long Pressed'))).toBeVisible();
+  });
+
+  it(':android: long press on screen by coordinates with duration', async () => {
+    await device.launchApp({ newInstance: true });
+    await element(by.text('Device Tap')).tap();
+    const point = {x: 200, y: 190}
+    await device.longPress(point, 2000);
+    await expect(element(by.text('Screen Long Custom Duration Pressed'))).toBeVisible();
   });
 });

@@ -282,6 +282,10 @@ class RuntimeDevice {
     await this.deviceDriver.tap(point);
   }
 
+  async longPress(point, duration) {
+    await this.deviceDriver.longPress(point, duration);
+  }
+
   async setLocation(lat, lon) {
     lat = String(lat);
     lon = String(lon);

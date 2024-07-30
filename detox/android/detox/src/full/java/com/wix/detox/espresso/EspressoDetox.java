@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
+import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -118,6 +120,69 @@ public class EspressoDetox {
             @Override
             public void run() {
                 NetworkIdlingResource.setURLBlacklist(urls);
+            }
+        });
+    }
+
+    public static void tap(Integer x, Integer y) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "tap on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ViewAction action = DetoxAction.tapAtLocation(x, y);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
+            }
+        });
+    }
+
+    public static void longPress(Integer x, Integer y) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "long press on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ViewAction action = DetoxAction.longPress(x, y);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
+            }
+        });
+    }
+
+    public static void longPress(Integer x, Integer y, Integer duration) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "long press on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ViewAction action = DetoxAction.longPress(x, y, duration);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
             }
         });
     }

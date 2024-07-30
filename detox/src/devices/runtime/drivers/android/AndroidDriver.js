@@ -246,9 +246,17 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async tap(point) {
-    let x = point?.x || await this.uiDevice.getDisplayWidth() / 2;
-    let y = point?.y || await this.uiDevice.getDisplayHeight() / 2;
-    await this.uiDevice.click(x, y);
+    let x = point?.x || 200;
+    let y = point?.y || 200;
+    const call = EspressoDetoxApi.tap(x, y);
+    await this.invocationManager.execute(call);
+  }
+
+  async longPress(point, duration) {
+    let x = point?.x || 200;
+    let y = point?.y || 200;
+    const call = !!duration ? EspressoDetoxApi.longPress(x, y, duration): EspressoDetoxApi.longPress(x, y);
+    await this.invocationManager.execute(call);
   }
 
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
