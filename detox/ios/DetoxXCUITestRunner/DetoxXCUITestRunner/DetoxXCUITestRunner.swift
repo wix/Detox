@@ -31,6 +31,9 @@ final class DetoxXCUITestRunner: XCTestCase {
 
       case .systemExpectation, .webExpectation:
         try expectationHandler.handle(from: params, on: element)
+
+      case .deviceAction:
+            <#code#>
     }
   }
 }

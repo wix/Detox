@@ -255,6 +255,10 @@ class RuntimeDevice {
     await this.deviceDriver.uninstallApp(_bundleId);
   }
 
+  async tap() {
+    await this.deviceDriver.tap({bundleId: this._bundleId});
+  }
+
   async installUtilBinaries() {
     const paths = this._deviceConfig.utilBinaryPaths;
     if (paths) {

@@ -5,8 +5,9 @@ const environment = require('../utils/environment');
 const log = require('../utils/logger').child({ cat: 'xcuitest-runner' });
 
 class XCUITestRunner {
-    constructor({ runtimeDevice }) {
-        this.runtimeDevice = runtimeDevice;
+    constructor({ id, bundleId }) {
+        this.id = id;
+        this.bundleId = bundleId;
     }
 
     async execute(invocationParams) {

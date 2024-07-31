@@ -36,6 +36,23 @@ class ActionHandler {
 
       case .clearText:
         element.clearText()
+
+      case .coordinateTap:
+            guard let x = params.params?.first, let y = params.params?[1] else {
+                throw Error.missingTypeTextParam
+            }
+
+            do {
+                // create the normalized vector:
+                let width = try XCUIApplication.appUnderTest().frame.width
+                // ...
+                let normalizedVector = CGVector(dx: 0.2, dy: 0.3)
+                let coordinate = try XCUIApplication.appUnderTest().coordinate(withNormalizedOffset: normalizedVector)
+
+                coordinate.tap()
+            } catch  {
+                throw Error.failedToFindApp
+            }
     }
   }
 }
@@ -43,11 +60,15 @@ class ActionHandler {
 extension ActionHandler {
   enum Error: Swift.Error, LocalizedError {
     case missingTypeTextParam
+    case failedToFindApp
 
     var errorDescription: String? {
       switch self {
         case .missingTypeTextParam:
           return "Missing text param for type action"
+
+          case .failedToFindApp:
+              return "Failed to find app under test"
       }
     }
   }

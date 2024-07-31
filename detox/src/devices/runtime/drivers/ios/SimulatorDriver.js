@@ -11,6 +11,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 
 const IosDriver = require('./IosDriver');
+const XCUITestRunner = require("../../../../ios/XCUITestRunner");
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -38,6 +39,10 @@ class SimulatorDriver extends IosDriver {
     this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
     this._applesimutils = deps.applesimutils;
+  }
+
+  async tap(bundleId) {
+    new XCUITestRunner({ id: getExternalId(), bundleId });
   }
 
   getExternalId() {
@@ -192,6 +197,10 @@ class SimulatorDriver extends IosDriver {
     });
 
     return viewHierarchyURL;
+  }
+
+  async tap(point){
+
   }
 
   async setStatusBar(flags) {
