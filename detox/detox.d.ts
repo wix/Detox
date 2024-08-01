@@ -783,12 +783,23 @@ declare global {
 
             /**
              * Perform a tap at arbitrary coordinates on the default display specified by the user. Currently only available in the Android Simulator.
-             * defaults
+             * @param point coordinates in the element's coordinate space. Optional (default is the center of the element). defaults: x: 100, y: 100
+             * @example await device.tap();
+             * @example await device.tap({ x: 100, y: 150 });
              */
-            tap(point?: Point2D): Promise<void>;
+            tap(): Promise<void>;
+            tap(point: Point2D): Promise<void>;
 
             /**
              * Perform a long press at arbitrary coordinates on the default display specified by the user. Custom press duration if needed. Currently only available in the Android Simulator.
+             * @param point coordinates in the element's coordinate space. Optional (default is the center of the element). defaults: x: 100, y: 100
+             * @param duration custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for the platform).
+             *      Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+             *      They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
+             * @example await device.longPress();
+             * @example await device.longPress({ x: 100, y: 150 });
+             * @example await device.longPress(2000);
+             * @example await device.longPress({ x: 100, y: 150 }, 2000);
              */
             longPress(): Promise<void>;
             longPress(point: Point2D): Promise<void>;
