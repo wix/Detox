@@ -783,13 +783,17 @@ declare global {
 
             /**
              * Perform a tap at arbitrary coordinates on the default display specified by the user. Currently only available in the Android Simulator.
+             * defaults
              */
             tap(point?: Point2D): Promise<void>;
 
             /**
              * Perform a long press at arbitrary coordinates on the default display specified by the user. Custom press duration if needed. Currently only available in the Android Simulator.
              */
-            longPress(point?: Point2D, duration?: number): Promise<void>;
+            longPress(): Promise<void>;
+            longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
+            longPress(point: Point2D, duration: number): Promise<void>;
 
             /**
              * Sets the simulator/emulator location to the given latitude and longitude.

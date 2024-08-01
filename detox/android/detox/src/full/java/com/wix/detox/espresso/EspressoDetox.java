@@ -146,24 +146,7 @@ public class EspressoDetox {
     }
 
     public static void longPress(Integer x, Integer y) {
-        onView(isRoot()).perform(new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return isRoot();
-            }
-
-            @Override
-            public String getDescription() {
-                return "long press on screen";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                ViewAction action = DetoxAction.longPress(x, y);
-                action.perform(uiController, view);
-                uiController.loopMainThreadUntilIdle();
-            }
-        });
+        longPress(x, y, null);
     }
 
     public static void longPress(Integer x, Integer y, Integer duration) {
