@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
 import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;

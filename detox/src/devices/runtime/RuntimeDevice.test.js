@@ -818,7 +818,7 @@ describe('Device', () => {
 
   it(`tap() should pass to device driver`, async () => {
     const device = await aValidDevice();
-    const points = {x: 200, y: 200};
+    const points = { x: 200, y: 200 };
     await device.tap(points);
 
     expect(driverMock.driver.tap).toHaveBeenCalledWith(points);
@@ -826,7 +826,7 @@ describe('Device', () => {
 
   it(`longPress() should pass to device driver`, async () => {
     const device = await aValidDevice();
-    const points = {x: 200, y: 200};
+    const points = { x: 200, y: 200 };
     const duration = 2000;
     await device.longPress(points, duration);
 
