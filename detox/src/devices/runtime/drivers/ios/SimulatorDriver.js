@@ -201,10 +201,6 @@ class SimulatorDriver extends IosDriver {
   async resetStatusBar() {
     await this._applesimutils.statusBarReset(this.udid);
   }
-
-  async tap(points) {
-    
-  }
 }
 
 module.exports = SimulatorDriver;
