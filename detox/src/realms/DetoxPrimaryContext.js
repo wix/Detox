@@ -11,6 +11,7 @@ const uuid = require('../utils/uuid');
 
 const DetoxContext = require('./DetoxContext');
 const symbols = require('./symbols');
+const retry = require('../utils/retry');
 
 // Protected symbols
 const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
@@ -27,6 +28,7 @@ const _cookieAllocators = Symbol('cookieAllocators');
 const _deviceAllocators = Symbol('deviceAllocators');
 const _createDeviceAllocator = Symbol('createDeviceAllocator');
 const _createDeviceAllocatorInstance = Symbol('createDeviceAllocatorInstance');
+const _allocateDeviceOnce = Symbol('allocateDeviceOnce');
 //#endregion
 
 class DetoxPrimaryContext extends DetoxContext {
@@ -154,6 +156,20 @@ class DetoxPrimaryContext extends DetoxContext {
   /** @override */
   async [symbols.allocateDevice](deviceConfig) {
     const deviceAllocator = await this[_createDeviceAllocator](deviceConfig);
+
+    const retryOptions = {
+      backoff: 'none',
+      retries: 5,
+      interval: 25000,
+      conditionFn: (e) => deviceAllocator.isRecoverableError(e),
+    };
+
+    await retry(retryOptions, async () => {
+      return await this[_allocateDeviceOnce](deviceAllocator, deviceConfig);
+    });
+  }
+
+  async [_allocateDeviceOnce](deviceAllocator, deviceConfig) {
     const deviceCookie = await deviceAllocator.allocate(deviceConfig);
     this[_cookieAllocators][deviceCookie.id] = deviceAllocator;
 
@@ -163,7 +179,10 @@ class DetoxPrimaryContext extends DetoxContext {
       try {
         await deviceAllocator.free(deviceCookie, { shutdown: true });
       } catch (e2) {
-        this[symbols.logger].error({ cat: 'device', err: e2 }, `Failed to free ${deviceCookie.name || deviceCookie.id} after a failed allocation attempt`);
+        this[symbols.logger].error({
+          cat: 'device',
+          err: e2
+        }, `Failed to free ${deviceCookie.name || deviceCookie.id} after a failed allocation attempt`);
       } finally {
         delete this[_cookieAllocators][deviceCookie.id];
       }
