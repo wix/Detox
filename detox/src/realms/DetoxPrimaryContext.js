@@ -7,11 +7,11 @@ const temporary = require('../artifacts/utils/temporaryPath');
 const { DetoxRuntimeError } = require('../errors');
 const SessionState = require('../ipc/SessionState');
 const { getCurrentCommand } = require('../utils/argparse');
+const retry = require('../utils/retry');
 const uuid = require('../utils/uuid');
 
 const DetoxContext = require('./DetoxContext');
 const symbols = require('./symbols');
-const retry = require('../utils/retry');
 
 // Protected symbols
 const { $logFinalizer, $restoreSessionState, $sessionState, $worker } = DetoxContext.protected;
@@ -164,7 +164,7 @@ class DetoxPrimaryContext extends DetoxContext {
       conditionFn: (e) => deviceAllocator.isRecoverableError(e),
     };
 
-    await retry(retryOptions, async () => {
+    return await retry(retryOptions, async () => {
       return await this[_allocateDeviceOnce](deviceAllocator, deviceConfig);
     });
   }

@@ -59,6 +59,8 @@ describe('DetoxPrimaryContext', () => {
   let facade;
   /** @type {import('./symbols')} */
   let symbols;
+  /** @type {jest.Mock<import('../utils/retry')>} */
+  let retry;
 
   const detoxServer = () => latestInstanceOf(DetoxServer);
   const ipcServer = () => latestInstanceOf(IPCServer);
@@ -466,6 +468,7 @@ describe('DetoxPrimaryContext', () => {
       free: jest.fn(),
       cleanup: jest.fn(),
       emergencyCleanup: jest.fn(),
+      isRecoverableError: jest.fn().mockReturnValue(true)
     };
 
     jest.mock('../environmentFactory');
@@ -481,6 +484,10 @@ describe('DetoxPrimaryContext', () => {
 
     jest.mock('../DetoxWorker');
     DetoxWorker = jest.requireMock('../DetoxWorker');
+
+    jest.mock('../utils/retry');
+    retry = jest.requireMock('../utils/retry');
+    retry.mockImplementation((opts, callback) => callback());
   }
 
   async function allocateSomeDevice() {

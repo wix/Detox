@@ -133,7 +133,7 @@ class GenyAllocDriver {
    */
   isRecoverableError(error) {
     const errorStr = JSON.stringify(error);
-    return error.indexOf('adb: device \'localhost:') !== -1
+    return errorStr.indexOf('adb: device \'localhost:') !== -1;
   }
 
   emergencyCleanup() {
