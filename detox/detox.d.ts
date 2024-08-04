@@ -1479,6 +1479,7 @@ declare global {
              */
             longPress(): Promise<void>;
             longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
             longPress(point: Point2D, duration: number): Promise<void>;
 
             /**

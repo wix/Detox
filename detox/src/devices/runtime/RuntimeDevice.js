@@ -3,6 +3,7 @@ const debug = require('../../utils/debug'); // debug utils, leave here even if u
 const log = require('../../utils/logger').child({ cat: 'device' });
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
+const mapLongPressArguments = require('../../utils/mapLongPressArguments');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
@@ -282,7 +283,9 @@ class RuntimeDevice {
     await this.deviceDriver.tap(point);
   }
 
-  async longPress(point, duration) {
+  async longPress(arg1, arg2) {
+    let { point, duration } = mapLongPressArguments(arg1, arg2);
+
     await this.deviceDriver.longPress(point, duration);
   }
 
