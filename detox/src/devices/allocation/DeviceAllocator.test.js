@@ -110,4 +110,17 @@ describe('Device allocator', () => {
       expect(allocDriver.emergencyCleanup).toHaveBeenCalled();
     });
   });
+
+  describe('#isRecoverableError()', function() {
+    test('should return false if the driver does not implement this function', () => {
+      delete allocDriver.isRecoverableError;
+      expect(deviceAllocator.isRecoverableError(new Error())).toBe(false);
+    });
+
+    test('should return the driver\'s isRecoverableError result', () => {
+      allocDriver.isRecoverableError = jest.fn().mockReturnValue(true);
+      expect(deviceAllocator.isRecoverableError(new Error())).toBe(true);
+      expect(allocDriver.isRecoverableError).toHaveBeenCalled();
+    });
+  });
 });
