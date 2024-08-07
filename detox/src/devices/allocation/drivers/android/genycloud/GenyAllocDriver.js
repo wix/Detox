@@ -125,6 +125,17 @@ class GenyAllocDriver {
     this._reportGlobalCleanupSummary(deletionLeaks);
   }
 
+  /**
+   * The current error we could recover from in the context of Genymotion Cloud is when the device is not found.
+   * The error message will contain the following text adb: device 'localhost:xxxxx' not found
+   * @param error
+   * @returns {boolean}
+   */
+  isRecoverableError(error) {
+    const errorStr = JSON.stringify(error);
+    return errorStr.indexOf('adb: device \'localhost:') !== -1;
+  }
+
   emergencyCleanup() {
     const instances = this._genyRegistry.getInstances();
     this._reportGlobalCleanupSummary(instances);

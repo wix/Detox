@@ -89,6 +89,10 @@ android {
     }
 }
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation('com.facebook.react:react-android')
@@ -106,7 +110,7 @@ dependencies {
     implementation project(':react-native-permissions')
 
     androidTestImplementation(project(path: ':detox'))
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }
 
 // Apply Hermes as our JS engine

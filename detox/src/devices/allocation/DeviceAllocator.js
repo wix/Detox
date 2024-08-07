@@ -92,6 +92,13 @@ class DeviceAllocator {
       this._driver.emergencyCleanup();
     }
   }
+
+  isRecoverableError(error) {
+    if (typeof this._driver.isRecoverableError !== 'function') {
+      return false;
+    }
+    return this._driver.isRecoverableError(error);
+  }
 }
 
 module.exports = DeviceAllocator;
