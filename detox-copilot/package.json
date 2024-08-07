@@ -1,0 +1,28 @@
+{
+  "name": "detox-copilot",
+  "version": "20.25.1",
+  "description": "A Detox plugin that leverages AI to seamlessly invoke Detox operations",
+  "keywords": [
+    "detox",
+    "copilot",
+    "ai"
+  ],
+  "author": "Asaf Korem <asaf.korem@gmail.com>",
+  "homepage": "https://github.com/wix/Detox/detox-copilot",
+  "license": "MIT",
+  "main": "index.ts",
+  "types": "index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wix/Detox.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: not implemented yet\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/Detox/issues"
+  }
+}
