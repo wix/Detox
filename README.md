@@ -41,7 +41,7 @@ describe('Login flow', () => {
 });
 ```
 
-[Get started with Detox now!](https://wix.github.io/Detox/docs/introduction/getting-started)
+[Get started withsdfsfsdf Detox now!](https://wix.github.io/Detox/docs/introduction/getting-started)
 
 ## About
 
