@@ -10,7 +10,7 @@
   "author": "Asaf Korem <asaf.korem@gmail.com>",
   "homepage": "https://github.com/wix/Detox/detox-copilot",
   "license": "MIT",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "types": "index.d.ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
