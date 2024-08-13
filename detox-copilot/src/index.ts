@@ -17,11 +17,6 @@ export class DetoxCopilot {
         };
     }
 
-    /**
-     * Executes an action based on the given prompt.
-     * @param actionPrompt - The prompt describing the action to be performed.
-     * @throws {ActionError} If the action fails to execute.
-     */
     async act(actionPrompt: string): Promise<void> {
         const viewHierarchy = await this.getViewHierarchy();
         const response = await this.callAdapter(actionPrompt, viewHierarchy);
@@ -33,15 +28,14 @@ export class DetoxCopilot {
         try {
             await this.executeWithRetry(() => eval(response.content));
         } catch (error) {
-            throw new ActionError(`Failed to execute action: ${error.message}`, error);
+            if (error instanceof Error) {
+                throw new ActionError(`Failed to execute action: ${error.message}`, error);
+            } else {
+                throw new ActionError('Failed to execute action: Unknown error');
+            }
         }
     }
 
-    /**
-     * Performs an assertion based on the given prompt.
-     * @param assertionPrompt - The prompt describing the assertion to be made.
-     * @throws {AssertionError} If the assertion fails.
-     */
     async assert(assertionPrompt: string): Promise<void> {
         const viewHierarchy = await this.getViewHierarchy();
         const response = await this.callAdapter(assertionPrompt, viewHierarchy);
@@ -53,16 +47,14 @@ export class DetoxCopilot {
         try {
             await this.executeWithRetry(() => eval(response.content));
         } catch (error) {
-            throw new AssertionError(`Assertion failed: ${error.message}`, error);
+            if (error instanceof Error) {
+                throw new AssertionError(`Assertion failed: ${error.message}`, error);
+            } else {
+                throw new AssertionError('Assertion failed: Unknown error');
+            }
         }
     }
 
-    /**
-     * Performs a visual assertion based on the given prompt.
-     * @param assertionPrompt - The prompt describing the visual assertion to be made.
-     * @returns A boolean indicating whether the assertion passed or failed.
-     * @throws {VisualAssertionError} If the visual assertion process fails.
-     */
     async visualAssert(assertionPrompt: string): Promise<boolean> {
         const snapshotPath = await this.detoxMethods.takeSnapshot();
         const viewHierarchy = await this.getViewHierarchy();
@@ -98,11 +90,17 @@ export class DetoxCopilot {
                 await fn();
                 return;
             } catch (error) {
-                lastError = error;
+                if (error instanceof Error) {
+                    lastError = error;
+                } else {
+                    lastError = new Error('Unknown error occurred');
+                }
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
             }
         }
-        throw lastError;
+        if (lastError) {
+            throw lastError;
+        }
     }
 }
 
