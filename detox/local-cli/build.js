@@ -34,8 +34,29 @@ module.exports.builder = {
   },
 };
 
+function checkAppsExist(appsConfig, commands) {
+  const result = { '*': true };
+
+  for (const { appName } of commands) {
+    if (appName) {
+      result[appName] = true;
+
+      const app = appsConfig[appName] || {};
+      if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
+        result[appName] = result['*'] = false;
+      }
+      if (app.testBinaryPath && !fs.existsSync(app.testBinaryPath)) {
+        result[appName] = result['*'] = false;
+      }
+    }
+  }
+
+  return result;
+}
+
 module.exports.handler = async function build(argv) {
   const { apps, commands, errorComposer } = await detox.resolveConfig({ argv });
+  const appsExist = checkAppsExist(apps, commands);
 
   let seenBuildCommands = false;
 
@@ -45,8 +66,8 @@ module.exports.handler = async function build(argv) {
     if (build) {
       seenBuildCommands = true;
 
-      if (argv['if-missing'] && app.binaryPath && fs.existsSync(app.binaryPath)) {
-        detox.log.info(`Skipping build for "${appName}" app...`);
+      if (argv['if-missing'] && appsExist[appName || '*']) {
+        detox.log.info(appName ? `Skipping build for "${appName}" app...` : 'Skipping build...');
         continue;
       }
 
