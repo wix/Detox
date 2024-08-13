@@ -77,8 +77,6 @@ describe('build', () => {
     detox.config.apps.app2 = { binaryPath: __filename };
     detox.config.commands = [
       { build: 'yet another command' },
-      { appName: 'app1' },
-      { appName: 'app2' },
     ];
 
     await callCli('./build', 'build -i');
@@ -88,6 +86,18 @@ describe('build', () => {
     expect(execSync).not.toHaveBeenCalled();
 
     expect(detox.log.info).toHaveBeenCalledWith('Skipping build...');
+  });
+
+  it('should not skip building the multi-app build command if one app does not exist', async () => {
+    detox.config.apps.app1 = { binaryPath: __filename };
+    detox.config.apps.app2 = { binaryPath: __filename + '.doesnotexist' };
+    detox.config.commands = [
+      { build: 'yet another command' },
+    ];
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).toHaveBeenCalled();
+    expect(detox.log.info).not.toHaveBeenCalledWith('Skipping build...');
   });
 
   it('fails with an error if a build script has not been found', async () => {

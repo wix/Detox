@@ -34,20 +34,20 @@ module.exports.builder = {
   },
 };
 
-function checkAppsExist(appsConfig, commands) {
+function checkWhichAppsExist(appsConfig) {
   const result = { '*': true };
 
-  for (const { appName } of commands) {
-    if (appName) {
-      result[appName] = true;
+  for (const appName of Object.keys(appsConfig)) {
+    result[appName] = true;
 
-      const app = appsConfig[appName] || {};
-      if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
-        result[appName] = result['*'] = false;
-      }
-      if (app.testBinaryPath && !fs.existsSync(app.testBinaryPath)) {
-        result[appName] = result['*'] = false;
-      }
+    /* istanbul ignore next */
+    const app = appsConfig[appName] || {};
+    if (app.binaryPath && !fs.existsSync(app.binaryPath)) {
+      result[appName] = result['*'] = false;
+    }
+
+    if (app.testBinaryPath && !fs.existsSync(app.testBinaryPath)) {
+      result[appName] = result['*'] = false;
     }
   }
 
@@ -56,7 +56,7 @@ function checkAppsExist(appsConfig, commands) {
 
 module.exports.handler = async function build(argv) {
   const { apps, commands, errorComposer } = await detox.resolveConfig({ argv });
-  const appsExist = checkAppsExist(apps, commands);
+  const appsExist = checkWhichAppsExist(apps);
 
   let seenBuildCommands = false;
 
