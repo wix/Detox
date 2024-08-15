@@ -223,7 +223,7 @@ class DeviceDriverBase {
     return '';
   }
 
-  async getUIHierarchy() {
+  async getViewHierarchyXml() {
     return '';
   }
 }

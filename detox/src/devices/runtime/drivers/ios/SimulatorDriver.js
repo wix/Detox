@@ -194,9 +194,9 @@ class SimulatorDriver extends IosDriver {
     return viewHierarchyURL;
   }
 
-  async getUIHierarchy() {
+  async getViewHierarchyXml() {
     try {
-      await this.client.getUIHierarchy();
+      await this.client.getViewHierarchyXml();
     } catch (e) {
       const stringError = e.toString();
       return stringError.replace('Error: ', '');

@@ -1,3 +1,5 @@
+const jestExpect = require('expect').default;
+
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
@@ -37,6 +39,14 @@ describe('Device', () => {
     await device.launchApp();
 
     await expect(element(by.text('Hello!!!'))).toBeVisible();
+  });
+
+  it('getViewHierarchyXml() - should return a valid UI hierarchy', async () => {
+    await device.launchApp({newInstance: true});
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
+    const hierarchy = await device.getViewHierarchyXml();
+    jestExpect(hierarchy).toMatchSnapshot(device.getPlatform());
   });
 
   // // Passing on iOS, not implemented on Android

@@ -225,8 +225,8 @@ class Client {
     }));
   }
 
-  async getUIHierarchy() {
-    return await this.sendAction(new actions.GetUIHierarchy());
+  async getViewHierarchyXml() {
+    return await this.sendAction(new actions.GetViewHierarchyXml());
   }
 
   async currentStatus() {

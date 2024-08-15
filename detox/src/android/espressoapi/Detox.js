@@ -69,13 +69,13 @@ class Detox {
     };
   }
 
-  static getUIHierarchy() {
+  static getViewHierarchyXml() {
     return {
       target: {
         type: "Class",
         value: "com.wix.detox.Detox"
       },
-      method: "getUIHierarchy",
+      method: "getViewHierarchyXml",
       args: []
     };
   }
