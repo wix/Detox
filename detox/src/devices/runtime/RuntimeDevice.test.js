@@ -969,6 +969,12 @@ describe('Device', () => {
     expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith('capture');
   });
 
+  it('getViewHierarchy() should return the result of the driver', async () => {
+    const device = await aValidDevice();
+    const hierarchy = await device.getViewHierarchyXml();
+    expect(driverMock.driver.getViewHierarchyXml).toHaveBeenCalled();
+  });
+
   describe('_isAppRunning (internal method)', () => {
     let device;
 
