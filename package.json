@@ -23,7 +23,7 @@
     "chalk": "^4.0.0",
     "dictionary-en": "^3.1.0",
     "lerna": "^6.6.2",
-    "lodash": "4.17.x",
+    "lodash": "4.17.6",
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
     "remark-cli": "^10.0.0",
