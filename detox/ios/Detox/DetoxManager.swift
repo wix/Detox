@@ -390,7 +390,8 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 				return
 
 			case "getViewHierarchyXml":
-				let recursiveDescription = (UIWindow.dtx_keyWindowScene() as! UIWindowScene).dtx_recursiveDescription()
+				let scene = UIWindow.dtx_keyWindowScene() as! UIWindowScene
+				let recursiveDescription = ViewHierarchyDump.getViewHierarchyDump(scene: scene)
 				let resultParams: [String: Any] = ["viewHierarchy": recursiveDescription]
 				self.webSocket.sendAction(done, params: resultParams, messageId: messageId)
 

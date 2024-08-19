@@ -89,7 +89,7 @@ object GetViewHierarchyHelper {
         serializer.attribute("", "focused", view.isFocused.toString())
         serializer.attribute("", "value", view.contentDescription?.toString() ?: "")
         serializer.attribute("", "label", view.getAccessibilityLabel().toString())
-        serializer.attribute("", "tag", view.tag?.toString() ?: "")
+        serializer.attribute("", "testID", view.tag?.toString() ?: "")
         if (view is TextView) {
             serializer.attribute("", "text", view.text.toString())
         }

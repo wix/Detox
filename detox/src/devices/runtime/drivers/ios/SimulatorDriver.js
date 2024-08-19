@@ -196,13 +196,11 @@ class SimulatorDriver extends IosDriver {
 
   async getViewHierarchyXml() {
     try {
-      await this.client.getViewHierarchyXml();
+      return await this.client.getViewHierarchyXml();
     } catch (e) {
       const stringError = e.toString();
       return stringError.replace('Error: ', '');
     }
-
-    return 'Failed to get UI hierarchy.';
   }
 
   async setStatusBar(flags) {
