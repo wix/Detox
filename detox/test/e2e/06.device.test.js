@@ -1,4 +1,5 @@
 const jestExpect = require('expect').default;
+const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
@@ -46,7 +47,8 @@ describe('Device', () => {
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     const hierarchy = await device.getViewHierarchyXml();
-    jestExpect(hierarchy).toMatchSnapshot(device.getPlatform());
+
+    jestExpect(hierarchy).toMatchSnapshot(`${device.getPlatform()} RN:${rnMinorVer}`);
   });
 
   // // Passing on iOS, not implemented on Android
