@@ -1,4 +1,4 @@
-package com.wix.detox.espresso.heirarchy
+package com.wix.detox.espresso.hierarchy
 
 import android.annotation.SuppressLint
 import android.view.View

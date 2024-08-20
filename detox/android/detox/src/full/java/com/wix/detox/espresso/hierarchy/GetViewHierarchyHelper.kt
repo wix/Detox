@@ -1,4 +1,4 @@
-package com.wix.detox.espresso.heirarchy
+package com.wix.detox.espresso.hierarchy
 
 import android.util.Xml
 import android.util.Xml.Encoding
@@ -23,6 +23,7 @@ object GetViewHierarchyHelper {
         stringWriter.use {
             xmlSerializer.setOutput(stringWriter)
             xmlSerializer.startDocument(Encoding.UTF_8.name, true)
+            xmlSerializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             xmlSerializer.startTag("", "ViewHierarchy")
 
             rootViews?.forEach { rootView ->

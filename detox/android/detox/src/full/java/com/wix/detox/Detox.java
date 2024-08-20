@@ -7,7 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.wix.detox.config.DetoxConfig;
-import com.wix.detox.espresso.heirarchy.GetViewHierarchyHelper;
+import com.wix.detox.espresso.hierarchy.GetViewHierarchyHelper;
 
 /**
  * <p>Static class.</p>
