@@ -22,8 +22,7 @@ class ViewHierarchyDump {
 		
 		return """
 		\(xmlHeader)
-		<ViewHierarchy>
-		\(viewHierarchy)
+		<ViewHierarchy>\(viewHierarchy)
 		</ViewHierarchy>
 		"""
 		

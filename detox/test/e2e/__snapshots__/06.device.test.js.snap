@@ -12,7 +12,12 @@ exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: andr
           <ViewStubCompat id="com.wix.detox.test:id/action_mode_bar_stub" class="androidx.appcompat.widget.ViewStubCompat" width="0" height="0" visibility="gone" x="0" y="66" alpha="1.0" focused="false" value="" label="null" testID="" />
           <ContentFrameLayout id="android:id/content" class="androidx.appcompat.widget.ContentFrameLayout" width="1080" height="2022" visibility="visible" x="0" y="66" alpha="1.0" focused="false" value="" label="null" testID="">
             <ReactRootView id="11" class="com.facebook.react.ReactRootView" width="1080" height="2022" visibility="visible" x="0" y="66" alpha="1.0" focused="false" value="" label="Hello!!!" testID="">
-              <ReactTextView id="289" class="com.facebook.react.views.text.ReactTextView" width="213" height="92" visibility="visible" x="434" y="1059" alpha="1.0" focused="false" value="" label="Hello!!!" testID="" text="Hello!!!" />
+              <ReactViewGroup id="285" class="com.facebook.react.views.view.ReactViewGroup" width="1080" height="2022" visibility="visible" x="0" y="66" alpha="1.0" focused="false" value="" label="Hello!!!" testID="">
+                 <ReactViewGroup id="283" class="com.facebook.react.views.view.ReactViewGroup" width="1080" height="2022" visibility="visible" x="0" y="66" alpha="1.0" focused="false" value="" label="Hello!!!" testID="">
+                    <ReactViewGroup id="307" class="com.facebook.react.views.view.ReactViewGroup" width="1080" height="2022" visibility="visible" x="0" y="66" alpha="1.0" focused="false" value="" label="Hello!!!" testID="">
+                        <ReactTextView id="289" class="com.facebook.react.views.text.ReactTextView" width="213" height="92" visibility="visible" x="434" y="1059" alpha="1.0" focused="false" value="" label="Hello!!!" testID="" text="Hello!!!" />
+                    </ReactViewGroup>
+                </ReactViewGroup>
             </ReactRootView>
           </ContentFrameLayout>
         </FitWindowsLinearLayout>
