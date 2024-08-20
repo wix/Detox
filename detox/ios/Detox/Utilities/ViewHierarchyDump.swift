@@ -13,24 +13,20 @@ class ViewHierarchyDump {
 
 	static func getViewHierarchyDump(scene: UIWindowScene) -> String {
 		let windows = UIWindow.allKeyWindowSceneWindows
-
-		// Create the root ViewHierarchy element
-		var xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-		xml.append("\n<ViewHierarchy>")
-
-		// For each window we will dump the hierarchy
-		for window in windows {
-			//Ignore the touch visualizer window
-			if NSStringFromClass(type(of: window)) == "DTXTouchVisualizerWindow" {
-				continue
-			}
-
-			xml.append(dumpViewHierarchyRecursive(view: window, level: 1))
-		}
-
-		xml.append("\n</ViewHierarchy>")
-
-		return xml
+			
+		let xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+		let viewHierarchy = windows
+			.filter { NSStringFromClass(type(of: $0)) != "DTXTouchVisualizerWindow"  }
+			.map { dumpViewHierarchyRecursive(view: $0, level: 1) }
+			.joined()
+		
+		return """
+		\(xmlHeader)
+		<ViewHierarchy>
+		\(viewHierarchy)
+		</ViewHierarchy>
+		"""
+		
 	}
 
 	private static func dumpViewHierarchyRecursive(view: UIView, level: Int) -> String {
