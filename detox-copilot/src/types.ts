@@ -1,21 +1,47 @@
-export type AIAdapter = (prompt: string, imagePath?: string) => Promise<AIResponse>;
-
-export interface DetoxMethods {
+/**
+ * Interface for the testing driver that will be used to interact with the Detox framework.
+ */
+interface DetoxDriver {
+    /**
+     * Takes a snapshot of the current screen and returns the path to the saved image.
+     */
     takeSnapshot: () => Promise<string>;
-    dumpViewHierarchy: () => Promise<string>;
+
+    /**
+     * Returns the current view hierarchy in XML format.
+     */
+    getViewHierarchyXML: () => Promise<string>;
+
+    /**
+     * A string that describes the available API of Detox that can be used by Copilot.
+     */
+    availableAPI: string;
 }
 
-export interface CopilotOptions {
-    viewHierarchyCacheDuration: number;
-    maxRetries: number;
+/**
+ * Interface for the prompt handler that will be used to interact with the AI service (e.g. OpenAI).
+ */
+interface PromptHandler {
+    /**
+     * Sends a prompt to the AI service and returns the response.
+     * @param prompt The prompt to send to the AI service.
+     * @param image The path to the image to upload to the AI service.
+     * @returns The response from the AI service.
+     */
+    runPrompt: (prompt: string, image: Record<string, any>) => Promise<string>;
 }
 
-export type AIResponse =
-    | { type: 'code'; content: string }
-    | { type: 'visual_assert_result'; content: VisualAssertResult };
+/**
+ * Configuration options for Copilot.
+ */
+interface CopilotConfig {
+    /**
+     * The testing driver to use for interacting with the Detox framework.
+     */
+    detoxDriver: DetoxDriver;
 
-export interface VisualAssertResult {
-    passed: boolean;
-    confidence: number;
-    details?: string;
+    /**
+     * The prompt handler to use for interacting with the AI service
+     */
+    promptHandler: PromptHandler;
 }
