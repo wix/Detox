@@ -1,5 +1,4 @@
 const { expectToThrow } = require('./utils/custom-expects');
-const custom = require('./utils/custom-it');
 
 describe(':ios: Overlay', () => {
   let showAlertButton;
@@ -55,11 +54,11 @@ describe(':ios: Overlay', () => {
         await dismissAlertButton.tap();
       });
 
-      custom.it.withFailureIf.iOSWithRNLessThan67('should be able to tap on elements', async () => {
+      it('should be able to tap on elements', async () => {
         await showOverlayWindowButton.tap();
       });
 
-      custom.it.withFailureIf.iOSWithRNLessThan67('should be able to scroll elements', async () => {
+      it('should be able to scroll elements', async () => {
         await verticalScrollView.scrollTo('bottom');
         await expect(showOverlayWindowButton).not.toBeVisible();
       });

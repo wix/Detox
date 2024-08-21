@@ -1,5 +1,4 @@
 const driver = require('./drivers/actions-driver').actionsScreenDriver;
-const custom = require('./utils/custom-it');
 
 describe('Actions', () => {
   beforeAll(async () => {
@@ -227,7 +226,7 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  custom.it.skipFromRNVersion(71)('should adjust legacy slider and assert its value', async () => {
+  it('@rn71 should adjust legacy slider and assert its value', async () => {
     const reactSliderId = 'legacySliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
     await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
