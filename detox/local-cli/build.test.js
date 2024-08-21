@@ -64,6 +64,42 @@ describe('build', () => {
     expect(detox.log.info).toHaveBeenCalledWith('Skipping build for "default" app...');
   });
 
+  it('should not skip building the app if the test binary does not exist', async () => {
+    detox.config.apps.default = { binaryPath: __filename, testBinaryPath: __filename + '.doesnotexist' };
+    detox.config.commands = [{ appName: 'default', build: 'yet another command' }];
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).toHaveBeenCalled();
+  });
+
+  it('skips building the multi-app build command if all apps exist and --if-missing flag is set', async () => {
+    detox.config.apps.app1 = { binaryPath: __filename };
+    detox.config.apps.app2 = { binaryPath: __filename };
+    detox.config.commands = [
+      { build: 'yet another command' },
+    ];
+
+    await callCli('./build', 'build -i');
+    expect(execSync).not.toHaveBeenCalled();
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).not.toHaveBeenCalled();
+
+    expect(detox.log.info).toHaveBeenCalledWith('Skipping build...');
+  });
+
+  it('should not skip building the multi-app build command if one app does not exist', async () => {
+    detox.config.apps.app1 = { binaryPath: __filename };
+    detox.config.apps.app2 = { binaryPath: __filename + '.doesnotexist' };
+    detox.config.commands = [
+      { build: 'yet another command' },
+    ];
+
+    await callCli('./build', 'build --if-missing');
+    expect(execSync).toHaveBeenCalled();
+    expect(detox.log.info).not.toHaveBeenCalledWith('Skipping build...');
+  });
+
   it('fails with an error if a build script has not been found', async () => {
     detox.config.apps.default = {};
     detox.config.commands = [{ appName: 'default', start: 'a command' }];
