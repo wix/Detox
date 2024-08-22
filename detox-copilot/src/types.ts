@@ -28,7 +28,7 @@ interface PromptHandler {
      * @param image The path to the image to upload to the AI service.
      * @returns The response from the AI service.
      */
-    runPrompt: (prompt: string, image: Record<string, any>) => Promise<string>;
+    runPrompt: (prompt: string, image: string) => Promise<string>;
 }
 
 /**
