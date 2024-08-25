@@ -195,12 +195,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async getViewHierarchyXml() {
-    try {
-      return await this.client.getViewHierarchyXml();
-    } catch (e) {
-      const stringError = e.toString();
-      return stringError.replace('Error: ', '');
-    }
+    return await this.client.getViewHierarchyXml();
   }
 
   async setStatusBar(flags) {

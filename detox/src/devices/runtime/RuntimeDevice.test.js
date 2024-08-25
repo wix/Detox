@@ -970,9 +970,10 @@ describe('Device', () => {
   });
 
   it('getViewHierarchy() should return the result of the driver', async () => {
+    driverMock.driver.getViewHierarchyXml = async () => 'xml';
     const device = await aValidDevice();
     const hierarchy = await device.getViewHierarchyXml();
-    expect(driverMock.driver.getViewHierarchyXml).toHaveBeenCalled();
+    expect(hierarchy).toEqual('xml');
   });
 
   describe('_isAppRunning (internal method)', () => {
