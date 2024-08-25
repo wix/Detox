@@ -1,7 +1,7 @@
 /**
- * Interface for the testing driver that will be used to interact with the Detox framework.
+ * Interface for the testing driver that will be used to interact with the underlying testing framework.
  */
-interface DetoxDriver {
+interface TestingFrameworkDriver {
     /**
      * Takes a snapshot of the current screen and returns the path to the saved image.
      */
@@ -10,7 +10,7 @@ interface DetoxDriver {
     /**
      * Returns the current view hierarchy in XML format.
      */
-    getViewHierarchyXML: () => Promise<string>;
+    getViewHierarchy: () => Promise<string>;
 
     /**
      * A string that describes the available API of Detox that can be used by Copilot.
@@ -36,9 +36,9 @@ interface PromptHandler {
  */
 interface CopilotConfig {
     /**
-     * The testing driver to use for interacting with the Detox framework.
+     * The testing driver to use for interacting with the underlying testing framework.
      */
-    detoxDriver: DetoxDriver;
+    frameworkDriver: TestingFrameworkDriver;
 
     /**
      * The prompt handler to use for interacting with the AI service

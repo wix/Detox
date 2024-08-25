@@ -6,33 +6,35 @@ import {ActPerformer} from "@/actions/ActPerformer";
 import {ExpectPerformer} from "@/actions/ExpectPerformer";
 
 /**
- * The main Copilot class that provides AI-assisted testing capabilities for Detox.
+ * The main Copilot class that provides AI-assisted testing capabilities for a given underlying testing framework.
+ * @note Originally, this class is designed to work with Detox, but it can be extended to work with other frameworks.
  */
-export class DetoxCopilot {
-    private static instance: DetoxCopilot;
-    private promptCreator: PromptCreator;
-    private codeEvaluator: CodeEvaluator;
-    private snapshotManager: SnapshotManager;
+export class Copilot {
+    private static instance: Copilot;
+    private readonly promptCreator: PromptCreator;
+    private readonly codeEvaluator: CodeEvaluator;
+    private readonly snapshotManager: SnapshotManager;
     private actPerformer: ActPerformer;
     private expectPerformer: ExpectPerformer;
 
     private constructor(config: CopilotConfig) {
-        this.promptCreator = new PromptCreator(config.detoxDriver.availableAPI);
+        this.promptCreator = new PromptCreator(config.frameworkDriver.availableAPI);
         this.codeEvaluator = new CodeEvaluator();
-        this.snapshotManager = new SnapshotManager(config.detoxDriver);
+        this.snapshotManager = new SnapshotManager(config.frameworkDriver);
         this.actPerformer = new ActPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
         this.expectPerformer = new ExpectPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
     }
 
     /**
-     * Gets the singleton instance of DetoxCopilot.
-     * @returns The DetoxCopilot instance.
+     * Gets the singleton instance of Copilot.
+     * @returns The Copilot instance.
      */
-    static getInstance(): DetoxCopilot {
-        if (!DetoxCopilot.instance) {
-            throw new CopilotError('DetoxCopilot has not been initialized. Please call `DetoxCopilot.init()` before using it.');
+    static getInstance(): Copilot {
+        if (!Copilot.instance) {
+            throw new CopilotError('Copilot has not been initialized. Please call `Copilot.init()` before using it.');
         }
-        return DetoxCopilot.instance;
+
+        return Copilot.instance;
     }
 
     /**
@@ -40,14 +42,14 @@ export class DetoxCopilot {
      * @param config The configuration options for Copilot.
      */
     static init(config: CopilotConfig): void {
-        DetoxCopilot.instance = new DetoxCopilot(config);
+        Copilot.instance = new Copilot(config);
     }
 
     /**
      * Performs an action based on the given prompt.
      * @param action The prompt describing the action to perform.
      */
-    async act(action: string): Promise<void> {
+    async act(action: string): Promise<any> {
         return this.actPerformer.perform(action);
     }
 

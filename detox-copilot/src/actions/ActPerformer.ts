@@ -10,7 +10,7 @@ export class ActPerformer {
         private promptHandler: PromptHandler
     ) {}
 
-    async perform(action: string): Promise<void> {
+    async perform(action: string): Promise<any> {
         const snapshot = await this.snapshotManager.takeSnapshot();
         const viewHierarchy = await this.snapshotManager.getViewHierarchy();
         const prompt = this.promptCreator.createActPrompt(action, viewHierarchy);
