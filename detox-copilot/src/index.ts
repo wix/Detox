@@ -5,9 +5,9 @@ export const init = (config: CopilotConfig) => {
 }
 
 export const act = async (action: string) => {
-    return Copilot.getInstance().act(action);
+    return await Copilot.getInstance().act(action);
 }
 
 export const expect = async (assertion: string) => {
-    return Copilot.getInstance().expect(assertion);
+    return await Copilot.getInstance().expect(assertion);
 }
