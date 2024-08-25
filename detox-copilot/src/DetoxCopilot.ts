@@ -1,16 +1,27 @@
-import {CopilotError} from "./errors/CopilotError";
+import {CopilotError} from "@/errors/CopilotError";
+import {PromptCreator} from "@/utils/PromptCreator";
+import {CodeEvaluator} from "@/utils/CodeEvaluator";
+import {SnapshotManager} from "@/utils/SnapshotManager";
+import {ActPerformer} from "@/actions/ActPerformer";
+import {ExpectPerformer} from "@/actions/ExpectPerformer";
 
 /**
  * The main Copilot class that provides AI-assisted testing capabilities for Detox.
  */
 export class DetoxCopilot {
     private static instance: DetoxCopilot;
-    private detoxDriver: DetoxDriver;
-    private promptHandler: PromptHandler;
+    private promptCreator: PromptCreator;
+    private codeEvaluator: CodeEvaluator;
+    private snapshotManager: SnapshotManager;
+    private actPerformer: ActPerformer;
+    private expectPerformer: ExpectPerformer;
 
     private constructor(config: CopilotConfig) {
-        this.detoxDriver = config.detoxDriver;
-        this.promptHandler = config.promptHandler;
+        this.promptCreator = new PromptCreator(config.detoxDriver.availableAPI);
+        this.codeEvaluator = new CodeEvaluator();
+        this.snapshotManager = new SnapshotManager(config.detoxDriver);
+        this.actPerformer = new ActPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
+        this.expectPerformer = new ExpectPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
     }
 
     /**
@@ -21,7 +32,6 @@ export class DetoxCopilot {
         if (!DetoxCopilot.instance) {
             throw new CopilotError('DetoxCopilot has not been initialized. Please call `DetoxCopilot.init()` before using it.');
         }
-
         return DetoxCopilot.instance;
     }
 
@@ -38,13 +48,7 @@ export class DetoxCopilot {
      * @param action The prompt describing the action to perform.
      */
     async act(action: string): Promise<void> {
-        const snapshot = await this.detoxDriver.takeSnapshot();
-        const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
-
-        const prompt = `Create the Detox code to perform the following action:\n${action}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
-        const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
-
-        return await this.evaluateGeneratedCode(generatedCode);
+        return this.actPerformer.perform(action);
     }
 
     /**
@@ -53,16 +57,6 @@ export class DetoxCopilot {
      * @returns A boolean indicating whether the expected assertion passed or failed.
      */
     async expect(assertion: string): Promise<boolean> {
-        const snapshot = await this.detoxDriver.takeSnapshot();
-        const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
-
-        const prompt = `Create the Detox code to expect the following assertion:\n${assertion}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
-        const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
-
-        return await this.evaluateGeneratedCode(generatedCode);
-    }
-
-    async evaluateGeneratedCode(generatedCode: string): Promise<any> {
-        return eval(generatedCode);
+        return this.expectPerformer.perform(assertion);
     }
 }
