@@ -1,108 +1,74 @@
-import { AIAdapter, DetoxMethods, CopilotOptions, AIResponse, VisualAssertResult } from './types';
-import { CopilotError, ActionError, AssertionError, VisualAssertionError } from './errors';
+import {CopilotError} from "./errors";
 
-export class DetoxCopilot {
-    private adapter: AIAdapter;
-    private detoxMethods: DetoxMethods;
-    private options: CopilotOptions;
-    private viewHierarchyCache: { hierarchy: string; timestamp: number } | null = null;
+/**
+ * The main Copilot class that provides AI-assisted testing capabilities for Detox.
+ */
+class DetoxCopilot {
+    private static instance: DetoxCopilot;
+    private detoxDriver: DetoxDriver;
+    private promptHandler: PromptHandler;
 
-    constructor(adapter: AIAdapter, detoxMethods: DetoxMethods, options: Partial<CopilotOptions> = {}) {
-        this.adapter = adapter;
-        this.detoxMethods = detoxMethods;
-        this.options = {
-            viewHierarchyCacheDuration: 1000, // todo: in milliseconds
-            maxRetries: 3,
-            ...options
-        };
+    private constructor(config: CopilotConfig) {
+        this.detoxDriver = config.detoxDriver;
+        this.promptHandler = config.promptHandler;
     }
 
-    async act(actionPrompt: string): Promise<void> {
-        const viewHierarchy = await this.getViewHierarchy();
-        const response = await this.callAdapter(actionPrompt, viewHierarchy);
-
-        if (response.type !== 'code') {
-            throw new ActionError('AI response did not contain executable code');
+    /**
+     * Gets the singleton instance of DetoxCopilot.
+     * @returns The DetoxCopilot instance.
+     */
+    static getInstance(): DetoxCopilot {
+        if (!DetoxCopilot.instance) {
+            throw new CopilotError('DetoxCopilot has not been initialized. Please call `DetoxCopilot.init()` before using it.');
         }
 
-        try {
-            await this.executeWithRetry(() => eval(response.content));
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new ActionError(`Failed to execute action: ${error.message}`, error);
-            } else {
-                throw new ActionError('Failed to execute action: Unknown error');
-            }
-        }
+        return DetoxCopilot.instance;
     }
 
-    async assert(assertionPrompt: string): Promise<void> {
-        const viewHierarchy = await this.getViewHierarchy();
-        const response = await this.callAdapter(assertionPrompt, viewHierarchy);
-
-        if (response.type !== 'code') {
-            throw new AssertionError('AI response did not contain executable code');
-        }
-
-        try {
-            await this.executeWithRetry(() => eval(response.content));
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new AssertionError(`Assertion failed: ${error.message}`, error);
-            } else {
-                throw new AssertionError('Assertion failed: Unknown error');
-            }
-        }
+    /**
+     * Initializes the Copilot with the provided configuration.
+     * @param config The configuration options for Copilot.
+     */
+    static init(config: CopilotConfig): void {
+        DetoxCopilot.instance = new DetoxCopilot(config);
     }
 
-    async visualAssert(assertionPrompt: string): Promise<boolean> {
-        const snapshotPath = await this.detoxMethods.takeSnapshot();
-        const viewHierarchy = await this.getViewHierarchy();
-        const response = await this.callAdapter(assertionPrompt, viewHierarchy, snapshotPath);
+    /**
+     * Performs an action based on the given prompt.
+     * @param intent The prompt describing the action to perform.
+     */
+    async act(intent: string): Promise<void> {
+        const snapshot = await this.detoxDriver.takeSnapshot();
+        const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
 
-        if (response.type !== 'visual_assert_result') {
-            throw new VisualAssertionError('AI response did not contain a valid visual assertion result');
-        }
+        const prompt = `Create the Detox code to perform the following action:\n${intent}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
+        const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
 
-        return response.content.passed;
+        return await this.evaluateGeneratedCode(generatedCode);
     }
 
-    private async getViewHierarchy(): Promise<string> {
-        const now = Date.now();
-        if (this.viewHierarchyCache && now - this.viewHierarchyCache.timestamp < this.options.viewHierarchyCacheDuration) {
-            return this.viewHierarchyCache.hierarchy;
-        }
+    /**
+     * Makes an assertion based on the given prompt.
+     * @param intent The prompt describing the assertion to make.
+     * @returns A boolean indicating whether the assertion passed or failed.
+     */
+    async assert(intent: string): Promise<boolean> {
+        const snapshot = await this.detoxDriver.takeSnapshot();
+        const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
 
-        const hierarchy = await this.detoxMethods.dumpViewHierarchy();
-        this.viewHierarchyCache = { hierarchy, timestamp: now };
-        return hierarchy;
+        const prompt = `Create the Detox code to assert the following condition:\n${intent}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
+        const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
+
+        return await this.evaluateGeneratedCode(generatedCode);
     }
 
-    private async callAdapter(prompt: string, viewHierarchy: string, imagePath?: string): Promise<AIResponse> {
-        const fullPrompt = `${prompt}\nView Hierarchy: ${viewHierarchy}`;
-        return await this.adapter(fullPrompt, imagePath);
-    }
-
-    private async executeWithRetry(fn: () => Promise<void>): Promise<void> {
-        let lastError: Error | null = null;
-        for (let i = 0; i < this.options.maxRetries; i++) {
-            try {
-                await fn();
-                return;
-            } catch (error) {
-                if (error instanceof Error) {
-                    lastError = error;
-                } else {
-                    lastError = new Error('Unknown error occurred');
-                }
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-            }
-        }
-        if (lastError) {
-            throw lastError;
-        }
+    async evaluateGeneratedCode(generatedCode: string): Promise<any> {
+        return eval(generatedCode);
     }
 }
 
-export * from './types';
-export * from './errors';
+module.exports = {
+    initCopilot: DetoxCopilot.init,
+    act: DetoxCopilot.getInstance().act,
+    assert: DetoxCopilot.getInstance().assert
+}

@@ -18,10 +18,3 @@ export class AssertionError extends CopilotError {
         this.name = 'AssertionError';
     }
 }
-
-export class VisualAssertionError extends CopilotError {
-    constructor(message: string, originalError?: Error) {
-        super(message, originalError);
-        this.name = 'VisualAssertionError';
-    }
-}
