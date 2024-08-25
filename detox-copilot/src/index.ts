@@ -35,13 +35,13 @@ class DetoxCopilot {
 
     /**
      * Performs an action based on the given prompt.
-     * @param intent The prompt describing the action to perform.
+     * @param action The prompt describing the action to perform.
      */
-    async act(intent: string): Promise<void> {
+    async act(action: string): Promise<void> {
         const snapshot = await this.detoxDriver.takeSnapshot();
         const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
 
-        const prompt = `Create the Detox code to perform the following action:\n${intent}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
+        const prompt = `Create the Detox code to perform the following action:\n${action}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
         const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
 
         return await this.evaluateGeneratedCode(generatedCode);
@@ -49,14 +49,14 @@ class DetoxCopilot {
 
     /**
      * Makes an assertion based on the given prompt.
-     * @param intent The prompt describing the assertion to make.
-     * @returns A boolean indicating whether the assertion passed or failed.
+     * @param assertion The prompt describing the assertion to make.
+     * @returns A boolean indicating whether the expected assertion passed or failed.
      */
-    async assert(intent: string): Promise<boolean> {
+    async expect(assertion: string): Promise<boolean> {
         const snapshot = await this.detoxDriver.takeSnapshot();
         const viewHierarchy = await this.detoxDriver.getViewHierarchyXML();
 
-        const prompt = `Create the Detox code to assert the following condition:\n${intent}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
+        const prompt = `Create the Detox code to expect the following assertion:\n${assertion}\nView Hierarchy: ${viewHierarchy}\nAvailable API: ${this.detoxDriver.availableAPI}`;
         const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
 
         return await this.evaluateGeneratedCode(generatedCode);
@@ -70,5 +70,5 @@ class DetoxCopilot {
 module.exports = {
     initCopilot: DetoxCopilot.init,
     act: DetoxCopilot.getInstance().act,
-    assert: DetoxCopilot.getInstance().assert
+    expect: DetoxCopilot.getInstance().expect
 }
