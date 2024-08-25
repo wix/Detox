@@ -53,5 +53,5 @@
     "shell-utils": "1.x.x",
     "unified": "^10.1.0"
   },
-  "version": "20.25.6-prerelease.0"
+  "version": "20.25.6"
 }
