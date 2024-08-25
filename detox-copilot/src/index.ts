@@ -1,15 +1,13 @@
 import { Copilot } from "@/Copilot";
 
-function init(config: CopilotConfig): void {
+export const init = (config: CopilotConfig) => {
     Copilot.init(config);
 }
 
-function act(action: string): Promise<any> {
+export const act = async (action: string) => {
     return Copilot.getInstance().act(action);
 }
 
-function expect(assertion: string): Promise<boolean> {
+export const expect = async (assertion: string) => {
     return Copilot.getInstance().expect(assertion);
 }
-
-export { init, act, expect };

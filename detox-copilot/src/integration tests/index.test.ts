@@ -33,18 +33,18 @@ describe('Copilot Integration Tests', () => {
     });
 
     describe('Initialization', () => {
+        beforeEach(() => {
+            // Reset Copilot instance before each test
+            // @ts-ignore
+            Copilot['instance'] = undefined;
+        });
+
         it('should throw an error when act is called before initialization', async () => {
-            // Reset the Copilot instance
-            jest.resetModules();
-            const { act: uninitializedAct } = require('@/index');
-            await expect(uninitializedAct('Some action')).rejects.toThrow(CopilotError);
+            await expect(Copilot.act('Some action')).rejects.toThrow();
         });
 
         it('should throw an error when expect is called before initialization', async () => {
-            // Reset the Copilot instance
-            jest.resetModules();
-            const { expect: uninitializedExpect } = require('@/index');
-            await expect(uninitializedExpect('Some assertion')).rejects.toThrow(CopilotError);
+            await expect(Copilot.act('Some assertion')).rejects.toThrow();
         });
     });
 

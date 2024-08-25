@@ -10,7 +10,9 @@ import {ExpectPerformer} from "@/actions/ExpectPerformer";
  * @note Originally, this class is designed to work with Detox, but it can be extended to work with other frameworks.
  */
 export class Copilot {
-    private static instance: Copilot;
+    // Singleton instance of Copilot
+    static instance?: Copilot;
+
     private readonly promptCreator: PromptCreator;
     private readonly codeEvaluator: CodeEvaluator;
     private readonly snapshotManager: SnapshotManager;
@@ -31,7 +33,7 @@ export class Copilot {
      */
     static getInstance(): Copilot {
         if (!Copilot.instance) {
-            throw new CopilotError('Copilot has not been initialized. Please call `Copilot.init()` before using it.');
+            throw new CopilotError('Copilot has not been initialized. Please call the `init()` method before using it.');
         }
 
         return Copilot.instance;
