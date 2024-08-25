@@ -1,5 +1,6 @@
-import * as Copilot from '@/index';
+import * as copilot from '@/index';
 import { CopilotError } from '@/errors/CopilotError';
+import {Copilot} from "@/Copilot";
 
 // Mock external dependencies
 jest.mock('@/utils/PromptCreator');
@@ -26,7 +27,7 @@ describe('Copilot Integration Tests', () => {
         };
 
         // Initialize Copilot
-        Copilot.init({
+        copilot.init({
             frameworkDriver: mockFrameworkDriver,
             promptHandler: mockPromptHandler
         });
@@ -35,16 +36,15 @@ describe('Copilot Integration Tests', () => {
     describe('Initialization', () => {
         beforeEach(() => {
             // Reset Copilot instance before each test
-            // @ts-ignore
             Copilot['instance'] = undefined;
         });
 
         it('should throw an error when act is called before initialization', async () => {
-            await expect(Copilot.act('Some action')).rejects.toThrow();
+            await expect(copilot.act('Some action')).rejects.toThrow();
         });
 
         it('should throw an error when expect is called before initialization', async () => {
-            await expect(Copilot.act('Some assertion')).rejects.toThrow();
+            await expect(copilot.act('Some assertion')).rejects.toThrow();
         });
     });
 
@@ -52,7 +52,7 @@ describe('Copilot Integration Tests', () => {
         it('should successfully perform an action', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('await element(by.text("Login")).tap();');
 
-            await expect(Copilot.act('Tap on the login button')).resolves.not.toThrow();
+            await expect(copilot.act('Tap on the login button')).resolves.not.toThrow();
 
             expect(mockFrameworkDriver.takeSnapshot).toHaveBeenCalled();
             expect(mockFrameworkDriver.getViewHierarchy).toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe('Copilot Integration Tests', () => {
         it('should handle errors during action execution', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
 
-            await expect(Copilot.act('Tap on a non-existent button')).rejects.toThrow(CopilotError);
+            await expect(copilot.act('Tap on a non-existent button')).rejects.toThrow(CopilotError);
         });
 
         it('should handle complex multi-step actions', async () => {
@@ -74,7 +74,7 @@ describe('Copilot Integration Tests', () => {
       `;
             mockPromptHandler.runPrompt.mockResolvedValue(generatedCode);
 
-            await expect(Copilot.act(complexAction)).resolves.not.toThrow();
+            await expect(copilot.act(complexAction)).resolves.not.toThrow();
 
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining(complexAction),
@@ -87,7 +87,7 @@ describe('Copilot Integration Tests', () => {
         it('should successfully perform an expectation and return true', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('return await expect(element(by.text("Welcome"))).toBeVisible();');
 
-            const result = await Copilot.expect('The welcome message should be visible');
+            const result = await copilot.expect('The welcome message should be visible');
 
             expect(result).toBe(true);
             expect(mockFrameworkDriver.takeSnapshot).toHaveBeenCalled();
@@ -98,7 +98,7 @@ describe('Copilot Integration Tests', () => {
         it('should return false for a failed expectation', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('return await expect(element(by.text("Error"))).not.toBeVisible();');
 
-            const result = await Copilot.expect('There should be no error message');
+            const result = await copilot.expect('There should be no error message');
 
             expect(result).toBe(false);
         });
@@ -113,7 +113,7 @@ describe('Copilot Integration Tests', () => {
       `;
             mockPromptHandler.runPrompt.mockResolvedValue(generatedCode);
 
-            const result = await Copilot.expect(complexAssertion);
+            const result = await copilot.expect(complexAssertion);
 
             expect(result).toBe(true);
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
@@ -127,13 +127,13 @@ describe('Copilot Integration Tests', () => {
         it('should throw CopilotError when PromptHandler fails', async () => {
             mockPromptHandler.runPrompt.mockRejectedValue(new Error('API error'));
 
-            await expect(Copilot.act('Perform action')).rejects.toThrow(CopilotError);
+            await expect(copilot.act('Perform action')).rejects.toThrow(CopilotError);
         });
 
         it('should handle empty view hierarchy', async () => {
             mockFrameworkDriver.getViewHierarchy.mockResolvedValue('');
 
-            await expect(Copilot.act('Perform action')).resolves.not.toThrow();
+            await expect(copilot.act('Perform action')).resolves.not.toThrow();
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining('View Hierarchy:'),
                 'mock_snapshot'
@@ -144,7 +144,7 @@ describe('Copilot Integration Tests', () => {
             const longAction = 'a'.repeat(1000);
             mockPromptHandler.runPrompt.mockResolvedValue('// No operation');
 
-            await expect(Copilot.act(longAction)).resolves.not.toThrow();
+            await expect(copilot.act(longAction)).resolves.not.toThrow();
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining(longAction),
                 'mock_snapshot'
@@ -160,10 +160,10 @@ describe('Copilot Integration Tests', () => {
                 .mockResolvedValueOnce('await element(by.text("Logout")).tap();')
                 .mockResolvedValueOnce('return await expect(element(by.text("Login"))).toBeVisible();');
 
-            await Copilot.act('Tap on the login button');
-            const welcomeVisible = await Copilot.expect('The welcome message should be visible');
-            await Copilot.act('Tap on the logout button');
-            const loginVisible = await Copilot.expect('The login button should be visible');
+            await copilot.act('Tap on the login button');
+            const welcomeVisible = await copilot.expect('The welcome message should be visible');
+            await copilot.act('Tap on the logout button');
+            const loginVisible = await copilot.expect('The login button should be visible');
 
             expect(welcomeVisible).toBe(true);
             expect(loginVisible).toBe(true);
