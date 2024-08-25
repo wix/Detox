@@ -1,34 +1,71 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
-XCODEPROJ=$1
-XCUITEST_OUTPUT_DIR=$2
-CONFIGURATION=Release
-PROJECT_NAME=DetoxXCUITestRunner
+set -euo pipefail
 
-# Clean up the output directory
+CONFIGURATION="Release"
+PROJECT_NAME="DetoxXCUITestRunner"
 
-rm -fr "${XCUITEST_OUTPUT_DIR}"
+print_usage() {
+    echo "Usage: $0 <xcodeproj_path> <xcuitest_output_dir>"
+    exit 1
+}
 
-# Make sure the output directory exists
+setup_output_dir() {
+    local output_dir="$1"
+    rm -rf "${output_dir}"
+    mkdir -p "${output_dir}"
+}
 
-mkdir -p "${XCUITEST_OUTPUT_DIR}"
+create_temp_dir() {
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    echo "${temp_dir}"
+}
 
-# Build Simulator version
+build_for_simulator() {
+    local xcodeproj="$1"
+    local temp_dir="$2"
 
-XCUITEST_OUTPUT_DIR_TEMP = "${XCUITEST_OUTPUT_DIR}/Temp"
+    env -i xcodebuild \
+        -project "${xcodeproj}" \
+        -scheme "${PROJECT_NAME}" \
+        -UseNewBuildSystem="YES" \
+        -configuration "${CONFIGURATION}" \
+        -sdk iphonesimulator \
+        -destination 'generic/platform=iOS Simulator' \
+        -derivedDataPath "${temp_dir}" \
+        build-for-testing \
+        -quiet
+}
 
-mkdir -p "${XCUITEST_OUTPUT_DIR_TEMP}"
+process_xctestrun() {
+    local temp_dir="$1"
+    local output_dir="$2"
 
-env -i bash -c "xcodebuild -project \"${XCODEPROJ}\" -scheme \"${PROJECT_NAME}\" -UseNewBuildSystem=\"YES\" -configuration \"${CONFIGURATION}\" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath \"${XCUITEST_OUTPUT_DIR_TEMP}\" build-for-testing -quiet"
+    local xctestrun_file
+    xctestrun_file=$(find "${temp_dir}" -name "*.xctestrun")
 
-# Find the .xctestrun file inside the output directory, copy it, and remove the rest
+    # Copy the parent directory of the .xctestrun file, which contains the .xctestrun file and its associated binaries
+    cp -r "$(dirname "${xctestrun_file}")" "${output_dir}"
+}
 
-XCTESTRUN_FILE=$(find "${XCUITEST_OUTPUT_DIR_TEMP}" -name "*.xctestrun")
+main() {
+    if [ $# -ne 2 ]; then
+        print_usage
+    fi
 
-# Copy the .xctestrun file to the output directory
+    local xcodeproj="$1"
+    local output_dir="$2"
 
-cp "${XCTESTRUN_FILE}" "${XCUITEST_OUTPUT_DIR}/Detox.xctestrun"
+    setup_output_dir "${output_dir}"
+    local temp_dir
+    temp_dir=$(create_temp_dir)
 
-# Remove the temp directory
+    # Ensure cleanup happens on script exit
+    trap "[[ -d ${temp_dir} ]] && rm -rf ${temp_dir}" EXIT
 
-rm -fr "${XCUITEST_OUTPUT_DIR_TEMP}"
+    build_for_simulator "${xcodeproj}" "${temp_dir}"
+    process_xctestrun "${temp_dir}" "${output_dir}"
+}
+
+main "$@"
