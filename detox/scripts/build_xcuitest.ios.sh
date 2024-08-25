@@ -15,4 +15,20 @@ mkdir -p "${XCUITEST_OUTPUT_DIR}"
 
 # Build Simulator version
 
-env -i bash -c "xcodebuild -project \"${XCODEPROJ}\" -scheme \"${PROJECT_NAME}\" -UseNewBuildSystem=\"YES\" -configuration \"${CONFIGURATION}\" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath \"${XCUITEST_OUTPUT_DIR}\" build-for-testing -quiet"
+XCUITEST_OUTPUT_DIR_TEMP = "${XCUITEST_OUTPUT_DIR}/Temp"
+
+mkdir -p "${XCUITEST_OUTPUT_DIR_TEMP}"
+
+env -i bash -c "xcodebuild -project \"${XCODEPROJ}\" -scheme \"${PROJECT_NAME}\" -UseNewBuildSystem=\"YES\" -configuration \"${CONFIGURATION}\" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath \"${XCUITEST_OUTPUT_DIR_TEMP}\" build-for-testing -quiet"
+
+# Find the .xctestrun file inside the output directory, copy it, and remove the rest
+
+XCTESTRUN_FILE=$(find "${XCUITEST_OUTPUT_DIR_TEMP}" -name "*.xctestrun")
+
+# Copy the .xctestrun file to the output directory
+
+cp "${XCTESTRUN_FILE}" "${XCUITEST_OUTPUT_DIR}/Detox.xctestrun"
+
+# Remove the temp directory
+
+rm -fr "${XCUITEST_OUTPUT_DIR_TEMP}"
