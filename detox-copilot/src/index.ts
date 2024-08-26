@@ -9,5 +9,5 @@ export const act = async (action: string) => {
 }
 
 export const expect = async (assertion: string) => {
-    return await Copilot.getInstance().expect(assertion);
+    await Copilot.getInstance().expect(assertion);
 }

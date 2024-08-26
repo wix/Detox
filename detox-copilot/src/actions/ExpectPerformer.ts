@@ -10,11 +10,12 @@ export class ExpectPerformer {
         private promptHandler: PromptHandler
     ) {}
 
-    async perform(assertion: string): Promise<boolean> {
+    async perform(assertion: string): Promise<void> {
         const snapshot = await this.snapshotManager.takeSnapshot();
         const viewHierarchy = await this.snapshotManager.getViewHierarchy();
         const prompt = this.promptCreator.createExpectPrompt(assertion, viewHierarchy);
         const generatedCode = await this.promptHandler.runPrompt(prompt, snapshot);
-        return this.codeEvaluator.evaluate(generatedCode);
+
+        await this.codeEvaluator.evaluate(generatedCode);
     }
 }

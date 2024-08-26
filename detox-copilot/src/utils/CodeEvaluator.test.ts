@@ -13,6 +13,11 @@ describe('CodeEvaluator', () => {
         await expect(codeEvaluator.evaluate(validCode)).resolves.not.toThrow();
     });
 
+    it('should evaluate valid code with comments successfully', async () => {
+        const validCode = 'return 2 + 2; // This is a comment';
+        await expect(codeEvaluator.evaluate(validCode)).resolves.not.toThrow();
+    });
+
     it('should throw CodeEvaluationError for invalid code', async () => {
         const invalidCode = 'throw new Error("Test error");';
         await expect(codeEvaluator.evaluate(invalidCode)).rejects.toThrow(CodeEvaluationError);

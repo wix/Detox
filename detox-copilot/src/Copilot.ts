@@ -52,15 +52,14 @@ export class Copilot {
      * @param action The prompt describing the action to perform.
      */
     async act(action: string): Promise<any> {
-        return this.actPerformer.perform(action);
+        return await this.actPerformer.perform(action);
     }
 
     /**
      * Makes an assertion based on the given prompt.
      * @param assertion The prompt describing the assertion to make.
-     * @returns A boolean indicating whether the expected assertion passed or failed.
      */
-    async expect(assertion: string): Promise<boolean> {
-        return this.expectPerformer.perform(assertion);
+    async expect(assertion: string): Promise<void> {
+        await this.expectPerformer.perform(assertion);
     }
 }

@@ -39,28 +39,14 @@ describe('ExpectPerformer', () => {
         mockSnapshotManager.getViewHierarchy.mockResolvedValue(viewHierarchy);
         mockPromptCreator.createExpectPrompt.mockReturnValue(prompt);
         mockPromptHandler.runPrompt.mockResolvedValue(generatedCode);
-        mockCodeEvaluator.evaluate.mockResolvedValue(true);
 
-        const result = await expectPerformer.perform(assertion);
+        await expectPerformer.perform(assertion);
 
-        expect(result).toBe(true);
         expect(mockSnapshotManager.takeSnapshot).toHaveBeenCalled();
         expect(mockSnapshotManager.getViewHierarchy).toHaveBeenCalled();
         expect(mockPromptCreator.createExpectPrompt).toHaveBeenCalledWith(assertion, viewHierarchy);
         expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(prompt, snapshot);
         expect(mockCodeEvaluator.evaluate).toHaveBeenCalledWith(generatedCode);
-    });
-
-    it('should return false for a failed expectation', async () => {
-        mockSnapshotManager.takeSnapshot.mockResolvedValue('snapshot');
-        mockSnapshotManager.getViewHierarchy.mockResolvedValue('<view></view>');
-        mockPromptCreator.createExpectPrompt.mockReturnValue('prompt');
-        mockPromptHandler.runPrompt.mockResolvedValue('code');
-        mockCodeEvaluator.evaluate.mockResolvedValue(false);
-
-        const result = await expectPerformer.perform('button is not visible');
-
-        expect(result).toBe(false);
     });
 
     it('should throw an error if code evaluation fails', async () => {
