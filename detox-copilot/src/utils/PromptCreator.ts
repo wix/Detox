@@ -114,9 +114,7 @@ ${matcherList}
         const basePrompt = this.createBasePrompt(intent, viewHierarchy);
         const rankedMethods = this.rankMethods(this.availableAPI[methodType], intent);
         const suggestedMethods = rankedMethods.slice(0, 3);
-        const methodPrompts = rankedMethods.map((rankedMethod, index) =>
-            this.createMethodPrompt(rankedMethod, index < 3)
-        ).join('\n\n');
+        const methodPrompts = rankedMethods.map(m => this.createMethodPrompt(m)).join('\n\n');
         const matcherPrompt = this.createMatcherPrompt();
 
         return `
