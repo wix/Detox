@@ -1,3 +1,4 @@
+const expectedValues = require('./assets/06.device.test');
 const jestExpect = require('expect').default;
 const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 
@@ -47,9 +48,15 @@ describe('Device', () => {
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     const hierarchy = await device.getViewHierarchyXml();
+    const expectedValues = require('./assets/06.device.test.js')
+    const expectedValue = removeWhiteSpacesAndTabs(expectedValues[device.getPlatform()][`rn${rnMinorVer}`]);
 
-    jestExpect(hierarchy).toMatchSnapshot(`${device.getPlatform()} RN:${rnMinorVer}`);
+    jestExpect(removeWhiteSpacesAndTabs(hierarchy.result)).toBe(expectedValue);
   });
+
+  function removeWhiteSpacesAndTabs(str) {
+    return str.replace(/[\s\t]+/g, '');
+  }
 
   // // Passing on iOS, not implemented on Android
   it(':ios: launchApp in a different language', async () => {

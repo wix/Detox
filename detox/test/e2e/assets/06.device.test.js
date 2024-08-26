@@ -1,8 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: android RN:71 1`] = `
-{
-  "result": "<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
+module.exports = {
+  'android': {
+    'rn71': `<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
 <ViewHierarchy>
   <DecorView class="com.android.internal.policy.DecorView" width="1080" height="2220" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="">
     <LinearLayout class="android.widget.LinearLayout" width="1080" height="2088" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="">
@@ -27,13 +25,8 @@ exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: andr
     <View id="android:id/navigationBarBackground" class="android.view.View" width="1080" height="132" visibility="visible" x="0" y="2088" alpha="1.0" focused="false" value="" label="null" testID="" />
     <View id="android:id/statusBarBackground" class="android.view.View" width="1080" height="66" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="" />
   </DecorView>
-</ViewHierarchy>",
-}
-`;
-
-exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: android RN:73 1`] = `
-{
-  "result": "<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
+</ViewHierarchy>`,
+    'rn73': `<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
 <ViewHierarchy>
   <DecorView class="com.android.internal.policy.DecorView" width="1080" height="2220" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="">
     <LinearLayout class="android.widget.LinearLayout" width="1080" height="2088" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="">
@@ -52,54 +45,50 @@ exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: andr
     <View id="android:id/navigationBarBackground" class="android.view.View" width="1080" height="132" visibility="visible" x="0" y="2088" alpha="1.0" focused="false" value="" label="null" testID="" />
     <View id="android:id/statusBarBackground" class="android.view.View" width="1080" height="66" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="null" testID="" />
   </DecorView>
-</ViewHierarchy>",
-}
-`;
-
-exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: ios RN:71 1`] = `
-"<?xml version="1.0" encoding="utf-8"?>
-<ViewHierarchy>
-	<AnnoyingWindow class="AnnoyingWindow" width="430" height="932" visibility="visible" alpha="1.0" focused="false" value="" label="">
-		<UITransitionView class="UITransitionView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-			<UIDropShadowView class="UIDropShadowView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-				<RCTRootView class="RCTRootView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-					<RCTRootContentView class="RCTRootContentView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-						<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-							<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-								<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-									<RCTTextView class="RCTTextView" width="76" height="30" visibility="visible" x="176" y="460" alpha="1.0" focused="false" value="" label="Hello!!!" />
-								</RCTView>
-							</RCTView>
-						</RCTView>
-					</RCTRootContentView>
-				</RCTRootView>
-			</UIDropShadowView>
-		</UITransitionView>
-		<UILabel class="UILabel" width="80" height="36" visibility="visible" x="174" y="45" alpha="1.0" focused="false" value="" label="Active" text="Active" />
-	</AnnoyingWindow>
-</ViewHierarchy>"
-`;
-
-exports[`Device getViewHierarchyXml() - should return a valid UI hierarchy: ios RN:73 1`] = `
-"<?xml version="1.0" encoding="utf-8"?>
-<ViewHierarchy>
-	<AnnoyingWindow class="AnnoyingWindow" width="430" height="932" visibility="visible" alpha="1.0" focused="false" value="" label="">
-		<UITransitionView class="UITransitionView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-			<UIDropShadowView class="UIDropShadowView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-				<RCTRootView class="RCTRootView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">
-					<RCTRootContentView class="RCTRootContentView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-						<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-							<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-								<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">
-									<RCTTextView class="RCTTextView" width="76" height="30" visibility="visible" x="176" y="460" alpha="1.0" focused="false" value="" label="Hello!!!" />
-								</RCTView>
-							</RCTView>
-						</RCTView>
-					</RCTRootContentView>
-				</RCTRootView>
-			</UIDropShadowView>
-		</UITransitionView>
-		<UILabel class="UILabel" width="80" height="36" visibility="visible" x="174" y="45" alpha="1.0" focused="false" value="" label="Active" text="Active" />
-	</AnnoyingWindow>
-</ViewHierarchy>"
-`;
+</ViewHierarchy>`
+  },
+  'ios': {
+    'rn71': '<?xml version="1.0" encoding="utf-8"?>\n' +
+      '<ViewHierarchy>\n' +
+      '\t<AnnoyingWindow class="AnnoyingWindow" width="430" height="932" visibility="visible" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t<UITransitionView class="UITransitionView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t<UIDropShadowView class="UIDropShadowView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t\t<RCTRootView class="RCTRootView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t\t\t<RCTRootContentView class="RCTRootContentView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t\t\t<RCTTextView class="RCTTextView" width="76" height="30" visibility="visible" x="176" y="460" alpha="1.0" focused="false" value="" label="Hello!!!" />\n' +
+      '\t\t\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t</RCTRootContentView>\n' +
+      '\t\t\t\t</RCTRootView>\n' +
+      '\t\t\t</UIDropShadowView>\n' +
+      '\t\t</UITransitionView>\n' +
+      '\t\t<UILabel class="UILabel" width="80" height="36" visibility="visible" x="174" y="45" alpha="1.0" focused="false" value="" label="Active" text="Active" />\n' +
+      '\t</AnnoyingWindow>\n' +
+      '</ViewHierarchy>',
+    'rn73': '<?xml version="1.0" encoding="utf-8"?>\n' +
+      '<ViewHierarchy>\n' +
+      '\t<AnnoyingWindow class="AnnoyingWindow" width="430" height="932" visibility="visible" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t<UITransitionView class="UITransitionView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t<UIDropShadowView class="UIDropShadowView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t\t<RCTRootView class="RCTRootView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="">\n' +
+      '\t\t\t\t\t<RCTRootContentView class="RCTRootContentView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t\t<RCTView class="RCTView" width="430" height="932" visibility="visible" x="0" y="0" alpha="1.0" focused="false" value="" label="Hello!!!">\n' +
+      '\t\t\t\t\t\t\t\t\t<RCTTextView class="RCTTextView" width="76" height="30" visibility="visible" x="176" y="460" alpha="1.0" focused="false" value="" label="Hello!!!" />\n' +
+      '\t\t\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t\t</RCTView>\n' +
+      '\t\t\t\t\t</RCTRootContentView>\n' +
+      '\t\t\t\t</RCTRootView>\n' +
+      '\t\t\t</UIDropShadowView>\n' +
+      '\t\t</UITransitionView>\n' +
+      '\t\t<UILabel class="UILabel" width="80" height="36" visibility="visible" x="174" y="45" alpha="1.0" focused="false" value="" label="Active" text="Active" />\n' +
+      '\t</AnnoyingWindow>\n' +
+      '</ViewHierarchy>'
+  }
+};
