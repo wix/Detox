@@ -11,8 +11,12 @@ describe('DetoxCopilot', () => {
 
     beforeEach(() => {
         mockConfig = {
-            detoxDriver: {
-                availableAPI: 'Detox API'
+            frameworkDriver: {
+                availableAPI: {
+                    matchers: [],
+                    actions: [],
+                    assertions: []
+                },
             },
             promptHandler: {}
         };
@@ -44,6 +48,13 @@ describe('DetoxCopilot', () => {
             await instance.act(action);
             expect(ActPerformer.prototype.perform).toHaveBeenCalledWith(action);
         });
+
+        it('should return the result from ActPerformer.perform', async () => {
+            (ActPerformer.prototype.perform as jest.Mock).mockResolvedValue(true);
+            const instance = Copilot.getInstance();
+            const result = await instance.act('action');
+            expect(result).toBe(true);
+        });
     });
 
     describe('expect', () => {
@@ -54,11 +65,10 @@ describe('DetoxCopilot', () => {
             expect(ExpectPerformer.prototype.perform).toHaveBeenCalledWith(assertion);
         });
 
-        it('should return the result from ExpectPerformer.perform', async () => {
-            (ExpectPerformer.prototype.perform as jest.Mock).mockResolvedValue(true);
+        it('should not return anything', async () => {
             const instance = Copilot.getInstance();
             const result = await instance.expect('assertion');
-            expect(result).toBe(true);
+            expect(result).toBeUndefined();
         });
     });
 });

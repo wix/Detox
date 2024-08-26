@@ -13,7 +13,11 @@ describe('Integration', () => {
         mockFrameworkDriver = {
             takeSnapshot: jest.fn().mockResolvedValue('mock_snapshot'),
             getViewHierarchy: jest.fn().mockResolvedValue('<view><button>Login</button></view>'),
-            availableAPI: 'Framework API'
+            availableAPI: {
+                matchers: [],
+                actions: [],
+                assertions: []
+            }
         };
 
         mockPromptHandler = {

@@ -8,14 +8,51 @@ interface TestingFrameworkDriver {
     takeSnapshot: () => Promise<string>;
 
     /**
-     * Returns the current view hierarchy in XML format.
+     * Returns the current view hierarchy in a string representation.
      */
     getViewHierarchy: () => Promise<string>;
 
     /**
-     * A string that describes the available API of Detox that can be used by Copilot.
+     * The available API methods of the testing framework.
      */
-    availableAPI: string;
+    availableAPI: TestingFrameworkAPI;
+}
+
+/**
+ * Represents the API of the testing framework that can be used by Copilot.
+ * @property matchers The available matchers API of the testing framework.
+ * @property actions The available actions API of the testing framework.
+ * @property assertions The available assertions API of the testing framework.
+ */
+type TestingFrameworkAPI = {
+    matchers: TestingFrameworkAPIMethod[];
+    actions: TestingFrameworkAPIMethod[];
+    assertions: TestingFrameworkAPIMethod[];
+}
+
+/**
+ * Represents a method in the API of the testing framework that can be used by Copilot.
+ * @property signature The method signature of the API.
+ * @property description A description of the API.
+ * @property example An example of how to use the API.
+ * @property guidelines An optional list of related guidelines for the API.
+ *
+ * @example
+ * {
+ *    signature: 'type(text: string)',
+ *    description: 'Types the given text into the target element.',
+ *    example: 'await element(by.id("username")).type("john_doe");',
+ *    guidelines: [
+ *      'Typing can only be done on text field elements.',
+ *      'If the target is not a text field, find the nearest parent or child that is a text field.'
+ *    ]
+ * };
+ */
+type TestingFrameworkAPIMethod = {
+    signature: string;
+    description: string;
+    example: string;
+    guidelines: string[];
 }
 
 /**
