@@ -1,4 +1,3 @@
-const expectedValues = require('./assets/06.device.assets');
 const jestExpect = require('expect').default;
 const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 

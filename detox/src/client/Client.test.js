@@ -426,7 +426,7 @@ describe('Client', () => {
     it('should get view hierarchy', async () => {
       mockAws.mockResponse('getViewHierarchyXml', { viewHierarchy: 'mock-hierarchy' });
       const hierarchy = await client.getViewHierarchyXml();
-      expect(hierarchy).toBe('mock-hierarchy');
+      expect(hierarchy).toStrictEqual({'result': 'mock-hierarchy'});
     });
   });
 
