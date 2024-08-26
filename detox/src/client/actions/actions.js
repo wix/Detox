@@ -306,7 +306,7 @@ class GetViewHierarchyXml extends Action {
   }
 
   async handle(response) {
-    return response.params.viewHierarchy;
+    return { 'result': response.params.viewHierarchy };
   }
 }
 
