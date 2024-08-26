@@ -1,13 +1,13 @@
 import { Copilot } from "@/Copilot";
 
-export const init = (config: CopilotConfig) => {
-    Copilot.init(config);
-}
-
-export const act = async (action: string) => {
-    return await Copilot.getInstance().act(action);
-}
-
-export const expect = async (assertion: string) => {
-    await Copilot.getInstance().expect(assertion);
+export const copilot = {
+    init: (config: CopilotConfig) => {
+        Copilot.init(config);
+    },
+    act: async (action: string) => {
+        return await Copilot.getInstance().act(action);
+    },
+    expect: async (assertion: string) => {
+        await Copilot.getInstance().expect(assertion);
+    }
 }

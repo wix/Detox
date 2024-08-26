@@ -1,9 +1,9 @@
-import * as copilot from '@/index';
+import { copilot } from "@/index";
 import { CopilotError } from '@/errors/CopilotError';
-import {Copilot} from "@/Copilot";
-import {CodeEvaluationError} from "@/errors/CodeEvaluationError";
+import { Copilot } from "@/Copilot";
+import { CodeEvaluationError } from "@/errors/CodeEvaluationError";
 
-describe('Copilot Integration Tests', () => {
+describe('Integration', () => {
     let mockFrameworkDriver: jest.Mocked<TestingFrameworkDriver>;
     let mockPromptHandler: jest.Mocked<PromptHandler>;
 
