@@ -4,8 +4,9 @@
 interface TestingFrameworkDriver {
     /**
      * Takes a snapshot of the current screen and returns the path to the saved image.
+     * If the driver does not support image, return undefined.
      */
-    takeSnapshot: () => Promise<string>;
+    takeSnapshot: () => Promise<string | undefined>;
 
     /**
      * Returns the current view hierarchy in a string representation.
@@ -62,16 +63,21 @@ interface PromptHandler {
     /**
      * Sends a prompt to the AI service and returns the response.
      * @param prompt The prompt to send to the AI service.
-     * @param image The path to the image to upload to the AI service.
+     * @param image Optional path to the image to upload to the AI service that captures the current UI state.
      * @returns The response from the AI service.
      */
-    runPrompt: (prompt: string, image: string) => Promise<string>;
+    runPrompt: (prompt: string, image?: string) => Promise<string>;
+
+    /**
+     * Checks if the AI service supports snapshot images for context.
+     */
+    isSnapshotImageSupported: () => boolean;
 }
 
 /**
  * Configuration options for Copilot.
  */
-interface CopilotConfig {
+interface Config {
     /**
      * The testing driver to use for interacting with the underlying testing framework.
      */
@@ -82,3 +88,18 @@ interface CopilotConfig {
      */
     promptHandler: PromptHandler;
 }
+
+/**
+ * Represents a step in the test script.
+ * @property type The type of the step.
+ * @property value The prompt for the step.
+ */
+type ExecutionStep = {
+    type: ExecutionStepType;
+    value: string;
+}
+
+/**
+ * Represents the type of a step in the test script.
+ */
+type ExecutionStepType = 'action' | 'assertion';

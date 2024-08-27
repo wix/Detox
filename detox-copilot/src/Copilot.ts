@@ -2,8 +2,7 @@ import {CopilotError} from "@/errors/CopilotError";
 import {PromptCreator} from "@/utils/PromptCreator";
 import {CodeEvaluator} from "@/utils/CodeEvaluator";
 import {SnapshotManager} from "@/utils/SnapshotManager";
-import {ActPerformer} from "@/actions/ActPerformer";
-import {ExpectPerformer} from "@/actions/ExpectPerformer";
+import {StepPerformer} from "@/actions/StepPerformer";
 
 /**
  * The main Copilot class that provides AI-assisted testing capabilities for a given underlying testing framework.
@@ -16,15 +15,14 @@ export class Copilot {
     private readonly promptCreator: PromptCreator;
     private readonly codeEvaluator: CodeEvaluator;
     private readonly snapshotManager: SnapshotManager;
-    private actPerformer: ActPerformer;
-    private expectPerformer: ExpectPerformer;
+    private previousSteps: ExecutionStep[] = [];
+    private stepPerformer: StepPerformer;
 
-    private constructor(config: CopilotConfig) {
+    private constructor(config: Config) {
         this.promptCreator = new PromptCreator(config.frameworkDriver.availableAPI);
         this.codeEvaluator = new CodeEvaluator();
         this.snapshotManager = new SnapshotManager(config.frameworkDriver);
-        this.actPerformer = new ActPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
-        this.expectPerformer = new ExpectPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
+        this.stepPerformer = new StepPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
     }
 
     /**
@@ -43,23 +41,23 @@ export class Copilot {
      * Initializes the Copilot with the provided configuration.
      * @param config The configuration options for Copilot.
      */
-    static init(config: CopilotConfig): void {
+    static init(config: Config): void {
         Copilot.instance = new Copilot(config);
     }
 
     /**
-     * Performs an action based on the given prompt.
-     * @param action The prompt describing the action to perform.
+     * Performs a test step based on the given prompt.
+     * @param step The step describing the operation to perform.
      */
-    async act(action: string): Promise<any> {
-        return await this.actPerformer.perform(action);
+    async execute(step: ExecutionStep): Promise<any> {
+        return await this.stepPerformer.perform(step, this.previousSteps);
     }
 
     /**
-     * Makes an assertion based on the given prompt.
-     * @param assertion The prompt describing the assertion to make.
+     * Resets the Copilot by clearing the previous steps.
+     * @note This must be called before starting a new test flow, in order to clean context from previous tests.
      */
-    async expect(assertion: string): Promise<void> {
-        await this.expectPerformer.perform(assertion);
+    reset(): void {
+        this.previousSteps = [];
     }
 }

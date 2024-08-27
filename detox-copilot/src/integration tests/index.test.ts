@@ -71,7 +71,7 @@ describe('Integration', () => {
         it('should successfully perform an expectation', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('// No operation');
 
-            await copilot.expect('The welcome message should be visible');
+            await copilot.assert('The welcome message should be visible');
 
             expect(mockFrameworkDriver.takeSnapshot).toHaveBeenCalled();
             expect(mockFrameworkDriver.getViewHierarchy).toHaveBeenCalled();
@@ -84,13 +84,13 @@ describe('Integration', () => {
         it('should handle errors during expectation execution', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
 
-            await expect(copilot.expect('The welcome message should be visible')).rejects.toThrow(CopilotError);
+            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(CopilotError);
         });
 
         it('should handle errors during code evaluation', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('foobar');
 
-            await expect(copilot.expect('The welcome message should be visible')).rejects.toThrow(CodeEvaluationError);
+            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(CodeEvaluationError);
         });
     });
 

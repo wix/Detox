@@ -1,228 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PromptCreator creates an action prompt correctly 1`] = `
-"# Test Code Generation
+exports[`PromptCreator creates a step prompt correctly 1`] = `
+"# Detox Copilot Test Code Generation
+You are an AI assistant tasked with generating test code for a mobile application using the provided testing framework API.
+Please generate the minimal executable code to perform the desired intent based on the given information and context.
 
 ## Context
-
-### View Hierarchy
-\`\`\`
+### Step to perform
+action - tap button
+### View hierarchy
 <View><Button testID="submit" title="Submit" /></View>
-\`\`\`
+### Snapshot image attached
 
-### Image Snapshot
-An image snapshot of the current UI state is attached to this prompt.
+## Available Action API
 
-### Intent
-Tap the submit button
-
-## Guidelines
-- Use the most appropriate method(s) from the available API.
-- Ensure the code is directly executable in JavaScript.
-- If the operation is impossible, explain why in a brief error message (e.g. "A login button element was not found, looks like the user is already logged in").
-- Consider the attached image snapshot when determining best course of action.
-
-Return only the executable code or the error message, without any additional formatting or explanation.
-
-## Available Methods
-### tap(element: Element) (Suggested, relevance: 1.00)
-
+### tap(element: Element)
 Taps on the specified element.
-
 #### Example
 \`\`\`
 await element(by.id("button")).tap();
 \`\`\`
-
 #### Guidelines
 - Ensure the element is tappable before using this method.
 
-### typeText(element: Element, text: string) (Suggested, relevance: 1.00)
-
+### typeText(element: Element, text: string)
 Types the specified text into the element.
-
 #### Example
 \`\`\`
 await element(by.id("input")).typeText("Hello, World!");
 \`\`\`
-
 #### Guidelines
 - Use this method only on text input elements.
 
-## Related Methods
+## Instructions
+1. Generate the minimal executable code to perform the following action:
+   "tap button"
+2. Use the provided API and follow the guidelines.
+3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+4. Wrap the generated code with backticks, without any additional formatting.
 
-3 most relevant methods, based on semantic similarity:
-- \`tap(element: Element)\` (relevance: 1.00)
-- \`typeText(element: Element, text: string)\` (relevance: 1.00)
-
-## Available Matchers
-
-- \`by.id(id: string)\`: Matches elements by their ID attribute."
-`;
-
-exports[`PromptCreator creates an assertion prompt correctly 1`] = `
-"# Test Code Generation
-
-## Context
-
-### View Hierarchy
-\`\`\`
-<View><Text testID="successMessage">Success!</Text></View>
+Example of throwing an informative error:
+\`\`\`typescript
+throw new Error("Unable to find the 'Submit' button in the current view hierarchy.");
 \`\`\`
 
-### Image Snapshot
-An image snapshot of the current UI state is attached to this prompt.
-
-### Intent
-Check if the success message is visible
-
-## Guidelines
-- Use the most appropriate method(s) from the available API.
-- Ensure the code is directly executable in JavaScript.
-- If the operation is impossible, explain why in a brief error message (e.g. "A login button element was not found, looks like the user is already logged in").
-- Consider the attached image snapshot when determining best course of action.
-
-Return only the executable code or the error message, without any additional formatting or explanation.
-
-## Available Methods
-### toBeVisible() (Suggested, relevance: 0.94)
-
-Asserts that the element is visible on the screen.
-
-#### Example
-\`\`\`
-await expect(element(by.id("title"))).toBeVisible();
-\`\`\`
-
-#### Guidelines
-- Consider scroll position when using this assertion.
-
-## Related Methods
-
-3 most relevant methods, based on semantic similarity:
-- \`toBeVisible()\` (relevance: 0.94)
-
-## Available Matchers
-
-- \`by.id(id: string)\`: Matches elements by their ID attribute."
-`;
-
-exports[`PromptCreator handles empty view hierarchy 1`] = `
-"# Test Code Generation
-
-## Context
-
-### View Hierarchy
-\`\`\`
-
-\`\`\`
-
-### Image Snapshot
-An image snapshot of the current UI state is attached to this prompt.
-
-### Intent
-Tap the submit button
-
-## Guidelines
-- Use the most appropriate method(s) from the available API.
-- Ensure the code is directly executable in JavaScript.
-- If the operation is impossible, explain why in a brief error message (e.g. "A login button element was not found, looks like the user is already logged in").
-- Consider the attached image snapshot when determining best course of action.
-
-Return only the executable code or the error message, without any additional formatting or explanation.
-
-## Available Methods
-### tap(element: Element) (Suggested, relevance: 1.00)
-
-Taps on the specified element.
-
-#### Example
-\`\`\`
-await element(by.id("button")).tap();
-\`\`\`
-
-#### Guidelines
-- Ensure the element is tappable before using this method.
-
-### typeText(element: Element, text: string) (Suggested, relevance: 1.00)
-
-Types the specified text into the element.
-
-#### Example
-\`\`\`
-await element(by.id("input")).typeText("Hello, World!");
-\`\`\`
-
-#### Guidelines
-- Use this method only on text input elements.
-
-## Related Methods
-
-3 most relevant methods, based on semantic similarity:
-- \`tap(element: Element)\` (relevance: 1.00)
-- \`typeText(element: Element, text: string)\` (relevance: 1.00)
-
-## Available Matchers
-
-- \`by.id(id: string)\`: Matches elements by their ID attribute."
-`;
-
-exports[`PromptCreator handles long intents 1`] = `
-"# Test Code Generation
-
-## Context
-
-### View Hierarchy
-\`\`\`
-<View><Button testID="submit" /><ActivityIndicator testID="loader" /><Text testID="successMessage" /></View>
-\`\`\`
-
-### Image Snapshot
-An image snapshot of the current UI state is attached to this prompt.
-
-### Intent
-Tap the submit button, then wait for the loading indicator to disappear, and finally verify that the success message is displayed
-
-## Guidelines
-- Use the most appropriate method(s) from the available API.
-- Ensure the code is directly executable in JavaScript.
-- If the operation is impossible, explain why in a brief error message (e.g. "A login button element was not found, looks like the user is already logged in").
-- Consider the attached image snapshot when determining best course of action.
-
-Return only the executable code or the error message, without any additional formatting or explanation.
-
-## Available Methods
-### tap(element: Element) (Suggested, relevance: 1.00)
-
-Taps on the specified element.
-
-#### Example
-\`\`\`
-await element(by.id("button")).tap();
-\`\`\`
-
-#### Guidelines
-- Ensure the element is tappable before using this method.
-
-### typeText(element: Element, text: string) (Suggested, relevance: 1.00)
-
-Types the specified text into the element.
-
-#### Example
-\`\`\`
-await element(by.id("input")).typeText("Hello, World!");
-\`\`\`
-
-#### Guidelines
-- Use this method only on text input elements.
-
-## Related Methods
-
-3 most relevant methods, based on semantic similarity:
-- \`tap(element: Element)\` (relevance: 1.00)
-- \`typeText(element: Element, text: string)\` (relevance: 1.00)
-
-## Available Matchers
-
-- \`by.id(id: string)\`: Matches elements by their ID attribute."
+Please provide your response below:"
 `;

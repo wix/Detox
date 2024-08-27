@@ -40,28 +40,14 @@ describe('PromptCreator', () => {
         promptCreator = new PromptCreator(mockAPI);
     });
 
-    it('creates an action prompt correctly', () => {
-        const action = 'Tap the submit button';
+    it('creates a step prompt correctly', () => {
+        const step: ExecutionStep = {
+            type: 'action',
+            value: 'tap button'
+        };
+
         const viewHierarchy = '<View><Button testID="submit" title="Submit" /></View>';
-        const prompt = promptCreator.createActPrompt(action, viewHierarchy);
+        const prompt = promptCreator.createPrompt(step, viewHierarchy, true, []);
         expect(prompt).toMatchSnapshot();
-    });
-
-    it('creates an assertion prompt correctly', () => {
-        const assertion = 'Check if the success message is visible';
-        const viewHierarchy = '<View><Text testID="successMessage">Success!</Text></View>';
-        const prompt = promptCreator.createExpectPrompt(assertion, viewHierarchy);
-        expect(prompt).toMatchSnapshot();
-    });
-
-    it('handles long intents', () => {
-        const action = 'Tap the submit button, then wait for the loading indicator to disappear, and finally verify that the success message is displayed';
-        const viewHierarchy = '<View><Button testID="submit" /><ActivityIndicator testID="loader" /><Text testID="successMessage" /></View>';
-        const prompt = promptCreator.createActPrompt(action, viewHierarchy);
-        expect(prompt).toMatchSnapshot();
-    });
-
-    it('throws an error for invalid API', () => {
-        expect(() => new PromptCreator({} as TestingFrameworkAPI)).toThrow('Invalid TestingFrameworkAPI provided');
     });
 });

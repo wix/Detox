@@ -1,10 +1,10 @@
 import { Copilot } from '@/Copilot';
-import { ActPerformer } from '@/actions/ActPerformer';
-import { ExpectPerformer } from '@/actions/ExpectPerformer';
+import { StepPerformer } from '@/actions/StepPerformer';
+import { AssertionPerformer } from '@/actions/AssertionPerformer';
 import { CopilotError } from '@/errors/CopilotError';
 
-jest.mock('@/actions/ActPerformer');
-jest.mock('@/actions/ExpectPerformer');
+jest.mock('@/actions/StepPerformer');
+jest.mock('@/actions/AssertionPerformer');
 
 describe('DetoxCopilot', () => {
     let mockConfig: any;
@@ -42,32 +42,32 @@ describe('DetoxCopilot', () => {
     });
 
     describe('act', () => {
-        it('should call ActPerformer.perform with the given action', async () => {
+        it('should call ActionPerformer.perform with the given action', async () => {
             const action = 'tap button';
             const instance = Copilot.getInstance();
             await instance.act(action);
-            expect(ActPerformer.prototype.perform).toHaveBeenCalledWith(action);
+            expect(StepPerformer.prototype.perform).toHaveBeenCalledWith(action);
         });
 
-        it('should return the result from ActPerformer.perform', async () => {
-            (ActPerformer.prototype.perform as jest.Mock).mockResolvedValue(true);
+        it('should return the result from ActionPerformer.perform', async () => {
+            (StepPerformer.prototype.perform as jest.Mock).mockResolvedValue(true);
             const instance = Copilot.getInstance();
             const result = await instance.act('action');
             expect(result).toBe(true);
         });
     });
 
-    describe('expect', () => {
-        it('should call ExpectPerformer.perform with the given assertion', async () => {
+    describe('assert', () => {
+        it('should call AssertionPerformer.perform with the given assertion', async () => {
             const assertion = 'button is visible';
             const instance = Copilot.getInstance();
-            await instance.expect(assertion);
-            expect(ExpectPerformer.prototype.perform).toHaveBeenCalledWith(assertion);
+            await instance.assert(assertion);
+            expect(AssertionPerformer.prototype.perform).toHaveBeenCalledWith(assertion);
         });
 
         it('should not return anything', async () => {
             const instance = Copilot.getInstance();
-            const result = await instance.expect('assertion');
+            const result = await instance.assert('assertion');
             expect(result).toBeUndefined();
         });
     });

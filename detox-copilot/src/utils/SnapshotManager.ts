@@ -1,7 +1,7 @@
 export class SnapshotManager {
     constructor(private driver: TestingFrameworkDriver) {}
 
-    async takeSnapshot(): Promise<string> {
+    async takeSnapshot(): Promise<string | undefined> {
         return this.driver.takeSnapshot();
     }
 
