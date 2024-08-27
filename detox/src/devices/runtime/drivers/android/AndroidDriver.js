@@ -245,6 +245,10 @@ class AndroidDriver extends DeviceDriverBase {
     await this.invocationManager.execute(call);
   }
 
+  async getViewHierarchyXml() {
+    return this.invocationManager.execute(DetoxApi.getViewHierarchyXml());
+  }
+
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
     const appBinaryPath = getAbsoluteBinaryPath(_appBinaryPath);
     const testBinaryPath = _testBinaryPath ? getAbsoluteBinaryPath(_testBinaryPath) : this._getTestApkPath(appBinaryPath);

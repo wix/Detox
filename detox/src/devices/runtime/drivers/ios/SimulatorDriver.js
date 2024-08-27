@@ -194,6 +194,10 @@ class SimulatorDriver extends IosDriver {
     return viewHierarchyURL;
   }
 
+  async getViewHierarchyXml() {
+    return await this.client.getViewHierarchyXml();
+  }
+
   async setStatusBar(flags) {
     await this._applesimutils.statusBarOverride(this.udid, flags);
   }

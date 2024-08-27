@@ -69,6 +69,17 @@ class Detox {
     };
   }
 
+  static getViewHierarchyXml() {
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "getViewHierarchyXml",
+      args: []
+    };
+  }
+
 }
 
 module.exports = Detox;

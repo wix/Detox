@@ -918,6 +918,12 @@ declare global {
             captureViewHierarchy(name?: string): Promise<string>;
 
             /**
+             * Dump the current view hierarchy of the app as a XML string.
+             * @returns a string containing the XML representation of the view hierarchy.
+             */
+            getViewHierarchyXml(): Promise<string>;
+
+            /**
              * Simulate shake (iOS Only)
              */
             shake(): Promise<void>;

@@ -1,3 +1,6 @@
+const jestExpect = require('expect').default;
+const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
@@ -38,6 +41,21 @@ describe('Device', () => {
 
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
+
+  it('getViewHierarchyXml() - should return a valid UI hierarchy', async () => {
+    await device.launchApp({newInstance: true});
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
+    const hierarchy = await device.getViewHierarchyXml();
+    const expectedValues = require('./assets/06.device.assets.js')
+    const expectedValue = removeWhiteSpacesAndTabs(expectedValues[device.getPlatform()][`rn${rnMinorVer}`]);
+
+    jestExpect(removeWhiteSpacesAndTabs(hierarchy.result)).toBe(expectedValue);
+  });
+
+  function removeWhiteSpacesAndTabs(str) {
+    return str.replace(/[\s\t]+/g, '');
+  }
 
   // // Passing on iOS, not implemented on Android
   it(':ios: launchApp in a different language', async () => {

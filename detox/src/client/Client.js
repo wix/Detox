@@ -225,6 +225,10 @@ class Client {
     }));
   }
 
+  async getViewHierarchyXml() {
+    return await this.sendAction(new actions.GetViewHierarchyXml());
+  }
+
   async currentStatus() {
     return await this.sendAction(new actions.CurrentStatus());
   }

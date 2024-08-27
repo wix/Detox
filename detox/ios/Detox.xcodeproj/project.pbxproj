@@ -135,6 +135,7 @@
 		60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E149C62759038F00519EE4 /* UIResponder+First.m */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
+		E29DED392C72499900688924 /* ViewHierarchyDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29DED382C72499900688924 /* ViewHierarchyDump.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -346,6 +347,7 @@
 		60E149C62759038F00519EE4 /* UIResponder+First.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+First.m"; sourceTree = "<group>"; };
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
+		E29DED382C72499900688924 /* ViewHierarchyDump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHierarchyDump.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -544,6 +546,7 @@
 				60E149C52759038F00519EE4 /* UIResponder+First.h */,
 				60E149C62759038F00519EE4 /* UIResponder+First.m */,
 				39CF46202A2E1F50004A0CA3 /* String+matchesJSRegex.swift */,
+				E29DED382C72499900688924 /* ViewHierarchyDump.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -936,6 +939,7 @@
 				600A0AE02B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift in Sources */,
 				AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */,
 				600A0AA82B998B4200937051 /* WebExpectationType.swift in Sources */,
+				E29DED392C72499900688924 /* ViewHierarchyDump.swift in Sources */,
 				600A0ADE2B9C817500937051 /* WebCodeBuilder+createSelectAllTextAction.swift in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				600A0A892B966FE200937051 /* WebPredicateType.swift in Sources */,
