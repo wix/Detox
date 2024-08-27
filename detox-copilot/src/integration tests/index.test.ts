@@ -21,7 +21,8 @@ describe('Integration', () => {
         };
 
         mockPromptHandler = {
-            runPrompt: jest.fn()
+            runPrompt: jest.fn(),
+            isSnapshotImageSupported: jest.fn().mockReturnValue(true)
         };
 
         copilot.init({
@@ -63,7 +64,7 @@ describe('Integration', () => {
         it('should handle errors during action execution', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
 
-            await expect(copilot.act('Tap on a non-existent button')).rejects.toThrow(CopilotError);
+            await expect(copilot.act('Tap on a non-existent button')).rejects.toThrow(new Error('Element not found'));
         });
     });
 
@@ -84,13 +85,13 @@ describe('Integration', () => {
         it('should handle errors during expectation execution', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
 
-            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(CopilotError);
+            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(new Error('Element not found'));
         });
 
         it('should handle errors during code evaluation', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('foobar');
 
-            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(CodeEvaluationError);
+            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(new Error('foobar is not defined'));
         });
     });
 

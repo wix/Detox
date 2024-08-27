@@ -20,7 +20,7 @@ describe('CodeEvaluator', () => {
 
     it('should throw CodeEvaluationError for invalid code', async () => {
         const invalidCode = 'throw new Error("Test error");';
-        await expect(codeEvaluator.evaluate(invalidCode)).rejects.toThrow(CodeEvaluationError);
+        await expect(codeEvaluator.evaluate(invalidCode)).rejects.toThrow(new Error('Test error'));
     });
 
     it('should handle asynchronous code', async () => {
@@ -30,7 +30,7 @@ describe('CodeEvaluator', () => {
 
     it('should throw CodeEvaluationError with original error message', async () => {
         const errorCode = 'throw new Error("Custom error message");';
-        await expect(codeEvaluator.evaluate(errorCode)).rejects.toThrow('Error evaluating generated code');
+        await expect(codeEvaluator.evaluate(errorCode)).rejects.toThrow(new Error('Custom error message'));
         await expect(codeEvaluator.evaluate(errorCode)).rejects.toThrow(CodeEvaluationError);
     });
 });
