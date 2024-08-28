@@ -16,6 +16,7 @@ class RuntimeDevice {
     runtimeErrorComposer,
   }, deviceDriver) {
     const methodNames = [
+      'backdoor',
       'captureViewHierarchy',
       'getViewHierarchyXml',
       'clearKeychain',
@@ -190,6 +191,10 @@ class RuntimeDevice {
     }
 
     return this.deviceDriver.takeScreenshot(name);
+  }
+
+  async backdoor(data) {
+    await this.deviceDriver.backdoor(data);
   }
 
   async captureViewHierarchy(name = 'capture') {

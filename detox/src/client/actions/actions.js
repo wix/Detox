@@ -338,8 +338,28 @@ class CaptureViewHierarchy extends Action {
   }
 }
 
+class Backdoor extends Action {
+  constructor(params) {
+    super ('backdoor', params);
+  }
+
+  get isAtomic() {
+    return true;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'backdoorDone');
+    return response;
+  }
+}
+
 module.exports = {
   Action,
+  Backdoor,
   Login,
   WaitForBackground,
   WaitForActive,

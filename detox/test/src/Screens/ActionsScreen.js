@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import TextInput from '../Views/TextInput';
 import Slider from '@react-native-community/slider';
+import { detoxBackdoor } from 'detox/react-native';
 
 let LegacySlider;
 try {
@@ -55,6 +56,14 @@ export default class ActionsScreen extends Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+
+    detoxBackdoor.registerActionHandler('greet', ({ text }) => {
+      this.setState({ greeting: text });
+    });
+  }
+
+  componentWillUnmount() {
+    detoxBackdoor.clearActionHandler('greet');
   }
 
   render() {
