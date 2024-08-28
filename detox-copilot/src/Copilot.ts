@@ -49,8 +49,11 @@ export class Copilot {
      * Performs a test step based on the given prompt.
      * @param step The step describing the operation to perform.
      */
-    async execute(step: ExecutionStep): Promise<any> {
-        return await this.stepPerformer.perform(step, this.previousSteps);
+    async perform(step: ExecutionStep): Promise<any> {
+        const result = await this.stepPerformer.perform(step, this.previousSteps);
+        this.didPerformStep(step);
+
+        return result;
     }
 
     /**
@@ -59,5 +62,9 @@ export class Copilot {
      */
     reset(): void {
         this.previousSteps = [];
+    }
+
+    private didPerformStep(step: ExecutionStep): void {
+        this.previousSteps = [...this.previousSteps, step];
     }
 }

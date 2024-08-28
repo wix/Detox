@@ -8,13 +8,13 @@ export const copilot = {
         Copilot.getInstance().reset();
     },
     act: async (action: string) => {
-        return await Copilot.getInstance().execute({
+        return await Copilot.getInstance().perform({
             type: 'action',
             value: action
         });
     },
     assert: async (assertion: string) => {
-        return await Copilot.getInstance().execute({
+        return await Copilot.getInstance().perform({
             type: 'assertion',
             value: assertion
         });
