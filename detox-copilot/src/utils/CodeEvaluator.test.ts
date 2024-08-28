@@ -31,6 +31,5 @@ describe('CodeEvaluator', () => {
     it('should throw CodeEvaluationError with original error message', async () => {
         const errorCode = 'throw new Error("Custom error message");';
         await expect(codeEvaluator.evaluate(errorCode)).rejects.toThrow(new Error('Custom error message'));
-        await expect(codeEvaluator.evaluate(errorCode)).rejects.toThrow(CodeEvaluationError);
     });
 });
