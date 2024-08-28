@@ -246,7 +246,7 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async getViewHierarchyXml() {
-    return this.invocationManager.execute(DetoxApi.getViewHierarchyXml());
+    return this.invocationManager.execute(DetoxApi.getViewHierarchyXml()).result;
   }
 
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
