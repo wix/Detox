@@ -100,6 +100,6 @@ type ExecutionStep = {
 }
 
 /**
- * Represents the type of a step in the test script.
+ * Represents the type of step in the test script.
  */
 type ExecutionStepType = 'action' | 'assertion';
