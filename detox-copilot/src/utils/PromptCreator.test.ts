@@ -33,14 +33,14 @@ const mockAPI: TestingFrameworkAPI = {
     ]
 };
 
-describe('PromptCreator', () => {
+describe('prompt creation', () => {
     let promptCreator: PromptCreator;
 
     beforeEach(() => {
         promptCreator = new PromptCreator(mockAPI);
     });
 
-    it('creates a step prompt correctly', () => {
+    it('should create an action step prompt correctly', () => {
         const step: ExecutionStep = {
             type: 'action',
             value: 'tap button'
@@ -48,6 +48,28 @@ describe('PromptCreator', () => {
 
         const viewHierarchy = '<View><Button testID="submit" title="Submit" /></View>';
         const prompt = promptCreator.createPrompt(step, viewHierarchy, true, []);
+        expect(prompt).toMatchSnapshot();
+    });
+
+    it('should create an assertion step with snapshot image prompt correctly', () => {
+        const step: ExecutionStep = {
+            type: 'assertion',
+            value: 'expect button to be visible'
+        };
+
+        const viewHierarchy = '<View><Button testID="submit" title="Submit" /></View>';
+        const prompt = promptCreator.createPrompt(step, viewHierarchy, true, []);
+        expect(prompt).toMatchSnapshot();
+    });
+
+    it('should create an assertion step without snapshot image prompt correctly', () => {
+        const step: ExecutionStep = {
+            type: 'assertion',
+            value: 'expect button to be visible'
+        };
+
+        const viewHierarchy = '<View><Button testID="submit" title="Submit" /></View>';
+        const prompt = promptCreator.createPrompt(step, viewHierarchy, false, []);
         expect(prompt).toMatchSnapshot();
     });
 });

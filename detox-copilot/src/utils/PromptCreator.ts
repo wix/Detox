@@ -7,65 +7,91 @@ export class PromptCreator {
         isSnapshotImageAttached: boolean,
         previousSteps: ExecutionStep[]
     ): string {
-        const sections = [
-            this.createBasePrompt(),
-            this.addContext(step, viewHierarchy, isSnapshotImageAttached, previousSteps),
-            this.addAPIInfo(step.type),
-            this.addInstructions(step)
-        ];
-
-        return sections.join('\n\n');
-    }
-
-    private createBasePrompt(): string {
         return [
-            "# Detox Copilot Test Code Generation",
-            "You are an AI assistant tasked with generating test code for a mobile application using the provided testing framework API.",
-            "Please generate the minimal executable code to perform the desired intent based on the given information and context."
-        ].join('\n');
+            this.createBasePrompt(),
+            this.createContext(step, viewHierarchy, isSnapshotImageAttached, previousSteps),
+            this.createAPIInfo(step.type),
+            this.createInstructions(step, isSnapshotImageAttached)
+        ]
+            .flat()
+            .join('\n');
     }
 
-    private addContext(
+    private createBasePrompt(): string[] {
+        return [
+            "# Test Code Generation",
+            "",
+            "You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.",
+            "Please generate the minimal executable code to perform the desired intent based on the given information and context.",
+            ""
+        ];
+    }
+
+    private createContext(
         step: ExecutionStep,
         viewHierarchy: string,
         isSnapshotImageAttached: boolean,
         previousSteps: ExecutionStep[]
-    ): string {
-        const context = [
+    ): string[] {
+        let context = [
             "## Context",
+            "",
             "### Step to perform",
-            `${step.type} - ${step.value}`,
+            "",
+            `Generate the minimal executable code to perform the following ${step.type}: "${step.value}"`,
+            "",
             "### View hierarchy",
+            "",
+            "```",
             `${viewHierarchy}`,
-            isSnapshotImageAttached ? "### Snapshot image attached" : ""
+            "```",
+            ""
         ];
+
+        if (isSnapshotImageAttached) {
+            context.push(
+                "### Snapshot image",
+                "",
+                "Snapshot image is attached for visual reference.",
+                ""
+            );
+        }
 
         if (previousSteps.length > 0) {
             context.push(
                 "### Previous steps",
-                ...previousSteps.map((prevStep, index) => `${index + 1}. ${prevStep.type}: ${prevStep.value}`)
+                "",
+                ...previousSteps.map((prevStep, index) => `${index + 1}. ${prevStep.type}: ${prevStep.value}`),
+                ""
             );
         }
 
-        return context.filter(Boolean).join('\n');
+        return context;
     }
 
-    private addAPIInfo(stepType: ExecutionStepType): string {
+    private createAPIInfo(stepType: ExecutionStepType): string[] {
         const relevantAPI = stepType === 'action' ? this.availableAPI.actions : this.availableAPI.assertions;
         return [
             `## Available ${stepType.charAt(0).toUpperCase() + stepType.slice(1)} API`,
-            ...relevantAPI.map(this.formatAPIMethod)
-        ].join('\n\n');
+            ""
+        ]
+            .concat(
+                relevantAPI.map(this.formatAPIMethod).flat()
+            );
     }
 
-    private formatAPIMethod(method: TestingFrameworkAPIMethod): string {
+    private formatAPIMethod(method: TestingFrameworkAPIMethod): string[] {
         const methodInfo = [
             `### ${method.signature}`,
+            "",
             method.description,
+            "",
             "#### Example",
+            "",
             "```",
             method.example,
-            "```"
+            "```",
+            ""
         ];
 
         if (method.guidelines.length > 0) {
@@ -75,24 +101,43 @@ export class PromptCreator {
             );
         }
 
-        return methodInfo.join('\n');
+        return methodInfo;
     }
 
-    private addInstructions(step: ExecutionStep): string {
+    private createInstructions(step: ExecutionStep, isSnapshotImageAttached: boolean): string[] {
         return [
             "## Instructions",
-            `1. Generate the minimal executable code to perform the following ${step.type}:`,
-            `   "${step.value}"`,
-            "2. Use the provided API and follow the guidelines.",
-            "3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.",
-            "4. Wrap the generated code with backticks, without any additional formatting.",
             "",
-            "Example of throwing an informative error:",
+            [
+                `Generate the minimal executable code to perform the following ${step.type}: "${step.value}"`,
+                "Use the provided API and follow the guidelines.",
+                "If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.",
+                "Wrap the generated code with backticks, without any additional formatting.",
+            ]
+                .concat(this.createVisualAssertionsInstructionIfPossible(isSnapshotImageAttached))
+                .map((instruction, index) => `${index + 1}. ${instruction}`).join('\n'),
+            "",
+            "### Examples of throwing an informative error:",
             "```typescript",
             'throw new Error("Unable to find the \'Submit\' button in the current view hierarchy.");',
             "```",
             "",
+            "```typescript",
+            'throw new Error("The provided prompt does not contain enough information to generate the code, \"button\" is too ambiguous for matching a specific element.");',
+            "```",
+            "",
             "Please provide your response below:"
-        ].join('\n');
+        ];
+    }
+
+    private createVisualAssertionsInstructionIfPossible(isSnapshotImageAttached: boolean): string[] {
+        if (!isSnapshotImageAttached) {
+            return [];
+        }
+
+        return [
+            "In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. " +
+                "Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.",
+        ];
     }
 }
