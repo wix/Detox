@@ -1,7 +1,7 @@
 {
   "name": "detox-copilot",
   "version": "0.0.0",
-  "description": "A Detox plugin that leverages AI to seamlessly invoke Detox operations",
+  "description": "A Detox-based plugin that leverages AI to seamlessly invoke UI testing framework operations",
   "keywords": [
     "detox",
     "copilot",
