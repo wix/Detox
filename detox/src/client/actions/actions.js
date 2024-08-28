@@ -306,7 +306,7 @@ class GetViewHierarchyXml extends Action {
   }
 
   async handle(response) {
-    return response.params.viewHierarchy;
+    return { 'result': response.params.viewHierarchy };
   }
 }
 
@@ -330,7 +330,7 @@ class CaptureViewHierarchy extends Action {
     if (captureViewHierarchyError) {
       throw new DetoxRuntimeError({
         message: 'Failed to capture view hierarchy. Reason:\n',
-        debugInfo: captureViewHierarchyError,
+        debugInfo: captureViewHierarchyError
       });
     }
 
