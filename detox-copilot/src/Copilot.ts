@@ -38,7 +38,7 @@ export class Copilot {
     }
 
     /**
-     * Initializes the Copilot with the provided configuration.
+     * Initializes the Copilot with the provided configuration, must be called before using Copilot.
      * @param config The configuration options for Copilot.
      */
     static init(config: Config): void {
