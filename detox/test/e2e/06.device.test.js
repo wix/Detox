@@ -50,7 +50,7 @@ describe('Device', () => {
     const expectedValues = require('./assets/06.device.assets.js')
     const expectedValue = removeWhiteSpacesAndTabs(expectedValues[device.getPlatform()][`rn${rnMinorVer}`]);
 
-    jestExpect(removeWhiteSpacesAndTabs(hierarchy.result)).toBe(expectedValue);
+    jestExpect(removeWhiteSpacesAndTabs(hierarchy)).toBe(expectedValue);
   });
 
   function removeWhiteSpacesAndTabs(str) {

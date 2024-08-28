@@ -330,7 +330,7 @@ class CaptureViewHierarchy extends Action {
     if (captureViewHierarchyError) {
       throw new DetoxRuntimeError({
         message: 'Failed to capture view hierarchy. Reason:\n',
-        debugInfo: captureViewHierarchyError,
+        debugInfo: captureViewHierarchyError
       });
     }
 

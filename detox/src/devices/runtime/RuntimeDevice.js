@@ -197,7 +197,8 @@ class RuntimeDevice {
   }
 
   async getViewHierarchyXml() {
-    return this.deviceDriver.getViewHierarchyXml();
+    const result = await this.deviceDriver.getViewHierarchyXml();
+    return result.result;
   }
 
   async sendToHome() {
