@@ -1,6 +1,6 @@
 {
   "name": "detox-copilot",
-  "version": "20.25.1",
+  "version": "0.0.0",
   "description": "A Detox plugin that leverages AI to seamlessly invoke Detox operations",
   "keywords": [
     "detox",
