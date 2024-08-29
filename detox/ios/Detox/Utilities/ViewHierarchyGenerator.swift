@@ -97,6 +97,7 @@ struct ViewHierarchyGenerator {
 
         return attributes
             .map { " \($0)=\"\($1)\"" }
+            .sorted()
             .joined()
     }
 }
