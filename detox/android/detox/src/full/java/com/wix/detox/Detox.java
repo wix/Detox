@@ -7,7 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.wix.detox.config.DetoxConfig;
-import com.wix.detox.espresso.hierarchy.GetViewHierarchyHelper;
+import com.wix.detox.espresso.hierarchy.ViewHierarchyGenerator;
 
 /**
  * <p>Static class.</p>
@@ -144,6 +144,6 @@ public final class Detox {
     }
 
     public static String generateViewHierarchyXml(boolean shouldInjectTestIds) {
-        return GenerateViewHierarchyHelper.generateXml(shouldInjectTestIds);
+        return ViewHierarchyGenerator.generateXml(shouldInjectTestIds);
     }
 }
