@@ -394,8 +394,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
                     injectingAccessibilityIdentifiers: params["shouldInjectTestIds"] as! Bool
                 )
 
-                let resultParams: [String: Any] = ["result": recursiveDescription]
-                self.webSocket.sendAction(done, params: resultParams, messageId: messageId)
+                self.webSocket.sendAction(
+                    "generateViewHierarchyXmlResult",
+                    params: ["viewHierarchy": recursiveDescription],
+                    messageId: messageId
+                )
 
 
             case "captureViewHierarchy":
