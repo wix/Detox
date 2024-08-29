@@ -197,8 +197,7 @@ class RuntimeDevice {
   }
 
   async generateViewHierarchyXml(shouldInjectTestIds = false) {
-    const result = await this.deviceDriver.generateViewHierarchyXml(shouldInjectTestIds);
-    return result.result;
+    return await this.deviceDriver.generateViewHierarchyXml(shouldInjectTestIds);
   }
 
   async sendToHome() {

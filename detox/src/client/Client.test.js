@@ -424,9 +424,9 @@ describe('Client', () => {
     });
 
     it('should generate view hierarchy XML', async () => {
-      mockAws.mockResponse('generateViewHierarchyXml', { result: 'mock-hierarchy' });
-      const hierarchy = await client.generateViewHierarchyXml();
-      expect(hierarchy).toStrictEqual({ 'result' :'mock-hierarchy' });
+      mockAws.mockResponse('generateViewHierarchyXml', { viewHierarchy: 'mock-hierarchy' });
+      const hierarchy = await client.generateViewHierarchyXml({ shouldInjectTestIds: false });
+      expect(hierarchy).toStrictEqual('mock-hierarchy');
     });
   });
 
