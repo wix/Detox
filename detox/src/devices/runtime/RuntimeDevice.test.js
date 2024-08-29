@@ -969,10 +969,10 @@ describe('Device', () => {
     expect(device.deviceDriver.captureViewHierarchy).toHaveBeenCalledWith('capture');
   });
 
-  it('getViewHierarchy() should return the result of the driver', async () => {
-    driverMock.driver.getViewHierarchyXml = async () => 'xml';
+  it('generateViewHierarchyXml() should return the result of the driver', async () => {
+    driverMock.driver.generateViewHierarchyXml = async () => 'xml';
     const device = await aValidDevice();
-    const hierarchy = await device.getViewHierarchyXml();
+    const hierarchy = await device.generateViewHierarchyXml();
     expect(hierarchy).toEqual('xml');
   });
 

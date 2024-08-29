@@ -42,11 +42,11 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
-  it('getViewHierarchyXml() - should return a valid UI hierarchy', async () => {
+  it('generateViewHierarchyXml() - should return a valid UI hierarchy', async () => {
     await device.launchApp({newInstance: true});
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
-    const hierarchy = await device.getViewHierarchyXml();
+    const hierarchy = await device.generateViewHierarchyXml();
     const expectedValues = require('./assets/06.device.assets.js')
     const expectedValue = removeWhiteSpacesAndTabs(expectedValues[device.getPlatform()][`rn${rnMinorVer}`]);
 

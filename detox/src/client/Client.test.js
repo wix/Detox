@@ -418,14 +418,14 @@ describe('Client', () => {
     });
   });
 
-  describe('.getViewHierarchyXml()', () => {
+  describe('.generateViewHierarchyXml()', () => {
     beforeEach(async () => {
       await client.connect();
     });
 
-    it('should get view hierarchy', async () => {
-      mockAws.mockResponse('getViewHierarchyXml', { viewHierarchy: 'mock-hierarchy' });
-      const hierarchy = await client.getViewHierarchyXml();
+    it('should generate view hierarchy XML', async () => {
+      mockAws.mockResponse('generateViewHierarchyXml', { result: 'mock-hierarchy' });
+      const hierarchy = await client.generateViewHierarchyXml();
       expect(hierarchy).toStrictEqual({ 'result' :'mock-hierarchy' });
     });
   });

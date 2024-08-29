@@ -223,7 +223,7 @@ class DeviceDriverBase {
     return '';
   }
 
-  async getViewHierarchyXml() {
+  async generateViewHierarchyXml(_shouldInjectTestIds) {
     return '';
   }
 }

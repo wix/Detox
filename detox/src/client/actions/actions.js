@@ -292,9 +292,9 @@ class SetInstrumentsRecordingState extends Action {
   }
 }
 
-class GetViewHierarchyXml extends Action {
+class GenerateViewHierarchyXml extends Action {
   constructor(params) {
-    super('getViewHierarchyXml', params);
+    super('generateViewHierarchyXml', params);
   }
 
   get isAtomic() {
@@ -354,5 +354,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
-  GetViewHierarchyXml
+  GenerateViewHierarchyXml
 };
