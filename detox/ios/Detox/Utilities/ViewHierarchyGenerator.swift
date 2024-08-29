@@ -70,7 +70,7 @@ struct ViewHierarchyGenerator {
             attributes["x"] = "\(Int(location.x))"
             attributes["y"] = "\(Int(location.y))"
         }
-
+        
         if shouldInjectIdentifiers {
             let injectedPrefix = "detox_temp_"
             let injectedIdentifier = "\(injectedPrefix)\(indexPath.map { String($0) }.joined(separator: "_"))"
@@ -96,6 +96,7 @@ struct ViewHierarchyGenerator {
         }
 
         return attributes
+            .filter { $0.value != "" }
             .map { " \($0)=\"\($1)\"" }
             .sorted()
             .joined()
