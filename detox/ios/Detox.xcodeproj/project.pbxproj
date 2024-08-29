@@ -123,6 +123,7 @@
 		600A0AE02B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0ADF2B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift */; };
 		601A40DC2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 601A40DA2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h */; };
 		601A40DD2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 601A40DB2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m */; };
+		604932B52C8070D5002EFCC9 /* ViewHierarchyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */; };
 		6062B5E12720323700CBDBF0 /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */; };
 		6062B5E22720323700CBDBF0 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */; };
 		6062B5E32720323700CBDBF0 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */; };
@@ -135,7 +136,6 @@
 		60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E149C62759038F00519EE4 /* UIResponder+First.m */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
-		E29DED392C72499900688924 /* ViewHierarchyDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29DED382C72499900688924 /* ViewHierarchyDump.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -335,6 +335,7 @@
 		600A0ADF2B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebCodeBuilder+createScrollIntoViewAction.swift"; sourceTree = "<group>"; };
 		601A40DA2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WKWebViewConfiguration+Detox.h"; sourceTree = "<group>"; };
 		601A40DB2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WKWebViewConfiguration+Detox.m"; sourceTree = "<group>"; };
+		604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHierarchyGenerator.swift; sourceTree = "<group>"; };
 		6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
 		6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXSwizzlingHelper.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXSwizzlingHelper.h; sourceTree = SOURCE_ROOT; };
 		6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Utils.h"; path = "DetoxSync/DetoxSync/DTXObjectiveCHelpers/NSArray+Utils.h"; sourceTree = SOURCE_ROOT; };
@@ -347,7 +348,6 @@
 		60E149C62759038F00519EE4 /* UIResponder+First.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+First.m"; sourceTree = "<group>"; };
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
-		E29DED382C72499900688924 /* ViewHierarchyDump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHierarchyDump.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -545,7 +545,7 @@
 				396D455025238BB90096E7FA /* UIView+Drawing.m */,
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
 				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
-				E29DED382C72499900688924 /* ViewHierarchyDump.swift */,
+				604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
 			);
 			path = Utilities;
@@ -939,11 +939,11 @@
 				600A0AE02B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift in Sources */,
 				AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */,
 				600A0AA82B998B4200937051 /* WebExpectationType.swift in Sources */,
-				E29DED392C72499900688924 /* ViewHierarchyDump.swift in Sources */,
 				600A0ADE2B9C817500937051 /* WebCodeBuilder+createSelectAllTextAction.swift in Sources */,
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				600A0A892B966FE200937051 /* WebPredicateType.swift in Sources */,
 				600A0AAA2B998B5500937051 /* WebExpectationModifier.swift in Sources */,
+				604932B52C8070D5002EFCC9 /* ViewHierarchyGenerator.swift in Sources */,
 				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */,
