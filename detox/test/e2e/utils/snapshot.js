@@ -3,6 +3,7 @@ const { ssim } = require('ssim.js');
 const { PNG } = require('pngjs');
 
 const rnMinorVer = require('../../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+const jestExpect = require('expect').default;
 
 // Threshold for SSIM comparison, if two images have SSIM score below this threshold, they are considered different.
 const SSIM_SCORE_THRESHOLD = 0.997;
@@ -58,9 +59,10 @@ async function expectSnapshotToMatch(value, snapshotName) {
     const snapshotPath = `./e2e/assets/${snapshotName}.${rnMinorVer}.${device.getPlatform()}.txt`;
 
     if (await fs.pathExists(snapshotPath) === false || process.env.UPDATE_SNAPSHOTS === 'true') {
-        await fs.writeFile(snapshotPath, text, 'utf8');
+        await fs.writeFile(snapshotPath, value, 'utf8');
     } else {
-        await expectTextToBeClose(text, snapshotPath);
+        const expectedValue = await fs.readFile(snapshotPath, 'utf8');
+        jestExpect(value).toEqual(expectedValue);
     }
 }
 
