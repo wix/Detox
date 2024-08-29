@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlSerializer
 import java.io.StringWriter
 
 object ViewHierarchyGenerator {
+    @JvmStatic
     fun generateXml(shouldInjectTestIds: Boolean): String {
         val rootViews = RootViewsHelper.getRootViews()
         return generateXmlFromViews(rootViews, shouldInjectTestIds)
