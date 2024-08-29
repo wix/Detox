@@ -970,7 +970,7 @@ describe('Device', () => {
   });
 
   it('generateViewHierarchyXml() should return the result of the driver', async () => {
-    driverMock.driver.generateViewHierarchyXml = async () => { return { result: 'xml' }; };
+    driverMock.driver.generateViewHierarchyXml = async () => { return 'xml'; };
     const device = await aValidDevice();
     const hierarchy = await device.generateViewHierarchyXml();
     expect(hierarchy).toEqual('xml');
