@@ -143,7 +143,7 @@ public final class Detox {
         return InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
     }
 
-    public static String getViewHierarchyXml() {
-        return GetViewHierarchyHelper.get();
+    public static String generateViewHierarchyXml(boolean shouldInjectTestIds) {
+        return GenerateViewHierarchyHelper.generateXml(shouldInjectTestIds);
     }
 }
