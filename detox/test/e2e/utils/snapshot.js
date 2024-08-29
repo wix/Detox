@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const { ssim } = require('ssim.js');
 const { PNG } = require('pngjs');
 
-const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+const rnMinorVer = require('../../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 
 // Threshold for SSIM comparison, if two images have SSIM score below this threshold, they are considered different.
 const SSIM_SCORE_THRESHOLD = 0.997;

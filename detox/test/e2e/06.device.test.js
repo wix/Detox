@@ -1,6 +1,4 @@
 const {expectSnapshotToMatch} = require("./utils/snapshot");
-const jestExpect = require('expect').default;
-const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
