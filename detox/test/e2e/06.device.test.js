@@ -41,13 +41,13 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
-  it.only('generateViewHierarchyXml() - should generate a valid view hierarchy XML without injected test-ids', async () => {
+  it('generateViewHierarchyXml() - should generate a valid view hierarchy XML without injected test-ids', async () => {
     await device.launchApp({newInstance: true});
     const hierarchy = await device.generateViewHierarchyXml();
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-without-test-id-injection`);
   });
 
-  it.only('generateViewHierarchyXml(true) - should generate a valid view hierarchy XML with injected test-ids', async () => {
+  it('generateViewHierarchyXml(true) - should generate a valid view hierarchy XML with injected test-ids', async () => {
     await device.launchApp({newInstance: true});
     const hierarchy = await device.generateViewHierarchyXml(true);
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-with-test-id-injection`);
