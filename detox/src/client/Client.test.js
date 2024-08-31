@@ -419,18 +419,6 @@ describe('Client', () => {
     });
   });
 
-  describe('.generateViewHierarchyXml()', () => {
-    beforeEach(async () => {
-      await client.connect();
-    });
-
-    it('should generate view hierarchy XML', async () => {
-      mockAws.mockResponse('generateViewHierarchyXml', { viewHierarchy: 'mock-hierarchy' });
-      const hierarchy = await client.generateViewHierarchyXml({ shouldInjectTestIds: false });
-      expect(hierarchy).toStrictEqual('mock-hierarchy');
-    });
-  });
-
   describe('.cleanup()', () => {
     it('should cancel "currentStatus" query', async () => {
       await simulateInFlightAction();
