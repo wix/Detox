@@ -55,6 +55,13 @@ function convertToSSIMFormat (image) {
     };
 }
 
+// Allow numeric values to be inconsistent, as they are not consistent between environments.
+async function expectViewHierarchySnapshotToMatch (viewHierarchy, snapshotName) {
+    // Find all occurrences of number attributes and replace with `="<number>"`
+    const viewHierarchyWithNumberReplaced = viewHierarchy.replace(/[=]"\d+"/g, '="<number>"');
+    await expectSnapshotToMatch(viewHierarchyWithNumberReplaced, snapshotName);
+}
+
 async function expectSnapshotToMatch(value, snapshotName) {
     const snapshotPath = `./e2e/assets/${snapshotName}.${rnMinorVer}.${device.getPlatform()}.txt`;
 
@@ -67,6 +74,7 @@ async function expectSnapshotToMatch(value, snapshotName) {
 }
 
 module.exports = {
+    expectViewHierarchySnapshotToMatch,
     expectSnapshotToMatch,
     expectElementSnapshotToMatch,
     expectDeviceSnapshotToMatch
