@@ -8,105 +8,119 @@
           <ViewStubCompat class="androidx.appcompat.widget.ViewStubCompat" width="<number>" height="<number>" visibility="gone" alpha="1.0" focused="false" value="" label="null" id="com.wix.detox.test:id/action_mode_bar_stub" x="<number>" y="<number>" testID="" />
           <ContentFrameLayout class="androidx.appcompat.widget.ContentFrameLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="null" id="android:id/content" x="<number>" y="<number>" testID="">
             <ReactRootView class="com.facebook.react.ReactRootView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations  |  Native Animation Device Location DatePicker WebView Attributes Crash  |  UI Crash  |  ANR Drag And Drop Element-Screenshots Init URL  |  Launch Args  |  Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test" id="<number>" x="<number>" y="<number>" text="Choose a test" testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Language" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Language" id="<number>" x="<number>" y="<number>" text="Language" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Sanity" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Sanity" id="<number>" x="<number>" y="<number>" text="Sanity" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Matchers" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Matchers" id="<number>" x="<number>" y="<number>" text="Matchers" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Actions" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Actions" id="<number>" x="<number>" y="<number>" text="Actions" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Visibility Expectation" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Visibility Expectation" id="<number>" x="<number>" y="<number>" text="Visibility Expectation" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Integrative Actions" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Integrative Actions" id="<number>" x="<number>" y="<number>" text="Integrative Actions" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="FS Scroll Actions" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="FS Scroll Actions" id="<number>" x="<number>" y="<number>" text="FS Scroll Actions" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Assertions" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Assertions" id="<number>" x="<number>" y="<number>" text="Assertions" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WaitFor" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WaitFor" id="<number>" x="<number>" y="<number>" text="WaitFor" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Stress" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Stress" id="<number>" x="<number>" y="<number>" text="Stress" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Switch Root" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Switch Root" id="<number>" x="<number>" y="<number>" text="Switch Root" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Timeouts" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Timeouts" id="<number>" x="<number>" y="<number>" text="Timeouts" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Orientation" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Orientation" id="<number>" x="<number>" y="<number>" text="Orientation" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Permissions" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Permissions" id="<number>" x="<number>" y="<number>" text="Permissions" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Alerts" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Alerts" id="<number>" x="<number>" y="<number>" text="Alerts" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Network" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Network" id="<number>" x="<number>" y="<number>" text="Network" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="RN Animations" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="RN Animations" id="<number>" x="<number>" y="<number>" text="RN Animations" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Native Animation" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Native Animation" id="<number>" x="<number>" y="<number>" text="Native Animation" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Device" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Device" id="<number>" x="<number>" y="<number>" text="Device" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Location" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Location" id="<number>" x="<number>" y="<number>" text="Location" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="DatePicker" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="DatePicker" id="<number>" x="<number>" y="<number>" text="DatePicker" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WebView" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WebView" id="<number>" x="<number>" y="<number>" text="WebView" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Attributes" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Attributes" id="<number>" x="<number>" y="<number>" text="Attributes" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Crash" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Crash" id="<number>" x="<number>" y="<number>" text="Crash" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="UI Crash" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="UI Crash" id="<number>" x="<number>" y="<number>" text="UI Crash" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="ANR" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="ANR" id="<number>" x="<number>" y="<number>" text="ANR" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Drag And Drop" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Drag And Drop" id="<number>" x="<number>" y="<number>" text="Drag And Drop" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Element-Screenshots" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Element-Screenshots" id="<number>" x="<number>" y="<number>" text="Element-Screenshots" testID="" />
-              </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Init URL" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Init URL" id="<number>" x="<number>" y="<number>" text="Init URL" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch Args" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch Args" id="<number>" x="<number>" y="<number>" text="Launch Args" testID="" />
-              </ReactViewGroup>
-              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
-                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch-Notification" id="<number>" x="<number>" y="<number>" text="Launch-Notification" testID="" />
+              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations  |  Native Animation Device Location DatePicker WebView Attributes Crash  |  UI Crash  |  ANR Drag And Drop Element-Screenshots Init URL  |  Launch Args  |  Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
+                <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations  |  Native Animation Device Location DatePicker WebView Attributes Crash  |  UI Crash  |  ANR Drag And Drop Element-Screenshots Init URL  |  Launch Args  |  Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
+                  <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations  |  Native Animation Device Location DatePicker WebView Attributes Crash  |  UI Crash  |  ANR Drag And Drop Element-Screenshots Init URL  |  Launch Args  |  Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
+                    <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Choose a test" id="<number>" x="<number>" y="<number>" text="Choose a test" testID="" />
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Language" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Language" id="<number>" x="<number>" y="<number>" text="Language" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Sanity" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Sanity" id="<number>" x="<number>" y="<number>" text="Sanity" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Matchers" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Matchers" id="<number>" x="<number>" y="<number>" text="Matchers" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Actions" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Actions" id="<number>" x="<number>" y="<number>" text="Actions" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Visibility Expectation" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Visibility Expectation" id="<number>" x="<number>" y="<number>" text="Visibility Expectation" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Integrative Actions" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Integrative Actions" id="<number>" x="<number>" y="<number>" text="Integrative Actions" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="FS Scroll Actions" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="FS Scroll Actions" id="<number>" x="<number>" y="<number>" text="FS Scroll Actions" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Assertions" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Assertions" id="<number>" x="<number>" y="<number>" text="Assertions" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WaitFor" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WaitFor" id="<number>" x="<number>" y="<number>" text="WaitFor" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Stress" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Stress" id="<number>" x="<number>" y="<number>" text="Stress" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Switch Root" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Switch Root" id="<number>" x="<number>" y="<number>" text="Switch Root" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Timeouts" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Timeouts" id="<number>" x="<number>" y="<number>" text="Timeouts" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Orientation" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Orientation" id="<number>" x="<number>" y="<number>" text="Orientation" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Permissions  |  Alerts" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Permissions" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Permissions" id="<number>" x="<number>" y="<number>" text="Permissions" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Alerts" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Alerts" id="<number>" x="<number>" y="<number>" text="Alerts" testID="" />
+                      </ReactViewGroup>
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Network" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Network" id="<number>" x="<number>" y="<number>" text="Network" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="RN Animations  |  Native Animation" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="RN Animations" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="RN Animations" id="<number>" x="<number>" y="<number>" text="RN Animations" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Native Animation" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Native Animation" id="<number>" x="<number>" y="<number>" text="Native Animation" testID="" />
+                      </ReactViewGroup>
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Device" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Device" id="<number>" x="<number>" y="<number>" text="Device" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Location" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Location" id="<number>" x="<number>" y="<number>" text="Location" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="DatePicker" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="DatePicker" id="<number>" x="<number>" y="<number>" text="DatePicker" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WebView" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="WebView" id="<number>" x="<number>" y="<number>" text="WebView" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Attributes" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Attributes" id="<number>" x="<number>" y="<number>" text="Attributes" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Crash  |  UI Crash  |  ANR" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Crash" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Crash" id="<number>" x="<number>" y="<number>" text="Crash" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="UI Crash" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="UI Crash" id="<number>" x="<number>" y="<number>" text="UI Crash" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="ANR" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="ANR" id="<number>" x="<number>" y="<number>" text="ANR" testID="" />
+                      </ReactViewGroup>
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Drag And Drop" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Drag And Drop" id="<number>" x="<number>" y="<number>" text="Drag And Drop" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Element-Screenshots" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Element-Screenshots" id="<number>" x="<number>" y="<number>" text="Element-Screenshots" testID="" />
+                    </ReactViewGroup>
+                    <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Init URL  |  Launch Args  |  Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Init URL" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Init URL" id="<number>" x="<number>" y="<number>" text="Init URL" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch Args" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch Args" id="<number>" x="<number>" y="<number>" text="Launch Args" testID="" />
+                      </ReactViewGroup>
+                      <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label=" | " id="<number>" x="<number>" y="<number>" text=" | " testID="" />
+                      <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch-Notification" id="<number>" x="<number>" y="<number>" testID="">
+                        <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" value="" label="Launch-Notification" id="<number>" x="<number>" y="<number>" text="Launch-Notification" testID="" />
+                      </ReactViewGroup>
+                    </ReactViewGroup>
+                  </ReactViewGroup>
+                </ReactViewGroup>
               </ReactViewGroup>
             </ReactRootView>
           </ContentFrameLayout>
