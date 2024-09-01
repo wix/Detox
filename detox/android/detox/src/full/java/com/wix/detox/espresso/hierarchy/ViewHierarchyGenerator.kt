@@ -76,7 +76,7 @@ object ViewHierarchyGenerator {
             "alpha" to view.alpha.toString(),
             "focused" to view.isFocused.toString(),
             "value" to (view.contentDescription?.toString() ?: ""),
-            "label" to view.getAccessibilityLabel().toString()
+            "label" to (view.getAccessibilityLabel()?.toString() ?: "")
         )
 
         view.id.takeIf { it != View.NO_ID }?.let {
@@ -96,9 +96,11 @@ object ViewHierarchyGenerator {
         }
 
         val currentTestId = view.tag?.toString() ?: ""
+
         val injectedPrefix = "detox_temp_"
-        val shouldInjectNewTestId = shouldInjectTestIds &&
-                                    (currentTestId.isEmpty() || currentTestId.startsWith(injectedPrefix))
+        val isTestIdEmpty = currentTestId.isEmpty()
+        val isTestIdInjected = currentTestId.startsWith(injectedPrefix)
+        val shouldInjectNewTestId = shouldInjectTestIds && (isTestIdEmpty || isTestIdInjected)
 
         if (shouldInjectNewTestId) {
             val newTestId = "${injectedPrefix}${indexPath.joinToString("_")}"
@@ -108,9 +110,13 @@ object ViewHierarchyGenerator {
             attributes["testID"] = currentTestId
         }
 
-        attributes.forEach { (key, value) ->
-            serializer.attribute("", key, value)
-        }
+        attributes
+            .filter { (_, value) ->
+                !value.isNullOrEmpty()
+            }
+            .forEach { (key, value) ->
+                serializer.attribute("", key, value)
+            }
     }
 
     private fun View.visibilityToString() = when (visibility) {
