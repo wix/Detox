@@ -10,8 +10,8 @@ describe('Copilot', () => {
     beforeEach(() => {
         mockConfig = {
             frameworkDriver: {
-                takeSnapshot: jest.fn(),
-                getViewHierarchy: jest.fn(),
+                captureSnapshotImage: jest.fn(),
+                captureViewHierarchyString: jest.fn(),
                 availableAPI: {
                     matchers: [],
                     actions: [],

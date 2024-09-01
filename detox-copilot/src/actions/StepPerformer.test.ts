@@ -51,8 +51,8 @@ describe('StepPerformer', () => {
                             codeEvaluationResult = 'success'
                         }: SetupMockOptions = {}) => {
         mockPromptHandler.isSnapshotImageSupported.mockReturnValue(isSnapshotSupported);
-        mockSnapshotManager.takeSnapshot.mockResolvedValue(snapshotData as string);
-        mockSnapshotManager.getViewHierarchy.mockResolvedValue(viewHierarchy);
+        mockSnapshotManager.captureSnapshotImage.mockResolvedValue(snapshotData as string);
+        mockSnapshotManager.captureViewHierarchyString.mockResolvedValue(viewHierarchy);
         mockPromptCreator.createPrompt.mockReturnValue('generated prompt');
         mockPromptHandler.runPrompt.mockResolvedValue(promptResult);
         mockCodeEvaluator.evaluate.mockResolvedValue(codeEvaluationResult);

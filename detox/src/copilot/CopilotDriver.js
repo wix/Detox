@@ -126,14 +126,14 @@ class DetoxDriver {
     };
   }
 
-  async takeSnapshot() {
+  async captureSnapshotImage() {
     const fileName = `snapshot_${Date.now()}.png`;
     await device.takeScreenshot(fileName);
     return fileName;
   }
 
-  async getViewHierarchy() {
-    return device.getViewHierarchyXml();
+  async captureViewHierarchyString() {
+    return device.generateViewHierarchyXml();
   }
 }
 

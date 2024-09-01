@@ -11,8 +11,8 @@ describe('Integration', () => {
         jest.clearAllMocks();
 
         mockFrameworkDriver = {
-            takeSnapshot: jest.fn().mockResolvedValue('mock_snapshot'),
-            getViewHierarchy: jest.fn().mockResolvedValue('<view><button>Login</button></view>'),
+            captureSnapshotImage: jest.fn().mockResolvedValue('mock_snapshot'),
+            captureViewHierarchyString: jest.fn().mockResolvedValue('<view><button>Login</button></view>'),
             availableAPI: {
                 matchers: [],
                 actions: [],
@@ -52,8 +52,8 @@ describe('Integration', () => {
 
             await expect(copilot.act('Tap on the login button')).resolves.not.toThrow();
 
-            expect(mockFrameworkDriver.takeSnapshot).toHaveBeenCalled();
-            expect(mockFrameworkDriver.getViewHierarchy).toHaveBeenCalledWith();
+            expect(mockFrameworkDriver.captureSnapshotImage).toHaveBeenCalled();
+            expect(mockFrameworkDriver.captureViewHierarchyString).toHaveBeenCalledWith();
 
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining('Tap on the login button'),
@@ -74,8 +74,8 @@ describe('Integration', () => {
 
             await copilot.assert('The welcome message should be visible');
 
-            expect(mockFrameworkDriver.takeSnapshot).toHaveBeenCalled();
-            expect(mockFrameworkDriver.getViewHierarchy).toHaveBeenCalled();
+            expect(mockFrameworkDriver.captureSnapshotImage).toHaveBeenCalled();
+            expect(mockFrameworkDriver.captureViewHierarchyString).toHaveBeenCalled();
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining('The welcome message should be visible'),
                 'mock_snapshot'
@@ -102,14 +102,14 @@ describe('Integration', () => {
             await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
         });
 
-        it('should throw error when takeSnapshot fails', async () => {
-            mockFrameworkDriver.takeSnapshot.mockRejectedValue(new Error('API error'));
+        it('should throw error when captureSnapshotImage() fails', async () => {
+            mockFrameworkDriver.captureSnapshotImage.mockRejectedValue(new Error('API error'));
 
             await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
         });
 
-        it('should throw error when getViewHierarchy fails', async () => {
-            mockFrameworkDriver.getViewHierarchy.mockRejectedValue(new Error('API error'));
+        it('should throw error when captureViewHierarchyString() fails', async () => {
+            mockFrameworkDriver.captureViewHierarchyString.mockRejectedValue(new Error('API error'));
 
             await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
         });

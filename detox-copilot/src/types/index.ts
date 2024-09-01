@@ -6,12 +6,12 @@ interface TestingFrameworkDriver {
      * Takes a snapshot of the current screen and returns the path to the saved image.
      * If the driver does not support image, return undefined.
      */
-    takeSnapshot: () => Promise<string | undefined>;
+    captureSnapshotImage: () => Promise<string | undefined>;
 
     /**
      * Returns the current view hierarchy in a string representation.
      */
-    getViewHierarchy: () => Promise<string>;
+    captureViewHierarchyString: () => Promise<string>;
 
     /**
      * The available API methods of the testing framework.
