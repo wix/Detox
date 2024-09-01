@@ -292,9 +292,9 @@ class SetInstrumentsRecordingState extends Action {
   }
 }
 
-class GetViewHierarchyXml extends Action {
+class GenerateViewHierarchyXml extends Action {
   constructor(params) {
-    super('getViewHierarchyXml', params);
+    super('generateViewHierarchyXml', params);
   }
 
   get isAtomic() {
@@ -306,7 +306,8 @@ class GetViewHierarchyXml extends Action {
   }
 
   async handle(response) {
-    return { 'result': response.params.viewHierarchy };
+    this.expectResponseOfType(response, 'generateViewHierarchyXmlResult');
+    return response.params.viewHierarchy;
   }
 }
 
@@ -330,7 +331,7 @@ class CaptureViewHierarchy extends Action {
     if (captureViewHierarchyError) {
       throw new DetoxRuntimeError({
         message: 'Failed to capture view hierarchy. Reason:\n',
-        debugInfo: captureViewHierarchyError,
+        debugInfo: captureViewHierarchyError
       });
     }
 
@@ -354,5 +355,5 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
-  GetViewHierarchyXml
+  GenerateViewHierarchyXml
 };

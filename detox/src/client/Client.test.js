@@ -363,6 +363,7 @@ describe('Client', () => {
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
       ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
+      ['generateViewHierarchyXml', 'generateViewHierarchyXmlResult', actions.GenerateViewHierarchyXml, { shouldInjectTestIds: false }, { viewHierarchy: 'mock-hierarchy' }]
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();
@@ -415,18 +416,6 @@ describe('Client', () => {
 
       const viewHierarchyURL = tempfile('.viewhierarchy');
       await expect(client.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrowError(/Test error to check/m);
-    });
-  });
-
-  describe('.getViewHierarchyXml()', () => {
-    beforeEach(async () => {
-      await client.connect();
-    });
-
-    it('should get view hierarchy', async () => {
-      mockAws.mockResponse('getViewHierarchyXml', { viewHierarchy: 'mock-hierarchy' });
-      const hierarchy = await client.getViewHierarchyXml();
-      expect(hierarchy).toStrictEqual({ 'result': 'mock-hierarchy' });
     });
   });
 

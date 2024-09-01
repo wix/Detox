@@ -17,10 +17,10 @@ class RuntimeDevice {
   }, deviceDriver) {
     const methodNames = [
       'captureViewHierarchy',
-      'getViewHierarchyXml',
       'clearKeychain',
       'disableSynchronization',
       'enableSynchronization',
+      'generateViewHierarchyXml',
       'installApp',
       'installUtilBinaries',
       'launchApp',
@@ -196,8 +196,8 @@ class RuntimeDevice {
     return this.deviceDriver.captureViewHierarchy(name);
   }
 
-  async getViewHierarchyXml() {
-    return this.deviceDriver.getViewHierarchyXml();
+  async generateViewHierarchyXml(shouldInjectTestIds = false) {
+    return await this.deviceDriver.generateViewHierarchyXml(shouldInjectTestIds);
   }
 
   async sendToHome() {

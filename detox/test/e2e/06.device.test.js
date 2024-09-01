@@ -1,5 +1,4 @@
-const jestExpect = require('expect').default;
-const rnMinorVer = require('../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+const {expectViewHierarchySnapshotToMatch} = require("./utils/snapshot");
 
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
@@ -42,20 +41,17 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
-  it('getViewHierarchyXml() - should return a valid UI hierarchy', async () => {
+  it('generateViewHierarchyXml() - should generate a valid view hierarchy XML without injected test-ids', async () => {
     await device.launchApp({newInstance: true});
-    await element(by.text('Sanity')).tap();
-    await element(by.text('Say Hello')).tap();
-    const hierarchy = await device.getViewHierarchyXml();
-    const expectedValues = require('./assets/06.device.assets.js')
-    const expectedValue = removeWhiteSpacesAndTabs(expectedValues[device.getPlatform()][`rn${rnMinorVer}`]);
-
-    jestExpect(removeWhiteSpacesAndTabs(hierarchy.result)).toBe(expectedValue);
+    const hierarchy = await device.generateViewHierarchyXml();
+    await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-without-test-id-injection`);
   });
 
-  function removeWhiteSpacesAndTabs(str) {
-    return str.replace(/[\s\t]+/g, '');
-  }
+  it('generateViewHierarchyXml(true) - should generate a valid view hierarchy XML with injected test-ids', async () => {
+    await device.launchApp({newInstance: true});
+    const hierarchy = await device.generateViewHierarchyXml(true);
+    await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-with-test-id-injection`);
+  });
 
   // // Passing on iOS, not implemented on Android
   it(':ios: launchApp in a different language', async () => {

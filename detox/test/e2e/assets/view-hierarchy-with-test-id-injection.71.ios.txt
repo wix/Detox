@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewHierarchy>
+	<AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" testID="detox_temp_" visibility="visible" width="<number>">
+		<UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" testID="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+			<UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" testID="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+				<RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" testID="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+					<RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Visibility Debug Artifacts Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations Device Overlay Location DatePicker Picker WebView Attributes System Dialogs Crash Shake Drag And Drop Custom Keyboard Element-Screenshots Init URL" testID="detox_temp_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+						<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Visibility Debug Artifacts Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations Device Overlay Location DatePicker Picker WebView Attributes System Dialogs Crash Shake Drag And Drop Custom Keyboard Element-Screenshots Init URL" testID="detox_temp_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+							<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Visibility Debug Artifacts Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations Device Overlay Location DatePicker Picker WebView Attributes System Dialogs Crash Shake Drag And Drop Custom Keyboard Element-Screenshots Init URL" testID="detox_temp_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+								<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Choose a test Language Sanity Matchers Actions Visibility Expectation Visibility Debug Artifacts Integrative Actions FS Scroll Actions Assertions WaitFor Stress Switch Root Timeouts Orientation Permissions  |  Alerts Network RN Animations Device Overlay Location DatePicker Picker WebView Attributes System Dialogs Crash Shake Drag And Drop Custom Keyboard Element-Screenshots Init URL" testID="detox_temp_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+									<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Choose a test" testID="detox_temp_0_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Language" testID="detox_temp_0_0_0_0_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Language" testID="detox_temp_0_0_0_0_0_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Sanity" testID="detox_temp_0_0_0_0_0_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Sanity" testID="detox_temp_0_0_0_0_0_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Matchers" testID="detox_temp_0_0_0_0_0_0_0_3" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Matchers" testID="detox_temp_0_0_0_0_0_0_0_3_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Actions" testID="detox_temp_0_0_0_0_0_0_0_4" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Actions" testID="detox_temp_0_0_0_0_0_0_0_4_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Visibility Expectation" testID="detox_temp_0_0_0_0_0_0_0_5" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Visibility Expectation" testID="detox_temp_0_0_0_0_0_0_0_5_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Visibility Debug Artifacts" testID="detox_temp_0_0_0_0_0_0_0_6" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Visibility Debug Artifacts" testID="detox_temp_0_0_0_0_0_0_0_6_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Integrative Actions" testID="detox_temp_0_0_0_0_0_0_0_7" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Integrative Actions" testID="detox_temp_0_0_0_0_0_0_0_7_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="FS Scroll Actions" testID="detox_temp_0_0_0_0_0_0_0_8" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="FS Scroll Actions" testID="detox_temp_0_0_0_0_0_0_0_8_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Assertions" testID="detox_temp_0_0_0_0_0_0_0_9" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Assertions" testID="detox_temp_0_0_0_0_0_0_0_9_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="WaitFor" testID="detox_temp_0_0_0_0_0_0_0_10" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="WaitFor" testID="detox_temp_0_0_0_0_0_0_0_10_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Stress" testID="detox_temp_0_0_0_0_0_0_0_11" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Stress" testID="detox_temp_0_0_0_0_0_0_0_11_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Switch Root" testID="detox_temp_0_0_0_0_0_0_0_12" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Switch Root" testID="detox_temp_0_0_0_0_0_0_0_12_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Timeouts" testID="detox_temp_0_0_0_0_0_0_0_13" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Timeouts" testID="detox_temp_0_0_0_0_0_0_0_13_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Orientation" testID="detox_temp_0_0_0_0_0_0_0_14" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Orientation" testID="detox_temp_0_0_0_0_0_0_0_14_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Permissions  |  Alerts" testID="detox_temp_0_0_0_0_0_0_0_15" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Permissions" testID="detox_temp_0_0_0_0_0_0_0_15_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Permissions" testID="detox_temp_0_0_0_0_0_0_0_15_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										</RCTView>
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label=" | " testID="detox_temp_0_0_0_0_0_0_0_15_1" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Alerts" testID="detox_temp_0_0_0_0_0_0_0_15_2" visibility="visible" width="<number>" x="<number>" y="<number>">
+											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Alerts" testID="detox_temp_0_0_0_0_0_0_0_15_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										</RCTView>
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Network" testID="detox_temp_0_0_0_0_0_0_0_16" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Network" testID="detox_temp_0_0_0_0_0_0_0_16_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="RN Animations" testID="detox_temp_0_0_0_0_0_0_0_17" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="RN Animations" testID="detox_temp_0_0_0_0_0_0_0_17_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="RN Animations" testID="detox_temp_0_0_0_0_0_0_0_17_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										</RCTView>
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Device" testID="detox_temp_0_0_0_0_0_0_0_18" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Device" testID="detox_temp_0_0_0_0_0_0_0_18_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Overlay" testID="detox_temp_0_0_0_0_0_0_0_19" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Overlay" testID="detox_temp_0_0_0_0_0_0_0_19_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Location" testID="detox_temp_0_0_0_0_0_0_0_20" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Location" testID="detox_temp_0_0_0_0_0_0_0_20_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="DatePicker" testID="detox_temp_0_0_0_0_0_0_0_21" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="DatePicker" testID="detox_temp_0_0_0_0_0_0_0_21_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Picker" testID="detox_temp_0_0_0_0_0_0_0_22" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Picker" testID="detox_temp_0_0_0_0_0_0_0_22_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="WebView" testID="detox_temp_0_0_0_0_0_0_0_23" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="WebView" testID="detox_temp_0_0_0_0_0_0_0_23_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Attributes" testID="detox_temp_0_0_0_0_0_0_0_24" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Attributes" testID="detox_temp_0_0_0_0_0_0_0_24_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="System Dialogs" testID="detox_temp_0_0_0_0_0_0_0_25" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="System Dialogs" testID="detox_temp_0_0_0_0_0_0_0_25_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Crash" testID="detox_temp_0_0_0_0_0_0_0_26" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Crash" testID="detox_temp_0_0_0_0_0_0_0_26_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Crash" testID="detox_temp_0_0_0_0_0_0_0_26_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										</RCTView>
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Shake" testID="detox_temp_0_0_0_0_0_0_0_27" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Shake" testID="detox_temp_0_0_0_0_0_0_0_27_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Drag And Drop" testID="detox_temp_0_0_0_0_0_0_0_28" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Drag And Drop" testID="detox_temp_0_0_0_0_0_0_0_28_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Custom Keyboard" testID="detox_temp_0_0_0_0_0_0_0_29" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Custom Keyboard" testID="detox_temp_0_0_0_0_0_0_0_29_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Element-Screenshots" testID="detox_temp_0_0_0_0_0_0_0_30" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Element-Screenshots" testID="detox_temp_0_0_0_0_0_0_0_30_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+									</RCTView>
+									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Init URL" testID="detox_temp_0_0_0_0_0_0_0_31" visibility="visible" width="<number>" x="<number>" y="<number>">
+										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Init URL" testID="detox_temp_0_0_0_0_0_0_0_31_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Init URL" testID="detox_temp_0_0_0_0_0_0_0_31_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+										</RCTView>
+									</RCTView>
+								</RCTView>
+							</RCTView>
+						</RCTView>
+					</RCTRootContentView>
+				</RCTRootView>
+			</UIDropShadowView>
+		</UITransitionView>
+		<UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" testID="detox_temp_1" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
+	</AnnoyingWindow>
+</ViewHierarchy>
