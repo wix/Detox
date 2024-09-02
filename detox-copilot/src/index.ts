@@ -1,13 +1,7 @@
 import { Copilot } from "@/Copilot";
+import {CopilotFacade} from "@/CopilotFacade";
 
-export type CopilotFacade = {
-    init: (config: Config) => void;
-    reset: () => void;
-    act: (action: string) => Promise<any>;
-    assert: (assertion: string) => Promise<any>;
-};
-
-export const copilot: CopilotFacade = {
+const copilot: CopilotFacade = {
     init: (config: Config) => {
         Copilot.init(config);
     },
@@ -27,3 +21,5 @@ export const copilot: CopilotFacade = {
         });
     }
 };
+
+export default copilot;
