@@ -1,3 +1,5 @@
+import {ExecutionStep, ExecutionStepType, TestingFrameworkAPI, TestingFrameworkAPIMethod} from "@/types";
+
 export class PromptCreator {
     constructor(private availableAPI: TestingFrameworkAPI) {}
 

@@ -1,5 +1,4 @@
 import { CodeEvaluator } from '@/utils/CodeEvaluator';
-import { CodeEvaluationError } from '@/errors/CodeEvaluationError';
 
 describe('CodeEvaluator', () => {
     let codeEvaluator: CodeEvaluator;

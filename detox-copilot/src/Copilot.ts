@@ -3,6 +3,7 @@ import {PromptCreator} from "@/utils/PromptCreator";
 import {CodeEvaluator} from "@/utils/CodeEvaluator";
 import {SnapshotManager} from "@/utils/SnapshotManager";
 import {StepPerformer} from "@/actions/StepPerformer";
+import {Config, ExecutionStep} from "@/types";
 
 /**
  * The main Copilot class that provides AI-assisted testing capabilities for a given underlying testing framework.
