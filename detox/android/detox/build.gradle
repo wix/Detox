@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply from: '../rninfo.gradle'
 
-def _kotlinMinVersion = '1.2.0'
+def _kotlinMinVersion = '1.8.0'
 def _materialMinVersion = '1.11.0'
 
 def _ext = rootProject.ext
@@ -111,7 +111,7 @@ android {
 
 // Fundamental deps.
 dependencies {
-    implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinMinVersion"
+    api "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
 
     compileOnly "${_rnNativeArtifact}"
 }
@@ -141,6 +141,9 @@ dependencies {
     }
     api('androidx.test.ext:junit:1.2.1') {
         because 'Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.'
+    }
+    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
+        because 'Needed by new espresso'
     }
 
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx

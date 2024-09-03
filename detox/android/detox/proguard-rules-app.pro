@@ -19,6 +19,7 @@
 -keep class kotlin.text.** { *; }
 -keep class kotlin.io.** { *; }
 -keep class okhttp3.** { *; }
+-keepclassmembers class kotlin.LazyKt { *; }
 
 -keep class androidx.concurrent.futures.** { *; }
 
