@@ -1,4 +1,5 @@
 import { PromptCreator } from './PromptCreator';
+import {ExecutionStep, TestingFrameworkAPI} from "@/types";
 
 const mockAPI: TestingFrameworkAPI = {
     actions: [

@@ -2,6 +2,7 @@ import { StepPerformer } from '@/actions/StepPerformer';
 import { PromptCreator } from '@/utils/PromptCreator';
 import { CodeEvaluator } from '@/utils/CodeEvaluator';
 import { SnapshotManager } from '@/utils/SnapshotManager';
+import {ExecutionStep, PromptHandler} from "@/types";
 
 jest.mock('@/utils/PromptCreator');
 jest.mock('@/utils/CodeEvaluator');

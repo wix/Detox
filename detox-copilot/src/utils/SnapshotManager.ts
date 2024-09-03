@@ -1,3 +1,5 @@
+import {TestingFrameworkDriver} from "@/types";
+
 export class SnapshotManager {
     constructor(private driver: TestingFrameworkDriver) {}
 

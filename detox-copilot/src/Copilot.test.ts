@@ -1,6 +1,7 @@
 import { Copilot } from '@/Copilot';
 import { StepPerformer } from '@/actions/StepPerformer';
 import { CopilotError } from '@/errors/CopilotError';
+import {Config, ExecutionStep} from "@/types";
 
 jest.mock('@/actions/StepPerformer');
 

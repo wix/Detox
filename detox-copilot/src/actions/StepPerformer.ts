@@ -1,6 +1,7 @@
 import { PromptCreator } from '@/utils/PromptCreator';
 import { CodeEvaluator } from '@/utils/CodeEvaluator';
 import { SnapshotManager } from '@/utils/SnapshotManager';
+import {ExecutionStep, PromptHandler} from "@/types";
 
 export class StepPerformer {
     constructor(

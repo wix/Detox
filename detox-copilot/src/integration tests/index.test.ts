@@ -1,7 +1,6 @@
-import { copilot } from "@/index";
-import { CopilotError } from '@/errors/CopilotError';
+import copilot from "@/index";
 import { Copilot } from "@/Copilot";
-import { CodeEvaluationError } from "@/errors/CodeEvaluationError";
+import {PromptHandler, TestingFrameworkDriver} from "@/types";
 
 describe('Integration', () => {
     let mockFrameworkDriver: jest.Mocked<TestingFrameworkDriver>;
@@ -37,12 +36,12 @@ describe('Integration', () => {
             Copilot['instance'] = undefined;
         });
 
-        it('should throw an error when act is called before initialization', async () => {
-            await expect(copilot.act('Some action')).rejects.toThrow();
+        it('should synchronously throw an error when act is called before initialization', async () => {
+            expect(() => copilot.act('Some action')).toThrow();
         });
 
-        it('should throw an error when expect is called before initialization', async () => {
-            await expect(copilot.act('Some assertion')).rejects.toThrow();
+        it('should synchronously throw an error when expect is called before initialization', async () => {
+            expect(() => copilot.act('Some assertion')).toThrow();
         });
     });
 

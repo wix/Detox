@@ -1,5 +1,5 @@
 import { Copilot } from "@/Copilot";
-import {CopilotFacade} from "@/CopilotFacade";
+import {CopilotFacade, Config} from "@/types";
 
 const copilot: CopilotFacade = {
     init: (config: Config) => {
@@ -23,3 +23,12 @@ const copilot: CopilotFacade = {
 };
 
 export default copilot;
+
+export {
+    CopilotFacade,
+    Config,
+    PromptHandler,
+    TestingFrameworkDriver,
+    TestingFrameworkAPI,
+    TestingFrameworkAPIMethod
+} from './types';
