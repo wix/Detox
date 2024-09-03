@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2022",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
@@ -10,9 +10,9 @@
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./src",
     "types": ["jest", "node"],
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["src/**/*"],

@@ -23,7 +23,7 @@
     "url": "git+https://github.com/wix/Detox.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "test": "jest",
     "prepublishOnly": "npm run build"
   },
@@ -34,6 +34,7 @@
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.4",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.5.4"
   }
 }
