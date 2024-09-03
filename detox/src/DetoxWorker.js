@@ -2,6 +2,7 @@ const CAF = require('caf');
 const _ = require('lodash');
 
 const Client = require('./client/Client');
+const DetoxCopilot = require('./copilot/DetoxCopilot');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
@@ -58,6 +59,8 @@ class DetoxWorker {
     this.by = null;
     /** @type {Detox.WebFacade} */
     this.web = null;
+    /** @type {Detox.DetoxCopilotFacade} */
+    this.copilot = null;
 
     this._deviceCookie = null;
 
@@ -120,6 +123,8 @@ class DetoxWorker {
       // @ts-ignore
       runtimeDeviceFactory,
     } = environmentFactory.createFactories(deviceConfig);
+
+    this.copilot = new DetoxCopilot();
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();

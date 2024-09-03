@@ -2,12 +2,18 @@ const copilot = require('detox-copilot').default;
 
 const detoxCopilotFrameworkDriver = require('./detoxCopilotFrameworkDriver');
 
+/**
+ * @typedef {Object} Detox.DetoxCopilotFacade
+ */
 class DetoxCopilot {
   constructor() {
     this.isInitialized = false;
   }
 
-  init({ promptHandler }) {
+  /**
+   * @param {Detox.DetoxCopilotPromptHandler} promptHandler
+   */
+  init(promptHandler) {
     copilot.init({
       frameworkDriver: detoxCopilotFrameworkDriver,
       promptHandler: promptHandler
@@ -25,10 +31,16 @@ class DetoxCopilot {
     copilot.reset();
   }
 
+  /**
+   * @param {String} action
+   */
   act(action) {
     return copilot.act(action);
   }
 
+  /**
+   * @param {String} assertion
+   */
   assert(assertion) {
     return copilot.assert(assertion);
   }
