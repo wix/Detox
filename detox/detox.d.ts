@@ -9,6 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
+import { CopilotFacade, PromptHandler } from "detox-copilot";
 
 declare global {
     namespace Detox {
@@ -444,6 +445,8 @@ declare global {
             readonly web: WebFacade;
 
             readonly system: SystemFacade;
+
+            readonly copilot: DetoxCopilotFacade;
 
             readonly DetoxConstants: {
                 userNotificationTriggers: {
@@ -1286,6 +1289,17 @@ declare global {
              */
             element(systemMatcher: SystemMatcher): IndexableSystemElement;
         }
+
+        interface DetoxCopilotFacade extends Pick<CopilotFacade, "act" | "assert"> {
+            /**
+             * Initializes the Copilot with the given prompt handler.
+             * Must be called before any other Copilot methods.
+             * @param promptHandler The prompt handler to use.
+             */
+            init: (promptHandler: DetoxCopilotPromptHandler) => void;
+        }
+
+        interface DetoxCopilotPromptHandler extends PromptHandler {}
 
         interface IndexableSystemElement extends SystemElement {
             /**
