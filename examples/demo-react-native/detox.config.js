@@ -33,11 +33,12 @@ module.exports = {
       "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
       "build": "cd android ; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug ; cd -",
       "start": "scripts/start-rn.sh android",
+      reversePorts: [8081]
     },
     "android.release": {
       "type": "android.apk",
       "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -",
+      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -"
     }
   },
   devices: {
@@ -56,27 +57,29 @@ module.exports = {
       device: {
         avdName: "Pixel_3a_API_34"
       },
-      utilBinaryPaths: [
-        "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-aosp-release.apk"
-      ],
+      reversePorts: [8081],
+
+      // utilBinaryPaths: [
+      //   "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-aosp-release.apk"
+      // ],
     },
     "genymotion.emulator.uuid": {
       type: "android.genycloud",
       device: {
         recipeUUID: "9baf12f9-a645-4ffa-a688-0e92584d6194"
       },
-      utilBinaryPaths: [
-        "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"
-      ],
+      // utilBinaryPaths: [
+      //   "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"
+      // ],
     },
     "genymotion.emulator.name": {
       type: "android.genycloud",
       device: {
         recipeName: "Detox_Pixel_3a_API_34"
       },
-      utilBinaryPaths: [
-        "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"
-      ],
+      // utilBinaryPaths: [
+      //   "../../detox/test/e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"
+      // ],
     }
   },
   configurations: {
