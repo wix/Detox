@@ -10,7 +10,8 @@ export class StepPerformer {
         private snapshotManager: SnapshotManager,
         private promptHandler: PromptHandler
     ) {}
-        async perform(step: ExecutionStep, previous: ExecutionStep[] = []): Promise<any> {
+
+    async perform(step: ExecutionStep, previous: ExecutionStep[] = []): Promise<any> {
         const snapshot = await this.snapshotManager.captureSnapshotImage();
         const viewHierarchy = await this.snapshotManager.captureViewHierarchyString();
 
