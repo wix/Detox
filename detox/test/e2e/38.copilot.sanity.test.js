@@ -7,7 +7,6 @@ describe('Copilot Sanity', () => {
       newInstance: true,
     });
 
-    console.log('something', copilot);
     await copilot.init(new PromptHandler());
   });
 
