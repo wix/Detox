@@ -25,7 +25,7 @@ describe('DetoxCopilot', () => {
 
   describe('init', () => {
     it('should initialize copilot with correct parameters', () => {
-      detoxCopilot.init({ promptHandler: mockPromptHandler });
+      detoxCopilot.init(mockPromptHandler);
 
       expect(copilot.init).toHaveBeenCalledWith({
         frameworkDriver: detoxCopilotFrameworkDriver,
