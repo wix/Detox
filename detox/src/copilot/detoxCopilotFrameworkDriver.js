@@ -1,7 +1,8 @@
-const { device } = require('../..');
+const detox = require('../..');
 
 const detoxCopilotFrameworkDriver = {
   availableAPI: {
+    context: detox,
     matchers: [
       {
         signature: 'by.id(id: string)',
@@ -41,7 +42,6 @@ const detoxCopilotFrameworkDriver = {
         example: "await element(by.id('usernameInput')).typeText('myusername');",
         guidelines: ['Typing can only be done on text field elements.']
       },
-      // ... (other actions remain the same)
     ],
     assertions: [
       {
@@ -73,11 +73,11 @@ const detoxCopilotFrameworkDriver = {
 
   captureSnapshotImage: async function() {
     const fileName = `snapshot_${Date.now()}.png`;
-    return await device.takeScreenshot(fileName);
+    return await detox.device.takeScreenshot(fileName);
   },
 
   captureViewHierarchyString: async function() {
-    return device.generateViewHierarchyXml();
+    return detox.device.generateViewHierarchyXml();
   }
 };
 

@@ -10,14 +10,16 @@ jest.mock('@/utils/SnapshotManager');
 
 describe('StepPerformer', () => {
     let stepPerformer: StepPerformer;
+    let mockContext: jest.Mocked<any>;
     let mockPromptCreator: jest.Mocked<PromptCreator>;
     let mockCodeEvaluator: jest.Mocked<CodeEvaluator>;
     let mockSnapshotManager: jest.Mocked<SnapshotManager>;
     let mockPromptHandler: jest.Mocked<PromptHandler>;
 
     beforeEach(() => {
-        const availableAPI = { matchers: [], actions: [], assertions: [] };
+        const availableAPI = { context: {}, matchers: [], actions: [], assertions: [] };
 
+        mockContext = {} as jest.Mocked<any>;
         mockPromptCreator = new PromptCreator(availableAPI) as jest.Mocked<PromptCreator>;
         mockCodeEvaluator = new CodeEvaluator() as jest.Mocked<CodeEvaluator>;
         mockSnapshotManager = new SnapshotManager({} as any) as jest.Mocked<SnapshotManager>;
@@ -27,10 +29,11 @@ describe('StepPerformer', () => {
         } as jest.Mocked<PromptHandler>;
 
         stepPerformer = new StepPerformer(
+            mockContext,
             mockPromptCreator,
             mockCodeEvaluator,
             mockSnapshotManager,
-            mockPromptHandler
+            mockPromptHandler,
         );
     });
 
@@ -45,12 +48,12 @@ describe('StepPerformer', () => {
     }
 
     const setupMocks = ({
-                            isSnapshotSupported = true,
-                            snapshotData = 'snapshot_data',
-                            viewHierarchy = '<view></view>',
-                            promptResult = 'generated code',
-                            codeEvaluationResult = 'success'
-                        }: SetupMockOptions = {}) => {
+        isSnapshotSupported = true,
+        snapshotData = 'snapshot_data',
+        viewHierarchy = '<view></view>',
+        promptResult = 'generated code',
+        codeEvaluationResult = 'success'
+    }: SetupMockOptions = {}) => {
         mockPromptHandler.isSnapshotImageSupported.mockReturnValue(isSnapshotSupported);
         mockSnapshotManager.captureSnapshotImage.mockResolvedValue(snapshotData as string);
         mockSnapshotManager.captureViewHierarchyString.mockResolvedValue(viewHierarchy);
@@ -68,7 +71,7 @@ describe('StepPerformer', () => {
         expect(result).toBe('success');
         expect(mockPromptCreator.createPrompt).toHaveBeenCalledWith(step, '<view></view>', true, []);
         expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith('generated prompt', 'snapshot_data');
-        expect(mockCodeEvaluator.evaluate).toHaveBeenCalledWith('generated code');
+        expect(mockCodeEvaluator.evaluate).toHaveBeenCalledWith('generated code', mockContext);
     });
 
     it('should perform a step successfully without snapshot image support', async () => {

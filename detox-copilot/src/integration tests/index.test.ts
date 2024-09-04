@@ -13,6 +13,7 @@ describe('Integration', () => {
             captureSnapshotImage: jest.fn().mockResolvedValue('mock_snapshot'),
             captureViewHierarchyString: jest.fn().mockResolvedValue('<view><button>Login</button></view>'),
             availableAPI: {
+                context: {},
                 matchers: [],
                 actions: [],
                 assertions: []
