@@ -73,8 +73,7 @@ const detoxCopilotFrameworkDriver = {
 
   captureSnapshotImage: async function() {
     const fileName = `snapshot_${Date.now()}.png`;
-    await device.takeScreenshot(fileName);
-    return fileName;
+    return await device.takeScreenshot(fileName);
   },
 
   captureViewHierarchyString: async function() {
