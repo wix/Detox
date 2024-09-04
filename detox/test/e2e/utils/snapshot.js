@@ -23,7 +23,7 @@ async function expectDeviceSnapshotToMatch (snapshotName, ssimThreshold = SSIM_S
     // Set status bar to consistent state for snapshot. Currently, doesn't work on iOS 17.
     await device.setStatusBar({time: '2024-03-08T09:41:00-07:00'});
 
-    await expectElementSnapshotToMatch(device, snapshotName);
+    await expectElementSnapshotToMatch(device, snapshotName, ssimThreshold);
 }
 
 async function expectSSIMToBeClose (bitmapPath, expectedBitmapPath, ssimThreshold) {
