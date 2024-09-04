@@ -1,7 +1,7 @@
 import { PromptCreator } from './PromptCreator';
-import {ExecutionStep, TestingFrameworkAPI} from "@/types";
+import {ExecutionStep, TestingFrameworkAPICatalog} from "@/types";
 
-const mockAPI: TestingFrameworkAPI = {
+const mockAPI: TestingFrameworkAPICatalog = {
     context: {},
     actions: [
         {

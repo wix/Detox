@@ -1,7 +1,7 @@
-import {ExecutionStep, ExecutionStepType, TestingFrameworkAPI, TestingFrameworkAPIMethod} from "@/types";
+import {ExecutionStep, ExecutionStepType, TestingFrameworkAPICatalog, TestingFrameworkAPICatalogItem} from "@/types";
 
 export class PromptCreator {
-    constructor(private availableAPI: TestingFrameworkAPI) {}
+    constructor(private availableAPI: TestingFrameworkAPICatalog) {}
 
     createPrompt(
         step: ExecutionStep,
@@ -82,7 +82,7 @@ export class PromptCreator {
             );
     }
 
-    private formatAPIMethod(method: TestingFrameworkAPIMethod): string[] {
+    private formatAPIMethod(method: TestingFrameworkAPICatalogItem): string[] {
         const methodInfo = [
             `### ${method.signature}`,
             "",

@@ -29,6 +29,6 @@ export {
     Config,
     PromptHandler,
     TestingFrameworkDriver,
-    TestingFrameworkAPI,
-    TestingFrameworkAPIMethod
+    TestingFrameworkAPICatalog,
+    TestingFrameworkAPICatalogItem
 } from './types';

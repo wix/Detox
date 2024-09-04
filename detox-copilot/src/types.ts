@@ -49,23 +49,23 @@ export interface TestingFrameworkDriver {
     captureViewHierarchyString: () => Promise<string>;
 
     /**
-     * The available API methods docs of the testing framework.
+     * A descriptive catalog for the available API of the testing framework that can be used by Copilot.
      */
-    availableAPI: TestingFrameworkAPI;
+    availableAPI: TestingFrameworkAPICatalog;
 }
 
 /**
- * Represents the API of the testing framework that can be used by Copilot.
+ * Represents the available API of the testing framework that can be used by Copilot.
  * @property context The available variables of the testing framework (i.e. exposes the matching function, expect, etc.).
  * @property matchers The available matchers API of the testing framework.
  * @property actions The available actions API of the testing framework.
  * @property assertions The available assertions API of the testing framework.
  */
-export type TestingFrameworkAPI = {
+export type TestingFrameworkAPICatalog = {
     context: any;
-    matchers: TestingFrameworkAPIMethod[];
-    actions: TestingFrameworkAPIMethod[];
-    assertions: TestingFrameworkAPIMethod[];
+    matchers: TestingFrameworkAPICatalogItem[];
+    actions: TestingFrameworkAPICatalogItem[];
+    assertions: TestingFrameworkAPICatalogItem[];
 }
 
 /**
@@ -86,7 +86,7 @@ export type TestingFrameworkAPI = {
  *    ]
  * };
  */
-export type TestingFrameworkAPIMethod = {
+export type TestingFrameworkAPICatalogItem = {
     signature: string;
     description: string;
     example: string;
