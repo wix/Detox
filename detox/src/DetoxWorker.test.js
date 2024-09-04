@@ -3,6 +3,7 @@ const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
 const Deferred = require('./utils/Deferred');
 
+jest.mock('./copilot/DetoxCopilot');
 jest.mock('./utils/logger');
 jest.mock('./client/Client');
 jest.mock('./utils/AsyncEmitter');
@@ -288,6 +289,29 @@ describe('DetoxWorker', () => {
       it('should fail with an error', async () => {
         detoxContext[symbols.allocateDevice].mockRejectedValue(new Error('Mock validation failure'));
         await expect(init).rejects.toThrowError('Mock validation failure');
+      });
+    });
+
+    describe('copilot initialization', () => {
+      let DetoxCopilot;
+
+      beforeEach(async () => {
+        DetoxCopilot = require('./copilot/DetoxCopilot');
+
+        await init();
+      });
+
+      it('should create a new DetoxCopilot instance', () => {
+        expect(DetoxCopilot).toHaveBeenCalledTimes(1);
+      });
+
+      it('should assign the DetoxCopilot instance to the copilot property', () => {
+        expect(detox.copilot).toBeDefined();
+        expect(detox.copilot).toBeInstanceOf(DetoxCopilot);
+      });
+
+      it('should not initialize the copilot', () => {
+        expect(detox.copilot.init).not.toHaveBeenCalled();
       });
     });
   });
