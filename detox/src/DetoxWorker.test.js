@@ -321,17 +321,27 @@ describe('DetoxWorker', () => {
       detox = await new Detox(detoxContext).init();
     });
 
-    it('should validate test summary object', async () => {
-      await expect(detox.onTestStart('Test')).rejects.toThrowError(
-        /Invalid test summary was passed/
-      );
-    });
+    describe('with an invalid test summary', () => {
+      it('should validate test summary object', async () => {
+        await expect(detox.onTestStart('Test')).rejects.toThrowError(
+          /Invalid test summary was passed/
+        );
+      });
 
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
+      it('should validate test summary status', async () => {
+        await expect(detox.onTestStart({
+          ...testSummaries.running(),
+          status: undefined,
+        })).rejects.toThrowError(/Invalid test summary status/);
+      });
+
+      it('should reset copilot if needed', async () => {
+        try {
+          await detox.onTestStart('Test');
+        } catch {}
+
+        expect(detox.copilot.resetIfNeeded).toHaveBeenCalled();
+      });
     });
 
     describe('with a valid test summary', () => {
