@@ -14,11 +14,14 @@
 -keep class com.reactnativecommunity.slider.** { *; }
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
 
+-keep class kotlin.reflect.** { *; }
+-keep class kotlin.coroutines.CoroutineDispatcher { *; }
 -keep class kotlin.jvm.** { *; }
 -keep class kotlin.collections.** { *; }
 -keep class kotlin.text.** { *; }
 -keep class kotlin.io.** { *; }
 -keep class okhttp3.** { *; }
+-keep class kotlin.LazyKt { *; }
 
 -keep class androidx.concurrent.futures.** { *; }
 

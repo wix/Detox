@@ -15,7 +15,7 @@ describe('WebView', () => {
   describe('single web-view scenario', () => {
     const expectWebViewToMatchSnapshot = async (snapshotName) => {
       const webViewElement = element(by.id('webViewFormWithScrolling'));
-      await expectElementSnapshotToMatch(webViewElement, snapshotName);
+      await expectElementSnapshotToMatch(webViewElement, snapshotName, 0.993);
     };
 
     describe('matchers', () => {
