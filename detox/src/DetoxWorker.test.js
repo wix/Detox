@@ -347,15 +347,18 @@ describe('DetoxWorker', () => {
       it('should notify artifacts manager about "testStart', () =>
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
+      it('should reset copilot if needed', async () => {
+        expect(detox.copilot.resetIfNeeded).toHaveBeenCalled();
+      });
+
       it('should not relaunch app', async () => {
-        await detox.onTestStart(testSummaries.running());
         expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
       });
 
       it('should not dump pending network requests', async () => {
-        await detox.onTestStart(testSummaries.running());
         expect(client().dumpPendingRequests).not.toHaveBeenCalled();
       });
+
     });
   });
 

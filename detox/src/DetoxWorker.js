@@ -226,6 +226,9 @@ class DetoxWorker {
   onTestStart = function* (_signal, testSummary) {
     this._validateTestSummary('beforeEach', testSummary);
 
+    // Copilot is reset before each test to ensure a clean state
+    this.copilot.resetIfNeeded();
+
     yield this._dumpUnhandledErrorsIfAny({
       pendingRequests: false,
       testName: testSummary.fullName,
