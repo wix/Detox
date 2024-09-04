@@ -142,10 +142,6 @@ dependencies {
     api('androidx.test.ext:junit:1.2.1') {
         because 'Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.'
     }
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {
-        because 'Needed by new espresso'
-    }
-
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...
     api('androidx.test.uiautomator:uiautomator:2.3.0') {
