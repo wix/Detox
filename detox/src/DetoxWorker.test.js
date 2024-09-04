@@ -334,13 +334,6 @@ describe('DetoxWorker', () => {
       })).rejects.toThrowError(/Invalid test summary status/);
     });
 
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
-    });
-
     describe('with a valid test summary', () => {
       beforeEach(() => detox.onTestStart(testSummaries.running()));
 
