@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.25.6",
+  "version": "20.26.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -71,7 +71,7 @@
     "caf": "^15.0.1",
     "chalk": "^4.0.0",
     "child-process-promise": "^2.2.0",
-    "detox-copilot": "^0.0.0",
+    "detox-copilot": "^20.26.0",
     "execa": "^5.1.1",
     "find-up": "^5.0.0",
     "fs-extra": "^11.0.0",
