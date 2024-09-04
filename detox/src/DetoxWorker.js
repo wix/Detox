@@ -162,6 +162,7 @@ class DetoxWorker {
       const injectedGlobals = {
         ...matchers,
         device: this.device,
+        copilot: this.copilot,
         detox: this,
       };
 
