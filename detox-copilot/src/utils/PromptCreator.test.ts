@@ -2,6 +2,7 @@ import { PromptCreator } from './PromptCreator';
 import {ExecutionStep, TestingFrameworkAPI} from "@/types";
 
 const mockAPI: TestingFrameworkAPI = {
+    context: {},
     actions: [
         {
             signature: 'tap(element: Element)',

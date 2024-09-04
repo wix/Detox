@@ -23,7 +23,13 @@ export class Copilot {
         this.promptCreator = new PromptCreator(config.frameworkDriver.availableAPI);
         this.codeEvaluator = new CodeEvaluator();
         this.snapshotManager = new SnapshotManager(config.frameworkDriver);
-        this.stepPerformer = new StepPerformer(this.promptCreator, this.codeEvaluator, this.snapshotManager, config.promptHandler);
+        this.stepPerformer = new StepPerformer(
+            config.frameworkDriver.availableAPI.context,
+            this.promptCreator,
+            this.codeEvaluator,
+            this.snapshotManager,
+            config.promptHandler
+        );
     }
 
     /**

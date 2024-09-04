@@ -14,6 +14,7 @@ describe('Copilot', () => {
                 captureSnapshotImage: jest.fn(),
                 captureViewHierarchyString: jest.fn(),
                 availableAPI: {
+                    context: {},
                     matchers: [],
                     actions: [],
                     assertions: []
