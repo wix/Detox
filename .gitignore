@@ -232,3 +232,7 @@ detox/test/artifacts
 Detox-android/
 Detox-ios-src.tbz
 Detox-ios.tbz
+
+
+# Ignore .env files across the project
+**/.env
