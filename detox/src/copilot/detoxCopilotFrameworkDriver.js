@@ -106,13 +106,13 @@ const detoxCopilotFrameworkDriver = {
         signature: 'launchApp(params: object)',
         description: 'Launches the app with specified parameters',
         example: 'await device.launchApp({newInstance: true});',
-        guidelines: ['Use this to launch the app with specific configurations.', 'this is part of the device API.']
+        guidelines: ['Use this to launch the app with specific configurations.']
       },
       {
         signature: 'reloadReactNative()',
         description: 'Reloads the React Native JS bundle',
         example: 'await device.reloadReactNative();',
-        guidelines: ['Faster than launchApp(), use when you just need to reset React Native logic.', 'this is part of the device API.']
+        guidelines: ['Faster than launchApp(), use when you just need to reset React Native state/logic.']
       }
     ],
     assertions: [
