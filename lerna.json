@@ -21,6 +21,7 @@
     "publish": {
       "ignoreChanges": [
         "demo-react-native-jest",
+        "detox-copilot",
         "demo-plugin",
         "examples/demo-react-native-detox-instruments",
         "detox-demo-native-android",
@@ -29,6 +30,9 @@
         "detox-test",
         "generation",
         "."
+      ],
+      "ignore": [
+        "detox-copilot"
       ]
     },
     "bootstrap": {
