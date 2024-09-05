@@ -24,8 +24,7 @@
   },
   "scripts": {
     "build": "tsc && tsc-alias",
-    "test": "jest",
-    "prepublishOnly": "npm run build"
+    "test": "jest"
   },
   "bugs": {
     "url": "https://github.com/wix/Detox/issues"
