@@ -43,7 +43,6 @@ email=\${NPM_EMAIL}
   // Workaround. see https://github.com/lerna/lerna/issues/361
   fs.copyFileSync('.npmrc', 'detox/.npmrc');
   fs.copyFileSync('.npmrc', 'detox-cli/.npmrc');
-  fs.copyFileSync('.npmrc', 'detox-copilot/.npmrc');
 }
 
 function versionTagAndPublish() {
