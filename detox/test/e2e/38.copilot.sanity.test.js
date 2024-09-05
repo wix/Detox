@@ -2,17 +2,13 @@ const PromptHandler = require('./copilot/PromptHandler');
 
 describe('Copilot Sanity', () => {
   beforeAll(async () => {
-    await device.launchApp({
-      delete: true,
-      newInstance: true,
-    });
-
     await copilot.init(new PromptHandler());
+
+    await copilot.act('Launch the app');
   });
 
   beforeEach(async () => {
-    await device.reloadReactNative();
-
+    await copilot.act('Reset react native state');
     await copilot.act('Navigate to sanity');
   });
 
