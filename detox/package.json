@@ -71,7 +71,7 @@
     "caf": "^15.0.1",
     "chalk": "^4.0.0",
     "child-process-promise": "^2.2.0",
-    "detox-copilot": "^0.0.0",
+    "detox-copilot": "^0.0.1",
     "execa": "^5.1.1",
     "find-up": "^5.0.0",
     "fs-extra": "^11.0.0",
