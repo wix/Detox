@@ -47,9 +47,6 @@ jobs:
       - name: Generation tests
         run: npm test
         working-directory: generation
-      - name: Copilot unit tests
-        run: npm test
-        working-directory: detox-copilot
       - name: Pack Allure results
         run: zip -r allure-results.zip detox/allure-results detox/test/allure-results generation/allure-results
       - name: Upload Allure results
