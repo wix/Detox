@@ -13,6 +13,8 @@ export class StepPerformer {
     ) {}
 
     async perform(step: ExecutionStep, previous: ExecutionStep[] = []): Promise<any> {
+        console.log("\x1b[36m%s\x1b[0m", `Running ${step.type} step: ${step.value}`);
+
         const snapshot = await this.snapshotManager.captureSnapshotImage();
         const viewHierarchy = await this.snapshotManager.captureViewHierarchyString();
 
