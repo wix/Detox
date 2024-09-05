@@ -28,6 +28,7 @@ The other projects are the Detox CLI, the Detox test app, example apps, and the 
 Here's a high-level overview of the repository structure:
 
 - 📁 **detox-cli** - The CLI for Detox (e.g., `detox init`, `detox test`, read more about our [CLI docs])
+- 📁 **detox-copilot** - Detox plugin that leverages large language models (LLM) to seamlessly invoke Detox actions (**work in progress**)
 - 📁 **detox** - The Detox framework
   - 📁 **android** - The Android native code, alongside native unit tests
   - 📁 **ios** - The iOS native code, including its native submodules (e.g., DetoxSync)
