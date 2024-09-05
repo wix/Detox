@@ -4,6 +4,7 @@
   "packages": [
     "detox",
     "detox-cli",
+    "detox-copilot",
     "detox/test",
     "examples/demo-native-android",
     "examples/demo-native-ios",
