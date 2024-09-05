@@ -9,6 +9,9 @@ export class CodeEvaluator {
     private createAsyncFunction(code: string, context: any): Function {
         const codeBlock = this.extractCodeBlock(code);
 
+        // todo: this is a temp log for debugging, we'll need to pass a logging mechanism from the framework.
+        console.log("\x1b[36m%s\x1b[0m", `Copilot evaluating code block: \`${codeBlock}\``);
+
         try {
             const contextValues = Object.values(context);
 
