@@ -144,7 +144,7 @@ dependencies {
     }
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...
-    api('androidx.test.uiautomator:uiautomator:2.3.0') {
+    api('androidx.test.uiautomator:uiautomator:2.2.0') {
         because 'Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
 }
