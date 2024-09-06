@@ -1,3 +1,5 @@
+const {expectViewHierarchySnapshotToMatch} = require("./utils/snapshot");
+
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
@@ -37,6 +39,18 @@ describe('Device', () => {
     await device.launchApp();
 
     await expect(element(by.text('Hello!!!'))).toBeVisible();
+  });
+
+  it('generateViewHierarchyXml() - should generate a valid view hierarchy XML without injected test-ids', async () => {
+    await device.launchApp({newInstance: true});
+    const hierarchy = await device.generateViewHierarchyXml();
+    await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-without-test-id-injection`);
+  });
+
+  it('generateViewHierarchyXml(true) - should generate a valid view hierarchy XML with injected test-ids', async () => {
+    await device.launchApp({newInstance: true});
+    const hierarchy = await device.generateViewHierarchyXml(true);
+    await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-with-test-id-injection`);
   });
 
   // // Passing on iOS, not implemented on Android

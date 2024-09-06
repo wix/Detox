@@ -442,6 +442,16 @@ test('Capture view hierarchy', async () => {
 });
 ```
 
+### `device.generateViewHierarchyXml([shouldInjectTestIds])`
+
+Generates a view hierarchy XML of the currently opened application. The XML is returned as a string.
+
+The `shouldInjectTestIds` parameter is optional and defaults to `false`. When set to `true`, Detox will attempt to inject `testID` attributes into the XML for each element if undefined.
+
+```js
+const viewHierarchyXml = await device.generateViewHierarchyXml();
+```
+
 ### `device.shake()` **iOS Only**
 
 Simulate shake

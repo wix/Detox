@@ -55,6 +55,7 @@ module.exports = async () => {
         'jest-metadata/environment-listener',
         'jest-allure2-reporter/environment-listener',
         require.resolve('detox-allure2-adapter'),
+        require.resolve('./utils/rnSkipper'),
       ]
     },
     'testRunner': './test/node_modules/jest-circus/runner',

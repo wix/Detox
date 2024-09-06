@@ -258,6 +258,11 @@ class AndroidDriver extends DeviceDriverBase {
     const call = !!duration ? EspressoDetoxApi.longPress(x, y, duration): EspressoDetoxApi.longPress(x, y);
     await this.invocationManager.execute(call);
   }
+  
+  async generateViewHierarchyXml(shouldInjectTestIds) {
+    const hierarchy = await this.invocationManager.execute(DetoxApi.generateViewHierarchyXml(shouldInjectTestIds));
+    return hierarchy.result;
+  }
 
   _getAppInstallPaths(_appBinaryPath, _testBinaryPath) {
     const appBinaryPath = getAbsoluteBinaryPath(_appBinaryPath);

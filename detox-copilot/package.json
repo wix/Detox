@@ -1,0 +1,36 @@
+{
+  "name": "detox-copilot",
+  "version": "0.0.0",
+  "description": "A Detox-based plugin that leverages AI to seamlessly invoke UI testing framework operations",
+  "keywords": [
+    "detox",
+    "copilot",
+    "ai"
+  ],
+  "author": "Asaf Korem <asaf.korem@gmail.com>",
+  "homepage": "https://github.com/wix/Detox/detox-copilot",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wix/Detox.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "bugs": {
+    "url": "https://github.com/wix/Detox/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.4",
+    "typescript": "^5.5.4"
+  }
+}

@@ -69,6 +69,21 @@ class Detox {
     };
   }
 
+  static generateViewHierarchyXml(shouldInjectTestIds) {
+    if (typeof shouldInjectTestIds !== "boolean") throw new Error("shouldInjectTestIds should be a boolean, but got " + (shouldInjectTestIds + (" (" + (typeof shouldInjectTestIds + ")"))));
+    return {
+      target: {
+        type: "Class",
+        value: "com.wix.detox.Detox"
+      },
+      method: "generateViewHierarchyXml",
+      args: [{
+        type: "boolean",
+        value: shouldInjectTestIds
+      }]
+    };
+  }
+
 }
 
 module.exports = Detox;

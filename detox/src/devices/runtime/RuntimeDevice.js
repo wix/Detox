@@ -21,6 +21,7 @@ class RuntimeDevice {
       'clearKeychain',
       'disableSynchronization',
       'enableSynchronization',
+      'generateViewHierarchyXml',
       'installApp',
       'installUtilBinaries',
       'launchApp',
@@ -194,6 +195,10 @@ class RuntimeDevice {
 
   async captureViewHierarchy(name = 'capture') {
     return this.deviceDriver.captureViewHierarchy(name);
+  }
+
+  async generateViewHierarchyXml(shouldInjectTestIds = false) {
+    return await this.deviceDriver.generateViewHierarchyXml(shouldInjectTestIds);
   }
 
   async sendToHome() {

@@ -943,6 +943,18 @@ declare global {
             captureViewHierarchy(name?: string): Promise<string>;
 
             /**
+             * Dump the current view hierarchy of the app as an XML string.
+             * @param [shouldInjectTestIds=false] whether to inject testIDs into the view hierarchy when missing,
+             * to provide an identifiable reference for each element.
+             * @returns a string containing the XML representation of the view hierarchy.
+             * @example
+             * const viewHierarchy = await device.generateViewHierarchyXml();
+             * const viewHierarchyWithInjectedTestIds = await device.generateViewHierarchyXml(true);
+             * @note enabling shouldInjectTestIds changes the actual elements during the test run, use with caution.
+             */
+            generateViewHierarchyXml(shouldInjectTestIds?: boolean): Promise<string>;
+
+            /**
              * Simulate shake (iOS Only)
              */
             shake(): Promise<void>;

@@ -230,6 +230,10 @@ class DeviceDriverBase {
   async captureViewHierarchy() {
     return '';
   }
+
+  async generateViewHierarchyXml(_shouldInjectTestIds) {
+    return '';
+  }
 }
 
 module.exports = DeviceDriverBase;

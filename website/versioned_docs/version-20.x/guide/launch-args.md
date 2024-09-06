@@ -41,5 +41,5 @@ Examples:
 
 Our official recommendation for getting the arguments inside the app is by integrating the [react-native-launch-arguments](https://github.com/iamolegga/react-native-launch-arguments) project, which provides that seamlessly. For those who are interested, here are the underlying details:
 
-- On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means, such as accesing `[[NSProcessInfo processInfo] arguments]`.
+- On iOS, the specified launch arguments are passed as the process launch arguments and available through normal means, such as accessing `[[NSProcessInfo processInfo] arguments]`.
 - On Android, the launch arguments are set as bundle-extra’s into the activity’s intent. They are therefore accessible on the native side via the current activity as: `currentActivity.getIntent().getBundleExtra("launchArgs")`.

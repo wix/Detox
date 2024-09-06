@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply from: '../rninfo.gradle'
 
-def _kotlinMinVersion = '1.2.0'
+def _kotlinMinVersion = '1.8.0'
 def _materialMinVersion = '1.11.0'
 
 def _ext = rootProject.ext
@@ -111,7 +111,7 @@ android {
 
 // Fundamental deps.
 dependencies {
-    implementation "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinMinVersion"
+    api "org.jetbrains.kotlin:$_kotlinStdlib:$_kotlinVersion"
 
     compileOnly "${_rnNativeArtifact}"
 }
@@ -123,26 +123,25 @@ dependencies {
     // Versions are in-sync with the 'androidx-test-1.4.0' release/tag of the android-test github repo,
     // used by the Detox generator. See https://github.com/android/android-test/releases/tag/androidx-test-1.4.0
     // Important: Should remain so when generator tag is replaced!
-    api('androidx.test.espresso:espresso-core:3.5.1') {
+    api('androidx.test.espresso:espresso-core:3.6.1') {
         because 'Needed all across Detox but also makes Espresso seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
-    api('androidx.test.espresso:espresso-web:3.5.1') {
+    api('androidx.test.espresso:espresso-web:3.6.1') {
         because 'Web-View testing'
     }
-    api('androidx.test.espresso:espresso-contrib:3.5.1') {
+    api('androidx.test.espresso:espresso-contrib:3.6.1') {
         because 'Android datepicker support'
         exclude group: "org.checkerframework", module: "checker"
     }
     api('org.hamcrest:hamcrest:2.2') {
         because 'See https://github.com/wix/Detox/issues/3920. Need to force hamcrest 2.2 win in battle of 2.2 vs. 1.3 (specified by Espresso).'
     }
-    api('androidx.test:rules:1.5.0') {
+    api('androidx.test:rules:1.6.1') {
         because 'of ActivityTestRule. Needed by users *and* internally used by Detox.'
     }
-    api('androidx.test.ext:junit:1.1.5') {
+    api('androidx.test.ext:junit:1.2.1') {
         because 'Needed so as to seamlessly provide AndroidJUnit4 to Detox users. Depends on junit core.'
     }
-
     // Version is the latest; Cannot sync with the Github repo (e.g. android/android-test) because the androidx
     // packaging version of associated classes is simply not there...
     api('androidx.test.uiautomator:uiautomator:2.2.0') {

@@ -363,6 +363,7 @@ describe('Client', () => {
       ['waitForActive', 'waitForActiveDone', actions.WaitForActive],
       ['waitUntilReady', 'ready', actions.Ready],
       ['currentStatus', 'currentStatusResult', actions.CurrentStatus, {}, { status: { app_status: 'idle' } }],
+      ['generateViewHierarchyXml', 'generateViewHierarchyXmlResult', actions.GenerateViewHierarchyXml, { shouldInjectTestIds: false }, { viewHierarchy: 'mock-hierarchy' }]
     ])('.%s', (methodName, expectedResponseType, Action, params, expectedResponseParams) => {
       beforeEach(async () => {
         await client.connect();

@@ -1,0 +1,176 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prompt creation should create an action step prompt correctly 1`] = `
+"# Test Code Generation
+
+You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
+Please generate the minimal executable code to perform the desired intent based on the given information and context.
+
+## Context
+
+### Step to perform
+
+Generate the minimal executable code to perform the following action: "tap button"
+
+### View hierarchy
+
+\`\`\`
+<View><Button testID="submit" title="Submit" /></View>
+\`\`\`
+
+### Snapshot image
+
+Snapshot image is attached for visual reference.
+
+## Available Action API
+
+### tap(element: Element)
+
+Taps on the specified element.
+
+#### Example
+
+\`\`\`
+await element(by.id("button")).tap();
+\`\`\`
+
+#### Guidelines
+- Ensure the element is tappable before using this method.
+### typeText(element: Element, text: string)
+
+Types the specified text into the element.
+
+#### Example
+
+\`\`\`
+await element(by.id("input")).typeText("Hello, World!");
+\`\`\`
+
+#### Guidelines
+- Use this method only on text input elements.
+## Instructions
+
+1. Generate the minimal executable code to perform the following action: "tap button"
+2. Use the provided API and follow the guidelines.
+3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+4. Wrap the generated code with backticks, without any additional formatting.
+5. In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.
+
+### Examples of throwing an informative error:
+\`\`\`typescript
+throw new Error("Unable to find the 'Submit' button in the current view hierarchy.");
+\`\`\`
+
+\`\`\`typescript
+throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+\`\`\`
+
+Please provide your response below:"
+`;
+
+exports[`prompt creation should create an assertion step with snapshot image prompt correctly 1`] = `
+"# Test Code Generation
+
+You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
+Please generate the minimal executable code to perform the desired intent based on the given information and context.
+
+## Context
+
+### Step to perform
+
+Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+
+### View hierarchy
+
+\`\`\`
+<View><Button testID="submit" title="Submit" /></View>
+\`\`\`
+
+### Snapshot image
+
+Snapshot image is attached for visual reference.
+
+## Available Assertion API
+
+### toBeVisible()
+
+Asserts that the element is visible on the screen.
+
+#### Example
+
+\`\`\`
+await expect(element(by.id("title"))).toBeVisible();
+\`\`\`
+
+#### Guidelines
+- Consider scroll position when using this assertion.
+## Instructions
+
+1. Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+2. Use the provided API and follow the guidelines.
+3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+4. Wrap the generated code with backticks, without any additional formatting.
+5. In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.
+
+### Examples of throwing an informative error:
+\`\`\`typescript
+throw new Error("Unable to find the 'Submit' button in the current view hierarchy.");
+\`\`\`
+
+\`\`\`typescript
+throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+\`\`\`
+
+Please provide your response below:"
+`;
+
+exports[`prompt creation should create an assertion step without snapshot image prompt correctly 1`] = `
+"# Test Code Generation
+
+You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
+Please generate the minimal executable code to perform the desired intent based on the given information and context.
+
+## Context
+
+### Step to perform
+
+Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+
+### View hierarchy
+
+\`\`\`
+<View><Button testID="submit" title="Submit" /></View>
+\`\`\`
+
+## Available Assertion API
+
+### toBeVisible()
+
+Asserts that the element is visible on the screen.
+
+#### Example
+
+\`\`\`
+await expect(element(by.id("title"))).toBeVisible();
+\`\`\`
+
+#### Guidelines
+- Consider scroll position when using this assertion.
+## Instructions
+
+1. Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+2. Use the provided API and follow the guidelines.
+3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+4. Wrap the generated code with backticks, without any additional formatting.
+
+### Examples of throwing an informative error:
+\`\`\`typescript
+throw new Error("Unable to find the 'Submit' button in the current view hierarchy.");
+\`\`\`
+
+\`\`\`typescript
+throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+\`\`\`
+
+Please provide your response below:"
+`;
