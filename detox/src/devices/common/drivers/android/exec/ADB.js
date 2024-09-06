@@ -320,11 +320,11 @@ class ADB {
   }
 
   async reverse(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse tcp:${port} tcp:${port}`);
+    return this.adbCmd(deviceId, `forward tcp:${port} tcp:${port}`);
   }
 
   async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    return this.adbCmd(deviceId, `forward --remove tcp:${port}`);
   }
 
   async emuKill(deviceId) {
