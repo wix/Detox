@@ -1,49 +1,44 @@
 package com.example;
 
-import android.content.pm.PackageManager;
 import android.util.Log;
-import android.view.Surface;
-
-import com.linkedin.android.testbutler.TestButler;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.wix.detoxbutler.DetoxButler;
 
 class TestButlerProbe {
 
     private static final String LOG_TAG = TestButlerProbe.class.getSimpleName();
-    private static final String TEST_BUTLER_PACKAGE_NAME = "com.linkedin.android.testbutler";
 
     private TestButlerProbe() {
     }
 
     static void assertReadyIfInstalled() {
-        Log.i(LOG_TAG, "Test butler service verification started...");
+        Log.i(LOG_TAG, "Detox butler service verification started...");
 
-        if (!isTestButlerServiceInstalled()) {
-            Log.w(LOG_TAG, "Test butler not installed on device - skipping verification");
+        if (!isDetoxButlerServiceInstalled()) {
+            Log.w(LOG_TAG, "Detox butler not installed on device - skipping verification");
             return;
         }
 
-        assertTestButlerServiceReady();
-        Log.i(LOG_TAG, "Test butler service is up and running!");
+        assertDetoxButlerServiceReady();
+        Log.i(LOG_TAG, "Detox butler service is up and running!");
     }
 
-    static private boolean isTestButlerServiceInstalled() {
-        try {
-            PackageManager pm = InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageManager();
-            pm.getPackageInfo(TEST_BUTLER_PACKAGE_NAME, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
+    static private boolean isDetoxButlerServiceInstalled() {
+        return DetoxButler.isDetoxButlerServiceInstalled(InstrumentationRegistry.getInstrumentation().getContext());
     }
 
-    static private void assertTestButlerServiceReady() {
+    static private void assertDetoxButlerServiceReady() {
+        boolean isEnabled;
         try {
-            // This has no effect if test-butler is running. However, if it is not, then unlike TestButler.setup(), it would hard-fail.
-            TestButler.setRotation(Surface.ROTATION_0);
+            isEnabled = DetoxButler.tryToWaitForDetoxButlerServiceToBeEnabled(15);
         } catch (Exception e) {
-            throw new RuntimeException("Test butler service is NOT ready!", e);
+            throw new RuntimeException("Detox butler service is NOT ready!", e);
+        }
+
+        if (!isEnabled) {
+            throw new RuntimeException("Detox butler service is NOT ready!");
         }
     }
 }
