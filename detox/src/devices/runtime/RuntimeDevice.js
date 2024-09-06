@@ -279,8 +279,8 @@ class RuntimeDevice {
     await this.deviceDriver.setOrientation(orientation);
   }
 
-  async tap(point) {
-    await this.deviceDriver.tap(point);
+  async tap(point, shouldIgnoreStatusBar) {
+    await this.deviceDriver.tap(point, shouldIgnoreStatusBar);
   }
 
   async longPress(arg1, arg2) {

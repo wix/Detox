@@ -51,7 +51,11 @@ class DeviceDriverBase {
     return '';
   }
 
-  async tap(point) {
+  async tap(point, shouldIgnoreStatusBar) {
+    return '';
+  }
+
+  async longPress(arg1, arg2) {
     return '';
   }
 

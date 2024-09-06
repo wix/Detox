@@ -136,7 +136,8 @@ public class EspressoDetox {
 
             @Override
             public void perform(UiController uiController, View view) {
-                ViewAction action = DetoxAction.tapAtLocation(x, y);
+                int adjustedY = true ? y + UiAutomatorHelper.getStatusBarHeight(view) : y;
+                ViewAction action = DetoxAction.tapAtLocation(x, adjustedY);
                 action.perform(uiController, view);
                 uiController.loopMainThreadUntilIdle();
             }
