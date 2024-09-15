@@ -1,13 +1,8 @@
-const copilot = require('@/index');
 const PromptHandler = require('./copilot/PromptHandler');
-const frameworkDriver = require('./copilot/FrameworkDriver'); // Assuming you have a framework driver implementation
 
 describe('Copilot Actions', () => {
   beforeAll(async () => {
-    copilot.init({
-      frameworkDriver,
-      promptHandler: new PromptHandler(),
-    });
+    copilot.init(new PromptHandler());
 
     await copilot.perform('Start the application');
   });
