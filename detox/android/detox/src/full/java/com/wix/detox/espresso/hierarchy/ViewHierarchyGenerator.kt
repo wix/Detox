@@ -79,14 +79,6 @@ object ViewHierarchyGenerator {
             "label" to (view.getAccessibilityLabel()?.toString() ?: "")
         )
 
-        view.id.takeIf { it != View.NO_ID }?.let {
-            attributes["id"] = try {
-                view.resources.getResourceName(it)
-            } catch (e: Exception) {
-                it.toString()
-            }
-        }
-
         val location = IntArray(2).apply { view.getLocationInWindow(this) }
         attributes["x"] = location[0].toString()
         attributes["y"] = location[1].toString()
