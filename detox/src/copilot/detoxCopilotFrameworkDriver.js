@@ -46,7 +46,10 @@ const detoxCopilotFrameworkDriver = {
             signature: 'longPress(point?: Point2D, duration?: number)',
             description: 'Simulates long press on an element.',
             example: "await element(by.id('menuItem')).longPress();",
-            guidelines: ['If the target element is not accessible, interact with its container or the most relevant parent element.'],
+            guidelines: [
+              'If the target element is not accessible, interact with its container or the most relevant parent element.',
+              'Long-press should be called with the relevant params only, e.g. `longPress(2000)`, `longPress({ x: 100, y: 200 })` or `longPress({ x: 100, y: 200 }, 2000)`.',
+            ]
           },
           {
             signature: 'multiTap(times: number)',
