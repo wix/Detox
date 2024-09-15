@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`prompt creation should create an action step prompt correctly 1`] = `
+exports[`PromptCreator should create a prompt for an intent correctly 1`] = `
 "# Test Code Generation
 
 You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
@@ -8,9 +8,9 @@ Please generate the minimal executable code to perform the desired intent based 
 
 ## Context
 
-### Step to perform
+### Intent to perform
 
-Generate the minimal executable code to perform the following action: "tap button"
+Generate the minimal executable code to perform the following intent: "tap button"
 
 ### View hierarchy
 
@@ -20,41 +20,79 @@ Generate the minimal executable code to perform the following action: "tap butto
 
 ### Snapshot image
 
-Snapshot image is attached for visual reference.
+A snapshot image is attached for visual reference.
 
-## Available Action API
+## Available Testing Framework API
 
-### tap(element: Element)
+### Actions
+
+#### tap(element: Element)
 
 Taps on the specified element.
 
-#### Example
+##### Example
 
 \`\`\`
 await element(by.id("button")).tap();
 \`\`\`
 
-#### Guidelines
+##### Guidelines
+
 - Ensure the element is tappable before using this method.
-### typeText(element: Element, text: string)
+
+#### typeText(element: Element, text: string)
 
 Types the specified text into the element.
 
-#### Example
+##### Example
 
 \`\`\`
 await element(by.id("input")).typeText("Hello, World!");
 \`\`\`
 
-#### Guidelines
+##### Guidelines
+
 - Use this method only on text input elements.
+
+### Assertions
+
+#### toBeVisible()
+
+Asserts that the element is visible on the screen.
+
+##### Example
+
+\`\`\`
+await expect(element(by.id("title"))).toBeVisible();
+\`\`\`
+
+##### Guidelines
+
+- Consider scroll position when using this assertion.
+
+### Matchers
+
+#### by.id(id: string)
+
+Matches elements by their ID attribute.
+
+##### Example
+
+\`\`\`
+element(by.id("uniqueId"))
+\`\`\`
+
+##### Guidelines
+
+- Use unique IDs for elements to avoid conflicts, combine with atIndex() if necessary.
+
 ## Instructions
 
-1. Generate the minimal executable code to perform the following action: "tap button"
+1. Generate the minimal executable code to perform the following intent: "tap button"
 2. Use the provided API and follow the guidelines.
-3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+3. If you cannot generate the relevant code due to ambiguity, invalid intent, or inability to find the desired element, return code that throws an informative error explaining the problem in one sentence.
 4. Wrap the generated code with backticks, without any additional formatting.
-5. In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.
+5. In case the expected behavior can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.
 
 ### Examples of throwing an informative error:
 \`\`\`typescript
@@ -62,13 +100,13 @@ throw new Error("Unable to find the 'Submit' button in the current view hierarch
 \`\`\`
 
 \`\`\`typescript
-throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+throw new Error("The provided intent does not contain enough information to generate the code; 'button' is too ambiguous for matching a specific element.");
 \`\`\`
 
 Please provide your response below:"
 `;
 
-exports[`prompt creation should create an assertion step with snapshot image prompt correctly 1`] = `
+exports[`PromptCreator should handle when no snapshot image is attached 1`] = `
 "# Test Code Generation
 
 You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
@@ -76,9 +114,9 @@ Please generate the minimal executable code to perform the desired intent based 
 
 ## Context
 
-### Step to perform
+### Intent to perform
 
-Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+Generate the minimal executable code to perform the following intent: "expect button to be visible"
 
 ### View hierarchy
 
@@ -86,31 +124,76 @@ Generate the minimal executable code to perform the following assertion: "expect
 <View><Button testID="submit" title="Submit" /></View>
 \`\`\`
 
-### Snapshot image
+## Available Testing Framework API
 
-Snapshot image is attached for visual reference.
+### Actions
 
-## Available Assertion API
+#### tap(element: Element)
 
-### toBeVisible()
+Taps on the specified element.
+
+##### Example
+
+\`\`\`
+await element(by.id("button")).tap();
+\`\`\`
+
+##### Guidelines
+
+- Ensure the element is tappable before using this method.
+
+#### typeText(element: Element, text: string)
+
+Types the specified text into the element.
+
+##### Example
+
+\`\`\`
+await element(by.id("input")).typeText("Hello, World!");
+\`\`\`
+
+##### Guidelines
+
+- Use this method only on text input elements.
+
+### Assertions
+
+#### toBeVisible()
 
 Asserts that the element is visible on the screen.
 
-#### Example
+##### Example
 
 \`\`\`
 await expect(element(by.id("title"))).toBeVisible();
 \`\`\`
 
-#### Guidelines
+##### Guidelines
+
 - Consider scroll position when using this assertion.
+
+### Matchers
+
+#### by.id(id: string)
+
+Matches elements by their ID attribute.
+
+##### Example
+
+\`\`\`
+element(by.id("uniqueId"))
+\`\`\`
+
+##### Guidelines
+
+- Use unique IDs for elements to avoid conflicts, combine with atIndex() if necessary.
+
 ## Instructions
 
-1. Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+1. Generate the minimal executable code to perform the following intent: "expect button to be visible"
 2. Use the provided API and follow the guidelines.
-3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+3. If you cannot generate the relevant code due to ambiguity, invalid intent, or inability to find the desired element, return code that throws an informative error explaining the problem in one sentence.
 4. Wrap the generated code with backticks, without any additional formatting.
-5. In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.
 
 ### Examples of throwing an informative error:
 \`\`\`typescript
@@ -118,13 +201,13 @@ throw new Error("Unable to find the 'Submit' button in the current view hierarch
 \`\`\`
 
 \`\`\`typescript
-throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+throw new Error("The provided intent does not contain enough information to generate the code; 'button' is too ambiguous for matching a specific element.");
 \`\`\`
 
 Please provide your response below:"
 `;
 
-exports[`prompt creation should create an assertion step without snapshot image prompt correctly 1`] = `
+exports[`PromptCreator should include previous intents in the context 1`] = `
 "# Test Code Generation
 
 You are an AI assistant tasked with generating test code for a mobile application using the provided UI testing framework API.
@@ -132,9 +215,9 @@ Please generate the minimal executable code to perform the desired intent based 
 
 ## Context
 
-### Step to perform
+### Intent to perform
 
-Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+Generate the minimal executable code to perform the following intent: "tap button"
 
 ### View hierarchy
 
@@ -142,25 +225,80 @@ Generate the minimal executable code to perform the following assertion: "expect
 <View><Button testID="submit" title="Submit" /></View>
 \`\`\`
 
-## Available Assertion API
+### Previous intents
 
-### toBeVisible()
+1. navigate to login screen
+2. enter username
+
+## Available Testing Framework API
+
+### Actions
+
+#### tap(element: Element)
+
+Taps on the specified element.
+
+##### Example
+
+\`\`\`
+await element(by.id("button")).tap();
+\`\`\`
+
+##### Guidelines
+
+- Ensure the element is tappable before using this method.
+
+#### typeText(element: Element, text: string)
+
+Types the specified text into the element.
+
+##### Example
+
+\`\`\`
+await element(by.id("input")).typeText("Hello, World!");
+\`\`\`
+
+##### Guidelines
+
+- Use this method only on text input elements.
+
+### Assertions
+
+#### toBeVisible()
 
 Asserts that the element is visible on the screen.
 
-#### Example
+##### Example
 
 \`\`\`
 await expect(element(by.id("title"))).toBeVisible();
 \`\`\`
 
-#### Guidelines
+##### Guidelines
+
 - Consider scroll position when using this assertion.
+
+### Matchers
+
+#### by.id(id: string)
+
+Matches elements by their ID attribute.
+
+##### Example
+
+\`\`\`
+element(by.id("uniqueId"))
+\`\`\`
+
+##### Guidelines
+
+- Use unique IDs for elements to avoid conflicts, combine with atIndex() if necessary.
+
 ## Instructions
 
-1. Generate the minimal executable code to perform the following assertion: "expect button to be visible"
+1. Generate the minimal executable code to perform the following intent: "tap button"
 2. Use the provided API and follow the guidelines.
-3. If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.
+3. If you cannot generate the relevant code due to ambiguity, invalid intent, or inability to find the desired element, return code that throws an informative error explaining the problem in one sentence.
 4. Wrap the generated code with backticks, without any additional formatting.
 
 ### Examples of throwing an informative error:
@@ -169,7 +307,7 @@ throw new Error("Unable to find the 'Submit' button in the current view hierarch
 \`\`\`
 
 \`\`\`typescript
-throw new Error("The provided prompt does not contain enough information to generate the code, "button" is too ambiguous for matching a specific element.");
+throw new Error("The provided intent does not contain enough information to generate the code; 'button' is too ambiguous for matching a specific element.");
 \`\`\`
 
 Please provide your response below:"

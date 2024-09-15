@@ -3,7 +3,7 @@ import {PromptCreator} from "@/utils/PromptCreator";
 import {CodeEvaluator} from "@/utils/CodeEvaluator";
 import {SnapshotManager} from "@/utils/SnapshotManager";
 import {StepPerformer} from "@/actions/StepPerformer";
-import {Config, ExecutionStep} from "@/types";
+import {Config} from "@/types";
 
 /**
  * The main Copilot class that provides AI-assisted testing capabilities for a given underlying testing framework.
@@ -16,15 +16,15 @@ export class Copilot {
     private readonly promptCreator: PromptCreator;
     private readonly codeEvaluator: CodeEvaluator;
     private readonly snapshotManager: SnapshotManager;
-    private previousSteps: ExecutionStep[] = [];
+    private previousSteps: string[] = [];
     private stepPerformer: StepPerformer;
 
     private constructor(config: Config) {
-        this.promptCreator = new PromptCreator(config.frameworkDriver.availableAPI);
+        this.promptCreator = new PromptCreator(config.frameworkDriver.apiCatalog);
         this.codeEvaluator = new CodeEvaluator();
         this.snapshotManager = new SnapshotManager(config.frameworkDriver);
         this.stepPerformer = new StepPerformer(
-            config.frameworkDriver.availableAPI.context,
+            config.frameworkDriver.apiCatalog.context,
             this.promptCreator,
             this.codeEvaluator,
             this.snapshotManager,
@@ -56,7 +56,7 @@ export class Copilot {
      * Performs a test step based on the given prompt.
      * @param step The step describing the operation to perform.
      */
-    async perform(step: ExecutionStep): Promise<any> {
+    async perform(step: string): Promise<any> {
         const result = await this.stepPerformer.perform(step, this.previousSteps);
         this.didPerformStep(step);
 
@@ -71,7 +71,7 @@ export class Copilot {
         this.previousSteps = [];
     }
 
-    private didPerformStep(step: ExecutionStep): void {
+    private didPerformStep(step: string): void {
         this.previousSteps = [...this.previousSteps, step];
     }
 }

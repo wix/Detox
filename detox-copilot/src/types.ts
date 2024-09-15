@@ -17,20 +17,13 @@ export interface CopilotFacade {
     reset: () => void;
 
     /**
-     * Performs an action in the app.
-     * @param action The action to perform (in free-form text).
+     * Performs a testing operation in the app based on the given `intent`.
      * @example Tap on the login button
      * @example Scroll down to the 7th item in the Events list
-     */
-    act: (action: string) => Promise<any>;
-
-    /**
-     * Asserts a condition in the app.
-     * @param assertion The assertion to check (in free-form text).
      * @example The welcome message should be visible
      * @example The welcome message text should be "Hello, world!"
      */
-    assert: (assertion: string) => Promise<any>;
+    perform: (intent: string) => Promise<any>;
 }
 
 /**
@@ -49,23 +42,29 @@ export interface TestingFrameworkDriver {
     captureViewHierarchyString: () => Promise<string>;
 
     /**
-     * A descriptive catalog for the available API of the testing framework that can be used by Copilot.
+     * The available API methods of the testing framework.
      */
-    availableAPI: TestingFrameworkAPICatalog;
+    apiCatalog: TestingFrameworkAPICatalog;
 }
 
 /**
  * Represents the available API of the testing framework that can be used by Copilot.
  * @property context The available variables of the testing framework (i.e. exposes the matching function, expect, etc.).
- * @property matchers The available matchers API of the testing framework.
- * @property actions The available actions API of the testing framework.
- * @property assertions The available assertions API of the testing framework.
+ * @property categories The available categories of the testing framework API.
  */
 export type TestingFrameworkAPICatalog = {
     context: any;
-    matchers: TestingFrameworkAPICatalogItem[];
-    actions: TestingFrameworkAPICatalogItem[];
-    assertions: TestingFrameworkAPICatalogItem[];
+    categories: TestingFrameworkAPICatalogCategory[];
+}
+
+/**
+ * Represents a category of the API of the testing framework that can be used by Copilot.
+ * @property title The title of the category.
+ * @property items The items in the category.
+ */
+export type TestingFrameworkAPICatalogCategory = {
+    title: string;
+    items: TestingFrameworkAPICatalogItem[];
 }
 
 /**
@@ -125,18 +124,3 @@ export interface Config {
      */
     promptHandler: PromptHandler;
 }
-
-/**
- * Represents a step in the test script.
- * @property type The type of the step.
- * @property value The prompt for the step.
- */
-export type ExecutionStep = {
-    type: ExecutionStepType;
-    value: string;
-}
-
-/**
- * Represents the type of step in the test script.
- */
-export type ExecutionStepType = 'action' | 'assertion';

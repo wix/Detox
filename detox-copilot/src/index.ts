@@ -8,17 +8,8 @@ const copilot: CopilotFacade = {
     reset: () => {
         Copilot.getInstance().reset();
     },
-    act: (action: string) => {
-        return Copilot.getInstance().perform({
-            type: 'action',
-            value: action
-        });
-    },
-    assert: (assertion: string) => {
-        return Copilot.getInstance().perform({
-            type: 'assertion',
-            value: assertion
-        });
+    perform: (intent: string) => {
+        return Copilot.getInstance().perform(intent);
     }
 };
 

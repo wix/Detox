@@ -1290,7 +1290,7 @@ declare global {
             element(systemMatcher: SystemMatcher): IndexableSystemElement;
         }
 
-        interface DetoxCopilotFacade extends Pick<CopilotFacade, "act" | "assert"> {
+        interface DetoxCopilotFacade extends Pick<CopilotFacade, "perform"> {
             /**
              * Initializes the Copilot with the given prompt handler.
              * Must be called before any other Copilot methods.

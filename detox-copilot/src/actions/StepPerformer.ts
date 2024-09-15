@@ -1,7 +1,7 @@
 import { PromptCreator } from '@/utils/PromptCreator';
 import { CodeEvaluator } from '@/utils/CodeEvaluator';
 import { SnapshotManager } from '@/utils/SnapshotManager';
-import {ExecutionStep, PromptHandler} from "@/types";
+import {PromptHandler} from "@/types";
 
 export class StepPerformer {
     constructor(
@@ -12,14 +12,14 @@ export class StepPerformer {
         private promptHandler: PromptHandler,
     ) {}
 
-    async perform(step: ExecutionStep, previous: ExecutionStep[] = []): Promise<any> {
-        console.log("\x1b[36m%s\x1b[0m", `Running ${step.type} step: ${step.value}`);
+    async perform(step: string, previous: string[] = []): Promise<any> {
+        console.log("\x1b[36m%s\x1b[0m", `Copilot performing: \"${step}\"`);
 
         const snapshot = await this.snapshotManager.captureSnapshotImage();
         const viewHierarchy = await this.snapshotManager.captureViewHierarchyString();
 
         const isSnapshotImageAttached =
-            snapshot !== undefined && this.promptHandler.isSnapshotImageSupported();
+            snapshot != null && this.promptHandler.isSnapshotImageSupported();
 
         const prompt = this.promptCreator.createPrompt(step, viewHierarchy, isSnapshotImageAttached, previous);
         const promptResult = await this.promptHandler.runPrompt(prompt, snapshot);

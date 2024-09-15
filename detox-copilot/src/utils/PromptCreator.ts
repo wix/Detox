@@ -1,19 +1,19 @@
-import {ExecutionStep, ExecutionStepType, TestingFrameworkAPICatalog, TestingFrameworkAPICatalogItem} from "@/types";
+import { TestingFrameworkAPICatalog, TestingFrameworkAPICatalogCategory, TestingFrameworkAPICatalogItem } from "@/types";
 
 export class PromptCreator {
-    constructor(private availableAPI: TestingFrameworkAPICatalog) {}
+    constructor(private apiCatalog: TestingFrameworkAPICatalog) {}
 
     createPrompt(
-        step: ExecutionStep,
+        intent: string,
         viewHierarchy: string,
         isSnapshotImageAttached: boolean,
-        previousSteps: ExecutionStep[]
+        previousIntents: string[]
     ): string {
         return [
             this.createBasePrompt(),
-            this.createContext(step, viewHierarchy, isSnapshotImageAttached, previousSteps),
-            this.createAPIInfo(step.type),
-            this.createInstructions(step, isSnapshotImageAttached)
+            this.createContext(intent, viewHierarchy, isSnapshotImageAttached, previousIntents),
+            this.createAPIInfo(),
+            this.createInstructions(intent, isSnapshotImageAttached)
         ]
             .flat()
             .join('\n');
@@ -30,17 +30,17 @@ export class PromptCreator {
     }
 
     private createContext(
-        step: ExecutionStep,
+        intent: string,
         viewHierarchy: string,
         isSnapshotImageAttached: boolean,
-        previousSteps: ExecutionStep[]
+        previousIntents: string[]
     ): string[] {
         let context = [
             "## Context",
             "",
-            "### Step to perform",
+            "### Intent to perform",
             "",
-            `Generate the minimal executable code to perform the following ${step.type}: "${step.value}"`,
+            `Generate the minimal executable code to perform the following intent: "${intent}"`,
             "",
             "### View hierarchy",
             "",
@@ -54,16 +54,16 @@ export class PromptCreator {
             context.push(
                 "### Snapshot image",
                 "",
-                "Snapshot image is attached for visual reference.",
+                "A snapshot image is attached for visual reference.",
                 ""
             );
         }
 
-        if (previousSteps.length > 0) {
+        if (previousIntents.length > 0) {
             context.push(
-                "### Previous steps",
+                "### Previous intents",
                 "",
-                ...previousSteps.map((prevStep, index) => `${index + 1}. ${prevStep.type}: ${prevStep.value}`),
+                ...previousIntents.map((prevIntent, index) => `${index + 1}. ${prevIntent}`),
                 ""
             );
         }
@@ -71,24 +71,32 @@ export class PromptCreator {
         return context;
     }
 
-    private createAPIInfo(stepType: ExecutionStepType): string[] {
-        const relevantAPI = stepType === 'action' ? this.availableAPI.actions : this.availableAPI.assertions;
+    private createAPIInfo(): string[] {
         return [
-            `## Available ${stepType.charAt(0).toUpperCase() + stepType.slice(1)} API`,
+            "## Available Testing Framework API",
             ""
-        ]
-            .concat(
-                relevantAPI.map(this.formatAPIMethod).flat()
-            );
+        ].concat(
+            this.apiCatalog.categories
+                .map((category) => this.formatAPICategory(category))
+                .flat()
+        );
+    }
+
+    private formatAPICategory(category: TestingFrameworkAPICatalogCategory): string[] {
+        return [
+            `### ${category.title}`,
+            "",
+            ...category.items.map((item) => this.formatAPIMethod(item)).flat()
+        ];
     }
 
     private formatAPIMethod(method: TestingFrameworkAPICatalogItem): string[] {
         const methodInfo = [
-            `### ${method.signature}`,
+            `#### ${method.signature}`,
             "",
             method.description,
             "",
-            "#### Example",
+            "##### Example",
             "",
             "```",
             method.example,
@@ -96,28 +104,31 @@ export class PromptCreator {
             ""
         ];
 
-        if (method.guidelines.length > 0) {
+        if (method.guidelines && method.guidelines.length > 0) {
             methodInfo.push(
-                "#### Guidelines",
-                ...method.guidelines.map(guideline => `- ${guideline}`)
+                "##### Guidelines",
+                "",
+                ...method.guidelines.map((guideline) => `- ${guideline}`),
+                ""
             );
         }
 
         return methodInfo;
     }
 
-    private createInstructions(step: ExecutionStep, isSnapshotImageAttached: boolean): string[] {
-        return [
+    private createInstructions(intent: string, isSnapshotImageAttached: boolean): string[] {
+        const instructions = [
             "## Instructions",
             "",
             [
-                `Generate the minimal executable code to perform the following ${step.type}: "${step.value}"`,
+                `Generate the minimal executable code to perform the following intent: "${intent}"`,
                 "Use the provided API and follow the guidelines.",
-                "If you cannot generate the relevant code due to ambiguity, invalid prompt, or inability to find the desired element, return a code that throws an informative error explaining the problem in one sentence.",
-                "Wrap the generated code with backticks, without any additional formatting.",
+                "If you cannot generate the relevant code due to ambiguity, invalid intent, or inability to find the desired element, return code that throws an informative error explaining the problem in one sentence.",
+                "Wrap the generated code with backticks, without any additional formatting."
             ]
                 .concat(this.createVisualAssertionsInstructionIfPossible(isSnapshotImageAttached))
-                .map((instruction, index) => `${index + 1}. ${instruction}`).join('\n'),
+                .map((instruction, index) => `${index + 1}. ${instruction}`)
+                .join('\n'),
             "",
             "### Examples of throwing an informative error:",
             "```typescript",
@@ -125,11 +136,13 @@ export class PromptCreator {
             "```",
             "",
             "```typescript",
-            'throw new Error("The provided prompt does not contain enough information to generate the code, \"button\" is too ambiguous for matching a specific element.");',
+            'throw new Error("The provided intent does not contain enough information to generate the code; \'button\' is too ambiguous for matching a specific element.");',
             "```",
             "",
             "Please provide your response below:"
         ];
+
+        return instructions;
     }
 
     private createVisualAssertionsInstructionIfPossible(isSnapshotImageAttached: boolean): string[] {
@@ -138,8 +151,7 @@ export class PromptCreator {
         }
 
         return [
-            "In case the expected behaviour can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. " +
-                "Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes.",
+            "In case the expected behavior can be tested visually based on the provided snapshot image, there's no need to generate test code for the assertion. Instead, return code that throws an error if the visual check fails, or an empty code block if the visual check passes."
         ];
     }
 }

@@ -1,7 +1,7 @@
 import { Copilot } from '@/Copilot';
 import { StepPerformer } from '@/actions/StepPerformer';
 import { CopilotError } from '@/errors/CopilotError';
-import {Config, ExecutionStep} from "@/types";
+import { Config } from "@/types";
 
 jest.mock('@/actions/StepPerformer');
 
@@ -13,11 +13,9 @@ describe('Copilot', () => {
             frameworkDriver: {
                 captureSnapshotImage: jest.fn(),
                 captureViewHierarchyString: jest.fn(),
-                availableAPI: {
+                apiCatalog: {
                     context: {},
-                    matchers: [],
-                    actions: [],
-                    assertions: []
+                    categories: []
                 },
             },
             promptHandler: {
@@ -73,52 +71,53 @@ describe('Copilot', () => {
         });
     });
 
-    describe('execute', () => {
-        it('should call StepPerformer.perform with the given step', async () => {
+    describe('perform', () => {
+        it('should call StepPerformer.perform with the given intent', async () => {
             Copilot.init(mockConfig);
             const instance = Copilot.getInstance();
-            const step: ExecutionStep = { type: 'action', value: 'tap button' };
+            const intent = 'tap button';
 
-            await instance.perform(step);
+            await instance.perform(intent);
 
-            expect(StepPerformer.prototype.perform).toHaveBeenCalledWith(step, []);
+            expect(StepPerformer.prototype.perform).toHaveBeenCalledWith(intent, []);
         });
 
         it('should return the result from StepPerformer.perform', async () => {
             (StepPerformer.prototype.perform as jest.Mock).mockResolvedValue(true);
             Copilot.init(mockConfig);
             const instance = Copilot.getInstance();
+            const intent = 'tap button';
 
-            const result = await instance.perform({ type: 'action', value: 'tap button' });
+            const result = await instance.perform(intent);
 
             expect(result).toBe(true);
         });
 
-        it('should accumulate previous steps', async () => {
+        it('should accumulate previous intents', async () => {
             Copilot.init(mockConfig);
             const instance = Copilot.getInstance();
-            const step1: ExecutionStep = { type: 'action', value: 'tap button 1' };
-            const step2 : ExecutionStep = { type: 'action', value: 'tap button 2' };
+            const intent1 = 'tap button 1';
+            const intent2 = 'tap button 2';
 
-            await instance.perform(step1);
-            await instance.perform(step2);
+            await instance.perform(intent1);
+            await instance.perform(intent2);
 
-            expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(step2, [step1]);
+            expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(intent2, [intent1]);
         });
     });
 
     describe('reset', () => {
-        it('should clear previous steps', async () => {
+        it('should clear previous intents', async () => {
             Copilot.init(mockConfig);
             const instance = Copilot.getInstance();
-            const step1: ExecutionStep = { type: 'action', value: 'tap button 1' };
-            const step2: ExecutionStep = { type: 'action', value: 'tap button 2' };
+            const intent1 = 'tap button 1';
+            const intent2 = 'tap button 2';
 
-            await instance.perform(step1);
+            await instance.perform(intent1);
             instance.reset();
-            await instance.perform(step2);
+            await instance.perform(intent2);
 
-            expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(step2, []);
+            expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(intent2, []);
         });
     });
 });

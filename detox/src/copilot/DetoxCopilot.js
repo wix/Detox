@@ -25,12 +25,8 @@ class DetoxCopilot {
     copilot.reset();
   }
 
-  act(action) {
-    return copilot.act(action);
-  }
-
-  assert(assertion) {
-    return copilot.assert(assertion);
+  perform(intent) {
+    return copilot.perform(intent);
   }
 }
 

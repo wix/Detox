@@ -1,6 +1,6 @@
 import copilot from "@/index";
 import { Copilot } from "@/Copilot";
-import {PromptHandler, TestingFrameworkDriver} from "@/types";
+import { PromptHandler, TestingFrameworkDriver } from "@/types";
 
 describe('Integration', () => {
     let mockFrameworkDriver: jest.Mocked<TestingFrameworkDriver>;
@@ -12,11 +12,9 @@ describe('Integration', () => {
         mockFrameworkDriver = {
             captureSnapshotImage: jest.fn().mockResolvedValue('mock_snapshot'),
             captureViewHierarchyString: jest.fn().mockResolvedValue('<view><button>Login</button></view>'),
-            availableAPI: {
+            apiCatalog: {
                 context: {},
-                matchers: [],
-                actions: [],
-                assertions: []
+                categories: []
             }
         };
 
@@ -24,36 +22,36 @@ describe('Integration', () => {
             runPrompt: jest.fn(),
             isSnapshotImageSupported: jest.fn().mockReturnValue(true)
         };
+    });
 
-        copilot.init({
-            frameworkDriver: mockFrameworkDriver,
-            promptHandler: mockPromptHandler
-        });
+    afterEach(() => {
+        // Reset Copilot instance after each test to ensure a clean state
+        Copilot['instance'] = undefined;
     });
 
     describe('Initialization', () => {
-        beforeEach(() => {
-            // Reset Copilot instance before each test
-            Copilot['instance'] = undefined;
-        });
-
-        it('should synchronously throw an error when act is called before initialization', async () => {
-            expect(() => copilot.act('Some action')).toThrow();
-        });
-
-        it('should synchronously throw an error when expect is called before initialization', async () => {
-            expect(() => copilot.act('Some assertion')).toThrow();
+        it('should synchronously throw an error when perform is called before initialization', () => {
+            expect(() => copilot.perform('Some action')).toThrowError(
+                'Copilot has not been initialized. Please call the `init()` method before using it.'
+            );
         });
     });
 
-    describe('act method', () => {
+    describe('perform method', () => {
+        beforeEach(() => {
+            copilot.init({
+                frameworkDriver: mockFrameworkDriver,
+                promptHandler: mockPromptHandler
+            });
+        });
+
         it('should successfully perform an action', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('// No operation');
 
-            await expect(copilot.act('Tap on the login button')).resolves.not.toThrow();
+            await expect(copilot.perform('Tap on the login button')).resolves.not.toThrow();
 
             expect(mockFrameworkDriver.captureSnapshotImage).toHaveBeenCalled();
-            expect(mockFrameworkDriver.captureViewHierarchyString).toHaveBeenCalledWith();
+            expect(mockFrameworkDriver.captureViewHierarchyString).toHaveBeenCalled();
 
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining('Tap on the login button'),
@@ -61,57 +59,63 @@ describe('Integration', () => {
             );
         });
 
-        it('should handle errors during action execution', async () => {
-            mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
-
-            await expect(copilot.act('Tap on a non-existent button')).rejects.toThrow(new Error('Element not found'));
-        });
-    });
-
-    describe('expect method', () => {
-        it('should successfully perform an expectation', async () => {
+        it('should successfully perform an assertion', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('// No operation');
 
-            await copilot.assert('The welcome message should be visible');
+            await expect(copilot.perform('The welcome message should be visible')).resolves.not.toThrow();
 
             expect(mockFrameworkDriver.captureSnapshotImage).toHaveBeenCalled();
             expect(mockFrameworkDriver.captureViewHierarchyString).toHaveBeenCalled();
+
             expect(mockPromptHandler.runPrompt).toHaveBeenCalledWith(
                 expect.stringContaining('The welcome message should be visible'),
                 'mock_snapshot'
             );
         });
 
-        it('should handle errors during expectation execution', async () => {
+        it('should handle errors during action execution', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
 
-            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(new Error('Element not found'));
+            await expect(copilot.perform('Tap on a non-existent button')).rejects.toThrow('Element not found');
+        });
+
+        it('should handle errors during assertion execution', async () => {
+            mockPromptHandler.runPrompt.mockResolvedValue('throw new Error("Element not found");');
+
+            await expect(copilot.perform('The welcome message should be visible')).rejects.toThrow('Element not found');
         });
 
         it('should handle errors during code evaluation', async () => {
             mockPromptHandler.runPrompt.mockResolvedValue('foobar');
 
-            await expect(copilot.assert('The welcome message should be visible')).rejects.toThrow(new Error('foobar is not defined'));
+            await expect(copilot.perform('The welcome message should be visible')).rejects.toThrow(/foobar is not defined/);
         });
     });
 
     describe('error handling', () => {
+        beforeEach(() => {
+            copilot.init({
+                frameworkDriver: mockFrameworkDriver,
+                promptHandler: mockPromptHandler
+            });
+        });
+
         it('should throw error when PromptHandler fails', async () => {
             mockPromptHandler.runPrompt.mockRejectedValue(new Error('API error'));
 
-            await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
+            await expect(copilot.perform('Perform action')).rejects.toThrow('API error');
         });
 
         it('should throw error when captureSnapshotImage() fails', async () => {
-            mockFrameworkDriver.captureSnapshotImage.mockRejectedValue(new Error('API error'));
+            mockFrameworkDriver.captureSnapshotImage.mockRejectedValue(new Error('Snapshot error'));
 
-            await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
+            await expect(copilot.perform('Perform action')).rejects.toThrow('Snapshot error');
         });
 
         it('should throw error when captureViewHierarchyString() fails', async () => {
-            mockFrameworkDriver.captureViewHierarchyString.mockRejectedValue(new Error('API error'));
+            mockFrameworkDriver.captureViewHierarchyString.mockRejectedValue(new Error('Hierarchy error'));
 
-            await expect(copilot.act('Perform action')).rejects.toThrow(/API error/);
+            await expect(copilot.perform('Perform action')).rejects.toThrow('Hierarchy error');
         });
     });
 });
