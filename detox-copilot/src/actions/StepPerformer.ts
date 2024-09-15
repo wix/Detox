@@ -17,7 +17,7 @@ export class StepPerformer {
         private promptHandler: PromptHandler,
         cacheFileName: string = 'step_performer_cache.json',
     ) {
-        this.cacheFilePath = path.resolve(process.cwd(), cacheFileName);
+        this.cacheFilePath = path.resolve(process.cwd(), 'copilot-cache', cacheFileName);
     }
 
     private getCacheKey(step: string, previous: string[]): string {

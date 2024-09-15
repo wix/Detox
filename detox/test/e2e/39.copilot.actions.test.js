@@ -1,4 +1,5 @@
 const PromptHandler = require('./copilot/PromptHandler');
+const jestExpect = require('expect').default;
 
 describe('Copilot Actions', () => {
   beforeAll(async () => {
@@ -93,10 +94,8 @@ describe('Copilot Actions', () => {
   });
 
   it('should expect text fields to be focused after tap but not before', async () => {
-    // This is not really the 1st text field in the screen, only in this context.
+    // This is not really the 1st / 2nd text fields in the screen, only in the test context.
     await copilot.perform('The text field UniqueId005 (call it "the first") does not have focus');
-
-    // Same :)
     await copilot.perform('Text input UniqueId006 (call it "the second") is not currently focused');
 
     // We expect the first input to be the one mentioned in the first step.
@@ -108,5 +107,17 @@ describe('Copilot Actions', () => {
 
     await copilot.perform('The first text input has lost focus');
     await copilot.perform('2nd text field is now the active input');
+  });
+
+  it('should assert on invalid intent', async () => {
+    await jestExpect(async () =>
+      await copilot.perform('Tap the "BLABLA" button')
+    ).rejects.toThrowError();
+  });
+
+  it('should assert on ambiguous intent', async () => {
+    await jestExpect(async () =>
+      await copilot.perform('Hello world')
+    ).rejects.toThrowError();
   });
 });
