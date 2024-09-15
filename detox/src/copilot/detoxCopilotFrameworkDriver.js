@@ -49,7 +49,7 @@ const detoxCopilotFrameworkDriver = {
             guidelines: [
               'If the target element is not accessible, interact with its container or the most relevant parent element.',
               'Long-press should be called with the relevant params only, e.g. `longPress(2000)`, `longPress({ x: 100, y: 200 })` or `longPress({ x: 100, y: 200 }, 2000)`.',
-            ]
+            ],
           },
           {
             signature: 'multiTap(times: number)',
@@ -115,7 +115,10 @@ const detoxCopilotFrameworkDriver = {
             signature: 'swipe(direction: string, speed?: string, normalizedOffset?: number)',
             description: 'Simulates a swipe on the element.',
             example: "await element(by.id('scrollView')).swipe('up', 'slow', 0.5);",
-            guidelines: ['Specify direction as "up", "down", "left", or "right".'],
+            guidelines: [
+              'Specify direction as "up", "down", "left", or "right".',
+              'Speed can be "fast", "slow". default is "fast".',
+            ],
           },
           {
             signature: 'setColumnToValue(column: number, value: string)',
@@ -199,6 +202,56 @@ const detoxCopilotFrameworkDriver = {
             description: 'Asserts that the element has the specified value.',
             example: "await expect(element(by.id('slider'))).toHaveValue('0.5');",
             guidelines: ['Use this to check the value of an element.'],
+          },
+          {
+            signature: 'toBeFocused()',
+            description: 'Asserts that the element is focused.',
+            example: "await expect(element(by.id('emailInput'))).toBeFocused();",
+            guidelines: ['Use this to check if an element is currently focused.'],
+          },
+          {
+            signature: 'toHaveLabel(label: string)',
+            description: 'Asserts that the element has the specified accessibility label.',
+            example: "await expect(element(by.id('submitButton'))).toHaveLabel('Submit');",
+            guidelines: [
+              'Use this to check the accessibility label of an element. Note that in React Native, the `accessibilityLabel` prop may behave differently on iOS and Android.',
+            ],
+          },
+          {
+            signature: 'toHaveId(id: string)',
+            description: 'Asserts that the element has the specified accessibility identifier.',
+            example: "await expect(element(by.text('Submit'))).toHaveId('submitButton');",
+            guidelines: ['Use this to check the testID/accessibility identifier of an element.'],
+          },
+          {
+            signature: 'toHaveSliderPosition(normalizedPosition: number, tolerance?: number)',
+            description:
+              'Asserts that the slider element has the specified normalized position [0, 1], within an optional tolerance.',
+            example:
+              "await expect(element(by.id('slider'))).toHaveSliderPosition(0.75);\nawait expect(element(by.id('slider'))).toHaveSliderPosition(0.3113, 0.00001);",
+            guidelines: ['Use this to verify the slider\'s position. Normalized position is between 0 and 1.'],
+          },
+          {
+            signature: 'toHaveToggleValue(value: boolean)',
+            description: 'Asserts that a toggle-able element is on/checked or off/unchecked.',
+            example:
+              "await expect(element(by.id('switch'))).toHaveToggleValue(true);\nawait expect(element(by.id('checkbox'))).toHaveToggleValue(false);",
+            guidelines: ['Use this to check the state of toggleable elements.'],
+          },
+          {
+            signature: 'withTimeout(timeout: number)',
+            description:
+              'Waits until the expectation is resolved for the specified amount of time.',
+            example:
+              "await waitFor(element(by.id('bigButton'))).toBeVisible().withTimeout(2000);",
+            guidelines: ['Use this to set a custom timeout for an expectation.'],
+          },
+          {
+            signature: 'not',
+            description: 'Negates the expectation.',
+            example:
+              "await expect(element(by.id('tinyButton'))).not.toBeVisible();\nawait expect(element(by.id('tinyButton'))).not.toExist();",
+            guidelines: ["Use 'not' to negate an expectation."],
           },
         ],
       },

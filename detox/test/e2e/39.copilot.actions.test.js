@@ -56,33 +56,33 @@ describe('Copilot Actions', () => {
   });
 
   it('should clear text in an element', async () => {
-    await copilot.perform('Remove all text from the clearable text input');
+    await copilot.perform('Remove all text from the text input that already has text in it');
     await copilot.perform('The text "Clear Working!!!" appears on the screen');
   });
 
   it('should replace text in an element', async () => {
-    await copilot.perform('Substitute the existing text with "replaced_text" in the editable field');
+    await copilot.perform('Substitute the existing text with "replaced_text" in the test_id="UniqueId006" field');
     await copilot.perform('The message "Replace Working!!!" is shown');
   });
 
   it('should swipe down until pull to reload is triggered', async () => {
-    await copilot.perform('Drag the scrollable area downwards until the refresh is activated');
+    await copilot.perform('Swipe fast the scrollable area ScrollView799 downwards until the refresh is activated');
     await copilot.perform('The text "PullToReload Working!!!" becomes visible');
   });
 
   it('should swipe vertically', async () => {
     await copilot.perform('The element with text "Text1" can be seen');
-    await copilot.perform('Slide the vertical scrollable area upwards');
+    await copilot.perform('Swipe the vertical scrollable area ScrollView161 upwards');
     await copilot.perform('The "Text1" element is no longer in view');
-    await copilot.perform('Scroll the vertical area back down');
+    await copilot.perform('Swipe the vertical area back down');
     await copilot.perform('"Text1" has reappeared on the screen');
   });
 
   it('should swipe horizontally', async () => {
     await copilot.perform('The "HText1" element is present');
-    await copilot.perform('Swipe the horizontal scrollable area towards the left');
+    await copilot.perform('Swipe the horizontal scrollable area ScrollViewH towards the left');
     await copilot.perform('"HText1" is not in the visible area');
-    await copilot.perform('Slide the horizontal scroll to the right');
+    await copilot.perform('Slide the horizontal scroll back to the right');
     await copilot.perform('The "HText1" element has come back into view');
   });
 
@@ -93,13 +93,20 @@ describe('Copilot Actions', () => {
   });
 
   it('should expect text fields to be focused after tap but not before', async () => {
-    await copilot.perform('The first text field does not have focus');
-    await copilot.perform('Text input 2 is not currently focused');
+    // This is not really the 1st text field in the screen, only in this context.
+    await copilot.perform('The text field UniqueId005 (call it "the first") does not have focus');
+
+    // Same :)
+    await copilot.perform('Text input UniqueId006 (call it "the second") is not currently focused');
+
+    // We expect the first input to be the one mentioned in the first step.
     await copilot.perform('Tap to focus on the first text field');
-    await copilot.perform('Text field 1 now has the focus');
+
+    await copilot.perform('First text field now has the focus');
     await copilot.perform('The second text input remains unfocused');
     await copilot.perform('Touch the second text field to give it focus');
+
     await copilot.perform('The first text input has lost focus');
-    await copilot.perform('Text field 2 is now the active input');
+    await copilot.perform('2nd text field is now the active input');
   });
 });
