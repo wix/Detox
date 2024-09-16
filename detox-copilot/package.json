@@ -8,7 +8,7 @@
     "ai"
   ],
   "author": "Asaf Korem <asaf.korem@gmail.com>",
-  "homepage": "https://github.com/wix/Detox/detox-copilot",
+  "homepage": "https://github.com/wix/Detox/tree/master/detox-copilot",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
