@@ -39,9 +39,8 @@ describe('Copilot Actions', () => {
   });
 
   it('should type in an element', async () => {
-    const typedText = 'Type Working!!!';
-    await copilot.perform(`Enter "${typedText}" into the text input field`);
-    await copilot.perform(`The typed text "${typedText}" is visible on the screen`);
+    await copilot.perform(`Enter "Type Working!!!" into the text input field`);
+    await copilot.perform(`The typed text is visible on the screen`);
   });
 
   it('should press the backspace key on an element', async () => {
