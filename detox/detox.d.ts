@@ -1294,6 +1294,7 @@ declare global {
             /**
              * Initializes the Copilot with the given prompt handler.
              * Must be called before any other Copilot methods.
+             * @note Copilot APIs are still in experimental phase and are subject to changes in the near future.
              * @param promptHandler The prompt handler to use.
              */
             init: (promptHandler: DetoxCopilotPromptHandler) => void;
