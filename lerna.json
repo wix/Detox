@@ -26,6 +26,7 @@
         "detox-demo-native-android",
         "detox-demo-native-ios",
         "detox-demo-react-native",
+        "detox-copilot",
         "detox-test",
         "generation",
         "."
