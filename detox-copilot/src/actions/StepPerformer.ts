@@ -42,7 +42,7 @@ export class StepPerformer {
     private saveCacheToFile(): void {
         try {
             const json = Object.fromEntries(this.cache);
-            fs.writeFileSync(this.cacheFilePath, JSON.stringify(json, null, 2), 'utf-8');
+            fs.writeFileSync(this.cacheFilePath, JSON.stringify(json, null, 2), { flag: 'w+' });
         } catch (error) {
             console.error('Error saving cache to file:', error);
         }
