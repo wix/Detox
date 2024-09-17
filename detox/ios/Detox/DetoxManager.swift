@@ -63,9 +63,11 @@ public class DetoxManager : NSObject, WebSocketDelegate {
 
     @objc
     private func appDidEnterBackground(_ note: Notification) {
-        var bgTask : UIBackgroundTaskIdentifier! = nil
+        var bgTask : UIBackgroundTaskIdentifier = .invalid
         bgTask = UIApplication.shared.beginBackgroundTask(withName: "DetoxBackground") {
-            UIApplication.shared.endBackgroundTask(bgTask)
+            UIApplication.shared.endBackgroundTask(bgTask)            
+            bgTask = .invalid
+
         }
     }
 
@@ -390,17 +392,17 @@ public class DetoxManager : NSObject, WebSocketDelegate {
                 return
 
             case "generateViewHierarchyXml":
-                let recursiveDescription = ViewHierarchyGenerator.generateXml(
-                    injectingAccessibilityIdentifiers: params["shouldInjectTestIds"] as! Bool
-                )
-
-                self.webSocket.sendAction(
-                    "generateViewHierarchyXmlResult",
-                    params: ["viewHierarchy": recursiveDescription],
-                    messageId: messageId
-                )
-
-
+                Task {
+                    let recursiveDescription = await ViewHierarchyGenerator.generateXml(
+                        injectingAccessibilityIdentifiers: params["shouldInjectTestIds"] as! Bool
+                    )
+                    
+                    self.webSocket.sendAction(
+                        "generateViewHierarchyXmlResult",
+                        params: ["viewHierarchy": recursiveDescription],
+                        messageId: messageId
+                    )
+                }
             case "captureViewHierarchy":
                 let url = URL(fileURLWithPath: params["viewHierarchyURL"] as! String)
                 precondition(url.lastPathComponent.hasSuffix(".viewhierarchy"), "Provided view Hierarchy URL is not in the expected format, ending with “.viewhierarchy”")

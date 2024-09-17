@@ -53,6 +53,13 @@ describe('Device', () => {
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-with-test-id-injection`);
   });
 
+  it('generateViewHierarchyXml() - should generate xml for web view', async () => {
+    await device.launchApp({newInstance: true});
+    await element(by.text('WebView')).tap();
+    const hierarchy = await device.generateViewHierarchyXml();
+    await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-web-view`);
+  });
+
   // // Passing on iOS, not implemented on Android
   it(':ios: launchApp in a different language', async () => {
     let languageAndLocale = {
