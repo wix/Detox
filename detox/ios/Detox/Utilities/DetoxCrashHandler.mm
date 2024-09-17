@@ -21,6 +21,11 @@
 __attribute__ ((visibility ("hidden")))
 OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString* other)
 {
+    // This is a workaround to avoid Detox error handling when app crashes, for special app-recovery tests
+    if([NSUserDefaults.standardUserDefaults boolForKey:@"detoxDisableHandleCrash"]) {
+        return;
+    }
+
 	NSNumber* threadNumber = [[NSThread currentThread] valueForKeyPath:@"private.seqNum"];
 	NSString* queueName = @"";
 #pragma clang diagnostic push
