@@ -7,8 +7,7 @@ jest.mock('detox-copilot', () => ({
   default: {
     init: jest.fn(),
     reset: jest.fn(),
-    act: jest.fn(),
-    assert: jest.fn(),
+    perform: jest.fn(),
   },
 }));
 
@@ -51,21 +50,12 @@ describe('DetoxCopilot', () => {
     });
   });
 
-  describe('act', () => {
-    it('should call copilot.act with the given action', async () => {
-      const action = 'test action';
-      await detoxCopilot.act(action);
+  describe('perform', () => {
+    it('should call copilot.perform with the given intent', async () => {
+      const intent = 'test something';
+      await detoxCopilot.perform(intent);
 
-      expect(copilot.act).toHaveBeenCalledWith(action);
-    });
-  });
-
-  describe('assert', () => {
-    it('should call copilot.assert with the given assertion', async () => {
-      const assertion = 'test assertion';
-      await detoxCopilot.assert(assertion);
-
-      expect(copilot.assert).toHaveBeenCalledWith(assertion);
+      expect(copilot.perform).toHaveBeenCalledWith(intent);
     });
   });
 });
