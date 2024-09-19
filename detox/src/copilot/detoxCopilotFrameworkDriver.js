@@ -1,8 +1,11 @@
+// eslint-disable-next-line node/no-extraneous-require
+const jestExpect = require('expect').default;
+
 const detox = require('../..');
 
 const detoxCopilotFrameworkDriver = {
   apiCatalog: {
-    context: detox,
+    context: { ...detox, jestExpect },
     categories: [
       {
         title: 'Matchers',
@@ -144,11 +147,41 @@ const detoxCopilotFrameworkDriver = {
             example: "await element(by.id('PinchableScrollView')).pinch(1.1);",
             guidelines: ['Use scale < 1 to zoom out, > 1 to zoom in.'],
           },
+
           {
             signature: 'getAttributes()',
-            description: 'Retrieves various attributes of the element.',
-            example: "const attributes = await element(by.id('textField')).getAttributes();",
-            guidelines: ['Use this to get properties like text, value, visibility, etc., for assertions or debugging.'],
+            description: `
+    Retrieves various attributes of the element.
+
+    **Attributes include:**
+    - **Common**: text (string), label (string), placeholder (string), enabled (boolean), identifier (string), visible (boolean), value (string | number | boolean), frame (object: x (number), y (number), width (number), height (number))
+    - **iOS-only**: activationPoint (object: x (number), y (number)), normalizedActivationPoint (object: x (number), y (number)), hittable (boolean), elementFrame (object: x (number), y (number), width (number), height (number)), elementBounds (object: x (number), y (number), width (number), height (number)), safeAreaInsets (object: top (number), bottom (number), left (number), right (number)), elementSafeBounds (object: x (number), y (number), width (number), height (number)), date (Date), normalizedSliderPosition (number), contentOffset (object: x (number), y (number)), contentInset (object: top (number), bottom (number), left (number), right (number)), adjustedContentInset (object: top (number), bottom (number), left (number), right (number)))
+    - **Android-only**: visibility (string: 'visible', 'invisible', 'gone'), width (number) *(deprecated)*, height (number) *(deprecated)*, elevation (number), alpha (number), focused (boolean), textSize (number), length (number)
+
+    *Note:* Attributes may vary based on the platform and element type. If an attribute's value is null or cannot be computed, the key might be absent or contain an empty string.
+  `,
+            example: `
+    // Retrieve attributes of an element
+    const attributes = await element(by.text('Tap Me')).getAttributes();
+    jestExpect(attributes.text).toBe('Tap Me');
+
+    // Numerical assertions with allowed error range
+    jestExpect(attributes.frame.x).toBeCloseTo(100, 1);
+    jestExpect(attributes.frame.y).toBeCloseTo(200, 1);
+
+    // Platform-specific attribute check
+    if (device.getPlatform() === 'ios') {
+      jestExpect(attributes.hittable).toBe(true);
+    } else if (device.getPlatform() === 'android') {
+      jestExpect(attributes.visibility).toBe('visible');
+    }
+  `,
+            guidelines: [
+              'Use this to get properties like text, value, visibility, etc., for assertions or debugging. But only if the regular matchers or assertions are not sufficient.',
+              'Note that numerical values like position or size may not be very accurate; consider allowing a small error range in assertions.',
+              'Check the platform using `device.getPlatform()` before using platform-specific attributes.',
+              'Attributes include text, label, placeholder, enabled, identifier, visible, value, frame (with x, y, width, height), and platform-specific attributes.',
+            ],
           },
           {
             signature: 'takeScreenshot(name: string)',
@@ -255,6 +288,22 @@ const detoxCopilotFrameworkDriver = {
           },
         ],
       },
+      {
+        title: 'Utilities',
+        items: [
+          {
+            signature: 'jestExpect',
+            description: 'Jest expect utility for jest-assisted assertions. It is already imported in the environment.',
+            example: `
+    // Use jestExpect for assertions
+    jestExpect(2 + 2).toBe(4);
+    jestExpect('hello').toBe('hello');
+    jestExpect(true).toBeTruthy();
+  `,
+            guidelines: ['Use jestExpect for assertions in tests, only when the default expect is not helpful for the specific case.'],
+          },
+        ],
+      }
     ],
   },
 
