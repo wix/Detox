@@ -30,11 +30,14 @@ import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
 import DragNDropScreen  from './DragNDropScreen';
+import LoginDragDropScreen from "./LoginScreen";
+import ShapeMatchGameScreen from "./ShapeMatchGameScreen";
 import SystemDialogsScreen from "./SystemDialogsScreen";
 import AlertScreen from "./AlertScreen";
 
 export {
   SanityScreen,
+  ShapeMatchGameScreen,
   MatchersScreen,
   ActionsScreen,
   IntegActionsScreen,
@@ -68,4 +71,5 @@ export {
   DragNDropScreen,
   SystemDialogsScreen,
   AlertScreen,
+  LoginDragDropScreen
 };

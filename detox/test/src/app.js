@@ -117,6 +117,7 @@ export default class example extends Component {
 
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
+        {this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}
         {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 

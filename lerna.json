@@ -4,7 +4,6 @@
   "packages": [
     "detox",
     "detox-cli",
-    "detox-copilot",
     "detox/test",
     "examples/demo-native-android",
     "examples/demo-native-ios",
@@ -26,7 +25,6 @@
         "detox-demo-native-android",
         "detox-demo-native-ios",
         "detox-demo-react-native",
-        "detox-copilot",
         "detox-test",
         "generation",
         "."
