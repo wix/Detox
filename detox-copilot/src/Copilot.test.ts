@@ -77,7 +77,7 @@ describe('Copilot', () => {
             const instance = Copilot.getInstance();
             const intent = 'tap button';
 
-            await instance.perform(intent);
+            await instance.performStep(intent);
 
             expect(StepPerformer.prototype.perform).toHaveBeenCalledWith(intent, []);
         });
@@ -88,7 +88,7 @@ describe('Copilot', () => {
             const instance = Copilot.getInstance();
             const intent = 'tap button';
 
-            const result = await instance.perform(intent);
+            const result = await instance.performStep(intent);
 
             expect(result).toBe(true);
         });
@@ -99,8 +99,8 @@ describe('Copilot', () => {
             const intent1 = 'tap button 1';
             const intent2 = 'tap button 2';
 
-            await instance.perform(intent1);
-            await instance.perform(intent2);
+            await instance.performStep(intent1);
+            await instance.performStep(intent2);
 
             expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(intent2, [intent1]);
         });
@@ -113,9 +113,9 @@ describe('Copilot', () => {
             const intent1 = 'tap button 1';
             const intent2 = 'tap button 2';
 
-            await instance.perform(intent1);
+            await instance.performStep(intent1);
             instance.reset();
-            await instance.perform(intent2);
+            await instance.performStep(intent2);
 
             expect(StepPerformer.prototype.perform).toHaveBeenLastCalledWith(intent2, []);
         });

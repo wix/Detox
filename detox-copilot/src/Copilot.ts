@@ -56,7 +56,7 @@ export class Copilot {
      * Performs a test step based on the given prompt.
      * @param step The step describing the operation to perform.
      */
-    async perform(step: string): Promise<any> {
+    async performStep(step: string): Promise<any> {
         const result = await this.stepPerformer.perform(step, this.previousSteps);
         this.didPerformStep(step);
 

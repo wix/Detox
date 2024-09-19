@@ -12,6 +12,6 @@ It provides APIs to perform actions and assertions within your tests while inter
 We will provide a high-level overview of the API that Detox Copilot will expose, this is a work in progress and the final API may differ. 
 We will also provide a more extensive documentation once the API is finalized.
 
-- `init(config)`: Initializes the Copilot with the provided configuration, must be called before using Copilot, e.g. `copilot.init(...)`
-- `reset()`: Resets the Copilot by clearing the previous steps, e.g. `copilot.reset()`
-- `perform(intent)`: Performs an operation with semantic intent, e.g. `copilot.perform('tap on the button')` 
+- `init(config)`: Initializes the Copilot with the provided configuration, must be called before using Copilot. The configuration includes the LLM service endpoint and the framework's driver.
+- `reset()`: Resets the Copilot by clearing the previous steps. This is required to start a new test case with a clean context.
+- `perform(steps)`: Performs a testing operation or series of testing operations in the app based on the given step intents (string or array of strings).

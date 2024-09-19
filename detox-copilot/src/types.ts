@@ -17,13 +17,18 @@ export interface CopilotFacade {
     reset: () => void;
 
     /**
-     * Performs a testing operation in the app based on the given `intent`.
+     * Performs a testing operation or series of testing operations in the app based on the given `steps`.
+     * @returns The result of the operation(s), which can be a single value or an array of values for each step.
      * @example Tap on the login button
      * @example Scroll down to the 7th item in the Events list
      * @example The welcome message should be visible
      * @example The welcome message text should be "Hello, world!"
+     * @example [
+     *    'Tap on the login button',
+     *    'A login form should be visible',
+     * ]
      */
-    perform: (intent: string) => Promise<any>;
+    perform: (steps: string | string[]) => Promise<any | any[]>;
 }
 
 /**
