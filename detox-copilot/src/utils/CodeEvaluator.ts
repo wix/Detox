@@ -10,7 +10,7 @@ export class CodeEvaluator {
         const codeBlock = this.extractCodeBlock(code);
 
         // todo: this is a temp log for debugging, we'll need to pass a logging mechanism from the framework.
-        console.log("\x1b[36m%s\x1b[0m", `Copilot evaluating code block: \`${codeBlock}\`\n`);
+        console.log("\x1b[90m%s\x1b[0m\x1b[93m%s\x1b[0m", "Copilot evaluating code block: ", `\`${codeBlock}\`\n`);
 
         try {
             const contextValues = Object.values(context);

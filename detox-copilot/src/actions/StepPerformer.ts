@@ -49,7 +49,8 @@ export class StepPerformer {
     }
 
     async perform(step: string, previous: string[] = []): Promise<any> {
-        console.log('\x1b[36m%s\x1b[0m', `Copilot performing: "${step}"`);
+        // todo: replace with the user's logger
+        console.log("\x1b[90m%s\x1b[0m%s", "Copilot performing: ", `"${step}"`);
 
         // Load cache before every operation
         this.loadCacheFromFile();
