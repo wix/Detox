@@ -71,6 +71,7 @@ export class Copilot {
         this.previousSteps = [];
     }
 
+    // todo: cache the previous steps' generated test code
     private didPerformStep(step: string): void {
         this.previousSteps = [...this.previousSteps, step];
     }
