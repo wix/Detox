@@ -1,7 +1,8 @@
 const PromptHandler = require('./copilot/PromptHandler');
+const {describeForCopilotEnv} = require("./utils/custom-describes");
 const jestExpect = require('expect').default;
 
-describe('Copilot Actions', () => {
+describeForCopilotEnv('Copilot Actions', () => {
   beforeAll(async () => {
     copilot.init(new PromptHandler());
 

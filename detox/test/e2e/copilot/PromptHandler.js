@@ -9,13 +9,13 @@ require('dotenv').config({
 class PromptHandler {
   constructor() {
     this.config = {
-      appID: process.env.APP_ID,
-      appSecret: process.env.APP_SECRET,
-      instanceId: process.env.INSTANCE_ID,
-      serverlessEndpoint: process.env.SERVERLESS_ENDPOINT,
-      tokenEndpoint: process.env.TOKEN_ENDPOINT,
-      uploadUrlEndpoint: process.env.UPLOAD_URL_ENDPOINT,
-      promptId: process.env.PROMPT_ID,
+      appID: process.env.COPILOT_APP_ID,
+      appSecret: process.env.COPILOT_APP_SECRET,
+      instanceId: process.env.COPILOT_INSTANCE_ID,
+      serverlessEndpoint: process.env.COPILOT_SERVERLESS_ENDPOINT,
+      tokenEndpoint: process.env.COPILOT_TOKEN_ENDPOINT,
+      uploadUrlEndpoint: process.env.COPILOT_UPLOAD_URL_ENDPOINT,
+      promptId: process.env.COPILOT_PROMPT_ID,
     };
 
     const emptyValues = Object.values(this.config).some(value => !value);

@@ -1,6 +1,7 @@
 const PromptHandler = require('./copilot/PromptHandler');
+const {describeForCopilotEnv} = require("./utils/custom-describes");
 
-describe('Shape Match Game Screen', () => {
+describeForCopilotEnv('Shape Match Game Screen', () => {
   beforeAll(async () => {
     await copilot.init(new PromptHandler());
     await copilot.perform('Launch the app');
