@@ -3,19 +3,53 @@ package com.wix.detox.espresso.hierarchy
 import android.util.Xml
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.TextView
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import org.xmlpull.v1.XmlSerializer
 import java.io.StringWriter
+import kotlin.coroutines.resume
+
+
+private const val GET_HTML_SCRIPT = """
+    const blacklistedTags = ['script', 'style', 'head', 'meta'];
+    const blackListedTagsSelector = blacklistedTags.join(',');
+
+    (function() {
+    // Clone the entire document
+    var clonedDoc = document.documentElement.cloneNode(true);
+
+    // Remove all <script> and <style> tags from the cloned document
+    var scripts = clonedDoc.querySelectorAll(blackListedTagsSelector);
+    scripts.forEach(function(script) {
+        script.remove();
+    });
+
+    // Create an instance of XMLSerializer
+    var serializer = new XMLSerializer();
+
+    // Serialize the cloned DOM to a string
+    var serializedHtml = serializer.serializeToString(clonedDoc);
+
+    // Return the serialized HTML as a string
+    return serializedHtml;
+})();
+"""
 
 object ViewHierarchyGenerator {
     @JvmStatic
     fun generateXml(shouldInjectTestIds: Boolean): String {
-        val rootViews = RootViewsHelper.getRootViews()
-        return generateXmlFromViews(rootViews, shouldInjectTestIds)
+        return runBlocking {
+            val rootViews = RootViewsHelper.getRootViews()
+            generateXmlFromViews(rootViews, shouldInjectTestIds)
+        }
     }
 
-    private fun generateXmlFromViews(rootViews: List<View?>?, shouldInjectTestIds: Boolean): String {
+    private suspend fun generateXmlFromViews(rootViews: List<View?>?, shouldInjectTestIds: Boolean): String {
         return StringWriter().use { writer ->
             val serializer = Xml.newSerializer().apply {
                 setOutput(writer)
@@ -39,7 +73,7 @@ object ViewHierarchyGenerator {
         }
     }
 
-    private fun serializeViewHierarchy(
+    private suspend fun serializeViewHierarchy(
         view: View,
         serializer: XmlSerializer,
         shouldInjectTestIds: Boolean,
@@ -48,18 +82,57 @@ object ViewHierarchyGenerator {
         serializer.startTag("", view.javaClass.simpleName)
         serializeViewAttributes(view, serializer, shouldInjectTestIds, indexPath)
 
-        if (view is ViewGroup) {
-            for (i in 0 until view.childCount) {
-                serializeViewHierarchy(
-                    view.getChildAt(i),
-                    serializer,
-                    shouldInjectTestIds,
-                    indexPath + i
-                )
-            }
+        when (view) {
+            is WebView -> serializeWebView(view, serializer)
+            is ViewGroup -> serializeViewGroupChildren(view, serializer, shouldInjectTestIds, indexPath)
         }
 
         serializer.endTag("", view.javaClass.simpleName)
+    }
+
+    private suspend fun serializeWebView(
+        webView: WebView,
+        serializer: XmlSerializer,
+    ) {
+        val html = getWebViewHtml(webView)
+        serializer.cdsect(html)
+    }
+
+    private suspend fun getWebViewHtml(webView: WebView): String = withContext(Dispatchers.Main) {
+        suspendCancellableCoroutine { cancellableContinuation ->
+            webView.evaluateJavascript(GET_HTML_SCRIPT) { html ->
+                cancellableContinuation.resume(html.unescapeUnicodeString())
+            }
+        }
+    }
+
+    private fun String.unescapeUnicodeString(): String {
+        // Replace all Unicode escape sequences (e.g., \u003C -> <)
+        return this
+            .replace("\\u003C", "<")
+            .replace("\\u003E", ">")
+            .replace("\\u0022", "\"")
+            .replace("\\u0027", "'")
+            .replace("\\u0026", "&")
+            .replace("\\u003D", "=")
+            .replace("\\u002F", "/")
+            .replace("\\n", "\n")
+    }
+
+    private suspend fun serializeViewGroupChildren(
+        view: ViewGroup,
+        serializer: XmlSerializer,
+        shouldInjectTestIds: Boolean,
+        indexPath: List<Int>
+    ) {
+        for (i in 0 until view.childCount) {
+            serializeViewHierarchy(
+                view.getChildAt(i),
+                serializer,
+                shouldInjectTestIds,
+                indexPath + i
+            )
+        }
     }
 
     private fun serializeViewAttributes(

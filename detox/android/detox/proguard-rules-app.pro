@@ -16,6 +16,9 @@
 
 -keep class kotlin.reflect.** { *; }
 -keep class kotlin.coroutines.CoroutineDispatcher { *; }
+-keep class kotlin.coroutines.CoroutineScope { *; }
+-keep class kotlin.coroutines.CoroutineContext { *; }
+-keep class kotlinx.coroutines.BuildersKt { *; }
 -keep class kotlin.jvm.** { *; }
 -keep class kotlin.collections.** { *; }
 -keep class kotlin.text.** { *; }
