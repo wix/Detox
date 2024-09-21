@@ -2,6 +2,8 @@
 describeForCopilotEnv = (description, fn) => {
   if (process.env.COPILOT_IS_ENABLED === 'true') {
     describe(description, fn);
+  } else {
+    describe.skip(description, fn);
   }
 }
 
