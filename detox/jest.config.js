@@ -75,6 +75,7 @@ module.exports = {
     'src/DetoxWorker.js',
     'src/logger/utils/streamUtils.js',
     'src/realms',
+    'src/copilot',
   ],
   resetMocks: true,
   resetModules: true,
