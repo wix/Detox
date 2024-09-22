@@ -10,6 +10,7 @@ import * as Screens from './Screens';
 
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
+const hasCopilotEnv = process.env.COPILOT_IS_ENABLED === 'true';
 
 const { NativeModule } = NativeModules;
 
@@ -117,7 +118,9 @@ export default class example extends Component {
 
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
-        {this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}
+
+        {hasCopilotEnv && this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}
+
         {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
