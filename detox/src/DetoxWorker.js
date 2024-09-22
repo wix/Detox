@@ -2,6 +2,7 @@ const CAF = require('caf');
 const _ = require('lodash');
 
 const Client = require('./client/Client');
+const DetoxCopilot = require('./copilot/DetoxCopilot');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
@@ -58,6 +59,8 @@ class DetoxWorker {
     this.by = null;
     /** @type {Detox.WebFacade} */
     this.web = null;
+    /** @type {Detox.DetoxCopilotFacade} */
+    this.copilot = null;
 
     this._deviceCookie = null;
 
@@ -121,6 +124,8 @@ class DetoxWorker {
       runtimeDeviceFactory,
     } = environmentFactory.createFactories(deviceConfig);
 
+    this.copilot = new DetoxCopilot();
+
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
 
@@ -157,6 +162,7 @@ class DetoxWorker {
       const injectedGlobals = {
         ...matchers,
         device: this.device,
+        copilot: this.copilot,
         detox: this,
       };
 
@@ -219,6 +225,9 @@ class DetoxWorker {
   };
 
   onTestStart = function* (_signal, testSummary) {
+    // Copilot is reset before each test to ensure a clean state
+    this.copilot.resetIfNeeded();
+
     this._validateTestSummary('beforeEach', testSummary);
 
     yield this._dumpUnhandledErrorsIfAny({

@@ -30,11 +30,13 @@ import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
 import DragNDropScreen  from './DragNDropScreen';
+import ShapeMatchGameScreen from "./ShapeMatchGameScreen";
 import SystemDialogsScreen from "./SystemDialogsScreen";
 import AlertScreen from "./AlertScreen";
 
 export {
   SanityScreen,
+  ShapeMatchGameScreen,
   MatchersScreen,
   ActionsScreen,
   IntegActionsScreen,

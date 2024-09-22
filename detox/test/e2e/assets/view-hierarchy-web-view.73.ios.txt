@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewHierarchy>
- <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" visibility="visible" width="<number>">
-  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+ <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" testID="detox_temp_" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" testID="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" testID="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" testID="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
      <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
@@ -38,17 +38,13 @@
             <input type="text" id="fname" name="fname" maxlength="<number>" /><br />
             <input type="submit" id="submit" value="Submit" onclick="document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;" />
         </form>
-
         <h2>Form Results</h2>
         <p>Your first name is: <span id="resultFname">No input yet</span></p>
-
         <h2>Content Editable</h2>
         <div id="contentEditable" class="contentEditable" contenteditable="true">Name: </div>
-
         <h2>Text and link</h2>
         <p>Some text and a <a id="w3link" href="https://www.w3schools.com">link</a>.</p>
         <p id="bottomParagraph" class="specialParagraph">This is a bottom paragraph with class.</p>
-    
 
 </body></html>]]>
              </WKWebView>
@@ -63,6 +59,6 @@
     </RCTRootView>
    </UIDropShadowView>
   </UITransitionView>
-  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
+  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" testID="detox_temp_1" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
  </AnnoyingWindow>
 </ViewHierarchy>
