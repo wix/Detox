@@ -1,197 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewHierarchy>
-	<AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" testID="detox_temp_" visibility="visible" width="<number>">
-		<UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" testID="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-			<UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" testID="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-				<RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" testID="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-					<RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-						<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-							<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-								<RCTSafeAreaView alpha="1.0" class="RCTSafeAreaView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="View7990" visibility="visible" width="<number>" x="<number>" y="<number>">
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me" testID="View7991" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Tap Me" testID="detox_temp_0_0_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Long Press Me 1.5s" testID="detox_temp_0_0_0_0_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Long Press Me 1.5s" testID="detox_temp_0_0_0_0_0_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Long Press on Top Left" testID="detox_temp_0_0_0_0_0_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Long Press on Top Left" testID="detox_temp_0_0_0_0_0_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me For Long Timeout" testID="detox_temp_0_0_0_0_0_0_0_3" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Tap Me For Long Timeout" testID="WhyDoAllTheTestIDsHaveTheseStrangeNames" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Taps: 0" testID="detox_temp_0_0_0_0_0_0_0_4" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Taps: 0" testID="detox_temp_0_0_0_0_0_0_0_4_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Taps: 0" testID="UniqueId819" visibility="visible" width="<number>" x="<number>" y="<number>" />
-										</RCTView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="UniqueId937_wrapper" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTSinglelineTextInputView alpha="1.0" class="RCTSinglelineTextInputView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_5_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTUITextField alpha="1.0" class="RCTUITextField" focused="false" height="<number>" testID="UniqueId937" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITouchPassthroughView alpha="1.0" class="_UITouchPassthroughView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_5_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_5_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_5_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UITextLayoutCanvasView>
-											</RCTUITextField>
-										</RCTSinglelineTextInputView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="NoTextInputInside" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									<RCTMultilineTextInputView alpha="1.0" class="RCTMultilineTextInputView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTUITextView alpha="1.0" class="RCTUITextView" focused="false" height="<number>" testID="UniqueId005" text="some stuff here.." value="some stuff here.." visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UITextLayoutView alpha="1.0" class="_UITextLayoutView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<_UITextContainerView alpha="1.0" class="_UITextContainerView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_2_0_0" visibility="visible" width="<number>" x="-1" y="<number>" />
-												</_UITextLayoutCanvasView>
-											</_UITextContainerView>
-											<UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_3" visibility="invisible" width="<number>" x="<number>" y="<number>" />
-											<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_7_0_4" value="0%" visibility="visible" width="<number>" x="-42" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_4_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UIScrollViewScrollIndicator>
-											<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_7_0_5" value="0%" visibility="visible" width="<number>" x="<number>" y="-31">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_7_0_5_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UIScrollViewScrollIndicator>
-										</RCTUITextView>
-									</RCTMultilineTextInputView>
-									<RCTSinglelineTextInputView alpha="1.0" class="RCTSinglelineTextInputView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_8" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTUITextField alpha="1.0" class="RCTUITextField" focused="false" height="<number>" testID="UniqueId006" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UITouchPassthroughView alpha="1.0" class="_UITouchPassthroughView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_8_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_8_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_8_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UITextLayoutCanvasView>
-										</RCTUITextField>
-									</RCTSinglelineTextInputView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Toggle scroll overlays" testID="detox_temp_0_0_0_0_0_0_0_9" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Toggle scroll overlays" testID="detox_temp_0_0_0_0_0_0_0_9_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Toggle scroll overlays" testID="toggleScrollOverlays" visibility="visible" width="<number>" x="<number>" y="<number>" />
-										</RCTView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_10" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page" testID="ScrollView161" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_10_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text1" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text2" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text3" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text4" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_3" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text5" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_4" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text6" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_5" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text7" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_6" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text8" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_7" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text9" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_8" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text10" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_9" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text11" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_10" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text12" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_0_11" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 7 pages" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_1" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_2" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_10_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages" testID="detox_temp_0_0_0_0_0_0_0_11" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages" testID="ScrollViewH" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_11_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText1" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText2" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText3" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText4" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_3" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText5" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_4" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText6" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_5" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText7" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_6" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText8" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_0_7" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 2 pages" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_1" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 2 pages" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_2" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_11_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_12" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="ScrollView799" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTRefreshControl alpha="1.0" class="RCTRefreshControl" focused="false" height="<number>" label="Loading..." testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UIRefreshControlModernContentView alpha="1.0" class="_UIRefreshControlModernContentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0_0" visibility="invisible" width="<number>" x="<number>" y="<number>">
-														<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="-9">
-															<_UIRefreshControlModernReplicatorView alpha="1.0" class="_UIRefreshControlModernReplicatorView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-																<_UIRefreshControlSeedView alpha="1.0" class="_UIRefreshControlSeedView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-															</_UIRefreshControlModernReplicatorView>
-														</UIView>
-														<UILabel alpha="0.0" class="UILabel" focused="false" height="<number>" label="Loading..." testID="detox_temp_0_0_0_0_0_0_0_12_0_0_0_0_1" text="Loading..." visibility="visible" width="<number>" x="<number>" y="<number>" />
-													</_UIRefreshControlModernContentView>
-												</RCTRefreshControl>
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_2" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_3" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_12_0_0_3_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTSlider alpha="1.0" class="RCTSlider" focused="false" height="<number>" testID="legacySliderWithASimpleID" value="25%" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UISlideriOSVisualElement alpha="1.0" class="_UISlideriOSVisualElement" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_0_0" visibility="visible" width="<number>" x="-103" y="<number>" />
-												</UIView>
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</UIView>
-												<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_13_0_0_2_0" visibility="visible" width="<number>" x="-13" y="-12" />
-												</UIImageView>
-											</_UISlideriOSVisualElement>
-										</RCTSlider>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RNCSlider alpha="1.0" class="RNCSlider" focused="false" height="<number>" testID="sliderWithASimpleID" value="25%" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UISlideriOSVisualElement alpha="1.0" class="_UISlideriOSVisualElement" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_0_0" visibility="visible" width="<number>" x="-103" y="<number>" />
-												</UIView>
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</UIView>
-												<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_14_0_0_2_0" visibility="visible" width="<number>" x="-13" y="-12" />
-												</UIImageView>
-											</_UISlideriOSVisualElement>
-										</RNCSlider>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_15" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="PinchableScrollView" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_15_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-														<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="UniqueId007" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													</RCTView>
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_1" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_2" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" testID="detox_temp_0_0_0_0_0_0_0_15_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-								</RCTSafeAreaView>
-							</RCTView>
-						</RCTView>
-					</RCTRootContentView>
-				</RCTRootView>
-			</UIDropShadowView>
-		</UITransitionView>
-		<UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" testID="detox_temp_1" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
-	</AnnoyingWindow>
+ <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" testID="detox_temp_" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" testID="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" testID="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" testID="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Welcome Say Hello Say World" testID="detox_temp_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+      <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" testID="detox_temp_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" testID="detox_temp_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" testID="detox_temp_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Welcome" testID="detox_temp_0_0_0_0_0_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say Hello" testID="detox_temp_0_0_0_0_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say Hello" testID="detox_temp_0_0_0_0_0_0_0_1_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say World" testID="detox_temp_0_0_0_0_0_0_0_2" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say World" testID="detox_temp_0_0_0_0_0_0_0_2_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+        </RCTView>
+       </RCTView>
+      </RCTView>
+     </RCTRootContentView>
+    </RCTRootView>
+   </UIDropShadowView>
+  </UITransitionView>
+  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" testID="detox_temp_1" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
+ </AnnoyingWindow>
 </ViewHierarchy>

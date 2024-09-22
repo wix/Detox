@@ -1,197 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewHierarchy>
-	<AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" visibility="visible" width="<number>">
-		<UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-			<UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-				<RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-					<RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-						<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-							<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-								<RCTSafeAreaView alpha="1.0" class="RCTSafeAreaView" focused="false" height="<number>" label="Tap Me Long Press Me 1.5s Long Press on Top Left Tap Me For Long Timeout Taps: 0 Toggle scroll overlays Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="View7990" visibility="visible" width="<number>" x="<number>" y="<number>">
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me" testID="View7991" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Tap Me" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Long Press Me 1.5s" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Long Press Me 1.5s" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Long Press on Top Left" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Long Press on Top Left" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Tap Me For Long Timeout" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Tap Me For Long Timeout" testID="WhyDoAllTheTestIDsHaveTheseStrangeNames" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Taps: 0" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Taps: 0" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Taps: 0" testID="UniqueId819" visibility="visible" width="<number>" x="<number>" y="<number>" />
-										</RCTView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="UniqueId937_wrapper" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTSinglelineTextInputView alpha="1.0" class="RCTSinglelineTextInputView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTUITextField alpha="1.0" class="RCTUITextField" focused="false" height="<number>" testID="UniqueId937" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITouchPassthroughView alpha="1.0" class="_UITouchPassthroughView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UITextLayoutCanvasView>
-											</RCTUITextField>
-										</RCTSinglelineTextInputView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="NoTextInputInside" visibility="visible" width="<number>" x="<number>" y="<number>" />
-									<RCTMultilineTextInputView alpha="1.0" class="RCTMultilineTextInputView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTUITextView alpha="1.0" class="RCTUITextView" focused="false" height="<number>" testID="UniqueId005" text="some stuff here.." value="some stuff here.." visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UITextLayoutView alpha="1.0" class="_UITextLayoutView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<_UITextContainerView alpha="1.0" class="_UITextContainerView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" visibility="visible" width="<number>" x="-1" y="<number>" />
-												</_UITextLayoutCanvasView>
-											</_UITextContainerView>
-											<UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" visibility="invisible" width="<number>" x="<number>" y="<number>" />
-											<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="-42" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UIScrollViewScrollIndicator>
-											<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="<number>" y="-31">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UIScrollViewScrollIndicator>
-										</RCTUITextView>
-									</RCTMultilineTextInputView>
-									<RCTSinglelineTextInputView alpha="1.0" class="RCTSinglelineTextInputView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTUITextField alpha="1.0" class="RCTUITextField" focused="false" height="<number>" testID="UniqueId006" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UITouchPassthroughView alpha="1.0" class="_UITouchPassthroughView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											<_UITextLayoutCanvasView alpha="1.0" class="_UITextLayoutCanvasView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<_UITextLayoutFragmentView alpha="1.0" class="_UITextLayoutFragmentView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-											</_UITextLayoutCanvasView>
-										</RCTUITextField>
-									</RCTSinglelineTextInputView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Toggle scroll overlays" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Toggle scroll overlays" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Toggle scroll overlays" testID="toggleScrollOverlays" visibility="visible" width="<number>" x="<number>" y="<number>" />
-										</RCTView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12 Vertical scroll bar, 7 pages Horizontal scroll bar, 1 page" testID="ScrollView161" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" label="Text1 Text2 Text3 Text4 Text5 Text6 Text7 Text8 Text9 Text10 Text11 Text12" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text2" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text3" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text4" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text5" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text6" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text7" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text8" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text9" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text10" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text11" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Text12" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 7 pages" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8 Vertical scroll bar, 2 pages Horizontal scroll bar, 2 pages" testID="ScrollViewH" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" label="HText1 HText2 HText3 HText4 HText5 HText6 HText7 HText8" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText1" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText2" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText3" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText4" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText5" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText6" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText7" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													<RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="HText8" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 2 pages" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 2 pages" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Loading... Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="ScrollView799" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTRefreshControl alpha="1.0" class="RCTRefreshControl" focused="false" height="<number>" label="Loading..." visibility="visible" width="<number>" x="<number>" y="<number>">
-													<_UIRefreshControlModernContentView alpha="1.0" class="_UIRefreshControlModernContentView" focused="false" height="<number>" visibility="invisible" width="<number>" x="<number>" y="<number>">
-														<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="-9">
-															<_UIRefreshControlModernReplicatorView alpha="1.0" class="_UIRefreshControlModernReplicatorView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-																<_UIRefreshControlSeedView alpha="1.0" class="_UIRefreshControlSeedView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-															</_UIRefreshControlModernReplicatorView>
-														</UIView>
-														<UILabel alpha="0.0" class="UILabel" focused="false" height="<number>" label="Loading..." text="Loading..." visibility="visible" width="<number>" x="<number>" y="<number>" />
-													</_UIRefreshControlModernContentView>
-												</RCTRefreshControl>
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTSlider alpha="1.0" class="RCTSlider" focused="false" height="<number>" testID="legacySliderWithASimpleID" value="25%" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UISlideriOSVisualElement alpha="1.0" class="_UISlideriOSVisualElement" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="-103" y="<number>" />
-												</UIView>
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</UIView>
-												<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="-13" y="-12" />
-												</UIImageView>
-											</_UISlideriOSVisualElement>
-										</RCTSlider>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RNCSlider alpha="1.0" class="RNCSlider" focused="false" height="<number>" testID="sliderWithASimpleID" value="25%" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<_UISlideriOSVisualElement alpha="1.0" class="_UISlideriOSVisualElement" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="-103" y="<number>" />
-												</UIView>
-												<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</UIView>
-												<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<UIImageView alpha="1.0" class="UIImageView" focused="false" height="<number>" visibility="visible" width="<number>" x="-13" y="-12" />
-												</UIImageView>
-											</_UISlideriOSVisualElement>
-										</RNCSlider>
-									</RCTView>
-									<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-										<RCTScrollView alpha="1.0" class="RCTScrollView" focused="false" height="<number>" label="Vertical scroll bar, 1 page Horizontal scroll bar, 1 page" testID="PinchableScrollView" visibility="visible" width="<number>" x="<number>" y="<number>">
-											<RCTCustomScrollView alpha="1.0" class="RCTCustomScrollView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-												<RCTScrollContentView alpha="1.0" class="RCTScrollContentView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-													<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-														<RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" testID="UniqueId007" visibility="visible" width="<number>" x="<number>" y="<number>" />
-													</RCTView>
-												</RCTScrollContentView>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Vertical scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="<number>" y="-39">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-												<_UIScrollViewScrollIndicator alpha="0.0" class="_UIScrollViewScrollIndicator" focused="false" height="<number>" label="Horizontal scroll bar, 1 page" value="0%" visibility="visible" width="<number>" x="-39" y="<number>">
-													<UIView alpha="1.0" class="UIView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-												</_UIScrollViewScrollIndicator>
-											</RCTCustomScrollView>
-										</RCTScrollView>
-									</RCTView>
-								</RCTSafeAreaView>
-							</RCTView>
-						</RCTView>
-					</RCTRootContentView>
-				</RCTRootView>
-			</UIDropShadowView>
-		</UITransitionView>
-		<UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
-	</AnnoyingWindow>
+ <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+      <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+        </RCTView>
+       </RCTView>
+      </RCTView>
+     </RCTRootContentView>
+    </RCTRootView>
+   </UIDropShadowView>
+  </UITransitionView>
+  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
+ </AnnoyingWindow>
 </ViewHierarchy>

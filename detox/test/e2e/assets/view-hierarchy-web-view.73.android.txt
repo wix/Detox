@@ -1,1 +1,48 @@
-<?xmlversion='1.0'encoding='UTF_8'standalone='yes'?><ViewHierarchy><DecorViewclass="com.android.internal.policy.DecorView"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_"><LinearLayoutclass="android.widget.LinearLayout"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0"><ViewStubclass="android.view.ViewStub"width="<number>"height="<number>"visibility="gone"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0_0"/><FrameLayoutclass="android.widget.FrameLayout"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0_1"><FitWindowsLinearLayoutclass="androidx.appcompat.widget.FitWindowsLinearLayout"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0_1_0"><ViewStubCompatclass="androidx.appcompat.widget.ViewStubCompat"width="<number>"height="<number>"visibility="gone"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0_1_0_0"/><ContentFrameLayoutclass="androidx.appcompat.widget.ContentFrameLayout"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="detox_temp_0_1_0_1"><ReactRootViewclass="com.facebook.react.ReactRootView"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW2NDWEBVIEWSHOW3RDWEBVIEW"x="<number>"y="<number>"testID="detox_temp_0_1_0_1_0"><ReactViewGroupclass="com.facebook.react.views.view.ReactViewGroup"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW2NDWEBVIEWSHOW3RDWEBVIEW"x="<number>"y="<number>"><ReactViewGroupclass="com.facebook.react.views.view.ReactViewGroup"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW2NDWEBVIEW"x="<number>"y="<number>"testID="toggle2ndWebviewButton"><ReactTextViewclass="com.facebook.react.views.text.ReactTextView"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW2NDWEBVIEW"x="<number>"y="<number>"text="SHOW2NDWEBVIEW"/></ReactViewGroup><ReactViewGroupclass="com.facebook.react.views.view.ReactViewGroup"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW3RDWEBVIEW"x="<number>"y="<number>"testID="toggle3rdWebviewButton"><ReactTextViewclass="com.facebook.react.views.text.ReactTextView"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"label="SHOW3RDWEBVIEW"x="<number>"y="<number>"text="SHOW3RDWEBVIEW"/></ReactViewGroup></ReactViewGroup><ReactViewGroupclass="com.facebook.react.views.view.ReactViewGroup"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"><RNCWebViewclass="com.reactnativecommunity.webview.RNCWebViewManager$RNCWebView"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"testID="webViewFormWithScrolling"><![CDATA["<htmlxmlns="http://www.w3.org/1999/xhtml"><body><h1id="pageHeadline"aria-label="first-webview">FirstWebview</h1><h2>Form</h2><form><labelfor="fname">Yourname:</label><br/><inputtype="text"id="fname"name="fname"maxlength="10"/><br/><inputtype="submit"id="submit"value="Submit"onclick="document.getElementById('resultFname').innerHTML=document.getElementById('fname').value;returnfalse;"/></form><h2>FormResults</h2><p>Yourfirstnameis:<spanid="resultFname">Noinputyet</span></p><h2>ContentEditable</h2><divid="contentEditable"class="contentEditable"contenteditable="true">Name:</div><h2>Textandlink</h2><p>Sometextanda<aid="w3link"href="https://www.w3schools.com">link</a>.</p><pid="bottomParagraph"class="specialParagraph">Thisisabottomparagraphwithclass.</p></body></html>"]]></RNCWebView></ReactViewGroup></ReactRootView></ContentFrameLayout></FitWindowsLinearLayout></FrameLayout></LinearLayout><Viewclass="android.view.View"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"/><Viewclass="android.view.View"width="<number>"height="<number>"visibility="visible"alpha="1.0"focused="false"x="<number>"y="<number>"/></DecorView></ViewHierarchy>
+<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
+<ViewHierarchy>
+  <DecorView class="com.android.internal.policy.DecorView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_">
+    <LinearLayout class="android.widget.LinearLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0">
+      <ViewStub class="android.view.ViewStub" width="<number>" height="<number>" visibility="gone" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0_0" />
+      <FrameLayout class="android.widget.FrameLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0_1">
+        <FitWindowsLinearLayout class="androidx.appcompat.widget.FitWindowsLinearLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0_1_0">
+          <ViewStubCompat class="androidx.appcompat.widget.ViewStubCompat" width="<number>" height="<number>" visibility="gone" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0_1_0_0" />
+          <ContentFrameLayout class="androidx.appcompat.widget.ContentFrameLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="detox_temp_0_1_0_1">
+            <ReactRootView class="com.facebook.react.ReactRootView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 2ND WEBVIEW SHOW 3RD WEBVIEW" x="<number>" y="<number>" testID="detox_temp_0_1_0_1_0">
+              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 2ND WEBVIEW SHOW 3RD WEBVIEW" x="<number>" y="<number>">
+                <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 2ND WEBVIEW" x="<number>" y="<number>" testID="toggle2ndWebviewButton">
+                  <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 2ND WEBVIEW" x="<number>" y="<number>" text="SHOW 2ND WEBVIEW" />
+                </ReactViewGroup>
+                <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 3RD WEBVIEW" x="<number>" y="<number>" testID="toggle3rdWebviewButton">
+                  <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="SHOW 3RD WEBVIEW" x="<number>" y="<number>" text="SHOW 3RD WEBVIEW" />
+                </ReactViewGroup>
+              </ReactViewGroup>
+              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+                <RNCWebView class="com.reactnativecommunity.webview.RNCWebViewManager$RNCWebView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" testID="webViewFormWithScrolling"><![CDATA["<html xmlns=\"http://www.w3.org/1999/xhtml\">
+    <body>
+        <h1 id=\"pageHeadline\" aria-label=\"first-webview\">First Webview</h1>
+        <h2>Form</h2>
+        <form>
+            <label for=\"fname\">Your name:</label><br />
+            <input type=\"text\" id=\"fname\" name=\"fname\" maxlength=\"10\" /><br />
+            <input type=\"submit\" id=\"submit\" value=\"Submit\" onclick=\"document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;\" />
+        </form>
+        <h2>Form Results</h2>
+        <p>Your first name is: <span id=\"resultFname\">No input yet</span></p>
+        <h2>Content Editable</h2>
+        <div id=\"contentEditable\" class=\"contentEditable\" contenteditable=\"true\">Name: </div>
+        <h2>Text and link</h2>
+        <p>Some text and a <a id=\"w3link\" href=\"https://www.w3schools.com\">link</a>.</p>
+        <p id=\"bottomParagraph\" class=\"specialParagraph\">This is a bottom paragraph with class.</p>
+
+</body></html>"]]>
+                </RNCWebView>
+              </ReactViewGroup>
+            </ReactRootView>
+          </ContentFrameLayout>
+        </FitWindowsLinearLayout>
+      </FrameLayout>
+    </LinearLayout>
+    <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
+    <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
+  </DecorView>
+</ViewHierarchy>
