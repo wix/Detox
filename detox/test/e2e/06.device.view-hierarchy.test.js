@@ -10,13 +10,13 @@ describe('generate view hierarchy', () => {
   });
 
   it('generateViewHierarchyXml() - should generate a valid view hierarchy XML without injected test-ids', async () => {
-    await element(by.text('Actions')).tap();
+    await element(by.text('Sanity')).tap();
     const hierarchy = await device.generateViewHierarchyXml();
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-without-test-id-injection`);
   });
 
   it('generateViewHierarchyXml(true) - should generate a valid view hierarchy XML with injected test-ids', async () => {
-    await element(by.text('Actions')).tap();
+    await element(by.text('Sanity')).tap();
     const hierarchy = await device.generateViewHierarchyXml(true);
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-with-test-id-injection`);
   });
