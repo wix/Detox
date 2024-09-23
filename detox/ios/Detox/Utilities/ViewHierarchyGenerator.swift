@@ -58,32 +58,45 @@ struct ViewHierarchyGenerator {
         return NSStringFromClass(type(of: window)) == "DTXTouchVisualizerWindow"
     }
 
+    enum StackItem {
+        case view(UIView, Int, [Int])       // View to process
+        case closeTag(String, Int)          // Closing tag for a view
+    }
+
     @MainActor
     private static func generateXmlForViewHierarchy(_ rootView: UIView, shouldInjectIdentifiers: Bool) async -> String {
-        var stack: [(UIView, Int, [Int])] = [(rootView, 1, [])]
+        var stack: [StackItem] = [.view(rootView, 1, [])]
         var xml = ""
 
-        while let (view, depth, indexPath) = stack.popLast() {
-            let indent = String(repeating: " ", count: depth)
-            let elementName = String(describing: type(of: view))
-            let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
+        while let item = stack.popLast() {
+            switch item {
+                case .view(let view, let depth, let indexPath):
+                    let indent = String(repeating: " ", count: depth)
+                    let elementName = String(describing: type(of: view))
+                    let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
 
-            xml += "\n\(indent)<\(elementName)\(attributes)"
+                    xml += "\n\(indent)<\(elementName)\(attributes)"
 
-            if let webView = view as? WKWebView {
-                let htmlContent = await getHtmlFromWebView(webView)
-                xml += ">\n\(indent)\t<![CDATA[\(htmlContent)]]>"
-                xml += "\n\(indent)</\(elementName)>"
-            } else if view.subviews.isEmpty {
-                xml += " />"
-            } else {
-                xml += ">"
-                let subviews = view.subviews
-                for (index, subview) in subviews.enumerated().reversed() {
-                    let subviewIndexPath = indexPath + [index]
-                    stack.append((subview, depth + 1, subviewIndexPath))
-                }
-                xml += "\n\(indent)</\(elementName)>"
+                    if let webView = view as? WKWebView {
+                        let htmlContent = await getHtmlFromWebView(webView)
+                        xml += ">\n\(indent)\t<![CDATA[\(htmlContent)]]>"
+                        xml += "\n\(indent)</\(elementName)>"
+                    } else if view.subviews.isEmpty {
+                        xml += " />"
+                    } else {
+                        xml += ">"
+                        stack.append(.closeTag(elementName, depth))
+
+                        let subviews = view.subviews
+                        for (index, subview) in subviews.enumerated().reversed() {
+                            let subviewIndexPath = indexPath + [index]
+                            stack.append(.view(subview, depth + 1, subviewIndexPath))
+                        }
+                    }
+
+                case .closeTag(let elementName, let depth):
+                    let indent = String(repeating: " ", count: depth)
+                    xml += "\n\(indent)</\(elementName)>"
             }
         }
 
