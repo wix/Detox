@@ -35,16 +35,18 @@ private let GET_HTML_SCRIPT = """
 })();
 """
 
-
 struct ViewHierarchyGenerator {
+    private static let maxDepth = 200
+
+    @MainActor
     static func generateXml(injectingAccessibilityIdentifiers shouldInject: Bool) async -> String {
         let xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-        let windows = await UIWindow.allKeyWindowSceneWindows
+        let windows = UIWindow.allKeyWindowSceneWindows
             .filter { !isVisualizerWindow($0) }
 
         var viewHierarchy = ""
         for window in windows {
-            viewHierarchy = await generateXmlForViewHierarchy(window, depth: 1, indexPath: [], shouldInjectIdentifiers: shouldInject)
+            viewHierarchy += await generateXmlForViewHierarchy(window, depth: 1, indexPath: [], shouldInjectIdentifiers: shouldInject)
         }
 
         return """
@@ -58,28 +60,40 @@ struct ViewHierarchyGenerator {
         return NSStringFromClass(type(of: window)) == "DTXTouchVisualizerWindow"
     }
 
-	private static func generateXmlForViewHierarchy(_ view: UIView, depth: Int, indexPath: [Int], shouldInjectIdentifiers: Bool) async -> String {
-		let indent = String(repeating: " ", count: depth)
-		let elementName = String(describing: type(of: view))
-		let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
+    @MainActor
+    private static func generateXmlForViewHierarchy(
+        _ view: UIView,
+        depth: Int,
+        indexPath: [Int],
+        shouldInjectIdentifiers: Bool
+    ) async -> String {
+        guard depth <= maxDepth else { return "" }
 
-		var xml = "\n\(indent)<\(elementName)\(attributes)"
+        let indent = String(repeating: " ", count: depth)
+        let elementName = String(describing: type(of: view))
+        let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
+
+        var xml = "\n\(indent)<\(elementName)\(attributes)"
 
         if let webView = view as? WKWebView {
             let htmlContent = await getHtmlFromWebView(webView)
             xml += ">\n\(indent)\t<![CDATA[\(htmlContent)]]>"
             xml += "\n\(indent)</\(elementName)>"
-        } else if await view.subviews.isEmpty {
+        } else if view.subviews.isEmpty {
             xml += " />"
         } else {
             xml += ">"
-            for (index, subview) in await view.subviews.enumerated() {
+            for (index, subview) in view.subviews.enumerated() {
                 let subviewIndexPath = indexPath + [index]
-                xml += await generateXmlForViewHierarchy(subview, depth: depth + 1, indexPath: subviewIndexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
+                xml += await generateXmlForViewHierarchy(
+                    subview,
+                    depth: depth + 1,
+                    indexPath: subviewIndexPath,
+                    shouldInjectIdentifiers: shouldInjectIdentifiers
+                )
             }
             xml += "\n\(indent)</\(elementName)>"
         }
-
 
         return xml
     }
@@ -100,7 +114,11 @@ struct ViewHierarchyGenerator {
         }
     }
 
-    private static func generateAttributes(for view: UIView, indexPath: [Int], shouldInjectIdentifiers: Bool) -> String {
+    private static func generateAttributes(
+        for view: UIView,
+        indexPath: [Int],
+        shouldInjectIdentifiers: Bool
+    ) -> String {
         var attributes: [String: String] = [
             "class": "\(type(of: view))",
             "width": "\(Int(view.frame.size.width))",
@@ -127,7 +145,7 @@ struct ViewHierarchyGenerator {
             let injectedIdentifier = "\(injectedPrefix)\(indexPath.map { String($0) }.joined(separator: "_"))"
 
             if let existingTestID = view.accessibilityIdentifier {
-                // override previously injected identifiers
+                // Override previously injected identifiers
                 if existingTestID.hasPrefix(injectedPrefix) {
                     view.accessibilityIdentifier = injectedIdentifier
                 }
@@ -141,14 +159,14 @@ struct ViewHierarchyGenerator {
         }
 
         if let textView = view as? UITextView {
-            attributes["text"] = textView.text
+            attributes["text"] = textView.text ?? ""
         } else if let label = view as? UILabel {
-            attributes["text"] = label.text
+            attributes["text"] = label.text ?? ""
         }
 
         return attributes
-            .filter { $0.value != "" }
-            .map { " \($0)=\"\($1)\"" }
+            .filter { !$0.value.isEmpty }
+            .map { " \($0.key)=\"\($0.value)\"" }
             .sorted()
             .joined()
     }
