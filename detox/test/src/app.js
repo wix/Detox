@@ -131,7 +131,7 @@ export default class example extends Component {
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>
 
-        {isIos && this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}
+        {/*{this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}*/}
       </View>
     );
   }
