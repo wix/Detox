@@ -36,8 +36,6 @@ private let GET_HTML_SCRIPT = """
 """
 
 struct ViewHierarchyGenerator {
-    private static let maxDepth = 200
-
     @MainActor
     static func generateXml(injectingAccessibilityIdentifiers shouldInject: Bool) async -> String {
         let xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -46,7 +44,7 @@ struct ViewHierarchyGenerator {
 
         var viewHierarchy = ""
         for window in windows {
-            viewHierarchy += await generateXmlForViewHierarchy(window, depth: 1, indexPath: [], shouldInjectIdentifiers: shouldInject)
+            viewHierarchy += await generateXmlForViewHierarchy(window, shouldInjectIdentifiers: shouldInject)
         }
 
         return """
@@ -61,38 +59,32 @@ struct ViewHierarchyGenerator {
     }
 
     @MainActor
-    private static func generateXmlForViewHierarchy(
-        _ view: UIView,
-        depth: Int,
-        indexPath: [Int],
-        shouldInjectIdentifiers: Bool
-    ) async -> String {
-        guard depth <= maxDepth else { return "" }
+    private static func generateXmlForViewHierarchy(_ rootView: UIView, shouldInjectIdentifiers: Bool) async -> String {
+        var stack: [(UIView, Int, [Int])] = [(rootView, 1, [])]
+        var xml = ""
 
-        let indent = String(repeating: " ", count: depth)
-        let elementName = String(describing: type(of: view))
-        let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
+        while let (view, depth, indexPath) = stack.popLast() {
+            let indent = String(repeating: " ", count: depth)
+            let elementName = String(describing: type(of: view))
+            let attributes = generateAttributes(for: view, indexPath: indexPath, shouldInjectIdentifiers: shouldInjectIdentifiers)
 
-        var xml = "\n\(indent)<\(elementName)\(attributes)"
+            xml += "\n\(indent)<\(elementName)\(attributes)"
 
-        if let webView = view as? WKWebView {
-            let htmlContent = await getHtmlFromWebView(webView)
-            xml += ">\n\(indent)\t<![CDATA[\(htmlContent)]]>"
-            xml += "\n\(indent)</\(elementName)>"
-        } else if view.subviews.isEmpty {
-            xml += " />"
-        } else {
-            xml += ">"
-            for (index, subview) in view.subviews.enumerated() {
-                let subviewIndexPath = indexPath + [index]
-                xml += await generateXmlForViewHierarchy(
-                    subview,
-                    depth: depth + 1,
-                    indexPath: subviewIndexPath,
-                    shouldInjectIdentifiers: shouldInjectIdentifiers
-                )
+            if let webView = view as? WKWebView {
+                let htmlContent = await getHtmlFromWebView(webView)
+                xml += ">\n\(indent)\t<![CDATA[\(htmlContent)]]>"
+                xml += "\n\(indent)</\(elementName)>"
+            } else if view.subviews.isEmpty {
+                xml += " />"
+            } else {
+                xml += ">"
+                let subviews = view.subviews
+                for (index, subview) in subviews.enumerated().reversed() {
+                    let subviewIndexPath = indexPath + [index]
+                    stack.append((subview, depth + 1, subviewIndexPath))
+                }
+                xml += "\n\(indent)</\(elementName)>"
             }
-            xml += "\n\(indent)</\(elementName)>"
         }
 
         return xml
