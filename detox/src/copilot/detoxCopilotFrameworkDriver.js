@@ -309,11 +309,19 @@ const detoxCopilotFrameworkDriver = {
 
   captureSnapshotImage: async function () {
     const fileName = `snapshot_${Date.now()}.png`;
-    return await detox.device.takeScreenshot(fileName);
+    try {
+      return await detox.device.takeScreenshot(fileName);
+    } catch (_error) {
+      return null;
+    }
   },
 
   captureViewHierarchyString: async function () {
-    return detox.device.generateViewHierarchyXml();
+    try {
+      return detox.device.generateViewHierarchyXml();
+    } catch (_error) {
+      return 'Unavailable, app is probably not launched yet';
+    }
   },
 };
 
