@@ -25,8 +25,8 @@ class DetoxCopilot {
     copilot.reset();
   }
 
-  perform(intent) {
-    return copilot.perform(intent);
+  perform(...steps) {
+    return copilot.perform(...steps);
   }
 }
 
