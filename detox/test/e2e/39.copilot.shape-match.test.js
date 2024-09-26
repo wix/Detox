@@ -8,7 +8,7 @@ describeForCopilotEnv('Shape Match Game Screen', () => {
   });
 
   it('should play the Shape Matching game', async () => {
-    await copilot.perform([
+    await copilot.perform(
       'Enter the "Shape Matching" game screen',
       'Game has started with score 0',
 
@@ -25,6 +25,6 @@ describeForCopilotEnv('Shape Match Game Screen', () => {
 
       'Drag shapes into their holes until the score is 3',
       'All shapes are in their holes and score is now 3',
-    ]);
+    );
   });
 });
