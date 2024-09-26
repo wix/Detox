@@ -143,17 +143,15 @@ jestExpect(attributes.text).toBe('Tap Me');`,
           },
           {
             signature: 'longPressAndDrag(duration, normalizedPositionX, normalizedPositionY, targetElement, normalizedTargetPositionX, normalizedTargetPositionY, speed, holdDuration)',
-            description: `
-Performs a long press and drags to a target element.
-  duration —the duration to press for, in ms (required)
-  normalizedPositionX — X coordinate of the starting point, relative to the element width (required, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
-  normalizedPositionY — Y coordinate of the starting point, relative to the element height (required, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
-  targetElement— the target element to drag to (required)
-  normalizedTargetPositionX — X coordinate of the ending point, relative to the target element width (optional, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
-  normalizedTargetPositionY — Y coordinate of the ending point, relative to the target element height (optional, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
-  speed — the speed of the drag (optional, valid input: "fast"/"slow" , default is "fast")
-  holdDuration — the duration before releasing at the end, in ms (optional, default is 1000)
-            `,
+            description: `Performs a long press and drags to a target element.
+  - \`duration\` — the duration to press for, in ms (required)
+  - \`normalizedPositionX\` — X coordinate of the starting point, relative to the element width (required, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
+  - \`normalizedPositionY\` — Y coordinate of the starting point, relative to the element height (required, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
+  - \`targetElement\` — the target element to drag to (required)
+  - \`normalizedTargetPositionX\` — X coordinate of the ending point, relative to the target element width (optional, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
+  - \`normalizedTargetPositionY\` — Y coordinate of the ending point, relative to the target element height (optional, a number between 0.0 and 1.0, NaN — choose an optimal value automatically)
+  - \`speed\` — the speed of the drag (optional, valid input: "fast"/"slow" , default is "fast")
+  - \`holdDuration\` — the duration before releasing at the end, in ms (optional, default is 1000)`,
             example: "await element(by.id('cellId_1')).longPressAndDrag(2000, 0.9, NaN, element(by.id('cellId_6')), 0.9, NaN, 'slow', 0);",
           },
         ],
@@ -304,12 +302,16 @@ await device.launchApp({ newInstance: true, launchArgs: { mockServerPort: 1234 }
         ],
       },
       {
-        title: 'System APIs',
+        title: 'System APIs (iOS)',
         items: [
           {
             signature: 'system.element(matcher: Matcher)',
             description: 'Selects an element within the system UI.',
             example: "system.element(by.system.label('Allow')).tap();",
+            guidelines: [
+              'Can be used for iOS system alerts and permissions dialogs',
+              'Check the platform with `device.getPlatform()` before using, as it is iOS-specific'
+            ]
           },
           {
             signature: 'by.system.label(label: string)',
