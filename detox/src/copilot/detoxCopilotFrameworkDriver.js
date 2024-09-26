@@ -260,11 +260,11 @@ Launches the app with specified parameters.
 | **speech**      | YES / NO / unset               |
 | **faceid**      | YES / NO / unset               |
 | **userTracking**| YES / NO / unset               |
-
-**Example:**
-\`\`\`js
-await device.launchApp({ newInstance: true, launchArgs: { mockServerPort: 1234 } });
-\`\`\``,
+`,
+            example: `
+await device.launchApp({ newInstance: true });
+await device.launchApp({ newInstance: true, permissions: { notifications: 'YES' } });
+await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
             guidelines: ['Use minimal parameters necessary for your launch scenario.'],
           },
           {
