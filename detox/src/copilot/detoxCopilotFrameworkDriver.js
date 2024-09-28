@@ -425,7 +425,7 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
             example: "web.element(by.web.label('Submit'));",
             guidelines: [
               'Can be used on iOS only.',
-              'Use when the element has a unique label.'
+              'Use when the element has a unique label.',
             ],
           },
           {
@@ -437,10 +437,13 @@ await webElement.runScript('(el) => el.click()');
 
 // With arguments
 await webElement.runScript('(el, args) => el.setAttribute("value", args[0])', ['Detox']);
+
+// There's no text-matcher for web elements, so you can use this method to interact with elements based on text.
+await web.runScript('document.body.querySelector(":contains(\`Submit\`)").click()');
 `,
             guidelines: [
               'The script can accept additional arguments and return a value. Make sure the values are primitive types or serializable objects, as they will be converted to JSON and back.',
-              'If you\'re not sure what to use from the other APIs, you can use this method to interact with the web element directly.'
+              'If you\'re not sure what to use from the other APIs, you can use this method to interact with the web element directly.',
             ]
           },
           {
