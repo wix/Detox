@@ -1,5 +1,5 @@
-const PromptHandler = require('./copilot/PromptHandler');
-const {describeForCopilotEnv} = require("./utils/custom-describes");
+const PromptHandler = require('./PromptHandler');
+const {describeForCopilotEnv} = require("../utils/custom-describes");
 
 describeForCopilotEnv('Copilot Sanity', () => {
   beforeAll(async () => {

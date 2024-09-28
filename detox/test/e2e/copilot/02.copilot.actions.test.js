@@ -1,5 +1,5 @@
-const PromptHandler = require('./copilot/PromptHandler');
-const {describeForCopilotEnv} = require("./utils/custom-describes");
+const PromptHandler = require('./PromptHandler');
+const {describeForCopilotEnv} = require("../utils/custom-describes");
 const jestExpect = require('expect').default;
 
 describeForCopilotEnv('Copilot Actions', () => {
@@ -97,19 +97,20 @@ describeForCopilotEnv('Copilot Actions', () => {
   it('should swipe vertically', async () => {
     await copilot.perform(
       'The element with text "Text1" can be seen',
-      'Swipe the vertical scrollable area ScrollView161 upwards',
-      'The "Text1" element is no longer in view',
-      'Swipe the vertical area back down',
-      '"Text1" has reappeared on the screen'
+      'Swipe the view "ScrollView161" upwards',
+      'The text element is no longer in view',
+      // To avoid confusion: up swipe scrolls down
+      'Swipe the element back up until the "Text1" element is visible',
     );
   });
 
   it('should swipe horizontally', async () => {
     await copilot.perform(
       'The "HText1" element is present',
-      'Swipe the horizontal scrollable area ScrollViewH towards the left',
+      // To avoid confusion: left swipe scrolls right
+      'Left-swipe the horizontal scrollable area "ScrollViewH"',
       '"HText1" is not in the visible area',
-      'Slide the horizontal scroll back to the right',
+      'Swipe the horizontal scroll back to the left',
       'The "HText1" element has come back into view'
     );
   });
