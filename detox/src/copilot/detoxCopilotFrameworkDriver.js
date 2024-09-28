@@ -352,16 +352,30 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
             signature: 'web.element(matcher: Matcher)',
             description: 'Selects an element within a web view.',
             example: "const element = web.element(by.web.id('username'));",
+            guidelines: [
+              'Web-APIs can only be used with web elements (web-views).',
+              'Regular APIs (matchers and assertions) are not available in web elements (web-views).',
+              'Avoid using web APIs for native elements or native APIs for web elements.',
+              'Always prefer the `by.web.id` matchers.'
+            ],
           },
           {
             signature: 'web(by.id("webview")).element(matcher: Matcher)',
             description: 'Selects an element within a specific web view.',
             example: "const element = web(by.id('webview')).element(by.web.id('password'));",
+            guidelines: [
+              'Always prefer web.element if the web view is the only one on the screen.',
+              'Use this method only when there are multiple web views on the screen.'
+            ],
           },
           {
             signature: 'by.web.id(id: string)',
             description: 'Matches web elements by ID attribute.',
             example: "web.element(by.web.id('submit_button'));",
+            guidelines: [
+              'Use for web elements with unique IDs.',
+              'This is the best-practice matcher.'
+            ],
           },
           {
             signature: 'by.web.className(className: string)',
@@ -371,7 +385,63 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
           {
             signature: 'by.web.cssSelector(cssSelector: string)',
             description: 'Matches web elements using a CSS selector.',
-            example: "web.element(by.web.cssSelector('div > button.submit'));",
+            example: "web.element(by.web.cssSelector('#cssSelector'));",
+          },
+          {
+            signature: 'by.web.name(name: string)',
+            description: 'Matches web elements by name attribute.',
+            example: "web.element(by.web.name('email'));",
+          },
+          {
+            signature: 'by.web.xpath(xpath: string)',
+            description: 'Matches web elements using an XPath expression.',
+            example: "web.element(by.web.xpath('//*[@id=\"submit\"]'));",
+            guidelines: ['If by.web.id is not available, use the XPath matcher.'],
+          },
+          {
+            signature: 'by.web.href(href: string)',
+            description: 'Matches web elements by href attribute.',
+            example: "web.element(by.web.href('https://example.com'));",
+          },
+          {
+            signature: 'by.web.hrefContains(href: string)',
+            description: 'Matches web elements containing the specified href.',
+            example: "web.element(by.web.hrefContains('example.com'));",
+          },
+          {
+            signature: 'by.web.tag(tag: string)',
+            description: 'Matches web elements by tag name.',
+            example: "web.element(by.web.tag('h1'));",
+          },
+          {
+            signature: 'by.web.value(value: string)',
+            description: 'Matches web elements by value attribute.',
+            example: "web.element(by.web.value('Submit'));",
+            guidelines: ['Can be used on iOS only.'],
+          },
+          {
+            signature: 'by.web.label(label: string)',
+            description: 'Matches web elements by aria-label attribute.',
+            example: "web.element(by.web.label('Submit'));",
+            guidelines: [
+              'Can be used on iOS only.',
+              'Use when the element has a unique label.'
+            ],
+          },
+          {
+            signature: 'runScript(script: string, args?: any[])',
+            description: 'Runs a JavaScript function on the element.',
+            example: `
+const webElement = web.element(by.web.id('identifier'));
+await webElement.runScript('(el) => el.click()');
+
+// With arguments
+await webElement.runScript('(el, args) => el.setAttribute("value", args[0])', ['Detox']);
+`,
+            guidelines: [
+              'The script can accept additional arguments and return a value. Make sure the values are primitive types or serializable objects, as they will be converted to JSON and back.',
+              'If you\'re not sure what to use from the other APIs, you can use this method to interact with the web element directly.'
+            ]
           },
           {
             signature: 'tap()',
