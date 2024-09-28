@@ -48,6 +48,7 @@ const detoxCopilotFrameworkDriver = {
             signature: 'longPress(point?: Point2D, duration?: number)',
             description: 'Simulates long press on an element.',
             example: "await element(by.id('menuItem')).longPress();",
+            guidelines: ['Tapping on edges of elements might work better when adding a small offset to the point.'],
           },
           {
             signature: 'multiTap(times: number)',
@@ -106,7 +107,11 @@ const detoxCopilotFrameworkDriver = {
             signature: 'swipe(direction: string, speed?: string, normalizedOffset?: number)',
             description: 'Simulates a swipe gesture.',
             example: "await element(by.id('scrollView')).swipe('up');",
-            guidelines: ['Speed can be "fast" or "slow"; default is "fast".'],
+            guidelines: [
+              'Speed can be "fast" or "slow"; default is "fast".',
+              'Direction can be "up", "down", "left", or "right".',
+              'Up swipe scrolls down, left swipe scrolls right.',
+            ],
           },
           {
             signature: 'setColumnToValue(column: number, value: string)',
