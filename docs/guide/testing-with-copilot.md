@@ -19,6 +19,8 @@ Detox Copilot is integrated into Detox and requires no additional installation. 
 Detox Copilot simplifies the process of writing tests by allowing you to describe test steps in natural language.
 It interprets these instructions and translates them into Detox commands. This guide will help you integrate Detox Copilot into your testing workflow and provide best practices for writing effective intents.
 
+![Demo](img/copilot/copilot-demo.gif)
+
 ## Step 0: Setting Up Detox
 
 Before you begin, ensure that your Detox environment is properly set up.
