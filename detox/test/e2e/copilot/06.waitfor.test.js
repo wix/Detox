@@ -1,5 +1,6 @@
 const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
+const {expectToThrow} = require("../utils/custom-expects");
 
 describeForCopilotEnv('WaitFor Functionality', () => {
   beforeAll(async () => {
@@ -48,9 +49,10 @@ describeForCopilotEnv('WaitFor Functionality', () => {
   });
 
   it('should handle timeouts for non-appearing elements', async () => {
-    await copilot.perform(
-      'Try to wait for an element with ID "neverAppearingText" to appear',
-      'Verify that an error occurs after the timeout period'
-    );
+    await expectToThrow(async () => {
+      await copilot.perform(
+        'Try to wait for an element with ID "neverAppearingText" to appear, with timeout of 2 seconds'
+      );
+    });
   });
 });
