@@ -19,7 +19,7 @@ Detox Copilot is integrated into Detox and requires no additional installation. 
 Detox Copilot simplifies the process of writing tests by allowing you to describe test steps in natural language.
 It interprets these instructions and translates them into Detox commands. This guide will help you integrate Detox Copilot into your testing workflow and provide best practices for writing effective intents.
 
-![Demo](img/copilot/copilot-demo.gif)
+![Demo](../img/copilot/copilot-demo.gif)
 
 ## Step 0: Setting Up Detox
 
@@ -143,33 +143,33 @@ To make the most out of Detox Copilot, consider the following best practices whe
 
 - **Provide Clear Instructions**: The clearer your instructions, the better Copilot can interpret them.
 - **Example**:
-    - **Good**: `'Tap on the "Login" button'`
-    - **Better**: `'Tap on the "Login" button located at the top right corner'`
+  - **Good**: `'Tap on the "Login" button'`
+  - **Better**: `'Tap on the "Login" button located at the top right corner'`
 
 ### One Action per Step
 
 - **Avoid Combining Multiple Actions**: Keep each step focused on a single action or assertion.
 - **Example**:
-    - **Avoid**: `'Tap on the "Login" button and enter credentials'`
-    - **Prefer**:
-      ```javascript
-      'Tap on the "Login" button',
-      'Enter "user@example.com" into the "Email" field'
-      ```
+  - **Avoid**: `'Tap on the "Login" button and enter credentials'`
+  - **Prefer**:
+  ```javascript
+  'Tap on the "Login" button',
+  'Enter "user@example.com" into the "Email" field'
+  ```
 
 ### Use Exact Labels
 
 - **Refer to UI Elements Precisely**: Use the exact text or identifiers as they appear in the app.
 - **Example**:
-    - **Good**: `'Enter "password123" into the "Password" field'`
-    - **Avoid**: `'Enter password into its field'`
+  - **Good**: `'Enter "password123" into the "Password" field'`
+  - **Avoid**: `'Enter password into its field'`
 
 ### Keep Assertions Simple
 
 - **Focus on Specific Outcomes**: Make assertions straightforward and specific.
 - **Example**:
-    - **Good**: `'Verify that the "Welcome" message is displayed'`
-    - **Avoid**: `'Check if the welcome message appears correctly on the screen'`
+  - **Good**: `'Verify that the "Welcome" message is displayed'`
+  - **Avoid**: `'Check if the welcome message appears correctly on the screen'`
 
 ### Leverage Visual Context
 
@@ -180,8 +180,8 @@ To make the most out of Detox Copilot, consider the following best practices whe
 
 - **Specify Elements Precisely**: If multiple elements could match, provide additional details.
 - **Example**:
-    - **Ambiguous**: `'Tap on the "Submit" button'`
-    - **Specific**: `'Tap on the "Submit" button in the registration form'`
+  - **Ambiguous**: `'Tap on the "Submit" button'`
+  - **Specific**: `'Tap on the "Submit" button in the registration form'`
 
 ### General Recommendations
 
@@ -213,4 +213,4 @@ To make the most out of Detox Copilot, consider the following best practices whe
 **A**: Detox Copilot is designed to avoid unnecessary calls to the LLM service and optimize performance using static cache that is based on the current state of the app.
 This minimizes the number of calls to the LLM service and reduces latency.
 However, you can optimize your `PromptHandler` implementation to reduce latency and improve response times (e.g., by reducing the image size or implementing a server-side cache).
-We have plans to optimize even further by introducing more advanced caching mechanisms for better performance. 
+We have plans to optimize even further by introducing more advanced caching mechanisms for better performance.
