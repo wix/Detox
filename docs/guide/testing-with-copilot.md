@@ -152,6 +152,7 @@ To make the most out of Detox Copilot, consider the following best practices whe
 - **Example**:
   - **Avoid**: `'Tap on the "Login" button and enter credentials'`
   - **Prefer**:
+
   ```javascript
   'Tap on the "Login" button',
   'Enter "user@example.com" into the "Email" field'

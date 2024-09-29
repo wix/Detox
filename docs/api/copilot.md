@@ -94,4 +94,4 @@ interface PromptHandler {
 
 You can refer to the [Detox Copilot Guide] for an example of implementing a `PromptHandler` for OpenAI's service.
 
-[Detox Copilot Guide]: /docs/guide/testing-with-copilot
+[Detox Copilot Guide]: ../guide/testing-with-copilot
