@@ -7,14 +7,14 @@ describeForCopilotEnv('WebView Interactions', () => {
     await copilot.perform('Start the app');
   });
 
-  describe('Single WebView Tests', () => {
-    beforeEach(async () => {
-      await copilot.perform(
-        'Restart the React Native state',
-        'Navigate to the WebView screen'
-      );
-    });
+  beforeEach(async () => {
+    await copilot.perform(
+      'Restart the React Native state',
+      'Navigate to the WebView screen'
+    );
+  });
 
+  describe('Single WebView Tests', () => {
     it('should interact with elements in a single WebView', async () => {
       await copilot.perform(
         'Find an element with ID "pageHeadline" in the WebView',
@@ -29,8 +29,8 @@ describeForCopilotEnv('WebView Interactions', () => {
 
     it('should scroll and interact with elements', async () => {
       await copilot.perform(
-        'Scroll to the bottom of the WebView to find an element with the id "bottomParagraph"',
-        'Verify that this element is now visible'
+        'Scroll to "bottomParagraph" in the WebView',
+        'Verify that the text of this element is "This is a bottom paragraph with class."',
       );
     });
   });
@@ -38,7 +38,6 @@ describeForCopilotEnv('WebView Interactions', () => {
   describe('Multiple WebViews Tests', () => {
     beforeEach(async () => {
       await copilot.perform(
-        'Navigate to the WebView screen',
         'Enable the second WebView'
       );
     });
@@ -46,7 +45,8 @@ describeForCopilotEnv('WebView Interactions', () => {
     it('should interact with elements in multiple WebViews', async () => {
       await copilot.perform(
         'In the second WebView, find an element that contains the message "This is a dummy webview."',
-        'Enable the third WebView',
+        'Hide the second WebView',
+        'Show the 3rd WebView',
         'There should be an iframe in the third WebView with the title "This is an iframe" or something similar'
       );
     });
