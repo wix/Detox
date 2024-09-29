@@ -315,7 +315,8 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
             example: "system.element(by.system.label('Allow')).tap();",
             guidelines: [
               'Can be used for iOS system alerts and permissions dialogs',
-              'Check the platform with `device.getPlatform()` before using, as it is iOS-specific'
+              'Check the platform with `device.getPlatform()` before using, as it is iOS-specific',
+              'System dialogs are not part of the app, so they won\'t be found in the app\'s view hierarchy. Identify the relevant system element from the snapshot.',
             ]
           },
           {
