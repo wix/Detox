@@ -90,13 +90,33 @@ const detoxCopilotFrameworkDriver = {
             signature: 'scroll(offset: number, direction: string, startPositionX?: number, startPositionY?: number)',
             description: 'Scrolls an element by an offset in a direction.',
             example: "await element(by.id('scrollView')).scroll(100, 'down');",
-            guidelines: ['Direction can be "up", "down", "left", or "right".'],
+            guidelines: [
+              'Direction can be "up", "down", "left", or "right".',
+              'Use `startPositionX` and `startPositionY` to specify the starting point of the scroll gesture.',
+              'If multiple scroll actions are needed while waiting for an element, use `whileElement()` in conjunction with `waitFor()`.',
+            ],
           },
           {
-            signature: 'scrollTo(edge: string)',
+            signature: 'scrollTo(edge: string, startPositionX?: number, startPositionY?: number)',
             description: 'Scrolls to an edge of the element.',
             example: "await element(by.id('scrollView')).scrollTo('bottom');",
-            guidelines: ['Edge can be "top", "bottom", "left", or "right".'],
+            guidelines: [
+              'Edge can be "top", "bottom", "left", or "right".',
+              'Use `startPositionX` and `startPositionY` to specify the starting point of the scroll gesture.',
+            ],
+          },
+          {
+            signature: 'whileElement(element: Matcher)',
+            description: 'Continuously performs an action while waiting for an expectation to be fulfilled.',
+            example: `
+await waitFor(element(by.text('Load More')))
+  .toBeVisible()
+  .whileElement(by.id('scrollView'))
+  .scroll(50, 'down');`,
+            guidelines: [
+              'Used in conjunction with `waitFor()` to perform actions like scrolling while waiting for an element to meet the expectation.',
+              'The action (e.g., `scroll`) is performed on the element specified in `whileElement()`.',
+            ],
           },
           {
             signature: 'scrollToIndex(index: number)',
