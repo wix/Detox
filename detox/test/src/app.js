@@ -118,7 +118,12 @@ export default class example extends Component {
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
 
-        {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
+          {isAndroid && this.renderInlineSeparator()}
+          {this.renderScreenButton('Shape Match', Screens.ShapeMatchGameScreen)}
+        </View>
+
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
         {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
@@ -130,8 +135,6 @@ export default class example extends Component {
           {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>
-
-        {/*{this.renderScreenButton('Shape Match Game!', Screens.ShapeMatchGameScreen)}*/}
       </View>
     );
   }

@@ -59,6 +59,8 @@ class DetoxWorker {
     this.by = null;
     /** @type {Detox.WebFacade} */
     this.web = null;
+    /** @type {Detox.SystemFacade} */
+    this.system = null;
     /** @type {Detox.DetoxCopilotFacade} */
     this.copilot = null;
 
