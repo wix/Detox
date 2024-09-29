@@ -34,6 +34,7 @@ const sidebars = {
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
+        'guide/testing-with-copilot',
         'guide/testing-webviews',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
@@ -107,6 +108,7 @@ const sidebars = {
         'api/webviews',
         'api/system',
         'api/logger',
+        'api/copilot',
       ]
     },
     'api/internals',
