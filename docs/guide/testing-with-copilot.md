@@ -4,7 +4,7 @@ In this tutorial, we'll explore how to use **Detox Copilot** to write end-to-end
 
 :::note
 
-Detox Copilot is integrated into Detox and requires no additional installation. For complete API details, refer to our [Detox Copilot API documentation](docs/api/copilot.md).
+Detox Copilot is integrated into Detox and requires no additional installation. For complete API details, refer to our [Detox Copilot API documentation](../api/copilot.md).
 
 :::
 
