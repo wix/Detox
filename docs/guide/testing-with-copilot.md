@@ -24,7 +24,7 @@ It interprets these instructions and translates them into Detox commands. This g
 Before you begin, ensure that your Detox environment is properly set up.
 If you need assistance with the setup, refer to the [Detox Getting Started Guide](docs/introduction/getting-started/).
 
-## Step 1: Implementing a `PromptHandler`
+## Step 1: Implementing a PromptHandler
 
 The `PromptHandler` is a crucial component that interfaces with your LLM service.
 Below is an example of how to implement a `PromptHandler` using OpenAI's GPT-4 API.
@@ -203,3 +203,12 @@ To make the most out of Detox Copilot, consider the following best practices whe
 **Q**: How can I provide feedback or contribute to Detox Copilot?
 
 **A**: Contributions are welcome! Visit the [Detox Copilot GitHub Repository](https://github.com/wix-incubator/detox-copilot) to open issues or pull requests if they are relevant to the core-library functionality or open a it under [Detox repository](https://github.com/wix/Detox) if it is related to Detox-Copilot integration or if you are not sure where the issue should be opened.
+
+---
+
+**Q**: These are heavy operations for a test (uploading images, calling an LLM). Do you optimize it in any way?
+
+**A**: Detox Copilot is designed to avoid unnecessary calls to the LLM service and optimize performance using static cache that is based on the current state of the app.
+This minimizes the number of calls to the LLM service and reduces latency.
+However, you can optimize your `PromptHandler` implementation to reduce latency and improve response times (e.g., by reducing the image size or implementing a server-side cache).
+We have plans to optimize even further by introducing more advanced caching mechanisms for better performance. 

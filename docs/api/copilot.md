@@ -18,6 +18,8 @@ Detox Copilot is in active development, and APIs are subject to change in future
 
 Detox Copilot exposes a simple API that integrates seamlessly with your Detox tests. It requires minimal setup and allows you to perform complex testing operations by simply describing them in natural language.
 
+For a more detailed guide on integrating Detox Copilot in your tests, refer to the [Detox Copilot Guide].
+
 ## Methods
 
 - [`copilot.init()`](#copilotinitprompthandler)
@@ -90,85 +92,6 @@ interface PromptHandler {
 }
 ```
 
-### Implementing a `PromptHandler`
+You can refer to the [Detox Copilot Guide] for an example of implementing a `PromptHandler` for OpenAI's service.
 
-You need to implement this interface to connect Detox Copilot with your LLM service. Below is an example using OpenAI's GPT-4 API.
-
-**Example:**
-
-```javascript
-const { Configuration, OpenAIApi } = require('openai');
-
-class OpenAIPromptHandler {
-  constructor(apiKey) {
-    const configuration = new Configuration({ apiKey });
-    this.openai = new OpenAIApi(configuration);
-  }
-
-  async runPrompt(prompt, image) {
-    const messages = [
-      { role: 'system', content: 'You are a test automation assistant.' },
-      { role: 'user', content: prompt },
-    ];
-
-    // Handle image if supported
-    if (image && this.isSnapshotImageSupported()) {
-      // Implement image handling as per LLM requirements
-    }
-
-    const response = await this.openai.createChatCompletion({
-      model: 'gpt-4',
-      messages,
-    });
-
-    return response.data.choices[0].message.content;
-  }
-
-  isSnapshotImageSupported() {
-    return false; // Set to true if your LLM supports images
-  }
-}
-
-module.exports = OpenAIPromptHandler;
-```
-
-## Example Usage
-
-Here is a complete example of how to use Detox Copilot in a test:
-
-```javascript
-const { device, copilot } = require('detox');
-const OpenAIPromptHandler = require('./OpenAIPromptHandler');
-
-describe('Login Flow', () => {
-  beforeAll(async () => {
-    await device.launchApp();
-    const promptHandler = new OpenAIPromptHandler('YOUR_OPENAI_API_KEY');
-    copilot.init(promptHandler);
-  });
-
-  it('should log in successfully', async () => {
-    await copilot.perform(
-      'Start the application',
-      'Tap on the "Login" button',
-      'Enter "user@example.com" into the email field',
-      'Enter "password123" into the password field',
-      'Press the "Submit" button',
-      'The welcome message "Hello, User!" should be displayed'
-    );
-  });
-});
-```
-
-## Additional Notes
-
-- **LLM Compatibility:** Detox Copilot is LLM-agnostic. While it can work with any LLM service, we recommend using advanced models like **Sonnet 3.5** or **GPT-4o** for better performance.
-
-- **Visual Assertions:** Detox Copilot leverages the app's visual context (view hierarchy and snapshots) to enable the LLM to perform visual assertions and understand the UI state.
-
-- **Core Library:** For more advanced configurations and to explore extending Detox Copilot to other testing frameworks, refer to the [detox-copilot core library](https://github.com/wix-incubator/detox-copilot).
-
-- **Guide:** For detailed usage instructions and best practices, refer to the [Detox Copilot Guide]
-
-
-[Detox Copilot Guide]: /docs/guides/testing-with-copilot
+[Detox Copilot Guide]: /docs/guide/testing-with-copilot
