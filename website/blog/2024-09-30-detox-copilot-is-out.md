@@ -1,8 +1,7 @@
-
 ---
 authors:
-- asafkorem
-  tags: [minor-release, detox-copilot, ai-integration]
+  - asafkorem
+tags: [minor-release, detox-copilot, ai-integration]
 ---
 
 # Introducing Detox Copilot: Natural Language Testing for Detox
