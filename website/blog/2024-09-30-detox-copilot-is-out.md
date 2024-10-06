@@ -53,7 +53,7 @@ Detox Copilot uses LLMs to interpret instructions but is designed to be LLM-agno
 
 Initialize Detox Copilot in your test setup by implementing a `PromptHandler` that connects to your LLM service. This abstraction allows Detox Copilot to communicate with any LLM you choose, promoting versatility across different testing frameworks.
 
-For more details, check our [Testing with Copilot guide](docs/guide/testing-with-copilot).
+For more details, check our [Testing with Copilot guide].
 
 ### Write Tests Using Natural Language
 
@@ -154,14 +154,18 @@ By combining these steps, Detox Copilot effectively bridges the gap between natu
 
 ## Extending Beyond Detox
 
-Detox Copilot is built on a standalone core library called [detox-copilot](https://github.com/wix-incubator/detox-copilot) designed to interpret natural language testing instructions and generate test code. Though initially developed for Detox, it can be extended to work with other testing frameworks.
+Detox Copilot is built on a standalone core library called [detox-copilot] designed to interpret natural language testing instructions and generate test code. Though initially developed for Detox, it can be extended to work with other testing frameworks.
 
 ## Learn More
 
-For detailed guidance, check out our [Testing with Detox Copilot Guide](docs/guide/testing-with-detox-copilot) and the [Detox Copilot API Documentation](docs/api/copilot).
+For detailed guidance, check out our [Testing with Copilot guide] and the [Detox Copilot API Documentation].
 
 ## Join the Future of Testing
 
 Detox Copilot represents a major step forward in making end-to-end testing more accessible and efficient. By embracing natural language testing, you can enhance collaboration, speed up test creation, and improve overall test coverage.
 
 We're **excited** to see how you'll leverage Detox Copilot in your tests! Share your experiences, feedback, and suggestions with us as we continue to refine and expand this groundbreaking feature.
+
+[Testing with Copilot guide]: /docs/guide/testing-with-copilot
+[Detox Copilot API Documentation]: /docs/api/copilot
+[detox-copilot]: https://github.com/wix-incubator/detox-copilot
