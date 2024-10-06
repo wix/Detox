@@ -4,7 +4,7 @@ This document guides you through setting up your development environment to star
 
 :::important Prerequisites
 
-Please complete our [Introductory environment setup](../introduction/environment-setup.md) guide before proceeding. This ensures you have the necessary tools and dependencies installed in order to _run_ Detox tests, which is a fundamental step before being able to contribute to the project itself.
+Please complete our [Introductory environment setup](../../introduction/environment-setup.md) guide before proceeding. This ensures you have the necessary tools and dependencies installed in order to _run_ Detox tests, which is a fundamental step before being able to contribute to the project itself.
 
 :::
 
