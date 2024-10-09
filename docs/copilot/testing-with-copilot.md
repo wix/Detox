@@ -181,5 +181,5 @@ it('should display the correct page title', async () => {
 
 ## Contributing to Detox Copilot
 
-Contributions are welcome! 
+Contributions are welcome!
 Visit the [Detox Copilot GitHub Repository](https://github.com/wix-incubator/detox-copilot) to open issues or pull requests if they are relevant to the core-library functionality or open a it under [Detox repository](https://github.com/wix/Detox) if it is related to Detox-Copilot integration or if you are not sure where the issue should be opened.
