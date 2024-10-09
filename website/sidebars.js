@@ -34,7 +34,6 @@ const sidebars = {
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
-        'guide/testing-with-copilot',
         'guide/testing-webviews',
         'guide/genymotion-saas',
         'guide/taking-screenshots',
@@ -48,6 +47,15 @@ const sidebars = {
         'guide/proguard-configuration',
         'guide/cucumber-js-integration',
         'guide/uninstalling',
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Detox Copilot',
+      items: [
+        'copilot/testing-with-copilot',
+        'copilot/best-practices',
+        'copilot/technical-overview',
       ]
     },
     {
