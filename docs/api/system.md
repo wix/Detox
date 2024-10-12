@@ -70,7 +70,7 @@ System expectations are used to assert the state of elements within the system:
 Asserts that the element exists.
 
 ```js
-await system.element(by.system.label('Allow')).toExist();
+await expect(system.element(by.system.label('Allow'))).toExist();
 ```
 
 ### `not`
@@ -78,7 +78,7 @@ await system.element(by.system.label('Allow')).toExist();
 Negates the expectation.
 
 ```js
-await system.element(by.system.label('Allow')).not.toExist();
+await expect(system.element(by.system.label('Allow'))).not.toExist();
 ```
 
 [`by.system.label(label)`]: #bysystemlabellabel
