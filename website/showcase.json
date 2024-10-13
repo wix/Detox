@@ -117,5 +117,57 @@
     "image": "img/showcase/mercari.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.mercariapp.mercari",
     "linkApple": "https://apps.apple.com/us/app/mercari-your-marketplace/id896130944"
+  },
+  {
+    "title": "DealerCenter",
+    "image": "img/showcase/DealerCenter.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.nowcom.dcmobile&hl=en_US&pli=1",
+    "linkApple": "https://apps.apple.com/us/app/dealercenter/id521054271"
+  },
+  {
+    "title": "Bumpy: International Dating",
+    "titleFontSize": "1.2rem",
+    "image": "img/showcase/Bumpy.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=app.bumpy.android",
+    "linkApple": "https://apps.apple.com/us/app/bumpy-international-dating/id1455336523"
+  },
+  {
+    "title": "Rippling",
+    "image": "img/showcase/Rippling.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.people.rippling&hl=en&gl=US&pli=1",
+    "linkApple": "https://apps.apple.com/us/app/rippling-hr-it-finance/id1231325957"
+  },
+  {
+    "title": "Qwil Messenger",
+    "image": "img/showcase/Qwil.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=io.qwil.android&hl=en_US",
+    "linkApple": "https://apps.apple.com/us/app/qwil-messenger/id1356119152"
+  },
+  {
+    "title": "Abacus for Firefly III",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/Abacus.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=abacus.fireflyiii.android.app",
+    "linkApple": "https://apps.apple.com/us/app/1627093491"
+  },
+  {
+    "title": "The Newt In Somerset",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/theNewt.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.candide.thenewt",
+    "linkApple": "https://apps.apple.com/us/app/the-newt-in-somerset/id1645524424the"
+  },
+  {
+    "title": "Babylonstoren",
+    "image": "img/showcase/babylonstoren.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.candide.babylonstoren",
+    "linkApple": "https://apps.apple.com/us/app/babylonstoren/id1626456402"
+  },
+  {
+    "title": "Lyrist",
+    "image": "img/showcase/Lyrist.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.rapbook",
+    "linkApple": "https://apps.apple.com/us/app/lyrist-ai-songwriting-toolkit/id1352247113"
   }
+
 ]
