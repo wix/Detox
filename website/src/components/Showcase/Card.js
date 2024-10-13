@@ -3,11 +3,12 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import styles from './Card.module.scss';
 
-function Card({ className, title, titleFontSize, image, linkGoogle, linkApple, linkGitHub, linkWebsite }) {
+function Card({ className, title, titleFontSize, image, linkGoogle, linkApple, linkGitHub, linkWebsite, backgroundGradietColor }) {
   return (
-    <li className={clsx(className, styles.card)}>
+    <li className={clsx(className, styles.card)}
+    style={{ '--bg-color': backgroundGradietColor }} >
       <img src={require(`@site/static/${image}`).default} className={styles.image} />
-      <span className={styles.title} style={{ fontSize: titleFontSize }}>
+      <span className={styles.title} style={{ fontSize: titleFontSize}}>
         {title}
       </span>
       <div>
