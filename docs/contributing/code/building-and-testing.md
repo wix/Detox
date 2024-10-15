@@ -78,6 +78,13 @@ cd detox/test
 detox test --configuration ios.sim.release
 ```
 
+:::note
+
+Mind that on iOS, Detox expects a specific simulator device with a specific name and os version to be available in your Xcode environment.
+The required details are specified in the [detox.config.js](https://github.com/wix/Detox/blob/master/detox/test/e2e/detox.config.js) under `ios.simulator` device configuration (see `type` and `os`). Be sure to [install such a device](https://developer.apple.com/documentation/safari-developer-tools/adding-additional-simulators), beforehand.
+
+:::
+
 To run in Android release mode, run:
 
 ```bash
@@ -87,7 +94,8 @@ detox test --configuration android.emu.release
 
 :::note
 
-Mind that on Android, Detox expects a specific AVD with a [specific name](https://github.com/wix/Detox/blob/24f68c3bd7675ed6f508e3f5fea97509eb7991b2/detox/test/e2e/detox.config.js#L111) to be available on your computer.
+Mind that on Android, Detox expects a specific AVD with a specific name to be available on your computer.
+The required details are specified in the [detox.config.js](https://github.com/wix/Detox/blob/master/detox/test/e2e/detox.config.js) under `android.emulator` device configuration (see `avdName`).
 Be sure to [install such an AVD](https://developer.android.com/studio/run/managing-avds#createavd), beforehand.
 
 :::
@@ -127,8 +135,8 @@ On our CI, we test our changes on both iOS and Android, and we lint-check our co
 You can run the same scripts we run on our CI locally, to ensure your changes are passing the tests (under the project's root directory):
 
 ```bash
-npm run ci.ios
-npm run ci.android
+npm run ci:ios
+npm run ci:android
 ```
 
 Refer to the scripts `scripts/ci.ios.sh` and `scripts/ci.android.sh` to see how we run the tests on our CI.
