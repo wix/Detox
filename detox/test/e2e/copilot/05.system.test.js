@@ -1,12 +1,7 @@
-const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 const {expectToThrow} = require("../utils/custom-expects");
 
 describeForCopilotEnv(':ios: iOS Permission Dialogs', () => {
-  beforeAll(async () => {
-    await copilot.init(new PromptHandler());
-  });
-
   beforeEach(async () => {
     await copilot.perform(
       'Remove the app and start a fresh instance',

@@ -1,9 +1,7 @@
-const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 
 describeForCopilotEnv('WebView Interactions', () => {
   beforeAll(async () => {
-    await copilot.init(new PromptHandler());
     await copilot.perform('Start the app');
   });
 
