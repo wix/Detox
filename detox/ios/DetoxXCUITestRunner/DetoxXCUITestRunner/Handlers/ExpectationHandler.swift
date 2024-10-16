@@ -7,11 +7,12 @@ import Foundation
 import XCTest
 
 class ExpectationHandler {
-  func handle(from params: InvocationParams, on element: XCUIElement) throws {
+  func handle(from params: InvocationParams, predicateHandler: PredicateHandler) throws {
     guard let expectation = params.expectation else {
       throw Error.invalidInvocationParams("Expectation type is missing")
     }
 
+    let element = predicateHandler.findElement(using: params)
     let expectedEvaluation = expectedEvaluation(params)
 
     switch expectation {

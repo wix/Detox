@@ -416,6 +416,55 @@ if (device.getPlatform() === 'ios') {
 }
 ```
 
+### `device.tap(point, shouldIgnoreStatusBar)`
+
+Perform a tap at arbitrary coordinates on the device's screen.
+
+#### tap parameters
+
+| parameter | platform | description | default value
+|  --------  |  -------  |  -------  | -------  |
+| point | Android & IOS | Coordinates in the element's coordinate space | `{x: 100, y: 100}`
+| shouldIgnoreStatusBar | Android | Coordinates will be measured starting from under the status bar. | `true`
+
+#### tap examples
+
+```js
+
+await device.tap();
+await device.tap({ x: 100, y: 150 }, false);
+await device.tap({ x: 100, y: 150 });
+await device.tap(false);
+
+```
+
+### `device.longPress(point, duration, shouldIgnoreStatusBar)`
+
+Perform a long press at arbitrary coordinates on the device's screen. Custom press duration if needed.
+
+#### longPress parameters
+
+| parameter | platform | description | default value
+|  --------  |  -------  |  -------  | -------  |
+| point | Android & IOS | Coordinates in the element's coordinate space | `{x: 100, y: 100}`
+| duration | Android & IOS | Custom press duration time, in milliseconds. | Android: Standard long-press duration.  IOS: 1000 milliseconds.
+| shouldIgnoreStatusBar | Android | Coordinates will be measured starting from under the status bar. | `true`
+
+#### longPress examples
+
+```js
+
+await device.longPress();
+await device.longPress({ x: 100, y: 150 }, 2000, false);
+await device.longPress({ x: 100, y: 150 }, 2000);
+await device.longPress(2000, false);
+await device.longPress({ x: 100, y: 150 }, false);
+await device.longPress({ x: 100, y: 150 });
+await device.longPress(2000);
+await device.longPress(false);
+
+```
+
 ### `device.takeScreenshot([name])`
 
 Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](../guide/taking-screenshots.md).

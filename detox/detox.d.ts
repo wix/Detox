@@ -785,6 +785,45 @@ declare global {
             setOrientation(orientation: Orientation): Promise<void>;
 
             /**
+             * Perform a tap at arbitrary coordinates on the device's screen.
+             * @param point Coordinates in the element's coordinate space. Optional. defaults: x: 100, y: 100
+             * @param shouldIgnoreStatusBar Coordinates will be measured starting from under the status bar. this param will affect only in Android tests. Optional. default: true
+             * @example await device.tap();
+             * @example await device.tap({ x: 100, y: 150 }, false);
+             * @example await device.tap({ x: 100, y: 150 });
+             * @example await device.tap(false);
+             */
+            tap(): Promise<void>;
+            tap(point: Point2D): Promise<void>;
+            tap(point: Point2D, shouldIgnoreStatusBar: boolean): Promise<void>;
+            tap(shouldIgnoreStatusBar: boolean): Promise<void>;
+
+            /**
+             * Perform a long press at arbitrary coordinates on the device's screen. Custom press duration if needed.
+             * @param point Coordinates in the device's coordinate space. Optional. defaults: x: 100, y: 100
+             * @param duration Custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for Android and 1000 milliseconds for ios).
+             *      Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+             *      They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
+             * @param shouldIgnoreStatusBar Coordinates will be measured starting from under the status bar. this param will affect only in Android tests. Optional. default: true
+             * @example await device.longPress();
+             * @example await device.longPress({ x: 100, y: 150 }, 2000, false);
+             * @example await device.longPress({ x: 100, y: 150 }, 2000);
+             * @example await device.longPress(2000, false);
+             * @example await device.longPress({ x: 100, y: 150 }, false);
+             * @example await device.longPress({ x: 100, y: 150 });
+             * @example await device.longPress(2000);
+             * @example await device.longPress(false);
+             */
+            longPress(): Promise<void>;
+            longPress(point: Point2D, duration: number, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D, duration: number): Promise<void>;
+            longPress(duration: number, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
+            longPress(shouldIgnoreStatusBar: boolean): Promise<void>;
+
+            /**
              * Sets the simulator/emulator location to the given latitude and longitude.
              *
              * <p/>On iOS `setLocation` is dependent on [fbsimctl](https://github.com/facebook/idb/tree/4b7929480c3c0f158f33f78a5b802c1d0e7030d2/fbsimctl)

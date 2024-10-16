@@ -52,6 +52,14 @@ function assertPoint(point) {
   throw new DetoxRuntimeError(`point should be an object with x and y properties, but got ${JSON.stringify(point)}`);
 }
 
+function assertShouldIgnoreStatusBar(shouldIgnoreStatusBar) {
+  if (typeof shouldIgnoreStatusBar === 'boolean') {
+    return true;
+  }
+
+  throw new DetoxRuntimeError('shouldIgnoreStatusBar should be a boolean, but got ' + (shouldIgnoreStatusBar + (' (' + (typeof shouldIgnoreStatusBar + ')'))));
+}
+
 function assertUndefined(arg) {
   if (arg === undefined) {
     return true;
@@ -76,6 +84,7 @@ module.exports = {
   assertString,
   assertDuration,
   assertPoint,
+  assertShouldIgnoreStatusBar,
   assertUndefined,
   assertTraceDescription
 };

@@ -6,11 +6,16 @@ const _ = require('lodash');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
+const XCUITestRunner = require('../../../../ios/XCUITestRunner');
+const { assertTraceDescription } = require('../../../../utils/assertArgument');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
+const { actionDescription } = require('../../../../utils/invocationTraceDescriptions');
 const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
+const traceInvocationCall = require('../../../../utils/traceInvocationCall').bind(null, log);
 
 const IosDriver = require('./IosDriver');
+
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -38,6 +43,19 @@ class SimulatorDriver extends IosDriver {
     this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
     this._applesimutils = deps.applesimutils;
+  }
+
+  withAction(xcuitestRunner, action, traceDescription, ...params) {
+    assertTraceDescription(traceDescription);
+
+    const invocation = {
+      ...(params.length !== 0 && { params }),
+      type: 'systemAction',
+      ...(this.index !== undefined && { systemAtIndex: this.index }),
+      systemAction: action
+    };
+
+    return traceInvocationCall(traceDescription, invocation, xcuitestRunner.execute(invocation));
   }
 
   getExternalId() {
@@ -109,6 +127,23 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('beforeTerminateApp', { deviceId: udid, bundleId });
     await this._applesimutils.terminate(udid, bundleId);
     await this.emitter.emit('terminateApp', { deviceId: udid, bundleId });
+  }
+
+  async tap(point, shouldIgnoreStatusBar, _bundleId) {
+    const xcuitestRunner = new XCUITestRunner({ runtimeDevice: { id: this.getExternalId(), _bundleId } });
+    let x = point?.x ?? 100;
+    let y = point?.y ?? 100;
+    const traceDescription = actionDescription.tap({ x, y });
+    return this.withAction(xcuitestRunner, 'coordinateTap', traceDescription, x.toString(), y.toString());
+  }
+
+  async longPress(point, pressDuration, shouldIgnoreStatusBar, _bundleId) {
+    const xcuitestRunner = new XCUITestRunner({ runtimeDevice: { id: this.getExternalId(), _bundleId } });
+    let x = point?.x ?? 100;
+    let y = point?.y ?? 100;
+    let _pressDuration = pressDuration ? (pressDuration / 1000) : 1;
+    const traceDescription = actionDescription.longPress({ x, y }, _pressDuration);
+    return this.withAction(xcuitestRunner, 'coordinateLongPress', traceDescription, x.toString(), y.toString(), _pressDuration.toString());
   }
 
   async setBiometricEnrollment(yesOrNo) {

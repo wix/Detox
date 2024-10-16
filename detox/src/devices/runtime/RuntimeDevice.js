@@ -1,6 +1,7 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
+const mapDeviceLongPressArguments = require('../../utils/mapDeviceLongPressArguments');
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
 
@@ -281,6 +282,16 @@ class RuntimeDevice {
 
   async setOrientation(orientation) {
     await this.deviceDriver.setOrientation(orientation);
+  }
+
+  async tap(point, shouldIgnoreStatusBar) {
+    await this.deviceDriver.tap(point, shouldIgnoreStatusBar, this._bundleId);
+  }
+
+  async longPress(arg1, arg2, arg3) {
+    let { point, duration, shouldIgnoreStatusBar } = mapDeviceLongPressArguments(arg1, arg2, arg3);
+
+    await this.deviceDriver.longPress(point, duration, shouldIgnoreStatusBar, this._bundleId);
   }
 
   async setLocation(lat, lon) {

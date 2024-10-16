@@ -816,6 +816,23 @@ describe('Device', () => {
     expect(driverMock.driver.setOrientation).toHaveBeenCalledWith('param');
   });
 
+  it(`tap() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    const points = { x: 200, y: 200 };
+    await device.tap(points);
+
+    expect(driverMock.driver.tap).toHaveBeenCalled();
+  });
+
+  it(`longPress() should pass to device driver`, async () => {
+    const device = await aValidDevice();
+    const points = { x: 200, y: 200 };
+    const duration = 2000;
+    await device.longPress(points, duration);
+
+    expect(driverMock.driver.longPress).toHaveBeenCalled();
+  });
+
   it(`sendUserNotification() should pass to device driver`, async () => {
     const device = await aValidDevice();
     await device.sendUserNotification('notif');
