@@ -155,7 +155,7 @@ struct ViewHierarchyGenerator {
         }
 
         if let testID = view.accessibilityIdentifier {
-            attributes["testID"] = testID
+            attributes["id"] = testID
         }
 
         if let textView = view as? UITextView {
