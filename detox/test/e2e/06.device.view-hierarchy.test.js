@@ -1,5 +1,7 @@
 const {expectViewHierarchySnapshotToMatch} = require("./utils/snapshot");
 
+const jestExpect = require('expect').default;
+
 describe('generate view hierarchy', () => {
   beforeAll(async () => {
     await device.launchApp();
@@ -25,5 +27,14 @@ describe('generate view hierarchy', () => {
     await element(by.text('WebView')).tap();
     const hierarchy = await device.generateViewHierarchyXml();
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-web-view`);
+  });
+
+  it('generateViewHierarchyXml() - should generate consistent consecutive view hierarchies', async () => {
+    await element(by.text('WebView')).tap();
+
+    const hierarchy1 = await device.generateViewHierarchyXml();
+    const hierarchy2 = await device.generateViewHierarchyXml();
+
+    jestExpect(hierarchy1).toEqual(hierarchy2);
   });
 });
