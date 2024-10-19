@@ -59,7 +59,7 @@ export default class example extends Component {
   }
 
   renderInlineSeparator() {
-    return <Text style={{width: 10}}> | </Text>;
+    return <Text style={{width: 30, color: 'gray', textAlign: 'center'}}> | </Text>;
   }
 
   renderMainMenu() {
@@ -120,7 +120,7 @@ export default class example extends Component {
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
-          {isAndroid && this.renderInlineSeparator()}
+          {this.renderInlineSeparator()}
           {this.renderScreenButton('Shape Match', Screens.ShapeMatchGameScreen)}
         </View>
 
