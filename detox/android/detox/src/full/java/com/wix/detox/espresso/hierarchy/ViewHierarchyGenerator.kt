@@ -16,10 +16,10 @@ import kotlin.coroutines.resume
 
 
 private const val GET_HTML_SCRIPT = """
+(function() {
     const blacklistedTags = ['script', 'style', 'head', 'meta'];
     const blackListedTagsSelector = blacklistedTags.join(',');
 
-    (function() {
     // Clone the entire document
     var clonedDoc = document.documentElement.cloneNode(true);
 
