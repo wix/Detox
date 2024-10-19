@@ -1,8 +1,10 @@
 const axios = require('axios');
 const PromptHandler = require("./PromptHandler");
 
+const describeOrDescribeSkip = process.env.CI === 'true' ? describe.skip : describe;
+
 describeForCopilotEnv = (description, fn) => {
-  describe(':ios: Copilot', () => {
+  describeOrDescribeSkip(':ios: Copilot', () => {
     describe(description, () => {
       beforeAll(async () => {
         if (!await checkVpnStatus()) {
