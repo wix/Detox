@@ -1,9 +1,7 @@
-const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 
 describeForCopilotEnv('WebView Interactions', () => {
   beforeAll(async () => {
-    await copilot.init(new PromptHandler());
     await copilot.perform('Start the app');
   });
 
@@ -44,7 +42,7 @@ describeForCopilotEnv('WebView Interactions', () => {
 
     it('should interact with elements in multiple WebViews', async () => {
       await copilot.perform(
-        'In the second WebView, find an element that contains the message "This is a dummy webview."',
+        'In the second WebView, verify the headline has the message "This is a dummy webview."',
         'Hide the second WebView',
         'Show the 3rd WebView',
         'There should be an iframe in the third WebView with the title "This is an iframe" or something similar'

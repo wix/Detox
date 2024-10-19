@@ -1,10 +1,8 @@
-const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 const {expectToThrow} = require("../utils/custom-expects");
 
 describeForCopilotEnv('WaitFor Functionality', () => {
   beforeAll(async () => {
-    await copilot.init(new PromptHandler());
     await copilot.perform('Launch the application');
   });
 

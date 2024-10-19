@@ -1,11 +1,8 @@
-const PromptHandler = require('./PromptHandler');
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 const jestExpect = require('expect').default;
 
 describeForCopilotEnv('Copilot Actions', () => {
   beforeAll(async () => {
-    copilot.init(new PromptHandler());
-
     await copilot.perform('Start the application');
   });
 
@@ -39,16 +36,15 @@ describeForCopilotEnv('Copilot Actions', () => {
 
   it('should long press with point', async () => {
     await copilot.perform(
-      'Long press the top left corner of the "Long Press on Top Left" button',
+      'Long press the top-most left-most corner of the "Long Press on Top Left" button',
       'The text "Long Press on Top Left Working!!!" appears'
     );
   });
 
   it('should not succeed in long pressing with point outside the target area', async () => {
-    await copilot.perform(
-      'Attempt a long press outside the "Long Press on Top Left" button',
-      'The message "Long Press on Top Left Working!!!" is not present'
-    );
+    await jestExpect(async () =>
+      await copilot.perform('Attempt a long press on the "Long Press on Top Left" button outside its bounds')
+    ).rejects.toThrowError();
   });
 
   it('should type in an element', async () => {
@@ -89,7 +85,7 @@ describeForCopilotEnv('Copilot Actions', () => {
 
   it('should swipe down until pull to reload is triggered', async () => {
     await copilot.perform(
-      'Swipe fast the scrollable area ScrollView799 downwards until the refresh is activated',
+      'Swipe fast the scrollable area ScrollView799 downwards to activate the pull-to-reload',
       'The text "PullToReload Working!!!" becomes visible'
     );
   });
@@ -98,8 +94,7 @@ describeForCopilotEnv('Copilot Actions', () => {
     await copilot.perform(
       'The element with text "Text1" can be seen',
       'Swipe the view "ScrollView161" upwards',
-      'The text element is no longer in view',
-      // To avoid confusion: up swipe scrolls down
+      'The Text1 element is no longer in view',
       'Swipe the element back up until the "Text1" element is visible',
     );
   });
@@ -144,7 +139,7 @@ describeForCopilotEnv('Copilot Actions', () => {
 
   it('should assert on ambiguous intent', async () => {
     await jestExpect(async () =>
-      await copilot.perform('Hello world')
+      await copilot.perform('Do magic to the element')
     ).rejects.toThrowError();
   });
 });
