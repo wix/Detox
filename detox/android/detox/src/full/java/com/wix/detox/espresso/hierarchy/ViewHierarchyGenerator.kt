@@ -170,9 +170,9 @@ object ViewHierarchyGenerator {
         if (shouldInjectNewTestId) {
             val newTestId = "${injectedPrefix}${indexPath.joinToString("_")}"
             view.tag = newTestId
-            attributes["testID"] = newTestId
+            attributes["id"] = newTestId
         } else {
-            attributes["testID"] = currentTestId
+            attributes["id"] = currentTestId
         }
 
         attributes
