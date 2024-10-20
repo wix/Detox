@@ -121,5 +121,53 @@ public class EspressoDetox {
             }
         });
     }
+
+    public static void tap(Integer x, Integer y, boolean shouldIgnoreStatusBar) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "tap on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                int adjustedY = shouldIgnoreStatusBar ? y + UiAutomatorHelper.getStatusBarHeight(view) : y;
+                ViewAction action = DetoxAction.tapAtLocation(x, adjustedY);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
+            }
+        });
+    }
+
+    public static void longPress(Integer x, Integer y, boolean shouldIgnoreStatusBar) {
+        longPress(x, y, null, shouldIgnoreStatusBar);
+    }
+
+    public static void longPress(Integer x, Integer y, Integer duration, boolean shouldIgnoreStatusBar) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "long press on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                int adjustedY = shouldIgnoreStatusBar ? y + UiAutomatorHelper.getStatusBarHeight(view) : y;
+                ViewAction action = DetoxAction.longPress(x, adjustedY, duration);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
+            }
+        });
+    }
 }
 
