@@ -144,7 +144,6 @@ struct ViewHierarchyGenerator {
 
         if let superview = view.superview {
             let location = view.convert(view.bounds.origin, to: superview)
-            // todo: error
             attributes["x"] = "\(toClampedInt(location.x))"
             attributes["y"] = "\(toClampedInt(location.y))"
         }
