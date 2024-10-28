@@ -129,8 +129,8 @@ struct ViewHierarchyGenerator {
     ) -> String {
         var attributes: [String: String] = [
             "class": "\(type(of: view))",
-            "width": "\(Int(view.frame.size.width))",
-            "height": "\(Int(view.frame.size.height))",
+            "width": "\(toClampedInt(view.frame.size.width))",
+            "height": "\(toClampedInt(view.frame.size.height))",
             "visibility": view.isHidden ? "invisible" : "visible",
             "alpha": "\(view.alpha)",
             "focused": "\(view.isFocused)",
@@ -144,8 +144,9 @@ struct ViewHierarchyGenerator {
 
         if let superview = view.superview {
             let location = view.convert(view.bounds.origin, to: superview)
-            attributes["x"] = "\(Int(location.x))"
-            attributes["y"] = "\(Int(location.y))"
+            // todo: error
+            attributes["x"] = "\(toClampedInt(location.x))"
+            attributes["y"] = "\(toClampedInt(location.y))"
         }
 
         if shouldInjectIdentifiers {
@@ -220,4 +221,8 @@ class WebViewHandler: NSObject, WKNavigationDelegate {
             loadCompletion?(.failure(error))
         }
     }
+}
+
+func toClampedInt(_ value: Double) -> Int {
+    return Int(min(max(value, Double(Int.min)), Double(Int.max)))
 }
