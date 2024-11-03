@@ -236,3 +236,7 @@ Detox-ios.tbz
 
 # Ignore .env files across the project
 **/.env
+
+#ignore yalc
+.yalc/
+yalc.lock
