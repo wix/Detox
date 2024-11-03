@@ -1,13 +1,16 @@
 package com.wix.detox.espresso.web;
 
 
+import static androidx.test.espresso.web.webdriver.DriverAtoms.findMultipleElements;
+
+import static com.wix.detox.espresso.web.DetoxDriverAtoms.findMultipleElementsDetox;
+
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.ElementReference;
 import androidx.test.espresso.web.webdriver.Locator;
 
 import java.util.List;
 
-import static androidx.test.espresso.web.webdriver.DriverAtoms.findMultipleElements;
 
 public class DetoxWebAtomMatcher {
 
@@ -16,19 +19,19 @@ public class DetoxWebAtomMatcher {
     }
 
     public static Atom<List<ElementReference>> matcherForId(String id) {
-        return findMultipleElements(Locator.ID, id);
+        return findMultipleElementsDetox(Locator.ID, id);
     }
 
     public static Atom<List<ElementReference>> matcherForClassName(String className) {
-        return findMultipleElements(Locator.CLASS_NAME, className);
+        return findMultipleElementsDetox(Locator.CLASS_NAME, className);
     }
 
     public static Atom<List<ElementReference>> matcherForCssSelector(String cssSelector) {
-        return findMultipleElements(Locator.CSS_SELECTOR, cssSelector);
+        return findMultipleElementsDetox(Locator.CSS_SELECTOR, cssSelector);
     }
 
     public static Atom<List<ElementReference>> matcherForName(String name) {
-        return findMultipleElements(Locator.NAME, name);
+        return findMultipleElementsDetox(Locator.NAME, name);
     }
 
     public static Atom<List<ElementReference>> matcherForXPath(String xpath) {

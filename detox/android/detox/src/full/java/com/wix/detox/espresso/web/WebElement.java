@@ -1,5 +1,7 @@
 package com.wix.detox.espresso.web;
 
+import android.util.Log;
+
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.Atoms;
 import androidx.test.espresso.web.model.ElementReference;
@@ -29,7 +31,9 @@ public class WebElement {
     }
 
     ElementReference get() {
+        long timestamp = System.currentTimeMillis();
         List<ElementReference> elements = getWebViewInteraction().withTimeout(30, TimeUnit.SECONDS).perform(matcherAtom).get();
+        Log.d("WebElement", "Time taken to get element: " + (System.currentTimeMillis() - timestamp) + "ms");
 
         if (elements == null || elements.size() == 0 || index >= elements.size()) {
             throw new RuntimeException(String.format("element was not found at index: %d", index));
