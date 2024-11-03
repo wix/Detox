@@ -168,17 +168,34 @@ public final class DetoxDriverAtoms {
     }
 
     private static String getSelector(Locator type, String value) {
-        return switch (type) {
-            case ID -> "#" + value;
-            case CLASS_NAME -> "." + value;
-            case LINK_TEXT -> "a[href=\"" + value + "\"]";
-            case PARTIAL_LINK_TEXT -> "a[href*=\"" + value + "\"]";
-            case CSS_SELECTOR -> value;
-            case NAME -> "[name=\"" + value + "\"]";
-            case TAG_NAME -> value;
-            case XPATH -> throw new IllegalArgumentException("XPath should be handled separately");
-            default -> throw new IllegalArgumentException("Unknown Locator type: " + type);
-        };
+        switch (type) {
+            case ID:
+                return "#" + value;
+
+            case CLASS_NAME:
+                return "." + value;
+
+            case LINK_TEXT:
+                return "a[href=\"" + value + "\"]";
+
+            case PARTIAL_LINK_TEXT:
+                return "a[href*=\"" + value + "\"]";
+
+            case CSS_SELECTOR:
+                return value;
+
+            case NAME:
+                return "[name=\"" + value + "\"]";
+
+            case TAG_NAME:
+                return value;
+
+            case XPATH:
+                throw new IllegalArgumentException("XPath should be handled separately");
+
+            default:
+                throw new IllegalArgumentException("Unknown Locator type: " + type);
+        }
     }
 
     @VisibleForTesting
