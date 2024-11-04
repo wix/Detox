@@ -18,7 +18,7 @@ const detoxCopilotFrameworkDriver = {
           },
           {
             signature: 'by.text(text: string)',
-            description: 'Matches elements by their text.',
+            description: 'Matches elements by their text (value).',
             example: "element(by.text('Login'))",
             guidelines: ['Prefer test IDs over text matchers when possible.'],
           },
@@ -33,6 +33,12 @@ const detoxCopilotFrameworkDriver = {
             description: 'Selects the element at the specified index from matched elements.',
             example: "element(by.id('listItem')).atIndex(2)",
             guidelines: ['Use when multiple elements match the same matcher.'],
+          },
+          {
+            signature: 'by.label(label: string)',
+            description: 'Match elements with the specified label.',
+            example: "element(by.label('Tuesday, 1 October'));",
+            guidelines: ['Use when there are no other identifiers, such as for date pickers to select specific days.'],
           },
         ],
       },
@@ -106,7 +112,7 @@ const detoxCopilotFrameworkDriver = {
             ],
           },
           {
-            signature: 'waitFor(element: Matcher)..toBeVisible().whileElement(element: Matcher).scroll(offset: number, direction: string)',
+            signature: 'waitFor(element: Matcher).toBeVisible(percent?: number).whileElement(element: Matcher).scroll(offset: number, direction: string)',
             description: 'Continuously performs an action while waiting for an expectation to be fulfilled.',
             example: `
 await waitFor(element(by.text('Load More')))
@@ -185,9 +191,13 @@ jestExpect(attributes.text).toBe('Tap Me');`,
         title: 'Assertions',
         items: [
           {
-            signature: 'toBeVisible()',
-            description: 'Asserts that the element is visible.',
-            example: "await expect(element(by.id('loginButton'))).toBeVisible();",
+            signature: 'toBeVisible(percent?: number)',
+            description: 'Asserts that the element is visible with at-least the specified percentage. Default percent is 75%.',
+            example: "await expect(element(by.id('loginButton'))).toBeVisible(38);",
+            guidelines: [
+              'Use the default visibility percent unless a different percentage is required.',
+              'If a percentage value is provided, use the exact percentage required for the test.',
+            ],
           },
           {
             signature: 'toExist()',
@@ -377,8 +387,8 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
         items: [
           {
             signature: 'web.element(matcher: Matcher)',
-            description: 'Selects an element within a web view. Use when there is only one web view on the screen.',
-            example: `    
+            description: 'Selects an element within a web view (`WKWebView` or `RNCWebView`). Use when there is only one web view on the screen.',
+            example: `
 await web.element(by.web.id('email')).typeText('test@example.com');
 await web.element(by.web.id('password')).typeText('password123');
 await web.element(by.web.id('login-button')).tap();
@@ -387,19 +397,20 @@ await web.element(by.web.id('login-button')).tap();
               'The web view may take time to load; add a delay using `await new Promise(resolve => setTimeout(resolve, milliseconds));` before the first interaction. This wait should happen only once.',
               'After the initial wait, you can interact with web elements without additional delays.',
               'Use `by.web.id` matcher when possible for matching web elements, as it is the most reliable.',
-              'Web APIs can only be used with web elements (within web views). Avoid using web APIs for native elements or native APIs for web elements.',
+              'Web APIs can only be used with web elements (within web views). Do not use web APIs for native elements or native APIs for web elements!',
+              'Confirm that you are targeting a web view before using this method.'
             ],
           },
           {
             signature: 'web(nativeMatcher: NativeMatcher).element(matcher: Matcher)',
-            description: 'Selects an element within a specific web view matched by a native matcher. Use when there are multiple web views on the screen.',
+            description: 'Selects an element within a specific web view (`WKWebView` or `RNCWebView`) matched by a native matcher. Use when there are multiple web views on the screen.',
             example: `
 // Wait for the specific web view to appear and load (only once before interacting)
 await expect(element(by.id('checkout-webview'))).toBeVisible();
 
 // Interact with elements within a specific web view
 const specificWebView = web(by.id('checkout-webview'));
-    
+
 await specificWebView.element(by.web.id('credit-card-number')).typeText('4111111111111111');
 await specificWebView.element(by.web.id('expiration-date')).typeText('12/25');
 await specificWebView.element(by.web.id('cvv')).typeText('123');
@@ -411,6 +422,7 @@ await specificWebView.element(by.web.id('pay-button')).tap();
               'After the initial wait, you can interact with elements within the web view without additional delays.',
               'Webview must be matched with `web(nativeMatcher)` (e.g., `web(by.id(..))` instead of `element(by.id(..))`).',
               'Prefer the basic `web.element()` if only one web view is present on the screen.',
+              'Confirm that you are targeting a web view before using this method.'
             ],
           },
           {
@@ -485,8 +497,8 @@ await secondWebView.element(by.web.id('search-button')).tap();
             example: `await web.element(by.web.label('Next')).tap();`,
             guidelines: [
               'Available on iOS only.',
-              'Use when the element has a unique label or aria-label.',
-              'Can be used to match buttons and input elements by their inner text content.',
+              'Use when the inner web element has a unique label or aria-label.',
+              'Can be used to match buttons and input elements inside a web view, by their inner text content.',
             ],
           },
           {
@@ -567,13 +579,13 @@ await web.element(by.web.id('email-input')).focus();
 await web.element(by.web.id('email-input')).typeText('user@example.com');
             `,
             guidelines: [
-              'Useful for input fields that require focus before typing.',
+              'Useful for input fields in a web view that require focus before typing.',
               'No need for secured interactions on iOS.',
             ]
           },
           {
             signature: 'moveCursorToEnd()',
-            description: 'Moves the input cursor to the end of the element\'s content.',
+            description: 'Moves the input cursor in a web view to the end of the element\'s content.',
             example: `
 await web.element(by.web.id('message-box')).moveCursorToEnd();
 await web.element(by.web.id('message-box')).typeText(' Adding more text.');
@@ -581,7 +593,7 @@ await web.element(by.web.id('message-box')).typeText(' Adding more text.');
           },
           {
             signature: 'runScript(script: string, args?: any[])',
-            description: 'Runs a JavaScript function on the element.',
+            description: 'Runs a JavaScript function on the web view element.',
             example: `
 // Click an element using a custom script
 await web.element(by.web.id('hidden-button')).runScript('el => el.click()');
