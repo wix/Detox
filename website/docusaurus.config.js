@@ -22,6 +22,10 @@ const config = {
       '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        gtag: {
+          trackingID: 'G-2Z5WTH61Y3',
+          anonymizeIP: true,
+        },
         blog: {
           path: 'blog',
           // Simple use-case: string editUrl
