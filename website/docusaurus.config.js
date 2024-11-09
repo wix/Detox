@@ -26,6 +26,9 @@ const config = {
           trackingID: 'G-2Z5WTH61Y3',
           anonymizeIP: true,
         },
+        googleTagManager: {
+          containerId: 'GTM-M58K66V8',
+        },
         blog: {
           path: 'blog',
           // Simple use-case: string editUrl
