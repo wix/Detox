@@ -2,7 +2,7 @@ import Foundation
 
 struct InvocationParams: Codable {
   let type: InvocationType
-  let predicate: Predicate
+  let predicate: Predicate?
   let atIndex: Int?
   let action: Action?
   let expectation: Expectation?
@@ -34,7 +34,7 @@ struct InvocationParams: Codable {
     } else if let webPredicate = try? container.decode(Predicate.self, forKey: .webPredicate) {
       predicate = webPredicate
     } else {
-      throw Error.dataCorruptedError("predicate")
+      predicate = nil
     }
 
     // Handle both systemAtIndex and webAtIndex for the atIndex property
@@ -157,6 +157,8 @@ extension InvocationParams.Predicate {
 extension InvocationParams {
   enum Action: String, Codable {
     case tap
+    case coordinateTap
+    case coordinateLongPress
     case typeText
     case replaceText
     case clearText
