@@ -39,4 +39,24 @@ describe('mapDeviceLongPressArguments', () => {
   it('should throw for invalid shouldIgnoreStatusBar', () => {
     expect(() => mapDeviceLongPressArguments({ x: 1, y: 2 }, 3, 'true')).toThrowError('shouldIgnoreStatusBar should be a boolean, but got true (string)');
   });
+
+  it('should return `{ point: { x: 1, y: 2 }, duration: null, shouldIgnoreStatusBar: true }` for `{ x: 1, y: 2 }, true`', () => {
+    expect(mapDeviceLongPressArguments({ x: 1, y: 2 }, true))
+    .toEqual({ point: { x: 1, y: 2 }, duration: null, shouldIgnoreStatusBar: true });
+  });
+
+  it('should return `{ point: { x: 1, y: 2 }, duration: null, shouldIgnoreStatusBar: false }` for `{ x: 1, y: 2 }, false`', () => {
+    expect(mapDeviceLongPressArguments({ x: 1, y: 2 }, false))
+    .toEqual({ point: { x: 1, y: 2 }, duration: null, shouldIgnoreStatusBar: false });
+  });
+
+  it('should throw when providing point, boolean, and extra argument', () => {
+    expect(() => mapDeviceLongPressArguments({ x: 1, y: 2 }, true, 'extra'))
+    .toThrowError();
+  });
+
+  it('should throw when providing duration, boolean, and extra argument', () => {
+    expect(() => mapDeviceLongPressArguments(1000, true, 'extra'))
+    .toThrowError();
+  });
 });

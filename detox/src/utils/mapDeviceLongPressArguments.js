@@ -6,7 +6,7 @@ function mapDeviceLongPressArguments(optionalAllParams, optionalDurationOrIgnore
     let point = null;
     let duration = null;
     let shouldIgnoreStatusBar = null;
-  
+
     try {
       if (optionalAllParams === undefined) {
         // Do nothing.
@@ -25,23 +25,21 @@ function mapDeviceLongPressArguments(optionalAllParams, optionalDurationOrIgnore
       } else {
         assertPoint(optionalAllParams);
         point = optionalAllParams;
-  
-        if (typeof optionalDurationOrIgnoreStatusBar === 'number' || typeof optionalDurationOrIgnoreStatusBar === 'boolean') {
-            if (typeof optionalDurationOrIgnoreStatusBar === 'number') {
-                assertDuration(optionalDurationOrIgnoreStatusBar);
-                duration = optionalDurationOrIgnoreStatusBar;
-            } else {
-                assertShouldIgnoreStatusBar(optionalDurationOrIgnoreStatusBar);
-                shouldIgnoreStatusBar = optionalDurationOrIgnoreStatusBar;
-                assertUndefined(optionalIgnoreStatusBar);
-            }
+
+        if (typeof optionalDurationOrIgnoreStatusBar === 'number') {
+          assertDuration(optionalDurationOrIgnoreStatusBar);
+          duration = optionalDurationOrIgnoreStatusBar;
+        } else if (typeof optionalDurationOrIgnoreStatusBar === 'boolean') {
+          assertShouldIgnoreStatusBar(optionalDurationOrIgnoreStatusBar);
+          shouldIgnoreStatusBar = optionalDurationOrIgnoreStatusBar;
+          assertUndefined(optionalIgnoreStatusBar);
         } else if (optionalDurationOrIgnoreStatusBar !== undefined) {
             assertDuration(optionalDurationOrIgnoreStatusBar);
         } else {
           assertUndefined(optionalDurationOrIgnoreStatusBar);
           assertUndefined(optionalIgnoreStatusBar);
         }
-  
+
         if (optionalIgnoreStatusBar !== undefined) {
           assertShouldIgnoreStatusBar(optionalIgnoreStatusBar);
           shouldIgnoreStatusBar = optionalIgnoreStatusBar;
@@ -51,7 +49,7 @@ function mapDeviceLongPressArguments(optionalAllParams, optionalDurationOrIgnore
       throw new DetoxRuntimeError(`longPress accepts either a duration (number) or a point ({x: number, y: number}) as ` +
         `its first argument, optionally a duration (number) as its second argument, and optionally a ignoreStatusBar (boolean) as its third argument. Error: ${e.message}`);
     }
-  
+
     return { point, duration, shouldIgnoreStatusBar };
   }
 
