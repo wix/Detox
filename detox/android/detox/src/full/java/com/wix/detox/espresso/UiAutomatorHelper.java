@@ -1,8 +1,13 @@
 package com.wix.detox.espresso;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Choreographer;
+import android.view.View;
 
 import com.wix.detox.common.UIThread;
 import com.wix.detox.espresso.action.common.utils.UiControllerUtils;
@@ -111,4 +116,10 @@ public class UiAutomatorHelper {
         }
     }
 
+    @SuppressLint({"DiscouragedApi", "InternalInsetResource"})
+    public static int getStatusBarHeightDps(View view) {
+        Context context = view.getContext();
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        return (int) (context.getResources().getDimensionPixelSize(resourceId) / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
 }

@@ -120,7 +120,7 @@ class IsDisplayingAtLeastDetoxMatcher(private val areaPercentage: Int) : TypeSaf
             .defaultDisplay
             .getMetrics(m)
 
-        val statusBarHeight = getStatusBarHeight(view)
+        val statusBarHeight = getStatusBarHeightPixels(view)
         val actionBarHeight = getActionBarHeight(view)
         return Rect(0, 0, m.widthPixels, m.heightPixels - (statusBarHeight + actionBarHeight))
     }
@@ -138,7 +138,7 @@ class IsDisplayingAtLeastDetoxMatcher(private val areaPercentage: Int) : TypeSaf
     }
 
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
-    private fun getStatusBarHeight(view: View): Int {
+    private fun getStatusBarHeightPixels(view: View): Int {
         val resourceId = view.context.resources.getIdentifier("status_bar_height", "dimen", "android")
         return if (resourceId > 0) view.context.resources.getDimensionPixelSize(resourceId) else 0
     }

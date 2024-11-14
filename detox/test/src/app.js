@@ -82,14 +82,22 @@ export default class example extends Component {
         {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
         {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
         {this.renderScreenButton('Orientation', Screens.Orientation)}
+
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderScreenButton('Permissions', Screens.Permissions)}
           {this.renderInlineSeparator()}
           {this.renderScreenButton('Alerts', Screens.AlertScreen)}
         </View>
+
         {this.renderScreenButton('Network', Screens.NetworkScreen)}
         {this.renderAnimationScreenButtons()}
-        {this.renderScreenButton('Device', Screens.DeviceScreen)}
+
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Device', Screens.DeviceScreen)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Device Tap', Screens.DeviceTapScreen)}
+        </View>
+
         {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}

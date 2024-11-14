@@ -7,6 +7,6 @@ import Foundation
 
 extension InvocationParams {
   var matcherDescription: String {
-    return predicate.description
+      return predicate?.description ?? "none"
   }
 }
