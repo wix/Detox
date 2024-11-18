@@ -142,7 +142,7 @@ When working with dependencies that require running your iOS app in a Rosetta si
 2. Run the following command in your terminal to ensure Xcode is properly selected:
 
 ```bash
-sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+sudo xcode-select --switch /Applications/Xcode.app
 ```
 
 3. Launch the iOS simulator in Rosetta mode:
