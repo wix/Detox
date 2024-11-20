@@ -8,6 +8,7 @@
 
 #import "ReactNativeSupport.h"
 #import "ReactNativeHeaders.h"
+#import "UIKit/UIKit.h"
 
 #include <dlfcn.h>
 #include <stdatomic.h>
@@ -40,14 +41,27 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 	{
 		//Call RN public API to request reload.
 		[bridge requestReload];
+        return;
 	}
-	else
-	{
-		//Legacy call to reload RN.
-		[[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
-															object:nil
-														  userInfo:nil];
-	}
+
+    NSObject<UIApplicationDelegate> *delegate = UIApplication.sharedApplication.delegate;
+    NSObject *rootViewFactory = [delegate valueForKey: @"rootViewFactory"];
+    if (rootViewFactory) {
+        NSObject *host = [rootViewFactory valueForKey:@"reactHost"];
+        SEL didReceiveReloadCommand = NSSelectorFromString(@"didReceiveReloadCommand");
+        if (host && [host respondsToSelector:didReceiveReloadCommand]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            [host performSelector:didReceiveReloadCommand];
+#pragma clang diagnostic pop
+            return;
+        }
+    }
+
+    //Legacy call to reload RN.
+    [[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
+                                                        object:nil
+                                                      userInfo:nil];
 }
 
 + (void)waitForReactNativeLoadWithCompletionHandler:(void (^)(void))handler
