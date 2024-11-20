@@ -81,8 +81,10 @@ class Element : NSObject {
 			return view.scrollView
 		} else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollView" {
 			return (view.value(forKey: "scrollView") as! UIScrollView)
-		}
-		
+        } else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollViewComponentView" {
+            return (view.value(forKey: "scrollView") as! UIScrollView)
+        }
+
 		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
 	}
 	

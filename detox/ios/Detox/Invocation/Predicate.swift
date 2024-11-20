@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Detox.Private
+import DetoxSync
 
 class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
   struct Keys {
@@ -66,10 +67,15 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
           return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
         } else {
           //Will crash if RN app and neither class exists
-          let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+            var RCTTextViewClass : AnyClass? = nil
+            if DTXReactNativeSupport.newArchEnabled() {
+                RCTTextViewClass = NSClassFromString("RCTParagraphComponentView")
+            } else {
+                RCTTextViewClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")
+            }
 
           let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
-            try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
+            try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass!)),
             ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
           ], modifiers: []), modifiers: [Modifier.not])
           descendantPredicate.hidden = true
@@ -91,6 +97,10 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
           //Will crash if RN app and neither class exists
           let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
           orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
+
+          if NSClassFromString("RCTParagraphComponentView") != nil {
+            orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: "RCTParagraphComponentView"))
+          }
         }
 
         let orCompoundPredicate = OrCompoundPredicate(predicates: orPredicates, modifiers: [])

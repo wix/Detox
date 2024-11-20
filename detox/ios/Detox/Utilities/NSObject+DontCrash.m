@@ -15,17 +15,23 @@
 	{
 		return [(UITextView*)self text];
 	}
-	
+
 	static Class RCTTextView;
+    static Class RCTParagraphComponentView;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		RCTTextView = NSClassFromString(@"RCTTextView");
+        RCTParagraphComponentView = NSClassFromString(@"RCTParagraphComponentView");
 	});
 	if(RCTTextView != nil && [self isKindOfClass:RCTTextView])
 	{
 		return [(NSTextStorage*)[self valueForKey:@"textStorage"] string];
 	}
-	
+    if(RCTParagraphComponentView != nil && [self isKindOfClass:RCTParagraphComponentView])
+    {
+        return [(NSAttributedString*)[self valueForKey:@"attributedText"] string];
+    }
+
 	return nil;
 }
 
