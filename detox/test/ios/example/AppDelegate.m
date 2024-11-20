@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+#import <React/RCTBundleURLProvider.h>
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -137,8 +138,16 @@ RCT_EXPORT_MODULE();
 	UILabel* _resignActive;
 }
 
+- (BOOL)newArchEnabled {
+    return YES;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.moduleName = @"example";
+
+    __auto_type superResult = [super application:application didFinishLaunchingWithOptions:launchOptions];
+
 	// this conditional init loads Detox only when command line arguments are given
 	// in normal execution, Detox is not loaded and there's zero impact on the app
 	
@@ -156,10 +165,10 @@ RCT_EXPORT_MODULE();
 	NSMutableDictionary* opts = launchOptions.mutableCopy;
 	opts[UIApplicationLaunchOptionsRemoteNotificationKey] = nil;
 	
-	RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-														moduleName:@"example"
-												 initialProperties:nil
-													 launchOptions:opts];
+//	RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+//														moduleName:@"example"
+//												 initialProperties:nil
+//													 launchOptions:opts];
 
 #if RCT_NEW_ARCH_ENABLED
 	_contextContainer = std::make_shared<facebook::react::ContextContainer const>();
@@ -169,27 +178,27 @@ RCT_EXPORT_MODULE();
 	rootView.bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
 #endif
 
-	rootView.backgroundColor = UIColor.whiteColor;
+//	rootView.backgroundColor = UIColor.whiteColor;
 	
-	self.window = [[AnnoyingWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
-	[self.window setIsAccessibilityElement:NO];
-	[self.window setAccessibilityElementsHidden:NO];
-
-	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
-	rootViewController.bridge = rootView.bridge;
-
-	rootViewController.view = rootView;
-	self.window.rootViewController = rootViewController;
-	[self.window makeKeyAndVisible];
+//	self.window = [[AnnoyingWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+//
+//	[self.window setIsAccessibilityElement:NO];
+//	[self.window setAccessibilityElementsHidden:NO];
+//
+//	ShakeDetectViewController *rootViewController = [ShakeDetectViewController new];
+//	rootViewController.bridge = rootView.bridge;
+//
+//	rootViewController.view = rootView;
+//	self.window.rootViewController = rootViewController;
+//	[self.window makeKeyAndVisible];
 	
 	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
 	
-	self.window.annoyingLabel.text = @"App is inactive";
-	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
-	self.window.annoyingLabel.textColor = UIColor.whiteColor;
-	self.window.annoyingLabel.font = [UIFont systemFontOfSize:30];
-	[self.window.annoyingLabel sizeToFit];
+//	self.window.annoyingLabel.text = @"App is inactive";
+//	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+//	self.window.annoyingLabel.textColor = UIColor.whiteColor;
+//	self.window.annoyingLabel.font = [UIFont systemFontOfSize:30];
+//	[self.window.annoyingLabel sizeToFit];
 	
 	[NSNotificationCenter.defaultCenter addObserverForName:@"ChangeScreen" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
 		NSString* name = note.userInfo[@"name"];
@@ -201,8 +210,8 @@ RCT_EXPORT_MODULE();
 			[self.window.rootViewController presentViewController:vc animated:YES completion:nil];
 		}
 	}];
-	
-	return YES;
+
+	return superResult;
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
@@ -238,10 +247,10 @@ RCT_EXPORT_MODULE();
 	//Add to the content view so that reloadReactNative() removes this label.
 	[[rv valueForKey:@"contentView"] addSubview:someLabel];
 	
-	[NSLayoutConstraint activateConstraints:@[
-		[someLabel.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
-		[someLabel.topAnchor constraintEqualToAnchor:self.window.annoyingLabel.bottomAnchor],
-	]];
+//	[NSLayoutConstraint activateConstraints:@[
+//		[someLabel.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
+//		[someLabel.topAnchor constraintEqualToAnchor:self.window.annoyingLabel.bottomAnchor],
+//	]];
 	
 	[someLabel.superview bringSubviewToFront:someLabel];
 	
@@ -296,38 +305,56 @@ RCT_EXPORT_MODULE();
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	self.window.annoyingLabel.text = [self _stringFromAppState];
-	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
-	[self.window.annoyingLabel sizeToFit];
+//	self.window.annoyingLabel.text = [self _stringFromAppState];
+//	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+//	[self.window.annoyingLabel sizeToFit];
 	
 	__dtx_external_logger("DidEnterBackground");
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	self.window.annoyingLabel.text = [self _stringFromAppState];
-	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
-	[self.window.annoyingLabel sizeToFit];
+//	self.window.annoyingLabel.text = [self _stringFromAppState];
+//	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+//	[self.window.annoyingLabel sizeToFit];
 	
 	__dtx_external_logger("WillEnterForeground");
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-	self.window.annoyingLabel.text = [self _stringFromAppState];
-	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
-	[self.window.annoyingLabel sizeToFit];
+//	self.window.annoyingLabel.text = [self _stringFromAppState];
+//	self.window.annoyingLabel.backgroundColor = UIColor.redColor;
+//	[self.window.annoyingLabel sizeToFit];
 	
 	__dtx_external_logger("WillResignActive");
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	self.window.annoyingLabel.text = [self _stringFromAppState];
-	self.window.annoyingLabel.backgroundColor = UIColor.greenColor;
-	[self.window.annoyingLabel sizeToFit];
+//	self.window.annoyingLabel.text = [self _stringFromAppState];
+//	self.window.annoyingLabel.backgroundColor = UIColor.greenColor;
+//	[self.window.annoyingLabel sizeToFit];
 	
 	__dtx_external_logger("DidBecomeActive");
+}
+
+- (NSURL *)bundleURL
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackExtension:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 }
 
 #if RCT_NEW_ARCH_ENABLED

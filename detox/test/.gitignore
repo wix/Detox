@@ -26,12 +26,17 @@ DerivedData
 *.ipa
 *.xcuserstate
 example.xcworkspace
+**/.xcode.env.local
 
 # Android/IJ
 #
 .idea
 .gradle
 local.properties
+
+# Ruby / CocoaPods
+**/Pods/
+/vendor/bundle/
 
 # node.js
 #

@@ -1,22 +1,37 @@
-if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
-    require_relative '../node_modules/react-native/scripts/react_native_pods'
-    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-    require_relative '../node_modules/react-native-permissions/scripts/setup'
-else
-    # Resolve react_native_pods.rb with node to allow for hoisting
-    def node_require(script)
-      # Resolve script with node to allow for hoisting
-      require Pod::Executable.execute_command('node', ['-p',
-        "require.resolve(
-          '#{script}',
-          {paths: [process.argv[1]]},
-        )", __dir__]).strip
-    end
+# if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
+#     require_relative '../node_modules/react-native/scripts/react_native_pods'
+#     require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+#     require_relative '../node_modules/react-native-permissions/scripts/setup'
+# else
+#     # Resolve react_native_pods.rb with node to allow for hoisting
+#     def node_require(script)
+#       # Resolve script with node to allow for hoisting
+#       require Pod::Executable.execute_command('node', ['-p',
+#         "require.resolve(
+#           '#{script}',
+#           {paths: [process.argv[1]]},
+#         )", __dir__]).strip
+#     end
 
-    node_require('react-native/scripts/react_native_pods.rb')
-    node_require('react-native-permissions/scripts/setup.rb')
+#     node_require('react-native/scripts/react_native_pods.rb')
+#     node_require('react-native-permissions/scripts/setup.rb')
+# end
+
+# Resolve react_native_pods.rb with node to allow for hoisting
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
 end
+
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
+
 platform :ios, min_ios_version_supported
+prepare_react_native_project!
 
 install! 'cocoapods', :deterministic_uuids => false
 
@@ -46,24 +61,30 @@ setup_permissions([
 def shared_pods
     config = use_native_modules!
 
-    if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70).*/)
-      # Flags change depending on the env values.
-      flags = get_default_flags()
+    # if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70).*/)
+    #   # Flags change depending on the env values.
+    #   flags = get_default_flags()
 
-      use_react_native!(
-        :path => config[:reactNativePath],
-        :hermes_enabled => flags[:hermes_enabled],
-        :fabric_enabled => flags[:fabric_enabled],
-        # :flipper_configuration => FlipperConfiguration.enabled,
-        # An absolute path to your application root.
-        :app_path => "#{Pod::Config.instance.installation_root}/.."
-      )
-    else
-      use_react_native!(
-        # To enable hermes on iOS, change `false` to `true` and then install pods
-        :hermes_enabled => false,
-      )
-    end
+    #   use_react_native!(
+    #     :path => config[:reactNativePath],
+    #     :hermes_enabled => flags[:hermes_enabled],
+    #     :fabric_enabled => flags[:fabric_enabled],
+    #     # :flipper_configuration => FlipperConfiguration.enabled,
+    #     # An absolute path to your application root.
+    #     :app_path => "#{Pod::Config.instance.installation_root}/.."
+    #   )
+    # else
+    #   use_react_native!(
+    #     # To enable hermes on iOS, change `false` to `true` and then install pods
+    #     :hermes_enabled => false,
+    #   )
+    # end
+
+    use_react_native!(
+      :path => config[:reactNativePath],
+      # An absolute path to your application root.
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
 end
 
 target 'example' do

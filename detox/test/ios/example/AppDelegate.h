@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import <RCTAppDelegate.h>
 
 @interface SomeMiddleman : UIWindow @end
 
@@ -10,7 +11,7 @@
 
 @interface DetoxApp : UIApplication @end
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : RCTAppDelegate <UIApplicationDelegate>
 
 @property (nonatomic, strong) AnnoyingWindow *window;
 
