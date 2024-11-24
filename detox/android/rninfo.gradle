@@ -1,11 +1,24 @@
 import groovy.json.JsonSlurper
 
-def getRNVersion = { workingDir ->
-    println("RNInfo: workingDir=$workingDir")
+def getRNPackageJsonDir() {
+    def currentDir = rootDir
+    while (currentDir != null) {
+        def nodeModulesDir = new File(currentDir, "node_modules/react-native")
+        def file = new File(nodeModulesDir, 'package.json')
+        if (file.exists()) {
+            return file.path
+        }
+        currentDir = currentDir.parentFile
+    }
+    throw new GradleException("Unable to find module: $moduleName")
+}
+
+def getRNVersion = { rnPackageJsonPath ->
+    println("RNInfo: package.json=$rnPackageJsonPath")
     def jsonSlurper = new JsonSlurper()
-    def packageFile = "$workingDir/../node_modules/react-native/package.json"
-    println("RNInfo: reading $packageFile")
-    Map<String, Object> packageJSON  = jsonSlurper.parse(new File(packageFile))
+    def packageFile =
+    println("RNInfo: reading $rnPackageJsonPath")
+    Map<String, Object> packageJSON  = jsonSlurper.parse(new File(rnPackageJsonPath))
     String rnVersion = packageJSON.get('version')
     return rnVersion
 }
@@ -15,24 +28,16 @@ def getMajorVersionInternal = { semanticVersion ->
     return rnVersionMajor
 }
 
-ext.getRnMajorVersion = { workingDir ->
-    String rnVersion = getRNVersion(workingDir)
-    Integer rnVersionMajor = getMajorVersionInternal(rnVersion)
-    return rnVersionMajor
-}
-
-def rnVersion = getRNVersion(rootDir)
+def rnVersion = getRNVersion(getRNPackageJsonDir())
 def rnMajorVer = getMajorVersionInternal(rnVersion)
-if (hasProperty('project')) {
-    println "[$project] RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
+println "RNInfo: detected React Native version: $rnVersion (major=$rnMajorVer)"
 
-    project.ext.rnInfo = [
-        version       : rnVersion,
-        majorVersion  : rnMajorVer,
-        isRN69OrHigher: rnMajorVer >= 69,
-        isRN70OrHigher: rnMajorVer >= 70,
-        isRN71OrHigher: rnMajorVer >= 71,
-        isRN72OrHigher: rnMajorVer >= 72,
-        isRN73OrHigher: rnMajorVer >= 73,
-    ]
-}
+ext.rnInfo = [
+    version       : rnVersion,
+    majorVersion  : rnMajorVer,
+    isRN69OrHigher: rnMajorVer >= 69,
+    isRN70OrHigher: rnMajorVer >= 70,
+    isRN71OrHigher: rnMajorVer >= 71,
+    isRN72OrHigher: rnMajorVer >= 72,
+    isRN73OrHigher: rnMajorVer >= 73,
+]

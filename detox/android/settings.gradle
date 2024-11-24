@@ -3,12 +3,10 @@ include ':detox'
 
 println("RNInfo: rootDir=$rootDir")
 
-def rnMajorVer = getRnMajorVersion(rootDir)
-println "[settings] RNInfo: detected React Native version: (major=$rnMajorVer)"
+println "[settings] RNInfo: detected React Native version: (major=${ext.rnInfo.version})"
 
-if (rnMajorVer < 72) {
-    includeBuild('../node_modules/react-native-gradle-plugin')
-} else {
+if (ext.rnInfo.isRN72OrHigher) {
     includeBuild('../node_modules/@react-native/gradle-plugin')
+} else {
+    includeBuild('../node_modules/react-native-gradle-plugin')
 }
-
