@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
 # Ensure Xcode is installed or print a warning message and return.
+which xcodebuild
+ls -la /Applications
+xcodebuild -version
 xcodebuild -version &>/dev/null || { echo "WARNING: Xcode is not installed on this machine. Skipping iOS framework build phase"; exit 0; }
 
 detoxRootPath="$(dirname "$(dirname "$0")")"
