@@ -6,6 +6,8 @@ const rnMinor = require('../src/utils/rn-consts/rn-consts').rnVersion.minor;
 function getGradleVersionByRNVersion() {
   switch (rnMinor) {
     default:
+      return '8.6';
+    case '73':
       return '8.3';
     case '72':
       return '8.0';
