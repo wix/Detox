@@ -31,7 +31,7 @@ function setGradleVersionByRNVersion() {
  */
 function updateGradleWrapperSync(newVersion) {
   const gradleWrapperPath = path.join(process.cwd(), 'android', 'gradle', 'wrapper', 'gradle-wrapper.properties');
-  console.log(`Updating Gradle wrapper to version${newVersion}. File: ${gradleWrapperPath}`);
+  console.log(`Updating Gradle wrapper to version$ {newVersion}. File: ${gradleWrapperPath}`);
 
   try {
     let data = fs.readFileSync(gradleWrapperPath, 'utf8');
