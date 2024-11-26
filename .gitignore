@@ -164,7 +164,7 @@ android/out/
 # Gradle files
 android/.gradle/
 android/build/
-.cpp/
+.cxx/
 
 # Local configuration file (sdk path, etc)
 local.properties
