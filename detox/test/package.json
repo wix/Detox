@@ -31,13 +31,13 @@
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.17.3",
+    "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-native-community/checkbox": "0.5.16",
     "@react-native-community/datetimepicker": "^8.2.0",
-    "@react-native-community/geolocation": "^3.2.1",
-    "@react-native-community/slider": "4.5.0",
-    "@react-native-picker/picker": "^2.1.0",
-    "@react-native-segmented-control/segmented-control": "2.3.0",
+    "@react-native-community/geolocation": "^3.4.0",
+    "@react-native-community/slider": "4.5.5",
+    "@react-native-picker/picker": "^2.9.0",
+    "@react-native-segmented-control/segmented-control": "2.5.6",
     "moment": "^2.24.0",
     "react": "18.2.0",
     "react-native": "0.74.6",
