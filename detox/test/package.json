@@ -61,7 +61,6 @@
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
     "axios": "^1.7.7",
-    "babel-jest": "^29.6.3",
     "cross-env": "^7.0.3",
     "detox": "^20.28.0",
     "detox-allure2-adapter": "^1.0.0-alpha.8",
