@@ -6,6 +6,8 @@ const rnMinor = require('../src/utils/rn-consts/rn-consts').rnVersion.minor;
 function getGradleVersionByRNVersion() {
   switch (rnMinor) {
     default:
+      return '8.6';
+    case '73':
       return '8.3';
     case '72':
       return '8.0';
@@ -29,7 +31,7 @@ function setGradleVersionByRNVersion() {
  */
 function updateGradleWrapperSync(newVersion) {
   const gradleWrapperPath = path.join(process.cwd(), 'android', 'gradle', 'wrapper', 'gradle-wrapper.properties');
-  console.log(`Updating Gradle wrapper to version${newVersion}. File: ${gradleWrapperPath}`);
+  console.log(`Updating Gradle wrapper to version$ {newVersion}. File: ${gradleWrapperPath}`);
 
   try {
     let data = fs.readFileSync(gradleWrapperPath, 'utf8');

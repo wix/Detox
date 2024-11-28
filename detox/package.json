@@ -34,10 +34,10 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
-    "@react-native/babel-preset": "0.73.19",
-    "@react-native/eslint-config": "^0.73.2",
-    "@react-native/metro-config": "^0.73.3",
-    "@react-native/typescript-config": "0.73.1",
+    "@react-native/babel-preset": "0.74.88",
+    "@react-native/eslint-config": "0.74.88",
+    "@react-native/metro-config": "0.74.88",
+    "@react-native/typescript-config": "0.74.88",
     "@tsconfig/react-native": "^3.0.0",
     "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
@@ -59,7 +59,7 @@
     "jest-allure2-reporter": "^2.0.0-beta.18",
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "^3.1.1",
-    "react-native": "0.73.2",
+    "react-native": "0.74.6",
     "react-native-codegen": "^0.0.8",
     "typescript": "^5.3.3",
     "wtfnode": "^0.9.1"
