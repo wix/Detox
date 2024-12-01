@@ -50,12 +50,10 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-
     "@react-native/babel-preset": "0.75.4",
     "@react-native/eslint-config": "0.75.4",
     "@react-native/metro-config": "0.75.4",
     "@react-native/typescript-config": "0.75.4",
-
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^16.18.68",
