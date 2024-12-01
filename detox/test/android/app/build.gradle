@@ -4,7 +4,9 @@ apply plugin: 'kotlin-android'
 apply from: '../../../android/rninfo.gradle'
 
 react {
-    autolinkLibrariesWithApp()
+    if (rnInfo.isRN75OrHigher) {
+        autolinkLibrariesWithApp()
+    }
 }
 
 android {
