@@ -1,6 +1,4 @@
 apply from: file("../../android/rninfo.gradle")
-rootProject.name = 'DetoxTest'
-include ':app'
 
 println "[settings] RNInfo: detected React Native version: (major=${ext.rnInfo.version})"
 
@@ -8,14 +6,15 @@ if (ext.rnInfo.isRN75OrHigher) {
     pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
     plugins { id("com.facebook.react.settings") }
     extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-} else {
-    if (ext.rnInfo.isRN72OrHigher) {
-        includeBuild('../node_modules/@react-native/gradle-plugin')
-    } else {
-        includeBuild('../node_modules/react-native-gradle-plugin')
-    }
 }
 
+if (ext.rnInfo.isRN72OrHigher) {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
+} else {
+    includeBuild('../node_modules/react-native-gradle-plugin')
+}
+rootProject.name = 'DetoxTest'
+include ':app'
 
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
