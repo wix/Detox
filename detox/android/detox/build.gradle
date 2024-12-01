@@ -22,6 +22,10 @@ def _rnNativeArtifact = rnInfo.isRN71OrHigher
 
 println "[$project] Resorted to RN native artifact $_rnNativeArtifact"
 
+react {
+    autolinkLibrariesWithApp()
+}
+
 android {
     def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
     if (agpVersion >= 7) {

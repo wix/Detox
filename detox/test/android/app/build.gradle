@@ -3,6 +3,9 @@ apply plugin: 'com.facebook.react'
 apply plugin: 'kotlin-android'
 apply from: '../../../android/rninfo.gradle'
 
+react {
+    autolinkLibrariesWithApp()
+}
 
 android {
     namespace 'com.example'
