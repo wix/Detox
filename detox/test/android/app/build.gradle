@@ -105,15 +105,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appCompatVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation project(path: ':@react-native-community_slider')
-    implementation project(':AsyncStorage')
-    implementation project(':react-native-webview')
-    implementation project(':react-native-community-checkbox')
-    implementation project(':react-native-community-geolocation')
-    implementation project(':react-native-datetimepicker')
-    implementation project(':react-native-launcharguments')
-    implementation project(':react-native-permissions')
-
     androidTestImplementation(project(path: ':detox'))
     androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }

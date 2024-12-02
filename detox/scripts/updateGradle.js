@@ -21,17 +21,43 @@ function getGradleVersionByRNVersion() {
 /**
  * Update the Gradle wrapper to the version that matches the React Native version.
  */
-function setGradleVersionByRNVersion() {
-  const gradleVersion = getGradleVersionByRNVersion();
-  updateGradleWrapperSync(gradleVersion);
+function patchGradleByRNVersion() {
+  updateGradleWrapperSync();
+  patchSettingsGradle();
+}
+
+/**
+ * In RN75 and above the settings.gradle file should contain the following lines. We can't wrap them in 'if' statement
+ * because they should be the first line in the settings file. This patch could be safely removed after dropping support
+ * for RN74.
+ */
+function patchSettingsGradle() {
+  if (parseInt(rnMinor) >= 75) {
+    return;
+  }
+
+  const settingsGradlePath = path.join(process.cwd(), 'android', 'settings.gradle');
+  console.log(`Patching settings.gradle. File: ${settingsGradlePath}`);
+
+  try {
+    let data = fs.readFileSync(settingsGradlePath, 'utf8');
+    let updatedData = data.replace('pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }', '');
+    updatedData = updatedData.replace('plugins { id("com.facebook.react.settings") }', '');
+    updatedData = updatedData.replace('extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }', '');
+
+    fs.writeFileSync(settingsGradlePath, updatedData, 'utf8');
+    console.log('settings.gradle patched successfully.');
+  } catch (err) {
+    console.error('Error:', err);
+  }
 }
 
 /**
  * Update the Gradle wrapper to the specified version.
- *
- * @param {string} newVersion - the new Gradle wrapper version
  */
-function updateGradleWrapperSync(newVersion) {
+function updateGradleWrapperSync() {
+  const newVersion = getGradleVersionByRNVersion();
+
   const gradleWrapperPath = path.join(process.cwd(), 'android', 'gradle', 'wrapper', 'gradle-wrapper.properties');
   console.log(`Updating Gradle wrapper to version$ {newVersion}. File: ${gradleWrapperPath}`);
 
@@ -47,5 +73,5 @@ function updateGradleWrapperSync(newVersion) {
 }
 
 module.exports = {
-  setGradleVersionByRNVersion
+  patchGradleByRNVersion: patchGradleByRNVersion
 };
