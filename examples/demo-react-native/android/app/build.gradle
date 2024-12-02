@@ -75,8 +75,6 @@ dependencies {
     // Apply Hermes as the JS engine
     implementation 'com.facebook.react:hermes-android'
 
-    implementation(project(path: ':AsyncStorage')) // !!! Note: not required unless effectively used by your app
-
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
     androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
