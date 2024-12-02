@@ -26,6 +26,7 @@ describe('generate view hierarchy', () => {
   it('generateViewHierarchyXml() - should generate xml for web view', async () => {
     await element(by.text('WebView')).tap();
     const hierarchy = await device.generateViewHierarchyXml();
+    console.log(hierarchy);
     await expectViewHierarchySnapshotToMatch(hierarchy, `view-hierarchy-web-view`);
   });
 
