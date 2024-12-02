@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
 
+react {
+    autolinkLibrariesWithApp()
+}
+
 android {
     namespace 'com.example'
 
