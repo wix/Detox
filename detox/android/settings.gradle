@@ -1,18 +1,16 @@
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
 apply from: '../android/rninfo.gradle'
 include ':detox'
 
 println("RNInfo: rootDir=$rootDir")
-
 println "[settings] RNInfo: detected React Native version: (major=${ext.rnInfo.version})"
 
-if (ext.rnInfo.isRN75OrHigher) {
-    pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
-    plugins { id("com.facebook.react.settings") }
-    extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+if (ext.rnInfo.isRN72OrHigher) {
+    includeBuild('../node_modules/@react-native/gradle-plugin')
 } else {
-    if (ext.rnInfo.isRN72OrHigher) {
-        includeBuild('../node_modules/@react-native/gradle-plugin')
-    } else {
-        includeBuild('../node_modules/react-native-gradle-plugin')
-    }
+    includeBuild('../node_modules/react-native-gradle-plugin')
 }
