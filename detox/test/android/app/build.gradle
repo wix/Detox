@@ -120,3 +120,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
   from configurations.implementation
   into 'libs'
 }
+
+if (!ext.rnInfo.isRN75OrHigher) {
+    // For versions below 0.75, we need to apply the old plugin
+    apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+}

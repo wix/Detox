@@ -3,16 +3,21 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 
 apply from: file("../../android/rninfo.gradle")
-
 println "[settings] RNInfo: detected React Native version: (major=${ext.rnInfo.version})"
+
+if (!ext.rnInfo.isRN75OrHigher) {
+    // For versions below 0.75, we need to apply the old plugin
+    apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+}
+
+rootProject.name = 'DetoxTest'
+include ':app'
 
 if (ext.rnInfo.isRN72OrHigher) {
     includeBuild('../node_modules/@react-native/gradle-plugin')
 } else {
     includeBuild('../node_modules/react-native-gradle-plugin')
 }
-rootProject.name = 'DetoxTest'
-include ':app'
 
 include ':detox'
 project(':detox').projectDir = new File(rootProject.projectDir, '../../android/detox')
