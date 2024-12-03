@@ -15,9 +15,6 @@
               <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say World" x="<number>" y="<number>" id="detox_temp_0_1_0_1_0_2">
                 <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say World" x="<number>" y="<number>" text="Say World" id="detox_temp_0_1_0_1_0_2_0" />
               </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" id="detox_temp_0_1_0_1_0_3">
-                <DebuggingOverlay class="com.facebook.react.views.debuggingoverlay.DebuggingOverlay" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" id="detox_temp_0_1_0_1_0_3_0" />
-              </ReactViewGroup>
             </ReactRootView>
           </ContentFrameLayout>
         </FitWindowsLinearLayout>
