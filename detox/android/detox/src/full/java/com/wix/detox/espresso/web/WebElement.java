@@ -3,7 +3,6 @@ package com.wix.detox.espresso.web;
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.Atoms;
 import androidx.test.espresso.web.model.ElementReference;
-import androidx.test.espresso.web.model.Evaluation;
 import androidx.test.espresso.web.model.SimpleAtom;
 import androidx.test.espresso.web.sugar.Web;
 import androidx.test.espresso.web.webdriver.DriverAtoms;

@@ -1,6 +1,7 @@
 package com.wix.detox.espresso.web;
 
-import android.os.Debug;
+import static androidx.test.espresso.web.sugar.Web.onWebView;
+
 import android.view.View;
 import android.webkit.WebView;
 
@@ -8,8 +9,6 @@ import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.ElementReference;
 import androidx.test.espresso.web.sugar.Web;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -17,10 +16,6 @@ import org.hamcrest.TypeSafeMatcher;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.web.sugar.Web.onWebView;
-import static org.hamcrest.CoreMatchers.allOf;
 
 public class WebViewElement {
 
@@ -37,6 +32,11 @@ public class WebViewElement {
                     // Support for react-native-webview >= 13.0.0
                     if (item instanceof WebView && item.getParent().getClass().getSimpleName().equals("RNCWebViewWrapper")) {
                         return userMatcher.matches(item.getParent());
+                    }
+
+                    if (item.getClass().getSimpleName().equals("RNCWebViewWrapper")) {
+                        // We never want to match the wrapper of the webview
+                        return false;
                     }
 
                     return userMatcher.matches(item);
