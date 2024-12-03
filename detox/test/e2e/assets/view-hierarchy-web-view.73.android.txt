@@ -17,7 +17,8 @@
                 </ReactViewGroup>
               </ReactViewGroup>
               <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
-                <RNCWebView class="com.reactnativecommunity.webview.RNCWebViewManager$RNCWebView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" id="webViewFormWithScrolling"><![CDATA["<html xmlns=\"http://www.w3.org/1999/xhtml\">
+                <RNCWebViewWrapper class="com.reactnativecommunity.webview.RNCWebViewWrapper" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" id="webViewFormWithScrolling">
+                  <RNCWebView class="com.reactnativecommunity.webview.RNCWebView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>"><![CDATA["<html xmlns=\"http://www.w3.org/1999/xhtml\">
     <body>
         <h1 id=\"pageHeadline\" aria-label=\"first-webview\">First Webview</h1>
         <h2>Form</h2>
@@ -26,16 +27,21 @@
             <input type=\"text\" id=\"fname\" name=\"fname\" maxlength=\"10\" /><br />
             <input type=\"submit\" id=\"submit\" value=\"Submit\" onclick=\"document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;\" />
         </form>
+
         <h2>Form Results</h2>
         <p>Your first name is: <span id=\"resultFname\">No input yet</span></p>
+
         <h2>Content Editable</h2>
         <div id=\"contentEditable\" class=\"contentEditable\" contenteditable=\"true\">Name: </div>
+
         <h2>Text and link</h2>
         <p>Some text and a <a id=\"w3link\" href=\"https://www.w3schools.com\">link</a>.</p>
         <p id=\"bottomParagraph\" class=\"specialParagraph\">This is a bottom paragraph with class.</p>
+    
 
 </body></html>"]]>
-                </RNCWebView>
+                  </RNCWebView>
+                </RNCWebViewWrapper>
               </ReactViewGroup>
             </ReactRootView>
           </ContentFrameLayout>
