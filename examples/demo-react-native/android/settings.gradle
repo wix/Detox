@@ -11,6 +11,6 @@ if (ext.rnInfo.isRN72OrHigher) {
     includeBuild('../node_modules/react-native-gradle-plugin')
 }
 
-
-include ':AsyncStorage'
-project(':AsyncStorage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-async-storage/async-storage/android')
+if (ext.rnInfo.isRN74OrHigher) {
+    apply from: file("../detox/node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+}

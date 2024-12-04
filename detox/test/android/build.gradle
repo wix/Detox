@@ -9,6 +9,7 @@ buildscript {
         targetSdkVersion = 34
         minSdkVersion = 26
         appCompatVersion = '1.6.1'
+        ndkVersion = "26.1.10909125"
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
@@ -21,7 +22,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle"
         classpath 'com.facebook.react:react-native-gradle-plugin'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin"
 
         // Needed by Spek (https://spekframework.org/setup-android)
         // Here in order to enable unit-tests run from Android Studio when working on the test app.

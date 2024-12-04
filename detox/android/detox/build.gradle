@@ -12,6 +12,7 @@ def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion 
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 21
 def _kotlinVersion = _ext.has('detoxKotlinVersion') ? _ext.detoxKotlinVersion : _kotlinMinVersion
 def _kotlinStdlib = _ext.has('detoxKotlinStdlib') ? _ext.detoxKotlinStdlib : 'kotlin-stdlib-jdk8'
+def _ndkVersion = _ext.has('ndkVersion') ? _ext.ndkVersion : "26.1.10909125"
 
 // RN native code comes from either maven-central (in which case, need the *exact* version),
 // or otherwise from node_modules/, where the version is already aligned, by definition.
@@ -29,6 +30,7 @@ android {
     }
     compileSdk _compileSdkVersion
     buildToolsVersion = _buildToolsVersion
+    ndkVersion = _ndkVersion
 
     defaultConfig {
         minSdkVersion _minSdkVersion
