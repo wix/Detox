@@ -41,9 +41,10 @@ function patchSettingsGradle() {
 
   try {
     let data = fs.readFileSync(settingsGradlePath, 'utf8');
-    let updatedData = data.replace('pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }', '');
-    updatedData = updatedData.replace('plugins { id("com.facebook.react.settings") }', '');
-    updatedData = updatedData.replace('extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }', '');
+    const blockRegex = /\/\/ RN75\+_BLOCK_START[\s\S]*?\/\/ RN75\+_BLOCK_END/g;
+
+    // Replace the block with an empty string
+    const updatedData = data.replace(blockRegex, '');
 
     fs.writeFileSync(settingsGradlePath, updatedData, 'utf8');
     console.log('settings.gradle patched successfully.');
