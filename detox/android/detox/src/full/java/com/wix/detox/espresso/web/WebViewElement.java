@@ -19,6 +19,8 @@ import javax.annotation.Nullable;
 
 public class WebViewElement {
 
+    private final static String WRAPPER_WEBVIEW_CLASS_NAME = "RNCWebViewWrapper";
+
     final Web.WebInteraction<Void> webViewInteraction;
 
     WebViewElement(@Nullable Matcher<View> userMatcher) {
