@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "^2.3.1",
+    "@docusaurus/plugin-client-redirects": "^2.4.3",
     "@docusaurus/plugin-google-gtag": "^2.3.1",
     "@docusaurus/preset-classic": "^2.3.1",
     "@docusaurus/remark-plugin-npm2yarn": "^2.3.1",
