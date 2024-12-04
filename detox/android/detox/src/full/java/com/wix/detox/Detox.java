@@ -1,5 +1,6 @@
 package com.wix.detox;
 
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -80,8 +81,8 @@ public final class Detox {
      *
      * @param activityTestRule the activityTestRule
      */
-    public static void runTests(ActivityTestRule activityTestRule) {
-        runTests(activityTestRule, getAppContext());
+    public static void runTests(Class<? extends Activity> clazz) {
+        runTests(clazz, getAppContext());
     }
 
     /**
@@ -90,8 +91,8 @@ public final class Detox {
      *
      * @param detoxConfig The configurations to apply.
      */
-    public static void runTests(ActivityTestRule activityTestRule, DetoxConfig detoxConfig) {
-        runTests(activityTestRule, getAppContext(), detoxConfig);
+    public static void runTests(Class<? extends Activity> clazz, DetoxConfig detoxConfig) {
+        runTests(clazz, getAppContext(), detoxConfig);
     }
 
     /**
@@ -109,8 +110,8 @@ public final class Detox {
      * @param activityTestRule the activityTestRule
      * @param context an object that has a {@code getReactNativeHost()} method
      */
-    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context) {
-        runTests(activityTestRule, context, new DetoxConfig());
+    public static void runTests(Class<? extends Activity> clazz, @NonNull final Context context) {
+        runTests(clazz, context, new DetoxConfig());
     }
 
     /**
@@ -119,12 +120,13 @@ public final class Detox {
      *
      * @param detoxConfig The configurations to apply.
      */
-    public static void runTests(ActivityTestRule activityTestRule, @NonNull final Context context, DetoxConfig detoxConfig) {
+    public static void runTests(Class<? extends Activity> clazz, @NonNull final Context context, DetoxConfig detoxConfig) {
         DetoxConfig.CONFIG = detoxConfig;
         DetoxConfig.CONFIG.apply();
 
-        sActivityLaunchHelper = new ActivityLaunchHelper(activityTestRule);
+        sActivityLaunchHelper = new ActivityLaunchHelper(clazz);
         DetoxMain.run(context, sActivityLaunchHelper);
+        sActivityLaunchHelper.close();
     }
 
     public static void launchMainActivity() {
