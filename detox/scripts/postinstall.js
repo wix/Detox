@@ -1,6 +1,6 @@
 const { platform, env } = process;
 
-const { setGradleVersionByRNVersion } = require('./updateGradle');
+const { patchGradleByRNVersion } = require('./updateGradle');
 
 const isDarwin = platform === 'darwin';
 const shouldInstallDetox = !env.DETOX_DISABLE_POSTINSTALL;
@@ -12,4 +12,4 @@ if (isDarwin && shouldInstallDetox) {
   execFileSync(`${__dirname}/build_local_xcuitest.ios.sh`, { stdio: 'inherit' });
 }
 
-setGradleVersionByRNVersion();
+patchGradleByRNVersion();
