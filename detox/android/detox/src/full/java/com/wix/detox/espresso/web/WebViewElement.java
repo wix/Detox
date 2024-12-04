@@ -30,7 +30,7 @@ public class WebViewElement {
                 @Override
                 protected boolean matchesSafely(View item) {
                     // Support for react-native-webview >= 13.0.0
-                    if (item instanceof WebView && item.getParent().getClass().getSimpleName().equals("RNCWebViewWrapper")) {
+                    if (item instanceof WebView && item.getParent().getClass().getSimpleName().equals(WRAPPER_WEBVIEW_CLASS_NAME)) {
                         return userMatcher.matches(item.getParent());
                     }
 
