@@ -153,6 +153,8 @@ arch -x86_64 /Applications/Xcode.app/Contents/Developer/Applications/Simulator.a
 
 After following these steps, the `detox build` command should run without errors in your Rosetta environment.
 
-```
-Note: In Xcode, you can enable "Show All Simulators". Here, we select the Rosetta simulator for the normal build. In the "Excluded Architectures" tab, we select the "arm64" architecture, not "x86_64".
-```
+:::note
+
+This approach configures Detox specifically to build and run with Rosetta without affecting your app's regular builds. To run your app with Rosetta in Xcode, enable Rosetta simulator destinations via Xcode.
+
+:::
