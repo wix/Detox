@@ -15,13 +15,30 @@ const config = {
   favicon: '/img/favicon.ico',
   organizationName: 'wix',
   projectName: 'Detox',
-  plugins: ['docusaurus-plugin-sass'],
-
+  plugins: ['docusaurus-plugin-sass',
+    ['@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            from: '/docs',
+            to: '/docs/next/introduction/getting-started',
+          }
+        ]
+      }
+    ]
+  ],
   presets: [
     [
       '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        gtag: {
+          trackingID: 'G-2Z5WTH61Y3',
+          anonymizeIP: true
+        },
+        googleTagManager: {
+          containerId: 'GTM-M58K66V8'
+        },
         blog: {
           path: 'blog',
           // Simple use-case: string editUrl
@@ -33,7 +50,7 @@ const config = {
           authorsMapPath: 'authors.yml',
           blogTitle: 'Blog',
           blogDescription:
-            "All the important updates and announcements from Detox crew, tips and tricks and everything else that you don't want to miss.",
+            'All the important updates and announcements from Detox crew, tips and tricks and everything else that you don\'t want to miss.',
           blogSidebarCount: 5,
           blogSidebarTitle: 'All our posts',
           routeBasePath: 'blog',
@@ -61,7 +78,7 @@ const config = {
   ],
 
   themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+  /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
         title: 'Detox',

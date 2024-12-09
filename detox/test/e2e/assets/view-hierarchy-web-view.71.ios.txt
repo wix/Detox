@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ViewHierarchy>
- <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" testID="detox_temp_" visibility="visible" width="<number>">
-  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" testID="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" testID="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
-    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" testID="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+ <AnnoyingWindow alpha="1.0" class="AnnoyingWindow" focused="false" height="<number>" id="detox_temp_" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" id="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" id="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" id="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
      <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
-           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview" testID="toggle2ndWebviewButton" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="toggle2ndWebviewButton" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
             <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
              <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>" />
             </RCTView>
            </RCTView>
           </RCTView>
           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
-           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 3rd webview" testID="toggle3rdWebviewButton" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="toggle3rdWebviewButton" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
             <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
              <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>" />
             </RCTView>
@@ -27,7 +27,7 @@
          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
            <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
-            <RNCWebView alpha="1.0" class="RNCWebView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" testID="webViewFormWithScrolling" visibility="visible" width="<number>" x="<number>" y="<number>">
+            <RNCWebView alpha="1.0" class="RNCWebView" focused="false" height="<number>" id="webViewFormWithScrolling" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
              <WKWebView alpha="1.0" class="WKWebView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
              	<![CDATA[<html xmlns="http://www.w3.org/1999/xhtml">
     <body>
@@ -59,6 +59,6 @@
     </RCTRootView>
    </UIDropShadowView>
   </UITransitionView>
-  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" label="Active" testID="detox_temp_1" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
+  <UILabel alpha="1.0" class="UILabel" focused="false" height="<number>" id="detox_temp_1" label="Active" text="Active" visibility="visible" width="<number>" x="<number>" y="<number>" />
  </AnnoyingWindow>
 </ViewHierarchy>

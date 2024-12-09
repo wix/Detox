@@ -1,9 +1,31 @@
-// Custom describe functions to run tests only when Copilot is available on the environment
+const axios = require('axios');
+const PromptHandler = require("./PromptHandler");
+
+const describeOrDescribeSkip = process.env.CI === 'true' ? describe.skip : describe;
+
 describeForCopilotEnv = (description, fn) => {
-  if (process.env.COPILOT_IS_ENABLED === 'true') {
-    describe(description, fn);
-  } else {
-    describe.skip(description, fn);
+  describeOrDescribeSkip(':ios: Copilot', () => {
+    describe(description, () => {
+      beforeAll(async () => {
+        if (!await checkVpnStatus()) {
+          console.warn('Cannot access the LLM service without Wix BO environment. Relying on cached responses only.');
+        }
+
+        await copilot.init(new PromptHandler());
+      });
+
+      fn();
+    });
+  });
+}
+
+checkVpnStatus = async () => {
+  try {
+    const response = await axios.get('https://wix.wixanswers.com/_serverless/expert-toolkit/checkVpn');
+    return response.data.enabled === true;
+  } catch (error) {
+    console.error('Error checking VPN status:', error.message);
+    return false;
   }
 }
 

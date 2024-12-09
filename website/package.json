@@ -16,12 +16,13 @@
   },
   "dependencies": {
     "@docusaurus/core": "^2.3.1",
+    "@docusaurus/plugin-client-redirects": "^2.4.3",
+    "@docusaurus/plugin-google-gtag": "^2.3.1",
     "@docusaurus/preset-classic": "^2.3.1",
     "@docusaurus/remark-plugin-npm2yarn": "^2.3.1",
     "@docusaurus/theme-search-algolia": "^2.3.1",
     "@mdx-js/react": "^1.6.21",
     "@percy/cli": "^1.17.0",
-    "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
     "docusaurus": "^1.14.7",
     "docusaurus-plugin-sass": "^0.2.3",
@@ -46,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^8.1.0"
   }
 }

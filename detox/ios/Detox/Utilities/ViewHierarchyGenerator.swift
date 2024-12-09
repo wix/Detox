@@ -11,10 +11,10 @@ import UIKit
 import WebKit
 
 private let GET_HTML_SCRIPT = """
+    (function() {
     const blacklistedTags = ['script', 'style', 'head', 'meta'];
     const blackListedTagsSelector = blacklistedTags.join(',');
 
-    (function() {
     // Clone the entire document
     var clonedDoc = document.documentElement.cloneNode(true);
 
@@ -100,15 +100,23 @@ struct ViewHierarchyGenerator {
 
     @MainActor
     private static func getHtmlFromWebView(_ webView: WKWebView) async -> String {
-        await withCheckedContinuation { continuation in
+        let handler = WebViewHandler()
+
+        do {
+            try await handler.waitForPageLoad(webView)
+        } catch {
+            print("Error waiting for page to load: \(error)")
+            return "<!-- Error loading page -->"
+        }
+
+        return await withCheckedContinuation { continuation in
             webView.evaluateJavaScript(GET_HTML_SCRIPT) { result, error in
                 if let html = result as? String {
                     continuation.resume(returning: html)
                 } else if let error = error {
-                    print("Error extracting HTML: \(error)")
-                    continuation.resume(returning: "<!-- Error loading HTML -->")
+                    continuation.resume(returning: "<!-- Error loading HTML: \(error) -->")
                 } else {
-                    continuation.resume(returning: "html is empty")
+                    continuation.resume(returning: "<!--- HTML is empty -->")
                 }
             }
         }
@@ -121,8 +129,8 @@ struct ViewHierarchyGenerator {
     ) -> String {
         var attributes: [String: String] = [
             "class": "\(type(of: view))",
-            "width": "\(Int(view.frame.size.width))",
-            "height": "\(Int(view.frame.size.height))",
+            "width": "\(toClampedInt(view.frame.size.width))",
+            "height": "\(toClampedInt(view.frame.size.height))",
             "visibility": view.isHidden ? "invisible" : "visible",
             "alpha": "\(view.alpha)",
             "focused": "\(view.isFocused)",
@@ -136,8 +144,8 @@ struct ViewHierarchyGenerator {
 
         if let superview = view.superview {
             let location = view.convert(view.bounds.origin, to: superview)
-            attributes["x"] = "\(Int(location.x))"
-            attributes["y"] = "\(Int(location.y))"
+            attributes["x"] = "\(toClampedInt(location.x))"
+            attributes["y"] = "\(toClampedInt(location.y))"
         }
 
         if shouldInjectIdentifiers {
@@ -155,7 +163,7 @@ struct ViewHierarchyGenerator {
         }
 
         if let testID = view.accessibilityIdentifier {
-            attributes["testID"] = testID
+            attributes["id"] = testID
         }
 
         if let textView = view as? UITextView {
@@ -170,4 +178,50 @@ struct ViewHierarchyGenerator {
             .sorted()
             .joined()
     }
+}
+
+@MainActor
+class WebViewHandler: NSObject, WKNavigationDelegate {
+    private var loadCompletion: ((Result<Void, Error>) -> Void)?
+
+    enum WebViewError: Error {
+        case timeout
+    }
+
+    func waitForPageLoad(_ webView: WKWebView, timeoutAfter seconds: TimeInterval = 10) async throws {
+        webView.navigationDelegate = self
+
+        if !webView.isLoading {
+            return
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let task = Task {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                loadCompletion?(.failure(WebViewError.timeout))
+            }
+
+            self.loadCompletion = { result in
+                task.cancel()
+                self.loadCompletion = nil
+                continuation.resume(with: result)
+            }
+        }
+    }
+
+    nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        Task { @MainActor in
+            loadCompletion?(.success(()))
+        }
+    }
+
+    nonisolated func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        Task { @MainActor in
+            loadCompletion?(.failure(error))
+        }
+    }
+}
+
+func toClampedInt(_ value: Double) -> Int {
+    return Int(min(max(value, Double(Int.min)), Double(Int.max)))
 }

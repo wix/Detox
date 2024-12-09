@@ -10,7 +10,9 @@
     "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
-    "package:ios": "scripts/ci.ios-release.sh"
+    "package:ios": "scripts/ci.ios-release.sh",
+    "ci:ios": "sh ./scripts/ci.ios.sh",
+    "ci:android": "sh ./scripts/ci.android.sh"
   },
   "repository": {
     "type": "git",
@@ -53,5 +55,5 @@
     "shell-utils": "1.x.x",
     "unified": "^10.1.0"
   },
-  "version": "20.27.2"
+  "version": "20.28.0"
 }

@@ -51,6 +51,14 @@ class DeviceDriverBase {
     return '';
   }
 
+  async tap(_bundleId) {
+    return '';
+  }
+
+  async longPress(_bundleId) {
+    return '';
+  }
+
   async sendToHome() {
     return '';
   }

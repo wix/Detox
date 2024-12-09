@@ -1,3 +1,5 @@
+jest.mock('../../../../ios/XCUITestRunner');
+
 // @ts-nocheck
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
@@ -36,6 +38,128 @@ describe('IOS simulator driver', () => {
 
   it('should return the device name', () => {
     expect(uut.getDeviceName()).toEqual(`${udid} (Chika)`);
+  });
+
+  describe('device-level gestures', () => {
+    let mockExecute;
+    let XCUITestRunner;
+
+    beforeEach(() => {
+      mockExecute = jest.fn().mockResolvedValue();
+
+      // Setup XCUITestRunner mock
+      jest.mock('../../../../ios/XCUITestRunner', () => {
+        return jest.fn().mockImplementation(() => ({
+          execute: mockExecute
+        }));
+      });
+
+      // Get fresh copy of mocked XCUITestRunner
+      XCUITestRunner = require('../../../../ios/XCUITestRunner');
+    });
+
+    describe('tap', () => {
+      it('should create XCUITestRunner with device info', async () => {
+        await uut.tap();
+
+        expect(XCUITestRunner).toHaveBeenCalledWith({
+          runtimeDevice: {
+            id: udid,
+            _bundleId: undefined
+          }
+        });
+      });
+
+      it('should tap with default coordinates when no point provided', async () => {
+        await uut.tap();
+
+        expect(mockExecute).toHaveBeenCalledWith({
+          type: 'systemAction',
+          systemAction: 'coordinateTap',
+          params: ['100', '100']
+        });
+      });
+
+      it('should tap with provided coordinates', async () => {
+        await uut.tap({ x: 200, y: 300 });
+
+        expect(mockExecute).toHaveBeenCalledWith({
+          type: 'systemAction',
+          systemAction: 'coordinateTap',
+          params: ['200', '300']
+        });
+      });
+
+      it('should pass bundleId to XCUITestRunner when provided', async () => {
+        await uut.tap(null, false, 'test.bundle');
+
+        expect(XCUITestRunner).toHaveBeenCalledWith({
+          runtimeDevice: {
+            id: udid,
+            _bundleId: 'test.bundle'
+          }
+        });
+      });
+    });
+
+    describe('longPress', () => {
+      it('should create XCUITestRunner with device info', async () => {
+        await uut.longPress();
+
+        expect(XCUITestRunner).toHaveBeenCalledWith({
+          runtimeDevice: {
+            id: udid,
+            _bundleId: undefined
+          }
+        });
+      });
+
+      it('should long press with default coordinates and duration when no params provided', async () => {
+        await uut.longPress();
+
+        expect(mockExecute).toHaveBeenCalledWith({
+          type: 'systemAction',
+          systemAction: 'coordinateLongPress',
+          params: ['100', '100', '1']
+        });
+      });
+
+      it('should long press with provided coordinates and duration', async () => {
+        await uut.longPress({ x: 200, y: 300 }, 2000);
+
+        expect(mockExecute).toHaveBeenCalledWith({
+          type: 'systemAction',
+          systemAction: 'coordinateLongPress',
+          params: ['200', '300', '2']
+        });
+      });
+
+      it('should convert press duration from milliseconds to seconds', async () => {
+        await uut.longPress({ x: 100, y: 100 }, 3500);
+
+        expect(mockExecute).toHaveBeenCalledWith({
+          type: 'systemAction',
+          systemAction: 'coordinateLongPress',
+          params: ['100', '100', '3.5']
+        });
+      });
+
+      it('should pass bundleId to XCUITestRunner when provided', async () => {
+        await uut.longPress(null, null, false, 'test.bundle');
+
+        expect(XCUITestRunner).toHaveBeenCalledWith({
+          runtimeDevice: {
+            id: udid,
+            _bundleId: 'test.bundle'
+          }
+        });
+      });
+    });
+
+    afterEach(() => {
+      jest.resetModules();
+      jest.clearAllMocks();
+    });
   });
 
   describe('launch args', () => {

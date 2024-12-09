@@ -1,0 +1,44 @@
+import OverviewSVG from '../img/copilot/copilot-overview.svg';
+
+# Technical Overview
+
+Detox Copilot integrates seamlessly with your testing environment by combining natural language processing with Detox's robust testing capabilities.
+
+## Building Blocks of Detox Copilot
+
+To enable Detox Copilot to work harmoniously with Detox and your app, it relies on several building blocks:
+
+- **Dynamic Code Generation**: Copilot generates Detox code on-the-fly to perform actions or assertions based on your instructions.
+- **Visual Analysis**: Copilot can analyze the app's screen to verify the presence of specific elements or text, enabling assertions beyond standard UI checks.
+- **App View Hierarchy**: Detox generates an XML representation of the app's view hierarchy, helping Copilot interact with all UI elements, even those not directly visible.
+- **Snapshot Images**: Optional snapshot images provide Copilot with visual context for more precise understanding and analysis.
+- **Injected Test IDs**: When necessary, Detox injects unique test IDs to ensure reliable access to UI elements.
+- **Caching Mechanism**: Copilot caches execution results to optimize performance and reduce unnecessary LLM calls (see [Performance Optimization](#performance-optimization)).
+- **Test Context Awareness**: Copilot maintains awareness of previously executed steps, ensuring continuity and readability in the test flow.
+
+## Copilot's Execution Flow
+
+<OverviewSVG
+  style={{
+    backgroundColor: '#f5f5f5',
+    borderRadius: '10px'
+  }}
+/>
+
+The execution flow of Detox Copilot can be broken down into six main steps:
+
+1. **Gather Context**: Collect relevant app state, view hierarchy, and previous step results.
+2. **Interpret Intent**: Use the LLM to interpret the natural language instruction.
+3. **Generate Code**: Create the appropriate Detox commands.
+4. **Execute Action**: Run the generated Detox code.
+5. **Cache Results**: Store execution results to optimize future runs.
+6. **Provide Feedback**: Return values or confirm actions for subsequent steps.
+
+By combining these steps, Detox Copilot effectively bridges the gap between natural language instructions and concrete test actions.
+
+### Performance Optimization
+
+Detox Copilot is designed to avoid unnecessary calls to the LLM service and optimize performance using static cache that is based on the current state of the app.
+This minimizes the number of calls to the LLM service and reduces latency.
+However, you can optimize your `PromptHandler` implementation to reduce latency and improve response times (e.g., by reducing the image size or implementing a server-side cache).
+We have plans to optimize even further by introducing more advanced caching mechanisms for better performance.

@@ -18,7 +18,7 @@ const detoxCopilotFrameworkDriver = {
           },
           {
             signature: 'by.text(text: string)',
-            description: 'Matches elements by their text.',
+            description: 'Matches elements by their text (value).',
             example: "element(by.text('Login'))",
             guidelines: ['Prefer test IDs over text matchers when possible.'],
           },
@@ -33,6 +33,12 @@ const detoxCopilotFrameworkDriver = {
             description: 'Selects the element at the specified index from matched elements.',
             example: "element(by.id('listItem')).atIndex(2)",
             guidelines: ['Use when multiple elements match the same matcher.'],
+          },
+          {
+            signature: 'by.label(label: string)',
+            description: 'Match elements with the specified label.',
+            example: "element(by.label('Tuesday, 1 October'));",
+            guidelines: ['Use when there are no other identifiers, such as for date pickers to select specific days.'],
           },
         ],
       },
@@ -106,7 +112,7 @@ const detoxCopilotFrameworkDriver = {
             ],
           },
           {
-            signature: 'whileElement(element: Matcher)',
+            signature: 'waitFor(element: Matcher).toBeVisible(percent?: number).whileElement(element: Matcher).scroll(offset: number, direction: string)',
             description: 'Continuously performs an action while waiting for an expectation to be fulfilled.',
             example: `
 await waitFor(element(by.text('Load More')))
@@ -185,9 +191,13 @@ jestExpect(attributes.text).toBe('Tap Me');`,
         title: 'Assertions',
         items: [
           {
-            signature: 'toBeVisible()',
-            description: 'Asserts that the element is visible.',
-            example: "await expect(element(by.id('loginButton'))).toBeVisible();",
+            signature: 'toBeVisible(percent?: number)',
+            description: 'Asserts that the element is visible with at-least the specified percentage. Default percent is 75%.',
+            example: "await expect(element(by.id('loginButton'))).toBeVisible(38);",
+            guidelines: [
+              'Use the default visibility percent unless a different percentage is required.',
+              'If a percentage value is provided, use the exact percentage required for the test.',
+            ],
           },
           {
             signature: 'toExist()',
@@ -335,14 +345,20 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
             example: "system.element(by.system.label('Allow')).tap();",
             guidelines: [
               'Can be used for iOS system alerts and permissions dialogs',
+              'Always use `system.element()` to interact with system dialog elements (alerts, permission requests).',
               'Check the platform with `device.getPlatform()` before using, as it is iOS-specific',
+              'Permission alerts are part of the system UI, not the app UI. Therefore should be matched with `system.element()`.',
               'System dialogs are not part of the app, so they won\'t be found in the app\'s view hierarchy. Identify the relevant system element from the snapshot.',
             ]
           },
           {
             signature: 'by.system.label(label: string)',
-            description: 'Matches system elements by label.',
+            description: 'Matches system elements by their label (text).',
             example: "system.element(by.system.label('Dismiss'));",
+            guidelines: [
+              'System elements will not be found in the app\'s view hierarchy. Read the text from the snapshot.',
+              'If no system dialog can be found, throw an error with the relevant message.',
+            ],
           },
           {
             signature: 'by.system.type(type: string)',
@@ -357,12 +373,12 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
           {
             signature: 'toExist()',
             description: 'Asserts that the system element exists.',
-            example: "await system.element(by.system.label('Allow')).toExist();",
+            example: "await expect(system.element(by.system.label('Allow'))).toExist();",
           },
           {
             signature: 'not',
             description: 'Negates the expectation for system elements.',
-            example: "await system.element(by.system.label('Allow')).not.toExist();",
+            example: "await expect(system.element(by.system.label('Allow'))).not.toExist();",
           },
         ],
       },
@@ -371,100 +387,124 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
         items: [
           {
             signature: 'web.element(matcher: Matcher)',
-            description: 'Selects an element within a web view. Use when there is only one web view on the screen.',
-            example: "const element = web.element(by.web.id('username'));",
+            description: 'Selects an element within a web view (`WKWebView` or `RNCWebView`). Use when there is only one web view on the screen.',
+            example: `
+await web.element(by.web.id('email')).typeText('test@example.com');
+await web.element(by.web.id('password')).typeText('password123');
+await web.element(by.web.id('login-button')).tap();
+            `,
             guidelines: [
-              'Web APIs can only be used with web elements (within web views).',
-              'Avoid using web APIs for native elements or native APIs for web elements.',
-              'Always prefer the `by.web.id` matcher when possible.',
+              'The web view may take time to load; add a delay using `await new Promise(resolve => setTimeout(resolve, milliseconds));` before the first interaction. This wait should happen only once.',
+              'After the initial wait, you can interact with web elements without additional delays.',
+              'Use `by.web.id` matcher when possible for matching web elements, as it is the most reliable.',
+              'Web APIs can only be used with web elements (within web views). Do not use web APIs for native elements or native APIs for web elements!',
+              'Confirm that you are targeting a web view before using this method.'
             ],
           },
           {
-            signature: 'web(nativeMatcher).element(matcher: Matcher)',
-            description: 'Selects an element within a specific web view matched by a native matcher. Use when there are multiple web views on the screen.',
-            example: "const element = web(by.id('webview')).element(by.web.id('password'));",
+            signature: 'web(nativeMatcher: NativeMatcher).element(matcher: Matcher)',
+            description: 'Selects an element within a specific web view (`WKWebView` or `RNCWebView`) matched by a native matcher. Use when there are multiple web views on the screen.',
+            example: `
+// Wait for the specific web view to appear and load (only once before interacting)
+await expect(element(by.id('checkout-webview'))).toBeVisible();
+
+// Interact with elements within a specific web view
+const specificWebView = web(by.id('checkout-webview'));
+
+await specificWebView.element(by.web.id('credit-card-number')).typeText('4111111111111111');
+await specificWebView.element(by.web.id('expiration-date')).typeText('12/25');
+await specificWebView.element(by.web.id('cvv')).typeText('123');
+await specificWebView.element(by.web.id('pay-button')).tap();
+            `,
             guidelines: [
               'Use this method when multiple web views are present.',
-              'Prefer `web.element` if only one web view is present on the screen.',
+              'Ensure the web view is visible and its content is loaded before interacting. This wait should happen only once.',
+              'After the initial wait, you can interact with elements within the web view without additional delays.',
+              'Webview must be matched with `web(nativeMatcher)` (e.g., `web(by.id(..))` instead of `element(by.id(..))`).',
+              'Prefer the basic `web.element()` if only one web view is present on the screen.',
+              'Confirm that you are targeting a web view before using this method.'
             ],
           },
           {
-            signature: 'web(nativeMatcher).atIndex(index: number).element(matcher: Matcher)',
+            signature: 'web(nativeMatcher: NativeMatcher).atIndex(index: number).element(matcher: Matcher)',
             description: 'Selects an element within a specific web view at a given index (iOS only).',
-            example: "const element = web(by.id('webview')).atIndex(1).element(by.web.id('password'));",
+            example: `
+// Interact with an element within the second web view (index starts from 0)
+const secondWebView = web(by.id('webview')).atIndex(1);
+await secondWebView.element(by.web.id('search-input')).typeText('Detox Testing');
+await secondWebView.element(by.web.id('search-button')).tap();
+            `,
             guidelines: [
               'Use when multiple web views with the same identifier are present on iOS.',
-              'This matcher is available for iOS only.',
+              'This method is available for iOS only.',
               'Check the platform with `device.getPlatform()` before using.',
             ],
           },
           {
             signature: 'by.web.id(id: string)',
-            description: 'Matches web elements by their ID attribute.',
-            example: "web.element(by.web.id('submit_button'));",
+            description: 'Matches web elements by their "id" attribute.',
+            example: `await web.element(by.web.id('search')).tap();`,
             guidelines: [
-              'Use for web elements with unique IDs.',
-              'This is the best-practice matcher for web elements.',
+              'Prefer `by.web.id` over any other matchers when available.',
             ],
           },
           {
             signature: 'by.web.className(className: string)',
             description: 'Matches web elements by their CSS class name.',
-            example: "web.element(by.web.className('btn-primary'));",
+            example: `await web.element(by.web.className('btn-login')).tap();`,
           },
           {
             signature: 'by.web.cssSelector(cssSelector: string)',
             description: 'Matches web elements using a CSS selector.',
-            example: "web.element(by.web.cssSelector('.container > .item'));",
+            example: `await web.element(by.web.cssSelector('#product-list .product-item[data-id="123"]')).scrollToView();`,
           },
           {
             signature: 'by.web.name(name: string)',
             description: 'Matches web elements by their name attribute.',
-            example: "web.element(by.web.name('email'));",
+            example: `await web.element(by.web.name('firstName')).typeText('John');`,
           },
           {
             signature: 'by.web.xpath(xpath: string)',
             description: 'Matches web elements using an XPath expression.',
-            example: "web.element(by.web.xpath('//*[@id=\"submit\"]'));",
-            guidelines: [
-              'Use when `by.web.id` is not available.',
-              'XPath matchers can be less performant.',
-            ],
+            example: `await web.element(by.web.xpath('//button[text()="Continue"]')).tap();`,
           },
           {
             signature: 'by.web.href(href: string)',
             description: 'Matches web elements by their href attribute.',
-            example: "web.element(by.web.href('https://example.com'));",
+            example: `await web.element(by.web.href('https://www.example.com/contact')).tap();`,
           },
           {
             signature: 'by.web.hrefContains(href: string)',
             description: 'Matches web elements whose href attribute contains the specified string.',
-            example: "web.element(by.web.hrefContains('example.com'));",
+            example: `await web.element(by.web.hrefContains('/about')).tap();`,
           },
           {
             signature: 'by.web.tag(tag: string)',
             description: 'Matches web elements by their tag name.',
-            example: "web.element(by.web.tag('h1'));",
+            example: `await expect(web.element(by.web.tag('h1'))).toHaveText('Welcome to Our Site');`,
           },
           {
             signature: 'by.web.value(value: string)',
             description: 'Matches web elements by their value attribute (iOS only).',
-            example: "web.element(by.web.value('Submit'));",
-            guidelines: ['Available on iOS only.'],
+            example: `await web.element(by.web.value('Sign In')).tap();`,
+            guidelines: [
+              'Available on iOS only.',
+            ],
           },
           {
             signature: 'by.web.label(label: string)',
-            description: 'Matches web elements by their accessibility label (iOS only, supports `asSecured()`).',
-            example: "web.element(by.web.label('Submit')).asSecured();",
+            description: 'Matches web elements by their label (iOS only, supports `asSecured()`).',
+            example: `await web.element(by.web.label('Next')).tap();`,
             guidelines: [
               'Available on iOS only.',
-              'Use when the element has a unique label.',
+              'Use when the inner web element has a unique label or aria-label.',
+              'Can be used to match buttons and input elements inside a web view, by their inner text content.',
             ],
           },
           {
             signature: 'by.web.type(accessibilityType: string)',
-            description: 'Matches web elements by accessibility type (iOS only, with `asSecured()`).',
-            example: "web.element(by.web.type('textField')).asSecured();",
+            description: 'Matches web elements by accessibility type (iOS only, `asSecured()` only).',
+            example: `await web.element(by.web.type('textField')).asSecured().typeText('Sample Text');`,
             guidelines: [
               'Available on iOS only and used with `asSecured()`.',
               'Type can be any XCUIElement.ElementType, e.g., "button", "textField".',
@@ -473,163 +513,166 @@ await device.launchApp({ launchArgs: { someLaunchArg: 1234 } });`,
           {
             signature: 'atIndex(index: number)',
             description: 'Selects the web element at the specified index from matched elements.',
-            example: "web.element(by.web.tag('h1')).atIndex(1);",
-            guidelines: ['Use when multiple web elements match the same matcher.'],
+            example: `await expect(web.element(by.web.tag('h2')).atIndex(1)).toHaveText('Features');`,
+            guidelines: [
+              'Use when multiple web elements match the same matcher.',
+            ],
           },
           {
             signature: 'tap()',
             description: 'Taps on a web element.',
-            example: "await web.element(by.web.id('link')).tap();",
+            example: `await web.element(by.web.label('Submit')).tap();`,
             guidelines: [
               'Supports `asSecured()` on iOS.',
-              'Use `asSecured()` when interacting with secured web views.',
             ],
           },
           {
-            signature: 'typeText(text: string, isContentEditable?: boolean)',
+            signature: 'typeText(text: string)',
             description: 'Types text into a web element.',
-            example: "await web.element(by.web.name('search')).typeText('Detox');",
+            example: `await web.element(by.web.id('rich-text-editor')).typeText('This is a test message');`,
             guidelines: [
-              'Set `isContentEditable` to `true` for content-editable elements on Android.',
-              'On iOS, content-editable elements are automatically detected.',
               'Supports `asSecured()` on iOS.',
             ],
           },
           {
             signature: 'replaceText(text: string)',
             description: 'Replaces text in a web element.',
-            example: "await web.element(by.web.name('search')).replaceText('Detox');",
+            example: `await web.element(by.web.id('username')).replaceText('new_user');`,
             guidelines: [
-              'Currently not supported for content-editable elements on Android.',
               'Supports `asSecured()` on iOS.',
             ],
           },
           {
             signature: 'clearText()',
             description: 'Clears text from a web element.',
-            example: "await web.element(by.web.name('search')).clearText();",
+            example: `await web.element(by.web.id('comments')).clearText();`,
             guidelines: [
-              'Currently not supported for content-editable elements on Android.',
               'Supports `asSecured()` on iOS.',
             ],
           },
           {
             signature: 'selectAllText()',
             description: 'Selects all text in a web element.',
-            example: "await web.element(by.web.id('editor')).selectAllText();",
-            guidelines: [
-              'Supported for content-editable elements only on Android.',
-              'On iOS, Detox can select all text of any element that supports it.',
-            ],
+            example: `await web.element(by.web.id('notes')).selectAllText();`,
           },
           {
             signature: 'getText()',
             description: 'Retrieves the text content of a web element.',
             example: `
-const text = await web.element(by.web.id('identifier')).getText();
-jestExpect(text).toBe('Hello World!');
-`,
+const description = await web.element(by.web.id('product-description')).getText();
+jestExpect(description).toContain('This product is made from the finest materials.');
+            `,
             guidelines: [
               'Use for assertions on the element\'s text content.',
-              'Requires importing `jestExpect` for assertions.',
             ],
           },
           {
             signature: 'scrollToView()',
             description: 'Scrolls the web view to bring the element into view.',
-            example: "await web.element(by.web.id('footer')).scrollToView();",
+            example: `await web.element(by.web.id('contact-section')).scrollToView();`,
           },
           {
             signature: 'focus()',
             description: 'Focuses on a web element.',
-            example: "await web.element(by.web.id('search')).focus();",
+            example: `
+await web.element(by.web.id('email-input')).focus();
+await web.element(by.web.id('email-input')).typeText('user@example.com');
+            `,
+            guidelines: [
+              'Useful for input fields in a web view that require focus before typing.',
+              'No need for secured interactions on iOS.',
+            ]
           },
           {
             signature: 'moveCursorToEnd()',
-            description: 'Moves the input cursor to the end of the element\'s content.',
-            example: "await web.element(by.web.id('editor')).moveCursorToEnd();",
-            guidelines: [
-              'Supported for content-editable elements only on Android.',
-              'On iOS, Detox can move the cursor to the end of any element that supports it.',
-            ],
+            description: 'Moves the input cursor in a web view to the end of the element\'s content.',
+            example: `
+await web.element(by.web.id('message-box')).moveCursorToEnd();
+await web.element(by.web.id('message-box')).typeText(' Adding more text.');
+            `,
           },
           {
             signature: 'runScript(script: string, args?: any[])',
-            description: 'Runs a JavaScript function on the element.',
+            description: 'Runs a JavaScript function on the web view element.',
             example: `
-const webElement = web.element(by.web.id('identifier'));
-await webElement.runScript('(el) => el.click()');
+// Click an element using a custom script
+await web.element(by.web.id('hidden-button')).runScript('el => el.click()');
 
-// With arguments
-await webElement.runScript('(el, args) => el.setAttribute("value", args[0])', ['Detox']);
+// Set the value of an input field using a custom script
+await web.element(by.web.id('username')).runScript('(el, args) => el.value = args[0]', ['new_user']);
 
-// Using function syntax
-const fontSize = await webElement.runScript(function get(element) {
-  return element.style.fontSize;
+// Get the color of an element
+const color = await web.element(by.web.id('header')).runScript(function(el) {
+  return window.getComputedStyle(el).color;
 });
-jestExpect(fontSize).toBe('16px');
+jestExpect(color).toBe('rgb(0, 0, 0)');
 
-// Scrolling to the bottom of a scrollable web-element
-await webElement.runScript('el => el.scrollTop = el.scrollHeight');
-`,
+// Scroll an element into view if not visible
+await web.element(by.web.id('lazy-image')).runScript('el => el.scrollIntoView()');
+            `,
             guidelines: [
               'The script can accept additional arguments and return a value.',
               'Ensure that arguments and return values are serializable.',
               'Useful for custom interactions or retrieving properties.',
+              'Avoid using this method for simple interactions like tapping or typing.',
             ],
           },
           {
             signature: 'getCurrentUrl()',
             description: 'Retrieves the current URL of the web view.',
             example: `
-const url = await web.element(by.web.id('identifier')).getCurrentUrl();
-jestExpect(url).toBe('https://example.com');
-`,
+await web.element(by.web.id('link-to-page')).tap();
+const currentUrl = await web.element(by.web.tag('body')).getCurrentUrl();
+jestExpect(currentUrl).toBe('https://www.example.com/target-page');
+            `,
             guidelines: [
               'Must be called from an inner element, not the root web view.',
-              'May have issues on Android; check relevant GitHub issues.',
             ],
           },
           {
             signature: 'getTitle()',
             description: 'Retrieves the title of the web view.',
             example: `
-const title = await web.element(by.web.id('identifier')).getTitle();
-jestExpect(title).toBe('Welcome Page');
-`,
+const pageTitle = await web.element(by.web.tag('body')).getTitle();
+jestExpect(pageTitle).toBe('Dashboard - MyApp');
+            `,
             guidelines: [
               'Must be called from an inner element, not the root web view.',
             ],
           },
           {
             signature: 'toHaveText(text: string)',
-            description: 'Asserts that the web element has the specified text.',
-            example: "await expect(web.element(by.web.tag('h1'))).toHaveText('Welcome');",
+            description: 'Asserts that the web element has the specified text. Used with `expect()`.',
+            example: `await expect(web.element(by.web.name('submit-button'))).toHaveText('Submit');`,
+            guidelines: [
+              'For web views, the text is the inner text of the element, e.g., `<h1>Welcome to the webpage!</h1>`.',
+            ],
           },
           {
             signature: 'toExist()',
-            description: 'Asserts that the web element exists.',
-            example: "await expect(web.element(by.web.xpath('//*[@id=\"main\"]'))).toExist();",
+            description: 'Asserts that the web element exists. Used with `expect()`.',
+            example: `await expect(web.element(by.web.id('error-message'))).toExist();`,
             guidelines: [
+              'Verifies the presence of a web element in the DOM.',
               'Supports `asSecured()` on iOS.',
             ],
           },
           {
             signature: 'not',
             description: 'Negates the expectation for web elements.',
-            example: "await expect(web.element(by.web.id('error'))).not.toExist();",
+            example: `await expect(web.element(by.web.id('loading-spinner'))).not.toExist();`,
             guidelines: [
+              'Use `not` to assert that an element should not be present.',
               'Supports `asSecured()` on iOS.',
             ],
           },
           {
             signature: 'asSecured()',
             description: 'Interacts with secured web views (iOS only).',
-            example: "await web.element(by.web.label('Submit')).asSecured().tap();",
+            example: `await web.element(by.web.label('Confirm')).asSecured().tap();`,
             guidelines: [
               'Use for web pages with secured protocols when regular interactions fail.',
-              'Available on iOS only and currently experimental.',
-              'Less performant and has fewer APIs.',
+              'Applicable on iOS only with specific APIs.',
             ],
           },
         ],
@@ -638,7 +681,7 @@ jestExpect(title).toBe('Welcome Page');
   },
 
   captureSnapshotImage: async function () {
-    const fileName = `snapshot_${Date.now()}.png`;
+const fileName = `snapshot_${Date.now()}.png`;
     try {
       return await detox.device.takeScreenshot(fileName);
     } catch (_error) {
