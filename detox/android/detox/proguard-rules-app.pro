@@ -8,6 +8,9 @@
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
 -keep class com.facebook.react.ReactInstanceEventListener { *; }
+-keep class com.facebook.react.soloader.OpenSourceMergedSoMapping { *; }
+-keep class com.facebook.soloader.SoLoader { *; }
+-keep class com.facebook.soloader.ExternalSoMapping { *; }
 
 -keep class com.facebook.react.views.slider.** { *; }
 -keep class com.google.android.material.slider.** { *; }
