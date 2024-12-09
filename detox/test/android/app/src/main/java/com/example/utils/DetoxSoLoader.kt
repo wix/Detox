@@ -1,6 +1,5 @@
 package com.example.utils
 
-import android.app.Application
 import android.content.Context
 import com.facebook.react.modules.systeminfo.ReactNativeVersion
 import com.facebook.soloader.SoLoader
@@ -11,8 +10,9 @@ object DetoxSoLoader {
     fun init(appContext: Context) {
         if (ReactNativeVersion.VERSION.run { get("minor") as Int } >= 76) {
             val mergedSoMappingClass = Class.forName(OpenSourceMergedSoMappingClassName)
-            val initMethod = SoLoader::class.java.getMethod("init", Application::class.java, Class::class.java)
-            initMethod.invoke(null, this, mergedSoMappingClass)
+            val externalSoMapping = Class.forName("com.facebook.soloader.ExternalSoMapping")
+            val initMethod = SoLoader::class.java.getMethod("init", Context::class.java, externalSoMapping)
+            initMethod.invoke(null, appContext, mergedSoMappingClass.getDeclaredField("INSTANCE").get(null))
         } else {
             SoLoader.init(appContext, false)
         }
