@@ -2,9 +2,11 @@ package com.wix.detox.reactnative
 
 import android.app.Activity
 import android.content.Context
+import android.os.Debug
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.facebook.react.ReactApplication
+import com.facebook.react.ReactHost
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
@@ -34,6 +36,7 @@ object ReactNativeExtension {
 
         (applicationContext as ReactApplication).let {
             val reactContext = awaitNewReactNativeContext(it, null)
+            Log.d(LOG_TAG, "React Native is ready $reactContext")
 
             enableOrDisableSynchronization(reactContext)
         }
@@ -75,6 +78,7 @@ object ReactNativeExtension {
 
     @JvmStatic
     fun enableAllSynchronization(applicationContext: ReactApplication) {
+        Debug.waitForDebugger()
         val reactContext = getCurrentReactContextSafe(applicationContext)
 
         if (reactContext != null) {
@@ -155,8 +159,8 @@ object ReactNativeExtension {
         rnIdlingResources = null
     }
 
-    private fun getInstanceManagerSafe(reactApplication: ReactApplication): ReactInstanceManager {
-        return reactApplication.reactNativeHost.reactInstanceManager
+    private fun getInstanceManagerSafe(reactApplication: ReactApplication): ReactHost {
+        return reactApplication?.reactHost
                 ?: throw RuntimeException("ReactInstanceManager is null!")
     }
 

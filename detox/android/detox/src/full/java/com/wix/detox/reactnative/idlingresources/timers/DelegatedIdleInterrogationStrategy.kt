@@ -1,7 +1,11 @@
 
 package com.wix.detox.reactnative.idlingresources.timers
 
+import android.os.Debug
+import android.util.Log
+import com.facebook.react.bridge.JavaScriptModule
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.devsupport.interfaces.DevSupportManager
 import com.facebook.react.modules.core.TimingModule
 
 private const val BUSY_WINDOW_THRESHOLD = 1500L
@@ -11,13 +15,15 @@ private const val BUSY_WINDOW_THRESHOLD = 1500L
  * [here](https://github.com/facebook/react-native/pull/27539) in the context
  * of RN v0.62 (followed by a previous refactor and rename of the class).
  */
-class DelegatedIdleInterrogationStrategy(private val timingModule: TimingModule): IdleInterrogationStrategy {
-    override fun isIdleNow(): Boolean = !timingModule.hasActiveTimersInRange(BUSY_WINDOW_THRESHOLD)
+class DelegatedIdleInterrogationStrategy(): IdleInterrogationStrategy {
+    override fun isIdleNow(): Boolean = false//!timingModule.hasActiveTimersInRange(BUSY_WINDOW_THRESHOLD)
 
     companion object {
         fun create(reactContext: ReactContext): DelegatedIdleInterrogationStrategy {
-            val timingModule = reactContext.getNativeModule(TimingModule::class.java)!!
-            return DelegatedIdleInterrogationStrategy(timingModule)
+            Debug.waitForDebugger()
+            Log.d("Detox", "Creating DelegatedIdleInterrogationStrategy with reactContext: $reactContext")
+            val timingModule = reactContext.getJSModule(JavaScriptModule::class.java)!!
+            return DelegatedIdleInterrogationStrategy()
         }
     }
 }
