@@ -139,13 +139,13 @@ When working with dependencies that require running your iOS app in a Rosetta si
 "build": "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp -configuration Debug -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build"
 ```
 
-2. Run the following command in your terminal to ensure Xcode is properly selected:
+1. Run the following command in your terminal to ensure Xcode is properly selected:
 
 ```bash
 sudo xcode-select --switch /Applications/Xcode.app
 ```
 
-3. Launch the iOS simulator in Rosetta mode:
+1. Launch the iOS simulator in Rosetta mode:
 
 ```bash
 arch -x86_64 /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator
