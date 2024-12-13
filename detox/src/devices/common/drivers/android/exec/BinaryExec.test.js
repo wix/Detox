@@ -1,3 +1,4 @@
+/* eslint-disable node/no-extraneous-require */
 describe('BinaryExec', () => {
   const binaryPath = '/binary/mock';
 
@@ -12,10 +13,10 @@ describe('BinaryExec', () => {
     }));
     exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
 
-    jest.mock('child-process-promise', () => ({
+    jest.mock('promisify-child-process', () => ({
       spawn: jest.fn()
     }));
-    spawn = require('child-process-promise').spawn;
+    spawn = require('promisify-child-process').spawn;
 
     const { BinaryExec } = require('./BinaryExec');
     binaryExec = new BinaryExec(binaryPath);
@@ -87,7 +88,7 @@ describe('BinaryExec', () => {
       expect(spawn).toHaveBeenCalledWith(binaryPath, commandArgs, expect.anything());
     });
 
-    it('should chain-return child-process-promise from spawn', async () => {
+    it('should chain-return promisify-child-process from spawn', async () => {
       const childProcessPromise = Promise.resolve('mock result');
       spawn.mockReturnValue(childProcessPromise);
 

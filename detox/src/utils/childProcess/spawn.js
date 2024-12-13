@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { spawn } = require('child-process-promise');
 const _ = require('lodash');
+const { spawn } = require('promisify-child-process');
 
 const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-spawn'] });
 const { escape } = require('../pipeCommands');

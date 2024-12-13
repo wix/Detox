@@ -1,5 +1,4 @@
-// @ts-nocheck
-const spawn = require('child-process-promise').spawn;
+const { spawn } = require('promisify-child-process');
 
 const exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
 
@@ -27,7 +26,13 @@ class BinaryExec {
   }
 
   async exec(command) {
-    return (await exec(`"${this.binary}" ${command._getArgsString()}`)).stdout;
+    const result = await exec(`"${this.binary}" ${command._getArgsString()}`);
+
+    if (!result) {
+      throw new Error(`Failed to execute binary: ${this.binary}`);
+    }
+
+    return result.stdout;
   }
 
   spawn(command, stdout, stderr) {
@@ -37,5 +42,5 @@ class BinaryExec {
 
 module.exports = {
   ExecCommand,
-  BinaryExec,
+  BinaryExec
 };

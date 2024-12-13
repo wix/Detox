@@ -3,9 +3,9 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const exec = require('child-process-promise').exec;
 const ini = require('ini');
 const _ = require('lodash');
+const { exec } = require('promisify-child-process');
 const _which = require('which');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
@@ -147,8 +147,7 @@ function throwMissingAvdINIError(avdName, avdIniPath) {
 
 function throwMissingAvdError(avdName, avdPath, avdIniPath) {
   throw new DetoxRuntimeError(
-    `Failed to find AVD ${avdName} directory at path: ${avdPath}\n` +
-    `Please verify "path" property in the INI file: ${avdIniPath}`
+    `Failed to find AVD ${avdName} directory at path: ${avdPath}\n` + `Please verify "path" property in the INI file: ${avdIniPath}`
   );
 }
 
@@ -169,7 +168,9 @@ function throwSdkIntegrityError(errMessage) {
 }
 
 function throwMissingGmsaasError() {
-  throw new DetoxRuntimeError(`Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`);
+  throw new DetoxRuntimeError(
+    `Failed to locate Genymotion's gmsaas executable. Please add it to your $PATH variable!\nPATH is currently set to: ${process.env.PATH}`
+  );
 }
 
 const getDetoxVersion = _.once(() => {
@@ -178,11 +179,15 @@ const getDetoxVersion = _.once(() => {
 
 const getBuildFolderName = _.once(async () => {
   const detoxVersion = getDetoxVersion();
-  const xcodeVersion = await exec('xcodebuild -version').then(result => result.stdout.trim());
+  const xcodeVersion = await exec('xcodebuild -version').then((result) => {
+    if (typeof result.stdout === 'string') {
+      return result.stdout.trim();
+    } else {
+      throw new DetoxRuntimeError(`Failed trim stdout result of command: xcodebuild -version`);
+    }
+  });
 
-  return crypto.createHash('sha1')
-      .update(`${detoxVersion}\n${xcodeVersion}\n`)
-      .digest('hex');
+  return crypto.createHash('sha1').update(`${detoxVersion}\n${xcodeVersion}\n`).digest('hex');
 });
 
 const getFrameworkDirPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/framework`;
@@ -197,8 +202,14 @@ const getXCUITestRunnerDirPath = `${DETOX_LIBRARY_ROOT_PATH}/ios/xcuitest-runner
 const getXCUITestRunnerPath = _.once(async () => {
   const buildFolder = await getBuildFolderName();
   const derivedDataPath = `${getXCUITestRunnerDirPath}/${buildFolder}`;
-  const xctestrunPath = await exec(`find ${derivedDataPath} -name "*.xctestrun" -print -quit`)
-      .then(result => result.stdout.trim());
+  const command = `find ${derivedDataPath} -name "*.xctestrun" -print -quit`;
+  const xctestrunPath = await exec(command).then((result) => {
+    if (typeof result.stdout === 'string') {
+      return result.stdout.trim();
+    } else {
+      throw new DetoxRuntimeError(`Failed trim stdout result of command: ${command}`);
+    }
+  });
 
   if (!xctestrunPath) {
     throw new DetoxRuntimeError(`Failed to find .xctestrun file in ${derivedDataPath}`);
@@ -246,5 +257,5 @@ module.exports = {
   getDetoxLockFilePath,
   getDeviceRegistryPath,
   getLastFailedTestsPath,
-  getHomeDir,
+  getHomeDir
 };

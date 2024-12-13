@@ -13,8 +13,8 @@ describe('Spawn utils', () => {
       jest.mock('../logger');
       log = require('../logger');
 
-      jest.mock('child-process-promise');
-      cpp = require('child-process-promise');
+      jest.mock('promisify-child-process');
+      cpp = require('promisify-child-process');
 
       jest.mock('../retry');
       retry = require('../retry');

@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { exec } = require('child-process-promise');
 const _ = require('lodash');
+const { exec } = require('promisify-child-process');
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-exec'] });
@@ -8,6 +8,12 @@ const retry = require('../retry');
 
 const execsCounter = require('./opsCounter');
 
+/**
+ * 
+ * @param {*} bin 
+ * @param {*} options 
+ * @returns {Promise<import('promisify-child-process').Output>}
+ */
 async function execWithRetriesAndLogs(bin, options = {}) {
   const {
     retries = 9,
