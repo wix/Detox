@@ -9,9 +9,9 @@ const retry = require('../retry');
 const execsCounter = require('./opsCounter');
 
 /**
- * 
- * @param {*} bin 
- * @param {*} options 
+ * Executes a command with retries and logs
+ * @param {*} bin - command to execute
+ * @param {*} options - options
  * @returns {Promise<import('promisify-child-process').Output>}
  */
 async function execWithRetriesAndLogs(bin, options = {}) {
