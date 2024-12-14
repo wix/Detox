@@ -28,10 +28,6 @@ class BinaryExec {
   async exec(command) {
     const result = await exec(`"${this.binary}" ${command._getArgsString()}`);
 
-    if (!result) {
-      throw new Error(`Failed to execute binary: ${this.binary}`);
-    }
-
     return result.stdout;
   }
 

@@ -42,15 +42,14 @@ const DEFAULT_KILL_SCHEDULE = {
 };
 
 async function interruptProcess(childProcessPromise, schedule) {
-  const childProcess = childProcessPromise.childProcess;
-  const cpid = childProcess.pid;
-  const spawnargs = childProcess.spawnargs.join(' ');
+  const cpid = childProcessPromise.pid;
+  const spawnargs = childProcessPromise.spawnargs.join(' ');
   const log = rootLogger.child({ event: 'SPAWN_KILL', cpid });
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {
       log.trace({ signal }, `sending ${signal} to: ${spawnargs}`);
-      childProcess.kill(signal);
+      childProcessPromise.kill(signal);
     }, ms);
   });
 
@@ -68,9 +67,8 @@ async function interruptProcess(childProcessPromise, schedule) {
 
 function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
   const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
-  const cpPromise = spawn(binary, flags, spawnOptions);
+  const childProcess = spawn(binary, flags, spawnOptions);
 
-  const { childProcess } = cpPromise;
   const { exitCode, stdout, stderr } = childProcess;
 
   const _logger = logger.child({ cpid: childProcess.pid });
@@ -85,16 +83,20 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
     stderr && stderr.on('data', _spawnStderrLoggerFn(_logger, logLevelPatterns));
   }
 
+  /**
+   * 
+   * @param {import('promisify-child-process').Output} resultOrErr 
+   */
   function onEnd(resultOrErr) {
-    const signal = resultOrErr.childProcess.signalCode || '';
+    const signal = resultOrErr.signal || '';
     const { code } = resultOrErr;
     const action = signal ? `terminated with ${signal}` : `exited with code #${code}`;
 
     _logger.debug({ event: 'SPAWN_END', signal, code }, `${command} ${action}`);
   }
 
-  cpPromise.then(onEnd, onEnd);
-  return cpPromise;
+  childProcess.then(onEnd, onEnd);
+  return childProcess;
 }
 
 function _joinCommandAndFlags(command, flags) {

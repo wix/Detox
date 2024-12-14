@@ -3,7 +3,6 @@
 jest.retryTimes(2);
 
 describe('Spawn utils', () => {
-
   describe('spawning', () => {
     let retry;
     let log;
@@ -25,21 +24,17 @@ describe('Spawn utils', () => {
       mockSpawnResult(0, {
         pid: 2018,
         stdout: toStream('hello'),
-        stderr: toStream('world'),
+        stderr: toStream('world')
       });
     });
 
     const mockSpawnResult = (code, childProcess) => {
-      const cpPromise = Promise.resolve({ code, childProcess });
-      cpp.spawn.mockReturnValue(Object.assign(cpPromise, { childProcess }));
+      const cpPromise = Promise.resolve({ code });
+      cpp.spawn.mockReturnValueOnce(Object.assign(cpPromise, childProcess));
     };
 
     const mockSpawnResults = (childProcess1, childProcess2) => {
-      const cpPromise1 = Promise.resolve({ childProcess: childProcess1 });
-      const cpPromise2 = Promise.resolve({ childProcess: childProcess2 });
-      cpp.spawn
-        .mockReturnValueOnce(Object.assign(cpPromise1, { childProcess: childProcess1 }))
-        .mockReturnValueOnce(Object.assign(cpPromise2, { childProcess: childProcess2 }));
+      cpp.spawn.mockReturnValueOnce(childProcess1).mockReturnValueOnce(childProcess2);
     };
 
     const advanceOpsCounter = (count) => {
@@ -47,10 +42,7 @@ describe('Spawn utils', () => {
       for (let i = 0; i < count; i++) opsCounter.inc();
     };
 
-    [
-      'spawnAndLog',
-      'spawnWithRetriesAndLogs',
-    ].forEach((func) => {
+    ['spawnAndLog', 'spawnWithRetriesAndLogs'].forEach((func) => {
       describe(func, () => {
         it('should spawn an attached command with ignored input and piped output', async () => {
           const command = 'command';
@@ -58,9 +50,13 @@ describe('Spawn utils', () => {
 
           await spawn[func](command, flags);
 
-          expect(cpp.spawn).toBeCalledWith(command, flags, expect.objectContaining({
-            stdio: ['ignore', 'pipe', 'pipe']
-          }));
+          expect(cpp.spawn).toBeCalledWith(
+            command,
+            flags,
+            expect.objectContaining({
+              stdio: ['ignore', 'pipe', 'pipe']
+            })
+          );
         });
 
         it('should log spawn command upon child-process start and finish', async () => {
@@ -95,8 +91,8 @@ describe('Spawn utils', () => {
           await spawn[func]('command', [], {
             logLevelPatterns: {
               debug: [/hello/],
-              warn: [/world/],
-            },
+              warn: [/world/]
+            }
           });
 
           await nextCycle();
@@ -111,15 +107,21 @@ describe('Spawn utils', () => {
 
           expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
           expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
-          expect(log.trace).not.toBeCalledWith(expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDOUT' })), expect.any(String));
-          expect(log.error).not.toBeCalledWith(expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDERR' })), expect.any(String));
+          expect(log.trace).not.toBeCalledWith(
+            expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDOUT' })),
+            expect.any(String)
+          );
+          expect(log.error).not.toBeCalledWith(
+            expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDERR' })),
+            expect.any(String)
+          );
         });
 
         it('should log erroneously finished spawns', async () => {
           mockSpawnResult(-2, {
             pid: 8102,
             stdout: toStream(''),
-            stderr: toStream('Some error.'),
+            stderr: toStream('Some error.')
           });
 
           await spawn[func]('mockCommand', []).catch(() => {});
@@ -135,7 +137,7 @@ describe('Spawn utils', () => {
             pid: null,
             exitCode: -2,
             stdout: toStream(''),
-            stderr: toStream('Command `command` not found.'),
+            stderr: toStream('Command `command` not found.')
           });
 
           await spawn[func]('command', []);
@@ -143,7 +145,10 @@ describe('Spawn utils', () => {
 
           expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
           expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
-          expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Command `command` not found.');
+          expect(log.error).toBeCalledWith(
+            expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }),
+            'Command `command` not found.'
+          );
         });
       });
     });
@@ -160,9 +165,13 @@ describe('Spawn utils', () => {
 
       it('should spawn an attached command with stderr capturing, by default', async () => {
         await spawn.spawnWithRetriesAndLogs(command, flags);
-        expect(cpp.spawn).toBeCalledWith(command, flags, expect.objectContaining({
-          capture: ['stderr'],
-        }));
+        expect(cpp.spawn).toBeCalledWith(
+          command,
+          flags,
+          expect.objectContaining({
+            capture: ['stderr']
+          })
+        );
       });
 
       it('should retry once, by default', async () => {
@@ -200,21 +209,25 @@ describe('Spawn utils', () => {
 
       it('should honor output-capturing options, but force stderr', async () => {
         await spawn.spawnWithRetriesAndLogs(command, flags, { capture: ['stdout'] });
-        expect(cpp.spawn).toBeCalledWith(command, flags, expect.objectContaining({
-          capture: ['stdout', 'stderr'],
-        }));
+        expect(cpp.spawn).toBeCalledWith(
+          command,
+          flags,
+          expect.objectContaining({
+            capture: ['stdout', 'stderr']
+          })
+        );
       });
 
       it('should return result of last retry attempt', async () => {
         const childProcess1 = {
           pid: 100,
           exitCode: 1,
-          stderr: toStream(''),
+          stderr: toStream('')
         };
         const childProcess2 = {
           pid: 101,
           exitCode: 0,
-          stdout: toStream('okay great'),
+          stdout: toStream('okay great')
         };
         mockSpawnResults(childProcess1, childProcess2);
 
@@ -224,10 +237,12 @@ describe('Spawn utils', () => {
         });
 
         const result = await spawn.spawnWithRetriesAndLogs(command, flags);
-        expect(result.childProcess).toEqual(expect.objectContaining({
-          pid: 101,
-          exitCode: 0,
-        }));
+        expect(result).toEqual(
+          expect.objectContaining({
+            pid: 101,
+            exitCode: 0
+          })
+        );
         expect(cpp.spawn).toHaveBeenCalledTimes(2);
       });
     });
@@ -242,17 +257,13 @@ describe('Spawn utils', () => {
     }, 500);
 
     it('should throw exception if child process exited with an error', async () => {
-      const script =
-        "process.on('SIGINT', () => {});" +
-        'setTimeout(()=>process.exit(1), 100);';
+      const script = "process.on('SIGINT', () => {});" + 'setTimeout(()=>process.exit(1), 100);';
 
       await interruptProcess(spawnAndLog('node', ['-e', script]));
     }, 1000);
 
     it('should SIGTERM a stuck process after specified time', async () => {
-      const script =
-        "process.on('SIGINT', () => {});" +
-        'setTimeout(()=>process.exit(1), 10000);';
+      const script = "process.on('SIGINT', () => {});" + 'setTimeout(()=>process.exit(1), 10000);';
 
       const theProcess = spawnAndLog('node', ['-e', script]);
       await interruptProcess(theProcess, {
@@ -263,7 +274,7 @@ describe('Spawn utils', () => {
 });
 
 function nextCycle() {
-  return new Promise(resolve => setTimeout(resolve));
+  return new Promise((resolve) => setTimeout(resolve));
 }
 
 function toStream(string) {
