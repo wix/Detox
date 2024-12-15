@@ -85,9 +85,9 @@ class ReactNativeIdlingResources constructor(
         }
 
         if (enable) {
-            setupNetworkIdlingResource()
+            //setupNetworkIdlingResource()
         } else {
-            removeNetworkIdlingResource()
+            //removeNetworkIdlingResource()
         }
         networkSyncEnabled = enable
     }
@@ -136,19 +136,20 @@ class ReactNativeIdlingResources constructor(
 
     private fun setupCustomRNIdlingResources() {
         //rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
-        timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
+        //timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
         uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
-        animIdlingResource = AnimatedModuleIdlingResource(reactContext)
+        //animIdlingResource = AnimatedModuleIdlingResource(reactContext)
 
         IdlingRegistry.getInstance()
             .register(
                 //timersIdlingResource,
                 //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                animIdlingResource)
+                //animIdlingResource
+            )
 
         if (networkSyncEnabled) {
-            setupNetworkIdlingResource()
+//            setupNetworkIdlingResource()
         }
         setupAsyncStorageIdlingResource()
     }

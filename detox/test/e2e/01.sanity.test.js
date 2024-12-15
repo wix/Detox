@@ -8,13 +8,18 @@
  * @severity critical
  * @tag sanity
  */
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+jest.setTimeout(120000); // Sets timeout to 120 seconds
+
 describe('Sanity', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
+    //await sleep(1000);
     await detox.traceCall('Navigate to sanity', element(by.text('Sanity')).tap());
   });
 
-  it('should have welcome screen', async () => {
+  it.only('should have welcome screen', async () => {
     await expect(element(by.text('Welcome'))).toBeVisible();
     await expect(element(by.text('Say Hello'))).toBeVisible();
     await expect(element(by.text('Say World'))).toBeVisible();

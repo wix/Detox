@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.uimodule
 
+import android.os.Debug
 import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
@@ -27,7 +28,8 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
 
     override fun checkIdle(): Boolean {
         try {
-            if (!reactContext.hasActiveCatalystInstance()) {
+
+            if (!reactContext.hasActiveReactInstance()) {
                 Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.")
                 return false
             }

@@ -78,7 +78,6 @@ object ReactNativeExtension {
 
     @JvmStatic
     fun enableAllSynchronization(applicationContext: ReactApplication) {
-        Debug.waitForDebugger()
         val reactContext = getCurrentReactContextSafe(applicationContext)
 
         if (reactContext != null) {

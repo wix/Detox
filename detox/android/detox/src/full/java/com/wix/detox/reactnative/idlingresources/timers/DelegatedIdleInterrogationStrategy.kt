@@ -20,7 +20,7 @@ class DelegatedIdleInterrogationStrategy(): IdleInterrogationStrategy {
 
     companion object {
         fun create(reactContext: ReactContext): DelegatedIdleInterrogationStrategy {
-            Debug.waitForDebugger()
+            //Debug.waitForDebugger()
             Log.d("Detox", "Creating DelegatedIdleInterrogationStrategy with reactContext: $reactContext")
             val timingModule = reactContext.getJSModule(JavaScriptModule::class.java)!!
             return DelegatedIdleInterrogationStrategy()

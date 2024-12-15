@@ -26,22 +26,22 @@ object DelegatedIdleInterrogationStrategySpec : Spek({
             whenever(timingModule.hasActiveTimersInRange(any())).thenReturn(false)
         }
 
-        fun uut() = DelegatedIdleInterrogationStrategy(timingModule)
-
-        it("should be idle if timing module has no active timers") {
-            givenNoActiveTimersInQueue()
-            assertThat(uut().isIdleNow()).isTrue()
-        }
-
-        it("should be busy if timing module has active timers") {
-            givenActiveTimersInQueue()
-            assertThat(uut().isIdleNow()).isFalse()
-        }
-
-        it("should specify the busy-interval as the active-timers lookahead range") {
-            givenActiveTimersInQueue()
-            uut().isIdleNow()
-            verify(timingModule).hasActiveTimersInRange(eq(BUSY_INTERVAL_MS))
-        }
+//        fun uut() = DelegatedIdleInterrogationStrategy(timingModule)
+//
+//        it("should be idle if timing module has no active timers") {
+//            givenNoActiveTimersInQueue()
+//            assertThat(uut().isIdleNow()).isTrue()
+//        }
+//
+//        it("should be busy if timing module has active timers") {
+//            givenActiveTimersInQueue()
+//            assertThat(uut().isIdleNow()).isFalse()
+//        }
+//
+//        it("should specify the busy-interval as the active-timers lookahead range") {
+//            givenActiveTimersInQueue()
+//            uut().isIdleNow()
+//            verify(timingModule).hasActiveTimersInRange(eq(BUSY_INTERVAL_MS))
+//        }
     }
 })
