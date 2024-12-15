@@ -3,6 +3,7 @@ package com.example
 import android.app.Application
 import android.webkit.WebView
 import com.example.utils.DetoxSoLoader
+import com.facebook.common.logging.FLog
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
@@ -17,6 +18,8 @@ class MainApplication : Application(), ReactApplication {
 
     override fun onCreate() {
         super.onCreate()
+        FLog.setMinimumLoggingLevel(FLog.VERBOSE)
+
         DetoxSoLoader.init(this)
 
         WebView.setWebContentsDebuggingEnabled(true)

@@ -149,6 +149,7 @@ object ReactNativeExtension {
         val launchArgs = LaunchArgs()
 
         rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs, networkSyncEnabled).apply {
+
             registerAll()
         }
     }
