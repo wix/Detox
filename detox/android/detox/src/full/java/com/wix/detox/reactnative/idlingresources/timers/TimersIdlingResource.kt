@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
+import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource

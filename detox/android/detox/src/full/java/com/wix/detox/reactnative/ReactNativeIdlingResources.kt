@@ -11,6 +11,7 @@ import com.wix.detox.reactnative.idlingresources.AnimatedModuleIdlingResource
 import com.wix.detox.reactnative.idlingresources.AsyncStorageIdlingResource
 import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
+import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
 import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
 import org.joor.Reflect
 import org.joor.ReflectException
@@ -137,16 +138,16 @@ class ReactNativeIdlingResources constructor(
 
     private fun setupCustomRNIdlingResources() {
         //rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
-        //timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
+        timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
         uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
-        //animIdlingResource = AnimatedModuleIdlingResource(reactContext)
+        animIdlingResource = AnimatedModuleIdlingResource(reactContext)
 
         IdlingRegistry.getInstance()
             .register(
-                //timersIdlingResource,
+                timersIdlingResource,
                 //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                //animIdlingResource
+                animIdlingResource
             )
 
         if (networkSyncEnabled) {
@@ -172,7 +173,7 @@ class ReactNativeIdlingResources constructor(
     private fun unregisterCustomRNIdlingResources() {
         IdlingRegistry.getInstance()
             .unregister(
-                //timersIdlingResource,
+                timersIdlingResource,
                 //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
                 animIdlingResource

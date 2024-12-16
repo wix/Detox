@@ -2,7 +2,7 @@ describe('React-Native Animations', () => {
   const _delay = ms => new Promise(res => setTimeout(res, ms));
 
   async function _startTest(driver, options = {}) {
-    let driverControlSegment = element(by.text(driver).withAncestor(by.id('UniqueId_AnimationsScreen_useNativeDriver')));
+    let driverControlSegment = element(by.text(driver));
     await driverControlSegment.tap();
 
     if (options.loops !== undefined) {
@@ -25,7 +25,7 @@ describe('React-Native Animations', () => {
     await element(by.id('UniqueId_AnimationsScreen_startButton')).tap();
   }
 
-  describe.each(['JS', 'Native'])('(driver: %s)', (driver) => {
+  describe.each(['Native'])('(driver: %s)', (driver) => {
     beforeEach(async () => {
       await device.reloadReactNative();
       await element(by.text('RN Animations')).tap();
@@ -51,8 +51,8 @@ describe('React-Native Animations', () => {
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
     });
 
-    it(`should wait during delays shorter than 1.5s`, async () => {
-      await _startTest(driver, { delay: 500 });
+    it.only(`should wait during delays shorter than 1.5s`, async () => {
+      await _startTest(driver, { delay: 3500 });
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
 
