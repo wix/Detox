@@ -7,9 +7,10 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
-import com.wix.detox.reactnative.idlingresources.*
+import com.wix.detox.reactnative.idlingresources.AnimatedModuleIdlingResource
+import com.wix.detox.reactnative.idlingresources.AsyncStorageIdlingResource
+import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
-import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
 import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
 import org.joor.Reflect
 import org.joor.ReflectException
@@ -85,9 +86,9 @@ class ReactNativeIdlingResources constructor(
         }
 
         if (enable) {
-            //setupNetworkIdlingResource()
+            setupNetworkIdlingResource()
         } else {
-            //removeNetworkIdlingResource()
+            removeNetworkIdlingResource()
         }
         networkSyncEnabled = enable
     }
@@ -149,7 +150,7 @@ class ReactNativeIdlingResources constructor(
             )
 
         if (networkSyncEnabled) {
-//            setupNetworkIdlingResource()
+            setupNetworkIdlingResource()
         }
         setupAsyncStorageIdlingResource()
     }
@@ -171,7 +172,7 @@ class ReactNativeIdlingResources constructor(
     private fun unregisterCustomRNIdlingResources() {
         IdlingRegistry.getInstance()
             .unregister(
-                timersIdlingResource,
+                //timersIdlingResource,
                 //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
                 animIdlingResource

@@ -3,6 +3,9 @@ package com.wix.detox.reactnative.idlingresources;
 import android.util.Log;
 import android.view.Choreographer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReactContext;
 
 import java.util.ArrayList;
@@ -14,8 +17,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 
