@@ -28,26 +28,36 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 
 + (void)reloadApp
 {
-	if([DTXReactNativeSupport hasReactNative] == NO)
-	{
-		return;
-	}
-	
-	id<RN_RCTBridge> bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
-	
-	SEL reqRelSel = NSSelectorFromString(@"requestReload");
-	if([bridge respondsToSelector:reqRelSel])
-	{
-		//Call RN public API to request reload.
-		[bridge requestReload];
-	}
-	else
-	{
-		//Legacy call to reload RN.
-		[[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
-															object:nil
-														  userInfo:nil];
-	}
+    // Early return if React Native is not present
+    if (![DTXReactNativeSupport hasReactNative]) {
+        return;
+    }
+
+    // Try legacy reload approach (without new arch)
+    id<RN_RCTBridge> bridge = [NSClassFromString(@"RCTBridge") valueForKey:@"currentBridge"];
+    if ([bridge respondsToSelector:@selector(requestReload)]) {
+        [bridge requestReload];
+        return;
+    }
+
+    // Try New Architecture reload approach
+    NSObject<UIApplicationDelegate> *appDelegate = UIApplication.sharedApplication.delegate;
+    NSObject *rootViewFactory = [appDelegate valueForKey:@"rootViewFactory"];
+    NSObject *reactHost = [rootViewFactory valueForKey:@"reactHost"];
+
+    SEL reloadCommand = NSSelectorFromString(@"didReceiveReloadCommand");
+    if (reactHost && [reactHost respondsToSelector:reloadCommand]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [reactHost performSelector:reloadCommand];
+#pragma clang diagnostic pop
+        return;
+    }
+
+    // Fallback to legacy^2 reload approach
+    [[NSNotificationCenter defaultCenter] postNotificationName:RCTReloadNotification
+                                                        object:nil
+                                                      userInfo:nil];
 }
 
 + (void)waitForReactNativeLoadWithCompletionHandler:(void (^)(void))handler
