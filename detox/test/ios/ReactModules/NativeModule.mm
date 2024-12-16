@@ -2,118 +2,167 @@
 #import <UIKit/UIKit.h>
 #import <React/RCTRootView.h>
 
-static int CALL_COUNTER = 0;
+@interface NativeModule ()
+@property (nonatomic, strong) UIWindow *overlayWindow;
+@property (nonatomic, strong) UIView *overlayView;
+@property (nonatomic, assign) NSInteger callCounter;
+@end
 
 @implementation NativeModule
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(echoWithoutResponse:(NSString *)str)
-{
-  // NSLog(@"NativeModule echoWithoutResponse called");
-  CALL_COUNTER++;
+#pragma mark - Lifecycle Methods
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _callCounter = 0;
+    }
+    return self;
+}
+
+#pragma mark - Echo Methods
+
+RCT_EXPORT_METHOD(echoWithoutResponse:(NSString *)str) {
+    self.callCounter++;
 }
 
 RCT_EXPORT_METHOD(echoWithResponse:(NSString *)str
-                          resolver:(RCTPromiseResolveBlock)resolve
-                          rejecter:(RCTPromiseRejectBlock)reject)
-{
-  CALL_COUNTER++;
-  resolve(str);
-  // NSLog(@"NativeModule echoWithResponse called");
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    self.callCounter++;
+    resolve(str);
 }
 
-RCT_EXPORT_METHOD(nativeSetTimeout:(NSTimeInterval)delay block:(RCTResponseSenderBlock)block)
-{
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		dispatch_async(dispatch_get_main_queue(), ^{
-			block(@[]);
-		});
-	});
+#pragma mark - Timing Methods
+
+RCT_EXPORT_METHOD(nativeSetTimeout:(NSTimeInterval)delay
+                  block:(RCTResponseSenderBlock)block) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
+                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self executeOnMainThread:^{
+            block(@[]);
+        }];
+    });
 }
 
-RCT_EXPORT_METHOD(switchToNativeRoot)
-{
-  dispatch_async(dispatch_get_main_queue(), ^{
-    UIViewController* newRoot = [UIViewController new];
-    newRoot.view.backgroundColor = [UIColor whiteColor];
-    UILabel* label = [UILabel new];
-    label.text = @"this is a new native root";
-    [label sizeToFit];
-    [[newRoot view] addSubview:label];
-    label.center = newRoot.view.center;
+#pragma mark - Navigation Methods
 
-    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
-    [[delegate window]setRootViewController:newRoot];
-    [[delegate window] makeKeyAndVisible];
-  });
+RCT_EXPORT_METHOD(switchToNativeRoot) {
+    [self executeOnMainThread:^{
+        UIViewController *newRoot = [self createNativeRootViewController];
+        [self updateRootViewController:newRoot];
+    }];
 }
 
-RCT_EXPORT_METHOD(switchToMultipleReactRoots)
-{
-  dispatch_async(dispatch_get_main_queue(), ^{
-    id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
-    RCTBridge* bridge = ((RCTRootView*)delegate.window.rootViewController.view).bridge;
-
-    UIViewController* newRoot = [UIViewController new];
-    newRoot.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
-    newRoot.tabBarItem.title = @"1";
-
-
-    UIViewController* newRoot2 = [UIViewController new];
-    newRoot2.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
-    newRoot2.tabBarItem.title = @"2";
-
-    UIViewController* newRoot3 = [UIViewController new];
-    newRoot3.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
-    newRoot3.tabBarItem.title = @"3";
-
-    UIViewController* newRoot4 = [UIViewController new];
-    newRoot4.view = [[RCTRootView alloc]initWithBridge:bridge moduleName:@"example" initialProperties:nil];
-    newRoot4.tabBarItem.title = @"4";
-
-    UITabBarController* tbc = [UITabBarController new];
-    tbc.viewControllers = @[newRoot, newRoot2, newRoot3, newRoot4];
-
-    [[delegate window]setRootViewController:tbc];
-    [[delegate window] makeKeyAndVisible];
-  });
+RCT_EXPORT_METHOD(switchToMultipleReactRoots) {
+    [self executeOnMainThread:^{
+        UITabBarController *tabController = [self createTabBarControllerWithBridge];
+        [self updateRootViewController:tabController];
+    }];
 }
 
-RCT_EXPORT_METHOD(sendNotification:(NSString*)notification name:(NSString*)name)
-{
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[NSNotificationCenter.defaultCenter postNotificationName:notification object:nil userInfo:@{@"name": name}];
-	});
+#pragma mark - Notification Methods
+
+RCT_EXPORT_METHOD(sendNotification:(NSString*)notification
+                  name:(NSString*)name) {
+    [self executeOnMainThread:^{
+        [NSNotificationCenter.defaultCenter postNotificationName:notification
+                                                          object:nil
+                                                        userInfo:@{@"name": name}];
+    }];
 }
+
+#pragma mark - Overlay Methods
 
 RCT_EXPORT_METHOD(presentOverlayWindow) {
-    static UIWindow *overlayWindow;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGRect screenBounds = UIScreen.mainScreen.bounds;
-        overlayWindow = [[UIWindow alloc] initWithFrame:screenBounds];
-        overlayWindow.accessibilityIdentifier = @"OverlayWindow";
-
-        [overlayWindow setWindowLevel:UIWindowLevelStatusBar];
-        [overlayWindow setHidden:NO];
-
-        [overlayWindow makeKeyAndVisible];
-    });
+    [self executeOnMainThread:^{
+        [self setupAndShowOverlayWindow];
+    }];
 }
 
 RCT_EXPORT_METHOD(presentOverlayView) {
-    static UIView *overlayView;
+    [self executeOnMainThread:^{
+        [self setupAndShowOverlayView];
+    }];
+}
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGRect screenBounds = UIScreen.mainScreen.bounds;
-        overlayView = [[UIView alloc] initWithFrame:screenBounds];
-        overlayView.userInteractionEnabled = YES;
-        overlayView.accessibilityIdentifier = @"OverlayView";
+#pragma mark - Private Helper Methods
 
-        UIWindow *keyWindow = UIApplication.sharedApplication.keyWindow;
-        [keyWindow addSubview:overlayView];
-    });
+- (void)executeOnMainThread:(void (^)(void))block {
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }
+}
+
+- (UIViewController *)createNativeRootViewController {
+    UIViewController *newRoot = [UIViewController new];
+    newRoot.view.backgroundColor = UIColor.whiteColor;
+
+    UILabel *label = [UILabel new];
+    label.text = @"this is a new native root";
+    [label sizeToFit];
+    [newRoot.view addSubview:label];
+    label.center = newRoot.view.center;
+
+    return newRoot;
+}
+
+- (UITabBarController *)createTabBarControllerWithBridge {
+    RCTBridge *bridge = [self getCurrentBridge];
+    NSArray *viewControllers = @[
+        [self createReactRootViewController:bridge title:@"1"],
+        [self createReactRootViewController:bridge title:@"2"],
+        [self createReactRootViewController:bridge title:@"3"],
+        [self createReactRootViewController:bridge title:@"4"]
+    ];
+
+    UITabBarController *tabController = [UITabBarController new];
+    tabController.viewControllers = viewControllers;
+    return tabController;
+}
+
+- (UIViewController *)createReactRootViewController:(RCTBridge *)bridge
+                                              title:(NSString *)title {
+    UIViewController *viewController = [UIViewController new];
+    viewController.view = [[RCTRootView alloc] initWithBridge:bridge
+                                                   moduleName:@"example"
+                                            initialProperties:nil];
+    viewController.tabBarItem.title = title;
+    return viewController;
+}
+
+- (RCTBridge *)getCurrentBridge {
+    id<UIApplicationDelegate> delegate = UIApplication.sharedApplication.delegate;
+    return ((RCTRootView *)delegate.window.rootViewController.view).bridge;
+}
+
+- (void)updateRootViewController:(UIViewController *)viewController {
+    id<UIApplicationDelegate> delegate = UIApplication.sharedApplication.delegate;
+    [delegate.window setRootViewController:viewController];
+    [delegate.window makeKeyAndVisible];
+}
+
+- (void)setupAndShowOverlayWindow {
+    CGRect screenBounds = UIScreen.mainScreen.bounds;
+    self.overlayWindow = [[UIWindow alloc] initWithFrame:screenBounds];
+    self.overlayWindow.accessibilityIdentifier = @"OverlayWindow";
+    [self.overlayWindow setWindowLevel:UIWindowLevelStatusBar];
+    [self.overlayWindow setHidden:NO];
+    [self.overlayWindow makeKeyAndVisible];
+}
+
+- (void)setupAndShowOverlayView {
+    CGRect screenBounds = UIScreen.mainScreen.bounds;
+    self.overlayView = [[UIView alloc] initWithFrame:screenBounds];
+    self.overlayView.userInteractionEnabled = YES;
+    self.overlayView.accessibilityIdentifier = @"OverlayView";
+
+    UIWindow *keyWindow = UIApplication.sharedApplication.keyWindow;
+    [keyWindow addSubview:self.overlayView];
 }
 
 @end
