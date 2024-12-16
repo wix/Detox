@@ -1,24 +1,52 @@
 # Set RCT_NEW_ARCH_ENABLED to '0' if not defined
 ENV['RCT_NEW_ARCH_ENABLED'] = '0' unless ENV['RCT_NEW_ARCH_ENABLED']
 
-if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.71.*/)
-  require_relative '../node_modules/react-native/scripts/react_native_pods'
-  require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-  require_relative '../node_modules/react-native-permissions/scripts/setup'
-else
-  # Resolve react_native_pods.rb with node to allow for hoisting
-  require Pod::Executable.execute_command('node', ['-p',
-    'require.resolve(
-      "react-native/scripts/react_native_pods.rb",
-      {paths: [process.argv[1]]},
-    )', __dir__]).strip
+def load_react_native_config
+  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.71.*/)
+    require_relative '../node_modules/react-native/scripts/react_native_pods'
+    require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+    require_relative '../node_modules/react-native-permissions/scripts/setup'
+  else
+    # Resolve react_native_pods.rb with node to allow for hoisting
+    require Pod::Executable.execute_command('node', ['-p',
+      'require.resolve(
+        "react-native/scripts/react_native_pods.rb",
+        {paths: [process.argv[1]]},
+      )', __dir__]).strip
 
-  require Pod::Executable.execute_command('node', ['-p',
-    'require.resolve(
-      "react-native-permissions/scripts/setup.rb",
-      {paths: [process.argv[1]]},
-    )', __dir__]).strip
+    require Pod::Executable.execute_command('node', ['-p',
+      'require.resolve(
+        "react-native-permissions/scripts/setup.rb",
+        {paths: [process.argv[1]]},
+      )', __dir__]).strip
+  end
 end
+
+def configure_target(target_name)
+  target target_name do
+    config = use_native_modules!
+
+    use_react_native!(
+      :path => config[:reactNativePath],
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
+
+    # Add React Native Slider
+    pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
+
+    post_install do |installer|
+      react_native_post_install(
+        installer,
+        config[:reactNativePath],
+        :mac_catalyst_enabled => false,
+        # :ccache_enabled => true
+      )
+    end
+  end
+end
+
+# Load configurations
+load_react_native_config
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
@@ -46,29 +74,13 @@ setup_permissions([
   'StoreKit',
 ])
 
+# Configure frameworks linkage
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'example' do
-  config = use_native_modules!
-
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
-
-  # Add React Native Slider
-  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-
-  post_install do |installer|
-    react_native_post_install(
-      installer,
-      config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
-    )
-  end
-end
+# Configure targets
+configure_target('example')
+configure_target('example-ci')
