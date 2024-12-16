@@ -1,14 +1,13 @@
 package com.wix.detox.reactnative.idlingresources.uimodule
 
-import android.os.Debug
 import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 import org.joor.ReflectException
 import java.lang.reflect.Field
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * Espresso IdlingResource for React Native's UI Module.
@@ -17,7 +16,6 @@ import java.lang.reflect.Field
 class UIModuleIdlingResource(private val reactContext: ReactContext)
     : DetoxBaseIdlingResource(), Choreographer.FrameCallback {
 
-    private val rn66workaround = RN66Workaround()
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
     private var callback: ResourceCallback? = null
 
@@ -30,14 +28,12 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
     override fun checkIdle(): Boolean {
         try {
 
-            Debug.waitForDebugger()
-
             if (!reactContext.hasActiveReactInstance()) {
                 Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.")
                 return false
             }
 
-            if (getSurfaceIdToManagerCount(reactContext) == getMountedSurfaceIdsCount(reactContext)) {
+            if (getMountItemsSize() == 0 && getViewCommandMountItemsSize() == 0) {
                 Log.i(LOG_TAG, "UIManagerModule is idle")
                 notifyIdle()
                 return true
@@ -69,51 +65,57 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         }
     }
 
-
-    fun getMountedSurfaceIdsCount(reactContext: ReactContext): Int {
+    private fun getViewCommandMountItemsSize(): Int {
         try {
-            val mFabricUIManager = getFabricManager(reactContext) ?: return -1
+            val fabricUIManager = getFabricManager(reactContext)
+            val mMountItemDispatcher = getMountItemDispatcher(fabricUIManager)
 
-            // Accessing the mMountedSurfaceIds field
-            val mMountedSurfaceIdsField: Field = mFabricUIManager::class.java.getDeclaredField("mMountedSurfaceIds")
-            mMountedSurfaceIdsField.isAccessible = true
-            val mMountedSurfaceIds = mMountedSurfaceIdsField.get(mFabricUIManager)
+            // Access mMountItems field from MountItemDispatcher
+            val mViewCommandMountItemsField: Field = mMountItemDispatcher::class.java.getDeclaredField("mViewCommandMountItems")
+            mViewCommandMountItemsField.isAccessible = true
+            val mViewCommandMountItems = mViewCommandMountItemsField.get(mMountItemDispatcher)
 
-            // Ensure it's an ArrayList and get the size
-            if (mMountedSurfaceIds is ArrayList<*>) {
-                return mMountedSurfaceIds.size
+            // Ensure it's a ConcurrentLinkedQueue and return the size
+            if (mViewCommandMountItems is ConcurrentLinkedQueue<*>) {
+                return mViewCommandMountItems.size
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return -1 // Return -1 if the operation fails
+        return -1 // Return -1 if reflection fails
     }
 
-    fun getSurfaceIdToManagerCount(reactContext: Any): Int {
+    private fun getMountItemsSize(): Int {
         try {
-            val mFabricUIManager = getFabricManager(reactContext) ?: return -1
+            val fabricUIManager = getFabricManager(reactContext)
+            val mMountItemDispatcher = getMountItemDispatcher(fabricUIManager)
 
-            // Accessing the mMountingManager field
-            val mMountingManagerField: Field = mFabricUIManager::class.java.getDeclaredField("mMountingManager")
-            mMountingManagerField.isAccessible = true
-            val mMountingManager = mMountingManagerField.get(mFabricUIManager)
+            // Access mMountItems field from MountItemDispatcher
+            val mMountItemsField: Field = mMountItemDispatcher::class.java.getDeclaredField("mMountItems")
+            mMountItemsField.isAccessible = true
+            val mMountItems = mMountItemsField.get(mMountItemDispatcher)
 
-            // Accessing the mSurfaceIdToManager field
-            val mSurfaceIdToManagerField: Field = mMountingManager::class.java.getDeclaredField("mSurfaceIdToManager")
-            mSurfaceIdToManagerField.isAccessible = true
-            val mSurfaceIdToManager = mSurfaceIdToManagerField.get(mMountingManager)
-
-            // Ensure it's a Map and get the size
-            if (mSurfaceIdToManager is Map<*, *>) {
-                return mSurfaceIdToManager.size
+            // Ensure it's a ConcurrentLinkedQueue and return the size
+            if (mMountItems is ConcurrentLinkedQueue<*>) {
+                return mMountItems.size
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return -1 // Return -1 if the operation fails
+        return -1 // Return -1 if reflection fails
     }
 
-    private fun getFabricManager(reactContext: Any): Any? {
+    private fun getMountItemDispatcher(fabricUIManager: Any): Any {
+        // Access mMountItemDispatcher from FabricUIManager
+        val mMountItemDispatcherField: Field =
+            fabricUIManager::class.java.getDeclaredField("mMountItemDispatcher")
+        mMountItemDispatcherField.isAccessible = true
+        val mMountItemDispatcher = mMountItemDispatcherField.get(fabricUIManager)
+        return mMountItemDispatcher!!
+    }
+
+
+    private fun getFabricManager(reactContext: Any): Any {
         // Accessing the mReactHost field
         val mReactHostField: Field = reactContext::class.java.getDeclaredField("mReactHost")
         mReactHostField.isAccessible = true
@@ -128,7 +130,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         val mFabricUIManagerField: Field = mReactInstance::class.java.getDeclaredField("mFabricUIManager")
         mFabricUIManagerField.isAccessible = true
         val mFabricUIManager = mFabricUIManagerField.get(mReactInstance)
-        return mFabricUIManager
+        return mFabricUIManager!!
     }
 
     companion object {
