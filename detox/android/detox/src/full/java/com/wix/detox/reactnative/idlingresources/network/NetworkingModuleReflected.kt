@@ -1,4 +1,4 @@
-package com.wix.detox.reactnative.idlingresources
+package com.wix.detox.reactnative.idlingresources.network
 
 import android.util.Log
 import com.facebook.react.bridge.ReactContext

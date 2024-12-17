@@ -3,6 +3,8 @@ package com.wix.detox.reactnative.idlingresources
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
+import com.wix.detox.reactnative.idlingresources.storage.SerialExecutorReflected
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.kotlin.*
 import org.spekframework.spek2.Spek
@@ -58,7 +60,7 @@ class AsyncStorageIdlingResourceSpec: Spek({
         fun verifyTaskEnqueuedTwice() = verify(sexecutorReflected, times(2)).executeTask(any())
 
         it("should have a name") {
-            assertThat(uut.name).isEqualTo("com.wix.detox.reactnative.idlingresources.AsyncStorageIdlingResource")
+            assertThat(uut.name).isEqualTo("com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource")
         }
 
         it("should have a debug-name") {

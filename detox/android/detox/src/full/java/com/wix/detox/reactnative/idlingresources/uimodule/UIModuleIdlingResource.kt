@@ -5,7 +5,7 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.helpers.RNHelpers
-import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
+import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.ReflectException
 
 /**
@@ -13,7 +13,7 @@ import org.joor.ReflectException
  * Hooks up to React Native internals to grab the pending ui operations from it.
  */
 class UIModuleIdlingResource(private val reactContext: ReactContext)
-    : DetoxBaseIdlingResource(), Choreographer.FrameCallback {
+    : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     private val rn66workaround = RN66Workaround()
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)

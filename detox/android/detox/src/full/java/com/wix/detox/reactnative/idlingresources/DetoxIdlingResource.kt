@@ -1,29 +1,31 @@
-package com.wix.detox.reactnative.idlingresources;
+package com.wix.detox.reactnative.idlingresources
 
-import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource;
+import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
+import java.util.concurrent.atomic.AtomicBoolean
 
-import java.util.concurrent.atomic.AtomicBoolean;
+abstract class DetoxIdlingResource : DescriptiveIdlingResource {
+    private var paused: AtomicBoolean = AtomicBoolean(false)
 
-public abstract class DetoxBaseIdlingResource implements DescriptiveIdlingResource {
-    AtomicBoolean paused = new AtomicBoolean(false);
-
-    public void pause() {
-        paused.set(true);
-        notifyIdle();
+    fun pause() {
+        paused.set(true)
+        notifyIdle()
     }
 
-    public void resume() {
-        paused.set(false);
+    fun resume() {
+        paused.set(false)
     }
 
-    @Override
-    final public boolean isIdleNow() {
+    final override fun isIdleNow(): Boolean {
         if (paused.get()) {
-            return true;
+            return true
         }
-        return checkIdle();
+        return checkIdle()
     }
 
-    protected abstract boolean checkIdle();
-    protected abstract void notifyIdle();
+    open fun onUnregistered() {
+        // no-op
+    }
+
+    protected abstract fun checkIdle(): Boolean
+    protected abstract fun notifyIdle()
 }
