@@ -1,49 +1,29 @@
-# Set RCT_NEW_ARCH_ENABLED to '0' if not defined
-ENV['RCT_NEW_ARCH_ENABLED'] = '0' unless ENV['RCT_NEW_ARCH_ENABLED']
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
-def load_react_native_config
-  if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.71.*/)
+if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
     require_relative '../node_modules/react-native/scripts/react_native_pods'
     require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
     require_relative '../node_modules/react-native-permissions/scripts/setup'
-  else
+else
     # Resolve react_native_pods.rb with node to allow for hoisting
-    require Pod::Executable.execute_command('node', ['-p',
-      'require.resolve(
-        "react-native/scripts/react_native_pods.rb",
-        {paths: [process.argv[1]]},
-      )', __dir__]).strip
+    def node_require(script)
+      # Resolve script with node to allow for hoisting
+      require Pod::Executable.execute_command('node', ['-p',
+        "require.resolve(
+          '#{script}',
+          {paths: [process.argv[1]]},
+        )", __dir__]).strip
+    end
 
-    require Pod::Executable.execute_command('node', ['-p',
-      'require.resolve(
-        "react-native-permissions/scripts/setup.rb",
-        {paths: [process.argv[1]]},
-      )', __dir__]).strip
-  end
+    node_require('react-native/scripts/react_native_pods.rb')
+    node_require('react-native-permissions/scripts/setup.rb')
 end
-
-# Configure target with common settings
-def configure_target(target_name)
-  target target_name do
-    config = use_native_modules!
-
-    use_react_native!(
-      :path => config[:reactNativePath],
-      :app_path => "#{Pod::Config.instance.installation_root}/.."
-    )
-
-    # Add React Native Slider
-    pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-  end
-end
-
-# Load configurations
-load_react_native_config
 
 platform :ios, min_ios_version_supported
-prepare_react_native_project!
 
-# Configure permissions
+install! 'cocoapods', :deterministic_uuids => false
+
+# Comment unwanted permissions
 setup_permissions([
   'AppTrackingTransparency',
   'Bluetooth',
@@ -66,23 +46,31 @@ setup_permissions([
   'StoreKit',
 ])
 
-# Configure frameworks linkage
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
+def shared_pods
+    config = use_native_modules!
+
+    use_react_native!(
+      :path => config[:reactNativePath],
+      :app_path => "#{Pod::Config.instance.installation_root}/.."
+    )
+
+    # Shared pods
+    pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
 end
 
-# Configure targets
-configure_target('example')
-configure_target('example-ci')
+target 'example' do
+  shared_pods
+end
 
-# Post install hook (moved outside of targets)
+target 'example-ci' do
+  shared_pods
+end
+
 post_install do |installer|
+  config = use_native_modules!
   react_native_post_install(
     installer,
     config[:reactNativePath],
-    :mac_catalyst_enabled => false,
-    # :ccache_enabled => true
+    :mac_catalyst_enabled => false
   )
 end
