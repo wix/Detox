@@ -52,7 +52,7 @@ const config = {
     'ios.debug': {
       type: 'ios.app',
       name: 'example',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example-ci.app',
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       start: 'react-native start',
       bundleId: 'com.wix.detox-example',
@@ -61,7 +61,7 @@ const config = {
     'ios.release': {
       type: 'ios.app',
       name: 'example',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
+      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example-ci.app',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
     },
 
