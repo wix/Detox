@@ -1,6 +1,8 @@
 const CAF = require('caf');
 const _ = require('lodash');
 
+const PromptHandler = require('../test/e2e/utils/PromptHandler');
+
 const Client = require('./client/Client');
 const DetoxCopilot = require('./copilot/DetoxCopilot');
 const environmentFactory = require('./environmentFactory');
@@ -9,7 +11,6 @@ const { InvocationManager } = require('./invoke');
 const symbols = require('./realms/symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const uuid = require('./utils/uuid');
-const PromptHandler = require('../test/e2e/utils/PromptHandler');
 
 class DetoxWorker {
   constructor(context) {
