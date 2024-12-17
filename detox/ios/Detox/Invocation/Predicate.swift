@@ -66,9 +66,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
           return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
         } else {
           //Will crash if RN app and neither class exists
-          let RCTTextViewClass : AnyClass =
-            NSClassFromString("RCTParagraphComponentView") ??
-            NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+          let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
 
           let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
             try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
@@ -91,9 +89,7 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 
         if ReactNativeSupport.isReactNativeApp == true {
           //Will crash if RN app and neither class exists
-          let RCTTextViewClass : AnyClass =
-            NSClassFromString("RCTParagraphComponentView") ??
-            NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+          let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
           orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
         }
 
