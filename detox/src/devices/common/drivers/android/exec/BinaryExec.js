@@ -32,7 +32,7 @@ class BinaryExec {
   }
 
   spawn(command, stdout, stderr) {
-    return spawn(this.binary, command._getArgs(), { detached: true, stdio: ['ignore', stdout, stderr] });
+    return spawn(this.binary, command._getArgs(), { detached: true, encoding: 'utf8', stdio: ['ignore', stdout, stderr] });
   }
 }
 

@@ -366,6 +366,7 @@ class ADB {
     const _spawnOptions = {
       ...spawnOptions,
       capture: ['stdout'],
+      encoding: 'utf8',
     };
     return spawnWithRetriesAndLogs(this.adbBin, _flags, _spawnOptions);
   }
