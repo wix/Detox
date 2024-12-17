@@ -22,6 +22,7 @@ def load_react_native_config
   end
 end
 
+# Configure target with common settings
 def configure_target(target_name)
   target target_name do
     config = use_native_modules!
@@ -33,15 +34,6 @@ def configure_target(target_name)
 
     # Add React Native Slider
     pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-
-    post_install do |installer|
-      react_native_post_install(
-        installer,
-        config[:reactNativePath],
-        :mac_catalyst_enabled => false,
-        # :ccache_enabled => true
-      )
-    end
   end
 end
 
@@ -84,3 +76,13 @@ end
 # Configure targets
 configure_target('example')
 configure_target('example-ci')
+
+# Post install hook (moved outside of targets)
+post_install do |installer|
+  react_native_post_install(
+    installer,
+    config[:reactNativePath],
+    :mac_catalyst_enabled => false,
+    # :ccache_enabled => true
+  )
+end
