@@ -335,12 +335,12 @@ describe('DetoxWorker', () => {
         })).rejects.toThrowError(/Invalid test summary status/);
       });
 
-      it('should reset copilot if needed', async () => {
+      it('should start copilot', async () => {
         try {
           await detox.onTestStart('Test');
         } catch {}
 
-        expect(detox.copilot.resetIfNeeded).toHaveBeenCalled();
+        expect(detox.copilot.start).toHaveBeenCalled();
       });
     });
 
@@ -350,8 +350,8 @@ describe('DetoxWorker', () => {
       it('should notify artifacts manager about "testStart', () =>
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
-      it('should reset copilot if needed', async () => {
-        expect(detox.copilot.resetIfNeeded).toHaveBeenCalled();
+      it('should end copilot', async () => {
+        expect(detox.copilot.start).toHaveBeenCalled();
       });
 
       it('should not relaunch app', async () => {

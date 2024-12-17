@@ -9,6 +9,7 @@ const { InvocationManager } = require('./invoke');
 const symbols = require('./realms/symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const uuid = require('./utils/uuid');
+const PromptHandler = require('../test/e2e/utils/PromptHandler');
 
 class DetoxWorker {
   constructor(context) {
@@ -62,7 +63,7 @@ class DetoxWorker {
     /** @type {Detox.SystemFacade} */
     this.system = null;
     /** @type {Detox.DetoxCopilotFacade} */
-    this.copilot = null;
+    this.copilot = new DetoxCopilot();
 
     this._deviceCookie = null;
 
@@ -125,8 +126,6 @@ class DetoxWorker {
       // @ts-ignore
       runtimeDeviceFactory,
     } = environmentFactory.createFactories(deviceConfig);
-
-    this.copilot = new DetoxCopilot();
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
@@ -226,9 +225,18 @@ class DetoxWorker {
     yield this._artifactsManager.onRunDescribeStart(...args);
   };
 
-  onTestStart = function* (_signal, testSummary) {
+  onTestStart = function* (_signal, testSummary){
+    try{
+        this.copilot.init(new PromptHandler());
+    }
+    catch (error){
+      if (error.message.includes('Copilot has already been initialized')) {
+      } else {
+        throw error;
+      }
+    }
     // Copilot is reset before each test to ensure a clean state
-    this.copilot.resetIfNeeded();
+    this.copilot.start();
 
     this._validateTestSummary('beforeEach', testSummary);
 
@@ -257,6 +265,9 @@ class DetoxWorker {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
+
+    // Pass false to copilot, so temporary cache is not saved
+    this.copilot.end(testSummary.status === 'passed');
   };
 
   onRunDescribeFinish = function* (_signal, ...args) {
