@@ -64,7 +64,7 @@
     "prettier": "^3.1.1",
     "react-native": "0.76.3",
     "react-native-codegen": "^0.0.8",
-    "typescript": "^5.3.3",
+    "typescript": "~5.3.3",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {

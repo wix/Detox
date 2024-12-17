@@ -28,13 +28,13 @@ describe('Spawn utils', () => {
       });
     });
 
-    const mockSpawnResult = (code, childProcess) => {
+    const mockSpawnResult = (code, childProcess, reset = true) => {
+      if (reset) {
+        cpp.spawn.mockReset();
+      }
+
       const cpPromise = Promise.resolve({ code });
       cpp.spawn.mockReturnValueOnce(Object.assign(cpPromise, childProcess));
-    };
-
-    const mockSpawnResults = (childProcess1, childProcess2) => {
-      cpp.spawn.mockReturnValueOnce(childProcess1).mockReturnValueOnce(childProcess2);
     };
 
     const advanceOpsCounter = (count) => {
@@ -42,114 +42,115 @@ describe('Spawn utils', () => {
       for (let i = 0; i < count; i++) opsCounter.inc();
     };
 
-    ['spawnAndLog', 'spawnWithRetriesAndLogs'].forEach((func) => {
-      describe(func, () => {
-        it('should spawn an attached command with ignored input and piped output', async () => {
-          const command = 'command';
-          const flags = ['--some', '--value', Math.random()];
+    describe.each([
+      ['spawnAndLog'],
+      ['spawnWithRetriesAndLogs']
+    ])('%s function', (func) => {
+      it('should spawn an attached command with ignored input and piped output', async () => {
+        const command = 'command';
+        const flags = ['--some', '--value', Math.random()];
 
-          await spawn[func](command, flags);
+        await spawn[func](command, flags);
 
-          expect(cpp.spawn).toBeCalledWith(
-            command,
-            flags,
-            expect.objectContaining({
-              stdio: ['ignore', 'pipe', 'pipe']
-            })
-          );
+        expect(cpp.spawn).toBeCalledWith(
+          command,
+          flags,
+          expect.objectContaining({
+            stdio: ['ignore', 'pipe', 'pipe']
+          })
+        );
+      });
+
+      it('should log spawn command upon child-process start and finish', async () => {
+        jest.spyOn(log, 'child');
+        await spawn[func]('mockCommand', []);
+
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
+      });
+
+      it('should collect output and log it', async () => {
+        await spawn[func]('mockCommand', []);
+        await nextCycle();
+
+        expect(log.trace).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), 'hello');
+        expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
+      });
+
+      it('should form and use a child-logger', async () => {
+        const trackingId = 7;
+        advanceOpsCounter(trackingId);
+
+        jest.spyOn(log, 'child');
+        await spawn[func]('mockCommand', []);
+
+        expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ trackingId, command: 'mockCommand', fn: func }));
+        expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ cpid: 2018 }));
+      });
+
+      it('should override log levels if configured', async () => {
+        jest.spyOn(log, 'child');
+        await spawn[func]('command', [], {
+          logLevelPatterns: {
+            debug: [/hello/],
+            warn: [/world/]
+          }
         });
 
-        it('should log spawn command upon child-process start and finish', async () => {
-          jest.spyOn(log, 'child');
-          await spawn[func]('mockCommand', []);
+        await nextCycle();
 
-          expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
-          expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
+        expect(log.warn).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
+      });
+
+      it('should not log output if silent: true', async () => {
+        await spawn[func]('mockCommand', [], { silent: true });
+        await nextCycle();
+
+        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
+        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
+        expect(log.trace).not.toBeCalledWith(
+          expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDOUT' })),
+          expect.any(String)
+        );
+        expect(log.error).not.toBeCalledWith(
+          expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDERR' })),
+          expect.any(String)
+        );
+      });
+
+      it('should log erroneously finished spawns', async () => {
+        mockSpawnResult(-2, {
+          pid: 8102,
+          stdout: toStream(''),
+          stderr: toStream('Some error.')
         });
 
-        it('should collect output and log it', async () => {
-          await spawn[func]('mockCommand', []);
-          await nextCycle();
+        await spawn[func]('mockCommand', []).catch(() => {});
+        await nextCycle();
 
-          expect(log.trace).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT', stdout: true }), 'hello');
-          expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'world');
+        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
+        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #-2');
+        expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
+      });
+
+      it('should log immediate spawn errors', async () => {
+        mockSpawnResult(undefined, {
+          pid: null,
+          exitCode: -2,
+          stdout: toStream(''),
+          stderr: toStream('Command `command` not found.')
         });
 
-        it('should form and use a child-logger', async () => {
-          const trackingId = 7;
-          advanceOpsCounter(trackingId);
+        await spawn[func]('command', []);
+        await nextCycle();
 
-          jest.spyOn(log, 'child');
-          await spawn[func]('mockCommand', []);
-
-          expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ trackingId, command: 'mockCommand', fn: func }));
-          expect(log.child).toHaveBeenCalledWith(expect.objectContaining({ cpid: 2018 }));
-        });
-
-        it('should override log levels if configured', async () => {
-          jest.spyOn(log, 'child');
-          await spawn[func]('command', [], {
-            logLevelPatterns: {
-              debug: [/hello/],
-              warn: [/world/]
-            }
-          });
-
-          await nextCycle();
-
-          expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDOUT' }), 'hello');
-          expect(log.warn).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR' }), 'world');
-        });
-
-        it('should not log output if silent: true', async () => {
-          await spawn[func]('mockCommand', [], { silent: true });
-          await nextCycle();
-
-          expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
-          expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
-          expect(log.trace).not.toBeCalledWith(
-            expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDOUT' })),
-            expect.any(String)
-          );
-          expect(log.error).not.toBeCalledWith(
-            expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDERR' })),
-            expect.any(String)
-          );
-        });
-
-        it('should log erroneously finished spawns', async () => {
-          mockSpawnResult(-2, {
-            pid: 8102,
-            stdout: toStream(''),
-            stderr: toStream('Some error.')
-          });
-
-          await spawn[func]('mockCommand', []).catch(() => {});
-          await nextCycle();
-
-          expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
-          expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #-2');
-          expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
-        });
-
-        it('should log immediate spawn errors', async () => {
-          mockSpawnResult(undefined, {
-            pid: null,
-            exitCode: -2,
-            stdout: toStream(''),
-            stderr: toStream('Command `command` not found.')
-          });
-
-          await spawn[func]('command', []);
-          await nextCycle();
-
-          expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-          expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
-          expect(log.error).toBeCalledWith(
-            expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }),
-            'Command `command` not found.'
-          );
-        });
+        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
+        expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
+        expect(log.error).toBeCalledWith(
+          expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }),
+          'Command `command` not found.'
+        );
       });
     });
 
@@ -219,19 +220,18 @@ describe('Spawn utils', () => {
       });
 
       it('should return result of last retry attempt', async () => {
-        const childProcess1 = {
+        mockSpawnResult(1, {
           pid: 100,
           exitCode: 1,
           stderr: toStream('')
-        };
-        const childProcess2 = {
+        });
+        mockSpawnResult(0, {
           pid: 101,
           exitCode: 0,
           stdout: toStream('okay great')
-        };
-        mockSpawnResults(childProcess1, childProcess2);
+        }, false);
 
-        retry.mockImplementation(async (opts, callback) => {
+        retry.mockImplementation(async (_opts, callback) => {
           await callback(1);
           await callback(2, spawnTryError('mocked stderr'));
         });

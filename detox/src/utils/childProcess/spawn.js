@@ -32,7 +32,8 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   let result;
   await retry({ retries, interval }, async (tryCount, lastError) => {
     _logSpawnRetrying(logger, tryCount, lastError);
-    result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
+    result = _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
+    await result;
   });
   return result;
 }
@@ -42,14 +43,15 @@ const DEFAULT_KILL_SCHEDULE = {
 };
 
 async function interruptProcess(childProcessPromise, schedule) {
-  const cpid = childProcessPromise.pid;
-  const spawnargs = childProcessPromise.spawnargs.join(' ');
+  const childProcess = childProcessPromise.childProcess;
+  const cpid = childProcess.pid;
+  const spawnargs = childProcess.spawnargs.join(' ');
   const log = rootLogger.child({ event: 'SPAWN_KILL', cpid });
 
   const handles = _.mapValues({ ...DEFAULT_KILL_SCHEDULE, ...schedule }, (ms, signal) => {
     return setTimeout(() => {
       log.trace({ signal }, `sending ${signal} to: ${spawnargs}`);
-      childProcessPromise.kill(signal);
+      childProcess.kill(signal);
     }, ms);
   });
 
@@ -67,7 +69,20 @@ async function interruptProcess(childProcessPromise, schedule) {
 
 function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
   const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
-  const childProcess = spawn(binary, flags, spawnOptions);
+  const cpPromise = spawn(binary, flags, spawnOptions);
+  const childProcess = cpPromise.childProcess = cpPromise;
+  const originalThen = cpPromise.then.bind(cpPromise);
+  const augmentPromise = (fn) => {
+    return typeof fn === 'function'
+      ? (result) => fn(Object.assign(result, {
+        childProcess,
+        exitCode: childProcess.exitCode,
+        pid: childProcess.pid
+      }))
+      : fn;
+  };
+  cpPromise.then = (onFulfilled, onRejected) => originalThen(augmentPromise(onFulfilled), augmentPromise(onRejected));
+  cpPromise.catch = (onRejected) => cpPromise.then(undefined, onRejected);
 
   const { exitCode, stdout, stderr } = childProcess;
 
@@ -84,8 +99,8 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
   }
 
   /**
-   * 
-   * @param {import('promisify-child-process').Output} resultOrErr 
+   *
+   * @param {import('promisify-child-process').Output} resultOrErr
    */
   function onEnd(resultOrErr) {
     const signal = resultOrErr.signal || '';
@@ -95,8 +110,8 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
     _logger.debug({ event: 'SPAWN_END', signal, code }, `${command} ${action}`);
   }
 
-  childProcess.then(onEnd, onEnd);
-  return childProcess;
+  cpPromise.then(onEnd, onEnd);
+  return cpPromise;
 }
 
 function _joinCommandAndFlags(command, flags) {
