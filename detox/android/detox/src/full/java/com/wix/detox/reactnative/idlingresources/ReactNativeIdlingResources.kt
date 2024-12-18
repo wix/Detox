@@ -131,6 +131,7 @@ class ReactNativeIdlingResources(
         loopers.values.forEach {
             IdlingRegistry.getInstance().unregisterLooperAsIdlingResource(it)
         }
+        loopers.clear()
     }
 
     private fun unregisterIdlingResources() {

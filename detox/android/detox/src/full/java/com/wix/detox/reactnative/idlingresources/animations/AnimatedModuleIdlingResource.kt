@@ -5,11 +5,7 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.animated.NativeAnimatedModule
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
-import com.wix.detox.reactnative.ReactNativeInfo.rnVersion
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-import org.joor.Reflect
-import org.joor.ReflectException
 
 /**
  * Created by simonracz on 25/08/2017.
@@ -43,8 +39,8 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
         val hasAnimations = animatedModule?.nodesManager?.hasActiveAnimations() ?: false
 
         if (hasAnimations) {
-            Log.i(LOG_TAG, "AnimatedModule is busy.");
-            Choreographer.getInstance().postFrameCallback(this);
+            Log.i(LOG_TAG, "AnimatedModule is busy.")
+            Choreographer.getInstance().postFrameCallback(this)
             return false
         }
 
