@@ -18,20 +18,12 @@ private const val FIELD_NON_BATCHED_OPS_LOCK = "mNonBatchedOperationsLock"
 
 class UIManagerModuleReflected(private val reactContext: ReactContext) {
 
-    fun getUIOpsCount(): Int = (viewCommandOperations()?.size ?: 0)
-    fun getNextUIOpReflected() = viewCommandOperations()?.firstCommandReflected()
-
-    fun nativeViewHierarchyManager(): NativeHierarchyManagerReflected? =
-            getUIOperationQueue()?.let {
-                NativeHierarchyManagerReflected(it)
-            }
-
     fun isRunnablesListEmpty(): Boolean =
         getUIOperationQueue()?.let {
-            synchronized(Reflect.on(it).field(FIELD_DISPATCH_RUNNABLES_LOCK).get())  {
+            synchronized(Reflect.on(it).field(FIELD_DISPATCH_RUNNABLES_LOCK).get()) {
                 Reflect.on(it)
                     .field(FIELD_DISPATCH_RUNNABLES)
-                    .call(METHOD_IS_EMPTY).get<Boolean>()
+                    .call(METHOD_IS_EMPTY).get()
             }
         } ?: true
 
@@ -39,32 +31,32 @@ class UIManagerModuleReflected(private val reactContext: ReactContext) {
         getUIOperationQueue()?.let {
             synchronized(Reflect.on(it).field(FIELD_NON_BATCHED_OPS_LOCK).get()) {
                 Reflect.on(it)
-                        .field(FIELD_NON_BATCHED_OPS)
-                        .call(METHOD_IS_EMPTY).get<Boolean>()
+                    .field(FIELD_NON_BATCHED_OPS)
+                    .call(METHOD_IS_EMPTY).get()
             }
         } ?: true
 
     fun isOperationQueueEmpty(): Boolean =
         getUIOperationQueue()?.let {
-            Reflect.on(it).call(METHOD_IS_EMPTY).get<Boolean>()
+            Reflect.on(it).call(METHOD_IS_EMPTY).get()
         } ?: true
 
     private fun viewCommandOperations(): ViewCommandOpsQueueReflected? =
-            getUIOperationQueue()?.let {
-                ViewCommandOpsQueueReflected(it)
-            }
+        getUIOperationQueue()?.let {
+            ViewCommandOpsQueueReflected(it)
+        }
 
 
     private fun getUIOperationQueue(): UIViewOperationQueue? =
-            try {
-                val uiModuleClass = Class.forName(CLASS_UI_MANAGER_MODULE)
-                Reflect.on(reactContext)
-                        .call(METHOD_GET_NATIVE_MODULE, uiModuleClass)
-                        .call(METHOD_GET_UI_IMPLEMENTATION)
-                        .field(FIELD_UI_OPERATION_QUEUE)
-                        .get()
-            } catch (e: Exception) {
-                Log.e(LOG_TAG, "failed to get $CLASS_UI_MANAGER_MODULE instance ", e)
-                null
-            }
+        try {
+            val uiModuleClass = Class.forName(CLASS_UI_MANAGER_MODULE)
+            Reflect.on(reactContext)
+                .call(METHOD_GET_NATIVE_MODULE, uiModuleClass)
+                .call(METHOD_GET_UI_IMPLEMENTATION)
+                .field(FIELD_UI_OPERATION_QUEUE)
+                .get()
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "failed to get $CLASS_UI_MANAGER_MODULE instance ", e)
+            null
+        }
 }

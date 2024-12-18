@@ -7,34 +7,20 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
-import com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource
-import com.wix.detox.reactnative.idlingresources.bridge.BridgeIdlingResource
+import com.wix.detox.reactnative.idlingresources.factory.DetoxIdlingResourceFactory
+import com.wix.detox.reactnative.idlingresources.factory.IdlingResourcesName
+import com.wix.detox.reactnative.idlingresources.factory.LooperName
 import com.wix.detox.reactnative.idlingresources.looper.MQThreadsReflector
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
-import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
-import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
-import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
+import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
 
-
-private enum class IdlingResourcesName {
-    Timers,
-    AsyncStorage,
-    RNBridge,
-    UIModule,
-    Animations,
-    Network
-}
-
-private enum class LooperName {
-    JS,
-    NativeModules
-}
 
 class ReactNativeIdlingResources(
     private val reactContext: ReactContext,
     private var launchArgs: LaunchArgs,
-    internal var networkSyncEnabled: Boolean = true
+    internal var networkSyncEnabled: Boolean = true,
+    private val idlingResourcesFactory: DetoxIdlingResourceFactory = DetoxIdlingResourceFactory(reactContext)
 ) {
     companion object {
         const val LOG_TAG = "DetoxRNIdleRes"
@@ -44,14 +30,16 @@ class ReactNativeIdlingResources(
     private val loopers = mutableMapOf<LooperName, Looper>()
 
     fun registerAll() {
-        Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
-        unregisterAll()
+        runBlocking {
+            Log.i(LOG_TAG, "Setting up Espresso Idling Resources for React Native")
+            unregisterAll()
 
-        setupUrlBlacklist()
-        setupMQThreadsInterrogators()
-        syncIdlingResources()
-        setupIdlingResources()
-        syncIdlingResources()
+            setupUrlBlacklist()
+            setupMQThreadsInterrogators()
+            syncIdlingResources()
+            setupIdlingResources()
+            syncIdlingResources()
+        }
     }
 
     fun unregisterAll() {
@@ -60,16 +48,18 @@ class ReactNativeIdlingResources(
     }
 
     fun setNetworkSynchronization(enable: Boolean) {
-        if (networkSyncEnabled == enable) {
-            return
-        }
+        runBlocking {
+            if (networkSyncEnabled == enable) {
+                return@runBlocking
+            }
 
-        if (enable) {
-            setupIdlingResource(IdlingResourcesName.Network)
-        } else {
-            removeIdlingResource(IdlingResourcesName.Network)
+            if (enable) {
+                setupIdlingResource(IdlingResourcesName.Network)
+            } else {
+                removeIdlingResource(IdlingResourcesName.Network)
+            }
+            networkSyncEnabled = enable
         }
-        networkSyncEnabled = enable
     }
 
     fun pauseNetworkSynchronization() = pauseIdlingResource(IdlingResourcesName.Network)
@@ -118,7 +108,7 @@ class ReactNativeIdlingResources(
         }
     }
 
-    private fun setupIdlingResources() {
+    private suspend fun setupIdlingResources() {
         setupIdlingResource(IdlingResourcesName.RNBridge)
         setupIdlingResource(IdlingResourcesName.Timers)
         setupIdlingResource(IdlingResourcesName.UIModule)
@@ -159,15 +149,8 @@ class ReactNativeIdlingResources(
         idlingResource?.resume()
     }
 
-    private fun setupIdlingResource(idlingResourcesName: IdlingResourcesName) {
-        val idlingResource:DetoxIdlingResource? = when (idlingResourcesName) {
-            IdlingResourcesName.Timers -> TimersIdlingResource(reactContext)
-            IdlingResourcesName.AsyncStorage -> AsyncStorageIdlingResource.createIfNeeded(reactContext)
-            IdlingResourcesName.RNBridge -> BridgeIdlingResource(reactContext)
-            IdlingResourcesName.UIModule -> UIModuleIdlingResource(reactContext)
-            IdlingResourcesName.Animations -> AnimatedModuleIdlingResource(reactContext)
-            IdlingResourcesName.Network -> NetworkIdlingResource(reactContext)
-        }
+    private suspend fun setupIdlingResource(idlingResourcesName: IdlingResourcesName) {
+        val idlingResource = idlingResourcesFactory.create(idlingResourcesName)
 
         idlingResource?.let {
             IdlingRegistry.getInstance().register(it)

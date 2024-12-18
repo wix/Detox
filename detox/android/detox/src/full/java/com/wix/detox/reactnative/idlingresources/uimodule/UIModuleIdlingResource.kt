@@ -15,7 +15,6 @@ import org.joor.ReflectException
 class UIModuleIdlingResource(private val reactContext: ReactContext)
     : DetoxIdlingResource(), Choreographer.FrameCallback {
 
-    private val rn66workaround = RN66Workaround()
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
     private var callback: ResourceCallback? = null
 
@@ -39,11 +38,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
 
             val runnablesAreEmpty = uiManagerModuleReflected.isRunnablesListEmpty()
             val nonBatchesOpsEmpty = uiManagerModuleReflected.isNonBatchOpsEmpty()
-            var operationQueueEmpty = uiManagerModuleReflected.isOperationQueueEmpty()
-
-            if (!operationQueueEmpty) {
-                operationQueueEmpty = rn66workaround.isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected)
-            }
+            val operationQueueEmpty = uiManagerModuleReflected.isOperationQueueEmpty()
 
             if (runnablesAreEmpty && nonBatchesOpsEmpty && operationQueueEmpty) {
                 notifyIdle()
