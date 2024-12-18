@@ -1,8 +1,6 @@
 const CAF = require('caf');
 const _ = require('lodash');
 
-const PromptHandler = require('../test/e2e/utils/PromptHandler');
-
 const Client = require('./client/Client');
 const DetoxCopilot = require('./copilot/DetoxCopilot');
 const environmentFactory = require('./environmentFactory');
@@ -227,16 +225,6 @@ class DetoxWorker {
   };
 
   onTestStart = function* (_signal, testSummary){
-    try{
-        this.copilot.init(new PromptHandler());
-    }
-    catch (error){
-      if (error.message.includes('Copilot has already been initialized')) {
-      } else {
-        throw error;
-      }
-    }
-    // Copilot is reset before each test to ensure a clean state
     this.copilot.start();
 
     this._validateTestSummary('beforeEach', testSummary);
