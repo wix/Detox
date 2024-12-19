@@ -13,14 +13,6 @@ class DetoxCopilot {
     });
   }
 
-  start() {
-    copilot.start();
-  }
-
-  end(saveToCache) {
-    copilot.end(saveToCache);
-  }
-
   perform(...steps) {
     return copilot.perform(...steps);
   }

@@ -6,6 +6,7 @@ const detoxCopilotFrameworkDriver = require('./detoxCopilotFrameworkDriver');
 jest.mock('detox-copilot', () => ({
   default: {
     init: jest.fn(),
+    isInitialized: jest.fn().mockReturnValue(false),
     start: jest.fn(),
     end: jest.fn(),
     perform: jest.fn(),
@@ -31,22 +32,6 @@ describe('DetoxCopilot', () => {
         frameworkDriver: detoxCopilotFrameworkDriver,
         promptHandler: mockPromptHandler,
       });
-    });
-  });
-
-  describe('start', () => {
-    it('should start copilot if initialized', () => {
-      detoxCopilot.start();
-
-      expect(copilot.start).toHaveBeenCalled();
-    });
-  });
-
-  describe('end', () => {
-    it('should end copilot if initialized', () => {
-      detoxCopilot.end();
-
-      expect(copilot.end).toHaveBeenCalled();
     });
   });
 
