@@ -2,10 +2,6 @@ const {describeForCopilotEnv} = require("../utils/custom-describes");
 const {expectToThrow} = require("../utils/custom-expects");
 
 describeForCopilotEnv('WaitFor Functionality', () => {
-  beforeAll(async () => {
-    await copilot.perform('Launch the application');
-  });
-
   beforeEach(async () => {
     await copilot.perform(
       'Restart the React Native environment',
