@@ -1,8 +1,10 @@
 package com.wix.detox.reactnative
 
 import android.app.Instrumentation
+import android.os.Debug
 import android.util.Log
 import com.facebook.react.ReactApplication
+import com.facebook.react.ReactInstanceEventListener
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
@@ -13,9 +15,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 private const val LOG_TAG = "DetoxRNLoading"
-
-private const val REACT_INSTANCE_EVENT_LISTENER_CLASS = "com.facebook.react.ReactInstanceEventListener"
-private const val REACT_INSTANCE_EVENT_LISTENER_CLASS_COMPAT = "com.facebook.react.ReactInstanceManager\$ReactInstanceEventListener"
 
 open class ReactNativeLoadingMonitor(
         private val instrumentation: Instrumentation,
@@ -83,8 +82,6 @@ open class ReactNativeLoadingMonitor(
     }
 }
 
-private interface DummyListenerIdentifier
-
 /**
  * This baby bridges over RN's breaking change introduced in version 0.68:
  * `ReactInstanceManager$ReactInstanceEventListener` was extracted onto a separate interface, having
@@ -97,33 +94,12 @@ private interface DummyListenerIdentifier
  * @see DynamicProxies https://docs.oracle.com/javase/8/docs/technotes/guides/reflection/proxy.html
  */
 private fun subscribeAsyncRNContextHandler(rnInstanceManager: ReactInstanceManager, onReactContextInitialized: () -> Any) {
-    val listenerClass = resolveListenerClass()
-    val proxyInterfaces = arrayOf(
-        listenerClass,
-        DummyListenerIdentifier::class.java // In order to be able to implement equals()
-    )
-    val listener = Proxy.newProxyInstance(listenerClass.classLoader, proxyInterfaces) { listener, method, args ->
-        Log.d(LOG_TAG, "Listener-proxy method called: ${method.name}")
 
-        val result = when (method.name) {
-            "onReactContextInitialized" -> {
-                Log.i(LOG_TAG, "Got new RN-context async'ly through listener")
-                Reflect.on(rnInstanceManager).call("removeReactInstanceEventListener", listener)
-                onReactContextInitialized()
-            }
-            "equals" -> {
-                val candidate = args[0]
-                candidate is DummyListenerIdentifier
-            }
-            else -> Any()
+    rnInstanceManager.addReactInstanceEventListener(object : ReactInstanceEventListener {
+        override fun onReactContextInitialized(context: ReactContext) {
+            Log.i(LOG_TAG, "Got new RN-context directly through listener")
+            onReactContextInitialized()
+            rnInstanceManager.removeReactInstanceEventListener(this)
         }
-
-        result
-    }
-    Reflect.on(rnInstanceManager).call("addReactInstanceEventListener", listener)
-}
-
-private fun resolveListenerClass(): Class<*> {
-    val className = if (ReactNativeInfo.rnVersion().minor >= 68) REACT_INSTANCE_EVENT_LISTENER_CLASS else REACT_INSTANCE_EVENT_LISTENER_CLASS_COMPAT
-    return Class.forName(className)
+    })
 }

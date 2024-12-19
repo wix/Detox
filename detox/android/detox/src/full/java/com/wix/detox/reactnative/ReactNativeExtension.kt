@@ -158,4 +158,14 @@ object ReactNativeExtension {
     private fun getCurrentReactContextSafe(reactApplication: ReactApplication): ReactContext? {
         return getInstanceManagerSafe(reactApplication).currentReactContext
     }
+
+    /**
+     * A little bit a dirty
+     */
+    fun isFabricEnabled(reactApplication: ReactApplication): Boolean {
+        val getUIManagerProviderMethod = reactApplication.reactNativeHost.javaClass.getDeclaredMethod("getUIManagerProvider")
+        getUIManagerProviderMethod.isAccessible = true
+        return getUIManagerProviderMethod.invoke(reactApplication.reactNativeHost) != null
+    }
+
 }

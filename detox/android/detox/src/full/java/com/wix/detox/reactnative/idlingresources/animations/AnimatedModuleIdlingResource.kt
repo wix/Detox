@@ -57,5 +57,3 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
         isIdleNow
     }
 }
-
-
