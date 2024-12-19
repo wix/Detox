@@ -19,7 +19,7 @@ export default class NetworkScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
 
-        <TouchableOpacity onPress={this.onNetworkButtonPress.bind(this, 'Short Network Request Working', 100)}>
+        <TouchableOpacity onPress={this.onNetworkButtonPress.bind(this, 'Short Network Request Working', 500)}>
           <Text testID='ShortNetworkRequest' style={{color: 'blue', marginBottom: 20}}>Short Network Request</Text>
         </TouchableOpacity>
 
