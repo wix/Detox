@@ -8,6 +8,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
+import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources
 
 private const val LOG_TAG = "DetoxRNExt"
 
