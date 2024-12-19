@@ -10,25 +10,31 @@ describeForCopilotEnv = (description, fn) => {
         if (!await checkVpnStatus()) {
           console.warn('Cannot access the LLM service without Wix BO environment. Relying on cached responses only.');
         }
-
-        await copilot.init(new PromptHandler());
+        try {
+          await copilot.init(new PromptHandler());
+        } catch (error) {
+          if (error.message.includes('Copilot has already been initialized')) {
+          } else {
+            throw error;
+          }
+        }
       });
 
       fn();
     });
   });
-}
+};
 
 checkVpnStatus = async () => {
   try {
-    const response = await axios.get('https://wix.wixanswers.com/_serverless/expert-toolkit/checkVpn');
+    const response = await axios.get('https://bo.wix.com/_serverless/expert-toolkit/checkVpn');
     return response.data.enabled === true;
   } catch (error) {
     console.error('Error checking VPN status:', error.message);
     return false;
   }
-}
+};
 
 module.exports = {
-  describeForCopilotEnv,
+  describeForCopilotEnv
 };

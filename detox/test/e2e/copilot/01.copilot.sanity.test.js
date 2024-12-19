@@ -1,12 +1,11 @@
 const {describeForCopilotEnv} = require("../utils/custom-describes");
 
 describeForCopilotEnv('Copilot Sanity', () => {
-  beforeAll(async () => {
-    await copilot.perform('Launch the app');
-  });
-
   beforeEach(async () => {
-    await copilot.perform('Reset react native state', 'Navigate to sanity');
+    await copilot.perform(
+      'Restart the React Native state',
+      'Navigate to the Sanity screen'
+    );
   });
 
   it('should have welcome screen', async () => {
