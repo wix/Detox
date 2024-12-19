@@ -1,4 +1,5 @@
 const CAF = require('caf');
+const copilot = require('detox-copilot').default;
 const _ = require('lodash');
 
 const Client = require('./client/Client');
@@ -225,7 +226,9 @@ class DetoxWorker {
   };
 
   onTestStart = function* (_signal, testSummary){
-    this.copilot.start();
+    if (copilot.isInitialized()) {
+      copilot.start();
+    }
 
     this._validateTestSummary('beforeEach', testSummary);
 
@@ -255,8 +258,10 @@ class DetoxWorker {
       testName: testSummary.fullName,
     });
 
-    // Pass false to copilot, so temporary cache is not saved
-    this.copilot.end(testSummary.status === 'passed');
+    if (copilot.isInitialized()) {
+      // In case of failure, pass false to copilot, so temporary cache is not saved
+      copilot.end(testSummary.status === 'passed');
+    }
   };
 
   onRunDescribeFinish = function* (_signal, ...args) {
