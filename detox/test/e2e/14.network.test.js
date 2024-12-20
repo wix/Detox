@@ -17,7 +17,7 @@ describe('Network Synchronization', () => {
     await element(by.text('Network')).tap();
   });
 
-  it('Sync with short network requests - 100ms', async () => {
+  it('Sync with short network requests - 500ms', async () => {
     await driver.shortRequest.sendButton.tap();
     await driver.shortRequest.expectReplied();
   });

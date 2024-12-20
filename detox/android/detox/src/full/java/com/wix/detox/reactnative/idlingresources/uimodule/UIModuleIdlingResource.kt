@@ -4,9 +4,10 @@ import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
 import org.joor.ReflectException
+import java.lang.reflect.Field
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  * Espresso IdlingResource for React Native's UI Module.
@@ -15,7 +16,6 @@ import org.joor.ReflectException
 class UIModuleIdlingResource(private val reactContext: ReactContext)
     : DetoxBaseIdlingResource(), Choreographer.FrameCallback {
 
-    private val rn66workaround = RN66Workaround()
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
     private var callback: ResourceCallback? = null
 
@@ -27,27 +27,17 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
 
     override fun checkIdle(): Boolean {
         try {
-            if (!reactContext.hasActiveCatalystInstance()) {
+
+            if (!reactContext.hasActiveReactInstance()) {
                 Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.")
                 return false
             }
 
-            if (RNHelpers.getNativeModule(reactContext, "com.facebook.react.uimanager.UIManagerModule") == null) {
+            if (getMountItemsSize() == 0 && getViewCommandMountItemsSize() == 0) {
+                Log.i(LOG_TAG, "UIManagerModule is idle")
                 notifyIdle()
                 return true
-            }
 
-            val runnablesAreEmpty = uiManagerModuleReflected.isRunnablesListEmpty()
-            val nonBatchesOpsEmpty = uiManagerModuleReflected.isNonBatchOpsEmpty()
-            var operationQueueEmpty = uiManagerModuleReflected.isOperationQueueEmpty()
-
-            if (!operationQueueEmpty) {
-                operationQueueEmpty = rn66workaround.isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected)
-            }
-
-            if (runnablesAreEmpty && nonBatchesOpsEmpty && operationQueueEmpty) {
-                notifyIdle()
-                return true
             }
 
             Log.i(LOG_TAG, "UIManagerModule is busy")
@@ -73,6 +63,74 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         callback?.run {
             onTransitionToIdle()
         }
+    }
+
+    private fun getViewCommandMountItemsSize(): Int {
+        try {
+            val fabricUIManager = getFabricManager(reactContext)
+            val mMountItemDispatcher = getMountItemDispatcher(fabricUIManager)
+
+            // Access mMountItems field from MountItemDispatcher
+            val mViewCommandMountItemsField: Field = mMountItemDispatcher::class.java.getDeclaredField("mViewCommandMountItems")
+            mViewCommandMountItemsField.isAccessible = true
+            val mViewCommandMountItems = mViewCommandMountItemsField.get(mMountItemDispatcher)
+
+            // Ensure it's a ConcurrentLinkedQueue and return the size
+            if (mViewCommandMountItems is ConcurrentLinkedQueue<*>) {
+                return mViewCommandMountItems.size
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return -1 // Return -1 if reflection fails
+    }
+
+    private fun getMountItemsSize(): Int {
+        try {
+            val fabricUIManager = getFabricManager(reactContext)
+            val mMountItemDispatcher = getMountItemDispatcher(fabricUIManager)
+
+            // Access mMountItems field from MountItemDispatcher
+            val mMountItemsField: Field = mMountItemDispatcher::class.java.getDeclaredField("mMountItems")
+            mMountItemsField.isAccessible = true
+            val mMountItems = mMountItemsField.get(mMountItemDispatcher)
+
+            // Ensure it's a ConcurrentLinkedQueue and return the size
+            if (mMountItems is ConcurrentLinkedQueue<*>) {
+                return mMountItems.size
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return -1 // Return -1 if reflection fails
+    }
+
+    private fun getMountItemDispatcher(fabricUIManager: Any): Any {
+        // Access mMountItemDispatcher from FabricUIManager
+        val mMountItemDispatcherField: Field =
+            fabricUIManager::class.java.getDeclaredField("mMountItemDispatcher")
+        mMountItemDispatcherField.isAccessible = true
+        val mMountItemDispatcher = mMountItemDispatcherField.get(fabricUIManager)
+        return mMountItemDispatcher!!
+    }
+
+
+    private fun getFabricManager(reactContext: Any): Any {
+        // Accessing the mReactHost field
+        val mReactHostField: Field = reactContext::class.java.getDeclaredField("mReactHost")
+        mReactHostField.isAccessible = true
+        val mReactHost = mReactHostField.get(reactContext)
+
+        // Accessing the mReactInstance field
+        val mReactInstanceField: Field = mReactHost::class.java.getDeclaredField("mReactInstance")
+        mReactInstanceField.isAccessible = true
+        val mReactInstance = mReactInstanceField.get(mReactHost)
+
+        // Accessing the mFabricUIManager field
+        val mFabricUIManagerField: Field = mReactInstance::class.java.getDeclaredField("mFabricUIManager")
+        mFabricUIManagerField.isAccessible = true
+        val mFabricUIManager = mFabricUIManagerField.get(mReactInstance)
+        return mFabricUIManager!!
     }
 
     companion object {
