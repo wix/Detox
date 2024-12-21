@@ -78,7 +78,7 @@ Following the example, you would then have to adjust your `build` and `binaryPat
 -      binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
 +      binaryPath: 'android/app/build/outputs/apk/releaseE2E/app-releaseE2E.apk',
 -      build: 'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release'
-+      build: 'cd android && ./gradlew assembleReleaseE2E assembleAndroidTest -DtestBuildType=release'
++      build: 'cd android && ./gradlew assembleReleaseE2E assembleAndroidTest -DtestBuildType=releaseE2E'
      },`
 ```
 
