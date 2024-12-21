@@ -1,6 +1,7 @@
 package com.wix.detox.reactnative.idlingresources
 
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import org.assertj.core.api.Assertions.assertThat
 
 import okhttp3.Dispatcher
@@ -18,7 +19,10 @@ class NetworkIdlingResourcesTest {
     @Before
     fun setup() {
         dispatcher = Dispatcher()
-        uut = NetworkIdlingResource(dispatcher)
+        uut =
+            NetworkIdlingResource(
+                dispatcher
+            )
     }
 
     // Note: Ideally, we should test that the list of busy resources is protected,
