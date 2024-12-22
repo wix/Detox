@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "20.28.0",
+  "version": "20.28.1-alpha.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -29,23 +29,23 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.3",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native/babel-preset": "0.76.3",
     "@react-native/eslint-config": "0.76.3",
     "@react-native/metro-config": "0.76.3",
     "@react-native/typescript-config": "0.76.3",
-    "@react-native-community/cli": "15.0.1",
-    "@react-native-community/cli-platform-android": "15.0.1",
-    "@react-native-community/cli-platform-ios": "15.0.1",
     "@tsconfig/react-native": "^3.0.5",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
     "@types/react": "^18.3.1",
-    "detox": "^20.28.0",
+    "@types/react-test-renderer": "^18.0.0",
+    "detox": "^20.28.1-alpha.0",
     "fs-extra": "^9.1.0",
     "jest": "^29.6.3",
+    "react-test-renderer": "18.3.1",
     "ts-jest": "^29.0.3",
-    "typescript": "^5.3.3",
-    "@types/react-test-renderer": "^18.0.0",
-    "react-test-renderer": "18.3.1"
+    "typescript": "^5.3.3"
   }
 }
