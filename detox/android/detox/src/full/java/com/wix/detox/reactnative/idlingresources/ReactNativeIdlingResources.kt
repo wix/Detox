@@ -19,7 +19,6 @@ import org.joor.Reflect
 class ReactNativeIdlingResources(
     private val reactContext: ReactContext,
     private var launchArgs: LaunchArgs,
-    internal var networkSyncEnabled: Boolean = true,
     private val idlingResourcesFactory: DetoxIdlingResourceFactory = DetoxIdlingResourceFactory(reactContext)
 ) {
     companion object {
@@ -47,26 +46,9 @@ class ReactNativeIdlingResources(
         unregisterIdlingResources()
     }
 
-    fun setNetworkSynchronization(enable: Boolean) {
-        runBlocking {
-            if (networkSyncEnabled == enable) {
-                return@runBlocking
-            }
-
-            if (enable) {
-                setupIdlingResource(IdlingResourcesName.Network)
-            } else {
-                removeIdlingResource(IdlingResourcesName.Network)
-            }
-            networkSyncEnabled = enable
-        }
-    }
-
     fun pauseNetworkSynchronization() = pauseIdlingResource(IdlingResourcesName.Network)
     fun resumeNetworkSynchronization() {
-        if (networkSyncEnabled) {
-            resumeIdlingResource(IdlingResourcesName.Network)
-        }
+        resumeIdlingResource(IdlingResourcesName.Network)
     }
 
     fun pauseRNTimersIdlingResource() = pauseIdlingResource(IdlingResourcesName.Timers)
@@ -109,14 +91,10 @@ class ReactNativeIdlingResources(
     }
 
     private suspend fun setupIdlingResources() {
-        setupIdlingResource(IdlingResourcesName.RNBridge)
-        setupIdlingResource(IdlingResourcesName.Timers)
-        setupIdlingResource(IdlingResourcesName.UIModule)
-        setupIdlingResource(IdlingResourcesName.Animations)
-        if (networkSyncEnabled) {
-            setupIdlingResource(IdlingResourcesName.Network)
+        idlingResources.putAll(idlingResourcesFactory.create())
+        idlingResources.forEach { (_, idlingResource) ->
+            IdlingRegistry.getInstance().register(idlingResource)
         }
-        setupIdlingResource(IdlingResourcesName.AsyncStorage)
     }
 
     private fun syncIdlingResources() {
@@ -148,15 +126,6 @@ class ReactNativeIdlingResources(
     private fun resumeIdlingResource(idlingResourcesName: IdlingResourcesName) {
         val idlingResource = idlingResources[idlingResourcesName]
         idlingResource?.resume()
-    }
-
-    private suspend fun setupIdlingResource(idlingResourcesName: IdlingResourcesName) {
-        val idlingResource = idlingResourcesFactory.create(idlingResourcesName)
-
-        idlingResource?.let {
-            IdlingRegistry.getInstance().register(it)
-            idlingResources[idlingResourcesName] = it
-        }
     }
 
     private fun removeIdlingResource(idlingResourcesName: IdlingResourcesName) {

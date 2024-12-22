@@ -12,14 +12,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DetoxIdlingResourceFactory(private val reactContext: ReactContext) {
-    suspend fun create(name: IdlingResourcesName): DetoxIdlingResource? = withContext(Dispatchers.Main) {
-        return@withContext when (name) {
-            IdlingResourcesName.Timers -> TimersIdlingResource(reactContext)
-            IdlingResourcesName.AsyncStorage -> AsyncStorageIdlingResource.createIfNeeded(reactContext)
-            IdlingResourcesName.RNBridge -> BridgeIdlingResource(reactContext)
-            IdlingResourcesName.UIModule -> UIModuleIdlingResource(reactContext)
-            IdlingResourcesName.Animations -> AnimatedModuleIdlingResource(reactContext)
-            IdlingResourcesName.Network -> NetworkIdlingResource(reactContext)
+    suspend fun create(): Map<IdlingResourcesName, DetoxIdlingResource> = withContext(Dispatchers.Main) {
+        val result = mutableMapOf(
+            IdlingResourcesName.Timers to TimersIdlingResource(reactContext),
+            IdlingResourcesName.RNBridge to BridgeIdlingResource(reactContext),
+            IdlingResourcesName.UIModule to UIModuleIdlingResource(reactContext),
+            IdlingResourcesName.Animations to AnimatedModuleIdlingResource(reactContext),
+            IdlingResourcesName.Network to NetworkIdlingResource(reactContext)
+        )
+
+        val asyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext)
+        if (asyncStorageIdlingResource != null) {
+            result[IdlingResourcesName.AsyncStorage] = asyncStorageIdlingResource
         }
+
+        return@withContext result
     }
 }
+
