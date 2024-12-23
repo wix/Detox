@@ -1,10 +1,13 @@
 package com.wix.detox.reactnative.idlingresources;
 
+import android.annotation.SuppressLint;
+import android.os.Debug;
 import android.util.Log;
 import android.view.Choreographer;
 
+import com.facebook.react.animated.NativeAnimatedModule;
+import com.facebook.react.bridge.ReactContext;
 import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource;
-import com.wix.detox.reactnative.ReactNativeInfo;
 
 import org.joor.Reflect;
 import org.joor.ReflectException;
@@ -60,9 +63,9 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
     }};
 
     private ResourceCallback callback = null;
-    private Object reactContext = null;
+    private ReactContext reactContext = null;
 
-    public AnimatedModuleIdlingResource(@NonNull Object reactContext) {
+    public AnimatedModuleIdlingResource(@NonNull ReactContext reactContext) {
         this.reactContext = reactContext;
     }
 
@@ -97,30 +100,11 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
         }
 
         try {
-            // reactContext.hasActiveCatalystInstance() should be always true here
-            // if called right after onReactContextInitialized(...)
-            if (Reflect.on(reactContext).field(FIELD_CATALYST_INSTANCE).get() == null) {
-                Log.e(LOG_TAG, "No active CatalystInstance. Should never see this.");
-                return false;
-            }
 
-            if (!(boolean) Reflect.on(reactContext).call(METHOD_HAS_NATIVE_MODULE, animModuleClass).get()) {
-                Log.e(LOG_TAG, "Can't find Animated Module.");
-                if (callback != null) {
-                    callback.onTransitionToIdle();
-                }
+            if (isIdle(animModuleClass)) {
                 return true;
             }
 
-            if (ReactNativeInfo.rnVersion().getMinor() >= 51) {
-                if(isIdleRN51(animModuleClass)) {
-                    return true;
-                }
-            } else {
-                if (isIdleRNOld(animModuleClass)) {
-                    return true;
-                }
-            }
 
             Log.i(LOG_TAG, "AnimatedModule is busy.");
             Choreographer.getInstance().postFrameCallback(this);
@@ -137,10 +121,11 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
         return true;
     }
 
-    private boolean isIdleRN51(Object animModuleClass) {
-        Object animModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, animModuleClass).get();
-        Object nodesManager = Reflect.on(animModule).call("getNodesManager").get();
-        boolean hasActiveAnimations = Reflect.on(nodesManager).call("hasActiveAnimations").get();
+    @SuppressLint("UnsafeOptInUsageError")
+    private boolean isIdle(Object animModuleClass) {
+        NativeAnimatedModule animatedModule = reactContext.getNativeModule(NativeAnimatedModule.class);
+        //Debug.waitForDebugger();
+        boolean hasActiveAnimations = animatedModule.getNodesManager().hasActiveAnimations();
         if (!hasActiveAnimations) {
             if (callback != null) {
                 callback.onTransitionToIdle();
@@ -151,54 +136,6 @@ public class AnimatedModuleIdlingResource implements DescriptiveIdlingResource, 
         return false;
     }
 
-    private boolean isIdleRNOld(Object animModuleClass) {
-        Object animModule = Reflect.on(reactContext).call(METHOD_GET_NATIVE_MODULE, animModuleClass).get();
-        Object operationsLock = Reflect.on(animModule).field(LOCK_OPERATIONS).get();
-        boolean operationsAreEmpty;
-        boolean animationsConsideredIdle;
-        synchronized (operationsLock) {
-            Object operations = Reflect.on(animModule).field(FIELD_OPERATIONS).get();
-            if (operations == null) {
-                operationsAreEmpty = true;
-            } else {
-                operationsAreEmpty = Reflect.on(operations).call(METHOD_IS_EMPTY).get();
-            }
-        }
-        Object nodesManager = Reflect.on(animModule).field(FIELD_NODES_MANAGER).get();
-
-        // We do this in this complicated way
-        // to not consider looped animations
-        // as a busy state.
-        int updatedNodesSize = Reflect.on(nodesManager).field(FIELD_UPDATED_NODES).call(METHOD_SIZE).get();
-        if (updatedNodesSize > 0) {
-            animationsConsideredIdle = false;
-        } else {
-            Object activeAnims = Reflect.on(nodesManager).field(FIELD_ACTIVE_ANIMATIONS).get();
-            int activeAnimsSize = Reflect.on(activeAnims).call(METHOD_SIZE).get();
-            if (activeAnimsSize == 0) {
-                animationsConsideredIdle = true;
-            } else {
-                animationsConsideredIdle = true;
-                for (int i = 0; i < activeAnimsSize; ++i) {
-                    int iterations = Reflect.on(activeAnims).call(METHOD_VALUE_AT, i).field(FIELD_ITERATIONS).get();
-                    // -1 means it is looped
-                    if (iterations != -1) {
-                        animationsConsideredIdle = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (operationsAreEmpty && animationsConsideredIdle) {
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
-//            Log.i(LOG_TAG, "AnimatedModule is idle.");
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public void registerIdleTransitionCallback(ResourceCallback callback) {

@@ -7,7 +7,9 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
-import com.wix.detox.reactnative.idlingresources.*
+import com.wix.detox.reactnative.idlingresources.AnimatedModuleIdlingResource
+import com.wix.detox.reactnative.idlingresources.AsyncStorageIdlingResource
+import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.getInterrogationStrategy
 import com.wix.detox.reactnative.idlingresources.uimodule.UIModuleIdlingResource
@@ -58,7 +60,7 @@ class ReactNativeIdlingResources constructor(
     private var timersIdlingResource: TimersIdlingResource? = null
     private var asyncStorageIdlingResource: AsyncStorageIdlingResource? = null
     private var legacyAsyncStorageIdlingResource: AsyncStorageIdlingResource? = null
-    private var rnBridgeIdlingResource: BridgeIdlingResource? = null
+    //private var rnBridgeIdlingResource: BridgeIdlingResource? = null
     private var uiModuleIdlingResource: UIModuleIdlingResource? = null
     private var animIdlingResource: AnimatedModuleIdlingResource? = null
     private var networkIdlingResource: NetworkIdlingResource? = null
@@ -135,7 +137,7 @@ class ReactNativeIdlingResources constructor(
     }
 
     private fun setupCustomRNIdlingResources() {
-        rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
+        //rnBridgeIdlingResource = BridgeIdlingResource(reactContext)
         timersIdlingResource = TimersIdlingResource(getInterrogationStrategy(reactContext)!!)
         uiModuleIdlingResource = UIModuleIdlingResource(reactContext)
         animIdlingResource = AnimatedModuleIdlingResource(reactContext)
@@ -143,9 +145,10 @@ class ReactNativeIdlingResources constructor(
         IdlingRegistry.getInstance()
             .register(
                 timersIdlingResource,
-                rnBridgeIdlingResource,
+                //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
-                animIdlingResource)
+                animIdlingResource
+            )
 
         if (networkSyncEnabled) {
             setupNetworkIdlingResource()
@@ -171,11 +174,11 @@ class ReactNativeIdlingResources constructor(
         IdlingRegistry.getInstance()
             .unregister(
                 timersIdlingResource,
-                rnBridgeIdlingResource,
+                //rnBridgeIdlingResource,
                 uiModuleIdlingResource,
                 animIdlingResource
             )
-        rnBridgeIdlingResource?.onDetach()
+        //rnBridgeIdlingResource?.onDetach()
 
         removeNetworkIdlingResource()
         removeAsyncStorageIdlingResource()

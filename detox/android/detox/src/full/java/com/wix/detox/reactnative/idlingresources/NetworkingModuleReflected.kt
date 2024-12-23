@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources
 
+import android.os.Debug
 import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.network.NetworkingModule
@@ -9,14 +10,15 @@ import org.joor.ReflectException
 
 internal class NetworkingModuleReflected(private val reactContext: ReactContext) {
     fun getHttpClient(): OkHttpClient? {
-        if (reactContext.hasNativeModule(NetworkingModule::class.java)) {
-            val networkNativeModule = reactContext.getNativeModule(NetworkingModule::class.java)
-            try {
-                return Reflect.on(networkNativeModule).field(FIELD_OKHTTP_CLIENT).get()
-            } catch (e: ReflectException) {
-                Log.e(LOG_TAG, "Can't set up Networking Module listener", e)
-            }
+        //Debug.waitForDebugger()
+        //if (reactContext.hasNativeModule(NetworkingModule::class.java)) {
+        val networkNativeModule = reactContext.getNativeModule(NetworkingModule::class.java)
+        try {
+            return Reflect.on(networkNativeModule).field(FIELD_OKHTTP_CLIENT).get()
+        } catch (e: ReflectException) {
+            Log.e(LOG_TAG, "Can't set up Networking Module listener", e)
         }
+//        }
         return null
     }
 
