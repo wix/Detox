@@ -20,7 +20,6 @@ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
  */
 class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
-    private var callback: ResourceCallback? = null
 
     override fun getName(): String {
         return AnimatedModuleIdlingResource::class.java.name
@@ -48,14 +47,8 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
         return true
     }
 
-    override fun notifyIdle() {
-        callback?.onTransitionToIdle()
-    }
-
-
-    override fun registerIdleTransitionCallback(callback: ResourceCallback) {
-        this.callback = callback
-
+    override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
     }
 

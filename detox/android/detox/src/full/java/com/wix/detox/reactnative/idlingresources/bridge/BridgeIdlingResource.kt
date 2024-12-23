@@ -1,7 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.bridge
 
 import android.util.Log
-import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     NotThreadSafeBridgeIdleDebugListener {
     private val idleNow = AtomicBoolean(true)
-    private var callback: ResourceCallback? = null
 
     init {
         reactContext.catalystInstance.addBridgeIdleDebugListener(this)
@@ -50,10 +48,6 @@ class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdling
         return ret
     }
 
-    override fun registerIdleTransitionCallback(callback: ResourceCallback) {
-        this.callback = callback
-    }
-
     override fun onTransitionToBridgeIdle() {
         idleNow.set(true)
         notifyIdle()
@@ -65,11 +59,6 @@ class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdling
     }
 
     override fun onBridgeDestroyed() {
-    }
-
-    override fun notifyIdle() {
-        // Log.i(LOG_TAG, "JS Bridge transitions to idle.");
-        callback?.onTransitionToIdle()
     }
 
     override fun onUnregistered() {

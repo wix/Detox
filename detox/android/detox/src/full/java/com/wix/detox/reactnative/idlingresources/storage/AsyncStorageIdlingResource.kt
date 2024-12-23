@@ -1,10 +1,8 @@
 package com.wix.detox.reactnative.idlingresources.storage
 
 import android.util.Log
-import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
 import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
@@ -38,7 +36,6 @@ class AsyncStorageIdlingResource
         get() = LOG_TAG
 
     private val moduleReflected = ModuleReflected(module, sexecutorReflectedGenFn)
-    private var callback: IdlingResource.ResourceCallback? = null
     private var idleCheckTask: Runnable? = null
     private val idleCheckTaskImpl = Runnable {
         with(moduleReflected.sexecutor) {
@@ -57,10 +54,6 @@ class AsyncStorageIdlingResource
     override fun getDebugName() = "io"
     override fun getBusyHint(): Map<String, Any>? = null
 
-    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
-        this.callback = callback
-        enqueueIdleCheckTask()
-    }
 
     private fun checkIdleInternal(): Boolean =
         with(moduleReflected.sexecutor) {
@@ -76,10 +69,6 @@ class AsyncStorageIdlingResource
                 enqueueIdleCheckTask()
             }
         }
-
-    override fun notifyIdle() {
-        callback?.onTransitionToIdle()
-    }
 
     private fun enqueueIdleCheckTask() =
         with(moduleReflected.sexecutor) {

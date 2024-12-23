@@ -5,7 +5,6 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import okhttp3.Dispatcher
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
@@ -20,7 +19,6 @@ import java.util.regex.PatternSyntaxException
  */
 class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
-    private var callback: ResourceCallback? = null
     private val busyResources: MutableSet<String> = HashSet()
 
     constructor(reactContext: ReactContext) : this(NetworkingModuleReflected(reactContext).getHttpClient()!!.dispatcher)
@@ -36,8 +34,8 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
     @Synchronized
     override fun getBusyHint(): Map<String, Any> = mapOf("urls" to ArrayList(busyResources))
 
-    override fun registerIdleTransitionCallback(callback: ResourceCallback) {
-        this.callback = callback
+    override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
     }
 
@@ -66,12 +64,6 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
 
         notifyIdle()
         return true
-    }
-
-    override fun notifyIdle() {
-        if (callback != null) {
-            callback!!.onTransitionToIdle()
-        }
     }
 
     private fun isUrlBlacklisted(url: String): Boolean {

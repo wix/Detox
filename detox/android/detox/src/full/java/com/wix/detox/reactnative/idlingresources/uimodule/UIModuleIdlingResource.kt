@@ -16,7 +16,6 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
     : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
-    private var callback: ResourceCallback? = null
 
     override fun getName(): String = UIModuleIdlingResource::class.java.name
     override fun getDebugName(): String = " ui"
@@ -55,19 +54,13 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         return true
     }
 
-    override fun registerIdleTransitionCallback(callback: ResourceCallback) {
-        this.callback = callback
+    override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
     }
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
-    }
-
-    override fun notifyIdle() {
-        callback?.run {
-            onTransitionToIdle()
-        }
     }
 
     companion object {

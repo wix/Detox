@@ -1,9 +1,11 @@
 package com.wix.detox.reactnative.idlingresources
 
+import androidx.test.espresso.IdlingResource
 import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class DetoxIdlingResource : DescriptiveIdlingResource {
+    private var callback: IdlingResource.ResourceCallback? = null
     private var paused: AtomicBoolean = AtomicBoolean(false)
 
     fun pause() {
@@ -13,6 +15,11 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
 
     fun resume() {
         paused.set(false)
+    }
+
+
+    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
+        this.callback = callback
     }
 
     final override fun isIdleNow(): Boolean {
@@ -27,5 +34,9 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
     }
 
     protected abstract fun checkIdle(): Boolean
-    protected abstract fun notifyIdle()
+
+
+    fun notifyIdle() {
+        callback?.onTransitionToIdle()
+    }
 }
