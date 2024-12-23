@@ -1,6 +1,7 @@
 package com.wix.detox.reactnative.idlingresources.storage
 
 import android.util.Log
+import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.helpers.RNHelpers
@@ -61,6 +62,11 @@ class AsyncStorageIdlingResource
                 !hasActiveTask() && !hasPendingTasks()
             }
         }
+
+    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
+        enqueueIdleCheckTask()
+    }
 
     override fun checkIdle(): Boolean =
         checkIdleInternal().also { idle ->
