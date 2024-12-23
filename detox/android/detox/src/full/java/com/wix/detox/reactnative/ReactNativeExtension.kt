@@ -156,11 +156,15 @@ object ReactNativeExtension {
     }
 
     private fun getCurrentReactContextSafe(reactApplication: ReactApplication): ReactContext? {
-        return getInstanceManagerSafe(reactApplication).currentReactContext
+        return if (isFabricEnabled(reactApplication)) {
+            reactApplication.reactHost?.currentReactContext
+        } else {
+            getInstanceManagerSafe(reactApplication).currentReactContext
+        }
     }
 
     /**
-     * A little bit a dirty
+     * A method to check if Fabric is enabled in the React Native application.
      */
     fun isFabricEnabled(reactApplication: ReactApplication): Boolean {
         val getUIManagerProviderMethod = reactApplication.reactNativeHost.javaClass.getDeclaredMethod("getUIManagerProvider")
