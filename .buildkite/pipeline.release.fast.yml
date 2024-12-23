@@ -18,22 +18,9 @@
       JAVA_HOME: /opt/openjdk/openlogic-openjdk-17.0.9+9-mac-x64/jdk-17.0.9.jdk/Contents/Home
     artifact_paths: "/Users/builder/uibuilder/work/detox/Detox-android/**/*"
 
-  - label: ":android: Package android Legacy"
-    key: 'android_package_legacy'
-    command:
-      - "nvm install"
-      - "npm install"
-      - "npm run package:android"
-    env:
-      REACT_NATIVE_VERSION: 0.71.10
-      DETOX_DISABLE_POSTINSTALL: true
-      DETOX_DISABLE_POD_INSTALL: true
-    artifact_paths: "/Users/builder/uibuilder/work/detox/Detox-android/**/*"
-
   - label: ":shipit: Publish"
     depends_on:
       - 'android_package'
-      - 'android_package_legacy'
       - 'ios_package'
     command:
       - "nvm install 20"
