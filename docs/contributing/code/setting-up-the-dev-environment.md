@@ -28,7 +28,7 @@ To set up the monorepo locally, follow these steps:
 
 Install the monorepo management tool, `lerna`:
 
-```bash npm2yarn
+```bash
 npm install lerna@6.x.x --global
 ```
 
@@ -52,7 +52,7 @@ lerna bootstrap
 
 [react-native-cli] is a command line interface for React Native.
 
-```bash npm2yarn
+```bash
 npm install react-native-cli --global
 ```
 
