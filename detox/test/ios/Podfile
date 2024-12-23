@@ -1,4 +1,4 @@
-ENV['RCT_NEW_ARCH_ENABLED'] = ENV['RCT_NEW_ARCH_ENABLED'] || 0
+ENV['RCT_NEW_ARCH_ENABLED'] = ENV['RCT_NEW_ARCH_ENABLED'] || '0'
 
 if ENV["REACT_NATIVE_VERSION"] && ENV["REACT_NATIVE_VERSION"].match(/0.(70|71).*/)
     require_relative '../node_modules/react-native/scripts/react_native_pods'
