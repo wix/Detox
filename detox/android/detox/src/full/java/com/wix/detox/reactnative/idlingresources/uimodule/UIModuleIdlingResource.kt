@@ -5,7 +5,7 @@ import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.helpers.RNHelpers
-import com.wix.detox.reactnative.idlingresources.DetoxBaseIdlingResource
+import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.ReflectException
 
 /**
@@ -13,11 +13,9 @@ import org.joor.ReflectException
  * Hooks up to React Native internals to grab the pending ui operations from it.
  */
 class UIModuleIdlingResource(private val reactContext: ReactContext)
-    : DetoxBaseIdlingResource(), Choreographer.FrameCallback {
+    : DetoxIdlingResource(), Choreographer.FrameCallback {
 
-    private val rn66workaround = RN66Workaround()
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
-    private var callback: ResourceCallback? = null
 
     override fun getName(): String = UIModuleIdlingResource::class.java.name
     override fun getDebugName(): String = " ui"
@@ -39,11 +37,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
 
             val runnablesAreEmpty = uiManagerModuleReflected.isRunnablesListEmpty()
             val nonBatchesOpsEmpty = uiManagerModuleReflected.isNonBatchOpsEmpty()
-            var operationQueueEmpty = uiManagerModuleReflected.isOperationQueueEmpty()
-
-            if (!operationQueueEmpty) {
-                operationQueueEmpty = rn66workaround.isScarceUISwitchCommandStuckInQueue(uiManagerModuleReflected)
-            }
+            val operationQueueEmpty = uiManagerModuleReflected.isOperationQueueEmpty()
 
             if (runnablesAreEmpty && nonBatchesOpsEmpty && operationQueueEmpty) {
                 notifyIdle()
@@ -60,19 +54,13 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         return true
     }
 
-    override fun registerIdleTransitionCallback(callback: ResourceCallback) {
-        this.callback = callback
+    override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
     }
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
-    }
-
-    override fun notifyIdle() {
-        callback?.run {
-            onTransitionToIdle()
-        }
     }
 
     companion object {

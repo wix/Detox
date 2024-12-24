@@ -8,6 +8,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
+import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources
 
 private const val LOG_TAG = "DetoxRNExt"
 
@@ -56,7 +57,6 @@ object ReactNativeExtension {
         Log.i(LOG_TAG, "Reloading React Native")
 
         (applicationContext as ReactApplication).let {
-            val networkSyncEnabled = rnIdlingResources?.networkSyncEnabled ?: true
             clearIdlingResources()
 
             val previousReactContext = getCurrentReactContextSafe(it)
@@ -64,7 +64,7 @@ object ReactNativeExtension {
             reloadReactNativeInBackground(it)
             val reactContext = awaitNewReactNativeContext(it, previousReactContext)
 
-            enableOrDisableSynchronization(reactContext, networkSyncEnabled)
+            enableOrDisableSynchronization(reactContext)
         }
     }
 
@@ -91,11 +91,6 @@ object ReactNativeExtension {
             return getCurrentReactContextSafe(applicationContext as ReactApplication)?.currentActivity
         }
         return null
-    }
-
-    @JvmStatic
-    fun setNetworkSynchronization(enable: Boolean) {
-        rnIdlingResources?.setNetworkSynchronization(enable)
     }
 
     @JvmStatic
@@ -129,11 +124,11 @@ object ReactNativeExtension {
         return rnLoadingMonitor.getNewContext()!!
     }
 
-    private fun enableOrDisableSynchronization(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
+    private fun enableOrDisableSynchronization(reactContext: ReactContext) {
         if (shouldDisableSynchronization()) {
             clearAllSynchronization()
         } else {
-            setupIdlingResources(reactContext, networkSyncEnabled)
+            setupIdlingResources(reactContext)
         }
     }
 
@@ -142,10 +137,10 @@ object ReactNativeExtension {
         return launchArgs.hasEnableSynchronization() && launchArgs.enableSynchronization.equals("0")
     }
 
-    private fun setupIdlingResources(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
+    private fun setupIdlingResources(reactContext: ReactContext) {
         val launchArgs = LaunchArgs()
 
-        rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs, networkSyncEnabled).apply {
+        rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs).apply {
             registerAll()
         }
     }

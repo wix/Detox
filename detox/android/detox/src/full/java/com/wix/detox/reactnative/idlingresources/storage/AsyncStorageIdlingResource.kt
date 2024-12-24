@@ -1,16 +1,18 @@
-package com.wix.detox.reactnative.idlingresources
+package com.wix.detox.reactnative.idlingresources.storage
 
 import android.util.Log
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
 import com.wix.detox.reactnative.helpers.RNHelpers
+import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.Executor
 
 private typealias SExecutorReflectedGenFnType = (executor: Executor) -> SerialExecutorReflected
-private val defaultSExecutorReflectedGenFn: SExecutorReflectedGenFnType = { executor: Executor -> SerialExecutorReflected(executor) }
+
+private val defaultSExecutorReflectedGenFn: SExecutorReflectedGenFnType =
+    { executor: Executor -> SerialExecutorReflected(executor) }
 
 private class ModuleReflected(module: NativeModule, sexecutorReflectedGen: SExecutorReflectedGenFnType) {
     private val executorReflected: SerialExecutorReflected
@@ -25,17 +27,16 @@ private class ModuleReflected(module: NativeModule, sexecutorReflectedGen: SExec
         get() = executorReflected
 }
 
-open class AsyncStorageIdlingResource
-    @JvmOverloads constructor(
-        module: NativeModule,
-        sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn)
-    : DescriptiveIdlingResource {
+class AsyncStorageIdlingResource
+@JvmOverloads constructor(
+    module: NativeModule,
+    sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn
+) : DetoxIdlingResource() {
 
-    open val logTag: String
+    val logTag: String
         get() = LOG_TAG
 
     private val moduleReflected = ModuleReflected(module, sexecutorReflectedGenFn)
-    private var callback: IdlingResource.ResourceCallback? = null
     private var idleCheckTask: Runnable? = null
     private val idleCheckTaskImpl = Runnable {
         with(moduleReflected.sexecutor) {
@@ -44,7 +45,7 @@ open class AsyncStorageIdlingResource
                     executeTask(idleCheckTask!!)
                 } else {
                     clearIdleCheckTask()
-                    callback?.onTransitionToIdle()
+                    notifyIdle()
                 }
             }
         }
@@ -54,22 +55,24 @@ open class AsyncStorageIdlingResource
     override fun getDebugName() = "io"
     override fun getBusyHint(): Map<String, Any>? = null
 
-    override fun isIdleNow(): Boolean =
-        checkIdle().also { idle ->
-            if (!idle) {
-                Log.d(logTag, "Async-storage is busy!")
-                enqueueIdleCheckTask()
-            }
-        }
-    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
-        this.callback = callback
-        enqueueIdleCheckTask()
-    }
 
-    private fun checkIdle(): Boolean =
+    private fun checkIdleInternal(): Boolean =
         with(moduleReflected.sexecutor) {
             synchronized(executor()) {
                 !hasActiveTask() && !hasPendingTasks()
+            }
+        }
+
+    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
+        super.registerIdleTransitionCallback(callback)
+        enqueueIdleCheckTask()
+    }
+
+    override fun checkIdle(): Boolean =
+        checkIdleInternal().also { idle ->
+            if (!idle) {
+                Log.d(logTag, "Async-storage is busy!")
+                enqueueIdleCheckTask()
             }
         }
 
@@ -94,26 +97,21 @@ open class AsyncStorageIdlingResource
     companion object {
         private const val LOG_TAG = "AsyncStorageIR"
 
-        fun createIfNeeded(reactContext: ReactContext, legacy: Boolean): AsyncStorageIdlingResource? {
-            Log.d(LOG_TAG, "Checking whether a custom IR for Async-Storage is required... (legacy=$legacy)")
+        fun createIfNeeded(reactContext: ReactContext): AsyncStorageIdlingResource? {
+            Log.d(LOG_TAG, "Checking whether a custom IR for Async-Storage is required...")
 
-            return RNHelpers.getNativeModule(reactContext, className(legacy))?.let { module ->
-                Log.d(LOG_TAG, "IR for Async-Storage is required! (legacy=$legacy)")
-                createInstance(module, legacy)
+            return RNHelpers.getNativeModule(reactContext, className())?.let { module ->
+                Log.d(LOG_TAG, "IR for Async-Storage is required!")
+                createInstance(module)
             }
         }
 
-        private fun className(legacy: Boolean): String {
-            val packageName = if (legacy) "com.facebook.react.modules.storage" else "com.reactnativecommunity.asyncstorage"
+        private fun className(): String {
+            val packageName = "com.reactnativecommunity.asyncstorage"
             return "$packageName.AsyncStorageModule"
         }
 
-        private fun createInstance(module: NativeModule, legacy: Boolean) =
-            if (legacy) AsyncStorageIdlingResourceLegacy(module) else AsyncStorageIdlingResource(module)
+        private fun createInstance(module: NativeModule) =
+            AsyncStorageIdlingResource(module)
     }
-}
-
-class AsyncStorageIdlingResourceLegacy(module: NativeModule): AsyncStorageIdlingResource(module) {
-    override val logTag: String
-        get() = super.logTag + "Legacy"
 }

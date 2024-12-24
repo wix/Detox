@@ -40,7 +40,7 @@ describe('StressTests', () => {
     }
   });
 
-  it.skip(':android: should handle tap during storage stress', async () => {
+  it(':android: should handle tap during storage stress', async () => {
     try {
       await element(by.text('Storage Stress')).tap();
       await expect(element(by.text('StorageStress'))).toBeVisible();
