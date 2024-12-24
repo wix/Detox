@@ -53,8 +53,8 @@ class ReactNativeIdlingResources(
 
     fun pauseRNTimersIdlingResource() = pauseIdlingResource(IdlingResourcesName.Timers)
     fun resumeRNTimersIdlingResource() = resumeIdlingResource(IdlingResourcesName.Timers)
-    fun pauseUIIdlingResource() = pauseIdlingResource(IdlingResourcesName.UIModule)
-    fun resumeUIIdlingResource() = resumeIdlingResource(IdlingResourcesName.UIModule)
+    fun pauseUIIdlingResource() = pauseIdlingResource(IdlingResourcesName.UI)
+    fun resumeUIIdlingResource() = resumeIdlingResource(IdlingResourcesName.UI)
 
     fun setBlacklistUrls(urlList: String) {
         setIdlingResourceBlacklist(urlList)

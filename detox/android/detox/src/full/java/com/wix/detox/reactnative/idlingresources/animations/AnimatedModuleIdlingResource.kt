@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.animations
 
+import android.os.Debug
 import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback

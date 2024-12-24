@@ -2,9 +2,6 @@ package com.wix.detox.reactnative.idlingresources.uimodule.oldarch
 
 import android.util.Log
 import com.wix.detox.common.DetoxLog
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_COMMAND
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NUM_RETRIES
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_TAG
 import org.joor.Reflect
 import org.joor.ReflectException
 

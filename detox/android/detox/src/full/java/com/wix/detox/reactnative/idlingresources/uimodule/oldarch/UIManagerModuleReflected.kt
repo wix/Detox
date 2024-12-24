@@ -4,15 +4,6 @@ import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIViewOperationQueue
 import com.wix.detox.common.DetoxLog
-import com.wix.detox.reactnative.idlingresources.uimodule.CLASS_UI_MANAGER_MODULE
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_DISPATCH_RUNNABLES
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_DISPATCH_RUNNABLES_LOCK
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NON_BATCHED_OPS
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NON_BATCHED_OPS_LOCK
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_UI_OPERATION_QUEUE
-import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_GET_NATIVE_MODULE
-import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_GET_UI_IMPLEMENTATION
-import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_IS_EMPTY
 import org.joor.Reflect
 
 private const val CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule"

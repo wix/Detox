@@ -5,7 +5,6 @@ import android.view.View
 import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.UIViewOperationQueue
 import com.wix.detox.common.DetoxLog
-import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NATIVE_HIERARCHY_MANAGER
 import org.joor.Reflect
 import org.joor.ReflectException
 
