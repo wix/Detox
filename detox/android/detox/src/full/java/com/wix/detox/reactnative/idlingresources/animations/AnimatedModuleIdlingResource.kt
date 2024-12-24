@@ -21,9 +21,7 @@ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
 
-    override fun getName(): String {
-        return AnimatedModuleIdlingResource::class.java.name
-    }
+    override fun getName() = AnimatedModuleIdlingResource::class.java.name
 
     override fun getDebugName(): String {
         return "AnimatedModule"
