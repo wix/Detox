@@ -47,10 +47,11 @@ object DetoxMain {
      * not by instrumentation itself, but based on the `AppWillTerminateWithError` message; In it's own, it is a good
      * thing, but for a reason we're not sure of yet, it is ignored by the test runner at this point in the flow.
      */
-    @Synchronized
     private fun launchActivityOnCue(rnHostHolder: Context, activityLaunchHelper: ActivityLaunchHelper) {
-        awaitHandshake()
-        launchActivity(rnHostHolder, activityLaunchHelper)
+        synchronized(this) {
+            awaitHandshake()
+            launchActivity(rnHostHolder, activityLaunchHelper)
+        }
     }
 
     private fun awaitHandshake() {
