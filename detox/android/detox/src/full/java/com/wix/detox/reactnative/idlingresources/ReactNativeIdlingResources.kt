@@ -16,14 +16,13 @@ import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
 
 
+private const val LOG_TAG = "DetoxRNIdleRes"
+
 class ReactNativeIdlingResources(
     private val reactContext: ReactContext,
     private var launchArgs: LaunchArgs,
     private val idlingResourcesFactory: DetoxIdlingResourceFactory = DetoxIdlingResourceFactory(reactContext)
 ) {
-    companion object {
-        const val LOG_TAG = "DetoxRNIdleRes"
-    }
 
     private val idlingResources = mutableMapOf<IdlingResourcesName, DetoxIdlingResource>()
     private val loopers = mutableMapOf<LooperName, Looper>()

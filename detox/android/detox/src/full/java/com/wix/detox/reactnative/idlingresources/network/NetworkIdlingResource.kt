@@ -85,6 +85,7 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
          *
          * @param urls list of regexes of blacklisted urls
          */
+        @JvmStatic
         fun setURLBlacklist(urls: List<String>?) {
             blacklist.clear()
             if (urls == null) return

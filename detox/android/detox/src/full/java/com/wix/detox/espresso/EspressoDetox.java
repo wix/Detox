@@ -120,7 +120,7 @@ public class EspressoDetox {
         UIThread.postSync(new Runnable() {
             @Override
             public void run() {
-                NetworkIdlingResource.Companion.setURLBlacklist(urls);
+                NetworkIdlingResource.setURLBlacklist(urls);
             }
         });
     }

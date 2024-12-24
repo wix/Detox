@@ -7,6 +7,9 @@ import com.facebook.react.animated.NativeAnimatedModule
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 
+private const val LOG_TAG = "Detox"
+
+
 /**
  * Created by simonracz on 25/08/2017.
  */
@@ -52,10 +55,6 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
-    }
-
-    companion object {
-        private const val LOG_TAG = "Detox"
     }
 }
 
