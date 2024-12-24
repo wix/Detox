@@ -1,9 +1,18 @@
-package com.wix.detox.reactnative.idlingresources.uimodule
+package com.wix.detox.reactnative.idlingresources.uimodule.oldarch
 
 import android.util.Log
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIViewOperationQueue
-import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.common.DetoxLog
+import com.wix.detox.reactnative.idlingresources.uimodule.CLASS_UI_MANAGER_MODULE
+import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_DISPATCH_RUNNABLES
+import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_DISPATCH_RUNNABLES_LOCK
+import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NON_BATCHED_OPS
+import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_NON_BATCHED_OPS_LOCK
+import com.wix.detox.reactnative.idlingresources.uimodule.FIELD_UI_OPERATION_QUEUE
+import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_GET_NATIVE_MODULE
+import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_GET_UI_IMPLEMENTATION
+import com.wix.detox.reactnative.idlingresources.uimodule.METHOD_IS_EMPTY
 import org.joor.Reflect
 
 private const val CLASS_UI_MANAGER_MODULE = "com.facebook.react.uimanager.UIManagerModule"
@@ -15,6 +24,8 @@ private const val FIELD_DISPATCH_RUNNABLES = "mDispatchUIRunnables"
 private const val FIELD_DISPATCH_RUNNABLES_LOCK = "mDispatchRunnablesLock"
 private const val FIELD_NON_BATCHED_OPS = "mNonBatchedOperations"
 private const val FIELD_NON_BATCHED_OPS_LOCK = "mNonBatchedOperationsLock"
+
+
 
 class UIManagerModuleReflected(private val reactContext: ReactContext) {
 
@@ -56,7 +67,7 @@ class UIManagerModuleReflected(private val reactContext: ReactContext) {
                 .field(FIELD_UI_OPERATION_QUEUE)
                 .get()
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "failed to get $CLASS_UI_MANAGER_MODULE instance ", e)
+            Log.e(DetoxLog.LOG_TAG, "failed to get $CLASS_UI_MANAGER_MODULE instance ", e)
             null
         }
 }
