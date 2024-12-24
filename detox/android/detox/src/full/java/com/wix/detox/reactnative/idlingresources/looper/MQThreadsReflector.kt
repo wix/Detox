@@ -3,11 +3,11 @@ package com.wix.detox.reactnative.idlingresources.looper
 import android.os.Looper
 import android.util.Log
 import com.facebook.react.bridge.ReactContext
-import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources.Companion.LOG_TAG
 import org.joor.Reflect
 import org.joor.ReflectException
 
 
+private const val LOG_TAG = "DetoxRNIdleRes"
 private const val METHOD_GET_LOOPER = "getLooper"
 private const val FIELD_NATIVE_MODULES_MSG_QUEUE = "mNativeModulesMessageQueueThread"
 private const val FIELD_JS_MSG_QUEUE = "mJSMessageQueueThread"
