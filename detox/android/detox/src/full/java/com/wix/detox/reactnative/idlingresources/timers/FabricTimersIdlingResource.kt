@@ -1,5 +1,3 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-
 package com.wix.detox.reactnative.idlingresources.timers
 
 import android.view.Choreographer
@@ -9,13 +7,15 @@ import com.facebook.react.internal.AndroidChoreographerProvider.getChoreographer
 import com.facebook.react.modules.core.JavaTimerManager
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class FabricTimersIdlingResource(
     private val reactContext: ReactContext,
 ) : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     override fun checkIdle(): Boolean {
-        val hasActiveTimers = Reflect.on(getTimersManager()).call("hasActiveTimersInRange",BUSY_WINDOW_THRESHOLD).get<Boolean>()
+        val hasActiveTimers: Boolean = hasActiveTimers()
 
         if (hasActiveTimers) {
             getChoreographer().postFrameCallback(this@FabricTimersIdlingResource)
@@ -24,6 +24,14 @@ class FabricTimersIdlingResource(
         }
 
         return !hasActiveTimers
+    }
+
+    private fun hasActiveTimers(): Boolean {
+        val hasActiveTimersInRangeInstanceClass = getTimersManager()::class
+        val method = hasActiveTimersInRangeInstanceClass.declaredFunctions.first { it.name == "hasActiveTimersInRange" }
+        method.isAccessible = true
+        val hasActiveTimers: Boolean = method.call(BUSY_WINDOW_THRESHOLD) as? Boolean ?: false
+        return hasActiveTimers
     }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
