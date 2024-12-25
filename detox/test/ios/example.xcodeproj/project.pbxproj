@@ -7,19 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C80B921A6F3F58F76C31292 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		213E1077F464B28612297B3E /* libPods-example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 467D00885FA51E1E9B0E8063 /* libPods-example.a */; };
-		60493BDE2D10E7E4002853A0 /* NativeModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 609DDBE32D10D45500028574 /* NativeModule.mm */; };
-		60493BDF2D10E7E4002853A0 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		60493BE02D10E7E4002853A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		60493BE52D10E7E4002853A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		60493BE62D10E7E4002853A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		60493BE72D10E7E4002853A0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		608868A02D1A9F070070D199 /* NativeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689D2D1A9F070070D199 /* NativeModule.swift */; };
+		608868A12D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */; };
+		608868A22D1A9F070070D199 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689A2D1A9F070070D199 /* AppDelegate.swift */; };
+		608868A32D1A9F070070D199 /* NativeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689D2D1A9F070070D199 /* NativeModule.swift */; };
+		608868A42D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */; };
+		608868A52D1A9F070070D199 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689A2D1A9F070070D199 /* AppDelegate.swift */; };
+		608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */; };
+		608868AC2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */; };
+		608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */; };
+		608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */; };
+		608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
+		608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
 		609DDB892D10C21800028574 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609DDB852D10C20800028574 /* Detox.framework */; };
-		609DDBE42D10D45500028574 /* NativeModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 609DDBE32D10D45500028574 /* NativeModule.mm */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90CCD0BA1322566EB1285DC2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		CA25A6405AF58BA742F7FD47 /* libPods-example-ci.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0FE045763B5363B2E7054 /* libPods-example-ci.a */; };
@@ -44,11 +49,8 @@
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = example/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = example/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = example/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = example/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = example/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = example/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-example-exampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example-exampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CB0FE045763B5363B2E7054 /* libPods-example-ci.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example-ci.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,9 +61,15 @@
 		5B7EB9410499542E8C5724F5 /* Pods-example-exampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-exampleTests.debug.xcconfig"; path = "Target Support Files/Pods-example-exampleTests/Pods-example-exampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		60493BD72D10D967002853A0 /* example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = example.entitlements; path = example/example.entitlements; sourceTree = "<group>"; };
 		60493BEE2D10E7E4002853A0 /* example-ci.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "example-ci.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6088689A2D1A9F070070D199 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6088689B2D1A9F070070D199 /* example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "example-Bridging-Header.h"; sourceTree = "<group>"; };
+		6088689C2D1A9F070070D199 /* example-ci-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "example-ci-Bridging-Header.h"; sourceTree = "<group>"; };
+		6088689D2D1A9F070070D199 /* NativeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeModule.swift; sourceTree = "<group>"; };
+		6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeEventEmitter.swift; sourceTree = "<group>"; };
+		608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeScreenManager.swift; sourceTree = "<group>"; };
+		608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboardDelegate.swift; sourceTree = "<group>"; };
+		608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactModulesBridge.m; sourceTree = "<group>"; };
 		609DDB772D10C20700028574 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = /Users/asafk/Development/Detox/detox/ios/Detox.xcodeproj; sourceTree = "<absolute>"; };
-		609DDBE22D10D45500028574 /* NativeModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeModule.h; sourceTree = "<group>"; };
-		609DDBE32D10D45500028574 /* NativeModule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeModule.mm; sourceTree = "<group>"; };
 		80C930B7D5D6C25DA27372A5 /* Pods-example-ci.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-ci.release.xcconfig"; path = "Target Support Files/Pods-example-ci/Pods-example-ci.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = example/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-example-exampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-exampleTests.release.xcconfig"; path = "Target Support Files/Pods-example-exampleTests/Pods-example-exampleTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -74,7 +82,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				609DDB892D10C21800028574 /* Detox.framework in Frameworks */,
-				0C80B921A6F3F58F76C31292 /* (null) in Frameworks */,
 				213E1077F464B28612297B3E /* libPods-example.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,15 +100,16 @@
 		13B07FAE1A68108700A75B9A /* example */ = {
 			isa = PBXGroup;
 			children = (
+				6088689A2D1A9F070070D199 /* AppDelegate.swift */,
 				60493BD72D10D967002853A0 /* example.entitlements */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				6088689B2D1A9F070070D199 /* example-Bridging-Header.h */,
+				6088689C2D1A9F070070D199 /* example-ci-Bridging-Header.h */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
-				609DDBE12D10D44F00028574 /* ReactModules */,
+				6088689F2D1A9F070070D199 /* ReactModules */,
+				608868B12D1AA1FB0070D199 /* UI */,
 			);
 			name = example;
 			sourceTree = "<group>";
@@ -117,6 +125,25 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		6088689F2D1A9F070070D199 /* ReactModules */ = {
+			isa = PBXGroup;
+			children = (
+				608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */,
+				6088689D2D1A9F070070D199 /* NativeModule.swift */,
+				6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */,
+			);
+			path = ReactModules;
+			sourceTree = "<group>";
+		};
+		608868B12D1AA1FB0070D199 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */,
+				608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		609DDB802D10C20800028574 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,15 +151,6 @@
 				609DDB872D10C20800028574 /* DetoxUserNotificationTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		609DDBE12D10D44F00028574 /* ReactModules */ = {
-			isa = PBXGroup;
-			children = (
-				609DDBE22D10D45500028574 /* NativeModule.h */,
-				609DDBE32D10D45500028574 /* NativeModule.mm */,
-			);
-			path = ReactModules;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -233,7 +251,10 @@
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1600;
+					};
+					60493BDB2D10E7E4002853A0 = {
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -454,9 +475,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				609DDBE42D10D45500028574 /* NativeModule.mm in Sources */,
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				608868A32D1A9F070070D199 /* NativeModule.swift in Sources */,
+				608868A42D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
+				608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
+				608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
+				608868A52D1A9F070070D199 /* AppDelegate.swift in Sources */,
+				608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,9 +488,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60493BDE2D10E7E4002853A0 /* NativeModule.mm in Sources */,
-				60493BDF2D10E7E4002853A0 /* AppDelegate.mm in Sources */,
-				60493BE02D10E7E4002853A0 /* main.m in Sources */,
+				608868A02D1A9F070070D199 /* NativeModule.swift in Sources */,
+				608868A12D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
+				608868AC2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
+				608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
+				608868A22D1A9F070070D199 /* AppDelegate.swift in Sources */,
+				608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +523,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
+				SWIFT_OBJC_BRIDGING_HEADER = "example-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -524,6 +552,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = example;
+				SWIFT_OBJC_BRIDGING_HEADER = "example-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -552,6 +581,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "example-ci-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -580,6 +610,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wix.detox-example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "example-ci-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
