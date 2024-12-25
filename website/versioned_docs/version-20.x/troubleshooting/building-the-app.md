@@ -128,3 +128,33 @@ packagingOptions {
     exclude 'META-INF/LICENSE'
 }
 ```
+
+### Running Detox in a Rosetta environment
+
+When working with dependencies that require running your iOS app in a Rosetta simulator, you may encounter issues with the `detox build` command. These issues often relate to SwiftEmitModule or SwiftCompile errors. To resolve this, follow these steps:
+
+1. Modify your build command in the Detox configuration:
+
+```json
+"build": "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp -configuration Debug -sdk iphonesimulator -arch x86_64 -derivedDataPath ios/build"
+```
+
+1. Run the following command in your terminal to ensure Xcode is properly selected:
+
+```bash
+sudo xcode-select --switch /Applications/Xcode.app
+```
+
+1. Launch the iOS simulator in Rosetta mode:
+
+```bash
+arch -x86_64 /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator
+```
+
+After following these steps, the `detox build` command should run without errors in your Rosetta environment.
+
+:::note
+
+This approach configures Detox specifically to build and run with Rosetta without affecting your app's regular builds. To run your app with Rosetta in Xcode, enable Rosetta simulator destinations via Xcode.
+
+:::
