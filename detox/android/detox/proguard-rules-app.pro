@@ -21,6 +21,10 @@
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
 
 -keep class kotlin.reflect.** { *; }
+-keep class kotlin.KotlinVersion { *; }
+-keep class kotlin.sequences.** { *; }
+-keep class kotlin.Triple { *; }
+-keep class kotlin.properties.ReadOnlyProperty { *; }
 -keep class kotlin.coroutines.CoroutineDispatcher { *; }
 -keep class kotlin.coroutines.CoroutineScope { *; }
 -keep class kotlin.coroutines.CoroutineContext { *; }

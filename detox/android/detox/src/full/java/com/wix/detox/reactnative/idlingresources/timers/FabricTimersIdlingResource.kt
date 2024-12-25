@@ -27,10 +27,11 @@ class FabricTimersIdlingResource(
     }
 
     private fun hasActiveTimers(): Boolean {
-        val hasActiveTimersInRangeInstanceClass = getTimersManager()::class
+        val timersManager = getTimersManager()
+        val hasActiveTimersInRangeInstanceClass = timersManager::class
         val method = hasActiveTimersInRangeInstanceClass.declaredFunctions.first { it.name == "hasActiveTimersInRange" }
         method.isAccessible = true
-        val hasActiveTimers: Boolean = method.call(BUSY_WINDOW_THRESHOLD) as? Boolean ?: false
+        val hasActiveTimers: Boolean = method.call(timersManager, BUSY_WINDOW_THRESHOLD) as? Boolean ?: false
         return hasActiveTimers
     }
 
