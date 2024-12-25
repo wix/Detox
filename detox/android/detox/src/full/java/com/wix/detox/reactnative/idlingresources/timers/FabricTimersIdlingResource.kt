@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
+import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
@@ -29,7 +30,7 @@ class FabricTimersIdlingResource(
     private fun hasActiveTimers(): Boolean {
         val timersManager = getTimersManager()
         val hasActiveTimersInRangeInstanceClass = timersManager::class
-        val method = hasActiveTimersInRangeInstanceClass.declaredFunctions.first { it.name == "hasActiveTimersInRange" }
+        val method = hasActiveTimersInRangeInstanceClass.declaredFunctions.first { it.name.contains("hasActiveTimersInRange") }
         method.isAccessible = true
         val hasActiveTimers: Boolean = method.call(timersManager, BUSY_WINDOW_THRESHOLD) as? Boolean ?: false
         return hasActiveTimers

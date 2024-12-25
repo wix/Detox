@@ -7,6 +7,7 @@
 -keep class com.facebook.react.ReactNativeHost { *; }
 -keep class com.facebook.react.ReactHost { *; }
 -keep class com.facebook.react.runtime.ReactHostImpl { *; }
+-keep class com.facebook.react.modules.core.JavaTimerManager { *; }
 
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
@@ -24,7 +25,7 @@
 -keep class kotlin.KotlinVersion { *; }
 -keep class kotlin.sequences.** { *; }
 -keep class kotlin.Triple { *; }
--keep class kotlin.properties.ReadOnlyProperty { *; }
+-keep class kotlin.properties.** { *; }
 -keep class kotlin.coroutines.CoroutineDispatcher { *; }
 -keep class kotlin.coroutines.CoroutineScope { *; }
 -keep class kotlin.coroutines.CoroutineContext { *; }
