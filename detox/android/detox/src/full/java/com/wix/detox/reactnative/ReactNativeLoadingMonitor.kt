@@ -65,7 +65,9 @@ open class ReactNativeLoadingMonitor(
                 // it is possible that our listener won't be ever called
                 // That's why we have to check the reactContext regularly.
                 val reactContext = rnApplication.getCurrentReactContextSafe()
-                if (reactContext != null && reactContext !== previousReactContext) {
+
+                // We also need to wait for rect native instance to be initialized
+                if (reactContext != null && reactContext !== previousReactContext && reactContext.hasActiveReactInstance()) {
                     Log.d(LOG_TAG, "Got new RN-context explicitly while polling (#iteration=$i)")
                     break
                 }

@@ -10,13 +10,7 @@ object RNHelpers {
     fun getNativeModule(reactContext: ReactContext, className: String): NativeModule? =
         try {
             val moduleClass = Class.forName(className) as Class<NativeModule>
-
-            if (reactContext.hasNativeModule(moduleClass)) {
-                reactContext.getNativeModule(moduleClass)
-            } else {
-                Log.d(LOG_TAG, "Native RN module resolution (class $className): no registered module found")
-                null
-            }
+            reactContext.getNativeModule(moduleClass)
         } catch (ex: ClassNotFoundException) {
             Log.d(LOG_TAG, "Native RN module resolution (class $className): no such class")
             null
