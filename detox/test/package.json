@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.28.0",
+  "version": "20.29.0",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -50,13 +50,13 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native/babel-preset": "0.76.3",
     "@react-native/eslint-config": "0.76.3",
     "@react-native/metro-config": "0.76.3",
     "@react-native/typescript-config": "0.76.3",
-    "@react-native-community/cli": "15.0.1",
-    "@react-native-community/cli-platform-android": "15.0.1",
-    "@react-native-community/cli-platform-ios": "15.0.1",
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^16.18.68",
@@ -65,7 +65,7 @@
     "@typescript-eslint/parser": "^6.16.0",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
-    "detox": "^20.28.0",
+    "detox": "^20.29.0",
     "detox-allure2-adapter": "^1.0.0-alpha.8",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
