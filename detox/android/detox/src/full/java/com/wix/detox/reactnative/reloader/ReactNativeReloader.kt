@@ -25,9 +25,9 @@ class NewArchitectureNativeReLoader(
     private val rnApplication: ReactApplication
 ) : ReactNativeReLoader {
     override fun reloadInBackground() {
-        val rnInstanceManager = rnApplication.reactHost
+        val reactHost = rnApplication.reactHost
         instrumentation.runOnMainSync {
-            rnInstanceManager?.reload("Detox")
+            reactHost?.reload("Detox")
         }
     }
 }

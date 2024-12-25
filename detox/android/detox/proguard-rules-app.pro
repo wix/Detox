@@ -5,6 +5,8 @@
 -keep class com.facebook.react.animated.** { *; }
 -keep class com.facebook.react.ReactApplication { *; }
 -keep class com.facebook.react.ReactNativeHost { *; }
+-keep class com.facebook.react.ReactHost { *; }
+
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
 -keep class com.facebook.react.ReactInstanceEventListener { *; }
