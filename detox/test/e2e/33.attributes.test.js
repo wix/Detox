@@ -134,9 +134,7 @@ describe('Attributes', () => {
     });
   });
 
-  // This test is skipped because the checkbox is not working with the new arch yet. Reenable when fixed.
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip('of a checkbox', () => {
+  describe('of a checkbox', () => {
     beforeAll(() => useMatcher(by.id('checkboxId')));
 
     it(':ios: should have a string .value', async () => {
@@ -145,7 +143,8 @@ describe('Attributes', () => {
       });
     });
 
-    it(':android: should have a boolean .value', async () => {
+    // Checkbox is not working with the new arch yet
+    it.skip(':android: should have a boolean .value', async () => {
       expect(await currentElement.getAttributes()).toMatchObject({
         value: false
       });
