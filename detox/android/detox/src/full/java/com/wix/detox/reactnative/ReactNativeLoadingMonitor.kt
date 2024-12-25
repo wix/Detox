@@ -5,6 +5,7 @@ import android.util.Log
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceEventListener
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.runtime.ReactHostImpl
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.config.DetoxConfig
 import java.util.concurrent.CountDownLatch
@@ -79,7 +80,8 @@ open class ReactNativeLoadingMonitor(
     private fun subscribeAsyncRNContextHandler(onReactContextInitialized: () -> Any) {
         val isFabric = rnApplication.isFabricEnabled()
         if (isFabric) {
-            val host = rnApplication.reactHost
+            // We do a casting for supporting RN 0.75 and above
+            val host = rnApplication.reactHost as ReactHostImpl?
             host?.addReactInstanceEventListener(object : ReactInstanceEventListener {
                 override fun onReactContextInitialized(context: ReactContext) {
                     Log.i(LOG_TAG, "Got new RN-context through listener")
