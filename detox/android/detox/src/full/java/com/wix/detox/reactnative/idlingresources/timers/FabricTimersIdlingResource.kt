@@ -15,7 +15,7 @@ class FabricTimersIdlingResource(
 ) : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     override fun checkIdle(): Boolean {
-        val hasActiveTimers = getTimersManager().hasActiveTimersInRange(BUSY_WINDOW_THRESHOLD)
+        val hasActiveTimers = Reflect.on(getTimersManager()).call("hasActiveTimersInRange",BUSY_WINDOW_THRESHOLD).get<Boolean>()
 
         if (hasActiveTimers) {
             getChoreographer().postFrameCallback(this@FabricTimersIdlingResource)
