@@ -1,10 +1,8 @@
 import UIKit
 import React
-import UserNotifications
 import CoreSpotlight
 
 // MARK: - App Delegate
-
 @UIApplicationMain
 @objc(AppDelegate)
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,9 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - UIApplicationDelegate Methods
 
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         setupReactNative(with: launchOptions)
         setupNotifications()
         setupScreenManager()
@@ -30,9 +29,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupReactNative(with launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         let bridge = RCTBridge(delegate: self, launchOptions: launchOptions)
-        let rootView = RCTRootView(bridge: bridge!,
-                                   moduleName: moduleName,
-                                   initialProperties: initialProps)
+        let rootView = RCTRootView(
+            bridge: bridge!,
+            moduleName: moduleName,
+            initialProperties: initialProps
+        )
         rootView.backgroundColor = .white
 
         let rootViewController = UIViewController()
@@ -44,8 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupNotifications() {
+        // Set ourselves as the UNUserNotificationCenter delegate
         UNUserNotificationCenter.current().delegate = self
 
+        // Example: Listen for a custom "ChangeScreen" event
         NotificationCenter.default.addObserver(
             forName: Notification.Name("ChangeScreen"),
             object: nil,
@@ -60,24 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-// MARK: - Shake Gesture Handling
-
-extension AppDelegate {
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            if let rootView = window?.rootViewController?.view as? RCTRootView {
-                let bridge = rootView.bridge
-                let shakeModule = bridge.module(for: ShakeEventEmitter.self) as! ShakeEventEmitter
-                shakeModule.handleShake()
-            }
-        } else {
-            super.motionEnded(motion, with: event)
-        }
-    }
-}
-
 // MARK: - URL and Universal Links Handling
-
 extension AppDelegate {
     func application(_ app: UIApplication,
                      open url: URL,
@@ -94,23 +80,7 @@ extension AppDelegate {
     }
 }
 
-// MARK: - UNUserNotificationCenterDelegate
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.list, .banner, .badge, .sound])
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        completionHandler()
-    }
-}
-
 // MARK: - RCTBridgeDelegate
-
 extension AppDelegate: RCTBridgeDelegate {
     func sourceURL(for bridge: RCTBridge) -> URL? {
         return bundleURL()
@@ -118,8 +88,10 @@ extension AppDelegate: RCTBridgeDelegate {
 
     private func bundleURL() -> URL {
 #if DEBUG
-        return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index",
-                                                                 fallbackExtension: nil)!
+        return RCTBundleURLProvider.sharedSettings().jsBundleURL(
+            forBundleRoot: "index",
+            fallbackExtension: nil
+        )!
 #else
         return Bundle.main.url(forResource: "main", withExtension: "jsbundle")!
 #endif
