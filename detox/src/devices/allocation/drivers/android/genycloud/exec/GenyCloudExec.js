@@ -1,8 +1,6 @@
 // @ts-nocheck
 const exec = require('../../../../../../utils/childProcess').execWithRetriesAndLogs;
 
-const defaultFlags = '--format compactjson';
-
 class GenyCloudExec {
   constructor(binaryPath) {
     this.binaryExec = binaryPath;
@@ -14,7 +12,7 @@ class GenyCloudExec {
   }
 
   doctor() {
-    return this._exec('doctor', { retries: 0 }, '--format text');
+    return this._exec('doctor', { retries: 0 }, 'text');
   }
 
   getRecipe(name) {
@@ -44,23 +42,25 @@ class GenyCloudExec {
     return this._exec(`instances stop ${instanceUUID}`, options);
   }
 
-  async _exec(args, options, flags = defaultFlags) {
+  async _exec(args, options, format = 'compactjson') {
     try {
-      const rawResult = await this.__exec(flags, args, options);
-      return JSON.parse(rawResult);
+      const rawResult = await this.__exec(args, options, format);
+      return (
+        format === 'compactjson' ? JSON.parse(rawResult) : rawResult
+      );
     } catch (error) {
       throw new Error(error.stderr);
     }
   }
 
-  async __exec(flags, args, _options) {
-    const options = {
-      ..._options,
+  async __exec(args, options, format) {
+    const _options = {
+      ...options,
       statusLogs: {
         retrying: true,
       },
     };
-    return (await exec(`"${this.binaryExec}" ${flags} ${args}`, options )).stdout;
+    return (await exec(`"${this.binaryExec}" --format ${format} ${args}`, _options )).stdout;
   }
 }
 
