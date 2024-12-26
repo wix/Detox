@@ -42,6 +42,7 @@ describe('Genymotion-cloud executable', () => {
 
   describe.each([
     ['version', () => uut.getVersion(), `"mock/path/to/gmsaas" --format compactjson --version`],
+    ['Doctor', () => uut.doctor(), `"mock/path/to/gmsaas" --format text doctor`, { retries: 0 }],
     ['Get Recipe', () => uut.getRecipe(recipeName), `"mock/path/to/gmsaas" --format compactjson recipes list --name "${recipeName}"`],
     ['Get Instance', () => uut.getInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances get ${instanceUUID}`],
     ['Get Instances', () => uut.getInstances(), `"mock/path/to/gmsaas" --format compactjson instances list -q`],
