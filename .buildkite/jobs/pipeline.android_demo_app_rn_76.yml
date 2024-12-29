@@ -1,4 +1,4 @@
-  - label: ":android::react: New Arch RN .76 + Android: Demo app"
+  - label: ":android::react: (New Arch) - RN .76 + Android: Demo app"
     command:
       - "nvm install"
       - "./scripts/demo-projects.android.sh"
