@@ -1,4 +1,4 @@
-  - label: ":android::detox: RN .75 + Android: Tests app"
+  - label: ":android::detox: Old Arch - RN .75 + Android: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.android.sh"
