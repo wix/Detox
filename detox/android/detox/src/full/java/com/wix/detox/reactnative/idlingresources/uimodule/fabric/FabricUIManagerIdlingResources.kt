@@ -3,9 +3,12 @@ package com.wix.detox.reactnative.idlingresources.uimodule.fabric
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.common.UIManagerType
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.ConcurrentLinkedQueue
+
 
 class FabricUIManagerIdlingResources(
     private val reactContext: ReactContext
@@ -45,7 +48,8 @@ class FabricUIManagerIdlingResources(
     }
 
     private fun getMountItemDispatcher(): Any {
-        val mountItemDispatcher = Reflect.on(reactContext.fabricUIManager).field("mMountItemDispatcher").get<Any>()
+        val fabricUIManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)
+        val mountItemDispatcher = Reflect.on(fabricUIManager).field("mMountItemDispatcher").get<Any>()
         return mountItemDispatcher
     }
 

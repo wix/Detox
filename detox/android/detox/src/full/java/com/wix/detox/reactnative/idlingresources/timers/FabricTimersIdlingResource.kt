@@ -3,7 +3,6 @@ package com.wix.detox.reactnative.idlingresources.timers
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.internal.AndroidChoreographerProvider.getChoreographer
 import com.facebook.react.modules.core.JavaTimerManager
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
@@ -12,6 +11,7 @@ import kotlin.reflect.jvm.isAccessible
 
 class FabricTimersIdlingResource(
     private val reactContext: ReactContext,
+    private val getChoreographer: () -> Choreographer = { Choreographer.getInstance() }
 ) : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     override fun checkIdle(): Boolean {
