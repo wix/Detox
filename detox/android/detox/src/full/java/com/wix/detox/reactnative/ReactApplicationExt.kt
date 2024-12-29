@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
 import org.joor.Reflect
 
 
@@ -25,5 +26,5 @@ fun ReactApplication.getCurrentReactContextSafe(): ReactContext? {
  * A method to check if Fabric is enabled in the React Native application.
  */
 fun ReactApplication.isFabricEnabled(): Boolean {
-    return Reflect.on(reactNativeHost).call("getUIManagerProvider") != null
+    return DefaultNewArchitectureEntryPoint.fabricEnabled
 }
