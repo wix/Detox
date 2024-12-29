@@ -26,6 +26,35 @@ function getGradleVersionByRNVersion() {
 function patchGradleByRNVersion() {
   updateGradleWrapperSync();
   patchSettingsGradle();
+  patchGradlePropertiesSync();
+}
+
+/**
+ * By default gralde.properties has new arch enabled. Disable it by adding evn var
+ */
+function patchGradlePropertiesSync() {
+  // Read the evn var to check if the new arch is enabled
+  let isNewArch;
+
+  if (!process.env.ENABLE_NEW_ARCH) {
+    // If the env var is not set, enable the new arch by default
+    isNewArch = true;
+  } else {
+    isNewArch = process.env.ENABLE_NEW_ARCH === 'true';
+  }
+
+  if (!isNewArch) {
+    try {
+      const gradleProperties = path.join(process.cwd(), 'android', 'gradle.properties');
+      console.log(`Patching gradle.properties. File: ${gradleProperties}`);
+      const data = fs.readFileSync(gradleProperties, 'utf8');
+      const updatedData = data.replace('newArchEnabled=true', 'newArchEnabled=false');
+      fs.writeFileSync(gradleProperties, updatedData, 'utf8');
+      console.log('gradle.properties patched successfully.');
+    } catch (e) {
+      console.error('Error:', e);
+    }
+  }
 }
 
 /**

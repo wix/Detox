@@ -6,6 +6,7 @@
       REACT_NATIVE_VERSION: 0.75.4
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
+      ENABLE_NEW_ARCH: false
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
