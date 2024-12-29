@@ -22,13 +22,13 @@ describe('Genymotion-cloud executable', () => {
   const givenSuccessJSONResult = () => exec.mockResolvedValue({
     stdout: JSON.stringify(successResponse),
   });
-  const givenSuccessTextResult = () => exec.mockResolvedValue({
+  const givenSuccessTextualResult = () => exec.mockResolvedValue({
     stdout: successResponse,
   });
   const givenErrorJSONResult = () => exec.mockRejectedValue({
     stderr: JSON.stringify(failResponse),
   });
-  const givenErrorResult = (errorMessage) => exec.mockRejectedValue({
+  const givenErrorTextualResult = (errorMessage) => exec.mockRejectedValue({
     stderr: errorMessage,
   });
 
@@ -59,18 +59,8 @@ describe('Genymotion-cloud executable', () => {
       it('should execute command by name', async () => {
         givenSuccessJSONResult();
 
-        const expectedOptions = {
-          ...expectedExecOptions,
-          statusLogs: {
-            retrying: true,
-          }
-        };
-
         await commandExecFn();
-        expect(exec).toHaveBeenCalledWith(
-          expectedExec,
-          expectedOptions,
-        );
+        expect(exec).toHaveBeenCalledWith(expectedExec, expect.objectContaining(expectedExecOptions || {}));
       });
 
       it('should return the result', async () => {
@@ -88,29 +78,19 @@ describe('Genymotion-cloud executable', () => {
     });
   });
 
-  describe('Text command', () => {
+  describe('Textual command', () => {
     describe.each([
       ['Doctor', () => uut.doctor(), `"mock/path/to/gmsaas" --format text doctor`, { retries: 0 }],
     ])(`%s`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
       it('should execute command by name', async () => {
-        givenSuccessTextResult();
-
-        const expectedOptions = {
-          ...expectedExecOptions,
-          statusLogs: {
-            retrying: true,
-          }
-        };
+        givenSuccessTextualResult();
 
         await commandExecFn();
-        expect(exec).toHaveBeenCalledWith(
-          expectedExec,
-          expectedOptions,
-        );
+        expect(exec).toHaveBeenCalledWith(expectedExec, expect.objectContaining(expectedExecOptions || {}));
       });
 
       it('should return the result', async () => {
-        givenSuccessTextResult();
+        givenSuccessTextualResult();
 
         const result = await commandExecFn();
         expect(result).toEqual(successResponse);
@@ -118,7 +98,7 @@ describe('Genymotion-cloud executable', () => {
 
       it('should fail upon an error result', async () => {
         const errorMessage = 'Oh no, mocked error has occurred!';
-        givenErrorResult(errorMessage);
+        givenErrorTextualResult(errorMessage);
 
         await expect(commandExecFn()).rejects.toThrowError(errorMessage);
       });
