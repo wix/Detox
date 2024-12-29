@@ -7,12 +7,6 @@ function getGradleVersionByRNVersion() {
   switch (rnMinor) {
     default:
       return '8.10.2';
-    case '75':
-      return '8.8';
-    case '74':
-      return '8.6';
-    case '73':
-      return '8.3';
     case '72':
       return '8.0';
     case '71':
