@@ -7,7 +7,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.TimingModule
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 
-const val BUSY_WINDOW_THRESHOLD: Long = 1500L
+const val BUSY_WINDOW_THRESHOLD: kotlin.Long = 1500L
 
 class TimersIdlingResource @JvmOverloads constructor(
     reactContext: ReactContext,
@@ -40,9 +40,5 @@ class TimersIdlingResource @JvmOverloads constructor(
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
-    }
-
-    companion object {
-        private const val LOG_TAG = "TimersIdlingResource"
     }
 }
