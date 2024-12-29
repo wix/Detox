@@ -147,6 +147,9 @@ dependencies {
     api('androidx.test.uiautomator:uiautomator:2.2.0') {
         because 'Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
+    api('androidx.test:core-ktx:1.6.1') {
+        because 'Needed by Detox but also makes AndroidX test core seamlessly provided to Detox users with hybrid apps/E2E-tests.'
+    }
 }
 
 // Third-party/extension deps.

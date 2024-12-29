@@ -42,9 +42,6 @@
                   </RNCWebView>
                 </RNCWebViewWrapper>
               </ReactViewGroup>
-              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
-                <DebuggingOverlay class="com.facebook.react.views.debuggingoverlay.DebuggingOverlay" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
-              </ReactViewGroup>
             </ReactSurfaceView>
           </ContentFrameLayout>
         </FitWindowsLinearLayout>

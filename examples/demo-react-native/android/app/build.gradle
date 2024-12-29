@@ -78,5 +78,4 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
 }
