@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupNotifications()
         setupScreenManager()
         setupApplicationStateObservers()
+        setupShakeDetection()
 
         return true
     }
@@ -45,10 +46,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupNotifications() {
-        // Set ourselves as the UNUserNotificationCenter delegate
         UNUserNotificationCenter.current().delegate = self
 
-        // Example: Listen for a custom "ChangeScreen" event
         NotificationCenter.default.addObserver(
             forName: Notification.Name("ChangeScreen"),
             object: nil,
@@ -60,6 +59,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupScreenManager() {
         screenManager = NativeScreenManager(window: window)
+    }
+
+    private func setupShakeDetection() {
+        UIViewController.swizzleMotionEnded()
     }
 }
 
