@@ -1,6 +1,5 @@
 import UIKit
 import React
-import CoreSpotlight
 
 // MARK: - App Delegate
 @UIApplicationMain
@@ -21,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupReactNative(with: launchOptions)
         setupNotifications()
         setupScreenManager()
+        setupApplicationStateObservers()
 
         return true
     }
@@ -60,23 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupScreenManager() {
         screenManager = NativeScreenManager(window: window)
-    }
-}
-
-// MARK: - URL and Universal Links Handling
-extension AppDelegate {
-    func application(_ app: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return RCTLinkingManager.application(app, open: url, options: options)
-    }
-
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        return RCTLinkingManager.application(application,
-                                             continue: userActivity,
-                                             restorationHandler: restorationHandler)
     }
 }
 

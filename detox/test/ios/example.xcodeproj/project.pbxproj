@@ -24,9 +24,19 @@
 		608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */; };
 		608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
 		608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
-		608868D22D1D696E0070D199 /* InAppNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* InAppNotificationView.swift */; };
-		608868D32D1D696E0070D199 /* InAppNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* InAppNotificationView.swift */; };
+		608868D22D1D696E0070D199 /* OverlayMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* OverlayMessageView.swift */; };
+		608868D32D1D696E0070D199 /* OverlayMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* OverlayMessageView.swift */; };
 		609DDB892D10C21800028574 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609DDB852D10C20800028574 /* Detox.framework */; };
+		60E207962D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207902D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift */; };
+		60E207972D21B0B400E6DBD2 /* AppDelegate+Linking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207912D21B0B400E6DBD2 /* AppDelegate+Linking.swift */; };
+		60E207982D21B0B400E6DBD2 /* AppDelegate+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207922D21B0B400E6DBD2 /* AppDelegate+Notifications.swift */; };
+		60E207992D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207932D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift */; };
+		60E2079A2D21B0B400E6DBD2 /* AppDelegate+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207942D21B0B400E6DBD2 /* AppDelegate+Shake.swift */; };
+		60E2079B2D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207902D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift */; };
+		60E2079C2D21B0B400E6DBD2 /* AppDelegate+Linking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207912D21B0B400E6DBD2 /* AppDelegate+Linking.swift */; };
+		60E2079D2D21B0B400E6DBD2 /* AppDelegate+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207922D21B0B400E6DBD2 /* AppDelegate+Notifications.swift */; };
+		60E2079E2D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207932D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift */; };
+		60E2079F2D21B0B400E6DBD2 /* AppDelegate+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E207942D21B0B400E6DBD2 /* AppDelegate+Shake.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90CCD0BA1322566EB1285DC2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		CA25A6405AF58BA742F7FD47 /* libPods-example-ci.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB0FE045763B5363B2E7054 /* libPods-example-ci.a */; };
@@ -71,17 +81,18 @@
 		608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeScreenManager.swift; sourceTree = "<group>"; };
 		608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboardDelegate.swift; sourceTree = "<group>"; };
 		608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactModulesBridge.m; sourceTree = "<group>"; };
-		608868D12D1D696E0070D199 /* InAppNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotificationView.swift; sourceTree = "<group>"; };
+		608868D12D1D696E0070D199 /* OverlayMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMessageView.swift; sourceTree = "<group>"; };
 		609DDB772D10C20700028574 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = /Users/asafk/Development/Detox/detox/ios/Detox.xcodeproj; sourceTree = "<absolute>"; };
+		60E207902D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+ApplicationState.swift"; sourceTree = "<group>"; };
+		60E207912D21B0B400E6DBD2 /* AppDelegate+Linking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Linking.swift"; sourceTree = "<group>"; };
+		60E207922D21B0B400E6DBD2 /* AppDelegate+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Notifications.swift"; sourceTree = "<group>"; };
+		60E207932D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+OverlayView.swift"; sourceTree = "<group>"; };
+		60E207942D21B0B400E6DBD2 /* AppDelegate+Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Shake.swift"; sourceTree = "<group>"; };
 		80C930B7D5D6C25DA27372A5 /* Pods-example-ci.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-ci.release.xcconfig"; path = "Target Support Files/Pods-example-ci/Pods-example-ci.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = example/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-example-exampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-exampleTests.release.xcconfig"; path = "Target Support Files/Pods-example-exampleTests/Pods-example-exampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		608868CB2D1D67DA0070D199 /* AppDelegate Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "AppDelegate Extensions"; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
@@ -108,7 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				6088689A2D1A9F070070D199 /* AppDelegate.swift */,
-				608868CB2D1D67DA0070D199 /* AppDelegate Extensions */,
+				60E207952D21B0B400E6DBD2 /* AppDelegate Extensions */,
 				60493BD72D10D967002853A0 /* example.entitlements */,
 				6088689B2D1A9F070070D199 /* example-Bridging-Header.h */,
 				6088689C2D1A9F070070D199 /* example-ci-Bridging-Header.h */,
@@ -146,9 +157,9 @@
 		608868B12D1AA1FB0070D199 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				608868D12D1D696E0070D199 /* InAppNotificationView.swift */,
 				608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */,
 				608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */,
+				608868D12D1D696E0070D199 /* OverlayMessageView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -160,6 +171,18 @@
 				609DDB872D10C20800028574 /* DetoxUserNotificationTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		60E207952D21B0B400E6DBD2 /* AppDelegate Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				60E207902D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift */,
+				60E207912D21B0B400E6DBD2 /* AppDelegate+Linking.swift */,
+				60E207922D21B0B400E6DBD2 /* AppDelegate+Notifications.swift */,
+				60E207932D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift */,
+				60E207942D21B0B400E6DBD2 /* AppDelegate+Shake.swift */,
+			);
+			path = "AppDelegate Extensions";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -225,9 +248,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				608868CB2D1D67DA0070D199 /* AppDelegate Extensions */,
-			);
 			name = example;
 			productName = example;
 			productReference = 13B07F961A680F5B00A75B9A /* example.app */;
@@ -248,9 +268,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				608868CB2D1D67DA0070D199 /* AppDelegate Extensions */,
 			);
 			name = "example-ci";
 			productName = example;
@@ -490,11 +507,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60E207962D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift in Sources */,
+				60E207972D21B0B400E6DBD2 /* AppDelegate+Linking.swift in Sources */,
+				60E207982D21B0B400E6DBD2 /* AppDelegate+Notifications.swift in Sources */,
+				60E207992D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift in Sources */,
+				60E2079A2D21B0B400E6DBD2 /* AppDelegate+Shake.swift in Sources */,
 				608868A32D1A9F070070D199 /* NativeModule.swift in Sources */,
 				608868A42D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
 				608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
 				608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
-				608868D32D1D696E0070D199 /* InAppNotificationView.swift in Sources */,
+				608868D32D1D696E0070D199 /* OverlayMessageView.swift in Sources */,
 				608868A52D1A9F070070D199 /* AppDelegate.swift in Sources */,
 				608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);
@@ -504,11 +526,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60E2079B2D21B0B400E6DBD2 /* AppDelegate+ApplicationState.swift in Sources */,
+				60E2079C2D21B0B400E6DBD2 /* AppDelegate+Linking.swift in Sources */,
+				60E2079D2D21B0B400E6DBD2 /* AppDelegate+Notifications.swift in Sources */,
+				60E2079E2D21B0B400E6DBD2 /* AppDelegate+OverlayView.swift in Sources */,
+				60E2079F2D21B0B400E6DBD2 /* AppDelegate+Shake.swift in Sources */,
 				608868A02D1A9F070070D199 /* NativeModule.swift in Sources */,
 				608868A12D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
 				608868AC2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
 				608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
-				608868D22D1D696E0070D199 /* InAppNotificationView.swift in Sources */,
+				608868D22D1D696E0070D199 /* OverlayMessageView.swift in Sources */,
 				608868A22D1A9F070070D199 /* AppDelegate.swift in Sources */,
 				608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);

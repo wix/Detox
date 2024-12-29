@@ -15,7 +15,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler([.list, .banner, .badge, .sound])
 
         let title = notification.request.content.title
-        showInAppNotification(withTitle: title)
+        showOverlayMessage(withMessage: title)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -23,37 +23,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
 
         let title = response.notification.request.content.title
-        showInAppNotification(withTitle: title)
+        showOverlayMessage(withMessage: title)
 
         completionHandler()
-    }
-}
-
-// MARK: - Private Helpers
-
-extension AppDelegate {
-
-    /// Displays the custom in-app notification banner on top of the React Native content view
-    private func showInAppNotification(withTitle title: String) {
-
-        let bannerView = InAppNotificationView(title: title)
-
-        guard
-            let rootView = window?.rootViewController?.view as? RCTRootView,
-            let contentView = rootView.value(forKey: "contentView") as? UIView
-        else {
-            return
-        }
-
-        contentView.addSubview(bannerView)
-
-        NSLayoutConstraint.activate([
-            bannerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            bannerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            bannerView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            bannerView.heightAnchor.constraint(equalToConstant: 60)
-        ])
-
-        contentView.bringSubviewToFront(bannerView)
     }
 }
