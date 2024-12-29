@@ -4,7 +4,7 @@ enum class IdlingResourcesName {
     Timers,
     AsyncStorage,
     RNBridge,
-    UIModule,
+    UI,
     Animations,
     Network
 }

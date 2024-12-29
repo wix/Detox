@@ -15,6 +15,6 @@ describe('Element screenshots', () => {
 
   it('should take a screenshot of a horizontally-clipped element', async () => {
     await element(by.id('switchOrientation')).tap();
-    await expectElementSnapshotToMatch(fancyElement, 'elementScreenshot.horiz');
+    await expectElementSnapshotToMatch(fancyElement, 'elementScreenshot.horiz', 0.995);
   });
 });

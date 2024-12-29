@@ -14,7 +14,7 @@ class ArtisticRectangle extends Component {
     const paddingHorizontal = this.props.borderSizeH;
     const paddingVertical = this.props.borderSizeV;
     return (
-      <View testID={this.props.testID}>
+      <View testID={this.props.testID} accessible={true}>
         <View style={{paddingHorizontal, paddingVertical, backgroundColor: 'cyan'}}>
           <View style={{paddingHorizontal, paddingVertical, backgroundColor: 'magenta'}}>
             <View style={{paddingHorizontal, paddingVertical, backgroundColor: 'yellow'}}>

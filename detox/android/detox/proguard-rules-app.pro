@@ -1,10 +1,18 @@
 -keepattributes InnerClasses, Exceptions
 
+-keep class com.facebook.react.fabric.FabricUIManager { *; }
+-keep class com.facebook.react.fabric.mounting.MountItemDispatcher { *; }
 -keep class com.facebook.react.modules.** { *; }
 -keep class com.facebook.react.uimanager.** { *; }
 -keep class com.facebook.react.animated.** { *; }
 -keep class com.facebook.react.ReactApplication { *; }
 -keep class com.facebook.react.ReactNativeHost { *; }
+-keep class com.facebook.react.ReactHost { *; }
+-keep class com.facebook.react.runtime.ReactHostImpl { *; }
+-keep class com.facebook.react.runtime.BridgelessReactContext { *; }
+-keep class com.facebook.react.runtime.ReactInstance { *; }
+-keep class com.facebook.react.modules.core.JavaTimerManager { *; }
+
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
 -keep class com.facebook.react.ReactInstanceEventListener { *; }
@@ -18,6 +26,10 @@
 -keep class com.reactnativecommunity.asyncstorage.** { *; }
 
 -keep class kotlin.reflect.** { *; }
+-keep class kotlin.KotlinVersion { *; }
+-keep class kotlin.sequences.** { *; }
+-keep class kotlin.Triple { *; }
+-keep class kotlin.properties.** { *; }
 -keep class kotlin.coroutines.CoroutineDispatcher { *; }
 -keep class kotlin.coroutines.CoroutineScope { *; }
 -keep class kotlin.coroutines.CoroutineContext { *; }

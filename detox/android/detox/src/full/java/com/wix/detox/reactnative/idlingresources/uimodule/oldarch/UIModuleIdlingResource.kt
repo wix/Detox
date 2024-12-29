@@ -1,8 +1,8 @@
-package com.wix.detox.reactnative.idlingresources.uimodule
+package com.wix.detox.reactnative.idlingresources.uimodule.oldarch
 
 import android.util.Log
 import android.view.Choreographer
-import androidx.test.espresso.IdlingResource.ResourceCallback
+import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
@@ -30,7 +30,10 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
                 return false
             }
 
-            if (RNHelpers.getNativeModule(reactContext, "com.facebook.react.uimanager.UIManagerModule") == null) {
+            if (RNHelpers.getNativeModule(
+                    reactContext,
+                    "com.facebook.react.uimanager.UIManagerModule"
+                ) == null) {
                 notifyIdle()
                 return true
             }
@@ -54,7 +57,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
         return true
     }
 
-    override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
+    override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
     }
