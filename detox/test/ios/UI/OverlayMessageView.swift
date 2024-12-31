@@ -45,6 +45,8 @@ class OverlayMessageView: UIView {
         addSubview(closeButton)
 
         NSLayoutConstraint.activate([
+            heightAnchor.constraint(equalToConstant: 60),
+
             messageLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             messageLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             messageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 40),
@@ -58,7 +60,7 @@ class OverlayMessageView: UIView {
 
         closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
 
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
             self?.removeFromSuperview()
         }
     }
