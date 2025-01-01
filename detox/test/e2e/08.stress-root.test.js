@@ -10,7 +10,7 @@ describe('StressRoot', () => {
 
   it('should switch root view controller from RN to native', async () => {
     await element(by.text('Switch to a new native root')).tap();
-    await expect(element(by.text('This is a new native root'))).toBeVisible();
+    await expect(element(by.text('this is a new native root'))).toBeVisible();
   });
 
   it(':ios: should switch root view controller from RN to RN', async () => {
