@@ -1,13 +1,14 @@
 const axios = require('axios');
 const PromptHandler = require("./PromptHandler");
 
-const describeOrDescribeSkip = process.env.CI === 'true' ? describe.skip : describe;
-
 describeForCopilotEnv = (description, fn) => {
-  describeOrDescribeSkip(':ios: Copilot', () => {
+  const isCI = process.env.CI === 'true';
+  const describeOrDescribeSkipIfCI = isCI ? describe.skip : describe;
+
+  describeOrDescribeSkipIfCI(':ios: Copilot', () => {
     describe(description, () => {
       beforeAll(async () => {
-        if (!await checkVpnStatus()) {
+        if (!await _checkVpnStatus()) {
           console.warn('Cannot access the LLM service without Wix BO environment. Relying on cached responses only.');
         }
         try {
@@ -25,7 +26,7 @@ describeForCopilotEnv = (description, fn) => {
   });
 };
 
-checkVpnStatus = async () => {
+_checkVpnStatus = async () => {
   try {
     const response = await axios.get('https://bo.wix.com/_serverless/expert-toolkit/checkVpn');
     return response.data.enabled === true;
@@ -35,6 +36,22 @@ checkVpnStatus = async () => {
   }
 };
 
+describeNewArchNotSupported = (description, fn) => {
+  const isNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
+  const describeOrDescribeSkipIfNewArch = isNewArch ? describe.skip : describe;
+
+  if (isNewArch) {
+    console.warn('Skipping tests for new architecture, as there are issues related to the new architecture.');
+  }
+
+  describeOrDescribeSkipIfNewArch('Legacy Arch (Paper)', () => {
+    describe(description, () => {
+      fn();
+    });
+  });
+}
+
 module.exports = {
-  describeForCopilotEnv
+  describeForCopilotEnv,
+  describeNewArchNotSupported
 };
