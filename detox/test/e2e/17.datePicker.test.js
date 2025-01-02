@@ -1,6 +1,7 @@
+const { describeNewArchNotSupported } = require('./utils/custom-describes');
 const jestExpect = require('expect').default;
 
-describe('DatePicker', () => {
+describeNewArchNotSupported('DatePicker', () => {
   describe.each([
     ['ios', 'compact', 0],
     ['ios', 'inline', 1],
