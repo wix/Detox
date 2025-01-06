@@ -1,6 +1,4 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
-
-describeForCopilotEnv('Shape Match Game Screen', () => {
+describe.forCopilot('Shape Match Game Screen', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Reset react native state',

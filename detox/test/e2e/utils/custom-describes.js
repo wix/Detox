@@ -1,11 +1,22 @@
 const axios = require('axios');
 const PromptHandler = require("./PromptHandler");
 
-describeForCopilotEnv = (description, fn) => {
+describe.skipIfCI = (title, fn) => {
   const isCI = process.env.CI === 'true';
-  const describeOrDescribeSkipIfCI = isCI ? describe.skip : describe;
+  return isCI ? describe.skip(title, fn) : describe(title, fn);
+};
 
-  describeOrDescribeSkipIfCI(':ios: Copilot', () => {
+describe.skipIfNewArch = (title, fn) => {
+  const isNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
+  if (isNewArch) {
+    console.warn('Skipping tests for new architecture, as there are issues related to the new architecture.');
+    return describe.skip(title, fn);
+  }
+  return describe(title, fn);
+};
+
+describe.forCopilot = (description, fn) => {
+  return describe.skipIfCI(':ios: Copilot', () => {
     describe(description, () => {
       beforeAll(async () => {
         if (!await _checkVpnStatus()) {
@@ -15,6 +26,7 @@ describeForCopilotEnv = (description, fn) => {
           await copilot.init(new PromptHandler());
         } catch (error) {
           if (error.message.includes('Copilot has already been initialized')) {
+            // Ignore already initialized error
           } else {
             throw error;
           }
@@ -26,7 +38,7 @@ describeForCopilotEnv = (description, fn) => {
   });
 };
 
-_checkVpnStatus = async () => {
+const _checkVpnStatus = async () => {
   try {
     const response = await axios.get('https://bo.wix.com/_serverless/expert-toolkit/checkVpn');
     return response.data.enabled === true;
@@ -34,24 +46,4 @@ _checkVpnStatus = async () => {
     console.error('Error checking VPN status:', error.message);
     return false;
   }
-};
-
-describeNewArchNotSupported = (description, fn) => {
-  const isNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
-  const describeOrDescribeSkipIfNewArch = isNewArch ? describe.skip : describe;
-
-  if (isNewArch) {
-    console.warn('Skipping tests for new architecture, as there are issues related to the new architecture.');
-  }
-
-  describeOrDescribeSkipIfNewArch('Legacy Arch (Paper)', () => {
-    describe(description, () => {
-      fn();
-    });
-  });
-}
-
-module.exports = {
-  describeForCopilotEnv,
-  describeNewArchNotSupported
 };

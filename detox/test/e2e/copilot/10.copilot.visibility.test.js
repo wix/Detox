@@ -1,7 +1,6 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
 const { default: jestExpect } = require('expect');
 
-describeForCopilotEnv('Visibility', () => {
+describe.forCopilot('Visibility', () => {
   describe('Visibility Expectation', () => {
     beforeEach(async () => {
       await copilot.perform(

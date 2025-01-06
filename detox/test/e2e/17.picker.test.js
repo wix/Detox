@@ -1,6 +1,4 @@
-const { describeNewArchNotSupported } = require('./utils/custom-describes');
-
-describeNewArchNotSupported(":ios: Picker", () => {
+describe.skipIfNewArch(":ios: Picker", () => {
     beforeEach(async () => {
       await device.reloadReactNative();
       await element(by.text("Picker")).tap();

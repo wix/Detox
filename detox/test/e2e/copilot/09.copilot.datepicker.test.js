@@ -1,8 +1,7 @@
-const { describeForCopilotEnv, describeNewArchNotSupported } = require('../utils/custom-describes');
 const { default: jestExpect } = require('expect');
 
-describeNewArchNotSupported('DatePicker', () => {
-  describeForCopilotEnv('Copilot', () => {
+describe.skipIfNewArch('DatePicker', () => {
+  describe.forCopilot('Copilot', () => {
     beforeEach(async () => {
       await copilot.perform(
         'Restart the React Native state',
