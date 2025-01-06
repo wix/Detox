@@ -6,15 +6,14 @@ const detoxCopilotFrameworkDriver = require('./detoxCopilotFrameworkDriver');
  * @typedef {Object} Detox.DetoxCopilotFacade
  */
 class DetoxCopilot {
+  perform = copilot.perform;
+  extendAPICatalog = copilot.extendAPICatalog;
+
   init(promptHandler) {
     copilot.init({
       frameworkDriver: detoxCopilotFrameworkDriver,
       promptHandler: promptHandler
     });
-  }
-
-  perform(...steps) {
-    return copilot.perform(...steps);
   }
 }
 
