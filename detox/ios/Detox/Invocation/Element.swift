@@ -73,19 +73,28 @@ class Element : NSObject {
 		return element
 	}
 	
-	private func extractScrollView() -> UIScrollView {
-		if let view = self.view as? UIScrollView {
-			return view
-		}
-		else if let view = self.view as? WKWebView {
-			return view.scrollView
-		} else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollView" {
-			return (view.value(forKey: "scrollView") as! UIScrollView)
-		}
-		
-		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
-	}
-	
+    private func extractScrollView() -> UIScrollView {
+        if let view = self.view as? UIScrollView {
+            return view
+        }
+
+        if let webView = self.view as? WKWebView {
+            return webView.scrollView
+        }
+
+        if ReactNativeSupport.isReactNativeApp {
+            let className = NSStringFromClass(type(of: view))
+            switch className {
+                case "RCTScrollView", "RCTScrollViewComponentView":
+                    return (view.value(forKey: "scrollView") as! UIScrollView)
+                default:
+                    break
+            }
+        }
+
+        dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
+    }
+
 	override var description: String {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}

@@ -1,7 +1,6 @@
-const { describeForCopilotEnv } = require('../utils/custom-describes');
 const jestExpect = require('expect').default;
 
-describeForCopilotEnv('Assertions', () => {
+describe.forCopilot('Assertions', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Restart the React Native state',

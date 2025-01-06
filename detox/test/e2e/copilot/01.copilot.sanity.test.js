@@ -1,6 +1,4 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
-
-describeForCopilotEnv('Copilot Sanity', () => {
+describe.forCopilot('Copilot Sanity', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Restart the React Native state',
