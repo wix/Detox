@@ -1,6 +1,6 @@
 const { default: jestExpect } = require('expect');
 
-describe.skipIfNewArch('DatePicker', () => {
+describe.skipIfNewArchOnIOS('DatePicker', () => {
   describe.forCopilot('Copilot', () => {
     beforeEach(async () => {
       await copilot.perform(

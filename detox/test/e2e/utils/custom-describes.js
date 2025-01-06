@@ -6,9 +6,9 @@ describe.skipIfCI = (title, fn) => {
   return isCI ? describe.skip(title, fn) : describe(title, fn);
 };
 
-describe.skipIfNewArch = (title, fn) => {
+describe.skipIfNewArchOnIOS = (title, fn) => {
   const isNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
-  if (isNewArch) {
+  if (isNewArch && device.getPlatform() === 'ios') {
     console.warn('Skipping tests for new architecture, as there are issues related to the new architecture.');
     return describe.skip(title, fn);
   }
