@@ -5,7 +5,7 @@ describeForCopilotEnv('Extend api catalog', () => {
   it('should run the new context', async () => {
     const dummyFunction = jest.fn();
 
-    const newCategory = [{
+    const newCategory = {
       title: 'Dummies',
       items: [
         {
@@ -14,7 +14,7 @@ describeForCopilotEnv('Extend api catalog', () => {
           example: 'dummyFunction()'
         }
       ]
-    }];
+    };
 
     copilot.extendAPICatalog(newCategory, { dummyFunction });
 
