@@ -7,6 +7,11 @@ import okhttp3.OkHttpClient
 import org.joor.Reflect
 import org.joor.ReflectException
 
+
+private const val LOG_TAG = "RNNetworkingModuleRefl"
+
+private const val FIELD_OKHTTP_CLIENT = "mClient"
+
 internal class NetworkingModuleReflected(private val reactContext: ReactContext) {
     fun getHttpClient(): OkHttpClient? {
         val networkNativeModule = reactContext.getNativeModule(NetworkingModule::class.java)
@@ -16,11 +21,5 @@ internal class NetworkingModuleReflected(private val reactContext: ReactContext)
             Log.e(LOG_TAG, "Can't set up Networking Module listener", e)
             return null
         }
-    }
-
-    companion object {
-        private const val LOG_TAG = "RNNetworkingModuleRefl"
-
-        private const val FIELD_OKHTTP_CLIENT = "mClient"
     }
 }
