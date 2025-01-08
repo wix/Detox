@@ -5,7 +5,7 @@
 
 import UIKit
 
-class OverlayMessageView: UIView {
+@objc class OverlayMessageView: UIView {
 
     private let messageLabel: UILabel = {
         let label = UILabel()

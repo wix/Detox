@@ -160,20 +160,20 @@ class NativeModule: NSObject, RCTBridgeModule {
 
     private func getCurrentBridge() -> RCTBridge? {
         guard let delegate = UIApplication.shared.delegate as? AppDelegate,
-              let window = delegate.window,
-              let rootView = window.rootViewController?.view as? RCTRootView else {
+              let rootView = delegate.window.rootViewController?.view as? RCTRootView else {
             return nil
         }
+
         return rootView.bridge
     }
 
     private func updateRootViewController(_ viewController: UIViewController) {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate,
-              let window = delegate.window else {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             return
         }
-        window.rootViewController = viewController
-        window.makeKeyAndVisible()
+
+        delegate.window.rootViewController = viewController
+        delegate.window.makeKeyAndVisible()
     }
 
     private func setupAndShowOverlayWindow() {
@@ -187,6 +187,7 @@ class NativeModule: NSObject, RCTBridgeModule {
 
     private func setupAndShowOverlayView() {
         guard let keyWindow = UIApplication.shared.keyWindow else { return }
+        
         let screenBounds = UIScreen.main.bounds
         overlayView = UIView(frame: screenBounds)
         overlayView?.isUserInteractionEnabled = true

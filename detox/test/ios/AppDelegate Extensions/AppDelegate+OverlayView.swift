@@ -6,10 +6,10 @@
 import UIKit
 import React
 
-extension AppDelegate {
+@objc extension AppDelegate {
     private var overlayStackView: UIStackView? {
         guard
-            let rootView = window?.rootViewController?.view as? RCTRootView,
+            let rootView = window.rootViewController?.view as? RCTRootView,
             let contentView = rootView.value(forKey: "contentView") as? UIView
         else {
             return nil
@@ -39,9 +39,9 @@ extension AppDelegate {
         return stackView
     }
 
-    func showOverlayMessage(withMessage message: String) {
+    @objc public func showOverlayMessageWithMessage(_ message: String) {
         guard
-            let rootView = window?.rootViewController?.view as? RCTRootView,
+            let rootView = window.rootViewController?.view as? RCTRootView,
             let contentView = rootView.value(forKey: "contentView") as? UIView
         else {
             return

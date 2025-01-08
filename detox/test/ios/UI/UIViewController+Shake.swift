@@ -8,7 +8,7 @@ import React
 
 extension UIViewController {
 
-    static func swizzleMotionEnded() {
+    @objc static func swizzleMotionEnded() {
         guard let originalMethod = class_getInstanceMethod(UIViewController.self, #selector(motionEnded(_:with:))),
               let swizzledMethod = class_getInstanceMethod(UIViewController.self, #selector(swizzled_motionEnded(_:with:))
               ) else { return }
