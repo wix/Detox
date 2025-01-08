@@ -7,5 +7,4 @@
 #import <React/RCTBridge.h>
 #import <React/RCTEventEmitter.h>
 
-#endif /* example_Bridging_Header_h */
-
+#endif
