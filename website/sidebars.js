@@ -55,7 +55,6 @@ const sidebars = {
       items: [
         'copilot/testing-with-copilot',
         'copilot/best-practices',
-        'copilot/technical-overview',
       ]
     },
     {
