@@ -2,7 +2,6 @@
 
 In this tutorial, we'll explore how to use **Detox Copilot** to write end-to-end tests using natural language commands. Detox Copilot leverages large language models (LLMs) to translate human-readable instructions into Detox actions and assertions, making test writing more intuitive and accessible.
 
-
 :::note
 
 Copilot now has a new [documentation site](https://wix-incubator.github.io/detox-copilot/).<br/>
