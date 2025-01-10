@@ -85,7 +85,7 @@ class Element : NSObject {
         if ReactNativeSupport.isReactNativeApp {
             let className = NSStringFromClass(type(of: view))
             switch className {
-                case "RCTScrollView", "RCTScrollViewComponentView":
+                case "RCTScrollView", "RCTScrollViewComponentView", "RCTEnhancedScrollView":
                     return (view.value(forKey: "scrollView") as! UIScrollView)
                 default:
                     break
