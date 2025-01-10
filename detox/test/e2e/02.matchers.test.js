@@ -57,7 +57,8 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
+    const iOSClass = process.env.RCT_NEW_ARCH_ENABLED === '1' ? 'RCTImageComponentView' : 'RCTImageView';
+    const byType = device.getPlatform() === 'ios' ? by.type(iOSClass) : by.type('android.widget.ImageView');
 
     await expect(element(byType)).toBeVisible();
     await element(byType).tap();
