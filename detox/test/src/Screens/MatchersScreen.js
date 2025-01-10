@@ -38,10 +38,10 @@ export default class MatchersScreen extends Component {
           </TouchableOpacity> : null
         }
 
-        <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}}>
-          <View testID='Father883' style={{padding: 8, backgroundColor: 'green'}}>
-            <View testID='Son883' style={{padding: 8, backgroundColor: 'blue'}}>
-              <View testID='Grandson883' style={{padding: 8, backgroundColor: 'purple'}} />
+        <View testID='Grandfather883' style={{padding: 8, backgroundColor: 'red', marginBottom: 10}} accessible={true}>
+          <View testID='Father883' style={{padding: 8, backgroundColor: 'green'}} accessible={true}>
+            <View testID='Son883' style={{padding: 8, backgroundColor: 'blue'}} accessible={true}>
+              <View testID='Grandson883' style={{padding: 8, backgroundColor: 'purple'}} accessible={true} />
             </View>
           </View>
         </View>
