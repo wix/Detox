@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+#import <CoreSpotlight/CoreSpotlight.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
@@ -116,11 +117,23 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 }
 
 - (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
-  return [RCTLinkingManager application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
+    continueUserActivity:(NSUserActivity *)userActivity
+    restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+        NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+        NSURL *url = identifier ? [NSURL URLWithString:identifier] : nil;
+
+        if (url) {
+            return [RCTLinkingManager application:application openURL:url options:@{
+                UIApplicationOpenURLOptionsSourceApplicationKey: @"",
+                UIApplicationOpenURLOptionsAnnotationKey: @{}
+            }];
+        }
+        return NO;
+    }
+
+    return [RCTLinkingManager application:application continueUserActivity:userActivity
+                       restorationHandler:restorationHandler];
 }
 
 #pragma mark - Overlay Message
