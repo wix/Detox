@@ -4,6 +4,7 @@
       - "./scripts/ci.ios.sh"
     env:
       REACT_NATIVE_VERSION: 0.73.2
+      RCT_NEW_ARCH_ENABLED: 0
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
