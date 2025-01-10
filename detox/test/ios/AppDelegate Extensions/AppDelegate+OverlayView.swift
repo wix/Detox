@@ -25,7 +25,6 @@ import React
         stackView.distribution = .equalSpacing
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false
-
         stackView.accessibilityIdentifier = "overlayStackView"
 
         contentView.addSubview(stackView)
@@ -48,9 +47,20 @@ import React
         }
 
         let stackView = overlayStackView ?? createOverlayStackView(in: contentView)
-        let messageView = OverlayMessageView(message: message)
 
-        stackView.addArrangedSubview(messageView)
+        // Check if message already exists
+        if let existingMessageView = findExistingMessageView(withMessage: message, in: stackView) {
+            existingMessageView.resetTimer()
+        } else {
+            let messageView = OverlayMessageView(message: message)
+            stackView.addArrangedSubview(messageView)
+        }
+
         contentView.bringSubviewToFront(stackView)
+    }
+
+    private func findExistingMessageView(withMessage message: String, in stackView: UIStackView) -> OverlayMessageView? {
+        return stackView.arrangedSubviews.compactMap { $0 as? OverlayMessageView }
+            .first { $0.message == message }
     }
 }
