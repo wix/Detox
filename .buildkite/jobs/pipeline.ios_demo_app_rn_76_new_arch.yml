@@ -1,4 +1,4 @@
-  - label: ":new::ios::react: RN .76 + iOS: Demo app"
+  - label: ":new::ios::react: RN .76 + New Arch + iOS: Demo app"
     command:
       - "nvm install"
       - "./scripts/demo-projects.ios.sh"
