@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const { ssim } = require('ssim.js');
 const { PNG } = require('pngjs');
+const { isRNNewArch } = require('../../../src/utils/rn-consts/rn-consts');
 
 const rnMinorVer = require('../../../src/utils/rn-consts/rn-consts').rnVersion.minor;
 const jestExpect = require('expect').default;
@@ -63,7 +64,8 @@ async function expectViewHierarchySnapshotToMatch(viewHierarchy, snapshotName) {
 }
 
 async function expectSnapshotToMatch(value, snapshotName, ignoreWhiteSpace = true) {
-  const snapshotPath = `./e2e/assets/${snapshotName}.${rnMinorVer}.${device.getPlatform()}.txt`;
+  const isNewArchString = isRNNewArch ? '.new-arch' : '';
+  const snapshotPath = `./e2e/assets/${snapshotName}.${rnMinorVer}.${device.getPlatform()}${isNewArchString}.txt`;
 
   function removeWhiteSpaces(str) {
     return str.replace(/\s/g, '');
