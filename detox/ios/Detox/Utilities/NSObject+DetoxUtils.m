@@ -324,8 +324,10 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 	if([self isKindOfClass:UISlider.class])
 	{
 		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
-	}
-	
+	} else if([[self valueForKey:@"slider"] isKindOfClass:UISlider.class]) {
+        rv[@"normalizedSliderPosition"] = @([(UISlider*)[self valueForKey:@"slider"] dtx_normalizedSliderPosition]);
+    }
+
 	if([self isKindOfClass:UIDatePicker.class])
 	{
 		UIDatePicker* dp = (id)self;

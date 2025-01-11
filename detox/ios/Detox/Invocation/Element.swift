@@ -205,7 +205,7 @@ class Element : NSObject {
 	}
 	
 	func adjust(toNormalizedSliderPosition normalizedSliderPosition: Double) {
-		guard let slider = view as? UISlider else {
+        guard let slider = view as? UISlider ?? view.value(forKey: "slider") as? UISlider else {
 			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", viewDescription: debugAttributes)
 		}
 		
@@ -270,7 +270,7 @@ class Element : NSObject {
 	@objc
 	var normalizedSliderPosition: Double {
 		get {
-			guard let slider = view as? UISlider else {
+			guard let slider = view as? UISlider ?? view.value(forKey: "slider") as? UISlider else {
 				dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", viewDescription: debugAttributes)
 			}
 			
