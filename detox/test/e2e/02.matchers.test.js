@@ -58,7 +58,7 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    const iOSClass = isRNNewArch === '1' ? 'RCTImageComponentView' : 'RCTImageView';
+    const iOSClass = isRNNewArch ? 'RCTImageComponentView' : 'RCTImageView';
     const byType = device.getPlatform() === 'ios' ? by.type(iOSClass) : by.type('android.widget.ImageView');
 
     await expect(element(byType)).toBeVisible();
