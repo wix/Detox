@@ -25,6 +25,8 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly, nullable) id accessibilityContainer;
 
 @property (nonatomic, readonly) UIView* dtx_view;
+@property (nonatomic, readonly, nullable) UISlider* dtx_sliderView;
+@property (nonatomic, readonly, nullable) UISwitch* dtx_switchView;
 
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint;
 

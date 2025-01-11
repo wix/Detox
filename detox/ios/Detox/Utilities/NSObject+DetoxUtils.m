@@ -87,6 +87,36 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     return self.dtx_viewContainer;
 }
 
+- (UISlider *)dtx_sliderView {
+    if([self isKindOfClass:UISlider.class])
+    {
+        return (id)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "slider");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return object_getIvar(self, ivar);
+}
+
+- (UISwitch *)dtx_switchView {
+    if([self isKindOfClass:UISwitch.class])
+    {
+        return (id)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_switchView");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return object_getIvar(self, ivar);
+}
+
 - (UIView*)dtx_viewContainer
 {
     if([self isKindOfClass:UIView.class])
@@ -386,7 +416,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     [windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [windowDescriptions addObject:[obj dtx_shortDescription]];
     }];
-    
+
     rv[@"windows"] = windowDescriptions;
 
     return rv;

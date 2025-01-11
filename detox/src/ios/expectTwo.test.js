@@ -530,7 +530,7 @@ describe('expectTwo', () => {
           'value': 'switch',
           'isRegex': false,
         },
-        'expectation': 'toHaveValue',
+        'expectation': 'toHaveToggleValue',
         'params': ['1']
       }
     };
