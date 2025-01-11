@@ -23,7 +23,7 @@
 
 @interface UIScrollView (DetoxScrolling)
 
-- (BOOL)_dtx_scrollViewWillEndDraggingWithDeceleration:(BOOL)arg1;
+- (void)_dtx_scrollViewWillEndDraggingWithDeceleration:(BOOL)arg1;
 @property (nonatomic, assign, setter=dtx_setDisableDecelerationForScroll:) BOOL dtx_disableDecelerationForScroll;
 
 @end
@@ -47,7 +47,7 @@ DTX_DIRECT_MEMBERS
 	return [objc_getAssociatedObject(self, "dtx_disableDecelerationForScroll") boolValue];
 }
 
-- (BOOL)_dtx_scrollViewWillEndDraggingWithDeceleration:(BOOL)arg1
+- (void)_dtx_scrollViewWillEndDraggingWithDeceleration:(BOOL)arg1
 {
 	BOOL deceleration = arg1;
 	if(self.dtx_disableDecelerationForScroll == YES &&
@@ -60,8 +60,8 @@ DTX_DIRECT_MEMBERS
 	{
 		deceleration = NO;
 	}
-	
-	return [self _dtx_scrollViewWillEndDraggingWithDeceleration:deceleration];
+
+    [self _dtx_scrollViewWillEndDraggingWithDeceleration:deceleration];
 }
 
 @end
