@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 class DetoxIdlingResourceFactory(private val reactApplication: ReactApplication) {
     suspend fun create(): Map<IdlingResourcesName, DetoxIdlingResource> = withContext(Dispatchers.Main) {
-        val strategy = if (reactApplication.isFabricEnabled()) {
+        val strategy = if (isFabricEnabled()) {
             FabricDetoxIdlingResourceFactoryStrategy(reactApplication)
         } else {
             OldArchitectureDetoxIdlingResourceFactoryStrategy(reactApplication)

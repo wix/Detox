@@ -30,7 +30,7 @@ open class ReactNativeLoadingMonitor(
         instrumentation.runOnMainSync(
             Runnable {
                 val reactContext = rnApplication.getCurrentReactContextSafe()
-                if (reactContext != null && reactContext !== previousReactContext) {
+                if (isReactNativeLoaded(reactContext)) {
                     Log.d(LOG_TAG, "Got new RN-context directly and immediately")
                     countDownLatch.countDown()
                     return@Runnable
@@ -67,7 +67,7 @@ open class ReactNativeLoadingMonitor(
                 val reactContext = rnApplication.getCurrentReactContextSafe()
 
                 // We also need to wait for rect native instance to be initialized
-                if (reactContext != null && reactContext !== previousReactContext && reactContext.hasActiveReactInstance()) {
+                if (isReactNativeLoaded(reactContext)) {
                     Log.d(LOG_TAG, "Got new RN-context explicitly while polling (#iteration=$i)")
                     break
                 }
@@ -79,8 +79,11 @@ open class ReactNativeLoadingMonitor(
         return rnApplication.getCurrentReactContextSafe()
     }
 
+    private fun isReactNativeLoaded(reactContext: ReactContext?) =
+        reactContext != null && reactContext !== previousReactContext && reactContext.hasActiveReactInstance()
+
     private fun subscribeAsyncRNContextHandler(onReactContextInitialized: () -> Any) {
-        val isFabric = rnApplication.isFabricEnabled()
+        val isFabric = isFabricEnabled()
         if (isFabric) {
             // We do a casting for supporting RN 0.75 and above
             val host = rnApplication.reactHost as ReactHostImpl?

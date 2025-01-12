@@ -11,7 +11,7 @@ class ReactNativeReloaderFactory(
 
     fun create(): ReactNativeReLoader {
         return when {
-            rnApplication.isFabricEnabled() -> NewArchitectureNativeReLoader(instrumentation, rnApplication)
+            isFabricEnabled() -> NewArchitectureNativeReLoader(instrumentation, rnApplication)
             else -> OldArchReactNativeReLoader(instrumentation, rnApplication)
         }
     }
