@@ -40,6 +40,11 @@ class FabricTimersIdlingResource(
         getChoreographer().postFrameCallback(this)
     }
 
+    override fun onUnregistered() {
+        super.onUnregistered()
+        getChoreographer().removeFrameCallback(this)
+    }
+
     override fun getDebugName(): String {
         return "FabricTimers"
     }

@@ -29,6 +29,11 @@ class FabricUIManagerIdlingResources(
         Choreographer.getInstance().postFrameCallback(this)
     }
 
+    override fun onUnregistered() {
+        super.onUnregistered()
+        Choreographer.getInstance().removeFrameCallback(this)
+    }
+
     override fun getDebugName(): String {
         return "Fabric UI"
     }

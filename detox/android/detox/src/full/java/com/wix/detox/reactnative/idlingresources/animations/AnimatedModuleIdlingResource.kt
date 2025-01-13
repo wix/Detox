@@ -1,6 +1,5 @@
 package com.wix.detox.reactnative.idlingresources.animations
 
-import android.os.Debug
 import android.util.Log
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource.ResourceCallback
@@ -52,6 +51,11 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
     override fun registerIdleTransitionCallback(callback: ResourceCallback?) {
         super.registerIdleTransitionCallback(callback)
         Choreographer.getInstance().postFrameCallback(this)
+    }
+
+    override fun onUnregistered() {
+        super.onUnregistered()
+        Choreographer.getInstance().removeFrameCallback(this)
     }
 
     override fun doFrame(frameTimeNanos: Long) {
