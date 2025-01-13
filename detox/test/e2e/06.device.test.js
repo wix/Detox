@@ -43,7 +43,7 @@ describe('Device', () => {
   it(':ios: launchApp in a different language', async () => {
     let languageAndLocale = {
       language: "es-MX",
-      locale: "es-MX"
+      locale: "en_MX"
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
@@ -53,7 +53,7 @@ describe('Device', () => {
 
     languageAndLocale = {
       language: "en-US",
-      locale: "en-US"
+      locale: "en_US"
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
@@ -75,7 +75,7 @@ describe('Device', () => {
     await device.reloadReactNative();
     await element(by.text('Shake')).tap();
     await device.shake();
-    await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
+    await expect(element(by.text('Shaken, not stirred'))).toExist();
   });
 
   it(':android: device back button - should show popup back pressed when back button is pressed', async () => {

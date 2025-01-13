@@ -12,16 +12,14 @@
 		60493BE52D10E7E4002853A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		60493BE62D10E7E4002853A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		60493BE72D10E7E4002853A0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		608868A02D1A9F070070D199 /* NativeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689D2D1A9F070070D199 /* NativeModule.swift */; };
-		608868A12D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */; };
-		608868A32D1A9F070070D199 /* NativeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689D2D1A9F070070D199 /* NativeModule.swift */; };
-		608868A42D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */; };
+		6051227B2D356C3B00781AE2 /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051227A2D356C3B00781AE2 /* NativeModule.m */; };
+		6051227C2D356C3B00781AE2 /* NativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051227A2D356C3B00781AE2 /* NativeModule.m */; };
+		6051227F2D356C5900781AE2 /* ShakeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051227E2D356C5900781AE2 /* ShakeEventEmitter.m */; };
+		605122802D356C5900781AE2 /* ShakeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6051227E2D356C5900781AE2 /* ShakeEventEmitter.m */; };
 		608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */; };
 		608868AC2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */; };
 		608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */; };
 		608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */; };
-		608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
-		608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */; };
 		608868D22D1D696E0070D199 /* OverlayMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* OverlayMessageView.swift */; };
 		608868D32D1D696E0070D199 /* OverlayMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608868D12D1D696E0070D199 /* OverlayMessageView.swift */; };
 		609DDB892D10C21800028574 /* Detox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 609DDB852D10C20800028574 /* Detox.framework */; };
@@ -69,13 +67,14 @@
 		5B7EB9410499542E8C5724F5 /* Pods-example-exampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example-exampleTests.debug.xcconfig"; path = "Target Support Files/Pods-example-exampleTests/Pods-example-exampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		60493BD72D10D967002853A0 /* example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = example.entitlements; path = example/example.entitlements; sourceTree = "<group>"; };
 		60493BEE2D10E7E4002853A0 /* example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		605122792D356BDE00781AE2 /* NativeModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeModule.h; sourceTree = "<group>"; };
+		6051227A2D356C3B00781AE2 /* NativeModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NativeModule.m; sourceTree = "<group>"; };
+		6051227D2D356C4800781AE2 /* ShakeEventEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShakeEventEmitter.h; sourceTree = "<group>"; };
+		6051227E2D356C5900781AE2 /* ShakeEventEmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShakeEventEmitter.m; sourceTree = "<group>"; };
 		6088689B2D1A9F070070D199 /* example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "example-Bridging-Header.h"; sourceTree = "<group>"; };
 		6088689C2D1A9F070070D199 /* example-ci-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "example-ci-Bridging-Header.h"; sourceTree = "<group>"; };
-		6088689D2D1A9F070070D199 /* NativeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeModule.swift; sourceTree = "<group>"; };
-		6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeEventEmitter.swift; sourceTree = "<group>"; };
 		608868AA2D1AA19B0070D199 /* NativeScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeScreenManager.swift; sourceTree = "<group>"; };
 		608868B02D1AA1FB0070D199 /* CustomKeyboardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboardDelegate.swift; sourceTree = "<group>"; };
-		608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactModulesBridge.m; sourceTree = "<group>"; };
 		608868D12D1D696E0070D199 /* OverlayMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMessageView.swift; sourceTree = "<group>"; };
 		609DDB772D10C20700028574 /* Detox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Detox.xcodeproj; path = /Users/asafk/Development/Detox/detox/ios/Detox.xcodeproj; sourceTree = "<absolute>"; };
 		60A403A82D21EADE004344C3 /* UIViewController+Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Shake.swift"; sourceTree = "<group>"; };
@@ -144,9 +143,10 @@
 		6088689F2D1A9F070070D199 /* ReactModules */ = {
 			isa = PBXGroup;
 			children = (
-				608868C42D1C3D0E0070D199 /* ReactModulesBridge.m */,
-				6088689D2D1A9F070070D199 /* NativeModule.swift */,
-				6088689E2D1A9F070070D199 /* ShakeEventEmitter.swift */,
+				6051227E2D356C5900781AE2 /* ShakeEventEmitter.m */,
+				6051227D2D356C4800781AE2 /* ShakeEventEmitter.h */,
+				6051227A2D356C3B00781AE2 /* NativeModule.m */,
+				605122792D356BDE00781AE2 /* NativeModule.h */,
 			);
 			path = ReactModules;
 			sourceTree = "<group>";
@@ -503,13 +503,12 @@
 			files = (
 				60FDFD942D2EAF5300804B82 /* main.m in Sources */,
 				60A403AA2D21EAE3004344C3 /* UIViewController+Shake.swift in Sources */,
-				608868A32D1A9F070070D199 /* NativeModule.swift in Sources */,
-				608868A42D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
+				6051227F2D356C5900781AE2 /* ShakeEventEmitter.m in Sources */,
 				608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
-				608868C52D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
 				608868D32D1D696E0070D199 /* OverlayMessageView.swift in Sources */,
 				60FDFD742D2E9EC400804B82 /* AppDelegate.m in Sources */,
 				60FDFD762D2E9ED500804B82 /* AppDelegate+OverlayView.swift in Sources */,
+				6051227C2D356C3B00781AE2 /* NativeModule.m in Sources */,
 				608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,13 +519,12 @@
 			files = (
 				60FDFD932D2EAF5300804B82 /* main.m in Sources */,
 				60A403A92D21EAE3004344C3 /* UIViewController+Shake.swift in Sources */,
-				608868A02D1A9F070070D199 /* NativeModule.swift in Sources */,
-				608868A12D1A9F070070D199 /* ShakeEventEmitter.swift in Sources */,
+				605122802D356C5900781AE2 /* ShakeEventEmitter.m in Sources */,
 				608868AC2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
-				608868C62D1C3D130070D199 /* ReactModulesBridge.m in Sources */,
 				608868D22D1D696E0070D199 /* OverlayMessageView.swift in Sources */,
 				60FDFD722D2E9EC400804B82 /* AppDelegate.m in Sources */,
 				60FDFD772D2E9ED500804B82 /* AppDelegate+OverlayView.swift in Sources */,
+				6051227B2D356C3B00781AE2 /* NativeModule.m in Sources */,
 				608868B32D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

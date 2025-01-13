@@ -28,7 +28,7 @@ extension UIViewController {
 
 
     private func handleGlobalShakeGesture() {
-        guard let shakeModule = ShakeEventEmitter.reactInstance else {
+        guard let shakeModule = ShakeEventEmitter.sharedInstance() else {
             return
         }
 
