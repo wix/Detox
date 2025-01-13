@@ -90,6 +90,6 @@ adb -s <emulator-port> shell rm -rf /sdcard/*_*.*
 
 If you have installed the official CLI wrapper for Detox, then make sure to uninstall it as well:
 
-```bash npm2yarn
+```bash
 npm uninstall detox-cli --global
 ```

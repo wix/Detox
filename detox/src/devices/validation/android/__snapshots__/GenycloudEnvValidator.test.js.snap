@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Genymotion-cloud test environment validator health validations should throw if gmsaas doctor detects an error 1`] = `
+[DetoxRuntimeError: Error: gmsaas is not configured properly
+One or several issues have been detected:
+- Android SDK not configured.]
+`;
+
+exports[`Genymotion-cloud test environment validator version validations should throw an error if gmsaas exec is too old (minor version < 6) 1`] = `
+[DetoxRuntimeError: Your Genymotion-Cloud executable (found in /path/to/gmsaas) is too old! (version 1.5.9)
+
+HINT: Detox requires version 1.6.0, or newer. To use 'android.genycloud' type devices, you must upgrade it, first.]
+`;

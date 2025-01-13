@@ -1,6 +1,6 @@
 const jestExpect = require('expect').default;
 
-describe('DatePicker', () => {
+describe.skipIfNewArchOnIOS('DatePicker', () => {
   describe.each([
     ['ios', 'compact', 0],
     ['ios', 'inline', 1],
