@@ -13,10 +13,8 @@ describe('StressRoot', () => {
     await expect(element(by.text('this is a new native root'))).toBeVisible();
   });
 
-  describe.skipIfNewArchOnIOS('Legacy root (Bridge)', () => {
-    it(':ios: should switch root view controller from RN to RN', async () => {
-      await element(by.text('Switch to multiple react roots')).tap();
-      await expect(element(by.text('Choose a test'))).toBeVisible();
-    });
+  it(':ios: should switch root view controller from RN to RN on @legacy', async () => {
+    await element(by.text('Switch to multiple react roots')).tap();
+    await expect(element(by.text('Choose a test'))).toBeVisible();
   });
 });
