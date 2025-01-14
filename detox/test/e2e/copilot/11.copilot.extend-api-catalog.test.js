@@ -16,7 +16,7 @@ describeForCopilotEnv('Extend api catalog', () => {
       ]
     };
 
-    copilot.extendAPICatalog(newCategory, { dummyFunction });
+    copilot.extendAPICatalog([newCategory], { dummyFunction });
 
     await copilot.perform(
       'Call the dummyFunction()'
