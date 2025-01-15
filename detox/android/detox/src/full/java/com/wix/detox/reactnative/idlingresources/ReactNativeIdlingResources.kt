@@ -7,7 +7,7 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
 import com.facebook.react.ReactApplication
 import com.wix.detox.LaunchArgs
-import com.wix.detox.reactnative.getCurrentReactContextSafe
+import com.wix.detox.reactnative.getCurrentReactContext
 import com.wix.detox.reactnative.idlingresources.factory.DetoxIdlingResourceFactory
 import com.wix.detox.reactnative.idlingresources.factory.IdlingResourcesName
 import com.wix.detox.reactnative.idlingresources.factory.LooperName
@@ -78,7 +78,7 @@ class ReactNativeIdlingResources(
     }
 
     private fun setupMQThreadsInterrogator(looperName: LooperName) {
-        reactApplication.getCurrentReactContextSafe()?.let {
+        reactApplication.getCurrentReactContext()?.let {
             val mqThreadsReflector = MQThreadsReflector(it)
             val looper = when (looperName) {
                 LooperName.JS -> mqThreadsReflector.getJSMQueue()?.getLooper()

@@ -25,9 +25,10 @@ class NewArchitectureNativeReLoader(
     private val rnApplication: ReactApplication
 ) : ReactNativeReLoader {
     override fun reloadInBackground() {
-        val reactHost = rnApplication.reactHost
+        val reactHost = rnApplication.reactHost ?: throw IllegalStateException("ReactHost is null. Check implementation of you Application class")
+
         instrumentation.runOnMainSync {
-            reactHost?.reload("Detox")
+            reactHost.reload("Detox")
         }
     }
 }

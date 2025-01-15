@@ -32,7 +32,6 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
     }
 
     open fun onUnregistered() {
-        // First thing to do is to pause the resource in order to insure that it won't be called again when it's not registered.
         pause()
     }
 

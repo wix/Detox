@@ -8,7 +8,6 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
 import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources
-import com.wix.detox.reactnative.reloader.ReactNativeReLoader
 import com.wix.detox.reactnative.reloader.ReactNativeReloaderFactory
 
 private const val LOG_TAG = "DetoxRNExt"
@@ -60,7 +59,7 @@ object ReactNativeExtension {
         (applicationContext as ReactApplication).let {
             clearIdlingResources()
 
-            val previousReactContext = it.getCurrentReactContextSafe()
+            val previousReactContext = it.getCurrentReactContext()
 
             reloadReactNativeInBackground(it)
             awaitNewReactNativeContext(it, previousReactContext)
@@ -85,7 +84,7 @@ object ReactNativeExtension {
     @JvmStatic
     fun getRNActivity(applicationContext: Context): Activity? {
         if (ReactNativeInfo.isReactNativeApp()) {
-            return (applicationContext as ReactApplication).getCurrentReactContextSafe()?.currentActivity
+            return (applicationContext as ReactApplication).getCurrentReactContext()?.currentActivity
         }
         return null
     }

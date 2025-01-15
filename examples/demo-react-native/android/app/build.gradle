@@ -79,4 +79,5 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
+    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }

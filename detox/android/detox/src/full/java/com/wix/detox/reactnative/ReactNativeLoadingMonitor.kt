@@ -29,7 +29,7 @@ open class ReactNativeLoadingMonitor(
     private fun subscribeToNewRNContextUpdates() {
         instrumentation.runOnMainSync(
             Runnable {
-                val reactContext = rnApplication.getCurrentReactContextSafe()
+                val reactContext = rnApplication.getCurrentReactContext()
                 if (isReactNativeLoaded(reactContext)) {
                     Log.d(LOG_TAG, "Got new RN-context directly and immediately")
                     countDownLatch.countDown()
@@ -61,10 +61,10 @@ open class ReactNativeLoadingMonitor(
                     break
                 }
 
-                // Due to an ugly timing issue in RN
+                // Due to timing in RN
                 // it is possible that our listener won't be ever called
                 // That's why we have to check the reactContext regularly.
-                val reactContext = rnApplication.getCurrentReactContextSafe()
+                val reactContext = rnApplication.getCurrentReactContext()
 
                 // We also need to wait for rect native instance to be initialized
                 if (isReactNativeLoaded(reactContext)) {
@@ -76,7 +76,7 @@ open class ReactNativeLoadingMonitor(
             }
         }
 
-        return rnApplication.getCurrentReactContextSafe()
+        return rnApplication.getCurrentReactContext()
     }
 
     private fun isReactNativeLoaded(reactContext: ReactContext?) =
