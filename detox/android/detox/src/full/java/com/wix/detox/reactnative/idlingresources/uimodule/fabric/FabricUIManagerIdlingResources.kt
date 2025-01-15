@@ -42,9 +42,7 @@ class FabricUIManagerIdlingResources(
         return mapOf("mountItems" to getMountItemsSize(), "viewCommandMountItems" to getViewCommandMountItemsSize())
     }
 
-    override fun getName(): String {
-        return FabricUIManagerIdlingResources::class.java.name
-    }
+    override fun getName() = FabricUIManagerIdlingResources::class.java.name
 
     private fun getMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
