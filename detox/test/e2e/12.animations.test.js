@@ -9,7 +9,7 @@ describe('React-Native Animations', () => {
       let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
       await loopSwitch.tap();
       if (device.getPlatform() === 'ios') {
-        await expect(loopSwitch).toHaveValue('1');
+        await expect(loopSwitch).toHaveToggleValue('1');
       }
       await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
     }
