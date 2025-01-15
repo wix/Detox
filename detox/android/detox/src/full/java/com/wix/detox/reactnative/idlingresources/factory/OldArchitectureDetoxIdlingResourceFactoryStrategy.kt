@@ -8,7 +8,7 @@ import com.wix.detox.reactnative.idlingresources.bridge.BridgeIdlingResource
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
 import com.wix.detox.reactnative.idlingresources.timers.TimersIdlingResource
-import com.wix.detox.reactnative.idlingresources.uimodule.oldarch.UIModuleIdlingResource
+import com.wix.detox.reactnative.idlingresources.uimodule.paper.UIModuleIdlingResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -1,4 +1,4 @@
-package com.wix.detox.reactnative.idlingresources.uimodule.oldarch
+package com.wix.detox.reactnative.idlingresources.uimodule.paper
 
 import android.util.Log
 import com.wix.detox.common.DetoxLog

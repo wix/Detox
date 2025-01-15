@@ -44,6 +44,10 @@ class FabricUIManagerIdlingResources(
 
     override fun getName() = FabricUIManagerIdlingResources::class.java.name
 
+    override fun doFrame(frameTimeNanos: Long) {
+        isIdleNow()
+    }
+
     private fun getMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
         val mountItems = Reflect.on(mountItemDispatcher).field("mMountItems").get<ConcurrentLinkedQueue<*>>()
@@ -63,7 +67,4 @@ class FabricUIManagerIdlingResources(
         return viewCommandMountItems.size
     }
 
-    override fun doFrame(frameTimeNanos: Long) {
-        isIdleNow()
-    }
 }
