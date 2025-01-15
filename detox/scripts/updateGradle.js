@@ -37,7 +37,6 @@ function patchGradlePropertiesSync() {
   let isNewArch;
 
   if (!process.env.ENABLE_NEW_ARCH) {
-    // If the env var is not set, enable the new arch by default
     isNewArch = true;
   } else {
     isNewArch = process.env.ENABLE_NEW_ARCH === 'true';
