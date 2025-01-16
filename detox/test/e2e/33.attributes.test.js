@@ -144,7 +144,7 @@ describe('Attributes', () => {
     });
 
     // Checkbox is not working with the new arch yet
-    it.todo(':android: should have a boolean .value', async () => {
+    it.skip(':android: should have a boolean .value', async () => {
       expect(await currentElement.getAttributes()).toMatchObject({
         value: false
       });
