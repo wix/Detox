@@ -1,8 +1,8 @@
-package com.wix.detox.reactnative.idlingresources.uimodule
+package com.wix.detox.reactnative.idlingresources.uimodule.paper
 
 import android.util.Log
 import com.facebook.react.uimanager.UIViewOperationQueue
-import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.common.DetoxLog
 import org.joor.Reflect
 import org.joor.ReflectException
 
@@ -21,7 +21,7 @@ class ViewCommandOpsQueueReflected(uiViewOperationQueueInstance: UIViewOperation
         try {
             instance.field(FIELD_VIEW_COMMAND_OPERATIONS).get<Collection<Any>>()
         } catch(e: ReflectException) {
-            Log.e(LOG_TAG, "could not get reflected field mViewCommandOperations ", e)
+            Log.e(DetoxLog.LOG_TAG, "could not get reflected field mViewCommandOperations ", e)
             null
         }
 }

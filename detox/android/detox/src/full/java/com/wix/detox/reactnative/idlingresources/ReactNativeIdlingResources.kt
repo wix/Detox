@@ -5,8 +5,9 @@ import android.util.Log
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.base.IdlingResourceRegistry
-import com.facebook.react.bridge.ReactContext
+import com.facebook.react.ReactApplication
 import com.wix.detox.LaunchArgs
+import com.wix.detox.reactnative.getCurrentReactContext
 import com.wix.detox.reactnative.idlingresources.factory.DetoxIdlingResourceFactory
 import com.wix.detox.reactnative.idlingresources.factory.IdlingResourcesName
 import com.wix.detox.reactnative.idlingresources.factory.LooperName
@@ -19,9 +20,9 @@ import org.joor.Reflect
 private const val LOG_TAG = "DetoxRNIdleRes"
 
 class ReactNativeIdlingResources(
-    private val reactContext: ReactContext,
+    private val reactApplication: ReactApplication,
     private var launchArgs: LaunchArgs,
-    private val idlingResourcesFactory: DetoxIdlingResourceFactory = DetoxIdlingResourceFactory(reactContext)
+    private val idlingResourcesFactory: DetoxIdlingResourceFactory = DetoxIdlingResourceFactory(reactApplication)
 ) {
 
     private val idlingResources = mutableMapOf<IdlingResourcesName, DetoxIdlingResource>()
@@ -52,8 +53,8 @@ class ReactNativeIdlingResources(
 
     fun pauseRNTimersIdlingResource() = pauseIdlingResource(IdlingResourcesName.Timers)
     fun resumeRNTimersIdlingResource() = resumeIdlingResource(IdlingResourcesName.Timers)
-    fun pauseUIIdlingResource() = pauseIdlingResource(IdlingResourcesName.UIModule)
-    fun resumeUIIdlingResource() = resumeIdlingResource(IdlingResourcesName.UIModule)
+    fun pauseUIIdlingResource() = pauseIdlingResource(IdlingResourcesName.UI)
+    fun resumeUIIdlingResource() = resumeIdlingResource(IdlingResourcesName.UI)
 
     fun setBlacklistUrls(urlList: String) {
         setIdlingResourceBlacklist(urlList)
@@ -77,16 +78,19 @@ class ReactNativeIdlingResources(
     }
 
     private fun setupMQThreadsInterrogator(looperName: LooperName) {
-        val mqThreadsReflector = MQThreadsReflector(reactContext)
-        val looper = when (looperName) {
-            LooperName.JS -> mqThreadsReflector.getJSMQueue()?.getLooper()
-            LooperName.NativeModules -> mqThreadsReflector.getNativeModulesQueue()?.getLooper()
+        reactApplication.getCurrentReactContext()?.let {
+            val mqThreadsReflector = MQThreadsReflector(it)
+            val looper = when (looperName) {
+                LooperName.JS -> mqThreadsReflector.getJSMQueue()?.getLooper()
+                LooperName.NativeModules -> mqThreadsReflector.getNativeModulesQueue()?.getLooper()
+            }
+
+            looper?.let {
+                IdlingRegistry.getInstance().registerLooperAsIdlingResource(it)
+                loopers[looperName] = it
+            }
         }
 
-        looper?.let {
-            IdlingRegistry.getInstance().registerLooperAsIdlingResource(it)
-            loopers[looperName] = it
-        }
     }
 
     private suspend fun setupIdlingResources() {

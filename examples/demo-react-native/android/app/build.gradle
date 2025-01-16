@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
+apply plugin: 'kotlin-android'
 
 react {
     autolinkLibrariesWithApp()
@@ -78,5 +79,5 @@ dependencies {
 
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }

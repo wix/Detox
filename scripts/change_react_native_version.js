@@ -20,7 +20,7 @@ async function run() {
     const data = await fetch(`https://registry.npmjs.org/react-native/${reactNativeVersion}`);
     const reactVersion = data.peerDependencies.react;
 
-    console.log(`Changed dependencies: 
+    console.log(`Changed dependencies:
       react-native: ${reactNativeVersion}
       react: ${reactVersion}`);
 
@@ -28,7 +28,25 @@ async function run() {
     packageJson.dependencies['react-native'] = reactNativeVersion;
   }
 
+  updateReactNative73DevDependencies(reactNativeVersion, packageJson);
+
   fs.writeFileSync(filePath, JSON.stringify(packageJson, null, 2));
+}
+
+function updateReactNative73DevDependencies(reactNativeVersion, packageJson) {
+  const minorVersion = reactNativeVersion.split('.')[1];
+  if (minorVersion !== '73') {
+    return;
+  }
+
+  packageJson.devDependencies['@react-native/babel-preset'] = '0.73.21';
+  packageJson.devDependencies['@react-native/eslint-config'] = '0.73.2';
+  packageJson.devDependencies['@react-native/metro-config'] = '0.73.5';
+  packageJson.devDependencies['@react-native/typescript-config'] = '0.73.1';
+
+  delete packageJson.devDependencies['@react-native-community/cli'];
+  delete packageJson.devDependencies['@react-native-community/cli-platform-android'];
+  delete packageJson.devDependencies['@react-native-community/cli-platform-ios'];
 }
 
 async function fetch(url) {

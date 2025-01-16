@@ -9,6 +9,8 @@ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.Executor
 
+private const val LOG_TAG = "AsyncStorageIR"
+
 private typealias SExecutorReflectedGenFnType = (executor: Executor) -> SerialExecutorReflected
 
 private val defaultSExecutorReflectedGenFn: SExecutorReflectedGenFnType =
@@ -29,17 +31,19 @@ private class ModuleReflected(module: NativeModule, sexecutorReflectedGen: SExec
 
 class AsyncStorageIdlingResource
 @JvmOverloads constructor(
-    module: NativeModule,
-    sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn
+    private val reactContext: ReactContext,
+    private val sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn,
+    private val rnHelpers: RNHelpers = RNHelpers()
 ) : DetoxIdlingResource() {
 
     val logTag: String
         get() = LOG_TAG
 
-    private val moduleReflected = ModuleReflected(module, sexecutorReflectedGenFn)
+    private val moduleReflected: ModuleReflected? = null
     private var idleCheckTask: Runnable? = null
     private val idleCheckTaskImpl = Runnable {
-        with(moduleReflected.sexecutor) {
+        val module = getModuleReflected() ?: return@Runnable
+        with(module.sexecutor) {
             synchronized(executor()) {
                 if (hasPendingTasks()) {
                     executeTask(idleCheckTask!!)
@@ -49,19 +53,36 @@ class AsyncStorageIdlingResource
                 }
             }
         }
+
     }
 
     override fun getName(): String = javaClass.name
     override fun getDebugName() = "io"
     override fun getBusyHint(): Map<String, Any>? = null
 
+    private fun getModuleReflected(): ModuleReflected? {
 
-    private fun checkIdleInternal(): Boolean =
-        with(moduleReflected.sexecutor) {
+        fun className(): String {
+            val packageName = "com.reactnativecommunity.asyncstorage"
+            return "$packageName.AsyncStorageModule"
+        }
+
+        if (moduleReflected != null) {
+            return moduleReflected
+        }
+
+        val nativeModule = rnHelpers.getNativeModule(reactContext, className()) ?: return null
+        return ModuleReflected(nativeModule, sexecutorReflectedGenFn)
+    }
+
+    private fun checkIdleInternal(): Boolean {
+        val module = getModuleReflected() ?: return true
+        return with(module.sexecutor) {
             synchronized(executor()) {
                 !hasActiveTask() && !hasPendingTasks()
             }
         }
+    }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         super.registerIdleTransitionCallback(callback)
@@ -76,8 +97,9 @@ class AsyncStorageIdlingResource
             }
         }
 
-    private fun enqueueIdleCheckTask() =
-        with(moduleReflected.sexecutor) {
+    private fun enqueueIdleCheckTask() {
+        val module = getModuleReflected() ?: return
+        with(module.sexecutor) {
             synchronized(executor()) {
                 if (idleCheckTask == null) {
                     initIdleCheckTask()
@@ -85,6 +107,7 @@ class AsyncStorageIdlingResource
                 }
             }
         }
+    }
 
     private fun initIdleCheckTask() {
         idleCheckTask = idleCheckTaskImpl
@@ -92,26 +115,5 @@ class AsyncStorageIdlingResource
 
     private fun clearIdleCheckTask() {
         idleCheckTask = null
-    }
-
-    companion object {
-        private const val LOG_TAG = "AsyncStorageIR"
-
-        fun createIfNeeded(reactContext: ReactContext): AsyncStorageIdlingResource? {
-            Log.d(LOG_TAG, "Checking whether a custom IR for Async-Storage is required...")
-
-            return RNHelpers.getNativeModule(reactContext, className())?.let { module ->
-                Log.d(LOG_TAG, "IR for Async-Storage is required!")
-                createInstance(module)
-            }
-        }
-
-        private fun className(): String {
-            val packageName = "com.reactnativecommunity.asyncstorage"
-            return "$packageName.AsyncStorageModule"
-        }
-
-        private fun createInstance(module: NativeModule) =
-            AsyncStorageIdlingResource(module)
     }
 }
