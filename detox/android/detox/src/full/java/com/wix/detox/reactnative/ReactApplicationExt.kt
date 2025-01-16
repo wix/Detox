@@ -21,6 +21,11 @@ fun ReactApplication.getCurrentReactContext(): ReactContext? {
     }
 }
 
+fun ReactApplication.getCurrentReactContextSafe(): ReactContext {
+    return getCurrentReactContext()
+        ?: throw RuntimeException("ReactContext is null!")
+}
+
 /**
  * A method to check if Fabric is enabled in the React Native application.
  */

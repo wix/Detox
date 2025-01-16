@@ -42,14 +42,23 @@ function patchGradlePropertiesSync() {
     isNewArch = process.env.ENABLE_NEW_ARCH === 'true';
   }
 
+  function readGradlePropertiesFile() {
+    const gradlePropertiesFile = path.join(process.cwd(), 'android', 'gradle.properties');
+    console.log(`Patching gradle.properties. File: ${gradlePropertiesFile}`);
+    const data = fs.readFileSync(gradlePropertiesFile, 'utf8');
+    return { gradlePropertiesFile, data };
+  }
+
+  function writeGradlePropertiesFile(gradlePropertiesFile, data) {
+    const updatedData = data.replace('newArchEnabled=true', 'newArchEnabled=false');
+    fs.writeFileSync(gradlePropertiesFile, updatedData, 'utf8');
+    console.log('gradle.properties patched successfully.');
+  }
+
   if (!isNewArch) {
     try {
-      const gradleProperties = path.join(process.cwd(), 'android', 'gradle.properties');
-      console.log(`Patching gradle.properties. File: ${gradleProperties}`);
-      const data = fs.readFileSync(gradleProperties, 'utf8');
-      const updatedData = data.replace('newArchEnabled=true', 'newArchEnabled=false');
-      fs.writeFileSync(gradleProperties, updatedData, 'utf8');
-      console.log('gradle.properties patched successfully.');
+      const { gradlePropertiesFile, data } = readGradlePropertiesFile();
+      writeGradlePropertiesFile(gradlePropertiesFile, data);
     } catch (e) {
       console.error('Error:', e);
     }
