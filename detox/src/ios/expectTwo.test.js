@@ -531,7 +531,7 @@ describe('expectTwo', () => {
           'isRegex': false,
         },
         'expectation': 'toHaveToggleValue',
-        'params': ['1']
+        'params': [1]
       }
     };
 
