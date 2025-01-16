@@ -53,9 +53,12 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
         Choreographer.getInstance().postFrameCallback(this)
     }
 
+    override fun onUnregistered() {
+        super.onUnregistered()
+        Choreographer.getInstance().removeFrameCallback(this)
+    }
+
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
     }
 }
-
-

@@ -7,7 +7,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.TimingModule
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 
-private const val BUSY_WINDOW_THRESHOLD = 1500L
+const val BUSY_WINDOW_THRESHOLD: Long = 1500L
 
 class TimersIdlingResource @JvmOverloads constructor(
     reactContext: ReactContext,
@@ -25,6 +25,11 @@ class TimersIdlingResource @JvmOverloads constructor(
         getChoreographer().postFrameCallback(this)
     }
 
+    override fun onUnregistered() {
+        super.onUnregistered()
+        getChoreographer().removeFrameCallback(this)
+    }
+
     @SuppressLint("VisibleForTests")
     override fun checkIdle(): Boolean {
         val isIdle = !timingModule.hasActiveTimersInRange(BUSY_WINDOW_THRESHOLD)
@@ -40,9 +45,5 @@ class TimersIdlingResource @JvmOverloads constructor(
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
-    }
-
-    companion object {
-        internal const val LOG_TAG = "TimersIdlingResource"
     }
 }

@@ -18,7 +18,7 @@ export default class AssertionsScreen extends Component {
     return (
       <View style={{flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center'}}>
         <Text testID='main-text' style={{marginBottom: 20}} accessibilityLabel={'I contain some text'}>I contain some text</Text>
-        <View testID='subtext-root' style={{marginBottom: 20}}>
+        <View testID='subtext-root' style={{marginBottom: 20}} accessible={true}>
           <Text accessibilityLabel={'This is some'}>This is some</Text>
           <Text accessibilityLabel={'subtext'}>subtext</Text>
         </View>
