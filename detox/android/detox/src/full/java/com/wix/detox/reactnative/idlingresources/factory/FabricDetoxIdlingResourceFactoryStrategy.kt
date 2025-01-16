@@ -16,20 +16,15 @@ class FabricDetoxIdlingResourceFactoryStrategy(private val reactApplication: Rea
     DetoxIdlingResourceFactoryStrategy {
     override suspend fun create(): Map<IdlingResourcesName, DetoxIdlingResource> =
         withContext(Dispatchers.Main) {
-            val reactContext =
-                reactApplication.getCurrentReactContextSafe()
+            val reactContext = reactApplication.getCurrentReactContextSafe()
 
-            val result = mutableMapOf<IdlingResourcesName, DetoxIdlingResource>(
+            val result = mutableMapOf(
                 IdlingResourcesName.UI to FabricUIManagerIdlingResources(reactContext),
                 IdlingResourcesName.Animations to AnimatedModuleIdlingResource(reactContext),
                 IdlingResourcesName.Timers to FabricTimersIdlingResource(reactContext),
                 IdlingResourcesName.Network to NetworkIdlingResource(reactContext),
+                IdlingResourcesName.AsyncStorage to AsyncStorageIdlingResource(reactContext)
             )
-
-            val asyncStorageIdlingResource = AsyncStorageIdlingResource.createIfNeeded(reactContext)
-            if (asyncStorageIdlingResource != null) {
-                result[IdlingResourcesName.AsyncStorage] = asyncStorageIdlingResource
-            }
 
             return@withContext result
         }

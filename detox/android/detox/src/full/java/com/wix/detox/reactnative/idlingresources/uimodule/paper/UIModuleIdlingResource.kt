@@ -30,7 +30,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
                 return false
             }
 
-            if (RNHelpers.getNativeModule(
+            if (RNHelpers().getNativeModule(
                     reactContext,
                     "com.facebook.react.uimanager.UIManagerModule"
                 ) == null) {

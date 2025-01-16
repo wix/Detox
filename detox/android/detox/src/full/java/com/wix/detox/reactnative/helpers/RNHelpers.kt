@@ -6,7 +6,7 @@ import com.facebook.react.bridge.ReactContext
 
 private const val LOG_TAG = "DetoxRNHelpers"
 
-object RNHelpers {
+class RNHelpers {
     fun getNativeModule(reactContext: ReactContext, className: String): NativeModule? =
         try {
             val moduleClass = Class.forName(className) as Class<NativeModule>
