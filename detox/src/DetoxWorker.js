@@ -259,7 +259,6 @@ class DetoxWorker {
     });
 
     if (copilot.isInitialized()) {
-      // In case of failure, pass false to copilot, so temporary cache is not saved
       copilot.end(testSummary.status !== 'passed');
     }
   };
