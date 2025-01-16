@@ -5,13 +5,13 @@ import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.TimingModule
 import org.assertj.core.api.Assertions
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.*
 import org.robolectric.RobolectricTestRunner
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import kotlin.test.assertTrue
 
 private fun anIdlingResourceCallback() = mock<IdlingResource.ResourceCallback>()
 
@@ -27,7 +27,6 @@ class TimersIdlingResourceTest {
         whenever(context.getNativeModule(eq(TimingModule::class.java))).thenReturn(timersModule)
         timersIdlingResource = TimersIdlingResource(context) { choreographer }
     }
-
 
     private fun givenIdleStrategy() {
         whenever(timersModule.hasActiveTimersInRange(any())).thenReturn(false)
@@ -46,6 +45,13 @@ class TimersIdlingResourceTest {
 
     private fun invokeChoreographerCallback() {
         getChoreographerCallback().doFrame(0L)
+    }
+
+    @Test
+    fun `should pause when unregistered`() {
+        assertFalse(timersIdlingResource.paused.get())
+        timersIdlingResource.onUnregistered()
+        assertTrue(timersIdlingResource.paused.get())
     }
 
     @Test

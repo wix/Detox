@@ -2,7 +2,9 @@ package com.wix.detox.reactnative.idlingresources
 
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
+import com.facebook.react.bridge.ReactContext
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.reactnative.helpers.RNHelpers
 import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
 import com.wix.detox.reactnative.idlingresources.storage.SerialExecutorReflected
 import org.assertj.core.api.Assertions.assertThat
@@ -10,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -37,6 +40,8 @@ class AsyncStorageIdlingResourceTest {
     private lateinit var sexecutorReflectedGenFn: (executor: Executor) -> SerialExecutorReflected
     private lateinit var module: AsyncStorageModuleStub
     private lateinit var uut: AsyncStorageIdlingResource
+    private val reactContext: ReactContext = mock()
+    private lateinit var rnHelpers: RNHelpers
 
     @Before
     fun setup() {
@@ -49,8 +54,10 @@ class AsyncStorageIdlingResourceTest {
             on { invoke(eq(module.executor)) }.thenReturn(sexecutorReflected)
         }
 
-
-        uut = AsyncStorageIdlingResource(module, sexecutorReflectedGenFn)
+        rnHelpers = mock {
+            on { getNativeModule(any(), any()) }.thenReturn(module)
+        }
+        uut = AsyncStorageIdlingResource(reactContext, sexecutorReflectedGenFn, rnHelpers)
     }
 
     fun givenNoActiveTasks() = whenever(sexecutorReflected.hasActiveTask()).thenReturn(false)

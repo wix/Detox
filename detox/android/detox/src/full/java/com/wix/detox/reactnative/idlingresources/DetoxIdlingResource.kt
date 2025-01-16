@@ -1,12 +1,14 @@
 package com.wix.detox.reactnative.idlingresources
 
+import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.IdlingResource
 import com.wix.detox.espresso.idlingresources.DescriptiveIdlingResource
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class DetoxIdlingResource : DescriptiveIdlingResource {
     private var callback: IdlingResource.ResourceCallback? = null
-    private var paused: AtomicBoolean = AtomicBoolean(false)
+    @VisibleForTesting
+    internal var paused: AtomicBoolean = AtomicBoolean(false)
 
     fun pause() {
         paused.set(true)
@@ -30,7 +32,7 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
     }
 
     open fun onUnregistered() {
-        // no-op
+        pause()
     }
 
     protected abstract fun checkIdle(): Boolean
