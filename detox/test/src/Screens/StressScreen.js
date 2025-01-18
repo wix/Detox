@@ -131,7 +131,7 @@ export default class StressScreen extends Component {
       setTimeout(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let str = getStringByLength(EVENT_LOOP_STR_CHUNK_LEN);
-      }, 1);
+      }, 100);
     }
   }
 
