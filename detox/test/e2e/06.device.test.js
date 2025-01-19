@@ -47,6 +47,9 @@ describe('Device', () => {
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
+    // iOS toast is hiding the element
+    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
+
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
@@ -57,6 +60,8 @@ describe('Device', () => {
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
+    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
+
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
