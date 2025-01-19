@@ -39,12 +39,7 @@ describe('StressTimeouts', () => {
     await expect(element(by.text('Interval Ignored!!!'))).toBeVisible();
   });
 
-  it(':ios: should skip over setInterval', async () => {
-    await element(by.id('SkipOverInterval')).tap();
-    await expect(element(by.text('Interval Skipped-Over!!!'))).toBeVisible();
-  });
-
-  it(':android: should skip over setInterval', async () => {
+  it('should skip over setInterval', async () => {
     await element(by.id('SkipOverInterval')).tap();
     await expect(element(by.text('Interval Skipped-Over!!!'))).toBeVisible();
   });
