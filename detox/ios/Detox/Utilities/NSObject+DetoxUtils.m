@@ -117,7 +117,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     return object_getIvar(self, ivar);
 }
 
-- (UISlider *)dtx_datePicker {
+- (UIDatePicker *)dtx_datePicker {
     if([self isKindOfClass:UIDatePicker.class])
     {
         return (id)self;
