@@ -102,6 +102,36 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     return object_getIvar(self, ivar);
 }
 
+- (UISlider *)dtx_scrollView {
+    if([self isKindOfClass:UIScrollView.class])
+    {
+        return (id)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_scrollView");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return object_getIvar(self, ivar);
+}
+
+- (UISlider *)dtx_datePicker {
+    if([self isKindOfClass:UIDatePicker.class])
+    {
+        return (id)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_picker");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return object_getIvar(self, ivar);
+}
+
 - (UISwitch *)dtx_switchView {
     if([self isKindOfClass:UISwitch.class])
     {
@@ -344,25 +374,18 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     rv[@"hittable"] = @(self.dtx_isHittable);
     rv[@"visible"] = @(self.dtx_isVisible);
 
-    if([self isKindOfClass:UIScrollView.class])
-    {
-        rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
-        rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
-        rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
-    }
+    [self dtx_ifHasScrollView:^(UIScrollView *scrollView) {
+        rv[@"contentInset"] = DTXInsetsToDictionary([scrollView contentInset]);
+        rv[@"adjustedContentInset"] = DTXInsetsToDictionary([scrollView adjustedContentInset]);
+        rv[@"contentOffset"] = DTXPointToDictionary([scrollView contentOffset]);
+    }];
 
-    if([self isKindOfClass:UISlider.class])
-    {
-        rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
-    } else {
-        [self dtx_ifHasSlider:^(UISlider *slider) {
-            rv[@"normalizedSliderPosition"] = @([slider dtx_normalizedSliderPosition]);
-        }];
-    }
+    [self dtx_ifHasSlider:^(UISlider *slider) {
+        rv[@"normalizedSliderPosition"] = @([slider dtx_normalizedSliderPosition]);
+        rv[@"value"] = [slider accessibilityValue];
+    }];
 
-    if([self isKindOfClass:UIDatePicker.class])
-    {
-        UIDatePicker* dp = (id)self;
+    [self dtx_ifDatePicker:^(UIDatePicker *dp) {
         rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
         NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
 
@@ -382,24 +405,32 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
         dateComponents[@"leapMonth"] = @(dc.leapMonth);
 
         rv[@"dateComponents"] = dateComponents;
-    }
+    }];
 
     return rv;
 }
 
 - (void)dtx_ifHasSlider:(void(^)(UISlider *slider))block {
-    SEL sliderSelector = NSSelectorFromString(@"slider");
-    if (![self respondsToSelector:sliderSelector]) { return; }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    id sliderObj = [self performSelector:sliderSelector];
-#pragma clang diagnostic pop
-
-    if (![sliderObj isKindOfClass:[UISlider class]]) { return; }
+    if (!self.dtx_sliderView) { return; }
 
     if (block) {
-        block((UISlider *)sliderObj);
+        block((UISlider *)self.dtx_sliderView);
+    }
+}
+
+- (void)dtx_ifHasScrollView:(void(^)(UIScrollView *scrollView))block {
+    if (!self.dtx_scrollView) { return; }
+
+    if (block) {
+        block((UIScrollView *)self.dtx_scrollView);
+    }
+}
+
+- (void)dtx_ifDatePicker:(void(^)(UIDatePicker *picker))block {
+    if (!self.dtx_datePicker) { return; }
+
+    if (block) {
+        block((UIDatePicker *)self.dtx_datePicker);
     }
 }
 
