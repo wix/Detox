@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.facebook.react.ReactApplication;
 import com.wix.detox.common.UIThread;
 import com.wix.detox.reactnative.ReactNativeExtension;
-import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
+import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource;
 
 import org.hamcrest.Matcher;
 

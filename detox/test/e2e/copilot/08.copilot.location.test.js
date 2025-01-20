@@ -1,10 +1,9 @@
-const { describeForCopilotEnv } = require('../utils/custom-describes');
 const DUMMY_COORDINATE1_LONGITUDE = '66.5';
 const DUMMY_COORDINATE1_LATITUDE = '-80.125';
 const DUMMY_COORDINATE2_LONGITUDE = '-80.125';
 const DUMMY_COORDINATE2_LATITUDE = '66.5';
 
-describeForCopilotEnv('Location', () => {
+describe.forCopilot('Location', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Restart the React Native state',

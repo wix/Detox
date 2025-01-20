@@ -6,7 +6,7 @@ Detox CLI lets you operate Detox from command line.
 
 Install `detox-cli` globally via [npm](http://npmjs.org/detox-cli):
 
-```bash npm2yarn
+```bash
 npm install detox-cli --global
 ```
 

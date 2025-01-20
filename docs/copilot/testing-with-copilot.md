@@ -4,13 +4,15 @@ In this tutorial, we'll explore how to use **Detox Copilot** to write end-to-end
 
 :::note
 
-Detox Copilot is integrated into Detox and requires no additional installation. For complete API details, refer to our [Detox Copilot API documentation](../api/copilot.md).
+Copilot now has a new [documentation site](https://wix-incubator.github.io/detox-copilot/).<br/>
+There, you can find a [technical overview](https://wix-incubator.github.io/detox-copilot/docs/guides/technical-overview), learn how to [implement a driver for your preferred testing framework](https://wix-incubator.github.io/detox-copilot/docs/guides/implementing-custom-testing-framework-driver), and stay up to date with the latest features and updates.
 
 :::
 
 :::caution Work in Progress
 
-**Note**: Detox Copilot is in active development. APIs are subject to change in future releases.
+**Note**: Detox Copilot is in active development. APIs are subject to change in future releases.<br/>
+For complete API details, refer to our [Detox Copilot API documentation](../api/copilot.md).
 
 :::
 
@@ -20,11 +22,6 @@ Detox Copilot simplifies the process of writing tests by allowing you to describ
 It interprets these instructions and translates them into Detox commands. This guide will help you integrate Detox Copilot into your testing workflow and provide best practices for writing effective intents.
 
 ![Demo](../img/copilot/copilot-demo.gif)
-
-## Setting Up Detox
-
-Before you begin, ensure that your Detox environment is properly set up.
-If you need assistance with the setup, refer to the [Detox Getting Started Guide](docs/introduction/getting-started/).
 
 ## Implementing a `PromptHandler`
 
@@ -42,13 +39,14 @@ If you have implemented a `PromptHandler` for a specific LLM or service, conside
 ### Example of a `PromptHandler` for OpenAI's GPT-4
 
 ```javascript
-const { Configuration, OpenAIApi } = require('openai');
+import OpenAI from 'openai';
+
 const path = require('path');
 
 class OpenAIPromptHandler {
   constructor(apiKey) {
-    const configuration = new Configuration({ apiKey });
-    this.openai = new OpenAIApi(configuration);
+    const configuration = new OpenAI({ apiKey });
+    this.openai = new OpenAI(configuration);
   }
 
   async runPrompt(prompt, imagePath) {
@@ -71,7 +69,7 @@ class OpenAIPromptHandler {
       }
     }
 
-    const response = await this.openai.createChatCompletion({
+    const response = await this.openai.chat.completions.create({
       model: 'gpt-4',
       messages,
     });

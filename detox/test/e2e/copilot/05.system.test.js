@@ -1,7 +1,6 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
 const {expectToThrow} = require("../utils/custom-expects");
 
-describeForCopilotEnv(':ios: iOS Permission Dialogs', () => {
+describe.forCopilot(':ios: iOS Permission Dialogs', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Remove the app and start a fresh instance',

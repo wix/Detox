@@ -5,9 +5,10 @@ import android.content.Context
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.facebook.react.ReactApplication
-import com.facebook.react.ReactInstanceManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.LaunchArgs
+import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources
+import com.wix.detox.reactnative.reloader.ReactNativeReloaderFactory
 
 private const val LOG_TAG = "DetoxRNExt"
 
@@ -33,9 +34,9 @@ object ReactNativeExtension {
         }
 
         (applicationContext as ReactApplication).let {
-            val reactContext = awaitNewReactNativeContext(it, null)
+            awaitNewReactNativeContext(it, null)
 
-            enableOrDisableSynchronization(reactContext)
+            enableOrDisableSynchronization(it)
         }
     }
 
@@ -56,15 +57,14 @@ object ReactNativeExtension {
         Log.i(LOG_TAG, "Reloading React Native")
 
         (applicationContext as ReactApplication).let {
-            val networkSyncEnabled = rnIdlingResources?.networkSyncEnabled ?: true
             clearIdlingResources()
 
-            val previousReactContext = getCurrentReactContextSafe(it)
+            val previousReactContext = it.getCurrentReactContext()
 
             reloadReactNativeInBackground(it)
-            val reactContext = awaitNewReactNativeContext(it, previousReactContext)
+            awaitNewReactNativeContext(it, previousReactContext)
 
-            enableOrDisableSynchronization(reactContext, networkSyncEnabled)
+            enableOrDisableSynchronization(it)
         }
     }
 
@@ -75,11 +75,7 @@ object ReactNativeExtension {
 
     @JvmStatic
     fun enableAllSynchronization(applicationContext: ReactApplication) {
-        val reactContext = getCurrentReactContextSafe(applicationContext)
-
-        if (reactContext != null) {
-            setupIdlingResources(reactContext)
-        }
+        setupIdlingResources(applicationContext)
     }
 
     @JvmStatic
@@ -88,14 +84,9 @@ object ReactNativeExtension {
     @JvmStatic
     fun getRNActivity(applicationContext: Context): Activity? {
         if (ReactNativeInfo.isReactNativeApp()) {
-            return getCurrentReactContextSafe(applicationContext as ReactApplication)?.currentActivity
+            return (applicationContext as ReactApplication).getCurrentReactContext()?.currentActivity
         }
         return null
-    }
-
-    @JvmStatic
-    fun setNetworkSynchronization(enable: Boolean) {
-        rnIdlingResources?.setNetworkSynchronization(enable)
     }
 
     @JvmStatic
@@ -120,20 +111,27 @@ object ReactNativeExtension {
     }
 
     private fun reloadReactNativeInBackground(reactApplication: ReactApplication) {
-        val rnReloader = ReactNativeReLoader(InstrumentationRegistry.getInstrumentation(), reactApplication)
+        val rnReloader = ReactNativeReloaderFactory(InstrumentationRegistry.getInstrumentation(), reactApplication).create()
         rnReloader.reloadInBackground()
     }
 
-    private fun awaitNewReactNativeContext(reactApplication: ReactApplication, previousReactContext: ReactContext?): ReactContext {
-        val rnLoadingMonitor = ReactNativeLoadingMonitor(InstrumentationRegistry.getInstrumentation(), reactApplication, previousReactContext)
+    private fun awaitNewReactNativeContext(
+        reactApplication: ReactApplication,
+        previousReactContext: ReactContext?
+    ): ReactContext {
+        val rnLoadingMonitor = ReactNativeLoadingMonitor(
+            InstrumentationRegistry.getInstrumentation(),
+            reactApplication,
+            previousReactContext
+        )
         return rnLoadingMonitor.getNewContext()!!
     }
 
-    private fun enableOrDisableSynchronization(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
+    private fun enableOrDisableSynchronization(reactApplication: ReactApplication) {
         if (shouldDisableSynchronization()) {
             clearAllSynchronization()
         } else {
-            setupIdlingResources(reactContext, networkSyncEnabled)
+            setupIdlingResources(reactApplication)
         }
     }
 
@@ -142,10 +140,10 @@ object ReactNativeExtension {
         return launchArgs.hasEnableSynchronization() && launchArgs.enableSynchronization.equals("0")
     }
 
-    private fun setupIdlingResources(reactContext: ReactContext, networkSyncEnabled: Boolean = true) {
+    private fun setupIdlingResources(reactApplication: ReactApplication) {
         val launchArgs = LaunchArgs()
 
-        rnIdlingResources = ReactNativeIdlingResources(reactContext, launchArgs, networkSyncEnabled).apply {
+        rnIdlingResources = ReactNativeIdlingResources(reactApplication, launchArgs).apply {
             registerAll()
         }
     }
@@ -155,12 +153,4 @@ object ReactNativeExtension {
         rnIdlingResources = null
     }
 
-    private fun getInstanceManagerSafe(reactApplication: ReactApplication): ReactInstanceManager {
-        return reactApplication.reactNativeHost.reactInstanceManager
-                ?: throw RuntimeException("ReactInstanceManager is null!")
-    }
-
-    private fun getCurrentReactContextSafe(reactApplication: ReactApplication): ReactContext? {
-        return getInstanceManagerSafe(reactApplication).currentReactContext
-    }
 }

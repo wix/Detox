@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources
 
+import com.wix.detox.reactnative.idlingresources.storage.SerialExecutorReflected
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify

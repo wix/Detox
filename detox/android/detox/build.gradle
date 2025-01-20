@@ -147,6 +147,12 @@ dependencies {
     api('androidx.test.uiautomator:uiautomator:2.2.0') {
         because 'Needed by Detox but also makes UIAutomator seamlessly provided to Detox users with hybrid apps/E2E-tests.'
     }
+    api('androidx.test:core-ktx:1.6.1') {
+        because 'Needed by Detox but also makes AndroidX test core seamlessly provided to Detox users with hybrid apps/E2E-tests.'
+    }
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion") {
+        because('Needed by Detox for kotlin reflection')
+    }
 }
 
 // Third-party/extension deps.
@@ -199,7 +205,6 @@ if (rootProject.hasProperty('isOfficialDetoxLib') ||
     dependencies {
         testImplementation 'org.spekframework.spek2:spek-dsl-jvm:2.0.15'
         testImplementation 'org.spekframework.spek2:spek-runner-junit5:2.0.15'
-        testImplementation "org.jetbrains.kotlin:kotlin-reflect:$_kotlinVersion"
     }
 }
 

@@ -1,10 +1,4 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
-
-describeForCopilotEnv('WebView Interactions', () => {
-  beforeAll(async () => {
-    await copilot.perform('Start the app');
-  });
-
+describe.forCopilot('WebView Interactions', () => {
   beforeEach(async () => {
     await copilot.perform(
       'Restart the React Native state',

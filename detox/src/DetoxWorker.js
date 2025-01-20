@@ -1,4 +1,5 @@
 const CAF = require('caf');
+const copilot = require('detox-copilot').default;
 const _ = require('lodash');
 
 const Client = require('./client/Client');
@@ -62,7 +63,7 @@ class DetoxWorker {
     /** @type {Detox.SystemFacade} */
     this.system = null;
     /** @type {Detox.DetoxCopilotFacade} */
-    this.copilot = null;
+    this.copilot = new DetoxCopilot();
 
     this._deviceCookie = null;
 
@@ -125,8 +126,6 @@ class DetoxWorker {
       // @ts-ignore
       runtimeDeviceFactory,
     } = environmentFactory.createFactories(deviceConfig);
-
-    this.copilot = new DetoxCopilot();
 
     const envValidator = envValidatorFactory.createValidator();
     yield envValidator.validate();
@@ -226,9 +225,10 @@ class DetoxWorker {
     yield this._artifactsManager.onRunDescribeStart(...args);
   };
 
-  onTestStart = function* (_signal, testSummary) {
-    // Copilot is reset before each test to ensure a clean state
-    this.copilot.resetIfNeeded();
+  onTestStart = function* (_signal, testSummary){
+    if (copilot.isInitialized()) {
+      copilot.start();
+    }
 
     this._validateTestSummary('beforeEach', testSummary);
 
@@ -257,6 +257,10 @@ class DetoxWorker {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
+
+    if (copilot.isInitialized()) {
+      copilot.end(testSummary.status !== 'passed');
+    }
   };
 
   onRunDescribeFinish = function* (_signal, ...args) {

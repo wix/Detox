@@ -1,13 +1,13 @@
-const {describeForCopilotEnv} = require("../utils/custom-describes");
-
-describeForCopilotEnv('Shape Match Game Screen', () => {
-  beforeAll(async () => {
-    await copilot.perform('Launch the app');
+describe.forCopilot('Shape Match Game Screen', () => {
+  beforeEach(async () => {
+    await copilot.perform(
+      'Reset react native state',
+      'Enter the "Shape Matching" game screen'
+    );
   });
 
   it('should play the Shape Matching game', async () => {
     await copilot.perform(
-      'Enter the "Shape Matching" game screen',
       'Game has started with score 0',
 
       'Drag the blue square into the middle of its hole',
