@@ -189,11 +189,17 @@ class Element : NSObject {
 	}
 	
 	func adjust(toDate date: Date) {
-		if let view = view as? UIDatePicker {
-			view.dtx_adjust(to: date)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", viewDescription: debugAttributes)
-		}
+        var didSetPicker = false
+
+        self.dtx_ifDatePicker { view in
+            view.dtx_adjust(to: date)
+            didSetPicker = true
+        }
+
+        guard didSetPicker else {
+            dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", viewDescription: debugAttributes)
+        }
+
 	}
 	
 	func setComponent(_ component: Int, toValue value: Any) {

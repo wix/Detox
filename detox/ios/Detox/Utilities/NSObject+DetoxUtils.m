@@ -105,7 +105,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 - (UISlider *)dtx_scrollView {
     if([self isKindOfClass:UIScrollView.class])
     {
-        return (id)self;
+        return (UISlider *)self;
     }
 
     Ivar ivar = class_getInstanceVariable([self class], "_scrollView");
@@ -114,28 +114,27 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
         return nil;
     }
 
-    return object_getIvar(self, ivar);
+    return (UISlider *)object_getIvar(self, ivar);
 }
 
 - (UIDatePicker *)dtx_datePicker {
     if([self isKindOfClass:UIDatePicker.class])
     {
-        return (id)self;
+        return (UIDatePicker *)self;
     }
 
     Ivar ivar = class_getInstanceVariable([self class], "_picker");
-
-    if (ivar == NULL) {
-        return nil;
+    if (ivar) {
+        return (UIDatePicker *)object_getIvar(self, ivar);
     }
 
-    return object_getIvar(self, ivar);
+    return nil;
 }
 
 - (UISwitch *)dtx_switchView {
     if([self isKindOfClass:UISwitch.class])
     {
-        return (id)self;
+        return (UISwitch *)self;
     }
 
     Ivar ivar = class_getInstanceVariable([self class], "_switchView");
@@ -144,7 +143,7 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
         return nil;
     }
 
-    return object_getIvar(self, ivar);
+    return (UISwitch *)object_getIvar(self, ivar);
 }
 
 - (UIView*)dtx_viewContainer
