@@ -99,6 +99,7 @@ const detoxCopilotFrameworkDriver = {
             guidelines: [
               'Direction can be "up", "down", "left", or "right".',
               'Use `startPositionX` and `startPositionY` to specify the starting point of the scroll gesture.',
+              '`startPositionX` and `startPositionY` are relative to the element\'s width and height, respectively. with values between 0 and 1.',
               'If multiple scroll actions are needed while waiting for an element, use `whileElement()` in conjunction with `waitFor()`.',
             ],
           },
@@ -109,6 +110,7 @@ const detoxCopilotFrameworkDriver = {
             guidelines: [
               'Edge can be "top", "bottom", "left", or "right".',
               'Use `startPositionX` and `startPositionY` to specify the starting point of the scroll gesture.',
+              '`startPositionX` and `startPositionY` are relative to the element\'s width and height, respectively. with values between 0 and 1.',
             ],
           },
           {
