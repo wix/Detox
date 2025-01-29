@@ -4,7 +4,11 @@ const jestExpect = require('expect').default;
 //     Test Failed: View “<RNDateTimePickerComponentView: 0x10c504080>” is not an instance of “UIDatePicker”
 describe('DatePicker', () => {
   describe.each([
+    ['ios', 'compact', 0],
+    ['ios', 'inline', 1],
     ['ios', 'spinner', 2],
+    ['android', 'calendar', 0],
+    ['android', 'spinner', 1],
   ])(`:%s: %s mode`, (platform, mode, toggleTimes) => {
     beforeEach(async () => {
       if (platform === 'ios') {
@@ -38,6 +42,9 @@ describe('DatePicker', () => {
 
     test.each([
       ['2019-02-06T05:10:00-08:00', 'Feb 6th, 2019', '1:10 PM'],
+      ['2019-02-06T05:10:00.435-08:00', 'Feb 6th, 2019', '1:10 PM'],
+      // This case is important because Date.toISOString() doesn't output a TZ (assumes UTC 0)
+      ['2023-01-11T10:41:26.912Z', 'Jan 11th, 2023', '10:41 AM'],
     ])('ISO 8601 format: %s', async (dateString, expectedUtcDate, expectedUtcTime) => {
       await setDate(dateString, 'ISO8601');
       await expect(element(by.id('utcDateLabel'))).toHaveText(`Date (UTC): ${expectedUtcDate}`);
@@ -46,5 +53,22 @@ describe('DatePicker', () => {
       }
     });
 
+    test.each([
+      ['yyyy/MM/dd HH:mm', '2019/02/06 13:10', 'Feb 6th, 2019', '1:10 PM'],
+    ])('custom format: %s', async (dateFormat, dateString, expectedLocalDate, expectedLocalTime) => {
+      await setDate(dateString, dateFormat);
+      await expect(element(by.id('localDateLabel'))).toHaveText(`Date (Local): ${expectedLocalDate}`);
+      if (platform === 'ios') {
+        await expect(element(by.id('localTimeLabel'))).toHaveText(`Time (Local): ${expectedLocalTime}`);
+      }
+    });
+
+    // Spinner-specific tests
+    if (platform !== 'ios' || mode !== 'spinner') return;
+
+    it('setColumnToValue should not work for a spinner date picker', async () => {
+      const invalidAction = element(by.id('datePicker')).setColumnToValue(1, "6");
+      await jestExpect(invalidAction).rejects.toThrow(/is not an instance of.*UIPickerView/);
+    });
   });
 });

@@ -191,7 +191,7 @@ class Element : NSObject {
 	func adjust(toDate date: Date) {
         var didSetPicker = false
 
-        self.dtx_ifDatePicker { view in
+        view.dtx_ifDatePicker { view in
             view.dtx_adjust(to: date)
             didSetPicker = true
         }
