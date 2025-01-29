@@ -131,6 +131,20 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
     return nil;
 }
 
+- (UIDatePicker *)dtx_picker {
+    if([self isKindOfClass:UIPickerView.class])
+    {
+        return (UIDatePicker *)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "picker");
+    if (ivar) {
+        return (UIDatePicker *)object_getIvar(self, ivar);
+    }
+
+    return nil;
+}
+
 - (UISwitch *)dtx_switchView {
     if([self isKindOfClass:UISwitch.class])
     {
@@ -430,6 +444,14 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
     if (block) {
         block((UIDatePicker *)self.dtx_datePicker);
+    }
+}
+
+- (void)dtx_ifPicker:(void(^)(UIPickerView *picker))block {
+    if (!self.dtx_picker) { return; }
+
+    if (block) {
+        block((UIPickerView *)self.dtx_picker);
     }
 }
 

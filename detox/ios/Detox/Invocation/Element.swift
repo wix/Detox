@@ -203,11 +203,16 @@ class Element : NSObject {
 	}
 	
 	func setComponent(_ component: Int, toValue value: Any) {
-		if let view = view as? UIPickerView {
-			view.dtx_setComponent(component, toValue: value)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", viewDescription: debugAttributes)
-		}
+        var didSetPicker = false
+
+        view.dtx_ifPicker { view in
+            view.dtx_setComponent(component, toValue: value)
+            didSetPicker = true
+        }
+
+        guard didSetPicker else {
+            dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", viewDescription: debugAttributes)
+        }
 	}
 	
 	func adjust(toNormalizedSliderPosition normalizedSliderPosition: Double) {

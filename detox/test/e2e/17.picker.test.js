@@ -1,6 +1,3 @@
-// todo(new-arch): tests are failing
-//         Test Failed: View “<RNCPickerComponentView: 0x10773a5c0>” is not an instance of “UIPickerView”
-
 describe(":ios: Picker", () => {
     beforeEach(async () => {
       await device.reloadReactNative();

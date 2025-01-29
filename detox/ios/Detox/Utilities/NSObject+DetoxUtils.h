@@ -37,6 +37,7 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 - (void)dtx_ifHasSlider:(void(^)(UISlider *slider))block;
 - (void)dtx_ifHasScrollView:(void(^)(UIScrollView *scrollView))block;
 - (void)dtx_ifDatePicker:(void(^)(UIDatePicker *picker))block;
+- (void)dtx_ifPicker:(void(^)(UIPickerView *picker))block;
 
 - (BOOL)dtx_isVisible;
 - (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent;
