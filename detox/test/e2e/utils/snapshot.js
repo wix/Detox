@@ -11,7 +11,8 @@ const SSIM_SCORE_THRESHOLD = 0.997;
 
 async function expectElementSnapshotToMatch(elementOrDevice, snapshotName, ssimThreshold = SSIM_SCORE_THRESHOLD) {
   const bitmapPath = await elementOrDevice.takeScreenshot(snapshotName);
-  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}.png`;
+  const isNewArchString = isRNNewArch ? '.new-arch' : '';
+  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}${isNewArchString}.png`;
 
   if (await fs.pathExists(expectedBitmapPath) === false || process.env.UPDATE_SNAPSHOTS === 'true') {
     await fs.copy(bitmapPath, expectedBitmapPath, { overwrite: true });
