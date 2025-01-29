@@ -23,7 +23,7 @@ describe('Network Synchronization', () => {
   });
 
   // todo(new-arch): test is failing
-  it('Sync with long network requests - 3000ms', async () => {
+  it('@legacy Sync with long network requests - 3000ms', async () => {
     await driver.longRequest.sendButton.tap();
     await driver.longRequest.expectReplied();
   });
