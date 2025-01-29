@@ -420,20 +420,20 @@ describe('DetoxWorker', () => {
         expect(client().dumpPendingRequests).toHaveBeenCalled());
     });
 
-    it('should end copilot if copilot init was called', async () => {
+    it('should end copilot with cache enabled if test has passed', async () => {
       mockIsInitialized = true;
 
       await detox.onTestDone(testSummaries.passed());
 
-      expect(copilot.end).toHaveBeenCalledWith(true);
+      expect(copilot.end).toHaveBeenCalledWith(false);
     });
 
-    it('should end copilot without cache if copilot init was called', async () => {
+    it('should end copilot without cache if test has failed', async () => {
       mockIsInitialized = true;
 
       await detox.onTestDone(testSummaries.failed());
 
-      expect(copilot.end).toHaveBeenCalledWith(false);
+      expect(copilot.end).toHaveBeenCalledWith(true);
     });
   });
 
