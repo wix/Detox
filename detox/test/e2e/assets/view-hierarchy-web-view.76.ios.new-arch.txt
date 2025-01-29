@@ -4,6 +4,7 @@
   <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" id="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
    <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" id="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
     <RCTSurfaceHostingProxyRootView alpha="1.0" class="RCTSurfaceHostingProxyRootView" focused="false" height="<number>" id="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <UIStackView alpha="1.0" class="UIStackView" focused="false" height="<number>" id="overlayStackView" visibility="visible" width="<number>" x="<number>" y="<number>" />
      <RCTSurfaceView alpha="1.0" class="RCTSurfaceView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
       <RCTRootComponentView alpha="1.0" class="RCTRootComponentView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
        <RCTViewComponentView alpha="1.0" class="RCTViewComponentView" focused="false" height="<number>" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
@@ -46,11 +47,6 @@
           </RNCWKWebView>
          </RNCWebViewImpl>
         </RNCWebView>
-       </RCTViewComponentView>
-       <RCTViewComponentView alpha="1.0" class="RCTViewComponentView" focused="false" height="<number>" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-        <RCTDebuggingOverlayComponentView alpha="1.0" class="RCTDebuggingOverlayComponentView" focused="false" height="<number>" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
-         <RCTDebuggingOverlay alpha="1.0" class="RCTDebuggingOverlay" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>" />
-        </RCTDebuggingOverlayComponentView>
        </RCTViewComponentView>
       </RCTRootComponentView>
      </RCTSurfaceView>
