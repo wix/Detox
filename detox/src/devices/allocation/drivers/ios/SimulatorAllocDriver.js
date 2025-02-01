@@ -120,7 +120,7 @@ class SimulatorAllocDriver {
 
     if (_.isEmpty(free)) {
       const prototypeDevice = taken[0];
-      udid = this._applesimutils.create(prototypeDevice);
+      udid = await this._applesimutils.create(prototypeDevice);
       await this._runScreenshotWorkaround(udid);
     } else {
       udid = free[0].udid;
