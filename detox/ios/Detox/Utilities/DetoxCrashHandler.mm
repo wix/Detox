@@ -53,10 +53,10 @@ OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSSt
 	{
 		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@", other, [NSThread dtx_demangledCallStackSymbols]];;
 	}
+
+    [DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
 	
-	[DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
-	
-	[NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:5];
 }
 
 static NSSet<NSNumber*>* __supportedSignals;
@@ -169,9 +169,11 @@ static void __dtx_terminate(void)
 			{
 				exceptionTypeName = [NSString stringWithUTF8String:exceptionTypeMangledName];
 			}
-			
-			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type “%@” was thrown", exceptionTypeName]);
-			(*__old_terminate)();
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                __DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type “%@” was thrown", exceptionTypeName]);
+                (*__old_terminate)();
+            });
 		}
 	}
 }

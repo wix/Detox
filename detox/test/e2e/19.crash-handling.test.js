@@ -1,6 +1,7 @@
 const jestExpect = require('expect').default;
 
 const { expectToThrow } = require('./utils/custom-expects');
+const { isRNNewArch } = require('../../src/utils/rn-consts/rn-consts');
 
 const relaunchAppWithArgs = (launchArgs) => {
   console.log('Relaunching app with launch-arguments...', launchArgs);
@@ -51,6 +52,8 @@ describe('Crash Handling', () => {
 
     if (device.getPlatform() === 'android') {
       jestExpect(error.stack).toContain('\tat java.lang.Thread.run');
+    } else if (isRNNewArch) {
+      jestExpect(error.stack).toContain('facebook::jsi::JSError');
     } else {
       jestExpect(error.stack).toContain('\t0   CoreFoundation');
     }
