@@ -23,11 +23,10 @@
     ```diff title="android/app/build.gradle"
      dependencies {
          // ...
+    -    androidTestImplementation('com.wix:detox:+')
     +    androidTestImplementation(project(path: ":detox"))
      }
     ```
-
-    Make sure to remove `androidTestImplementation('com.wix:detox:+')`
 
 
 1. Stay in that file, just scroll down and add to the `defaultConfig` subsection:
