@@ -23,6 +23,7 @@
     ```diff title="android/app/build.gradle"
      dependencies {
          // ...
+    -    androidTestImplementation('com.wix:detox:+')
     +    androidTestImplementation(project(path: ":detox"))
      }
     ```
