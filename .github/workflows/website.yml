@@ -78,7 +78,7 @@ jobs:
           urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
           outputDirectory: ${{ github.workspace }}/tmp/artifacts
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Lighthouse reports
           path: ${{ github.workspace }}/tmp/artifacts
