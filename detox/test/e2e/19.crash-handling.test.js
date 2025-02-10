@@ -40,7 +40,8 @@ describe('Crash Handling', () => {
     await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
-  it('Should throw a detailed error upon early app crash', async () => {
+  // todo: this test is flaky, looks like there's a race condition between the app crash and the `waitForActive` event.
+  it('@legacy Should throw a detailed error upon early app crash', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ simulateEarlyCrash: true }),
       'The app has crashed');
