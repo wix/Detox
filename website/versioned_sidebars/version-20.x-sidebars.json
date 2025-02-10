@@ -40,8 +40,7 @@
       "label": "Detox Copilot",
       "items": [
         "copilot/testing-with-copilot",
-        "copilot/best-practices",
-        "copilot/technical-overview"
+        "copilot/best-practices"
       ]
     },
     {
