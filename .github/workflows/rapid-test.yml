@@ -50,7 +50,7 @@ jobs:
       - name: Pack Allure results
         run: zip -r allure-results.zip detox/allure-results detox/test/allure-results generation/allure-results
       - name: Upload Allure results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-linux
           path: allure-results.zip
@@ -79,7 +79,7 @@ jobs:
           Compress-Archive -Path detox/allure-results -DestinationPath allure-results.zip
         shell: pwsh
       - name: Upload Allure results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-windows
           path: allure-results.zip
