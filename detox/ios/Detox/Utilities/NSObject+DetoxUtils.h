@@ -25,12 +25,19 @@ static double LNLinearInterpolate(CGFloat from, CGFloat to, CGFloat p)
 @property (nonatomic, readonly, nullable) id accessibilityContainer;
 
 @property (nonatomic, readonly) UIView* dtx_view;
+@property (nonatomic, readonly, nullable) UISlider* dtx_sliderView;
+@property (nonatomic, readonly, nullable) UISwitch* dtx_switchView;
 
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint;
 
 @property (nonatomic, readonly) CGRect dtx_bounds;
 @property (nonatomic, readonly) CGRect dtx_contentBounds;
 @property (nonatomic, readonly) CGRect dtx_visibleBounds;
+
+- (void)dtx_ifHasSlider:(void(^)(UISlider *slider))block;
+- (void)dtx_ifHasScrollView:(void(^)(UIScrollView *scrollView))block;
+- (void)dtx_ifDatePicker:(void(^)(UIDatePicker *picker))block;
+- (void)dtx_ifPicker:(void(^)(UIPickerView *picker))block;
 
 - (BOOL)dtx_isVisible;
 - (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent;

@@ -101,10 +101,10 @@ id createKeyEventWithCharacter(NSString *character) {
 
 - (void)dtx_tapAtPoint:(CGPoint)point numberOfTaps:(NSUInteger)numberOfTaps
 {
-    if([self isKindOfClass:UISwitch.class] && numberOfTaps == 1)
+    if(self.dtx_switchView != nil && numberOfTaps == 1)
     {
         //Attempt a long press on the switch, rather than tap.
-        [self dtx_longPressAtPoint:point duration:0.7];
+        [self.dtx_switchView dtx_longPressAtPoint:point duration:0.7];
         return;
     }
 

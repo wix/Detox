@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewHierarchy>
+ <UIWindow alpha="1.0" class="UIWindow" focused="false" height="<number>" id="detox_temp_" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" id="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" id="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTSurfaceHostingProxyRootView alpha="1.0" class="RCTSurfaceHostingProxyRootView" focused="false" height="<number>" id="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <UIStackView alpha="1.0" class="UIStackView" focused="false" height="<number>" id="overlayStackView" visibility="visible" width="<number>" x="<number>" y="<number>" />
+     <RCTSurfaceView alpha="1.0" class="RCTSurfaceView" focused="false" height="<number>" id="detox_temp_0_0_0_1" visibility="visible" width="<number>" x="<number>" y="<number>">
+      <RCTRootComponentView alpha="1.0" class="RCTRootComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0" label="Welcome Say Hello Say World" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+       <RCTParagraphComponentView alpha="1.0" class="RCTParagraphComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_0" label="Welcome" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTParagraphTextView alpha="1.0" class="RCTParagraphTextView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+       </RCTParagraphComponentView>
+       <RCTViewComponentView alpha="1.0" class="RCTViewComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_1" label="Say Hello" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTParagraphComponentView alpha="1.0" class="RCTParagraphComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_1_0" label="Say Hello" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTParagraphTextView alpha="1.0" class="RCTParagraphTextView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_1_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+        </RCTParagraphComponentView>
+       </RCTViewComponentView>
+       <RCTViewComponentView alpha="1.0" class="RCTViewComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_2" label="Say World" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTParagraphComponentView alpha="1.0" class="RCTParagraphComponentView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_2_0" label="Say World" tag="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTParagraphTextView alpha="1.0" class="RCTParagraphTextView" focused="false" height="<number>" id="detox_temp_0_0_0_1_0_2_0_0" visibility="visible" width="<number>" x="<number>" y="<number>" />
+        </RCTParagraphComponentView>
+       </RCTViewComponentView>
+      </RCTRootComponentView>
+     </RCTSurfaceView>
+    </RCTSurfaceHostingProxyRootView>
+   </UIDropShadowView>
+  </UITransitionView>
+ </UIWindow>
+</ViewHierarchy>

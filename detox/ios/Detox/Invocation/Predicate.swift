@@ -159,6 +159,13 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
   func predicateForQuery() -> NSPredicate {
     var rv = innerPredicateForQuery()
 
+    // Filter out `RCTAccessibilityElement` instances -
+    // React Native injects these internal accessibility bridges into the view hierarchy to handle accessibility
+    // mappings between JS and native layers
+    rv = NSCompoundPredicate(
+        andPredicateWithSubpredicates:
+            [rv, NSPredicate(format: "NOT (class.description = %@)", "RCTAccessibilityElement")])
+
     if modifiers.contains(Modifier.not) {
       rv = NSCompoundPredicate(notPredicateWithSubpredicate: rv)
     }

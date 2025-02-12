@@ -17,31 +17,31 @@
 DTX_ALWAYS_INLINE
 static id DTXJSONSafeNSNumberOrString(double d)
 {
-	return isnan(d) ? @"NaN" : @(d);
+    return isnan(d) ? @"NaN" : @(d);
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXInsetsToDictionary(UIEdgeInsets insets)
 {
-	return @{@"top": DTXJSONSafeNSNumberOrString(insets.top), @"bottom": DTXJSONSafeNSNumberOrString(insets.bottom), @"left": DTXJSONSafeNSNumberOrString(insets.left), @"right": DTXJSONSafeNSNumberOrString(insets.right)};
+    return @{@"top": DTXJSONSafeNSNumberOrString(insets.top), @"bottom": DTXJSONSafeNSNumberOrString(insets.bottom), @"left": DTXJSONSafeNSNumberOrString(insets.left), @"right": DTXJSONSafeNSNumberOrString(insets.right)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXRectToDictionary(CGRect rect)
 {
-	return @{@"x": DTXJSONSafeNSNumberOrString(rect.origin.x), @"y": DTXJSONSafeNSNumberOrString(rect.origin.y), @"width": DTXJSONSafeNSNumberOrString(rect.size.width), @"height": DTXJSONSafeNSNumberOrString(rect.size.height)};
+    return @{@"x": DTXJSONSafeNSNumberOrString(rect.origin.x), @"y": DTXJSONSafeNSNumberOrString(rect.origin.y), @"width": DTXJSONSafeNSNumberOrString(rect.size.width), @"height": DTXJSONSafeNSNumberOrString(rect.size.height)};
 }
 
 DTX_ALWAYS_INLINE
 static NSDictionary* DTXPointToDictionary(CGPoint point)
 {
-	return @{@"x": DTXJSONSafeNSNumberOrString(point.x), @"y": DTXJSONSafeNSNumberOrString(point.y)};
+    return @{@"x": DTXJSONSafeNSNumberOrString(point.x), @"y": DTXJSONSafeNSNumberOrString(point.y)};
 }
 
 DTX_ALWAYS_INLINE
 static NSString* DTXPointToString(CGPoint point)
 {
-	return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:nil] encoding:NSUTF8StringEncoding];
+    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:DTXPointToDictionary(point) options:0 error:nil] encoding:NSUTF8StringEncoding];
 }
 
 @interface NSObject ()
@@ -52,13 +52,13 @@ static NSString* DTXPointToString(CGPoint point)
 
 BOOL __DTXDoulbeEqualToDouble(double a, double b)
 {
-	double difference = fabs(a * .00001);
-	return fabs(a - b) <= difference;
+    double difference = fabs(a * .00001);
+    return fabs(a - b) <= difference;
 }
 
 BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 {
-	return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
+    return __DTXDoulbeEqualToDouble(floor(a.x), floor(b.x)) && __DTXDoulbeEqualToDouble(floor(a.y), floor(b.y));
 }
 
 @implementation NSObject (DetoxUtils)
@@ -68,110 +68,183 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (CGPoint)dtx_convertRelativePointToViewCoordinateSpace:(CGPoint)relativePoint
 {
-	if([self isKindOfClass:UIView.class])
-	{
-		return relativePoint;
-	}
-	
-	CGPoint screenPoint = CGPointMake(self.accessibilityFrame.origin.x + relativePoint.x, self.accessibilityFrame.origin.y + relativePoint.y);
-	return [self.dtx_view.window.screen.coordinateSpace convertPoint:screenPoint toCoordinateSpace:self.dtx_view.coordinateSpace];
+    if([self isKindOfClass:UIView.class])
+    {
+        return relativePoint;
+    }
+
+    CGPoint screenPoint = CGPointMake(self.accessibilityFrame.origin.x + relativePoint.x, self.accessibilityFrame.origin.y + relativePoint.y);
+    return [self.dtx_view.window.screen.coordinateSpace convertPoint:screenPoint toCoordinateSpace:self.dtx_view.coordinateSpace];
 }
 
 - (UIView*)dtx_view
 {
-	if([self isKindOfClass:UIView.class])
-	{
-		return (id)self;
-	}
-	
-	return self.dtx_viewContainer;
+    if([self isKindOfClass:UIView.class])
+    {
+        return (id)self;
+    }
+
+    return self.dtx_viewContainer;
+}
+
+- (UISlider *)dtx_sliderView {
+    if([self isKindOfClass:UISlider.class])
+    {
+        return (id)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "slider");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return object_getIvar(self, ivar);
+}
+
+- (UISlider *)dtx_scrollView {
+    if([self isKindOfClass:UIScrollView.class])
+    {
+        return (UISlider *)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_scrollView");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return (UISlider *)object_getIvar(self, ivar);
+}
+
+- (UIDatePicker *)dtx_datePicker {
+    if([self isKindOfClass:UIDatePicker.class])
+    {
+        return (UIDatePicker *)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_picker");
+    if (ivar) {
+        return (UIDatePicker *)object_getIvar(self, ivar);
+    }
+
+    return nil;
+}
+
+- (UIDatePicker *)dtx_picker {
+    if([self isKindOfClass:UIPickerView.class])
+    {
+        return (UIDatePicker *)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "picker");
+    if (ivar) {
+        return (UIDatePicker *)object_getIvar(self, ivar);
+    }
+
+    return nil;
+}
+
+- (UISwitch *)dtx_switchView {
+    if([self isKindOfClass:UISwitch.class])
+    {
+        return (UISwitch *)self;
+    }
+
+    Ivar ivar = class_getInstanceVariable([self class], "_switchView");
+
+    if (ivar == NULL) {
+        return nil;
+    }
+
+    return (UISwitch *)object_getIvar(self, ivar);
 }
 
 - (UIView*)dtx_viewContainer
 {
-	if([self isKindOfClass:UIView.class])
-	{
-		return self.dtx_container;
-	}
-	else if([self respondsToSelector:@selector(accessibilityContainer)])
-	{
-		return [self.dtx_container dtx_view];
-	}
-	
-	return nil;
+    if([self isKindOfClass:UIView.class])
+    {
+        return self.dtx_container;
+    }
+    else if([self respondsToSelector:@selector(accessibilityContainer)])
+    {
+        return [self.dtx_container dtx_view];
+    }
+
+    return nil;
 }
 
 - (id)dtx_container
 {
-	if ([self isKindOfClass:UIView.class])
-	{
-		return [(UIView *)self superview];
-	}
-	else if ([self respondsToSelector:@selector(accessibilityContainer)])
-	{
-		return [(UIAccessibilityElement*)self accessibilityContainer];
-	}
+    if ([self isKindOfClass:UIView.class])
+    {
+        return [(UIView *)self superview];
+    }
+    else if ([self respondsToSelector:@selector(accessibilityContainer)])
+    {
+        return [(UIAccessibilityElement*)self accessibilityContainer];
+    }
 
-	return nil;
+    return nil;
 }
 
 - (CGRect)dtx_bounds
 {
-	if([self isKindOfClass:UIView.class])
-	{
-		return [(UIView*)self bounds];
-	}
-	
-	UIView* view = self.dtx_view;
-	return [view.window.screen.coordinateSpace convertRect:self.accessibilityFrame toCoordinateSpace:view.coordinateSpace];
+    if([self isKindOfClass:UIView.class])
+    {
+        return [(UIView*)self bounds];
+    }
+
+    UIView* view = self.dtx_view;
+    return [view.window.screen.coordinateSpace convertRect:self.accessibilityFrame toCoordinateSpace:view.coordinateSpace];
 }
 
 - (CGRect)dtx_contentBounds
 {
-	return self.dtx_bounds;
+    return self.dtx_bounds;
 }
 
 - (CGRect)dtx_visibleBounds
 {
-	return self.dtx_bounds;
+    return self.dtx_bounds;
 }
 
 - (BOOL)dtx_isVisible {
-	return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:nil];
+    return [self dtx_isVisibleAtRect:self.dtx_bounds percent:nil error:nil];
 }
 
 - (BOOL)dtx_isVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent
-					  error:(NSError* __strong __nullable * __nullable)error {
-	return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
+                      error:(NSError* __strong __nullable * __nullable)error {
+    return [self.dtx_view dtx_isVisibleAtRect:rect percent:percent error:error];
 }
 
 - (void)dtx_assertVisible {
-	[self dtx_assertVisibleWithPercent:nil];
+    [self dtx_assertVisibleWithPercent:nil];
 }
 
 - (void)dtx_assertVisibleWithPercent:(nullable NSNumber *)percent {
-  [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
+    [self dtx_assertVisibleAtRect:self.dtx_bounds percent:percent];
 }
 
 - (void)dtx_assertVisibleAtRect:(CGRect)rect percent:(nullable NSNumber *)percent {
-	[self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
+    [self.dtx_view dtx_assertVisibleAtRect:rect percent:percent];
 }
 
 - (BOOL)dtx_isFocused
 {
-	BOOL isFocused = [self.dtx_view isFocused];
-	BOOL isFirstResponder = [self.dtx_view isFirstResponder];
-	return isFocused || isFirstResponder;
+    BOOL isFocused = [self.dtx_view isFocused];
+    BOOL isFirstResponder = [self.dtx_view isFirstResponder];
+    return isFocused || isFirstResponder;
 }
 
 - (BOOL)dtx_isHittable
 {
-	return YES;
+    return YES;
 }
 
 - (BOOL)dtx_isHittableAtPoint:(CGPoint)viewPoint
-						error:(NSError* __strong __nullable * __nullable)error {
-  return YES;
+                        error:(NSError* __strong __nullable * __nullable)error {
+    return YES;
 }
 
 - (void)dtx_assertHittable {}
@@ -180,207 +253,236 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 
 - (NSString *)dtx_text
 {
-	id rv = [self _dtx_text];
-	if(rv == nil || [rv isKindOfClass:NSString.class])
-	{
-		return rv;
-	}
-	
-	if([rv isKindOfClass:NSAttributedString.class])
-	{
-		return [(NSAttributedString*)rv string];
-	}
-	
-	//Unsupported
-	return nil;
+    id rv = [self _dtx_text];
+    if(rv == nil || [rv isKindOfClass:NSString.class])
+    {
+        return rv;
+    }
+
+    if([rv isKindOfClass:NSAttributedString.class])
+    {
+        return [(NSAttributedString*)rv string];
+    }
+
+    //Unsupported
+    return nil;
 }
 
 - (NSString *)dtx_placeholder
 {
-	id rv = [self _dtx_placeholder];
-	if(rv == nil || [rv isKindOfClass:NSString.class])
-	{
-		return rv;
-	}
-	
-	if([rv isKindOfClass:NSAttributedString.class])
-	{
-		return [(NSAttributedString*)rv string];
-	}
-	
-	//Unsupported
-	return nil;
+    id rv = [self _dtx_placeholder];
+    if(rv == nil || [rv isKindOfClass:NSString.class])
+    {
+        return rv;
+    }
+
+    if([rv isKindOfClass:NSAttributedString.class])
+    {
+        return [(NSAttributedString*)rv string];
+    }
+
+    //Unsupported
+    return nil;
 }
 
 - (BOOL)dtx_isEnabled
 {
-	return self.dtx_view.dtx_isEnabled;
+    return self.dtx_view.dtx_isEnabled;
 }
 
 - (void)dtx_assertEnabled
 {
-	return [self.dtx_view dtx_assertEnabled];
+    return [self.dtx_view dtx_assertEnabled];
 }
 
 - (NSString *)dtx_shortDescription
 {
-	return self.description;
+    return self.description;
 }
 
 - (CGRect)dtx_accessibilityFrame
 {
-	return self.accessibilityFrame;
+    return self.accessibilityFrame;
 }
 
 - (CGRect)dtx_safeAreaBounds
 {
-	return self.dtx_bounds;
+    return self.dtx_bounds;
 }
 
 - (CGPoint)dtx_accessibilityActivationPoint
 {
-	return self.accessibilityActivationPoint;
+    return self.accessibilityActivationPoint;
 }
 
 - (CGPoint)dtx_accessibilityActivationPointInViewCoordinateSpace
 {
-	UIView* view = self.dtx_view;
-	return [view.window.screen.coordinateSpace convertPoint:self.accessibilityActivationPoint toCoordinateSpace:view.coordinateSpace];
+    UIView* view = self.dtx_view;
+    return [view.window.screen.coordinateSpace convertPoint:self.accessibilityActivationPoint toCoordinateSpace:view.coordinateSpace];
 }
 
 - (NSDictionary<NSString *,id> *)dtx_attributes
 {
-	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
-	rv[@"className"] = NSStringFromClass(self.class);
-	
-	NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"dtx_placeholder"]];
-	[results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-		if([obj isKindOfClass:NSNull.class])
-		{
-			return;
-		}
+    NSMutableDictionary* rv = [NSMutableDictionary new];
 
-		if([key isEqualToString:@"dtx_text"])
-		{
-			rv[@"text"] = obj;
-		}
-		else if([key isEqualToString:@"dtx_placeholder"])
-		{
-			rv[@"placeholder"] = obj;
-		}
-		else if([key isEqualToString:@"accessibilityLabel"])
-		{
-			rv[@"label"] = obj;
-		}
-		else if([key isEqualToString:@"accessibilityValue"])
-		{
-			rv[@"value"] = obj;
-		}
-		else if([key isEqualToString:@"accessibilityIdentifier"])
-		{
-			rv[@"identifier"] = obj;
-		}
-		else
-		{
-			rv[key] = obj;
-		}
-	}];
-	
-	rv[@"enabled"] = @(self.dtx_isEnabled);
-	
-	rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
-	rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
-	
-	if([self isKindOfClass:UIView.class])
-	{
-		UIView* view = (id)self;
-		rv[@"elementFrame"] = DTXRectToDictionary(view.frame);
-		rv[@"elementBounds"] = DTXRectToDictionary(view.bounds);
-		rv[@"safeAreaInsets"] = DTXInsetsToDictionary(view.safeAreaInsets);
-		rv[@"layer"] = view.layer.description;
-	}
-	else
-	{
-		rv[@"isAccessibilityElement"] = @(self.isAccessibilityElement);
-	}
-	
-	CGPoint accessibilityActivationPoint = self.dtx_accessibilityActivationPoint;
-	CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
-	rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
-	CGRect accessibilityFrame = self.dtx_accessibilityFrame;
-	rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.x - CGRectGetMinX(accessibilityFrame)) / CGRectGetWidth(accessibilityFrame), CGRectGetHeight(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)));
-	
-	rv[@"hittable"] = @(self.dtx_isHittable);
-	rv[@"visible"] = @(self.dtx_isVisible);
-	
-	if([self isKindOfClass:UIScrollView.class])
-	{
-		rv[@"contentInset"] = DTXInsetsToDictionary([(UIScrollView*)self contentInset]);
-		rv[@"adjustedContentInset"] = DTXInsetsToDictionary([(UIScrollView*)self adjustedContentInset]);
-		rv[@"contentOffset"] = DTXPointToDictionary([(UIScrollView*)self contentOffset]);
-	}
-	
-	if([self isKindOfClass:UISlider.class])
-	{
-		rv[@"normalizedSliderPosition"] = @([(UISlider*)self dtx_normalizedSliderPosition]);
-	}
-	
-	if([self isKindOfClass:UIDatePicker.class])
-	{
-		UIDatePicker* dp = (id)self;
-		rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
-		NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
-		
-		NSMutableDictionary* dateComponents = [NSMutableDictionary new];
-		dateComponents[@"era"] = @(dc.era);
-		dateComponents[@"year"] = @(dc.year);
-		dateComponents[@"month"] = @(dc.month);
-		dateComponents[@"day"] = @(dc.day);
-		dateComponents[@"hour"] = @(dc.hour);
-		dateComponents[@"minute"] = @(dc.minute);
-		dateComponents[@"second"] = @(dc.second);
-		dateComponents[@"weekday"] = @(dc.weekday);
-		dateComponents[@"weekdayOrdinal"] = @(dc.weekdayOrdinal);
-		dateComponents[@"quarter"] = @(dc.quarter);
-		dateComponents[@"weekOfMonth"] = @(dc.weekOfMonth);
-		dateComponents[@"weekOfYear"] = @(dc.weekOfYear);
-		dateComponents[@"leapMonth"] = @(dc.leapMonth);
-		
-		rv[@"dateComponents"] = dateComponents;
-	}
-	
-	return rv;
+    rv[@"className"] = NSStringFromClass(self.class);
+
+    NSDictionary* results = [self dictionaryWithValuesForKeys:@[@"dtx_text", @"accessibilityLabel", @"accessibilityIdentifier", @"accessibilityValue", @"dtx_placeholder"]];
+    [results enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if([obj isKindOfClass:NSNull.class])
+        {
+            return;
+        }
+
+        if([key isEqualToString:@"dtx_text"])
+        {
+            rv[@"text"] = obj;
+        }
+        else if([key isEqualToString:@"dtx_placeholder"])
+        {
+            rv[@"placeholder"] = obj;
+        }
+        else if([key isEqualToString:@"accessibilityLabel"])
+        {
+            rv[@"label"] = obj;
+        }
+        else if([key isEqualToString:@"accessibilityValue"])
+        {
+            rv[@"value"] = obj;
+        }
+        else if([key isEqualToString:@"accessibilityIdentifier"])
+        {
+            rv[@"identifier"] = obj;
+        }
+        else
+        {
+            rv[key] = obj;
+        }
+    }];
+
+    rv[@"enabled"] = @(self.dtx_isEnabled);
+
+    rv[@"frame"] = DTXRectToDictionary(self.dtx_accessibilityFrame);
+    rv[@"elementSafeBounds"] = DTXRectToDictionary(self.dtx_safeAreaBounds);
+
+    if([self isKindOfClass:UIView.class])
+    {
+        UIView* view = (id)self;
+        rv[@"elementFrame"] = DTXRectToDictionary(view.frame);
+        rv[@"elementBounds"] = DTXRectToDictionary(view.bounds);
+        rv[@"safeAreaInsets"] = DTXInsetsToDictionary(view.safeAreaInsets);
+        rv[@"layer"] = view.layer.description;
+    }
+    else
+    {
+        rv[@"isAccessibilityElement"] = @(self.isAccessibilityElement);
+    }
+
+    CGPoint accessibilityActivationPoint = self.dtx_accessibilityActivationPoint;
+    CGPoint accessibilityActivationPointInViewCoordinateSpace = self.dtx_accessibilityActivationPointInViewCoordinateSpace;
+    rv[@"activationPoint"] = DTXPointToDictionary(accessibilityActivationPointInViewCoordinateSpace);
+    CGRect accessibilityFrame = self.dtx_accessibilityFrame;
+    rv[@"normalizedActivationPoint"] = DTXPointToDictionary(CGPointMake(CGRectGetWidth(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.x - CGRectGetMinX(accessibilityFrame)) / CGRectGetWidth(accessibilityFrame), CGRectGetHeight(accessibilityFrame) == 0 ? 0 : (accessibilityActivationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)));
+
+    rv[@"hittable"] = @(self.dtx_isHittable);
+    rv[@"visible"] = @(self.dtx_isVisible);
+
+    [self dtx_ifHasScrollView:^(UIScrollView *scrollView) {
+        rv[@"contentInset"] = DTXInsetsToDictionary([scrollView contentInset]);
+        rv[@"adjustedContentInset"] = DTXInsetsToDictionary([scrollView adjustedContentInset]);
+        rv[@"contentOffset"] = DTXPointToDictionary([scrollView contentOffset]);
+    }];
+
+    [self dtx_ifHasSlider:^(UISlider *slider) {
+        rv[@"normalizedSliderPosition"] = @([slider dtx_normalizedSliderPosition]);
+        rv[@"value"] = [slider accessibilityValue];
+    }];
+
+    [self dtx_ifDatePicker:^(UIDatePicker *dp) {
+        rv[@"date"] = [NSISO8601DateFormatter stringFromDate:dp.date timeZone:dp.timeZone ?: NSTimeZone.systemTimeZone formatOptions:NSISO8601DateFormatWithInternetDateTime | NSISO8601DateFormatWithDashSeparatorInDate | NSISO8601DateFormatWithColonSeparatorInTime | NSISO8601DateFormatWithColonSeparatorInTimeZone];
+        NSDateComponents* dc = [dp.calendar componentsInTimeZone:dp.timeZone ?: NSTimeZone.systemTimeZone fromDate:dp.date];
+
+        NSMutableDictionary* dateComponents = [NSMutableDictionary new];
+        dateComponents[@"era"] = @(dc.era);
+        dateComponents[@"year"] = @(dc.year);
+        dateComponents[@"month"] = @(dc.month);
+        dateComponents[@"day"] = @(dc.day);
+        dateComponents[@"hour"] = @(dc.hour);
+        dateComponents[@"minute"] = @(dc.minute);
+        dateComponents[@"second"] = @(dc.second);
+        dateComponents[@"weekday"] = @(dc.weekday);
+        dateComponents[@"weekdayOrdinal"] = @(dc.weekdayOrdinal);
+        dateComponents[@"quarter"] = @(dc.quarter);
+        dateComponents[@"weekOfMonth"] = @(dc.weekOfMonth);
+        dateComponents[@"weekOfYear"] = @(dc.weekOfYear);
+        dateComponents[@"leapMonth"] = @(dc.leapMonth);
+
+        rv[@"dateComponents"] = dateComponents;
+    }];
+
+    return rv;
+}
+
+- (void)dtx_ifHasSlider:(void(^)(UISlider *slider))block {
+    if (!self.dtx_sliderView) { return; }
+
+    if (block) {
+        block((UISlider *)self.dtx_sliderView);
+    }
+}
+
+- (void)dtx_ifHasScrollView:(void(^)(UIScrollView *scrollView))block {
+    if (!self.dtx_scrollView) { return; }
+
+    if (block) {
+        block((UIScrollView *)self.dtx_scrollView);
+    }
+}
+
+- (void)dtx_ifDatePicker:(void(^)(UIDatePicker *picker))block {
+    if (!self.dtx_datePicker) { return; }
+
+    if (block) {
+        block((UIDatePicker *)self.dtx_datePicker);
+    }
+}
+
+- (void)dtx_ifPicker:(void(^)(UIPickerView *picker))block {
+    if (!self.dtx_picker) { return; }
+
+    if (block) {
+        block((UIPickerView *)self.dtx_picker);
+    }
 }
 
 + (NSDictionary<NSString*, id> *)dtx_genericElementDebugAttributes
 {
-	NSMutableDictionary* rv = [NSMutableDictionary new];
-	
-	rv[@"viewHierarchy"] = [[UIWindow dtx_keyWindowScene] dtx_recursiveDescription];
-	
-	NSMutableArray* windowDescriptions = [NSMutableArray new];
-	
-	UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;	
-	auto windows = [UIWindow dtx_allWindowsForScene:scene];
-	[windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		[windowDescriptions addObject:[obj dtx_shortDescription]];
-	}];
-	
-	rv[@"windows"] = windowDescriptions;
-	
-	return rv;
+    NSMutableDictionary* rv = [NSMutableDictionary new];
+
+    rv[@"viewHierarchy"] = [[UIWindow dtx_keyWindowScene] dtx_recursiveDescription];
+
+    NSMutableArray* windowDescriptions = [NSMutableArray new];
+
+    UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;
+    auto windows = [UIWindow dtx_allWindowsForScene:scene];
+    [windows enumerateObjectsUsingBlock:^(UIWindow * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [windowDescriptions addObject:[obj dtx_shortDescription]];
+    }];
+
+    rv[@"windows"] = windowDescriptions;
+
+    return rv;
 }
 
 - (NSDictionary<NSString *, id> *)dtx_elementDebugAttributes
 {
-	NSMutableDictionary<NSString *, id> *rv = [NSMutableDictionary new];
-	[rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
-	
-	rv[@"elementAttributes"] = [self dtx_attributes];
-	rv[@"viewDescription"] = self.description;
-	
-	return rv;
+    NSMutableDictionary<NSString *, id> *rv = [NSMutableDictionary new];
+    [rv addEntriesFromDictionary:NSObject.dtx_genericElementDebugAttributes];
+
+    rv[@"elementAttributes"] = [self dtx_attributes];
+    rv[@"viewDescription"] = self.description;
+
+    return rv;
 }
 
 

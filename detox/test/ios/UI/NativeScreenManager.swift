@@ -5,8 +5,8 @@
 
 import UIKit
 
-enum NativeScreen {
-    case customKeyboard
+@objc enum NativeScreen: Int {
+    case customKeyboard = 0
 
     var viewController: UIViewController {
         switch self {
@@ -18,25 +18,27 @@ enum NativeScreen {
     }
 }
 
-protocol NativeScreenManaging {
-    func present(_ screen: NativeScreen, from: UIViewController?, animated: Bool)
+@objc protocol NativeScreenManaging {
     func handle(_ notification: Notification)
 }
 
-class NativeScreenManager: NativeScreenManaging {
+@objc(NativeScreenManager)
+class NativeScreenManager: NSObject, NativeScreenManaging {
     weak var window: UIWindow?
 
-    init(window: UIWindow?) {
+    @objc init(window: UIWindow?) {
         self.window = window
+        super.init()
     }
 
+    // Internal Swift method that uses the enum
     func present(_ screen: NativeScreen, from: UIViewController?, animated: Bool) {
         let presentingVC = from ?? window?.rootViewController
         let viewController = screen.viewController
         presentingVC?.present(viewController, animated: animated)
     }
 
-    func handle(_ notification: Notification) {
+    @objc func handle(_ notification: Notification) {
         guard let name = notification.userInfo?["name"] as? String else { return }
 
         switch name {

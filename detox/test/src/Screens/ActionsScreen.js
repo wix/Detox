@@ -119,7 +119,7 @@ export default class ActionsScreen extends Component {
           </View>}
         </View>
 
-        <View testID='UniqueId937_wrapper'>
+        <View testID='UniqueId937_wrapper' accessible={true}>
           <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, marginHorizontal: 20, padding: 5 }}
             onChangeText={this.onChangeTypeText.bind(this)}
             value={this.state.typeText}

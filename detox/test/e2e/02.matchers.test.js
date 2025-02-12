@@ -1,4 +1,5 @@
 const { expectToThrow } = require('./utils/custom-expects');
+const { isRNNewArch } = require('../../src/utils/rn-consts/rn-consts');
 
 describe('Matchers', () => {
   beforeEach(async () => {
@@ -57,7 +58,8 @@ describe('Matchers', () => {
   });
 
   it('should match elements by type (native class)', async () => {
-    const byType = device.getPlatform() === 'ios' ? by.type('RCTImageView') : by.type('android.widget.ImageView');
+    const iOSClass = isRNNewArch ? 'RCTImageComponentView' : 'RCTImageView';
+    const byType = device.getPlatform() === 'ios' ? by.type(iOSClass) : by.type('android.widget.ImageView');
 
     await expect(element(byType)).toBeVisible();
     await element(byType).tap();

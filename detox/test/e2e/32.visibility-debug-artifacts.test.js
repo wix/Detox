@@ -1,4 +1,6 @@
 const { expectToThrow } = require('./utils/custom-expects');
+const { isRNNewArch } = require('../../src/utils/rn-consts/rn-consts');
+
 const {
   assertArtifactExists,
   waitUntilArtifactsManagerIsIdle,
@@ -20,7 +22,8 @@ describe(':ios: Visibility Debug Artifacts', () => {
   afterAll(async () => {
     await waitUntilArtifactsManagerIsIdle();
 
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_RCTTextView__0x*__SCREEN.png');
-    assertArtifactExists('✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_RCTTextView__0x*__TEST.png');
+    const className = isRNNewArch ? "RCTParagraphComponentView" : "RCTTextView";
+    assertArtifactExists(`✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_${className}__0x*__SCREEN.png`);
+    assertArtifactExists(`✓ _ios_ Visibility Debug Artifacts should not be able to tap an overlayed button/DETOX_VISIBILITY_${className}__0x*__TEST.png`);
   });
 });

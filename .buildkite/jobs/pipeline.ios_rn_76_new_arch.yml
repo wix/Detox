@@ -1,4 +1,4 @@
-  - label: ":new::ios::detox: RN .76 + New Arch + iOS: Tests app"
+  - label: ":ios::detox: RN .76 + iOS: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.ios.sh"

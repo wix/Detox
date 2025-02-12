@@ -51,7 +51,7 @@ class AnimationsComponent extends Component {
   render() {
     return (
       <View style={{ flex: 1, paddingTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-        <Animated.Text testID='UniqueId_AnimationsScreen_animatedText' style={{
+        <Animated.Text accessible={true} testID='UniqueId_AnimationsScreen_animatedText' style={{
           opacity: this._fadeInValue,
           backgroundColor: 'green'
         }}
@@ -66,9 +66,11 @@ class AnimationsComponent extends Component {
   renderAfterAnimTextIfNeeded() {
     if (this.state.showAfterAnimationText) {
       return (
-        <Text testID='UniqueId_AnimationsScreen_afterAnimationText' style={{ marginTop: 20 }}>
-          After-animation-text
-        </Text>
+        <View accessible={true} testID='UniqueId_AnimationsScreen_afterAnimationText'>
+          <Text style={{ marginTop: 20 }}>
+            After-animation-text
+          </Text>
+        </View>
       );
     }
     return undefined;
@@ -115,6 +117,7 @@ export default class AnimationsScreen extends Component {
         <View style={{paddingTop: 20}}>
           <Text>Driver:</Text>
           <SegmentedControl
+            acessible={true}
             testID="UniqueId_AnimationsScreen_useNativeDriver"
             values={['JS', 'Native']}
             selectedIndex={-1}
@@ -124,6 +127,7 @@ export default class AnimationsScreen extends Component {
         <View style={{paddingTop: 20}}>
           <Text>Loop:</Text>
           <Switch
+            accessible={true}
             testID="UniqueId_AnimationsScreen_enableLoop"
             value={this.state.enableLoop}
             onValueChange={(value) => this.setState({enableLoop: value})}

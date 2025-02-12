@@ -57,6 +57,7 @@ class Expectation : CustomStringConvertible {
 		static let toHaveValue = "toHaveValue"
 		static let toHavePlaceholder = "toHavePlaceholder"
 		static let toHaveSliderPosition = "toHaveSliderPosition"
+        static let toHaveToggleValue = "toHaveToggleValue"
 	}
 	
 	let element : Element
@@ -81,7 +82,8 @@ class Expectation : CustomStringConvertible {
 		Kind.toHaveId: ValueExpectation.self,
 		Kind.toHaveValue: ValueExpectation.self,
 		Kind.toHavePlaceholder: ValueExpectation.self,
-		Kind.toHaveSliderPosition: SliderPositionExpectation.self
+		Kind.toHaveSliderPosition: SliderPositionExpectation.self,
+        Kind.toHaveToggleValue: ToggleValueExpectation.self
 	]
 	
 	static let keyMapping : [String: String] = [
@@ -106,7 +108,10 @@ class Expectation : CustomStringConvertible {
 		
 		let element = try Element.with(dictionaryRepresentation: dictionaryRepresentation)
 		let expectationClass = mapping[kind]!
-		if expectationClass == SliderPositionExpectation.self {
+        if expectationClass == ToggleValueExpectation.self {
+            return ToggleValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, value: params!.first! as! Double, tolerance: params!.count > 1 ? (params![1] as! Double) : nil)
+
+        } else if expectationClass == SliderPositionExpectation.self {
 			return SliderPositionExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, value: params!.first! as! Double, tolerance: params!.count > 1 ? (params![1] as! Double) : nil)
 		} else if expectationClass == ValueExpectation.self {
 			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!)
@@ -311,4 +316,16 @@ class SliderPositionExpectation : DoubleExpectation {
 			return "(sliderPosition \(tolerance != nil ? "(~\(tolerance!))" : "")== “\(value)”)"
 		}
 	}
+}
+
+class ToggleValueExpectation : DoubleExpectation {
+    override func valueToTest(from element: Element) -> Double {
+        return element.toggleValue
+    }
+
+    override var additionalDescription: String {
+        get {
+            return "(toggleValue \(tolerance != nil ? "(~\(tolerance!))" : "")== \(value == 1.0 ? "ON" : "OFF"))"
+        }
+    }
 }

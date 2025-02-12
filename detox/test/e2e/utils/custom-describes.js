@@ -1,5 +1,6 @@
 const axios = require('axios');
 const PromptHandler = require("./PromptHandler");
+const { isRNNewArch } = require('../../../src/utils/rn-consts/rn-consts');
 
 describe.skipIfCI = (title, fn) => {
   const isCI = process.env.CI === 'true';
@@ -7,8 +8,7 @@ describe.skipIfCI = (title, fn) => {
 };
 
 describe.skipIfNewArchOnIOS = (title, fn) => {
-  const isNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
-  if (isNewArch && device.getPlatform() === 'ios') {
+  if (isRNNewArch && device.getPlatform() === 'ios') {
     console.warn('Skipping tests for new architecture, as there are issues related to the new architecture.');
     return describe.skip(title, fn);
   }

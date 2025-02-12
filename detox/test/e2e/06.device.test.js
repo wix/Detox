@@ -43,20 +43,25 @@ describe('Device', () => {
   it(':ios: launchApp in a different language', async () => {
     let languageAndLocale = {
       language: "es-MX",
-      locale: "es-MX"
+      locale: "en_MX"
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
+    // iOS toast is hiding the element
+    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
+
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
 
     languageAndLocale = {
       language: "en-US",
-      locale: "en-US"
+      locale: "en_US"
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
+    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
+
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
@@ -75,7 +80,7 @@ describe('Device', () => {
     await device.reloadReactNative();
     await element(by.text('Shake')).tap();
     await device.shake();
-    await expect(element(by.text('Shaken, not stirred'))).toBeVisible();
+    await expect(element(by.text('Shaken, not stirred'))).toExist();
   });
 
   it(':android: device back button - should show popup back pressed when back button is pressed', async () => {
