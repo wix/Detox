@@ -324,9 +324,9 @@ describe('WebView', () => {
     it('should throw on multiple matches', async () => {
       await element(by.id('toggle3rdWebviewButton')).tap();
 
-      await jestExpect(async () => {
+      await expectToThrow(async () => {
         await expect(web(by.id('webView')).element(by.web.id('message'))).toExist();
-      }).rejects.toThrowError();
+      });
 
       await device.launchApp();
     });
