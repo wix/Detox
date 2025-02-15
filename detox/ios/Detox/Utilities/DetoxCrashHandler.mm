@@ -43,9 +43,13 @@ OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSSt
 
         report[@"errorDetails"] = errorDetails;
 
+        if (NSThread.isMainThread) {
+            [DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
+        } else {
         dispatch_sync(dispatch_get_main_queue(), ^{
             [DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
         });
+        }
 
         [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
     }
