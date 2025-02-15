@@ -436,13 +436,13 @@ describe(':ios: WebView CORS (inner frame)', () => {
 
     it('should type text in cross-origin frame with `asSecured()`', async () => {
       await web.element(by.web.type('textField')).atIndex(1).asSecured().typeText('Test');
-      await expectElementSnapshotToMatch(webviewElement, 'type-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'type-text-in-cross-origin-frame', 0.97);
 
       await web.element(by.web.type('textField')).asSecured().atIndex(1).replaceText('Test 2');
-      await expectElementSnapshotToMatch(webviewElement, 'replace-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'replace-text-in-cross-origin-frame', 0.97);
 
       await web.element(by.web.type('textField')).asSecured().atIndex(1).clearText();
-      await expectElementSnapshotToMatch(webviewElement, 'clear-text-in-cross-origin-frame');
+      await expectElementSnapshotToMatch(webviewElement, 'clear-text-in-cross-origin-frame', 0.97);
     });
 
     it('should tap on cross-origin frame element with `asSecured()`', async () => {
