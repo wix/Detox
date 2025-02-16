@@ -66,7 +66,7 @@ export default class Permissions extends Component {
           const statusColor = status === RESULTS.GRANTED ? 'green' : status === RESULTS.BLOCKED ? 'red' : 'black';
 
           return (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row'}} key={name}>
               <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20}}>{name}</Text>
               <Text style={{marginBottom: 10, fontSize: 14, marginRight: 20, color: statusColor}} testID={name}>
                 {status}

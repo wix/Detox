@@ -106,7 +106,9 @@ class Expect {
   }
 
   toHaveToggleValue(value) {
-    return this.toHaveValue(`${Number(value)}`);
+    const expectedValue = Number(value);
+    const traceDescription = expectDescription.toHaveToggleValue(expectedValue);
+    return this.expect('toHaveToggleValue', traceDescription, expectedValue);
   }
 
   createInvocation(expectation, ...params) {

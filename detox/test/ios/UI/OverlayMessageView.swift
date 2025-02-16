@@ -5,7 +5,10 @@
 
 import UIKit
 
-class OverlayMessageView: UIView {
+@objc class OverlayMessageView: UIView {
+    private var timer: Timer?
+    private(set) var message: String
+    private let displayDuration: TimeInterval = 2.0
 
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -27,6 +30,7 @@ class OverlayMessageView: UIView {
     }()
 
     init(message: String) {
+        self.message = message
         super.init(frame: .zero)
         setup(with: message)
     }
@@ -59,13 +63,26 @@ class OverlayMessageView: UIView {
         ])
 
         closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
+        startTimer()
+    }
 
-        Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
+    func resetTimer() {
+        timer?.invalidate()
+        startTimer()
+    }
+
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: displayDuration, repeats: false) { [weak self] _ in
             self?.removeFromSuperview()
         }
     }
 
     @objc private func didTapClose() {
+        timer?.invalidate()
         removeFromSuperview()
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 }

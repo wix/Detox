@@ -1,6 +1,8 @@
 const jestExpect = require('expect').default;
 
-describe.skipIfNewArchOnIOS('DatePicker', () => {
+// todo(new-arch): tests are failing
+//     Test Failed: View “<RNDateTimePickerComponentView: 0x10c504080>” is not an instance of “UIDatePicker”
+describe('DatePicker', () => {
   describe.each([
     ['ios', 'compact', 0],
     ['ios', 'inline', 1],

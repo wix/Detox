@@ -18,6 +18,9 @@ const rnVersion = (function parseRNVersion() {
   };
 })();
 
+const isRNNewArch = process.env.RCT_NEW_ARCH_ENABLED === '1';
+
 module.exports = {
-  rnVersion
+  rnVersion,
+  isRNNewArch
 };
