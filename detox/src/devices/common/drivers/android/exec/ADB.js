@@ -100,7 +100,7 @@ class ADB {
   }
 
   async isPackageInstalled(deviceId, packageId) {
-    const output = await this.shell(deviceId, `pm list packages ${packageId}`);
+    const output = await this.shell(deviceId, `pm list packages --user 0 ${packageId}`);
     const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');
     const isInstalled = packageRegexp.test(output);
 
