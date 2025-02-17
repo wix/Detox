@@ -1,7 +1,5 @@
 const jestExpect = require('expect').default;
 
-// todo(new-arch): tests are failing
-//     Test Failed: View “<RNDateTimePickerComponentView: 0x10c504080>” is not an instance of “UIDatePicker”
 describe('DatePicker', () => {
   describe.each([
     ['ios', 'compact', 0],
