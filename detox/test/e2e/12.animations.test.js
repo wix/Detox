@@ -51,8 +51,8 @@ describe('React-Native Animations', () => {
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).not.toExist();
     });
 
-    // todo: investigate test failure on new-arch.
-    it(`:ios: @legacy should wait during delays shorter than 1.5s`, async () => {
+    // todo: JS-animation is failing on new architecture. See https://github.com/wix/Detox/issues/4706
+    it(`:ios: ${driver === 'JS' ? '@legacy' : ''} should wait during delays shorter than 1.5s`, async () => {
       await _startTest(driver, { delay: 500 });
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toExist();
     });
