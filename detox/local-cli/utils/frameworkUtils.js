@@ -1,12 +1,11 @@
 const os = require('os');
 const path = require('path');
 
-const { spawn } = require('child-process-promise');
 const fs = require('fs-extra');
+const { spawn } = require('promisify-child-process');
 
 const detox = require('../../internals');
 const { getFrameworkDirPath, getXCUITestRunnerDirPath } = require('../../src/utils/environment');
-
 
 const frameworkBuildScript = '../../scripts/build_local_framework.ios.sh';
 const xcuitestBuildScript = '../../scripts/build_local_xcuitest.ios.sh';

@@ -1,4 +1,4 @@
-const { exec } = require('child-process-promise');
+const { exec } = require('promisify-child-process');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 const environment = require('../utils/environment');
