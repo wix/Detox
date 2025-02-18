@@ -12,6 +12,7 @@
 -keep class com.facebook.react.runtime.BridgelessReactContext { *; }
 -keep class com.facebook.react.runtime.ReactInstance { *; }
 -keep class com.facebook.react.modules.core.JavaTimerManager { *; }
+-keep class com.facebook.react.defaults.DefaultNewArchitectureEntryPoint { *; }
 
 -keep class com.facebook.react.ReactInstanceManager { *; }
 -keep class com.facebook.react.ReactInstanceManager** { *; }
