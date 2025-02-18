@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { spawn } = require('child-process-promise');
 const _ = require('lodash');
+const { spawn } = require('promisify-child-process');
 
 const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-spawn'] });
 const { escape } = require('../pipeCommands');
@@ -32,7 +32,8 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   let result;
   await retry({ retries, interval }, async (tryCount, lastError) => {
     _logSpawnRetrying(logger, tryCount, lastError);
-    result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
+    result = _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
+    await result;
   });
   return result;
 }
@@ -69,8 +70,20 @@ async function interruptProcess(childProcessPromise, schedule) {
 function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
   const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
   const cpPromise = spawn(binary, flags, spawnOptions);
+  const childProcess = cpPromise.childProcess = cpPromise;
+  const originalThen = cpPromise.then.bind(cpPromise);
+  const augmentPromise = (fn) => {
+    return typeof fn === 'function'
+      ? (result) => fn(Object.assign(result, {
+        childProcess,
+        exitCode: childProcess.exitCode,
+        pid: childProcess.pid
+      }))
+      : fn;
+  };
+  cpPromise.then = (onFulfilled, onRejected) => originalThen(augmentPromise(onFulfilled), augmentPromise(onRejected));
+  cpPromise.catch = (onRejected) => cpPromise.then(undefined, onRejected);
 
-  const { childProcess } = cpPromise;
   const { exitCode, stdout, stderr } = childProcess;
 
   const _logger = logger.child({ cpid: childProcess.pid });
@@ -85,8 +98,12 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
     stderr && stderr.on('data', _spawnStderrLoggerFn(_logger, logLevelPatterns));
   }
 
+  /**
+   *
+   * @param {import('promisify-child-process').Output} resultOrErr
+   */
   function onEnd(resultOrErr) {
-    const signal = resultOrErr.childProcess.signalCode || '';
+    const signal = resultOrErr.signal || '';
     const { code } = resultOrErr;
     const action = signal ? `terminated with ${signal}` : `exited with code #${code}`;
 
