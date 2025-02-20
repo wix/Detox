@@ -286,7 +286,7 @@ describe('Sync Status Formatter', () => {
       await expect(format(busyStatus)).toMatchSnapshot();
     });
 
-    it('should format "js_timers" corrrectly', async () => {
+    it('should format "js_timers" correctly', async () => {
       let busyStatus = {
         app_status: 'busy',
         busy_resources: [
@@ -308,6 +308,22 @@ describe('Sync Status Formatter', () => {
             }
           }
 
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
+    it('should format "animation_updates" correctly', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'animation_updates',
+            description: {
+              pending_updates: 42
+            }
+          }
         ]
       };
 
