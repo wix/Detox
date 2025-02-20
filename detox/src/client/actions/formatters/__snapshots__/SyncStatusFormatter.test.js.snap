@@ -61,6 +61,7 @@ With reasons:
 • must be equal to constant in path "#/oneOf/1/properties/busy_resources/items/anyOf/10/properties/name/const" with params: {"allowedValue":"io"}
 • must be equal to constant in path "#/oneOf/1/properties/busy_resources/items/anyOf/11/properties/name/const" with params: {"allowedValue":"bridge"}
 • must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/12/required" with params: {"missingProperty":"description"}
+• must have required property 'description' in path "#/oneOf/1/properties/busy_resources/items/anyOf/13/required" with params: {"missingProperty":"description"}
 • must match a schema in anyOf in path "#/oneOf/1/properties/busy_resources/items/anyOf" with params: {}
 • must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
@@ -85,11 +86,17 @@ With reasons:
 • must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/10/required" with params: {"missingProperty":"name"}
 • must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/11/required" with params: {"missingProperty":"name"}
 • must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/12/required" with params: {"missingProperty":"name"}
+• must have required property 'name' in path "#/oneOf/1/properties/busy_resources/items/anyOf/13/required" with params: {"missingProperty":"name"}
 • must match a schema in anyOf in path "#/oneOf/1/properties/busy_resources/items/anyOf" with params: {}
 • must match exactly one schema in oneOf in path "#/oneOf" with params: {"passingSchemas":null}
 
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
+`;
+
+exports[`Sync Status Formatter busy status should format "animation_updates" correctly 1`] = `
+"The app is busy with the following tasks:
+• There are 42 pending animation updates."
 `;
 
 exports[`Sync Status Formatter busy status should format "bg" correctly 1`] = `
@@ -117,7 +124,7 @@ exports[`Sync Status Formatter busy status should format "io" correctly 1`] = `
 • Disk I/O activity."
 `;
 
-exports[`Sync Status Formatter busy status should format "js_timers" corrrectly 1`] = `
+exports[`Sync Status Formatter busy status should format "js_timers" correctly 1`] = `
 "The app is busy with the following tasks:
 • 2 enqueued JavaScript timers:
   - Timer #1:

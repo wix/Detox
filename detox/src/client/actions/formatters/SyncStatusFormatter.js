@@ -14,6 +14,7 @@ const oneTimeEventsFormatter = require('./sync-resources/OneTimeEventsFormatter'
 const runLoopFormatter = require('./sync-resources/RunLoopFormatter');
 const timersFormatter = require('./sync-resources/TimersFormatter');
 const uiFormatter = require('./sync-resources/UIFormatter');
+const animationUpdateFormatter = require('./sync-resources/AnimationUpdateResourceFormatter');
 const unknownResourceFormatter = require('./sync-resources/UnknownResourceFormatter');
 const { makeResourceTitle } = require('./sync-resources/utils');
 
@@ -63,6 +64,7 @@ const resourceFormatters = {
   network: networkFormatter,
   looper: looperFormatter,
   io: () => { return makeResourceTitle(`Disk I/O activity.`); },
+  animation_updates: animationUpdateFormatter,
   unknown: unknownResourceFormatter,
   bridge: () => { return makeResourceTitle(`Activity on the React-Native bridge.`); },
 };
