@@ -96,7 +96,7 @@ https://github.com/wix/Detox/issues"
 
 exports[`Sync Status Formatter busy status should format "animation_updates" correctly 1`] = `
 "The app is busy with the following tasks:
-• There are 42 pending animation updates."
+• There are 42 pending React Native node animation updates."
 `;
 
 exports[`Sync Status Formatter busy status should format "bg" correctly 1`] = `
