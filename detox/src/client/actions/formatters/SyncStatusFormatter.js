@@ -4,6 +4,7 @@ const Ajv = require('ajv');
 const DetoxInternalError = require('../../../errors/DetoxInternalError');
 const statusSchema = require('../SyncStatusSchema.json');
 
+const animationUpdateFormatter = require('./sync-resources/AnimationUpdateResourceFormatter');
 const bgThreadFormatter = require('./sync-resources/BgThreadFormatter');
 const delayedPerformSelectorFormatter = require('./sync-resources/DelayedPerformSelectorFormatter');
 const dispatchQueueFormatter = require('./sync-resources/DispatchQueueFormatter');
@@ -14,7 +15,6 @@ const oneTimeEventsFormatter = require('./sync-resources/OneTimeEventsFormatter'
 const runLoopFormatter = require('./sync-resources/RunLoopFormatter');
 const timersFormatter = require('./sync-resources/TimersFormatter');
 const uiFormatter = require('./sync-resources/UIFormatter');
-const animationUpdateFormatter = require('./sync-resources/AnimationUpdateResourceFormatter');
 const unknownResourceFormatter = require('./sync-resources/UnknownResourceFormatter');
 const { makeResourceTitle } = require('./sync-resources/utils');
 
