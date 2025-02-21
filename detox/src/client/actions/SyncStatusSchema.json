@@ -300,14 +300,14 @@
                             "duration":{
                               "type":"number"
                             },
-                            "is_recurring":{
-                              "type":"boolean"
+                            "elapsed":{
+                              "type":"number"
                             }
                           },
                           "required":[
                             "timer_id",
                             "duration",
-                            "is_recurring"
+                            "elapsed"
                           ],
                           "additionalProperties":false
                         },
@@ -371,6 +371,30 @@
                   "name"
                 ],
                 "additionalProperties":false
+              },
+              {
+                "properties": {
+                  "name": {
+                    "const": "animation_updates"
+                  },
+                  "description": {
+                    "type": "object",
+                    "properties": {
+                      "pending_updates": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "pending_updates"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "name",
+                  "description"
+                ],
+                "additionalProperties": false
               },
               {
                 "properties":{
