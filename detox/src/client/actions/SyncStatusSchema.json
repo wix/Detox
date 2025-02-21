@@ -300,14 +300,14 @@
                             "duration":{
                               "type":"number"
                             },
-                            "is_recurring":{
-                              "type":"boolean"
+                            "elapsed":{
+                              "type":"number"
                             }
                           },
                           "required":[
                             "timer_id",
                             "duration",
-                            "is_recurring"
+                            "elapsed"
                           ],
                           "additionalProperties":false
                         },

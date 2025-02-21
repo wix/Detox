@@ -297,12 +297,12 @@ describe('Sync Status Formatter', () => {
                 {
                   timer_id: 4,
                   duration: 1,
-                  is_recurring: false
+                  elapsed: 0.2
                 },
                 {
                   timer_id: 12,
                   duration: 2,
-                  is_recurring: true
+                  elapsed: 0.3
                 }
               ]
             }

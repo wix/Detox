@@ -130,11 +130,11 @@ exports[`Sync Status Formatter busy status should format "js_timers" correctly 1
   - Timer #1:
     + JS timer ID: 4.
     + Duration: 1.
-    + Is recurring: NO.
+    + Elapsed: 0.2.
   - Timer #2:
     + JS timer ID: 12.
     + Duration: 2.
-    + Is recurring: YES."
+    + Elapsed: 0.3."
 `;
 
 exports[`Sync Status Formatter busy status should format "looper" correctly #1 1`] = `

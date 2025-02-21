@@ -4,7 +4,7 @@ function makeTimerDescription(timer, timerCount) {
   return `${makeResourceSubTitle(`Timer #${timerCount}:`)}\n` +
     `${makeResourceSubSubTitle(`JS timer ID: ${timer.timer_id}`)}.\n` +
     `${makeResourceSubSubTitle(`Duration: ${timer.duration}`)}.\n` +
-    `${makeResourceSubSubTitle(`Is recurring: ${timer.is_recurring ? `YES` : `NO`}`)}.`;
+    `${makeResourceSubSubTitle(`Elapsed: ${timer.elapsed}`)}.`;
 }
 
 module.exports = function(properties) {
