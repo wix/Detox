@@ -286,7 +286,35 @@ describe('Sync Status Formatter', () => {
       await expect(format(busyStatus)).toMatchSnapshot();
     });
 
-    it('should format "js_timers" correctly', async () => {
+    it('should format "js_timers" correctly (old-arch)', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'js_timers',
+            description: {
+              timers: [
+                {
+                  timer_id: 4,
+                  duration: 1,
+                  is_recurring: false
+                },
+                {
+                  timer_id: 12,
+                  duration: 2,
+                  is_recurring: true
+                }
+              ]
+            }
+          }
+
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
+    it('should format "js_timers" correctly (new-arch)', async () => {
       let busyStatus = {
         app_status: 'busy',
         busy_resources: [

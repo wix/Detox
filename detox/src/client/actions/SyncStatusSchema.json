@@ -302,12 +302,14 @@
                             },
                             "elapsed":{
                               "type":"number"
+                            },
+                            "is_recurring":{
+                              "type":"boolean"
                             }
                           },
                           "required":[
                             "timer_id",
-                            "duration",
-                            "elapsed"
+                            "duration"
                           ],
                           "additionalProperties":false
                         },
