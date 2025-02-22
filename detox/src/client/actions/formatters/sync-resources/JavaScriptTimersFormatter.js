@@ -1,10 +1,17 @@
 const { makeResourceTitle, makeResourceSubTitle, makeResourceSubSubTitle } = require('./utils');
 
 function makeTimerDescription(timer, timerCount) {
-  return `${makeResourceSubTitle(`Timer #${timerCount}:`)}\n` +
+  return (
+    `${makeResourceSubTitle(`Timer #${timerCount}:`)}\n` +
     `${makeResourceSubSubTitle(`JS timer ID: ${timer.timer_id}`)}.\n` +
     `${makeResourceSubSubTitle(`Duration: ${timer.duration}`)}.\n` +
-    `${makeResourceSubSubTitle(`Is recurring: ${timer.is_recurring ? `YES` : `NO`}`)}.`;
+    (timer.is_recurring !== undefined
+      ? `${makeResourceSubSubTitle(`Is recurring: ${timer.is_recurring ? 'YES' : 'NO'}`)}.\n`
+      : '') +
+    (timer.elapsed !== undefined
+      ? `${makeResourceSubSubTitle(`Elapsed: ${timer.elapsed}`)}.\n`
+      : '')
+  );
 }
 
 module.exports = function(properties) {

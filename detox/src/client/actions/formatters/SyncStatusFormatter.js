@@ -4,6 +4,7 @@ const Ajv = require('ajv');
 const DetoxInternalError = require('../../../errors/DetoxInternalError');
 const statusSchema = require('../SyncStatusSchema.json');
 
+const animationUpdateFormatter = require('./sync-resources/AnimationUpdateResourceFormatter');
 const bgThreadFormatter = require('./sync-resources/BgThreadFormatter');
 const delayedPerformSelectorFormatter = require('./sync-resources/DelayedPerformSelectorFormatter');
 const dispatchQueueFormatter = require('./sync-resources/DispatchQueueFormatter');
@@ -63,6 +64,7 @@ const resourceFormatters = {
   network: networkFormatter,
   looper: looperFormatter,
   io: () => { return makeResourceTitle(`Disk I/O activity.`); },
+  animation_updates: animationUpdateFormatter,
   unknown: unknownResourceFormatter,
   bridge: () => { return makeResourceTitle(`Activity on the React-Native bridge.`); },
 };
