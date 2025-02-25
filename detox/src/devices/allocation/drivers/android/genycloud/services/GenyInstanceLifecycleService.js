@@ -18,10 +18,19 @@ class GenyInstanceLifecycleService {
     return new Instance(result.instance);
   }
 
+  /**
+   * @param { string } instanceUUID
+   * @returns {Promise<Instance>}
+   */
   async adbConnectInstance(instanceUUID){
     const doAdbConnect = async () =>
       this._genyCloudExec.adbConnect(instanceUUID);
-    const beforeEachRetry = async () => {
+
+    /**
+     * @param _err { Error }
+     * @returns {Promise<boolean>}
+     */
+    const beforeEachRetry = async (_err) => {
       try {
         const { stdout } = await this._adb.devices({ retries: 0, verbosity: 'low' });
         log.warn('adb-connect command failed, current ADB devices list:\n', stdout);

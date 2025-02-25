@@ -4,6 +4,7 @@ const AndroidDriver = require('../AndroidDriver');
 
 /**
  * @typedef { AndroidDriverDeps } GenycloudDriverDeps
+ * @property { GenyCloudADB } adb
  */
 
 /**
@@ -20,6 +21,12 @@ class GenyCloudDriver extends AndroidDriver {
     super(deps, { adbName });
 
     this._instanceName = name;
+
+    this.adb.setOnReconnect(this.onDeviceReconnect.bind(this));
+  }
+
+  onDeviceReconnect({ adbName }) {
+    this.adbName = adbName;
   }
 
   getDeviceName() {
