@@ -10,12 +10,35 @@ const backoffModes = {
   'none': () => ({ interval }) => interval,
 };
 
+/**
+ * @typedef RetryOptions
+ * @property {number} [retries]
+ * @property {number} [interval]
+ * @property { 'linear' | 'none' } [backoff]
+ * @property {function(Error): Promise<boolean>} [conditionFn]
+ * @property {number} [initialSleep]
+ * @property {boolean} [shouldUnref]
+ */
+
+/**
+ * @typedef {function(number, Error): Promise<void>} RetryActionFunction
+ */
+
+/**
+ * @param {RetryOptions | RetryActionFunction} optionsOrFunc
+ * @param {RetryActionFunction} func
+ * @returns {Promise<*>}
+ */
 async function retry(optionsOrFunc, func) {
-  let options = optionsOrFunc;
+  let _options = optionsOrFunc;
   if (typeof optionsOrFunc === 'function') {
     func = optionsOrFunc;
-    options = {};
+    _options = {};
   }
+
+  /** @type {RetryOptions} */
+  /* @ts-ignore */
+  const options = _options;
 
   const {
     retries = DEFAULT_RETRIES,
@@ -43,6 +66,8 @@ async function retry(optionsOrFunc, func) {
       if (!conditionFn(e) || (totalTries > retries)) {
         throw e;
       }
+
+      // @ts-ignore
       await sleep(backoffFn({ interval, totalTries }), sleepOptions);
     }
   }
