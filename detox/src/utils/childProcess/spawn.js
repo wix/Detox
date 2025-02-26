@@ -26,11 +26,12 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   const {
     retries = 1,
     interval = 100,
+    backoff = 'none',
     ...spawnOptions
   } = _options;
 
   let result;
-  await retry({ retries, interval }, async (tryCount, lastError) => {
+  await retry({ retries, interval, backoff }, async (tryCount, lastError) => {
     _logSpawnRetrying(logger, tryCount, lastError);
     result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
   });
