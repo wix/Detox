@@ -8,11 +8,19 @@ const { escape } = require('../../../../../utils/pipeCommands');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
-const INSTALL_TIMEOUT = 45000;
+const DEFAULT_EXEC_OPTIONS = {
+  retries: 1,
+};
+const DEFAULT_INSTALL_OPTIONS = {
+  timeout: 60000,
+  retries: 3,
+};
 
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
+    this.defaultExecOptions = DEFAULT_EXEC_OPTIONS;
+    this.installOptions = DEFAULT_INSTALL_OPTIONS;
     this.adbBin = getAdbPath();
   }
 
@@ -113,7 +121,7 @@ class ADB {
     const command = (apiLvl >= 23)
       ? `install -r -g -t ${apkPath}`
       : `install -rg ${apkPath}`;
-    const result = await this.adbCmdSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
+    const result = await this.adbCmdSpawned(deviceId, command, this.installOptions);
 
     const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
     if (failure) {
@@ -129,7 +137,7 @@ class ADB {
     const command = (apiLvl >= 23)
       ? `pm install -r -g -t ${path}`
       : `pm install -rg ${path}`;
-    return this.shellSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
+    return this.shellSpawned(deviceId, command, this.installOptions);
   }
 
   async uninstall(deviceId, appId) {
@@ -353,7 +361,7 @@ class ADB {
     const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
     const _options = {
-      retries: 1,
+      ...this.defaultExecOptions,
       ...options,
     };
     return execWithRetriesAndLogs(cmd, _options);
@@ -364,6 +372,7 @@ class ADB {
     const serial = deviceId ? ['-s', deviceId] : [];
     const _flags = [...serial, ...flags];
     const _spawnOptions = {
+      ...this.defaultExecOptions,
       ...spawnOptions,
       capture: ['stdout'],
     };
