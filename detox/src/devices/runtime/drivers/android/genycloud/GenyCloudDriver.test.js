@@ -6,6 +6,8 @@ describe('Genymotion-cloud driver', () => {
   });
 
   /** @type {jest.Mocked<*>} */
+  let adb;
+  /** @type {jest.Mocked<*>} */
   let aapt;
   /** @type {jest.Mocked<*>} */
   let eventEmitter;
@@ -21,6 +23,10 @@ describe('Genymotion-cloud driver', () => {
   let detoxGenymotionManager;
 
   beforeEach(() => {
+    jest.mock('../../../../common/drivers/android/exec/ADB');
+    const ADB = jest.requireMock('../../../../common/drivers/android/exec/ADB');
+    adb = new ADB();
+
     jest.mock('../../../../common/drivers/android/exec/AAPT');
     const AAPT = jest.requireMock('../../../../common/drivers/android/exec/AAPT');
     aapt = new AAPT();
@@ -58,8 +64,10 @@ describe('Genymotion-cloud driver', () => {
     let GenyCloudDriver;
     let uut;
     beforeEach(() => {
+      adb.defaultExecOptions = {};
       GenyCloudDriver = require('./GenyCloudDriver');
       uut = new GenyCloudDriver({
+        adb,
         aapt,
         apkValidator,
         invocationManager,
@@ -68,6 +76,14 @@ describe('Genymotion-cloud driver', () => {
         appInstallHelper,
         instrumentation,
       }, aCookie());
+    });
+
+    it('should ease the default ADB exec options with more cloud-suitable settings', () => {
+      expect(adb.defaultExecOptions).toEqual({
+        retries: 5,
+        interval: 3000,
+        backoff: 'linear',
+      });
     });
 
     it('should return the adb-name as the external ID', () => {
