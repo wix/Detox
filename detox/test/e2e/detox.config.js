@@ -9,6 +9,9 @@ const launchArgs = {
 /** @type {Detox.DetoxConfig} */
 const config = {
   extends: 'detox-allure2-adapter/preset-detox',
+  logger: {
+    level: 'debug',
+  },
   testRunner: {
     args: {
       $0: process.env.CI ? 'nyc jest' : 'jest',
