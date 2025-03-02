@@ -131,7 +131,7 @@ describe('ADB', () => {
   it('should install with proper spawning/retry options', async () => {
     const expectedOptions = {
       retries: 3,
-      timeout: 45000,
+      timeout: 60000,
       capture: ['stdout'],
     };
     await adb.install(deviceId, 'path/to/bin.apk');
@@ -139,9 +139,44 @@ describe('ADB', () => {
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.any(Array), expectedOptions);
   });
 
+  it('show allow for installing with external exec and install options', async () => {
+    adb.defaultExecOptions = {
+      retries: 66,
+      interval: 123123,
+    };
+    // Expect to override the default options
+    adb.installOptions = {
+      retries: 99,
+      timeout: 1337,
+    };
+    await adb.install(deviceId, 'dont-care/path');
+    expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.any(Array), expect.objectContaining({
+      retries: 99,
+      interval: 123123,
+      timeout: 1337,
+    }));
+  });
+
   it(`uninstall`, async () => {
     await adb.uninstall('com.package');
     expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it('show allow for uninstalling with external exec options', async () => {
+    adb.defaultExecOptions = {
+      retries: 66,
+      interval: 123123,
+    };
+    // Expect to be ignored
+    adb.installOptions = {
+      retries: 99,
+      timeout: 1337,
+    };
+    await adb.uninstall('com.dontcare');
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+      retries: 66,
+      interval: 123123,
+    }));
   });
 
   it(`terminate`, async () => {
@@ -211,7 +246,7 @@ describe('ADB', () => {
   it('should remote-install with proper spawning/retry options', async () => {
     const expectedOptions = {
       retries: 3,
-      timeout: 45000,
+      timeout: 60000,
       capture: ['stdout'],
     };
     const binaryPath = '/mock-path/filename.mock';

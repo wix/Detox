@@ -167,7 +167,7 @@ describe('Spawn utils', () => {
 
       it('should retry once, by default', async () => {
         await spawn.spawnWithRetriesAndLogs(command, flags);
-        expect(retry).toHaveBeenCalledWith({ retries: 1, interval: 100 }, expect.any(Function));
+        expect(retry).toHaveBeenCalledWith(expect.objectContaining({ retries: 1, interval: 100 }), expect.any(Function));
       });
 
       it('should log retry attempts', async () => {
@@ -194,8 +194,9 @@ describe('Spawn utils', () => {
       it('should honor retry options', async () => {
         const retries = 456456;
         const interval = 123123;
-        await spawn.spawnWithRetriesAndLogs(command, flags, { retries, interval });
-        expect(retry).toHaveBeenCalledWith({ retries, interval }, expect.any(Function));
+        const backoff = 'linear';
+        await spawn.spawnWithRetriesAndLogs(command, flags, { retries, interval, backoff });
+        expect(retry).toHaveBeenCalledWith({ retries, interval, backoff }, expect.any(Function));
       });
 
       it('should honor output-capturing options, but force stderr', async () => {

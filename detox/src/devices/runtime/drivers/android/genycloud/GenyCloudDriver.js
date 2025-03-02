@@ -19,6 +19,12 @@ class GenyCloudDriver extends AndroidDriver {
   constructor(deps, { adbName, name }) {
     super(deps, { adbName });
 
+    // Make ADB more resilient to network latency and connection hiccups
+    this.adb.defaultExecOptions = {
+      retries: 5,
+      interval: 3000,
+      backoff: 'linear',
+    };
     this._instanceName = name;
   }
 
