@@ -2,6 +2,7 @@
 describe('Exec utils', () => {
   let logger;
   let exec;
+  let retry;
   let cpp;
   beforeEach(() => {
     jest.mock('../logger');
@@ -9,6 +10,12 @@ describe('Exec utils', () => {
 
     jest.mock('child-process-promise');
     cpp = require('child-process-promise');
+
+    const mockedRetryActual = jest.requireActual('../retry');
+    const mockedRetry = jest.fn().mockReturnValue(undefined);
+    jest.mock('../retry', () =>
+      (opts, func) => (mockedRetry(opts, func) || mockedRetryActual(opts, func)));
+    retry = mockedRetry;
 
     exec = require('./exec');
   });
@@ -223,6 +230,18 @@ describe('Exec utils', () => {
     await execWithRetriesAndLogs('bin', { retries: 6, interval: 1 });
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
     expect(cpp.exec).toHaveBeenCalledTimes(6);
+  });
+
+  it(`exec should pass through custom retry-args to retry`, async () => {
+    const options = {
+      retries: 512,
+      interval: 1024,
+      backoff: 'linear',
+    };
+
+    mockCppSuccessful(cpp);
+    await execWithRetriesAndLogs('bin', options);
+    expect(retry).toHaveBeenCalledWith(options, expect.any(Function));
   });
 
   it(`execAsync command with no arguments runs successfully`, async () => {
