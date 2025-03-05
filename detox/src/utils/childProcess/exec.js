@@ -12,6 +12,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
   const {
     retries = 9,
     interval = 1000,
+    backoff,
     prefix = null,
     args = null,
     timeout,
@@ -30,7 +31,7 @@ async function execWithRetriesAndLogs(bin, options = {}) {
   try {
     logger.debug({ event: 'EXEC_CMD' }, `${cmd}`);
 
-    await retry({ retries, interval }, async (tryNumber, lastError) => {
+    await retry({ retries, interval, backoff }, async (tryNumber, lastError) => {
       if (statusLogs.trying) {
         _logExecTrying(logger, statusLogs.trying, tryNumber, lastError);
       } else if (statusLogs.retrying) {
