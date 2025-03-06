@@ -449,7 +449,7 @@ describe('composeDeviceConfig', () => {
       describe('Unhappy scenarios', () => {
         describe('missing device matcher properties', () => {
           test.each([
-            [['type', 'name', 'id'], 'ios.simulator'],
+            [['type', 'name', 'id', 'booted'], 'ios.simulator'],
             [['adbName'], 'android.attached'],
             [['avdName'], 'android.emulator'],
             [['recipeUUID', 'recipeName'], 'android.genycloud'],
