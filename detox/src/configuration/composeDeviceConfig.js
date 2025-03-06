@@ -228,7 +228,7 @@ function unpackDeviceQuery(deviceConfig) {
 }
 
 const EXPECTED_DEVICE_MATCHER_PROPS = {
-  'ios.simulator': ['type', 'name', 'id'],
+  'ios.simulator': ['type', 'name', 'id', 'booted'],
   'android.attached': ['adbName'],
   'android.emulator': ['avdName'],
   'android.genycloud': ['recipeUUID', 'recipeName'],

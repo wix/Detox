@@ -408,6 +408,7 @@ declare global {
             type: string;
             name: string;
             os: string;
+            booted?: boolean;
         }
 
         type DetoxConfiguration = DetoxConfigurationCommon & (
