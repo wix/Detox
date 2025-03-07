@@ -135,5 +135,16 @@ module.exports = {
     group: 'Debugging:',
     describe: '[Jest Only] Allows debugging of the underlying test runner',
     boolean: true,
+  },
+  'repl': {
+    group: 'Debugging:',
+    describe: 'Launch REPL mode. Use --repl=auto to enter REPL on test failures.',
+    coerce(value) {
+      if (value === undefined) return undefined;
+      if (value === false) return 'false';
+      if (value === true) return 'true';
+      if (typeof value === 'string' && value === 'auto') return 'auto';
+      return 'true';
+    },
   }
 };

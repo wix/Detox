@@ -18,6 +18,8 @@ In the Detox world, you can debug either Detox itself (i.e. run it step by step)
 
 ## Running Detox Tests Step-by-Step
 
+### Using Node.js Inspector
+
 Detox tests can be run step-by-step either using an IDE or by using Chrome debugger.
 
 Start by running Detox using the Detox CLI alongside the inspection argument (`--inspect-brk`) and the file in which the test resides. For example:
@@ -53,7 +55,86 @@ To learn more about debugging with `--inspect-brk`, refer to [Debugging — Gett
   </TabItem>
 </Tabs>
 
+### Using Detox REPL Mode
 
+Detox provides a REPL (Read-Eval-Print Loop) mode that allows you to interactively debug your app during test execution. This feature is built on Node.js's built-in [`node:repl`][1] module and is particularly useful when you need to explore the app's state, try different commands, or debug test failures.
+
+To use REPL mode, you can either:
+
+* Add the `--repl` flag when running your tests:
+
+  ```bash
+  detox test --repl -c ios.sim.debug e2e/someSuite.test.js
+  ```
+
+  Call `detox.REPL()` directly in your test code to enter REPL mode at a specific point:
+
+  ```js
+  describe('My test suite', () => {
+    it('should do something', async () => {
+      await device.launchApp();
+      // Test some functionality
+
+      // Enter REPL mode to debug
+      await detox.REPL();
+
+      // Continue with the test after exiting REPL
+    });
+  });
+  ```
+
+* Use `--repl=auto` to automatically enter REPL mode when a test fails:
+
+  ```bash
+  detox test --repl=auto -c ios.sim.debug e2e/someSuite.test.js
+  ```
+
+When in REPL mode, you can:
+
+- Execute any Detox commands interactively
+- Use standard Node.js REPL commands like `.help`, `.break`, `.clear`, `.exit`, etc.
+- Use the `.dumpxml` command to print the current view hierarchy
+- Use the `.ai` command to execute natural language commands (e.g., `.ai Tap on login button`). Note that you have [Detox Pilot][2] configured before you start.
+- Access all Detox globals like `device`, `element`, `by`, etc.
+
+<details>
+
+  <summary>💡 <b>Adding scope to REPL context</b></summary>
+
+You can pass extra scope to the REPL context to make those properties available during your debugging session. This is especially useful for providing access to screen drivers, test data, or utility functions:
+
+```js
+// Create useful objects for debugging
+const myScreenDriver = {
+  login: async (username, password) => { /* ... */ },
+  navigateToSettings: async () => { /* ... */ }
+};
+
+const testUser = {
+  username: 'test@example.com',
+  password: 'password123',
+};
+
+// Pass them to the REPL context
+await detox.REPL({
+  myScreenDriver,
+  testUser,
+  sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+});
+```
+
+In the REPL session, you can then access and use these objects:
+
+```
+detox> myScreenDriver.login(testUser.username, testUser.password)
+// Executes the login function
+
+detox> await sleep(1000)
+// Waits for 1 second
+```
+</details>
+
+To exit REPL mode, press Ctrl+C or type `.exit`.
 
 ## Debugging JavaScript application code
 
@@ -186,3 +267,6 @@ Detox stops instead and prompts you to launch the app from the IDE:
     <TroubleshootingAndroid />
   </TabItem>
 </Tabs>
+
+[1]: https://nodejs.org/api/repl.html
+[2]: ../pilot/testing-with-pilot.md

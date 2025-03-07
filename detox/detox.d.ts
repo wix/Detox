@@ -497,6 +497,17 @@ declare global {
              * @see https://wix.github.io/Detox/docs/19.x/api/detox-object-api/#detoxtracecall
              */
             readonly traceCall: <T>(event: string, action: () => Promise<T>, args?: Record<string, unknown>) => Promise<T>;
+
+            /**
+             * Enter the REPL mode.
+             * Works only with `--repl` CLI flag or DETOX_REPL environment variable.
+             * @param context Optional context to be passed to the REPL.
+             * @example
+             * await detox.REPL();
+             * @example
+             * await detox.REPL({ myScreenDriver, usefulConstants });
+             */
+            readonly REPL(context?: object): Promise<void>;
         }
 
         interface Logger {

@@ -63,6 +63,17 @@ describe('collectCliConfig', () => {
     ]);
   }
 
+  function asBooleanEnum(testCase) {
+    return multiplyTest(testCase, [
+      [undefined, undefined],
+      [null, undefined],
+      ['', undefined],
+      ['true', true],
+      ['false', false],
+      ['auto', 'auto'],
+    ]);
+  }
+
   describe.each([
     ...asString( ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',     'artifacts-location']),
     ...asString( ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY', 'capture-view-hierarchy']),
@@ -90,6 +101,7 @@ describe('collectCliConfig', () => {
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
     ...asString( ['start',                'DETOX_START',                  'start']),
+    ...asBooleanEnum(['repl',             'DETOX_REPL',                   'repl']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {
       if (envName) env[envName] = input;
