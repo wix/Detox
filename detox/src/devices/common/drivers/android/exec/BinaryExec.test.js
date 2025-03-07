@@ -1,3 +1,4 @@
+/* eslint-disable node/no-extraneous-require */
 describe('BinaryExec', () => {
   const binaryPath = '/binary/mock';
 
@@ -6,16 +7,11 @@ describe('BinaryExec', () => {
   let binaryExec;
   beforeEach(() => {
     jest.mock('../../../../../utils/childProcess', () => ({
-      execWithRetriesAndLogs: jest.fn().mockResolvedValue({
-        stdout: '',
-      }),
+      execAsync: jest.fn().mockResolvedValue(''),
+      spawnAndLog: jest.fn()
     }));
-    exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
-
-    jest.mock('child-process-promise', () => ({
-      spawn: jest.fn()
-    }));
-    spawn = require('child-process-promise').spawn;
+    exec = require('../../../../../utils/childProcess').execAsync;
+    spawn = require('../../../../../utils/childProcess').spawnAndLog;
 
     const { BinaryExec } = require('./BinaryExec');
     binaryExec = new BinaryExec(binaryPath);
@@ -55,17 +51,15 @@ describe('BinaryExec', () => {
       expect(exec).toHaveBeenCalledWith(`"${binaryPath}" -mock -argz`);
     });
 
-    it('should return content of resolved promise\'s stdout', async () => {
-      const execResult = {
-        stdout: 'mock stdout content'
-      };
+    it('should return content of resolved promise', async () => {
+      const execResult = 'mock stdout content';
       exec.mockResolvedValue(execResult);
 
       const { ExecCommand } = require('./BinaryExec');
       const command = new ExecCommand();
       const result = await binaryExec.exec(command);
 
-      expect(result).toEqual(execResult.stdout);
+      expect(result).toEqual(execResult);
     });
   });
 
@@ -87,14 +81,14 @@ describe('BinaryExec', () => {
       expect(spawn).toHaveBeenCalledWith(binaryPath, commandArgs, expect.anything());
     });
 
-    it('should chain-return child-process-promise from spawn', async () => {
-      const childProcessPromise = Promise.resolve('mock result');
-      spawn.mockReturnValue(childProcessPromise);
+    it('should chain-return spawn result', async () => {
+      const spawnResult = Promise.resolve('mock result');
+      spawn.mockReturnValue(spawnResult);
 
       const command = anEmptyCommand();
 
       const result = binaryExec.spawn(command);
-      expect(result).toEqual(childProcessPromise);
+      expect(result).toEqual(spawnResult);
     });
   });
 });

@@ -1,12 +1,11 @@
 const os = require('os');
 const path = require('path');
 
-const { spawn } = require('child-process-promise');
 const fs = require('fs-extra');
+const { spawnAndLog } = require('../../src/utils/childProcess');
 
 const detox = require('../../internals');
 const { getFrameworkDirPath, getXCUITestRunnerDirPath } = require('../../src/utils/environment');
-
 
 const frameworkBuildScript = '../../scripts/build_local_framework.ios.sh';
 const xcuitestBuildScript = '../../scripts/build_local_xcuitest.ios.sh';
@@ -26,7 +25,7 @@ async function execBuildScript(targetPath, scriptPath, descriptor) {
   const scriptFullPath = path.join(__dirname, scriptPath);
 
   try {
-    await spawn(scriptFullPath, [], { stdio: 'inherit' });
+    await spawnAndLog(scriptFullPath, [], { stdio: 'inherit' });
   } catch (error) {
     detox.log.error(`Error while building ${descriptor}:\n${error}`);
     throw error;

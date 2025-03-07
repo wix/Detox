@@ -133,6 +133,7 @@ describe('ADB', () => {
       retries: 3,
       timeout: 60000,
       capture: ['stdout'],
+      encoding: 'utf8',
     };
     await adb.install(deviceId, 'path/to/bin.apk');
 
@@ -248,6 +249,7 @@ describe('ADB', () => {
       retries: 3,
       timeout: 60000,
       capture: ['stdout'],
+      encoding: 'utf8',
     };
     const binaryPath = '/mock-path/filename.mock';
     await adb.install(deviceId, binaryPath);

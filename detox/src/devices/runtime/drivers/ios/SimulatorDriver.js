@@ -1,8 +1,8 @@
 // @ts-nocheck
 const path = require('path');
 
-const exec = require('child-process-promise').exec;
 const _ = require('lodash');
+const { execAsync } = require('../../../../utils/childProcess');
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
@@ -15,7 +15,6 @@ const pressAnyKey = require('../../../../utils/pressAnyKey');
 const traceInvocationCall = require('../../../../utils/traceInvocationCall').bind(null, log);
 
 const IosDriver = require('./IosDriver');
-
 
 /**
  * @typedef SimulatorDriverDeps { DeviceDriverDeps }
@@ -69,8 +68,7 @@ class SimulatorDriver extends IosDriver {
   async getBundleIdFromBinary(appPath) {
     appPath = getAbsoluteBinaryPath(appPath);
     try {
-      const result = await exec(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
-      const bundleId = _.trim(result.stdout);
+      const bundleId = await execAsync(`/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${path.join(appPath, 'Info.plist')}"`);
       if (_.isEmpty(bundleId)) {
         throw new Error();
       }
@@ -141,7 +139,7 @@ class SimulatorDriver extends IosDriver {
     const xcuitestRunner = new XCUITestRunner({ runtimeDevice: { id: this.getExternalId(), _bundleId } });
     let x = point?.x ?? 100;
     let y = point?.y ?? 100;
-    let _pressDuration = pressDuration ? (pressDuration / 1000) : 1;
+    let _pressDuration = pressDuration ? pressDuration / 1000 : 1;
     const traceDescription = actionDescription.longPress({ x, y }, _pressDuration);
     return this.withAction(xcuitestRunner, 'coordinateLongPress', traceDescription, x.toString(), y.toString(), _pressDuration.toString());
   }
@@ -210,7 +208,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'screenshot',
       artifactName: screenshotName || path.basename(tempPath, '.png'),
-      artifactPath: tempPath,
+      artifactPath: tempPath
     });
 
     return tempPath;
@@ -223,7 +221,7 @@ class SimulatorDriver extends IosDriver {
     await this.emitter.emit('createExternalArtifact', {
       pluginId: 'uiHierarchy',
       artifactName: artifactName,
-      artifactPath: viewHierarchyURL,
+      artifactPath: viewHierarchyURL
     });
 
     return viewHierarchyURL;

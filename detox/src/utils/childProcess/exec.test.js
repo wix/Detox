@@ -8,8 +8,8 @@ describe('Exec utils', () => {
     jest.mock('../logger');
     logger = require('../logger');
 
-    jest.mock('child-process-promise');
-    cpp = require('child-process-promise');
+    jest.mock('promisify-child-process');
+    cpp = require('promisify-child-process');
 
     const mockedRetryActual = jest.requireActual('../retry');
     const mockedRetry = jest.fn().mockReturnValue(undefined);
@@ -98,8 +98,8 @@ describe('Exec utils', () => {
       args: `--argument 123`,
       statusLogs: {
         trying: 'trying status log',
-        successful: 'successful status log',
-      },
+        successful: 'successful status log'
+      }
     };
     await execWithRetriesAndLogs('bin', options);
 
@@ -117,8 +117,8 @@ describe('Exec utils', () => {
     const options = {
       args: `--argument 123`,
       statusLogs: {
-        retrying: true,
-      },
+        retrying: true
+      }
     };
 
     logger.debug.mockClear();
@@ -252,20 +252,20 @@ describe('Exec utils', () => {
 });
 
 const returnSuccessfulWithValue = (value) => ({
-    stdout: JSON.stringify(value),
-    stderr: 'err',
-    childProcess: {
-      exitCode: 0
-    }
-  });
+  stdout: JSON.stringify(value),
+  stderr: 'err',
+  childProcess: {
+    exitCode: 0
+  }
+});
 
 const returnErrorWithValue = (value) => ({
-    stdout: 'out',
-    stderr: value,
-    childProcess: {
-      exitCode: 1
-    }
-  });
+  stdout: 'out',
+  stderr: value,
+  childProcess: {
+    exitCode: 1
+  }
+});
 
 function mockCppSuccessful(cpp) {
   const successfulResult = returnSuccessfulWithValue('successful result');
