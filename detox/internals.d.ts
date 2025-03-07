@@ -306,6 +306,7 @@ declare global {
       reuse: string;
       takeScreenshots: string;
       useCustomLogger: string;
+      repl: boolean | 'auto';
     }>>;
   }
 }
