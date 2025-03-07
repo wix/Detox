@@ -2,12 +2,13 @@
 const path = require('path');
 
 const _ = require('lodash');
-const { execAsync } = require('../../../../utils/childProcess');
+
 
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const XCUITestRunner = require('../../../../ios/XCUITestRunner');
 const { assertTraceDescription } = require('../../../../utils/assertArgument');
+const { execAsync } = require('../../../../utils/childProcess');
 const getAbsoluteBinaryPath = require('../../../../utils/getAbsoluteBinaryPath');
 const { actionDescription } = require('../../../../utils/invocationTraceDescriptions');
 const log = require('../../../../utils/logger').child({ cat: 'device' });

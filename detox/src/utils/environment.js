@@ -5,12 +5,12 @@ const path = require('path');
 
 const ini = require('ini');
 const _ = require('lodash');
-const { execAsync } = require('./childProcess');
 const _which = require('which');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
 const appdatapath = require('./appdatapath');
+const { execAsync } = require('./childProcess');
 const fsext = require('./fsext');
 
 function which(executable, path) {

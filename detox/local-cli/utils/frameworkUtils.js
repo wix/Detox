@@ -2,9 +2,9 @@ const os = require('os');
 const path = require('path');
 
 const fs = require('fs-extra');
-const { spawnAndLog } = require('../../src/utils/childProcess');
 
 const detox = require('../../internals');
+const { spawnAndLog } = require('../../src/utils/childProcess');
 const { getFrameworkDirPath, getXCUITestRunnerDirPath } = require('../../src/utils/environment');
 
 const frameworkBuildScript = '../../scripts/build_local_framework.ios.sh';
