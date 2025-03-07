@@ -64,6 +64,8 @@ class DetoxWorker {
     this.system = null;
     /** @type {Detox.DetoxCopilotFacade} */
     this.copilot = new DetoxCopilot();
+    /** @type {Function} */
+    this.REPL = context.REPL;
 
     this._deviceCookie = null;
 
@@ -164,6 +166,7 @@ class DetoxWorker {
         ...matchers,
         device: this.device,
         copilot: this.copilot,
+        REPL: this.REPL,
         detox: this,
       };
 

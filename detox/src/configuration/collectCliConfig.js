@@ -22,6 +22,15 @@ const asNumber = (value) => {
     : undefined;
 };
 
+const asBooleanEnum = (value) => {
+  if (value == null || value === '') {
+    return undefined;
+  }
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return value;
+};
+
 function collectCliConfig({ argv }) {
   const env = (key) => argparse.getEnvValue(key);
   const get = (key, fallback) => {
@@ -54,6 +63,7 @@ function collectCliConfig({ argv }) {
     reuse: asBoolean(get('reuse')),
     useCustomLogger: asBoolean(get('use-custom-logger')),
     retries: asNumber(get('retries')),
+    repl: asBooleanEnum(get('repl')),
     inspectBrk: asBoolean(get('inspect-brk')),
     start: get('start'),
   }, _.isUndefined);
