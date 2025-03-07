@@ -1,6 +1,5 @@
-const { exec } = require('child-process-promise');
-
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const { execAsync } = require('../utils/childProcess');
 const environment = require('../utils/environment');
 const log = require('../utils/logger').child({ cat: 'xcuitest-runner' });
 
@@ -37,7 +36,7 @@ class XCUITestRunner {
           `--predicate 'process == "DetoxXCUITestRunner-Runner" && subsystem == "com.wix.DetoxXCUITestRunner.xctrunner"'`);
 
         try {
-            return await exec(`TEST_RUNNER_PARAMS="${base64InvocationParams}" TEST_RUNNER_BUNDLE_ID="${this.runtimeDevice._bundleId}" xcodebuild ${flags.join(' ')}`);
+            return await execAsync(`TEST_RUNNER_PARAMS="${base64InvocationParams}" TEST_RUNNER_BUNDLE_ID="${this.runtimeDevice._bundleId}" xcodebuild ${flags.join(' ')}`);
         } catch (e) {
             const stdout = e.stdout.toString();
             const innerError = this.findInnerError(stdout);

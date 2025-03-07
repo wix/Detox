@@ -375,6 +375,7 @@ class ADB {
       ...this.defaultExecOptions,
       ...spawnOptions,
       capture: ['stdout'],
+      encoding: 'utf8',
     };
     return spawnWithRetriesAndLogs(this.adbBin, _flags, _spawnOptions);
   }

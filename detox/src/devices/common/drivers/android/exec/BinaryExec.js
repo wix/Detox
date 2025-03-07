@@ -1,7 +1,4 @@
-// @ts-nocheck
-const spawn = require('child-process-promise').spawn;
-
-const exec = require('../../../../../utils/childProcess').execWithRetriesAndLogs;
+const { execAsync, spawnAndLog } = require('../../../../../utils/childProcess');
 
 class ExecCommand {
   toString() {
@@ -27,15 +24,19 @@ class BinaryExec {
   }
 
   async exec(command) {
-    return (await exec(`"${this.binary}" ${command._getArgsString()}`)).stdout;
+    return await execAsync(`"${this.binary}" ${command._getArgsString()}`);
   }
 
   spawn(command, stdout, stderr) {
-    return spawn(this.binary, command._getArgs(), { detached: true, stdio: ['ignore', stdout, stderr] });
+    return spawnAndLog(this.binary, command._getArgs(), {
+      detached: true,
+      encoding: 'utf8',
+      stdio: ['ignore', stdout, stderr]
+    });
   }
 }
 
 module.exports = {
   ExecCommand,
-  BinaryExec,
+  BinaryExec
 };

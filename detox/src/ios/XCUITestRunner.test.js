@@ -1,12 +1,12 @@
 const XCUITestRunner = require('./XCUITestRunner');
 
-jest.mock('child-process-promise', () => {
+jest.mock('promisify-child-process', () => {
     return {
         exec: jest.fn(),
     };
 });
 
-const { exec } = jest.requireMock('child-process-promise');
+const { exec } = jest.requireMock('promisify-child-process');
 const environment = jest.requireMock('../utils/environment');
 
 jest.mock('../utils/environment');
