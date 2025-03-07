@@ -427,6 +427,18 @@ describe('AndroidExpect', () => {
     });
 
     describe('WebElement Actions', () => {
+      let handle;
+
+      beforeEach(() => {
+        jest.useFakeTimers({ doNotFake: ['clearInterval', 'setInterval'] });
+        handle = setInterval(() => jest.runAllTimers(), 5);
+      });
+
+      afterEach(() => {
+        clearInterval(handle);
+        jest.useRealTimers();
+      });
+
       it('tap', async () => {
         await e.web.element(e.by.web.id('id')).tap();
         await e.web.element(e.by.web.className('className')).tap();
