@@ -2,73 +2,26 @@
 
 <!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take variable amount of time to complete. We can’t continue the test until they’ve completed. How can we synchronize the test with these operations?
+Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take a variable amount of time to complete; In each step, we can’t move on to the next one until they’ve completed (i.e. when the app goes idle), which in turn surfaces a challenge in continously trying to understand when the right time to do so is.
 
-Synchronizing manually with `sleep()` commands is a bad idea. It’s flaky, complicates the tests, behaves differently on different machines and makes tests needlessly slow.
+Fortunately, Detox - which comes with a gray-box approach, cleverly performs the synchronization automatically, as explained [here](../articles/how-detox-works.md#how-detox-automatically-synchronizes-with-your-app).
 
-Instead, Detox tries to synchronize the test with the app completely _automatically_.
+## Debugging the Automated Synchronization Mechanism
 
-When this works it’s like magic. You simply execute actions one after the other without worrying about timing, and Detox waits for the app to stabilize before moving to the next test line. If there’s an in-flight request to a server, for example, the test will not move forward until the request completes.
+While Detox's auto-synchronization mechanism is powerful and efficient, it does come with at least one caveat: **It imposes strictness over the app's behavior.** By default, Detox will fail your tests (i.e. due to a wait-for-idle timeout), if, for example, following an app launch or a navigation to a new screen, timers or animations continue to run endlessly. While this could be considered an advantage (e.g. finding an animation or timer management leakage!), these type of issues may not:
 
-### What operations do we try to synchronize with automatically
+1. Be specifially related to the main coverage goal of your test.
+2. Be directly visible to or considered a bug by the end user.
 
-- **Network requests** - Detox monitors in-flight requests over the network.
+Therefore, it may be something some would want to be able to opt-out of.
 
-- **Main thread (native)** - Detox monitors pending native operations on the main thread (main dispatch queue and main `NSOperationQueue`).
+### Step 1: Understanding what's blocking Detox
 
-- **Layout of UI** - Detox monitors UI layout operations. There’s also special support for React Native layout which includes the Shadow Queue where [yoga](https://github.com/facebook/yoga) runs.
+Detox's [syncrhonization debugging mechanism](../config/session.mdx#sessiondebugsynchronization-number) generates output to Detox's log which provides useful information. We recommend reading about it in order to understand how it can be useful in synchronization debugging, before anything else.
 
-- **Timers** - Detox monitors timers (explicit asynchronous delays). There’s special support for JavaScript timers like `setTimeout` and `setInterval`.
+#### (Optional) Lower-level Idling Resources Debug (iOS Only)
 
-- **Animations** - Detox monitors active animations and transitions. There’s special support for React Native animations with the Animated library.
-
-- **React Native JavaScript thread** - Detox monitors pending operations on the JavaScript thread in RN apps.
-
-- **React Native bridge** - Detox monitors the React Native bridge and asynchronous messages sent on it.
-
-### Automatic synchronization works most of the time
-
-It’s difficult for an automatic mechanism to be correct in 100% of the cases. There are always exceptions. We are optimizing for the common case so most of your scenarios will not have to deal with synchronization issues.
-
-For the rest of this tutorial, we’ll assume the test is having some sort of synchronization issue.
-
-### Are we waiting too much or not waiting enough?
-
-When the automatic synchronization mechanism doesn’t work, we have 2 potential problems:
-
-- We are waiting too much - The test will appear to hang and fail with timeout. This happens because Detox thinks an asynchronous operation is currently taking place and is waiting for it endlessly.
-
-- We are not waiting enough - The test will appear to fail at some point because an element isn’t found according to an expectation or isn’t found when attempting to perform an action on it. This happens because Detox didn’t take some asynchronous operation into account and isn’t waiting until it completes.
-
-### Identifying which synchronization mechanism causes us to wait too much
-
-Interactions with the application are synchronized, meaning that they will not execute unless the app is idle. You may encounter situations where the tests just hang.
-When an action/expectation takes a significant amount of time use this option to print device synchronization status.
-The status will be printed if the action takes more than \[value] (in ms) to complete
-
-```bash
-detox test --debug-synchronization 500
-```
-
-Then, reproduce your issue, and you should see output similar to the following:
-
-```plain text
-detox[9733] INFO:  [APP_STATUS] The app is busy with the following tasks:
-• There are 1 work items pending on the dispatch queue: "Main Queue (<OS_dispatch_queue_main: com.apple.main-thread>)".
-• Run loop "Main Run Loop" is awake.
-• 1 enqueued native timers:
-  - Timer #1:
-    + Fire date: 2021-11-11 14:19:57 +0200.
-    + Time until fire: 0.072.
-    + Repeat interval: 0.
-    + Is recurring: NO.
-```
-
-See [this document](https://github.com/wix/DetoxSync/blob/master/StatusDocumentation.md) for documentation of the debug synchronization output.
-
-#### Lower-level Idling Resources Debug (iOS Only)
-
-If `--debug-synchronization` does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
+If the synchronization debugging mechanism does not provide the necessary information, on iOS you can add the following launch argument to your app (using `launchArgs` in your `launchApp()` call) to enable a very verbose logging of the idling resource system to the system log:
 
 ```plain text
 -DTXEnableVerboseSyncSystem YES -DTXEnableVerboseSyncResources YES
@@ -85,11 +38,13 @@ For example, change your `device.launchApp()` call like:
 ```js
 await device.launchApp({
   newInstance: true,
-  launchArgs: { 'DTXEnableVerboseSyncSystem': 'YES', 'DTXEnableVerboseSyncResources': 'YES' }
+  launchArgs: { 'DTXEnableVerboseSyncSystem': 'YES', 'DTXEnableVerboseSyncResources': 'YES' },
 });
 ```
 
-### Switching to manual synchronization as a workaround
+### Step 2: Apply the Most Suitable Solution
+
+#### Switching to manual synchronization as a workaround
 
 We always have the fail-safe of turning off automatic synchronization and waiting manually by ourselves. This isn’t the recommended approach, but sometimes we don’t have a choice.
 
@@ -141,7 +96,7 @@ This makes sense only if we’re not waiting enough (or if we’ve disabled auto
 
 ### Tweaking and fine-tuning the synchronization mechanisms
 
-> This isn’t exposed yet, to be done...
+As of writing this, fine tuning is not supported. Check out issue [#1513](https://github.com/wix/Detox/issues/1513) to keep track of that.
 
 ### Modifying your app to avoid waiting too much
 
