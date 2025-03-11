@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.34.4",
+  "version": "20.34.5",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -80,13 +80,13 @@
     "funpermaproxy": "^1.1.0",
     "glob": "^8.0.3",
     "ini": "^1.3.4",
-    "promisify-child-process": "^4.1.2",
     "jest-environment-emit": "^1.0.8",
     "json-cycle": "^1.3.0",
     "lodash": "^4.17.11",
     "multi-sort-stream": "^1.0.3",
     "multipipe": "^4.0.0",
     "node-ipc": "9.2.1",
+    "promisify-child-process": "^4.1.2",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
