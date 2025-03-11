@@ -62,7 +62,7 @@ First and foremost, as explained, an app's inability to go idle might be an indi
 
 Sometimes the resource that's holding the app back from turning idle is a mere animation of a single loader - running endlessly on the screen:
 
-<img src="../img/app-loader.jpeg" alt="app loader" style="zoom:25%;" />
+![App loader example](../img/app-loader.jpeg)
 
 The syncrhonization logs telling you that, would usually look roughly like this:
 
