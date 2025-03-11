@@ -24,13 +24,13 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 
 ### Operations Detox synchronizes with automatically
 
-- **Network requests** - Detox monitors in-flight requests over the network.
+- **Network requests** - Detox monitors in-flight requests over the network (waiting for them to be responded).
 
 - **Main thread (native)** - Detox monitors pending native operations on the app's main thread (main dispatch queue and main `NSOperationQueue`).
 
 - **Layout of UI** - Detox monitors UI layout operations. There’s also special support for React Native layout which includes the Shadow Queue where [yoga](https://github.com/facebook/yoga) runs.
 
-- **Timers** - Detox monitors timers (explicit asynchronous delays). There’s special support for JavaScript timers like `setTimeout` and `setInterval`.
+- **Timers** - Detox monitors timers (explicit asynchronous delays). There’s special support for JavaScript's `setTimeout`, which is monitored.
 
 - **Animations** - Detox monitors active animations and transitions. There’s special support for React Native animations with the Animated library.
 
