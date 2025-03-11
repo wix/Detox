@@ -13,6 +13,7 @@ const {
   DetoxCoreListener,
   DetoxInitErrorListener,
   DetoxPlatformFilterListener,
+  REPLListener,
   SpecReporter,
   WorkerAssignReporter
 } = require('./listeners');
@@ -62,6 +63,7 @@ class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
       DetoxCoreListener,
       SpecReporter,
       WorkerAssignReporter,
+      REPLListener,
     });
 
     // Artifacts flushing should be delayed to avoid conflicts with third-party reporters
