@@ -32,7 +32,7 @@ Detox tries to eliminate flakiness by automatically synchronizing your tests wit
 
 - **Timers** - Detox monitors timers (explicit asynchronous delays). There’s special support for JavaScript's `setTimeout`, which is monitored.
 
-- **Animations** - Detox monitors active animations and transitions. There’s special support for React Native animations with the Animated library.
+- **Animations** - Detox monitors active animations and transitions. There’s special support for React Native animations with the Animated library, and even the popular [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated).
 
 - **React Native JavaScript thread** - Detox monitors pending operations on the JavaScript thread in RN apps.
 

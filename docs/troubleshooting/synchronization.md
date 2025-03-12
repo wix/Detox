@@ -54,7 +54,7 @@ await device.launchApp({
 
 ### Step 2: Applying the Most Suitable Solution
 
-First and foremost, as explained, an app's inability to go idle might be an indication of that some resources are _unnecessarily_ busy. Therefore, whether it's a network request that's been left unacknowledged, or an endless loader - 
+First and foremost, as explained, an app's inability to go idle might be an indication of that some resources are _unnecessarily_ busy. Therefore, whether it's a network request that's been left unacknowledged, or an endless loader -
 
 **The best solution is to fix the problem!:construction_worker:**
 
@@ -66,7 +66,7 @@ Sometimes the resource that's holding the app back from turning idle is a mere a
 
 The synchronization logs telling you that, would usually look roughly like this:
 
-```
+```plain text
 09:04:20.170 detox[90417] i The app is busy with the following tasks:
 • UI elements are busy:
   - View animations pending: 2.
@@ -91,7 +91,7 @@ The synchronization logs telling you that, would usually look roughly like this:
 
 Your app is waiting indefinitely to load all of the necessary data from the a non-responsive server / a bad network, and therefore cannot switch to rendering the expected UI. When this is the deal, additional synchronization logs also repeatedly show some in-flight network calls:
 
-```
+```plain text
 09:04:20.170 detox[90417] i The app is busy with the following tasks:
 • 1 network requests with URLs:
   - URL #1: https://nonresponsive-server.org/something?id=1337
@@ -102,7 +102,7 @@ _This can be solved by finding out why the server is being non-responsive or unr
 
 ##### ii. A returned server error is not conveyed by the UI
 
-Sometimes the servers _do_ respond, **but with an error**. Often times, we fail to adjust our app code so as to display the necessary UI (e.g. replacing the loader with a friendly message). Rather, the loader just remains running indefinitely. Unlike in the previous case, you will not see synchronization-debug logs surfacing those unacknowledged network calls. 
+Sometimes the servers _do_ respond, **but with an error**. Often times, we fail to adjust our app code to display the necessary UI (e.g. replacing the loader with a friendly message). Rather, the loader just remains running indefinitely. Unlike in the previous case, you will not see synchronization-debug logs surfacing those unacknowledged network calls.
 
 _Scan through the **app/device** logs (not Detox log!) from the bottom up and find traces of errors. The app/device logs can be automatically recorded by Detox as a test-run artifact._
 
@@ -122,8 +122,8 @@ Detox currently has no API's for "black listing" animations - namely, excluding 
 
 **Not all synchronization issues around animations are trivial:**
 
-* The animation can be associated with an element that is rendered off-screen, such as an item in a long news feed that's been rendered beyond the screen's bound, or a loader in a screen associated with a bottom tab that hasn't been navigated-to since the beginning of the test.
-* The animation can also be associated with elements which have been silently leaked (bug) under other UI elements. They are fully functional yet not visible to the user. For example: A compact loader accidentally showing under the app bar (android)/navigation bar (iOS).
+- The animation can be associated with an element that is rendered off-screen, such as an item in a long news feed that's been rendered beyond the screen's bound, or a loader in a screen associated with a bottom tab that hasn't been navigated-to since the beginning of the test.
+-The animation can also be associated with elements which have been silently leaked (bug) under other UI elements. They are fully functional yet not visible to the user. For example: A compact loader accidentally showing under the app bar (android)/navigation bar (iOS).
 
 These types of animations can be difficult to track down, and sometimes fix.
 
@@ -170,7 +170,7 @@ By default, Detox is designed to ignore JavaScript's `setInterval()` and will on
 
 If you can't find the source of the problem, or otherwise decide not to fix it (temporarily...), Detox always has the fail-safe solution of turning off automatic-synchronization altogether and waiting manually for elements.
 
-This isn’t the recommended approach as you'd be giving up Detox's synchronization super-powers and resort to manually defining timeouts, but hey, life is about tradeoffs. You can do this with the main [synchronization switching API's](../api/device.md#devicedisablesynchronization):
+This isn’t the recommended approach as you'd be giving up Detox's synchronization super-powers and resort to manually defining timeouts, but hey, life is about trade-offs. You can do this with the main [synchronization switching API's](../api/device.md#devicedisablesynchronization):
 
 ```js
 // Disabling in mid test-run:
@@ -214,6 +214,3 @@ await element(by.id('submit-btn')).tap();
 ##### Hybrid manual/automatic synchronization
 
 As of writing this, fine-tuned control over the various synchronized OS-systems that Detox monitors is not supported. Follow issue [#1513](https://github.com/wix/Detox/issues/1513) to keep track of that.
-
-
-
