@@ -6,11 +6,11 @@ When a Detox test executes, you actually have two different parts running side b
 
 - **The mobile app itself**, usually running on a simulator/emulator. A regular native build of your app is installed and executed on the device. Your app is usually built once before the tests start running.
 
-- **The test suite**, running on Node.js, ove ra test runner like Jest. The tests are normally written in JavaScript. Because the tests are asynchronous in nature (every test line requires to access the app and wait for a response), the tests rely heavily on [`async`-`await`](https://ponyfoo.com/articles/understanding-javascript-async-await).
+- **The test suite**, running on Node.js, over a test runner like Jest. The tests are normally written in JavaScript. Because the tests are asynchronous in nature (every test line requires to access the app and wait for a response), the tests rely heavily on [`async`-`await`](https://ponyfoo.com/articles/understanding-javascript-async-await).
 
 The two parts are usually running in separate processes on your machine. It is also possible to run the two parts on different machines. Communication between the two parts takes place over the network using a web socket.
 
-In practice, to make the communication more resilient, both parts are implemented as clients and communicate through a Detox server that acts as mediator. Haivng that server allows for some advantages like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
+In practice, to make the communication more resilient, both parts are implemented as clients and communicate through a Detox server that acts as mediator. Having that server allows for some advantages like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
 
 ## How Detox Automatically Synchronizes With Your App
 
