@@ -2,7 +2,9 @@
 
 <!-- markdownlint-configure-file { "header-increment": 0 } -->
 
-Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app. Complex operations inside the app (like accessing servers or performing animations) often take a variable amount of time to complete; In each step, we can’t move on to the next one until they’ve completed (i.e. when the app goes idle), which in turn surfaces a challenge in continuously trying to understand when the right time to do so is.
+Traditionally, one of the most difficult aspects of E2E testing is synchronizing the test scenario with the app.
+
+Complex operations inside the app (like accessing servers or performing animations) often take a variable amount of time to complete; In each step, we can’t move on to the next one until they’ve completed (i.e. when the app goes idle), which in turn surfaces a challenge in continuously trying to understand when the right time to do so is.
 
 Fortunately, Detox - which comes with a gray-box approach, cleverly performs the synchronization automatically, as explained [here](../articles/how-detox-works.md#how-detox-automatically-synchronizes-with-your-app).
 
@@ -56,7 +58,7 @@ await device.launchApp({
 
 First and foremost, as explained, an app's inability to go idle might be an indication of that some resources are _unnecessarily_ busy. Therefore, whether it's a network request that's been left unacknowledged, or an endless loader -
 
-**The best solution is to fix the problem!:construction_worker:**
+**The best solution is to fix the problem! :construction_worker:**
 
 #### Dealing with endless animation bugs (e.g. loaders)
 
@@ -120,10 +122,10 @@ Detox currently has no API's for "black listing" animations - namely, excluding 
 
 #### Dealing with **hidden** animations
 
-**Not all synchronization issues around animations are trivial:**
+Not all synchronization issues around animations are trivial:
 
 - The animation can be associated with an element that is rendered off-screen, such as an item in a long news feed that's been rendered beyond the screen's bound, or a loader in a screen associated with a bottom tab that hasn't been navigated-to since the beginning of the test.
--The animation can also be associated with elements which have been silently leaked (bug) under other UI elements. They are fully functional yet not visible to the user. For example: A compact loader accidentally showing under the app bar (android)/navigation bar (iOS).
+- The animation can also be associated with elements which have been silently leaked (bug) under other UI elements. They are fully functional yet not visible to the user. For example: A compact loader accidentally showing under the app bar (android)/navigation bar (iOS).
 
 These types of animations can be difficult to track down, and sometimes fix.
 
@@ -166,28 +168,39 @@ By default, Detox is designed to ignore JavaScript's `setInterval()` and will on
 
 *If you have an endless polling loop with short intervals implemented with `setTimeout`, switch the implementation to `setInterval`. If possible, avoid aggressive polling in your app altogether, the poor single JavaScript thread we have doesn’t like it.*
 
-#### Last resort: Switching to manual synchronization as a workaround
+#### Last resort: Switching to manual synchronization
 
-If you can't find the source of the problem, or otherwise decide not to fix it (temporarily...), Detox always has the fail-safe solution of turning off automatic-synchronization altogether and waiting manually for elements.
+Disabling automatic synchronization makes sense in two cases:
+
+1. You have a synchronization problem (as explained above) but you can't find the source of the problem, or simply decide not to fix it (temporarily...)
+2. You have a screen with a transient element, such as a toast or a cheering UI element, that is displayed temporarily and disappears automatically:
+
+   ![Transient UI element](../img/transient-ui-element.png)
+
+Detox always has the fail-safe solution of turning off automatic-synchronization altogether and waiting manually for elements.
 
 This isn’t the recommended approach as you'd be giving up Detox's synchronization super-powers and resort to manually defining timeouts, but hey, life is about trade-offs. You can do this with the main [synchronization switching API's](../api/device.md#devicedisablesynchronization):
 
 ```js
 // Disabling in mid test-run:
 await device.disableSynchronization();
+```
 
+```js
 // Launching the app with sync disabled from the start:
 await device.launchApp({
   launchArgs: {
     detoxEnableSynchronization: 0
   },
 });
+```
 
+```js
 // To turn synchronization back on (this command will block on synchronization):
 await device.enableSynchronization();
 ```
 
-Mind that when this technique is applied, it effectively means that have to start using Detox API's differently (i.e. resort to using [`withTimeout()` API's](../api/expect.md#withtimeouttimeout)) and possibly even migrate test code.
+Mind that when this technique is applied, it effectively means that have to start using Detox API's differently (i.e. resort to using [`waitFor().withTimeout()`](../api/expect.md#withtimeouttimeout)) API's and possibly even migrate test code.
 
 For example, instead of:
 
