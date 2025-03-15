@@ -9,7 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import { CopilotFacade, PromptHandler } from "detox-copilot";
+import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/detox'
 
 declare global {
     namespace Detox {
@@ -446,7 +446,13 @@ declare global {
 
             readonly system: SystemFacade;
 
-            readonly copilot: DetoxCopilotFacade;
+            readonly pilot: PilotFacade;
+
+          /**
+           * @deprecated This API is deprecated and will be removed in the next major version.
+           * Please use `pilot` instead of `pilot`.
+           */
+            readonly copilot: PilotFacade;
 
             readonly DetoxConstants: {
                 userNotificationTriggers: {
@@ -1329,17 +1335,17 @@ declare global {
             element(systemMatcher: SystemMatcher): IndexableSystemElement;
         }
 
-        interface DetoxCopilotFacade extends Pick<CopilotFacade, "perform"> {
+        interface PilotFacade extends Pick<Pilot, "perform" | "autopilot" | "extendAPICatalog"> {
             /**
-             * Initializes the Copilot with the given prompt handler.
-             * Must be called before any other Copilot methods.
-             * @note Copilot APIs are still in experimental phase and are subject to changes in the near future.
+             * Initializes the Pilot with the given prompt handler.
+             * Must be called before any other Pilot methods.
+             * @note Wix-Pilot APIs are still in experimental phase and are subject to changes in the near future.
              * @param promptHandler The prompt handler to use.
              */
-            init: (promptHandler: DetoxCopilotPromptHandler) => void;
+            init: (promptHandler: PromptHandler) => void;
         }
 
-        interface DetoxCopilotPromptHandler extends PromptHandler {}
+        type PromptHandler = _PromptHandler;
 
         interface IndexableSystemElement extends SystemElement {
             /**

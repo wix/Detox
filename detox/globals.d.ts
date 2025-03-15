@@ -10,6 +10,7 @@ declare global {
   const web: Detox.DetoxExportWrapper['web'];
   const system: Detox.DetoxExportWrapper['system'];
   const copilot: Detox.DetoxExportWrapper['copilot'];
+  const pilot: Detox.DetoxExportWrapper['pilot'];
 
   namespace NodeJS {
     interface Global {
@@ -22,6 +23,7 @@ declare global {
       web: Detox.DetoxExportWrapper['web'];
       system: Detox.DetoxExportWrapper['system'];
       copilot: Detox.DetoxExportWrapper['copilot'];
+      pilot: Detox.DetoxExportWrapper['pilot'];
     }
   }
 }

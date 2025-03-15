@@ -3,18 +3,18 @@ const DUMMY_COORDINATE1_LATITUDE = '-80.125';
 const DUMMY_COORDINATE2_LONGITUDE = '-80.125';
 const DUMMY_COORDINATE2_LATITUDE = '66.5';
 
-describe.forCopilot('Location', () => {
+describe.forPilot('Location', () => {
   beforeEach(async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Restart the React Native state',
-      'Navigate to the Location screen'
     );
   });
 
   describe('Location Tests', () => {
     it('should show error when permission defined as `never`', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Launch the app with location permission denied',
+        'Navigate to the Location screen',
         'Verify there is an element with the text "Get location"',
         'Tap the get location element',
         'Verify there is an element with the text "User denied access to location services."'
@@ -22,8 +22,9 @@ describe.forCopilot('Location', () => {
     });
 
     it('should show location when permission is `always`', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Launch the app with location permission always',
+        'Navigate to the Location screen',
         'Verify there is an element with the text "Get location"',
         'Tap the get location element',
         `Set the device location (${DUMMY_COORDINATE1_LATITUDE}, ${DUMMY_COORDINATE1_LONGITUDE})`,
@@ -33,8 +34,9 @@ describe.forCopilot('Location', () => {
     });
 
     it('should show location when permission is `inuse`', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Launch the app with location permission just once',
+        'Navigate to the Location screen',
         'Verify there is an element with the text "Get location"',
         'Tap the get location element',
         `Set the device location to (${DUMMY_COORDINATE1_LATITUDE}, ${DUMMY_COORDINATE1_LONGITUDE})`,
@@ -44,8 +46,9 @@ describe.forCopilot('Location', () => {
     });
 
     it('should set location multiple times', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Launch the app with location permission just once',
+        'Navigate to the Location screen',
         'Verify there is an element with the text "Get location"',
         'Tap the get location element',
         `Set the device location to (${DUMMY_COORDINATE1_LATITUDE}, ${DUMMY_COORDINATE1_LONGITUDE})`,
