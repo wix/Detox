@@ -51,8 +51,8 @@ describe.forPilot('Location', () => {
         'Navigate to the Location screen',
         'Verify there is an element with the text "Get location"',
         'Tap the get location element',
-        `Set the device location to (${DUMMY_COORDINATE1_LATITUDE}, ${DUMMY_COORDINATE1_LONGITUDE})`,
-        `Set the device location to (${DUMMY_COORDINATE2_LATITUDE}, ${DUMMY_COORDINATE2_LONGITUDE})`,
+        `Set the device location to (lat: ${DUMMY_COORDINATE1_LATITUDE}, long: ${DUMMY_COORDINATE1_LONGITUDE})`,
+        `Set the device location to (lat: ${DUMMY_COORDINATE2_LATITUDE}, long: ${DUMMY_COORDINATE2_LONGITUDE})`,
         `Verify that "Latitude: ${DUMMY_COORDINATE2_LATITUDE}" is displayed`,
         `Verify that "Longitude: ${DUMMY_COORDINATE1_LONGITUDE}" is displayed`
       );
