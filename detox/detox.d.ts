@@ -9,7 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/detox'
+import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/core'
 
 declare global {
     namespace Detox {
