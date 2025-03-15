@@ -23,9 +23,9 @@ it('should navigate and add a product to the cart', async () => {
 });
 ```
 
-### Be Specific and Clear
+### Define Specific and Clear Steps
 
-- **Provide Clear Instructions**: The clearer your instructions, the better Copilot can interpret them.
+- **Provide Clear Instructions**: The clearer your instructions, the better Pilot can interpret them.
 - **Example**:
   - **Good**: `'Tap on the "Login" button'`
   - **Better**: `'Tap on the "Login" button located at the top right corner'`
@@ -34,6 +34,7 @@ it('should navigate and add a product to the cart', async () => {
 
 - **Avoid Combining Multiple Actions**: Keep each step focused on a single action or assertion.
 - **Example**:
+
   - **Avoid**: `'Tap on the "Login" button and enter credentials'`
   - **Prefer**:
 
@@ -72,7 +73,7 @@ it('should navigate and add a product to the cart', async () => {
 
 The `autopilot()` function automatically generates a series of steps to achieve the given goal. To optimize the output, follow these guidelines:
 
-### Be Specific and Clear
+### Define Specific and Clear Goals
 
 - **Be Clear and Concise**: Describe the goal with enough detail for Pilot to understand the desired outcome.
 - **Example**:
@@ -80,13 +81,14 @@ The `autopilot()` function automatically generates a series of steps to achieve 
 ```javascript
 await pilot.autopilot('Complete the checkout process and verify the order confirmation');
 ```
+
 ### Provide Context
+
 - **Specify the Context of the Flow**: Indicate which part of the app you're focusing on.
 - **Example**: 'Verify the login flow from the homepage'
 
-
 ## General Recommendations
 
-- **Flexibility**: While it's best to provide clear instructions, Copilot is designed to interpret a variety of phrasing. Different approaches can work, and you are encouraged to experiment.
-- **Feedback Loop**: Observe how Copilot interprets your instructions and adjust accordingly.
+- **Flexibility**: While it's best to provide clear instructions, Pilot is designed to interpret a variety of phrasing. Different approaches can work, and you are encouraged to experiment.
+- **Feedback Loop**: Observe how Pilot interprets your instructions and adjust accordingly.
 - **Model Selection**: Choose an LLM model that best suits your application's complexity and language requirements. We recommend advanced models like **Sonnet 3.5** or **GPT-4o** for better performance.

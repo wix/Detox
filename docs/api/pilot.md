@@ -10,7 +10,6 @@ Wix Pilot is in active development, and APIs are subject to change in future rel
 
 :::note Migration Notice
 
-
 With the introduction of **Wix Pilot**, the `copilot` API is now deprecated.
 
 - **Wix Pilot** is a standalone plugin that enables natural language-based testing and can work across different testing frameworks.
@@ -24,7 +23,7 @@ From now on, use the `pilot` API. The `copilot` API will remain temporarily supp
 
 Detox Pilot exposes a simple API that integrates seamlessly with your Detox tests. It requires minimal setup and allows you to perform complex testing operations by simply describing them in natural language.
 
-For a more detailed guide on integrating Wix Copilot in your tests, refer to the [Detox Copilot Guide].
+For a more detailed guide on integrating Wix Copilot in your tests, refer to the \[Detox Copilot Guide].
 
 ## Methods
 
@@ -39,7 +38,7 @@ Initializes Pilot with the given prompt handler. Must be called before any other
 **Parameters:**
 
 - `promptHandler` (PromptHandler): An object implementing the [`PromptHandler`](#prompthandler-interface) interface.
--  `detox` (DetoxInstance): The Detox instance to integrate with Wix Pilot.
+- `detox` (DetoxInstance): The Detox instance to integrate with Wix Pilot.
 
 **Example:**
 
@@ -59,7 +58,7 @@ Performs a testing operation or series of operations based on the given steps.
 
 **Parameters:**
 
-- `steps` (string[]): One or more natural language instructions specifying the actions or assertions to perform.
+- `steps` (string\[]): One or more natural language instructions specifying the actions or assertions to perform.
 
 **Returns:**
 
@@ -77,6 +76,7 @@ await pilot.perform(
   'The welcome message "Hello, User!" should be displayed'
 );
 ```
+
 ## `pilot.autopilot(goal)`
 
 Automatically generates a series of steps to achieve the given goal.
@@ -87,9 +87,9 @@ Automatically generates a series of steps to achieve the given goal.
 
 **Example:**
 
-  ```javascript
-  await pilot.autoPilot('Log in and navigate to the profile page');
-  ```
+```javascript
+await pilot.autoPilot('Log in and navigate to the profile page');
+```
 
 ## `PromptHandler` Interface
 

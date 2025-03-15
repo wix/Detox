@@ -178,6 +178,7 @@ it('should display the correct page title', async () => {
 ```
 
 ## Goal-Oriented Tests with `pilot.autoPilot`
+
 With the `pilot.autopilot` method, you can define the desired goal of your test, and Pilot will automatically generate the necessary actions and assertions to achieve that goal. This method focuses on the outcome, allowing you to create tests without having to specify each step manually.
 
 ## Contributing to Pilot
