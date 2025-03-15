@@ -23,7 +23,7 @@ From now on, use the `pilot` API. The `copilot` API will remain temporarily supp
 
 Detox Pilot exposes a simple API that integrates seamlessly with your Detox tests. It requires minimal setup and allows you to perform complex testing operations by simply describing them in natural language.
 
-For a more detailed guide on integrating Wix Copilot in your tests, refer to the \[Detox Copilot Guide].
+For a more detailed guide on integrating Wix Pilot in your tests, refer to the \[Detox Pilot Guide].
 
 ## Methods
 
@@ -115,4 +115,4 @@ interface PromptHandler {
 
 You can refer to the [Pilot Guide] for an example of implementing a `PromptHandler` for OpenAI's service.
 
-[Pilot Guide]: ../pilot/testing-with-pilot
+[Detox Pilot Guide]: ../pilot/testing-with-pilot

@@ -32,7 +32,7 @@ You can adapt this code to work with other LLMs or services as needed. You may a
 
 :::note Open for Contributions
 
-If you have implemented a `PromptHandler` for a specific LLM or service, consider contributing it to the Copilot repository to help the community.
+If you have implemented a `PromptHandler` for a specific LLM or service, consider contributing it to the [Wix Pilot GitHub Repository](https://github.com/wix-incubator/pilot) to help the community.
 
 :::
 
@@ -139,9 +139,9 @@ In the example above, Pilot can perform checks that go beyond traditional UI tes
 - **Step-by-Step Instructions**: Each step is a separate string, representing a single action or assertion.
 - **Sequential Execution**: Steps are executed in order, allowing you to describe complex interactions intuitively.
 
-#### Hybrid Tests with Copilot and Detox APIs
+#### Hybrid Tests with Pilot and Detox APIs
 
-You can also combine Copilot commands with traditional Detox APIs for more control.
+You can also combine Pilot commands with traditional Detox APIs for more control.
 
 ```javascript
 it('should add an item to the cart', async () => {
@@ -184,4 +184,4 @@ With the `pilot.autopilot` method, you can define the desired goal of your test,
 ## Contributing to Pilot
 
 Contributions are welcome!
-Visit the [Pilot GitHub Repository](https://github.com/wix-incubator/pilot) to open issues or pull requests if they are relevant to the core-library functionality or open a it under [Detox repository](https://github.com/wix/Detox) if it is related to Detox-Copilot integration or if you are not sure where the issue should be opened.
+Visit the [Pilot GitHub Repository](https://github.com/wix-incubator/pilot) to open issues or pull requests if they are relevant to the core-library functionality or open a it under [Detox repository](https://github.com/wix/Detox) if it is related to Detox-Pilot integration or if you are not sure where the issue should be opened.
