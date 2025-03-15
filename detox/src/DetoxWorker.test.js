@@ -429,7 +429,7 @@ describe('DetoxWorker', () => {
 
       await detox.onTestDone(testSummaries.passed());
 
-      expect(detox.pilot.end).toHaveBeenCalledWith(false);
+      expect(detox.pilot.end).toHaveBeenCalledWith(true);
     });
 
     it('should end pilot without cache if test has failed', async () => {
@@ -437,7 +437,7 @@ describe('DetoxWorker', () => {
 
       await detox.onTestDone(testSummaries.failed());
 
-      expect(detox.pilot.end).toHaveBeenCalledWith(true);
+      expect(detox.pilot.end).toHaveBeenCalledWith(false);
     });
   });
 
