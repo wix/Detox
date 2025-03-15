@@ -1,12 +1,11 @@
 const CAF = require('caf');
-const copilot = require('detox-copilot').default;
 const _ = require('lodash');
 
 const Client = require('./client/Client');
-const DetoxCopilot = require('./copilot/DetoxCopilot');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
+const DetoxPilot = require('./pilot/DetoxPilot');
 const symbols = require('./realms/symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const uuid = require('./utils/uuid');
@@ -62,8 +61,8 @@ class DetoxWorker {
     this.web = null;
     /** @type {Detox.SystemFacade} */
     this.system = null;
-    /** @type {Detox.DetoxCopilotFacade} */
-    this.copilot = new DetoxCopilot();
+    /** @type {Detox.PilotFacade} */
+    this.pilot = null;
 
     this._deviceCookie = null;
 
@@ -103,7 +102,6 @@ class DetoxWorker {
     // @ts-ignore
     this._sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
-
     this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
       // @ts-ignore
@@ -111,6 +109,7 @@ class DetoxWorker {
         await this.device.terminateApp();
       }
     };
+    this.pilot = new DetoxPilot();
 
     yield this._client.connect();
 
@@ -163,12 +162,19 @@ class DetoxWorker {
       const injectedGlobals = {
         ...matchers,
         device: this.device,
-        copilot: this.copilot,
+        pilot: this.pilot,
         detox: this,
       };
 
       this._injectedGlobalProperties = Object.keys(injectedGlobals);
       Object.assign(DetoxWorker.global, injectedGlobals);
+      Object.defineProperty(DetoxWorker.global, 'copilot', {
+        get: () => {
+          console.warn('Warning: "copilot" is deprecated. Please use "pilot" instead.');
+          return this.pilot;
+        },
+        configurable: true,
+      });
     }
 
     // @ts-ignore
@@ -226,8 +232,8 @@ class DetoxWorker {
   };
 
   onTestStart = function* (_signal, testSummary){
-    if (copilot.isInitialized()) {
-      copilot.start();
+    if (this.pilot.isInitialized()) {
+      this.pilot.start();
     }
 
     this._validateTestSummary('beforeEach', testSummary);
@@ -258,8 +264,8 @@ class DetoxWorker {
       testName: testSummary.fullName,
     });
 
-    if (copilot.isInitialized()) {
-      copilot.end(testSummary.status !== 'passed');
+    if (this.pilot.isInitialized()) {
+      this.pilot.end(testSummary.status === 'passed');
     }
   };
 

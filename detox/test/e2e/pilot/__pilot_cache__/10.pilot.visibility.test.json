@@ -1,0 +1,143 @@
+{
+  "{\"currentStep\":\"Restart the React Native state\",\"previousSteps\":[]}": [
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742058606476,
+      "lastAccessTime": 1742058606476
+    },
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058650243,
+      "lastAccessTime": 1742058650243
+    }
+  ],
+  "{\"currentStep\":\"Navigate to the Visibility Expectation screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.label('Visibility Expectation')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742058617858,
+      "lastAccessTime": 1742058617858
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a text element with the text \\\"Element should be half-visible\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('detox_temp_0_0_0_1_0_0_1'))).toHaveText('Element should be only half-visible.');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058628841,
+      "lastAccessTime": 1742058628841
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle below the text that is exactly 50% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"},{\"step\":\"Verify there is a text element with the text \\\"Element should be half-visible\\\"\",\"code\":\"await expect(element(by.id('detox_temp_0_0_0_1_0_0_1'))).toHaveText('Element should be only half-visible.');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(50);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058639287,
+      "lastAccessTime": 1742058639287
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle is 51% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(51);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058662528,
+      "lastAccessTime": 1742058662528
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle is 51% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"},{\"step\":\"Verify the purple rectangle is 51% visible\",\"code\":\"await expect(element(by.id('halfVisible'))).toBeVisible(51);\",\"error\":\"Test Failed: Failed expectation: TOBEVISIBLE WITH MATCHER(id == “halfVisible”), View “<RCTViewComponentView: 0x103918690>” is not visible: View is obscured by its window bounds and does not pass visibility percent threshold (51)\\n\\nHINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher.\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(51);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058674872,
+      "lastAccessTime": 1742058674872
+    }
+  ],
+  "{\"currentStep\":\"Tap the button with the text \\\"Move That Element\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('moveHalfVisible')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81183ffff0000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "4bc72e1bbd3bf60aa324c67a1c44aab5"
+      },
+      "creationTime": 1742058689995,
+      "lastAccessTime": 1742058689995
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle is exactly 25% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"},{\"step\":\"Tap the button with the text \\\"Move That Element\\\"\",\"code\":\"await element(by.id('moveHalfVisible')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(25);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81101ffbef000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "cc366513ea1246fa5ab0d0ea56aca0bc"
+      },
+      "creationTime": 1742058701805,
+      "lastAccessTime": 1742058701805
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle is exactly 26% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"},{\"step\":\"Tap the button with the text \\\"Move That Element\\\"\",\"code\":\"await element(by.id('moveHalfVisible')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(26);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81101ffbef000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "cc366513ea1246fa5ab0d0ea56aca0bc"
+      },
+      "creationTime": 1742058718858,
+      "lastAccessTime": 1742058718858
+    }
+  ],
+  "{\"currentStep\":\"Verify the purple rectangle is exactly 26% visible\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Visibility Expectation screen\",\"code\":\"await element(by.label('Visibility Expectation')).tap();\"},{\"step\":\"Tap the button with the text \\\"Move That Element\\\"\",\"code\":\"await element(by.id('moveHalfVisible')).tap();\"},{\"step\":\"Verify the purple rectangle is exactly 26% visible\",\"code\":\"await expect(element(by.id('halfVisible'))).toBeVisible(26);\",\"error\":\"Test Failed: Failed expectation: TOBEVISIBLE WITH MATCHER(id == “halfVisible”), View “<RCTViewComponentView: 0x102f3a030>” is not visible: View is obscured by its window bounds and does not pass visibility percent threshold (26)\\n\\nHINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher.\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('halfVisible'))).toBeVisible(26);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c81101ffbef000ff701e7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe7ffe0000",
+        "ViewHierarchyHash": "cc366513ea1246fa5ab0d0ea56aca0bc"
+      },
+      "creationTime": 1742058731402,
+      "lastAccessTime": 1742058731402
+    }
+  ]
+}
