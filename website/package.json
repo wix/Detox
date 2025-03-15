@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "percy": "zx percy.mjs",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -22,7 +21,6 @@
     "@docusaurus/remark-plugin-npm2yarn": "^2.3.1",
     "@docusaurus/theme-search-algolia": "^2.3.1",
     "@mdx-js/react": "^1.6.21",
-    "@percy/cli": "^1.17.0",
     "clsx": "^1.1.1",
     "docusaurus": "^1.14.7",
     "docusaurus-plugin-sass": "^0.2.3",
