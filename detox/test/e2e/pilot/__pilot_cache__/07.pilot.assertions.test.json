@@ -1,0 +1,442 @@
+{
+  "{\"currentStep\":\"Restart the React Native state\",\"previousSteps\":[]}": [
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742057036510,
+      "lastAccessTime": 1742057036510
+    },
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057068746,
+      "lastAccessTime": 1742057068746
+    }
+  ],
+  "{\"currentStep\":\"Navigate to the Assertions screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Assertions')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742057047446,
+      "lastAccessTime": 1742057047446
+    }
+  ],
+  "{\"currentStep\":\"Verify there is an element with the text \\\"i contain some text\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('main-text'))).toHaveText('I contain some text');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057057972,
+      "lastAccessTime": 1742057057972
+    }
+  ],
+  "{\"currentStep\":\"Verify there is element with the text \\\"I am full of text\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with text 'I am full of text' does not exist in the current screen. Available text elements are: 'I contain some text', 'This is some subtext', 'Some more text here', 'I am pink', 'I am not visible'\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057080060,
+      "lastAccessTime": 1742057080060
+    }
+  ],
+  "{\"currentStep\":\"Verify there is element with the text \\\"I am full of text\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is element with the text \\\"I am full of text\\\" in the screen\",\"code\":\"throw new Error(\\\"Element with text 'I am full of text' does not exist in the current screen. Available text elements are: 'I contain some text', 'This is some subtext', 'Some more text here', 'I am pink', 'I am not visible'\\\");\",\"error\":\"Element with text 'I am full of text' does not exist in the current screen. Available text elements are: 'I contain some text', 'This is some subtext', 'Some more text here', 'I am pink', 'I am not visible'\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with text 'I am full of text' does not exist in the current screen. Available text elements are: 'I contain some text', 'This is some subtext', 'Some more text here', 'I am pink', 'I am not visible'\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057090199,
+      "lastAccessTime": 1742057090199
+    }
+  ],
+  "{\"currentStep\":\"Verify there is an element with ID \\\"subtext-root\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('subtext-root'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057105921,
+      "lastAccessTime": 1742057105921
+    }
+  ],
+  "{\"currentStep\":\"Find an element with ID \\\"RandomJunk959\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with ID 'RandomJunk959' not found in the view hierarchy.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057123236,
+      "lastAccessTime": 1742057123236
+    }
+  ],
+  "{\"currentStep\":\"Find an element with ID \\\"RandomJunk959\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Find an element with ID \\\"RandomJunk959\\\" in the screen\",\"code\":\"throw new Error(\\\"Element with ID 'RandomJunk959' not found in the view hierarchy.\\\");\",\"error\":\"Element with ID 'RandomJunk959' not found in the view hierarchy.\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with ID 'RandomJunk959' not found in the view hierarchy.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057133524,
+      "lastAccessTime": 1742057133524
+    }
+  ],
+  "{\"currentStep\":\"Verify there is an element with the accessibility label \\\"I contain some text\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('main-text'))).toHaveLabel('I contain some text');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057150367,
+      "lastAccessTime": 1742057150367
+    }
+  ],
+  "{\"currentStep\":\"Find an element with label \\\"I exist in the screen\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with label 'I exist in the screen' not found in the view hierarchy.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057166083,
+      "lastAccessTime": 1742057166083
+    }
+  ],
+  "{\"currentStep\":\"Find an element with label \\\"I exist in the screen\\\" in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Find an element with label \\\"I exist in the screen\\\" in the screen\",\"code\":\"throw new Error(\\\"Element with label 'I exist in the screen' not found in the view hierarchy.\\\");\",\"error\":\"Element with label 'I exist in the screen' not found in the view hierarchy.\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Element with label 'I exist in the screen' not found in the view hierarchy. Available text elements are: 'I contain some text', 'This is some subtext', 'Some more text here', 'I am pink', and 'I am not visible'.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057175659,
+      "lastAccessTime": 1742057175659
+    }
+  ],
+  "{\"currentStep\":\"Verify that the toggle type element is exist in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('toggle'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057194753,
+      "lastAccessTime": 1742057194753
+    }
+  ],
+  "{\"currentStep\":\"Find a text-field element in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"No text field element found in the current screen view hierarchy.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057210281,
+      "lastAccessTime": 1742057210281
+    }
+  ],
+  "{\"currentStep\":\"Find a text-field element in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Find a text-field element in the screen\",\"code\":\"throw new Error(\\\"No text field element found in the current screen view hierarchy.\\\");\",\"error\":\"No text field element found in the current screen view hierarchy.\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"No text field element found in the current screen. The view hierarchy contains text elements, an image, a switch, and emojis, but no text input fields.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057218687,
+      "lastAccessTime": 1742057218687
+    }
+  ],
+  "{\"currentStep\":\"Verify that the toggle has false value\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('toggle'))).toHaveToggleValue(false);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057234170,
+      "lastAccessTime": 1742057234170
+    }
+  ],
+  "{\"currentStep\":\"Tap the toggle\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('toggle')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057249429,
+      "lastAccessTime": 1742057249429
+    }
+  ],
+  "{\"currentStep\":\"Verify that the toggle has true value\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Tap the toggle\",\"code\":\"await element(by.id('toggle')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('toggle'))).toHaveToggleValue(true);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "914d95c3cbf35c6c09bdf543c1fade15"
+      },
+      "creationTime": 1742057261862,
+      "lastAccessTime": 1742057261862
+    }
+  ],
+  "{\"currentStep\":\"Verify there is an image element in the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('example-image'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057279063,
+      "lastAccessTime": 1742057279063
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a banana in the image element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an image element in the screen\",\"code\":\"await expect(element(by.id('example-image'))).toExist();\"}]}": [
+    {
+      "value": {
+        "code": "// Visual assertion passed: The banana icon is present in the first row of the example-image grid display at ID 'example-image'. The banana appears as part of a 3x3 fruit grid layout showing various fruits including bananas, kiwi, orange, apple, grapes, pear, mango and pomegranate."
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057290403,
+      "lastAccessTime": 1742057290403
+    }
+  ],
+  "{\"currentStep\":\"Verify there isn`t an apple in the image element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an image element in the screen\",\"code\":\"await expect(element(by.id('example-image'))).toExist();\"},{\"step\":\"Verify there is a banana in the image element\",\"code\":\"// Visual assertion passed: The banana icon is present in the first row of the example-image grid display at ID 'example-image'. The banana appears as part of a 3x3 fruit grid layout showing various fruits including bananas, kiwi, orange, apple, grapes, pear, mango and pomegranate.\"}]}": [
+    {
+      "value": {
+        "code": "// Visual assertion passed: In the image element with ID 'example-image', which shows a 3x3 grid of fruit icons, there is no apple icon present. The grid contains bananas, kiwi, orange, grapes, pear, mango, and pomegranate, but no apple is visible."
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057302468,
+      "lastAccessTime": 1742057302468
+    }
+  ],
+  "{\"currentStep\":\"Verify there are grapes in the image element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an image element in the screen\",\"code\":\"await expect(element(by.id('example-image'))).toExist();\"},{\"step\":\"Verify there is a banana in the image element\",\"code\":\"// Visual assertion passed: The banana icon is present in the first row of the example-image grid display at ID 'example-image'. The banana appears as part of a 3x3 fruit grid layout showing various fruits including bananas, kiwi, orange, apple, grapes, pear, mango and pomegranate.\"},{\"step\":\"Verify there isn`t an apple in the image element\",\"code\":\"// Visual assertion passed: In the image element with ID 'example-image', which shows a 3x3 grid of fruit icons, there is no apple icon present. The grid contains bananas, kiwi, orange, grapes, pear, mango, and pomegranate, but no apple is visible.\"}]}": [
+    {
+      "value": {
+        "code": "// Visual assertion passed: In the image element with ID 'example-image', which displays a 3x3 grid of fruit icons, grapes are clearly visible in the second row. The grapes appear as a purple cluster icon among other fruits including bananas, kiwi, orange, pear, mango and pomegranate."
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057314347,
+      "lastAccessTime": 1742057314347
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a green text element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('color-text1'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057329174,
+      "lastAccessTime": 1742057329174
+    }
+  ],
+  "{\"currentStep\":\"Verify there is an element with the text \\\"subtext\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('subtext'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057343529,
+      "lastAccessTime": 1742057343529
+    }
+  ],
+  "{\"currentStep\":\"Verify that under the text element with the text \\\"subtext\\\" there is an image element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"subtext\\\"\",\"code\":\"await expect(element(by.text('subtext'))).toExist();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('subtext'))).toExist();\nawait expect(element(by.id('example-image'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057355206,
+      "lastAccessTime": 1742057355206
+    }
+  ],
+  "{\"currentStep\":\"Verify that under the image element there is a green text element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"subtext\\\"\",\"code\":\"await expect(element(by.text('subtext'))).toExist();\"},{\"step\":\"Verify that under the text element with the text \\\"subtext\\\" there is an image element\",\"code\":\"await expect(element(by.text('subtext'))).toExist();\\nawait expect(element(by.id('example-image'))).toExist();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('example-image'))).toExist();\nawait expect(element(by.id('color-text1'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057365955,
+      "lastAccessTime": 1742057365955
+    }
+  ],
+  "{\"currentStep\":\"Verify that under the green text element there is a toggle element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"subtext\\\"\",\"code\":\"await expect(element(by.text('subtext'))).toExist();\"},{\"step\":\"Verify that under the text element with the text \\\"subtext\\\" there is an image element\",\"code\":\"await expect(element(by.text('subtext'))).toExist();\\nawait expect(element(by.id('example-image'))).toExist();\"},{\"step\":\"Verify that under the image element there is a green text element\",\"code\":\"await expect(element(by.id('example-image'))).toExist();\\nawait expect(element(by.id('color-text1'))).toExist();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('color-text1'))).toExist();\nawait expect(element(by.id('toggle'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057376913,
+      "lastAccessTime": 1742057376913
+    }
+  ],
+  "{\"currentStep\":\"Verify the toggle element is above the text element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Visual assertion failed: The toggle element (y=598) is positioned below the text element (y=561), not above it as expected.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057396778,
+      "lastAccessTime": 1742057396778
+    }
+  ],
+  "{\"currentStep\":\"Verify the toggle element is above the text element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify the toggle element is above the text element\",\"code\":\"throw new Error(\\\"Visual assertion failed: The toggle element (y=598) is positioned below the text element (y=561), not above it as expected.\\\");\",\"error\":\"Visual assertion failed: The toggle element (y=598) is positioned below the text element (y=561), not above it as expected.\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Visual assertion failed: The toggle element (y=598) is positioned below the text element (y=561), not above it as expected.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057407138,
+      "lastAccessTime": 1742057407138
+    }
+  ],
+  "{\"currentStep\":\"Verify that under the image element in the screen there is text element with the text \\\"subtext\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "const imageElement = element(by.id('example-image'));\nconst subtextElement = element(by.id('subtext-root'));\n\n// Get attributes of both elements to verify their position\nconst imageAttributes = await imageElement.getAttributes();\nconst subtextAttributes = await subtextElement.getAttributes();\n\nif (subtextAttributes.frame.y > imageAttributes.frame.y) {\n  await expect(subtextElement).toExist();\n  await expect(subtextElement).toHaveText('This is some subtext');\n} else {\n  throw new Error('The subtext element is not positioned under the image element as expected. The subtext is at y=' + subtextAttributes.frame.y + ' while the image is at y=' + imageAttributes.frame.y);\n}"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057418387,
+      "lastAccessTime": 1742057418387
+    }
+  ],
+  "{\"currentStep\":\"Verify that under the image element in the screen there is text element with the text \\\"subtext\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify that under the image element in the screen there is text element with the text \\\"subtext\\\"\",\"code\":\"const imageElement = element(by.id('example-image'));\\nconst subtextElement = element(by.id('subtext-root'));\\n\\n// Get attributes of both elements to verify their position\\nconst imageAttributes = await imageElement.getAttributes();\\nconst subtextAttributes = await subtextElement.getAttributes();\\n\\nif (subtextAttributes.frame.y > imageAttributes.frame.y) {\\n  await expect(subtextElement).toExist();\\n  await expect(subtextElement).toHaveText('This is some subtext');\\n} else {\\n  throw new Error('The subtext element is not positioned under the image element as expected. The subtext is at y=' + subtextAttributes.frame.y + ' while the image is at y=' + imageAttributes.frame.y);\\n}\",\"error\":\"The subtext element is not positioned under the image element as expected. The subtext is at y=360 while the image is at y=414\"}]}": [
+    {
+      "value": {
+        "code": "const imageElement = element(by.id('example-image'));\nconst subtextElement = element(by.id('subtext-root'));\n\n// Get y-coordinates to verify relative positioning\nconst imageAttributes = await imageElement.getAttributes();\nconst subtextAttributes = await subtextElement.getAttributes();\n\n// Verify text content and position\nawait expect(subtextElement).toExist();\nawait expect(subtextElement).toHaveText('This is some subtext');\n\nif (subtextAttributes.frame.y < imageAttributes.frame.y) {\n  throw new Error('Layout verification failed: The subtext element is positioned above the image element (subtext y=' + subtextAttributes.frame.y + ', image y=' + imageAttributes.frame.y + '). Expected subtext to be below the image.');\n}"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057430187,
+      "lastAccessTime": 1742057430187
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a smiling emoji in the top left corner of the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('smile-emoji'))).toExist();\nawait expect(element(by.id('smile-emoji'))).toHaveText('😊');\n\n// Get attributes to verify position\nconst attributes = await element(by.id('smile-emoji')).getAttributes();\nif (attributes.x !== 20 || attributes.y !== 20) {\n  throw new Error('Smiling emoji is not in the top left corner. Expected position (20, 20) but got (' + attributes.x + ', ' + attributes.y + ')');\n}"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057449055,
+      "lastAccessTime": 1742057449055
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a smiling emoji in the top left corner of the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is a smiling emoji in the top left corner of the screen\",\"code\":\"await expect(element(by.id('smile-emoji'))).toExist();\\nawait expect(element(by.id('smile-emoji'))).toHaveText('😊');\\n\\n// Get attributes to verify position\\nconst attributes = await element(by.id('smile-emoji')).getAttributes();\\nif (attributes.x !== 20 || attributes.y !== 20) {\\n  throw new Error('Smiling emoji is not in the top left corner. Expected position (20, 20) but got (' + attributes.x + ', ' + attributes.y + ')');\\n}\",\"error\":\"Smiling emoji is not in the top left corner. Expected position (20, 20) but got (undefined, undefined)\"}]}": [
+    {
+      "value": {
+        "code": "// First verify the emoji exists and has correct content\nawait expect(element(by.id('smile-emoji'))).toExist();\nawait expect(element(by.id('smile-emoji'))).toHaveText('😊');\n\n// Then verify position by getting attributes\nconst attributes = await element(by.id('smile-emoji')).getAttributes();\nconst expectedX = 20;\nconst expectedY = 20;\nconst tolerance = 5; // Allow small positioning differences\n\nif (Math.abs(attributes.y - expectedY) > tolerance || Math.abs(attributes.x - expectedX) > tolerance) {\n  throw new Error(`Smiling emoji is not in the top left corner. Expected position (${expectedX}, ${expectedY}) but got (${attributes.x}, ${attributes.y})`);\n}"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057462198,
+      "lastAccessTime": 1742057462198
+    }
+  ],
+  "{\"currentStep\":\"Verify there is a party emoji in the bottom right corner of the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the Assertions screen\",\"code\":\"await element(by.text('Assertions')).tap();\"},{\"step\":\"Verify there is a smiling emoji in the top left corner of the screen\",\"code\":\"// First verify the emoji exists and has correct content\\nawait expect(element(by.id('smile-emoji'))).toExist();\\nawait expect(element(by.id('smile-emoji'))).toHaveText('😊');\\n\\n// Then verify position by getting attributes\\nconst attributes = await element(by.id('smile-emoji')).getAttributes();\\nconst expectedX = 20;\\nconst expectedY = 20;\\nconst tolerance = 5; // Allow small positioning differences\\n\\nif (Math.abs(attributes.y - expectedY) > tolerance || Math.abs(attributes.x - expectedX) > tolerance) {\\n  throw new Error(`Smiling emoji is not in the top left corner. Expected position (${expectedX}, ${expectedY}) but got (${attributes.x}, ${attributes.y})`);\\n}\"}]}": [
+    {
+      "value": {
+        "code": "// First verify the emoji exists and has correct content\nawait expect(element(by.id('celebration-emoji'))).toExist();\nawait expect(element(by.id('celebration-emoji'))).toHaveText('🎉');\n\n// Then verify position by getting attributes\nconst attributes = await element(by.id('celebration-emoji')).getAttributes();\nconst screenWidth = 430; // From view hierarchy root width\nconst screenHeight = 932; // From view hierarchy root height\nconst expectedX = 365; // From view hierarchy\nconst expectedY = 864; // From view hierarchy\nconst tolerance = 5; // Allow small positioning differences\n\n// Verify position is in bottom right corner\nif (Math.abs(attributes.x - expectedX) > tolerance || Math.abs(attributes.y - expectedY) > tolerance) {\n  throw new Error(`Party emoji is not in the bottom right corner. Expected position (${expectedX}, ${expectedY}) but got (${attributes.x}, ${attributes.y})`);\n}\n\n// Verify element dimensions match expected size\nif (Math.abs(attributes.width - 45) > tolerance || Math.abs(attributes.height - 48) > tolerance) {\n  throw new Error(`Party emoji has unexpected dimensions. Expected (45x48) but got (${attributes.width}x${attributes.height})`);\n}"
+      },
+      "snapshotHashes": {
+        "BlockHash": "08011ffffffffffffffff81ffc3ffc3ffc3ff81ffe7ffffffffffffffff8f818",
+        "ViewHierarchyHash": "23e25b016254e147590cf34130af663d"
+      },
+      "creationTime": 1742057474125,
+      "lastAccessTime": 1742057474125
+    }
+  ]
+}

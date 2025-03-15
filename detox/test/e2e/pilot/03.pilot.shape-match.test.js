@@ -24,5 +24,9 @@ describe.forPilot('Shape Match Game Screen', () => {
       'Drag shapes into their holes until the score is 3',
       'All shapes are in their holes and score is now 3',
     );
+  }, 500000);
+
+  it('should play the Shape Matcher game with Autopilot', async () => {
+    await pilot.autopilot('Play the shape matching game until score 2, use only the top row shapes');
   });
 });
