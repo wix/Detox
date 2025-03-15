@@ -1,7 +1,7 @@
 ---
 authors:
   - asafkorem
-tags: [minor-release, detox-copilot, ai-integration]
+tags: [minor-release, detox-pilot, ai-integration]
 ---
 
 # Introducing Detox Copilot
