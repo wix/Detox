@@ -86,7 +86,7 @@ Detox Copilot represents a major step forward in making end-to-end testing more 
 
 We're **excited** to see how you'll leverage Detox Copilot in your tests! Share your experiences, feedback, and suggestions with us as we continue to refine and expand this groundbreaking feature.
 
-[Testing with Copilot guide]: /docs/copilot/testing-with-copilot
-[Detox Copilot API Documentation]: https://wix-incubator.github.io/detox-copilot
-[detox-copilot]: https://github.com/wix-incubator/detox-copilot
-[Technical Overview]: https://wix-incubator.github.io/detox-copilot/docs/guides/technical-overview
+[Testing with Copilot guide]: /docs/pilot/testing-with-pilot
+[Detox Copilot API Documentation]: https://wix-pilot.com
+[detox-copilot]: https://github.com/wix-incubator/pilot
+[Technical Overview]: https://wix-pilot.com/docs/guides/technical-overview
