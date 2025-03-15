@@ -1,7 +1,11 @@
 // @ts-nocheck
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
+const DetoxPilot = require('./pilot/DetoxPilot');
 const Deferred = require('./utils/Deferred');
+jest.mock('@wix-pilot/detox', () => ({
+  DetoxFrameworkDriver: jest.fn(),
+}));
 
 jest.mock('./utils/logger');
 jest.mock('./client/Client');
@@ -10,16 +14,20 @@ jest.mock('./invoke');
 jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
 
-let mockIsInitialized = false;
-jest.mock('detox-copilot', () => ({
-  default: {
-    init: jest.fn(),
-    isInitialized: jest.fn(() => mockIsInitialized),
-    start: jest.fn(),
-    end: jest.fn(),
-    perform: jest.fn(),
-  },
-}));
+
+jest.mock('./pilot/DetoxPilot', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      init: jest.fn(),
+      start: jest.fn(),
+      perform: jest.fn(),
+      autopilot: jest.fn(),
+      extendAPICatalog: jest.fn(),
+      end: jest.fn(),
+      isInitialized: jest.fn().mockReturnValue(false),
+    };
+  });
+});
 
 describe('DetoxWorker', () => {
   const fakeCookie = {
@@ -51,7 +59,6 @@ describe('DetoxWorker', () => {
   let runtimeDevice;
   let Detox;
   let detox;
-  let copilot;
 
   beforeEach(() => {
     mockEnvironmentFactories();
@@ -67,8 +74,6 @@ describe('DetoxWorker', () => {
   });
 
   beforeEach(async () => {
-    mockIsInitialized = false;
-
     detoxConfig = await configuration.composeDetoxConfig({
       override: {
         configurations: {
@@ -100,7 +105,6 @@ describe('DetoxWorker', () => {
       [symbols.deallocateDevice]: jest.fn(),
     };
 
-    copilot = require('detox-copilot').default;
   });
 
   describe('when DetoxWorker#init() is called', () => {
@@ -307,23 +311,21 @@ describe('DetoxWorker', () => {
       });
     });
 
-    describe('copilot initialization', () => {
-      let DetoxCopilot;
-
+    describe('pilot initialization', () => {
       beforeEach(async () => {
-        DetoxCopilot = require('./copilot/DetoxCopilot');
-
         await init();
       });
 
 
-      it('should assign the DetoxCopilot instance to the copilot property', () => {
-        expect(detox.copilot).toBeDefined();
-        expect(detox.copilot).toBeInstanceOf(DetoxCopilot);
+      it('should assign the DetoxPilot instance to the pilot property', () => {
+        expect(detox.pilot).toBeDefined();
+
+        const detoxPilot = new DetoxPilot();
+        expect(typeof detox.pilot).toBe(typeof detoxPilot);
       });
 
-      it('should not initialize the copilot', () => {
-        expect(copilot.init).not.toHaveBeenCalled();
+      it('should not initialize the pilot', () => {
+        expect(detox.pilot.init).not.toHaveBeenCalled();
       });
     });
   });
@@ -349,27 +351,29 @@ describe('DetoxWorker', () => {
     });
 
     describe('with a valid test summary', () => {
-      beforeEach(() => detox.onTestStart(testSummaries.running()));
+      beforeEach(() => {
+        detox.onTestStart(testSummaries.running());
+      });
 
       it('should notify artifacts manager about "testStart', () =>
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
-      it('should not start copilot if copilot init was not called', async () => {
+      it('should not start pilot if pilot init was not called', async () => {
         try {
           await detox.onTestStart('Test');
         } catch {}
 
-        expect(copilot.start).not.toHaveBeenCalled();
+        expect(detox.pilot.start).not.toHaveBeenCalled();
       });
 
-      it('should start copilot if copilot init was called', async () => {
-        mockIsInitialized = true;
+      it('should start pilot if pilot init was called', async () => {
+        detox.pilot.isInitialized = () => true;
 
         try {
           await detox.onTestStart('Test');
         } catch {}
 
-        expect(copilot.start).toHaveBeenCalled();
+        expect(detox.pilot.start).toHaveBeenCalled();
       });
 
       it('should not relaunch app', async () => {
@@ -401,8 +405,8 @@ describe('DetoxWorker', () => {
       it('should notify artifacts manager about "testDone"', () =>
         expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
 
-      it('should not end copilot if copilot init was not called', async () => {
-        expect(copilot.end).not.toHaveBeenCalled();
+      it('should not end pilot if pilot init was not called', async () => {
+        expect(detox.pilot.end).not.toHaveBeenCalled();
       });
     });
 
@@ -420,20 +424,20 @@ describe('DetoxWorker', () => {
         expect(client().dumpPendingRequests).toHaveBeenCalled());
     });
 
-    it('should end copilot with cache enabled if test has passed', async () => {
-      mockIsInitialized = true;
+    it('should end pilot with cache enabled if test has passed', async () => {
+      detox.pilot.isInitialized = () => true;
 
       await detox.onTestDone(testSummaries.passed());
 
-      expect(copilot.end).toHaveBeenCalledWith(false);
+      expect(detox.pilot.end).toHaveBeenCalledWith(true);
     });
 
-    it('should end copilot without cache if test has failed', async () => {
-      mockIsInitialized = true;
+    it('should end pilot without cache if test has failed', async () => {
+      detox.pilot.isInitialized = () => true;
 
       await detox.onTestDone(testSummaries.failed());
 
-      expect(copilot.end).toHaveBeenCalledWith(true);
+      expect(detox.pilot.end).toHaveBeenCalledWith(false);
     });
   });
 

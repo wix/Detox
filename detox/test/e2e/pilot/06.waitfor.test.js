@@ -1,15 +1,15 @@
 const {expectToThrow} = require("../utils/custom-expects");
 
-describe.forCopilot('WaitFor Functionality', () => {
+describe.forPilot('WaitFor Functionality', () => {
   beforeEach(async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Restart the React Native environment',
       'Navigate to the WaitFor screen'
     );
   });
 
   it('should wait for elements to appear and disappear', async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Verify that an element with ID "changeExistenceByToggle" is not present',
       'Tap the "Go" button',
       'Wait for the element to appear',
@@ -21,7 +21,7 @@ describe.forCopilot('WaitFor Functionality', () => {
   });
 
   it('should wait for elements to become focused and unfocused', async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Check that an element with ID "changeFocusByToggle" is not focused',
       'Tap the "Go" button',
       'Wait for the element to become focused',
@@ -33,7 +33,7 @@ describe.forCopilot('WaitFor Functionality', () => {
   });
 
   it('should find elements by scrolling', async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Verify that an element with text "Text5" is not visible',
       'Tap the "Go" button',
       'Scroll down in the ScrollView until "Text5" becomes visible',
@@ -43,7 +43,7 @@ describe.forCopilot('WaitFor Functionality', () => {
 
   it('should handle timeouts for non-appearing elements', async () => {
     await expectToThrow(async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Try to wait for an element with ID "neverAppearingText" to appear, with timeout of 2 seconds'
       );
     });

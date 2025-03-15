@@ -51,10 +51,10 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Detox Copilot',
+      label: 'Pilot-Powered Detox Testing',
       items: [
-        'copilot/testing-with-copilot',
-        'copilot/best-practices',
+        'pilot/testing-with-pilot',
+        'pilot/best-practices',
       ]
     },
     {
@@ -115,7 +115,7 @@ const sidebars = {
         'api/webviews',
         'api/system',
         'api/logger',
-        'api/copilot',
+        'api/pilot',
       ]
     },
     'api/internals',

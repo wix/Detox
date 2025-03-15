@@ -1,6 +1,6 @@
-describe.forCopilot('WebView Interactions', () => {
+describe.forPilot('WebView Interactions', () => {
   beforeEach(async () => {
-    await copilot.perform(
+    await pilot.perform(
       'Restart the React Native state',
       'Navigate to the WebView screen'
     );
@@ -8,7 +8,7 @@ describe.forCopilot('WebView Interactions', () => {
 
   describe('Single WebView Tests', () => {
     it('should interact with elements in a single WebView', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Find an element with ID "pageHeadline" in the WebView',
         'Verify that the text of this element is "First Webview"',
         'Locate an input field with ID "fname"',
@@ -20,7 +20,7 @@ describe.forCopilot('WebView Interactions', () => {
     });
 
     it('should scroll and interact with elements', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Scroll to "bottomParagraph" in the WebView',
         'Verify that the text of this element is "This is a bottom paragraph with class."',
       );
@@ -29,13 +29,13 @@ describe.forCopilot('WebView Interactions', () => {
 
   describe('Multiple WebViews Tests', () => {
     beforeEach(async () => {
-      await copilot.perform(
+      await pilot.perform(
         'Enable the second WebView'
       );
     });
 
     it('should interact with elements in multiple WebViews', async () => {
-      await copilot.perform(
+      await pilot.perform(
         'In the second WebView, verify the headline has the message "This is a dummy webview."',
         'Hide the second WebView',
         'Show the 3rd WebView',
