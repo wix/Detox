@@ -25,11 +25,24 @@ Detox Pilot exposes a simple API that integrates seamlessly with your Detox test
 
 For a more detailed guide on integrating Wix Pilot in your tests, refer to the \[Detox Pilot Guide].
 
+## Installation
+
+To get started with Detox Pilot, you'll need to install the `@wix-pilot/core` and `@wix-pilot/detox` packages.
+
+```bash
+# using npm
+npm install @wix-pilot/core @wix-pilot/detox --save-dev
+
+# or using yarn
+yarn add @wix-pilot/core @wix-pilot/detox --dev
+```
+
 ## Methods
 
 - [`pilot.init()`](#pilotinitprompthandler-detox)
 - [`pilot.perform()`](#pilotperformsteps)
 - [`pilot.autopilot()`](#pilotautopilotgoal)
+- [`pilot.extendAPICatalog()`](#pilotextendapicatalog)
 
 ## `pilot.init(promptHandler, detox)`
 
@@ -48,7 +61,7 @@ const OpenAIPromptHandler = require('./OpenAIPromptHandler');
 
 beforeAll(() => {
   const promptHandler = new OpenAIPromptHandler('YOUR_OPENAI_API_KEY');
-  pilot.init(promptHandler, detox);
+  pilot.init(promptHandler);
 });
 ```
 
@@ -89,6 +102,27 @@ Automatically generates a series of steps to achieve the given goal.
 
 ```javascript
 await pilot.autoPilot('Log in and navigate to the profile page');
+```
+
+## `pilot.extendAPICatalog()`
+
+Extends the API catalog with custom testing operations.
+
+**Example:**
+
+```javascript
+pilot.extendAPICatalog([
+  {
+    title: 'Custom Actions',
+    items: [
+      {
+        signature: 'customAction(arg1, arg2)',
+        description: 'Performs a custom action with the given arguments.',
+        example: 'customAction("value1", "value2")',
+      },
+    ],
+  },
+], customAction);
 ```
 
 ## `PromptHandler` Interface
