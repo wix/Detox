@@ -51,6 +51,8 @@
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
+    "@wix-pilot/core": "^3.1.4",
+    "@wix-pilot/detox": "^1.0.8",
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-plugin-ecmascript-compat": "^3.1.0",
@@ -68,8 +70,6 @@
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
-    "@wix-pilot/core": "^3.1.4",
-    "@wix-pilot/detox": "^1.0.8",
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^3.1.0",
@@ -107,10 +107,18 @@
     "yargs-unparser": "^2.0.0"
   },
   "peerDependencies": {
-    "jest": "29.x.x || 28.x.x || ^27.2.5"
+    "jest": "29.x.x || 28.x.x || ^27.2.5",
+    "@wix-pilot/core": "^3.1.4",
+    "@wix-pilot/detox": "^1.0.8"
   },
   "peerDependenciesMeta": {
     "jest": {
+      "optional": true
+    },
+    "@wix-pilot/core": {
+      "optional": true
+    },
+    "@wix-pilot/detox": {
       "optional": true
     }
   },

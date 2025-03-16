@@ -9,7 +9,6 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/core'
 
 declare global {
     namespace Detox {
@@ -1335,17 +1334,66 @@ declare global {
             element(systemMatcher: SystemMatcher): IndexableSystemElement;
         }
 
-        interface PilotFacade extends Pick<Pilot, "perform" | "autopilot" | "extendAPICatalog"> {
+        interface PilotFacade {
             /**
              * Initializes the Pilot with the given prompt handler.
              * Must be called before any other Pilot methods.
              * @note Wix-Pilot APIs are still in experimental phase and are subject to changes in the near future.
              * @param promptHandler The prompt handler to use.
              */
-            init: (promptHandler: PromptHandler) => void;
+            init: (promptHandler: PilotPromptHandler) => void;
+
+            /**
+             * Performs one or more test steps using the provided intents.
+             * @param steps The intents describing the test steps to perform.
+             * @returns The result of the last executed step.
+             */
+            perform(...steps: string[]): Promise<any>;
+
+            /**
+             * Performs an entire test flow using the provided goal.
+             * @param goal A string which describes the flow should be executed.
+             * @returns pilot report with info about the actions, thoughts, summary etc.
+             */
+            autopilot(goal: string): Promise<any>;
+
+            /**
+             * Extends the testing framework's API capabilities.
+             * @param categories - Additional API categories to add
+             * @param context - Testing framework variables to expose (optional)
+             */
+            extendAPICatalog(categories: PilotAPICatalogCategory[], context?: any): void;
         }
 
-        type PromptHandler = _PromptHandler;
+        /**
+         * Handler for prompts to AI services (used by Pilot).
+         */
+        export interface PilotPromptHandler {
+            /**
+             * Sends prompt to AI service and gets response.
+             * @param prompt - Text prompt to send
+             * @param image - Optional UI state image path
+             */
+            runPrompt: (prompt: string, image?: string) => Promise<string>;
+
+            /**
+             * Indicates if the AI service supports UI snapshots.
+             */
+            isSnapshotImageSupported: () => boolean;
+        }
+
+        /**
+         * Testing framework API catalog category for Pilot.
+         */
+        export interface PilotAPICatalogCategory {
+            title: string;
+            items: Array<{
+                signature: string;
+                description: string;
+                example: string;
+                guidelines?: string[];
+            }>;
+        }
 
         interface IndexableSystemElement extends SystemElement {
             /**
