@@ -3,8 +3,8 @@ const detox = require('../..');
 /** @type {Detox.PilotFacade} */
 class DetoxPilot {
   init(promptHandler) {
-    const { Pilot } = this.requireOrThrow('@wix-pilot/core', 'Pilot');
-    const { DetoxFrameworkDriver } = this.requireOrThrow('@wix-pilot/detox', 'DetoxFrameworkDriver');
+    const { Pilot } = this.requireOrThrow('@wix-pilot/core');
+    const { DetoxFrameworkDriver } = this.requireOrThrow('@wix-pilot/detox');
 
     this.pilot = new Pilot({
       frameworkDriver: new DetoxFrameworkDriver(detox),
@@ -12,13 +12,13 @@ class DetoxPilot {
     });
   }
 
-  requireOrThrow(packageName, exportName) {
+  requireOrThrow(packageName) {
     try {
       return require(packageName);
     } catch (error) {
       throw new Error(
-        `Failed to load ${exportName} from ${packageName}. ` +
-        `Please install ${packageName} as it's a peer dependency: npm install ${packageName}`
+        `Failed to load ${packageName}.` +
+        `Please install ${packageName} as it's a peer dependency: npm install --save-dev ${packageName}`
       );
     }
   }
