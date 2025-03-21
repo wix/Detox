@@ -4,13 +4,19 @@
 
 This page is about issues related to executing your Detox tests, typically triggered when running `detox test` (and not `detox build`, for example).
 
-## No simulators found (iOS)
+## No simulators/emulators found
 
-In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by Xcode itself. You can list all available simulators using `simctl` by typing `xcrun simctl list` in terminal.
+### iOS
 
-If you’re missing a simulator, make sure Xcode is installed and use it to download the simulator. Take a look at the Preferences screen, some screenshots can be seen [here](http://stackoverflow.com/questions/33738113/how-to-install-ios-9-1-simulator-in-xcode-version-7-1-1-7b1005).
+In order to run tests on a simulator, you need to have simulator images installed on your machine. This process is performed by `xcode` itself. You can list all available simulators using `simctl` by typing `xcrun simctl list` in terminal.
+
+If you’re missing a simulator, you need to [manually install it](https://developer.apple.com/documentation/safari-developer-tools/adding-additional-simulators). Note that `xcode` is required.
 
 Once the desired simulator is installed and returned by `xcrun simctl list`, double check its name in the list and make sure this name is found in the `detox` configuration entry in `package.json`. The reference for the configuration options is available [here](../config/devices.mdx).
+
+### Android
+
+Coming soon...
 
 ## Detox starts but my test doesn't actually run
 
@@ -83,15 +89,19 @@ This might be related somehow to your test code, but **could definitely stem fro
 Either one of the following 2 scenarios:
 
 1. The test runs, the app starts on the device and is maybe even being successfully navigated-through by the test, onto an inner screen; The app/screen opens properly and you know for sure that your element matcher is spot-on - **yet Detox says the element cannot be found (this can even happen intermittently, in a flaky test).**
-2. The test runs, the app starts and displays a transient UI element (e.g. a Toast) for a limited amount of time and is then removed automatically. For example: A temporary "Success" cheering-effect that fades out to the screen below:
+2. The test runs, the app starts and displays a transient UI element for a limited amount of time and is then removed automatically. For example: A _Toast_ element. Another example: A temporary "Success" cheering-effect that fades out to the screen below:
 
    ![Transient UI element](../img/transient-ui-element.png)
 
 ### Course of action
 
-For the 1st option, you'd have to go deeper by exploring the [synchronization troubleshooting guide](./synchronization.md#last-resort-Switching-to-manual-synchronization).
+For the 1st option, you'd have to go deeper by exploring the possibility of disabling auto-synchronization as explained in the [synchronization troubleshooting guide](./synchronization.md#last-resort-Switching-to-manual-synchronization).
 
-For the 2nd option, if possible, start by revisiting your matching technique, as explained in the dedicated [matching troubleshooting guide](./element-matching.md). If that doesn't solve it, consider switching to using `waitFor()` --
+As for the 2nd option -
+
+1. If possible, start by revisiting your matching technique, as explained in the dedicated [matching troubleshooting guide](./element-matching.md).
+2. If that doesn't solve it, consider switching to using `waitFor()` (see below).
+3. If all fails, consider [disabling synchronization](./synchronization.md#last-resort-Switching-to-manual-synchronization) altogether.
 
 #### Switching to the polling-based `waitFor()` API's
 
