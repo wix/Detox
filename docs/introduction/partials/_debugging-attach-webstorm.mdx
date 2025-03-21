@@ -1,0 +1,31 @@
+Open your app project (where there tests are, among other things) on Webstorm.
+
+#### Set up a breakpoint
+
+Open the file where the test you wish to run is. Mark it as `it.only`, and set up a breakpoint in a line that suites your needs (note: This can actually be inside a helper function or a test-driver's function):
+
+![Webstorm breakpoint](../../img/webstorm/breakpoint.png)
+
+#### Create & Run a debug configuration
+
+Go to Webstorm's [`Edit Configurations`](https://www.jetbrains.com/help/webstorm/run-debug-configuration.html).
+
+Tap the `+` button and select the Node.js option:
+
+![Webstorm edit configurations](../../img/webstorm/new-configuration.png)
+
+Create a new debugging configuration using the default arguments (port 9229, etc.):
+
+![Webstorm node debugging configuration](../../img/webstorm/node-debug-configuration.png)
+
+Attach to Detox by "debugging" the new configuration (start it using the beetle button).
+
+![Webstorm start debug configuration](../../img/webstorm/run-debug-configuration.png)
+
+Let Detox run until stopped at the break-point:
+
+![Webstorm stopped at breakpoint](../../img/webstorm/stopped-at-breakpoint.png)
+
+Run step-by-step using Webstorm's debugging actions (step-over, step-into, etc.)
+
+Happy debugging!

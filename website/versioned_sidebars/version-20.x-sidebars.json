@@ -16,7 +16,6 @@
       "type": "category",
       "label": "Guides",
       "items": [
-        "guide/investigating-test-failure",
         "guide/test-id",
         "guide/parallel-test-execution",
         "guide/typescript",
