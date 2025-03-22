@@ -1,7 +1,9 @@
+const _ = require('lodash');
+
 const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 
 function firstEntry(obj) {
-  return Object.entries(obj)[0];
+  return _.entries(obj)[0] || ['value', obj];
 }
 
 function assertType(expectedType) {

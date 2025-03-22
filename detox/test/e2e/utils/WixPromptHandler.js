@@ -1,7 +1,10 @@
 const axios = require('axios');
 const fs = require('fs').promises;
 
-class PromptHandler {
+/**
+ * @type {Detox.PromptHandler}
+ */
+class WixPromptHandler {
   async uploadImage(imagePath) {
     const image = await fs.readFile(imagePath);
 
@@ -55,4 +58,4 @@ class PromptHandler {
   }
 }
 
-module.exports = PromptHandler;
+module.exports = WixPromptHandler;

@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.34.0",
+  "version": "20.35.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -64,17 +64,17 @@
     "prettier": "^3.1.1",
     "react-native": "0.76.3",
     "react-native-codegen": "^0.0.8",
-    "typescript": "^5.3.3",
+    "typescript": "~5.3.3",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
+    "@wix-pilot/core": "^3.1.4",
+    "@wix-pilot/detox": "^1.0.8",
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
     "bunyan-debug-stream": "^3.1.0",
     "caf": "^15.0.1",
     "chalk": "^4.0.0",
-    "child-process-promise": "^2.2.0",
-    "detox-copilot": "^0.0.27",
     "execa": "^5.1.1",
     "find-up": "^5.0.0",
     "fs-extra": "^11.0.0",
@@ -87,6 +87,7 @@
     "multi-sort-stream": "^1.0.3",
     "multipipe": "^4.0.0",
     "node-ipc": "9.2.1",
+    "promisify-child-process": "^4.1.2",
     "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",

@@ -21,9 +21,8 @@ describe('Network Synchronization', () => {
     await driver.shortRequest.sendButton.tap();
     await driver.shortRequest.expectReplied();
   });
-
-  // todo(new-arch): test is failing
-  it('@legacy Sync with long network requests - 3000ms', async () => {
+  
+  it('should sync with long network requests - 3000ms', async () => {
     await driver.longRequest.sendButton.tap();
     await driver.longRequest.expectReplied();
   });

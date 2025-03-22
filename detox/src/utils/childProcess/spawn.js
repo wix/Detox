@@ -1,6 +1,6 @@
 // @ts-nocheck
-const { spawn } = require('child-process-promise');
 const _ = require('lodash');
+const { spawn } = require('promisify-child-process');
 
 const rootLogger = require('../logger').child({ cat: ['child-process', 'child-process-spawn'] });
 const { escape } = require('../pipeCommands');
@@ -8,15 +8,15 @@ const retry = require('../retry');
 
 const execsCounter = require('./opsCounter');
 
-function spawnAndLog(binary, flags, options) {
-  const command = _joinCommandAndFlags(binary, flags);
+function spawnAndLog(binary, args, options) {
+  const command = _joinCommandAndArgs(binary, args);
   const trackingId = execsCounter.inc();
   const logger = rootLogger.child({ fn: 'spawnAndLog', command, trackingId });
-  return _spawnAndLog(logger, binary, flags, command, options);
+  return _spawnAndLog(logger, binary, args, command, options);
 }
 
-async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
-  const command = _joinCommandAndFlags(binary, flags);
+async function spawnWithRetriesAndLogs(binary, args, options = {}) {
+  const command = _joinCommandAndArgs(binary, args);
   const trackingId = execsCounter.inc();
   const logger = rootLogger.child({ fn: 'spawnWithRetriesAndLogs', command, trackingId });
   const _options = {
@@ -26,13 +26,15 @@ async function spawnWithRetriesAndLogs(binary, flags, options = {}) {
   const {
     retries = 1,
     interval = 100,
+    backoff = 'none',
     ...spawnOptions
   } = _options;
 
   let result;
-  await retry({ retries, interval }, async (tryCount, lastError) => {
+  await retry({ retries, interval, backoff }, async (tryCount, lastError) => {
     _logSpawnRetrying(logger, tryCount, lastError);
-    result = await _spawnAndLog(logger, binary, flags, command, spawnOptions, tryCount);
+    result = _spawnAndLog(logger, binary, args, command, spawnOptions, tryCount);
+    await result;
   });
   return result;
 }
@@ -66,11 +68,23 @@ async function interruptProcess(childProcessPromise, schedule) {
   }
 }
 
-function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
+function _spawnAndLog(logger, binary, args, command, options, tryCount) {
   const { logLevelPatterns, silent, ...spawnOptions } = { stdio: ['ignore', 'pipe', 'pipe'], ...options };
-  const cpPromise = spawn(binary, flags, spawnOptions);
+  const cpPromise = spawn(binary, args, spawnOptions);
+  const childProcess = cpPromise.childProcess = cpPromise;
+  const originalThen = cpPromise.then.bind(cpPromise);
+  const augmentPromise = (fn) => {
+    return typeof fn === 'function'
+      ? (result) => fn(Object.assign(result, {
+        childProcess,
+        exitCode: childProcess.exitCode,
+        pid: childProcess.pid
+      }))
+      : fn;
+  };
+  cpPromise.then = (onFulfilled, onRejected) => originalThen(augmentPromise(onFulfilled), augmentPromise(onRejected));
+  cpPromise.catch = (onRejected) => cpPromise.then(undefined, onRejected);
 
-  const { childProcess } = cpPromise;
   const { exitCode, stdout, stderr } = childProcess;
 
   const _logger = logger.child({ cpid: childProcess.pid });
@@ -85,8 +99,12 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
     stderr && stderr.on('data', _spawnStderrLoggerFn(_logger, logLevelPatterns));
   }
 
+  /**
+   *
+   * @param {import('promisify-child-process').Output} resultOrErr
+   */
   function onEnd(resultOrErr) {
-    const signal = resultOrErr.childProcess.signalCode || '';
+    const signal = resultOrErr.signal || '';
     const { code } = resultOrErr;
     const action = signal ? `terminated with ${signal}` : `exited with code #${code}`;
 
@@ -97,11 +115,11 @@ function _spawnAndLog(logger, binary, flags, command, options, tryCount) {
   return cpPromise;
 }
 
-function _joinCommandAndFlags(command, flags) {
+function _joinCommandAndArgs(command, args) {
   let result = command;
 
-  for (const flag of flags.map(String)) {
-    result += ' ' + (flag.indexOf(' ') === -1 ? flag : `"${escape.inQuotedString(flag)}"`);
+  for (const arg of args.map(String)) {
+    result += ' ' + (arg.indexOf(' ') === -1 ? arg : `"${escape.inQuotedString(arg)}"`);
   }
 
   return result;

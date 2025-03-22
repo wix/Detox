@@ -1,0 +1,698 @@
+{
+  "{\"currentStep\":\"Restart the React Native environment\",\"previousSteps\":[]}": [
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742054153773,
+      "lastAccessTime": 1742054153773
+    },
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fffffffffffffffffffffffffffff81ffffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "61904bf25dfae5057630902b1233e327"
+      },
+      "creationTime": 1742054200308,
+      "lastAccessTime": 1742054200308
+    },
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054324774,
+      "lastAccessTime": 1742054324774
+    },
+    {
+      "value": {
+        "code": "await device.reloadReactNative();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e3fff12487ffe00007ffe1ff80ff00000",
+        "ViewHierarchyHash": "23dab72ef0d529417fc52978833b6581"
+      },
+      "creationTime": 1742054364508,
+      "lastAccessTime": 1742054364508
+    }
+  ],
+  "{\"currentStep\":\"Go to the Actions screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Actions')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
+        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
+      },
+      "creationTime": 1742054166212,
+      "lastAccessTime": 1742054166212
+    }
+  ],
+  "{\"currentStep\":\"Press the \\\"Tap Me\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Tap Me')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054177250,
+      "lastAccessTime": 1742054177250
+    }
+  ],
+  "{\"currentStep\":\"The text \\\"Tap Working!!!\\\" is shown on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Press the \\\"Tap Me\\\" button\",\"code\":\"await element(by.text('Tap Me')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Tap Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fffffffffffffffffffffffffffff81ffffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "61904bf25dfae5057630902b1233e327"
+      },
+      "creationTime": 1742054187917,
+      "lastAccessTime": 1742054187917
+    }
+  ],
+  "{\"currentStep\":\"Perform a long press on the \\\"Tap Me\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('View7991')).longPress();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054212661,
+      "lastAccessTime": 1742054212661
+    }
+  ],
+  "{\"currentStep\":\"The message \\\"Long Press Working!!!\\\" is displayed\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Perform a long press on the \\\"Tap Me\\\" button\",\"code\":\"await element(by.id('View7991')).longPress();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.label('Long Press Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801ffffffffffffffffffffffffffffe007fffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "80b41d46802261ff763aa4f289ec28ed"
+      },
+      "creationTime": 1742054223821,
+      "lastAccessTime": 1742054223821
+    }
+  ],
+  "{\"currentStep\":\"Hold the \\\"Long Press Me 1.5s\\\" button for 1.5 seconds\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Long Press Me 1.5s')).longPress(1500);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054240506,
+      "lastAccessTime": 1742054240506
+    }
+  ],
+  "{\"currentStep\":\"Can see \\\"Long Press With Duration Working!!!\\\" on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Hold the \\\"Long Press Me 1.5s\\\" button for 1.5 seconds\",\"code\":\"await element(by.text('Long Press Me 1.5s')).longPress(1500);\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Long Press With Duration Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801ffffffffffffffffffffffffffff0000fffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "4dfeb5bd0ab8dde8490a9bb82cfd889a"
+      },
+      "creationTime": 1742054252323,
+      "lastAccessTime": 1742054252323
+    }
+  ],
+  "{\"currentStep\":\"Long press the top-most left-most corner of the \\\"Long Press on Top Left\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Long Press on Top Left')).longPress({x: 0, y: 0});"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054268509,
+      "lastAccessTime": 1742054268509
+    }
+  ],
+  "{\"currentStep\":\"The text \\\"Long Press on Top Left Working!!!\\\" appears\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Long press the top-most left-most corner of the \\\"Long Press on Top Left\\\" button\",\"code\":\"await element(by.text('Long Press on Top Left')).longPress({x: 0, y: 0});\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Long Press on Top Left Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801ffffffffffffffffffffffffffff8001fffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "d74464b28b2f986c0eaab0b1f441c2bd"
+      },
+      "creationTime": 1742054278941,
+      "lastAccessTime": 1742054278941
+    }
+  ],
+  "{\"currentStep\":\"Attempt a long press on the \\\"Long Press on Top Left\\\" button outside its bounds\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Long Press on Top Left')).longPress({x: -10, y: 0});"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054297036,
+      "lastAccessTime": 1742054297036
+    }
+  ],
+  "{\"currentStep\":\"Attempt a long press on the \\\"Long Press on Top Left\\\" button outside its bounds\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Attempt a long press on the \\\"Long Press on Top Left\\\" button outside its bounds\",\"code\":\"await element(by.text('Long Press on Top Left')).longPress({x: -10, y: 0});\",\"error\":\"Test Failed: View is not hittable at its visible point. Error: View is not visible around point.\\n- view point: {-10, 0}\\n- visible bounds: {{0, 0}, {430, 17}}\\n- view bounds: {{0, 0}, {430, 17}}\\n---\\nError: Error Domain=DetoxErrorDomain Code=0 \\\"View “<RCTParagraphComponentView: 0x1073a6c70>” is not visible: View does not pass visibility percent threshold (100)\\\" UserInfo={NSLocalizedDescription=View “<RCTParagraphComponentView: 0x1073a6c70>” is not visible: View does not pass visibility percent threshold (100)}\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.text('Long Press on Top Left')).longPress({x: -5, y: 8});"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054311926,
+      "lastAccessTime": 1742054311926
+    }
+  ],
+  "{\"currentStep\":\"Enter \\\"Type Working!!!\\\" into the text input field\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId937')).typeText('Type Working!!!');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "e1c78becc0ed77a098deed777387c7e7"
+      },
+      "creationTime": 1742054337004,
+      "lastAccessTime": 1742054337004
+    }
+  ],
+  "{\"currentStep\":\"The typed text is visible on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Enter \\\"Type Working!!!\\\" into the text input field\",\"code\":\"await element(by.id('UniqueId937')).typeText('Type Working!!!');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId937'))).toHaveText('Type Working!!!');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e3fff12487ffe00007ffe1ff80ff00000",
+        "ViewHierarchyHash": "23dab72ef0d529417fc52978833b6581"
+      },
+      "creationTime": 1742054352578,
+      "lastAccessTime": 1742054352578
+    }
+  ],
+  "{\"currentStep\":\"Input \\\"test\\\" in the text field\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId937')).typeText('test');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "dacd5c52a0ff60d633fecd9d326ed6fc"
+      },
+      "creationTime": 1742054378740,
+      "lastAccessTime": 1742054378740
+    }
+  ],
+  "{\"currentStep\":\"Hit the backspace key in the text input\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Input \\\"test\\\" in the text field\",\"code\":\"await element(by.id('UniqueId937')).typeText('test');\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId937')).tapBackspaceKey();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e3fff12487ffe00007ffe1ff80ff00000",
+        "ViewHierarchyHash": "e1f000e33c2a6c4f0a1d45358f09df11"
+      },
+      "creationTime": 1742054390965,
+      "lastAccessTime": 1742054390965
+    }
+  ],
+  "{\"currentStep\":\"The typed text is shown in the input field\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Input \\\"test\\\" in the text field\",\"code\":\"await element(by.id('UniqueId937')).typeText('test');\"},{\"step\":\"Hit the backspace key in the text input\",\"code\":\"await element(by.id('UniqueId937')).tapBackspaceKey();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId937'))).toHaveText('tes');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e3fff12487ffe00007ffe1ff80ff00000",
+        "ViewHierarchyHash": "f92e9be1c0c240fbef66fd14645b7aa8"
+      },
+      "creationTime": 1742054405230,
+      "lastAccessTime": 1742054405230
+    }
+  ],
+  "{\"currentStep\":\"Tap the return key on the keyboard for the text input\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId937')).tapReturnKey();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "dacd5c52a0ff60d633fecd9d326ed6fc"
+      },
+      "creationTime": 1742054422510,
+      "lastAccessTime": 1742054422510
+    }
+  ],
+  "{\"currentStep\":\"The message \\\"Return Working!!!\\\" is visible to the user\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Tap the return key on the keyboard for the text input\",\"code\":\"await element(by.id('UniqueId937')).tapReturnKey();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Return Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fffffffffffffffffffffffffffff00ffffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "7be808391eea09b18d59fa2ee75baec2"
+      },
+      "creationTime": 1742054433229,
+      "lastAccessTime": 1742054433229
+    }
+  ],
+  "{\"currentStep\":\"Remove all text from the text input that already has text in it\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId005')).clearText();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054447221,
+      "lastAccessTime": 1742054447221
+    }
+  ],
+  "{\"currentStep\":\"The text \\\"Clear Working!!!\\\" appears on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Remove all text from the text input that already has text in it\",\"code\":\"await element(by.id('UniqueId005')).clearText();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Clear Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fffffffffffffffffffffffffffff00ffffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "b19b960f7cac56dfba4156add390e9be"
+      },
+      "creationTime": 1742054456770,
+      "lastAccessTime": 1742054456770
+    }
+  ],
+  "{\"currentStep\":\"Substitute the existing text with \\\"replaced_text\\\" in the test_id=\\\"UniqueId006\\\" field\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId006')).replaceText('replaced_text');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054470818,
+      "lastAccessTime": 1742054470818
+    }
+  ],
+  "{\"currentStep\":\"The message \\\"Replace Working!!!\\\" is shown\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Substitute the existing text with \\\"replaced_text\\\" in the test_id=\\\"UniqueId006\\\" field\",\"code\":\"await element(by.id('UniqueId006')).replaceText('replaced_text');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Replace Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fffffffffffffffffffffffffffff00ffffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "13fc7416ebc218ed8941e2b10284a61a"
+      },
+      "creationTime": 1742054482369,
+      "lastAccessTime": 1742054482369
+    }
+  ],
+  "{\"currentStep\":\"Swipe fast the scrollable area ScrollView799 downwards to activate the pull-to-reload\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('ScrollView799')).swipe('down', 'fast');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054498265,
+      "lastAccessTime": 1742054498265
+    }
+  ],
+  "{\"currentStep\":\"The text \\\"PullToReload Working!!!\\\" becomes visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Swipe fast the scrollable area ScrollView799 downwards to activate the pull-to-reload\",\"code\":\"await element(by.id('ScrollView799')).swipe('down', 'fast');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('PullToReload Working!!!'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801ffffffffffffffffffffffffffffe007fffffffffffffffffffffffff81f",
+        "ViewHierarchyHash": "2c529ced70af9c426c432d67b6cfc5cd"
+      },
+      "creationTime": 1742054509403,
+      "lastAccessTime": 1742054509403
+    }
+  ],
+  "{\"currentStep\":\"The element with text \\\"Text1\\\" can be seen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(web.element(by.web.label('Text1'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054526381,
+      "lastAccessTime": 1742054526381
+    }
+  ],
+  "{\"currentStep\":\"The element with text \\\"Text1\\\" can be seen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The element with text \\\"Text1\\\" can be seen\",\"code\":\"await expect(web.element(by.web.label('Text1'))).toBeVisible();\",\"error\":\"expect(...).toBeVisible is not a function\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Text1'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054538597,
+      "lastAccessTime": 1742054538597
+    }
+  ],
+  "{\"currentStep\":\"Swipe the view \\\"ScrollView161\\\" upwards\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The element with text \\\"Text1\\\" can be seen\",\"code\":\"await expect(element(by.text('Text1'))).toBeVisible();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('ScrollView161')).swipe('up');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054550326,
+      "lastAccessTime": 1742054550326
+    }
+  ],
+  "{\"currentStep\":\"The Text1 element is no longer in view\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The element with text \\\"Text1\\\" can be seen\",\"code\":\"await expect(element(by.text('Text1'))).toBeVisible();\"},{\"step\":\"Swipe the view \\\"ScrollView161\\\" upwards\",\"code\":\"await element(by.id('ScrollView161')).swipe('up');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('Text1'))).not.toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00fffff87ff87ff000000000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d59c6d9b408fc2334a12c0a0f3ebac5f"
+      },
+      "creationTime": 1742054563177,
+      "lastAccessTime": 1742054563177
+    }
+  ],
+  "{\"currentStep\":\"Swipe the element back up until the \\\"Text1\\\" element is visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The element with text \\\"Text1\\\" can be seen\",\"code\":\"await expect(element(by.text('Text1'))).toBeVisible();\"},{\"step\":\"Swipe the view \\\"ScrollView161\\\" upwards\",\"code\":\"await element(by.id('ScrollView161')).swipe('up');\"},{\"step\":\"The Text1 element is no longer in view\",\"code\":\"await expect(element(by.text('Text1'))).not.toBeVisible();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('ScrollView161')).swipe('down', 'slow');\nawait expect(element(by.text('Text1'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00fffff87ff87ff000000000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "038b7889cfc3a7403f960d2ed378b3fc"
+      },
+      "creationTime": 1742054575201,
+      "lastAccessTime": 1742054575201
+    }
+  ],
+  "{\"currentStep\":\"The \\\"HText1\\\" element is present\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('HText1'))).toExist();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054593978,
+      "lastAccessTime": 1742054593978
+    }
+  ],
+  "{\"currentStep\":\"Left-swipe the horizontal scrollable area \\\"ScrollViewH\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The \\\"HText1\\\" element is present\",\"code\":\"await expect(element(by.text('HText1'))).toExist();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('ScrollViewH')).swipe('left');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054607464,
+      "lastAccessTime": 1742054607464
+    }
+  ],
+  "{\"currentStep\":\"\\\"HText1\\\" is not in the visible area\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The \\\"HText1\\\" element is present\",\"code\":\"await expect(element(by.text('HText1'))).toExist();\"},{\"step\":\"Left-swipe the horizontal scrollable area \\\"ScrollViewH\\\"\",\"code\":\"await element(by.id('ScrollViewH')).swipe('left');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('HText1'))).not.toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "6132ccc0acd6d52bff7c470d22f46b4a"
+      },
+      "creationTime": 1742054619982,
+      "lastAccessTime": 1742054619982
+    }
+  ],
+  "{\"currentStep\":\"Swipe the horizontal scroll back to the left\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The \\\"HText1\\\" element is present\",\"code\":\"await expect(element(by.text('HText1'))).toExist();\"},{\"step\":\"Left-swipe the horizontal scrollable area \\\"ScrollViewH\\\"\",\"code\":\"await element(by.id('ScrollViewH')).swipe('left');\"},{\"step\":\"\\\"HText1\\\" is not in the visible area\",\"code\":\"await expect(element(by.text('HText1'))).not.toBeVisible();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('ScrollViewH')).swipe('right');"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "90c9bda3d340b80c5d223d8137b7fffb"
+      },
+      "creationTime": 1742054632569,
+      "lastAccessTime": 1742054632569
+    }
+  ],
+  "{\"currentStep\":\"The \\\"HText1\\\" element has come back into view\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The \\\"HText1\\\" element is present\",\"code\":\"await expect(element(by.text('HText1'))).toExist();\"},{\"step\":\"Left-swipe the horizontal scrollable area \\\"ScrollViewH\\\"\",\"code\":\"await element(by.id('ScrollViewH')).swipe('left');\"},{\"step\":\"\\\"HText1\\\" is not in the visible area\",\"code\":\"await expect(element(by.text('HText1'))).not.toBeVisible();\"},{\"step\":\"Swipe the horizontal scroll back to the left\",\"code\":\"await element(by.id('ScrollViewH')).swipe('right');\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.text('HText1'))).toBeVisible();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e3fff1240127fffff000023fffffff81f",
+        "ViewHierarchyHash": "2e82977f898be9a11ef995eb46b4d0f5"
+      },
+      "creationTime": 1742054644993,
+      "lastAccessTime": 1742054644993
+    }
+  ],
+  "{\"currentStep\":\"The slider is set to 25%\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "<RNCSlider alpha=\"1.0\" class=\"RNCSlider\" focused=\"false\" height=\"40\" id=\"detox_temp_0_0_0_1_0_0_18_0\" value=\"25%\" visibility=\"visible\" width=\"390\" x=\"0\" y=\"0\">"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054665373,
+      "lastAccessTime": 1742054665373
+    }
+  ],
+  "{\"currentStep\":\"The slider is set to 25%\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The slider is set to 25%\",\"code\":\"<RNCSlider alpha=\\\"1.0\\\" class=\\\"RNCSlider\\\" focused=\\\"false\\\" height=\\\"40\\\" id=\\\"detox_temp_0_0_0_1_0_0_18_0\\\" value=\\\"25%\\\" visibility=\\\"visible\\\" width=\\\"390\\\" x=\\\"0\\\" y=\\\"0\\\">\",\"error\":\"Failed to execute test step code, error: Unexpected token '<':\\n```\\n<RNCSlider alpha=\\\"1.0\\\" class=\\\"RNCSlider\\\" focused=\\\"false\\\" height=\\\"40\\\" id=\\\"detox_temp_0_0_0_1_0_0_18_0\\\" value=\\\"25%\\\" visibility=\\\"visible\\\" width=\\\"390\\\" x=\\\"0\\\" y=\\\"0\\\">\\n```\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.25);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054675148,
+      "lastAccessTime": 1742054675148
+    }
+  ],
+  "{\"currentStep\":\"Move the slider to the 75% position\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The slider is set to 25%\",\"code\":\"await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.25);\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054685849,
+      "lastAccessTime": 1742054685849
+    }
+  ],
+  "{\"currentStep\":\"The slider value is approximately 75%, give or take 10%\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The slider is set to 25%\",\"code\":\"await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.25);\"},{\"step\":\"Move the slider to the 75% position\",\"code\":\"await element(by.id('sliderWithASimpleID')).adjustSliderToPosition(0.75);\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('sliderWithASimpleID'))).toHaveSliderPosition(0.75, 0.1);"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff00003fc7fffff81f",
+        "ViewHierarchyHash": "7c7b9bafe509b40a094de3574f2e1f68"
+      },
+      "creationTime": 1742054698194,
+      "lastAccessTime": 1742054698194
+    }
+  ],
+  "{\"currentStep\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId005'))).not.toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054715771,
+      "lastAccessTime": 1742054715771
+    }
+  ],
+  "{\"currentStep\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId006'))).not.toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054726811,
+      "lastAccessTime": 1742054726811
+    }
+  ],
+  "{\"currentStep\":\"Tap to focus on the first text field\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId937')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054738187,
+      "lastAccessTime": 1742054738187
+    }
+  ],
+  "{\"currentStep\":\"First text field now has the focus\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Tap to focus on the first text field\",\"code\":\"await element(by.id('UniqueId937')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId937'))).toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "02fc2b5175010a029434b5f9ea8f578c"
+      },
+      "creationTime": 1742054750784,
+      "lastAccessTime": 1742054750784
+    }
+  ],
+  "{\"currentStep\":\"The second text input remains unfocused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Tap to focus on the first text field\",\"code\":\"await element(by.id('UniqueId937')).tap();\"},{\"step\":\"First text field now has the focus\",\"code\":\"await expect(element(by.id('UniqueId937'))).toBeFocused();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId006'))).not.toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f000187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "02fc2b5175010a029434b5f9ea8f578c"
+      },
+      "creationTime": 1742054762581,
+      "lastAccessTime": 1742054762581
+    }
+  ],
+  "{\"currentStep\":\"Touch the second text field to give it focus\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Tap to focus on the first text field\",\"code\":\"await element(by.id('UniqueId937')).tap();\"},{\"step\":\"First text field now has the focus\",\"code\":\"await expect(element(by.id('UniqueId937'))).toBeFocused();\"},{\"step\":\"The second text input remains unfocused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"}]}": [
+    {
+      "value": {
+        "code": "await element(by.id('UniqueId006')).tap();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f000187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "02fc2b5175010a029434b5f9ea8f578c"
+      },
+      "creationTime": 1742054774719,
+      "lastAccessTime": 1742054774719
+    }
+  ],
+  "{\"currentStep\":\"The first text input has lost focus\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Tap to focus on the first text field\",\"code\":\"await element(by.id('UniqueId937')).tap();\"},{\"step\":\"First text field now has the focus\",\"code\":\"await expect(element(by.id('UniqueId937'))).toBeFocused();\"},{\"step\":\"The second text input remains unfocused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Touch the second text field to give it focus\",\"code\":\"await element(by.id('UniqueId006')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId937'))).not.toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff381e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "19751049495bce30064c7f9d70750ee8"
+      },
+      "creationTime": 1742054787177,
+      "lastAccessTime": 1742054787177
+    }
+  ],
+  "{\"currentStep\":\"2nd text field is now the active input\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"The text field UniqueId005 (call it \\\"the first\\\") does not have focus\",\"code\":\"await expect(element(by.id('UniqueId005'))).not.toBeFocused();\"},{\"step\":\"Text input UniqueId006 (call it \\\"the second\\\") is not currently focused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Tap to focus on the first text field\",\"code\":\"await element(by.id('UniqueId937')).tap();\"},{\"step\":\"First text field now has the focus\",\"code\":\"await expect(element(by.id('UniqueId937'))).toBeFocused();\"},{\"step\":\"The second text input remains unfocused\",\"code\":\"await expect(element(by.id('UniqueId006'))).not.toBeFocused();\"},{\"step\":\"Touch the second text field to give it focus\",\"code\":\"await element(by.id('UniqueId006')).tap();\"},{\"step\":\"The first text input has lost focus\",\"code\":\"await expect(element(by.id('UniqueId937'))).not.toBeFocused();\"}]}": [
+    {
+      "value": {
+        "code": "await expect(element(by.id('UniqueId006'))).toBeFocused();"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff381e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "19751049495bce30064c7f9d70750ee8"
+      },
+      "creationTime": 1742054799173,
+      "lastAccessTime": 1742054799173
+    }
+  ],
+  "{\"currentStep\":\"Tap the \\\"FOOBAR\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Cannot find button with text 'FOOBAR' in the current view hierarchy\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054815903,
+      "lastAccessTime": 1742054815903
+    }
+  ],
+  "{\"currentStep\":\"Tap the \\\"FOOBAR\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Tap the \\\"FOOBAR\\\" button\",\"code\":\"throw new Error(\\\"Cannot find button with text 'FOOBAR' in the current view hierarchy\\\");\",\"error\":\"Cannot find button with text 'FOOBAR' in the current view hierarchy\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Cannot find button with text 'FOOBAR' in the current view hierarchy\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054826856,
+      "lastAccessTime": 1742054826856
+    }
+  ],
+  "{\"currentStep\":\"Do magic to the element\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Intent 'Do magic to the element' is too ambiguous. Please specify which element and what action to perform.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054840567,
+      "lastAccessTime": 1742054840567
+    }
+  ],
+  "{\"currentStep\":\"Do magic to the element\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Go to the Actions screen\",\"code\":\"await element(by.text('Actions')).tap();\"},{\"step\":\"Do magic to the element\",\"code\":\"throw new Error(\\\"Intent 'Do magic to the element' is too ambiguous. Please specify which element and what action to perform.\\\");\",\"error\":\"Intent 'Do magic to the element' is too ambiguous. Please specify which element and what action to perform.\"}]}": [
+    {
+      "value": {
+        "code": "throw new Error(\"Intent 'Do magic to the element' is ambiguous - please specify which element to interact with and what action to perform on it.\");"
+      },
+      "snapshotHashes": {
+        "BlockHash": "c801fe7ff81ff00f800187ff87ff781e00000000ffffffff000023fffffff81f",
+        "ViewHierarchyHash": "d851766acc76d2cd8736129e6d686444"
+      },
+      "creationTime": 1742054850716,
+      "lastAccessTime": 1742054850716
+    }
+  ]
+}

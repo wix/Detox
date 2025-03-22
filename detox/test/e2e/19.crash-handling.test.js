@@ -1,7 +1,6 @@
 const jestExpect = require('expect').default;
 
 const { expectToThrow } = require('./utils/custom-expects');
-const { isRNNewArch } = require('../../src/utils/rn-consts/rn-consts');
 
 const relaunchAppWithArgs = (launchArgs) => {
   console.log('Relaunching app with launch-arguments...', launchArgs);
@@ -40,7 +39,6 @@ describe('Crash Handling', () => {
     await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
-  // todo: this test is flaky, looks like there's a race condition between the app crash and the `waitForActive` event.
   it('@legacy Should throw a detailed error upon early app crash', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ simulateEarlyCrash: true }),
@@ -53,8 +51,6 @@ describe('Crash Handling', () => {
 
     if (device.getPlatform() === 'android') {
       jestExpect(error.stack).toContain('\tat java.lang.Thread.run');
-    } else if (!isRNNewArch) {
-      jestExpect(error.stack).toContain('\t0   CoreFoundation');
     } else {
       jestExpect(error.stack).toContain('JS Exception');
     }
