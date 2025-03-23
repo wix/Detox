@@ -4,8 +4,8 @@ const { DetoxRuntimeError } = require('../errors');
 const { assertTraceDescription } = require('../utils/assertArgument');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
-const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 const sleep = require('../utils/sleep');
+const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 class WebExpect {
   constructor(invocationManager, xcuitestRunner, element) {
