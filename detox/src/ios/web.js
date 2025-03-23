@@ -5,7 +5,7 @@ const { assertTraceDescription } = require('../utils/assertArgument');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
-
+const sleep = require('../utils/sleep');
 
 class WebExpect {
   constructor(invocationManager, xcuitestRunner, element) {
@@ -137,7 +137,11 @@ class WebElement {
 
   scrollToView() {
     const traceDescription = webViewActionDescription.scrollToView();
-    return this.withAction('scrollToView', traceDescription);
+
+    // TODO Synchronization is not perfect here. We have to fix and remove this sleep ASAP.
+    //  See https://github.com/wix/Detox/issues/4741
+    return this.withAction('scrollToView', traceDescription)
+      .then(() => sleep(20));
   }
 
   focus() {
