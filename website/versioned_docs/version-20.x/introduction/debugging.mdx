@@ -1,6 +1,9 @@
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import DebuggerAttachWebstorm from './partials/_debugging-attach-webstorm.mdx';
+import DebuggerAttachChrome from './partials/_debugging-attach-chrome.mdx';
+import DebuggerAttachVscode from './partials/_debugging-attach-vscode.mdx';
 import CompilingIOS from './partials/_debugging-native-code-compliing-ios.mdx';
 import CompilingAndroid from './partials/_debugging-native-code-compliing-android.mdx';
 import ConfigIOS from './partials/_debugging-native-code-config-ios.mdx';
@@ -11,50 +14,48 @@ import TroubleshootingAndroid from './partials/_debugging-native-code-troublesho
 
 # How to Debug
 
-## Detox Tests
+In the Detox world, you can debug either Detox itself (i.e. run it step by step), and the tested app. This guide covers both options.
 
-If you need to walk through your Detox tests step by step, add a `debugger` statement
-inside your test to mark a starting point, e.g.:
+## Running Detox Tests Step-by-Step
 
-```diff title="e2e/starter.test.js"
- describe('Example', () => {
-   beforeAll(async () => {
-     await device.launchApp();
-+    debugger;
-   });
-```
+Detox tests can be run step-by-step either using an IDE or by using Chrome debugger.
 
-Now run Detox with that specific test and `--inspect-brk` flag, e.g.:
+Start by running Detox using the Detox CLI alongside the inspection argument (`--inspect-brk`) and the file in which the test resides. For example:
 
 ```bash
 detox test --inspect-brk -c android.emu.debug e2e/starter.test.js
 ```
 
-Assuming you're using Jest, you'll see something like:
+You will see Detox starts and these logs:
 
 ```plain text
-DETOX_CONFIGURATION="android.emu.debug" node --inspect-brk ./node_modules/.bin/jest --config e2e/jest.config.js --runInBand e2e/starter.test.js
 Debugger listening on ws://127.0.0.1:9229/3dedd03b-8896-4ab8-a0a8-1b647abb9c98
 For help, see: https://nodejs.org/en/docs/inspector
 ```
 
+Now you can attach to Detox and tap-in into its execution process.
+
 :::info
 
-To learn more about debugging with `--inspect-brk`, refer to
-[Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/)
-on the official Node.js website. This tutorial suggests using Google Chrome for debugging,
-but you can also use an IDE to connect to the debugger.
+To learn more about debugging with `--inspect-brk`, refer to [Debugging — Getting Started](https://nodejs.org/en/docs/guides/debugging-getting-started/) on the official Node.js website.
 
 :::
 
-Open `Google Chrome` and go to `chrome://inspect` tab, where you'll see `./node_modules/.bin/jest` as a remote
-target waiting until you click `inspect` to attach to it.
+<Tabs groupId="debuggerAttach">
+  <TabItem value="Webstorm" label="Webstorm" default>
+    <DebuggerAttachWebstorm />
+  </TabItem>
+  <TabItem value="vs-code" label="vs-code">
+    <DebuggerAttachVscode />
+  </TabItem>
+  <TabItem value="Chrome" label="Chrome">
+    <DebuggerAttachChrome />
+  </TabItem>
+</Tabs>
 
-![](../img/inspect-brk.png)
 
-Happy debugging!
 
-## JavaScript application code
+## Debugging JavaScript application code
 
 Use debug configurations of your app that rely on React Native Packager running on port 8081 (or another):
 
@@ -63,7 +64,7 @@ Use debug configurations of your app that rely on React Native Packager running 
 
 For the rest of details, please refer to [React Native – Debugging](https://reactnative.dev/docs/debugging).
 
-## Native application code
+## Debugging Native application code
 
 ### Setting Detox up as a compiling dependency
 
@@ -122,7 +123,7 @@ parameters to disable various side effects and make life easier when debugging:
  }
 ```
 
-- Using a preconfigured `session` with an autostarting server removes the legwork of copying and
+- Using a preconfigured `session` with an auto-starting server removes the legwork of copying and
 pasting values to the instrumentation runner launch arguments dialog every time before any launch
 from the IDE. Otherwise, by default when the `session` object omitted, `server` and `sessionId`
 are randomly generated for every new test session.

@@ -1,31 +1,47 @@
 # How Detox Works
 
-Detox is an end-to-end testing framework. This means it runs your app on an actual device/simulator and interacts with it just like a real user would. This type of testing can give a lot of confidence in your app and help automate a manual QA process.
+Detox is an end-to-end testing framework. This means it runs your app on an actual device, or a device simulator/emulator and interacts with it just like a real user would. This type of testing can give a lot of confidence in your app and help automate an otherwise tedious manual QA process.
 
 When a Detox test executes, you actually have two different parts running side by side:
 
-- **The mobile app itself**, usually running on a simulator/emulator. A regular native build of your app is installed and executed on the device. Your app is usually built once before the tests start running.
+1. **The mobile app itself**, running on a device or a device simulator/emulator. A regular native-build of your app is installed and executed on the device, orchestrated by native Detox code that is built separately and installed alongside the app itself.
 
-- **The test suite**, running on Node.js, using a test runner like Jest. The tests are normally written in JavaScript. Because the tests are asynchronous in nature (every test line requires to access the app and wait for a response), the tests rely heavily on [`async`-`await`](https://ponyfoo.com/articles/understanding-javascript-async-await).
+2. **The test suite**, running on Node.js, over a test runner like Jest. The tests are normally written in JavaScript, and utilize the JavaScript part of Detox.
 
-The two parts are usually running in separate processes on your machine. It is also possible to run the two parts on different machines. Communication between the two parts takes place over the network using a web socket.
+The two parts are run in separate processes on your machine. It is also possible to run the two parts on different machines. Communication between the two parts takes place over the network using a web socket.
 
-In practice, to make the communication more resilient, both parts are implemented as clients and communicate with a Detox server that acts as proxy. This allows some nice behaviors like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
+In practice, to make the communication more resilient, both parts are implemented as clients and communicate through a Detox server that acts as mediator. Having that server allows for some advantages like allowing one side to disconnect (during a simulator boot for example or app restart) without disconnecting the other side and losing its state.
 
-## How Detox Automatically Synchronizes With Your App
+## Automatic App-State Synchronization
 
-One of the key features of Detox is its ability to automatically synchronize the test execution with your app. The most annoying aspect of end-to-end tests is flakiness—tests sometimes fail without anything changing. Flakiness happens because tests are nondeterministic. Every time a test is running, things take place in a slightly different order inside your app.
+One of Detox's key features is the automatic synchronization of test execution with the app's state. For example, consider the following super-common moment in a test scenario:
 
-Consider a scenario where the app is making multiple network requests at the same time. What is the order of execution? It depends on which request completes first. This is an external concern depending on network congestion and how busy the server is.
+1. Node.js runs test code that effectively tells Detox to tap on the *login* button. Detox sends this tap command to the app.
+2. The app receives the command, the button is pressed, and the login process begins. A secure user session is obtained from the server, and the app navigates to the home screen. The home screen fetches yet even more data from the servers and renders elements with loading animations.
+3. **Detox - being a gray-box testing framework, monitors these changes in the app's state and waits for them to complete. This ensures that the test and the app's current state remain in-sync.**
+4. Detox proceeds to the next action in the test code only after the app is stable (!)
 
-The traditional method of dealing with flakiness is adding various `sleep()`/`waitFor()` commands throughout the test in an attempt to force a certain execution order. This is a bad practice, riddled with fragile magic values that often change if the machine running the tests becomes faster or slower.
+Let’s deep-dive into step #2: So much UI work happens with numerous network requests performed in the background… What is the order of execution of those requests, and how long should you wait until all of them are replied to? How long should you wait until the UI is ready? For the network, it depends on which request completes first, which in turn depends on network congestion and how busy the server is. As for the UI, it depends on the specific test device / machine specs and how busy its processor is.
 
-Detox tries to eliminate flakiness by automatically synchronizing your tests with the app. A test cannot continue to the next command until the app becomes idle. Detox monitors your app very closely in order to know when it’s idle. It tracks several asynchronous operations and waits until they complete. This includes:
+In the traditional black-box (rather than gray-box) testing approach, you normally deal with being blind to the app’s state by adding various `sleep()` / `waitFor()` commands throughout the test in an attempt to force order into the chaos. In step #3, **Detox eliminates the need for that malpractice, and so introduces stability into the otherwise inherently-flaky test world.**
 
-- Keeping track of all network requests that are currently in-flight and waiting until they complete
-- Keeping track of pending animations and waiting until they complete
-- Keeping track of timers and waiting until they expire or are cancelled
-- Keeping track of the React Native operations
+### Operations Detox synchronizes with automatically
+
+- **Network requests** - Detox monitors in-flight requests over the network (waiting for them to be responded).
+
+- **Main thread (native)** - Detox monitors pending native operations on the app's main thread (main dispatch queue and main `NSOperationQueue`).
+
+- **Layout of UI** - Detox monitors UI layout operations. There’s also special support for React Native layout which includes the Shadow Queue where [yoga](https://github.com/facebook/yoga) runs.
+
+- **Timers** - Detox monitors timers (explicit asynchronous delays). There’s special support for JavaScript's `setTimeout`, which is monitored.
+
+- **Animations** - Detox monitors active animations and transitions. There’s special support for React Native animations with the Animated library, and even the popular [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated).
+
+- **React Native JavaScript thread** - Detox monitors pending operations on the JavaScript thread in RN apps.
+
+- **React Native native-modules thread** - Detox monitors pending RN native-module actions executed on its dedicated thread.
+
+- **React Native bridge** - In non-bridge-less apps (i.e. before RN's new-architecture), Detox monitors the React Native bridge and asynchronous messages delivered through it.
 
 :::info
 
