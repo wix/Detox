@@ -49,7 +49,8 @@
         "troubleshooting/building-the-app",
         "troubleshooting/running-tests",
         "troubleshooting/synchronization",
-        "troubleshooting/flakiness"
+        "troubleshooting/flakiness",
+        "troubleshooting/element-matching"
       ]
     },
     {
