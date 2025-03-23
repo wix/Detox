@@ -30,7 +30,6 @@ const sidebars = {
       type: 'category',
       label: 'Guides',
       items: [
-        'guide/investigating-test-failure',
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
@@ -65,6 +64,7 @@ const sidebars = {
         'troubleshooting/running-tests',
         'troubleshooting/synchronization',
         'troubleshooting/flakiness',
+        'troubleshooting/element-matching',
       ]
     },
     {
