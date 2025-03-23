@@ -141,7 +141,7 @@ class WebElement {
     // TODO Synchronization is not perfect here. We have to fix and remove this sleep ASAP.
     //  See https://github.com/wix/Detox/issues/4741
     return this.withAction('scrollToView', traceDescription)
-      .then(() => sleep(20));
+      .then((result) => sleep(20) && result);
   }
 
   focus() {
