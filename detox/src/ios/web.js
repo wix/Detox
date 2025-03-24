@@ -135,13 +135,15 @@ class WebElement {
     }
   }
 
-  scrollToView() {
+  async scrollToView() {
     const traceDescription = webViewActionDescription.scrollToView();
+
+    const result = await this.withAction('scrollToView', traceDescription);
 
     // TODO Synchronization is not perfect here. We have to fix and remove this sleep ASAP.
     //  See https://github.com/wix/Detox/issues/4741
-    return this.withAction('scrollToView', traceDescription)
-      .then((result) => sleep(20) && result);
+    await sleep(50);
+    return result;
   }
 
   focus() {
