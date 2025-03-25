@@ -14,7 +14,7 @@
     "generation",
     "."
   ],
-  "version": "20.35.1",
+  "version": "20.36.0",
   "npmClient": "npm",
   "command": {
     "publish": {
