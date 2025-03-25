@@ -4,8 +4,8 @@ const { DetoxRuntimeError } = require('../errors');
 const { assertTraceDescription } = require('../utils/assertArgument');
 const { webViewActionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
+const sleep = require('../utils/sleep');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
-
 
 class WebExpect {
   constructor(invocationManager, xcuitestRunner, element) {
@@ -135,9 +135,15 @@ class WebElement {
     }
   }
 
-  scrollToView() {
+  async scrollToView() {
     const traceDescription = webViewActionDescription.scrollToView();
-    return this.withAction('scrollToView', traceDescription);
+
+    const result = await this.withAction('scrollToView', traceDescription);
+
+    // TODO Synchronization is not perfect here. We have to fix and remove this sleep ASAP.
+    //  See https://github.com/wix/Detox/issues/4741
+    await sleep(50);
+    return result;
   }
 
   focus() {
