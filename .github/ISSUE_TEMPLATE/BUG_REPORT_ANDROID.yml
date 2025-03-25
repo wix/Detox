@@ -5,6 +5,22 @@ body:
   - type: markdown
     attributes:
       value: Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: tested-last-detox
+    attributes:
+      label: Did you test using the latest Detox?
+      description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox. Check our [release log](https://github.com/wix/Detox/releases).
+      options:
+        - label: I have tested this issue on the latest Detox release and it still reproduces.
+          required: true
+  - type: checkboxes
+    id: troubleshooting-guide
+    attributes:
+      label: Did your test fail and you're not sure why?
+      description: Please read our [troubleshooting guide](https://wix.github.io/Detox/docs/troubleshooting/running-tests) in order to try to solve the issue yourself.
+      options:
+        - label: I have read the troubleshooting guide and it didn't help me.
+          required: true
   - type: textarea
     id: description
     attributes:
@@ -17,27 +33,12 @@ body:
     attributes:
       label: What was the expected behaviour?
       description: A clear and concise description of what was expected to happen.
-  - type: checkboxes
-    id: tested-last-detox
-    attributes:
-      label: Was it tested on latest Detox?
-      description: Before reporting this issue, please make sure it can be reproduced on the latest released version of Detox, see our [releases](https://github.com/wix/Detox/releases).
-      options:
-        - label: I have tested this issue on the latest Detox release and it still reproduces.
-          required: true
-  - type: checkboxes
-    id: timeout
-    attributes:
-      label: Did your test throw out a timeout?
-      description: If this is the case, try going over our synchronization troubleshooting guide.
-      options:
-        - label: I have followed the instructions under [Identifying which synchronization mechanism causes us to wait too much](https://wix.github.io/Detox/docs/troubleshooting/synchronization#identifying-which-synchronization-mechanism-causes-us-to-wait-too-much).
   - type: textarea
     id: reproduction
     attributes:
       label: Help us reproduce this issue!
       description: "Provide the steps necessary to reproduce the issue. If you are seeing a regression, try to provide the last known version where the issue did not reproduce.\n\n
-      In case of a vague bug or a crash, please create an example project that reproduces it by forking the ready-to-go [DetoxTemplate project](https://github.com/wix-incubator/DetoxTemplate) and applying the minimal changes required for it to reproduce (e.g. add 3rd party libraries / E2E tests). For complete information, please review the guidelines there."
+      If possible, provide an example project that reproduces the issue. You can fork the Detox repo and make the necessary changes to our own [example project](https://github.com/wix/Detox/tree/master/examples/demo-react-native)."
   - type: textarea
     id: environment
     attributes:
