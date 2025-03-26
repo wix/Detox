@@ -102,6 +102,16 @@ class GenyAllocDriver {
    * @return {Promise<void>}
    */
   async free(cookie, options = {}) {
+    try {
+      if (!options.shutdown) {
+        await Timer.run(10000, 'waiting for device to respond', async () => {
+          await this._adb.shell(cookie.adbName, 'echo ok');
+        });
+      }
+    } catch {
+      options.shutdown = true;
+    }
+
     // Known issue: cookie won't have a proper 'instance' field due to (de)serialization
     if (options.shutdown) {
       this._genyRegistry.removeInstance(cookie.id);
