@@ -63,6 +63,8 @@ class DetoxWorker {
     this.system = null;
     /** @type {Detox.PilotFacade} */
     this.pilot = null;
+    /** @type {Detox.PilotFacade} */
+    this.copilot = null;
 
     this._deviceCookie = null;
 
@@ -110,6 +112,13 @@ class DetoxWorker {
       }
     };
     this.pilot = new DetoxPilot();
+    Object.defineProperty(this, 'copilot', {
+      get: () => {
+        console.warn('Warning: "copilot" is deprecated. Please use "pilot" instead.');
+        return this.pilot;
+      },
+      configurable: true,
+    });
 
     yield this._client.connect();
 
@@ -169,10 +178,7 @@ class DetoxWorker {
       this._injectedGlobalProperties = Object.keys(injectedGlobals);
       Object.assign(DetoxWorker.global, injectedGlobals);
       Object.defineProperty(DetoxWorker.global, 'copilot', {
-        get: () => {
-          console.warn('Warning: "copilot" is deprecated. Please use "pilot" instead.');
-          return this.pilot;
-        },
+        get: () => this.copilot,
         configurable: true,
       });
     }

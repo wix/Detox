@@ -1,3 +1,5 @@
+const { copilot } = require('detox');
+
 describe.forPilot('Pilot Sanity', () => {
   beforeEach(async () => {
     await pilot.perform(
@@ -19,6 +21,10 @@ describe.forPilot('Pilot Sanity', () => {
   });
 
   it('should show world screen after tap with Copilot (deprecated API)', async () => {
+    await global.copilot.autopilot('tap on the Say World button in the sanity screen and expect to see "World!!!" text displayed');
+  });
+
+  it('should access copilot via destructuring', async () => {
     await copilot.autopilot('tap on the Say World button in the sanity screen and expect to see "World!!!" text displayed');
   });
 });
