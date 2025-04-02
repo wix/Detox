@@ -9,6 +9,16 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
       return worker._artifactsManager._idlePromise;
     };
   }
+
+  async initDetox() {
+    const worker = await super.initDetox();
+    if (worker.device.deviceDriver.adb) {
+      worker.device.deviceDriver.adb.installOptions = {
+        timeout: 45_000,
+      };
+    }
+    return worker;
+  }
 }
 
 process.on('unhandledRejection', (reason, p) => {

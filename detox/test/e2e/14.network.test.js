@@ -29,6 +29,7 @@ describe('Network Synchronization', () => {
 
   it('disableSynchronization() should disable sync', async () => {
     await device.disableSynchronization();
+    await waitFor(element(by.id('message-input'))).toBeVisible().withTimeout(4000);
     await waitFor(driver.longRequest.sendButton).toBeVisible().withTimeout(4000);
 
     await driver.longRequest.sendButton.tap();

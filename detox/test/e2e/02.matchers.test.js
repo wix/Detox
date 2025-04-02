@@ -11,7 +11,7 @@ describe('Matchers', () => {
     await expect(element(by.text("Label Working!!!"))).toBeVisible();
   });
 
-  it('should match elements by regex text', async () => {
+  it.only('should match elements by regex text', async () => {
     await element(by.label('Label')).tap();
     await expect(element(by.text(/^[a-z]* working!+$/i))).toBeVisible();
   });

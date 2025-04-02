@@ -163,20 +163,19 @@ describe('ADB', () => {
   });
 
   it('show allow for uninstalling with external exec options', async () => {
-    adb.defaultExecOptions = {
+    const defaultExecOptions = {
       retries: 66,
       interval: 123123,
     };
+    adb.defaultExecOptions = defaultExecOptions;
     // Expect to be ignored
     adb.installOptions = {
       retries: 99,
       timeout: 1337,
     };
+
     await adb.uninstall('com.dontcare');
-    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-      retries: 66,
-      interval: 123123,
-    }));
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(defaultExecOptions));
   });
 
   it(`terminate`, async () => {

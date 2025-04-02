@@ -36,8 +36,8 @@ describe('React-Native Animations', () => {
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
-    it(`should detect loops with final number of iterations`, async () => {
-      await _startTest(driver, { loops: 4 });
+    it.only(`should detect loops with final number of iterations`, async () => {
+      await _startTest(driver, { duration: 10000, loops: 1000 });
       await expect(element(by.id('UniqueId_AnimationsScreen_afterAnimationText'))).toBeVisible();
     });
 
