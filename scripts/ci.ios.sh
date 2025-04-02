@@ -22,6 +22,8 @@ pushd detox/test
 ## After this command sims are available again
 xcrun simctl list > /dev/null
 
+xcrun simctl create 'iPhone 15 Pro Max' 'iPhone 15 Pro Max' 'com.apple.CoreSimulator.SimRuntime.iOS-18-1'
+
 run_f "npm run build:ios"
 run_f "npm run e2e:ios"
 cp coverage/lcov.info ../../coverage/e2e-ios-ci.lcov
