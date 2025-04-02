@@ -80,7 +80,10 @@
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
     "react-native-codegen": "^0.0.8",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "react-native-ui-lib": "^7.39.1",
+    "react-native-reanimated": "3.8.1",
+    "react-native-gesture-handler": "2.14.1"
   },
   "jest-junit": {
     "suiteName": "Detox E2E tests",
