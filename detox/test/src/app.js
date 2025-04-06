@@ -7,12 +7,11 @@ import {
   NativeModules,
 } from 'react-native';
 import * as Screens from './Screens';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
 
-const {NativeModule} = NativeModules;
+const { NativeModule } = NativeModules;
 
 export default class example extends Component {
 
@@ -27,8 +26,7 @@ export default class example extends Component {
     this.setScreen = this.setScreen.bind(this);
   }
 
-  async componentDidMount() {
-  }
+  async componentDidMount() {}
 
   renderButton(title, onPressCallback) {
     return (
@@ -66,90 +64,86 @@ export default class example extends Component {
 
   renderMainMenu() {
     return (
-      <SafeAreaProvider>
-        <SafeAreaView>
-          <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{fontSize: 18, marginBottom: 10}}>
-              Choose a test
-            </Text>
-            {this.renderScreenButton('Language', Screens.LanguageScreen)}
-            {this.renderScreenButton('Sanity', Screens.SanityScreen)}
-            {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
-            {this.renderScreenButton('Actions', Screens.ActionsScreen)}
-            {this.renderScreenButton('Visibility Expectation', Screens.VisibilityExpectationScreen)}
-            {isIos && this.renderScreenButton('Visibility Debug Artifacts', Screens.VisibilityScreen)}
-            {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
-            {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
-            {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
-            {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
-            {this.renderScreenButton('Stress', Screens.StressScreen)}
-            {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
-            {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
-            {this.renderScreenButton('Orientation', Screens.Orientation)}
+      <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: 18, marginBottom: 10}}>
+          Choose a test
+        </Text>
+        {this.renderScreenButton('Language', Screens.LanguageScreen)}
+        {this.renderScreenButton('Sanity', Screens.SanityScreen)}
+        {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
+        {this.renderScreenButton('Actions', Screens.ActionsScreen)}
+        {this.renderScreenButton('Visibility Expectation', Screens.VisibilityExpectationScreen)}
+        {isIos && this.renderScreenButton('Visibility Debug Artifacts', Screens.VisibilityScreen)}
+        {this.renderScreenButton('Integrative Actions', Screens.IntegActionsScreen)}
+        {this.renderScreenButton('FS Scroll Actions', Screens.ScrollActionsScreen)}
+        {this.renderScreenButton('Assertions', Screens.AssertionsScreen)}
+        {this.renderScreenButton('WaitFor', Screens.WaitForScreen)}
+        {this.renderScreenButton('Stress', Screens.StressScreen)}
+        {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
+        {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
+        {this.renderScreenButton('Orientation', Screens.Orientation)}
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {this.renderScreenButton('Permissions', Screens.Permissions)}
-              {this.renderInlineSeparator()}
-              {this.renderScreenButton('Alerts', Screens.AlertScreen)}
-            </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Permissions', Screens.Permissions)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Alerts', Screens.AlertScreen)}
+        </View>
 
-            {this.renderScreenButton('Network', Screens.NetworkScreen)}
-            {this.renderAnimationScreenButtons()}
+        {this.renderScreenButton('Network', Screens.NetworkScreen)}
+        {this.renderAnimationScreenButtons()}
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {this.renderScreenButton('Device', Screens.DeviceScreen)}
-              {this.renderInlineSeparator()}
-              {this.renderScreenButton('Device Tap', Screens.DeviceTapScreen)}
-            </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Device', Screens.DeviceScreen)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Device Tap', Screens.DeviceTapScreen)}
+        </View>
 
-            {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
-            {this.renderScreenButton('Location', Screens.LocationScreen)}
-            {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
-            {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
-            {this.renderScreenButton('WebView', Screens.WebViewScreen)}
-            {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
-            {isIos && this.renderScreenButton('System Dialogs', Screens.SystemDialogsScreen)}
+        {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
+        {this.renderScreenButton('Location', Screens.LocationScreen)}
+        {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
+        {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
+        {this.renderScreenButton('WebView', Screens.WebViewScreen)}
+        {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
+        {isIos && this.renderScreenButton('System Dialogs', Screens.SystemDialogsScreen)}
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {this.renderButton('Crash', () => {
-                // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
-                throw new Error('Simulated Crash');
-              })}
-              {isAndroid && this.renderInlineSeparator()}
-              {isAndroid && this.renderButton('UI Crash', () => {
-                // Killing main-thread while handling a tap will evidently cause
-                // the tap-action itself to fail and thus for an error to be responded
-                NativeModule.crashMainThread();
-              })}
-              {isAndroid && this.renderInlineSeparator()}
-              {isAndroid && this.renderButton('ANR', () => {
-                NativeModule.chokeMainThread();
-              })}
-            </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderButton('Crash', () => {
+            // Note: this crashes the native-modules thread (and thus an *uncaught* exception, on Android).
+            throw new Error('Simulated Crash');
+          })}
+          {isAndroid && this.renderInlineSeparator()}
+          {isAndroid && this.renderButton('UI Crash', () => {
+            // Killing main-thread while handling a tap will evidently cause
+            // the tap-action itself to fail and thus for an error to be responded
+            NativeModule.crashMainThread();
+          })}
+          {isAndroid && this.renderInlineSeparator()}
+          {isAndroid && this.renderButton('ANR', () => {
+            NativeModule.chokeMainThread();
+          })}
+        </View>
 
 
-            {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
+        {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
-              {this.renderInlineSeparator()}
-              {this.renderScreenButton('Shape Match', Screens.ShapeMatchGameScreen)}
-            </View>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Shape Match', Screens.ShapeMatchGameScreen)}
+        </View>
 
-            {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
+        {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
-            {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
+        {this.renderScreenButton('Element-Screenshots', Screens.ElementScreenshotScreen)}
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              {this.renderScreenButton('Init URL', Screens.LaunchUrlScreen)}
-              {isAndroid && this.renderInlineSeparator()}
-              {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
-              {isAndroid && this.renderInlineSeparator()}
-              {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
-            </View>
-          </View>
-        </SafeAreaView>
-      </SafeAreaProvider>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Init URL', Screens.LaunchUrlScreen)}
+          {isAndroid && this.renderInlineSeparator()}
+          {isAndroid && this.renderScreenButton('Launch Args', Screens.LaunchArgsScreen)}
+          {isAndroid && this.renderInlineSeparator()}
+          {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
+        </View>
+      </View>
     );
   }
 
@@ -166,7 +160,7 @@ export default class example extends Component {
 
     console.log('App@render: JS rendering main screen');
     return this.renderMainMenu();
-  }
+}
 
   setScreen(name) {
     this.setState({
