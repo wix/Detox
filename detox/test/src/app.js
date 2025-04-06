@@ -64,7 +64,7 @@ export default class example extends Component {
 
   renderMainMenu() {
     return (
-      <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, paddingTop: 25, paddingBottom: 40, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
@@ -149,7 +149,11 @@ export default class example extends Component {
 
   renderInnerScreen() {
     const Screen = this.state.screen;
-    return <Screen setScreen={this.setScreen}/>;
+    return (
+      <View style={{flex: 1, paddingTop: 25, paddingBottom: 50}}>
+        <Screen setScreen={this.setScreen}/>
+      </View>
+    );
   }
 
   render() {
