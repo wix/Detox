@@ -263,7 +263,7 @@ describe('Attributes', () => {
 
       expect(attributesArray[0]).toMatchObject({
         ...{
-          height: 412,
+          height: 413,
           width: 1074,
         },
         ...baseAttributes

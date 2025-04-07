@@ -21,6 +21,5 @@
       </FrameLayout>
     </LinearLayout>
     <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
-    <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
   </DecorView>
 </ViewHierarchy>

@@ -61,6 +61,7 @@ function convertToSSIMFormat(image) {
 async function expectViewHierarchySnapshotToMatch(viewHierarchy, snapshotName) {
   // Find all occurrences of number attributes and replace with `="<number>"`
   const viewHierarchyWithNumberReplaced = viewHierarchy.replace(/[=]"\d+"/g, '="<number>"');
+  console.log(viewHierarchyWithNumberReplaced);
   await expectSnapshotToMatch(viewHierarchyWithNumberReplaced, snapshotName);
 }
 
