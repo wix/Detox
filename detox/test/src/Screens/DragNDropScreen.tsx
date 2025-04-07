@@ -38,7 +38,7 @@ export default class DragNDropScreen extends Component {
                 }}>
                     <View testID="DragAndDropTarget" style={{ width: 100, height: 100, alignSelf: 'center', backgroundColor: 'yellow' }} />
 
-                    <View style={{ flex: 1, justifyContent: 'flex-end'}}>
+                    <View style={{ flex: 1, justifyContent: 'flex-end', padding: 20}}>
                         <DragNDropComponent />
                     </View>
                 </View>
