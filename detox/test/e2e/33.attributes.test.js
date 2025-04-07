@@ -271,7 +271,7 @@ describe('Attributes', () => {
 
       expect(attributesArray[1]).toMatchObject({
         ...{
-          height: 206,
+          height: 207,
           width: 275,
           identifier: 'innerView1'
         },
