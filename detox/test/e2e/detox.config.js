@@ -45,6 +45,7 @@ const config = {
       screenshot: {
         keepOnlyFailedTestsArtifacts: false,
       },
+      video : 'failing'
     },
   },
 
