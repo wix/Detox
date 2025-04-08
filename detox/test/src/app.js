@@ -150,7 +150,7 @@ export default class example extends Component {
   renderInnerScreen() {
     const Screen = this.state.screen;
     return (
-      <View style={{flex: 1, paddingTop: 25, paddingBottom: 50}}>
+      <View style={{flex: 1, paddingTop: 24, paddingBottom: 50}}>
         <Screen setScreen={this.setScreen}/>
       </View>
     );
