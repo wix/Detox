@@ -32,7 +32,7 @@ import UIKit
     init(message: String) {
         self.message = message
         super.init(frame: .zero)
-        setup(with: message)
+        //setup(with: message)
     }
 
     required init?(coder: NSCoder) {
