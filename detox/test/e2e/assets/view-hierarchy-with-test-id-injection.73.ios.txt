@@ -8,12 +8,14 @@
       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
-         <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
-         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_1" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
-          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_1_0" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
-         </RCTView>
-         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_2" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
-          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_2_0" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0_0" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0_1" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0_1_0" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          </RCTView>
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0_2" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" id="detox_temp_0_0_0_0_0_0_0_0_2_0" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          </RCTView>
          </RCTView>
         </RCTView>
        </RCTView>
