@@ -40,7 +40,8 @@ describe('Device tap', () => {
   });
 
   it('long press on button by coordinates with duration ignoring status bar', async () => {
-    const point = {x: 170, y: 185}
+    let y = device.getPlatform() === 'ios' ? 185 : 160;
+    const point = {x: 170, y: y}
     await device.longPress(point, 2000, true);
     await expect(element(by.text('Screen Long Custom Duration Pressed'))).toBeVisible();
   });
