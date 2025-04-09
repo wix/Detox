@@ -29,7 +29,7 @@ import static com.wix.detox.espresso.scroll.ScrollProbes.getScrollableProbe;
 public class ScrollHelper {
     private static final String LOG_TAG = "DetoxScrollHelper";
 
-    private static final int SCROLL_MOTIONS = 40;
+    private static final int SCROLL_MOTIONS = 25;
     private static final int MAX_FLING_WAITS = 3;
 
     private static final double DEFAULT_DEADZONE_PERCENT = 0.05;

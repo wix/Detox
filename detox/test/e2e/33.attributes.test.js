@@ -263,7 +263,7 @@ describe('Attributes', () => {
 
       expect(attributesArray[0]).toMatchObject({
         ...{
-          height: 412,
+          height: 413,
           width: 1074,
         },
         ...baseAttributes
@@ -280,7 +280,7 @@ describe('Attributes', () => {
 
       expect(attributesArray[2]).toMatchObject({
         ...{
-          height: 206,
+          height: 207,
           width: 275,
           identifier: 'innerView2'
         },

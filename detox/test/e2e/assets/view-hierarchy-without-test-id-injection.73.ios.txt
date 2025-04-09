@@ -8,12 +8,14 @@
       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
-         <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
-         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
-          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
-         </RCTView>
-         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
-          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          </RCTView>
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+          </RCTView>
          </RCTView>
         </RCTView>
        </RCTView>
