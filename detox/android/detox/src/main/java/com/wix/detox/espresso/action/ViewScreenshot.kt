@@ -21,7 +21,7 @@ class ScreenshotResult(private val bitmap: Bitmap) {
 
 class ViewScreenshot() {
     /**
-     * This function iterates the view hierachy down and manually draw all
+     * This function iterates the view hierachy down and manually draws all
      * TextureViews onto the exisiting canvas. This is a quite naive implementation
      * that does not properly handle all edge cases where e.g. the TextureView might 
      * be underneath a normal view.
