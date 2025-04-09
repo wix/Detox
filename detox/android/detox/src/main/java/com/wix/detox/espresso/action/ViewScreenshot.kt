@@ -16,30 +16,43 @@ class ScreenshotResult(private val bitmap: Bitmap) {
         return outStream.toByteArray()
     }
     fun asBase64String(): String =
-        Base64.encodeToString(asRawBytes(), Base64.NO_WRAP or Base64.NO_PADDING)
+            Base64.encodeToString(asRawBytes(), Base64.NO_WRAP or Base64.NO_PADDING)
 }
 
 class ViewScreenshot() {
     /**
-     * Texture views do not support to drar themselves. To still capture them for a screenshot
-     * we have to traverse and render them manually. Some libraries like react-native-skia use them.
+     * This function iterates the view hierachy down and manually draw all
+     * TextureViews onto the exisiting canvas. This is a quite naive implementation
+     * that does not properly handle all edge cases where e.g. the TextureView might 
+     * be underneath a normal view.
      */
-    fun drawTextureViews(view: View, canvas: Canvas) {
+    fun drawTextureViewsFromHirachyToCanvas(
+            view: View,
+            canvas: Canvas,
+            offsetLeft: Int,
+            offsetTop: Int
+    ) {
         if (view is TextureView) {
             val viewBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
             view.getBitmap(viewBitmap)
+
+            val locationOnScren = IntArray(2) { 0 }
+            view.getLocationOnScreen(locationOnScren)
+
+            // determine relative position to the screenshoted view
+            // to properly position it on the existing canvas
+            val left = (locationOnScren[0] - offsetLeft).toFloat()
+            val top = (locationOnScren[1] - offsetTop).toFloat()
+
+            canvas.translate(left, top)
             canvas.drawBitmap(viewBitmap, 0f, 0f, null)
+            canvas.translate(-left, -top)
         } else if (view is ViewGroup) {
             for (i in 0..(view.getChildCount() - 1)) {
                 val childContainerPos = view.getChildDrawingOrder(i)
                 val childView = view.getChildAt(childContainerPos)
 
-                val left = childView.left.toFloat()
-                val top = childView.top.toFloat()
-
-                canvas.translate(left, top);
-                this.drawTextureViews(childView, canvas)
-                canvas.translate(-left, -top);
+                this.drawTextureViewsFromHirachyToCanvas(childView, canvas, offsetLeft, offsetTop)
             }
         }
     }
@@ -48,8 +61,19 @@ class ViewScreenshot() {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
+        // normal views can simply be drawn via their own draw function
         view.draw(canvas)
-        this.drawTextureViews(view, canvas)
+
+        val locationOnScren = IntArray(2) { 0 }
+        view.getLocationOnScreen(locationOnScren)
+        // texture views do not support this, which is why we have to manually
+        // paint them on top of the regular view screenshot to include them
+        this.drawTextureViewsFromHirachyToCanvas(
+                view,
+                canvas,
+                locationOnScren[0],
+                locationOnScren[1]
+        )
 
         return ScreenshotResult(bitmap)
     }
