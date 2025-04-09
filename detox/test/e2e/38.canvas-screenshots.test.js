@@ -1,6 +1,6 @@
 const { expectElementSnapshotToMatch } = require('./utils/snapshot');
 
-describe('Canvas screenshots', () => {
+describe(':android: Canvas screenshots', () => {
   let fancyElement;
 
   beforeEach(async () => {
