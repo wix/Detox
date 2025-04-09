@@ -1,19 +1,24 @@
-const os = require('os');
-const path = require('path');
+const { clean } = require('./utils/frameworkUtils');
 
-const fs = require('fs-extra');
+module.exports = {
+  command: 'clean-framework-cache',
+  desc: 'Cleans cached versions of the Detox framework and XCUITest-runner in ~/Library/Detox. ' +
+    'Use the `--detox` and `--xcuitest` flags to selectively clean the framework components. ' +
+    'By default, both the injected Detox library and the XCUITest test runner are cleaned. (MacOS only)',
 
-const detox = require('../internals');
+  builder: yargs => yargs
+  .option('detox', {
+    describe: 'Clean only the injected Detox library',
+    type: 'boolean',
+    default: false
+  })
+  .option('xcuitest', {
+    describe: 'Clean only the XCUITest test runner',
+    type: 'boolean',
+    default: false
+  }),
 
-module.exports.command = 'clean-framework-cache';
-module.exports.desc = "Deletes all Detox cached frameworks from ~/Library/Detox. Cached framework can be rebuilt using the 'build-framework-cache' command. (macOS only)";
-
-module.exports.handler = async function cleanFrameworkCache() {
-  if (os.platform() === 'darwin') {
-    const frameworkPath = path.join(os.homedir(), '/Library/Detox');
-    detox.log.info(`Removing framework binaries from ${frameworkPath}`);
-    await fs.remove(frameworkPath);
-  } else {
-    detox.log.info(`The command is supported only on macOS, skipping the execution.`);
+  handler: async function(argv) {
+    await clean(argv.detox, argv.xcuitest);
   }
 };

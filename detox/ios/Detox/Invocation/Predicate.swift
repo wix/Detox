@@ -65,20 +65,32 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
         if ReactNativeSupport.isReactNativeApp == false {
           return ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
         } else {
-          //Will crash if RN app and neither class exists
-          let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
+            let possibleRNClasses: [AnyClass] = [
+                NSClassFromString("RCTParagraphComponentView"),
+                NSClassFromString("RCTText"),
+                NSClassFromString("RCTTextView")
+            ].compactMap { $0 }
 
-          let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
-            try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)),
-            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
-          ], modifiers: []), modifiers: [Modifier.not])
-          descendantPredicate.hidden = true
+            guard !possibleRNClasses.isEmpty else {
+                fatalError("No React Native text component classes found")
+            }
 
-          return AndCompoundPredicate(predicates: [
-            ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex),
-            descendantPredicate
-          ], modifiers: [])
+            let typePredicates = possibleRNClasses.map { rnClass in
+                try! KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(rnClass))
+            }
+
+            let descendantPredicate = DescendantPredicate(predicate: AndCompoundPredicate(predicates: [
+                OrCompoundPredicate(predicates: typePredicates, modifiers: []),
+                ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex)
+            ], modifiers: []), modifiers: [Modifier.not])
+            descendantPredicate.hidden = true
+
+            return AndCompoundPredicate(predicates: [
+                ValuePredicate(kind: kind, modifiers: modifiers, value: label, requiresAccessibilityElement: true, isRegex: isRegex),
+                descendantPredicate
+            ], modifiers: [])
         }
+
       case Kind.text:
         let text = dictionaryRepresentation[Keys.value] as! String
         var orPredicates = [
@@ -88,9 +100,21 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
         ]
 
         if ReactNativeSupport.isReactNativeApp == true {
-          //Will crash if RN app and neither class exists
-          let RCTTextViewClass : AnyClass = NSClassFromString("RCTText") ?? NSClassFromString("RCTTextView")!
-          orPredicates.append(try KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(RCTTextViewClass)))
+            let possibleRNClasses: [AnyClass] = [
+                NSClassFromString("RCTParagraphComponentView"),
+                NSClassFromString("RCTText"),
+                NSClassFromString("RCTTextView")
+            ].compactMap { $0 }
+
+            guard !possibleRNClasses.isEmpty else {
+                fatalError("No React Native text component classes found")
+            }
+
+            possibleRNClasses.forEach { rnClass in
+                let predicate = try! KindOfPredicate(kind: Kind.type, modifiers: [], className: NSStringFromClass(rnClass))
+
+                orPredicates.append(predicate)
+            }
         }
 
         let orCompoundPredicate = OrCompoundPredicate(predicates: orPredicates, modifiers: [])
@@ -134,6 +158,13 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
 
   func predicateForQuery() -> NSPredicate {
     var rv = innerPredicateForQuery()
+
+    // Filter out `RCTAccessibilityElement` instances -
+    // React Native injects these internal accessibility bridges into the view hierarchy to handle accessibility
+    // mappings between JS and native layers
+    rv = NSCompoundPredicate(
+        andPredicateWithSubpredicates:
+            [rv, NSPredicate(format: "NOT (class.description = %@)", "RCTAccessibilityElement")])
 
     if modifiers.contains(Modifier.not) {
       rv = NSCompoundPredicate(notPredicateWithSubpredicate: rv)

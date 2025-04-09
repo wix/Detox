@@ -15,6 +15,7 @@ describe('start', () => {
         apps: {},
         artifacts: {},
         behavior: {},
+        commands: [],
         errorComposer: new DetoxConfigErrorComposer(),
         device: {},
         session: {}
@@ -54,7 +55,7 @@ describe('start', () => {
 
   it('spawns the start script from the composed apps config', async () => {
     cmd = buildMockCommand();
-    detox.config.apps.default = { start: `${cmd.cmd} --arg1=value1 --arg2 value2` };
+    detox.config.commands = [{ appName: 'default', start: `${cmd.cmd} --arg1=value1 --arg2 value2` }];
     await callCli('./start', 'start').catch(() => {});
 
     expect(cmd.calls).toEqual([
@@ -69,7 +70,7 @@ describe('start', () => {
 
   it('forwards passthrough arguments to the start script', async () => {
     cmd = buildMockCommand();
-    detox.config.apps.default = { start: `${cmd.cmd} --arg1` };
+    detox.config.commands = [{ appName: 'default', start: `${cmd.cmd} --arg1` }];
     await callCli('./start', 'start -- --arg2').catch(() => {});
 
     expect(cmd.calls).toEqual([
@@ -83,8 +84,8 @@ describe('start', () => {
 
   it('stops if one of the scripts is failing', async () => {
     cmd = buildMockCommand({ exitCode: 0, sleep: 100 });
-    detox.config.apps.app1 = { start: 'node --eval="process.exit(3)"' };
-    detox.config.apps.app2 = { start: cmd.cmd };
+    detox.config.commands.push({ appName: 'app1', start: 'node --eval="process.exit(3)"' });
+    detox.config.commands.push({ appName: 'app2', start: cmd.cmd });
     await expect(callCli('./start', 'start')).rejects.toThrowError(/Command exited with code 3/);
 
     expect(cmd.calls).toHaveLength(0);
@@ -95,8 +96,8 @@ describe('start', () => {
     ['--force'],
   ])('does not stop in %s mode if one of the scripts is failing', async (__force) => {
     cmd = buildMockCommand({ sleep: 100 });
-    detox.config.apps.app1 = { start: 'node --eval="process.exit(3)"' };
-    detox.config.apps.app2 = { start: cmd.cmd };
+    detox.config.commands.push({ appName: 'app1', start: 'node --eval="process.exit(3)"' });
+    detox.config.commands.push({ appName: 'app2', start: cmd.cmd });
 
     await callCli('./start', `start ${__force}`);
     expect(cmd.calls).toHaveLength(1);

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.facebook.react.ReactApplication;
 import com.wix.detox.common.UIThread;
 import com.wix.detox.reactnative.ReactNativeExtension;
-import com.wix.detox.reactnative.idlingresources.NetworkIdlingResource;
+import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource;
 
 import org.hamcrest.Matcher;
 
@@ -21,18 +21,21 @@ import java.util.ArrayList;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static com.wix.detox.espresso.UiAutomatorHelper.getStatusBarHeightDps;
 
 /**
  * Created by rotemm on 26/12/2016.
  */
 public class EspressoDetox {
     private static final String LOG_TAG = "detox";
+
+    private static int calculateAdjustedY(View view, Integer y, boolean shouldIgnoreStatusBar) {
+        return shouldIgnoreStatusBar ? y + getStatusBarHeightDps(view) : y;
+    }
 
     public static Object perform(Matcher<View> matcher, ViewAction action) {
         ViewActionPerformer performer = ViewActionPerformer.forAction(action);
@@ -118,6 +121,54 @@ public class EspressoDetox {
             @Override
             public void run() {
                 NetworkIdlingResource.setURLBlacklist(urls);
+            }
+        });
+    }
+
+    public static void tap(Integer x, Integer y, boolean shouldIgnoreStatusBar) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "tap on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                int adjustedY = calculateAdjustedY(view, y, shouldIgnoreStatusBar);
+                ViewAction action = DetoxAction.tapAtLocation(x, adjustedY);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
+            }
+        });
+    }
+
+    public static void longPress(Integer x, Integer y, boolean shouldIgnoreStatusBar) {
+        longPress(x, y, null, shouldIgnoreStatusBar);
+    }
+
+    public static void longPress(Integer x, Integer y, Integer duration, boolean shouldIgnoreStatusBar) {
+        onView(isRoot()).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "long press on screen";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                int adjustedY = calculateAdjustedY(view, y, shouldIgnoreStatusBar);
+                ViewAction action = DetoxAction.longPress(x, adjustedY, duration);
+                action.perform(uiController, view);
+                uiController.loopMainThreadUntilIdle();
             }
         });
     }

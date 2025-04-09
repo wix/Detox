@@ -1,7 +1,11 @@
 // @ts-nocheck
 const testSummaries = require('./artifacts/__mocks__/testSummaries.mock');
 const configuration = require('./configuration');
+const DetoxPilot = require('./pilot/DetoxPilot');
 const Deferred = require('./utils/Deferred');
+jest.mock('@wix-pilot/detox', () => ({
+  DetoxFrameworkDriver: jest.fn(),
+}));
 
 jest.mock('./utils/logger');
 jest.mock('./client/Client');
@@ -9,6 +13,21 @@ jest.mock('./utils/AsyncEmitter');
 jest.mock('./invoke');
 jest.mock('./utils/wrapWithStackTraceCutter');
 jest.mock('./environmentFactory');
+
+
+jest.mock('./pilot/DetoxPilot', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      init: jest.fn(),
+      start: jest.fn(),
+      perform: jest.fn(),
+      autopilot: jest.fn(),
+      extendAPICatalog: jest.fn(),
+      end: jest.fn(),
+      isInitialized: jest.fn().mockReturnValue(false),
+    };
+  });
+});
 
 describe('DetoxWorker', () => {
   const fakeCookie = {
@@ -85,6 +104,7 @@ describe('DetoxWorker', () => {
       [symbols.allocateDevice]: jest.fn().mockResolvedValue(fakeCookie),
       [symbols.deallocateDevice]: jest.fn(),
     };
+
   });
 
   describe('when DetoxWorker#init() is called', () => {
@@ -290,6 +310,24 @@ describe('DetoxWorker', () => {
         await expect(init).rejects.toThrowError('Mock validation failure');
       });
     });
+
+    describe('pilot initialization', () => {
+      beforeEach(async () => {
+        await init();
+      });
+
+
+      it('should assign the DetoxPilot instance to the pilot property', () => {
+        expect(detox.pilot).toBeDefined();
+
+        const detoxPilot = new DetoxPilot();
+        expect(typeof detox.pilot).toBe(typeof detoxPilot);
+      });
+
+      it('should not initialize the pilot', () => {
+        expect(detox.pilot.init).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('when DetoxWorker#@onTestStart() is called', () => {
@@ -297,41 +335,55 @@ describe('DetoxWorker', () => {
       detox = await new Detox(detoxContext).init();
     });
 
-    it('should validate test summary object', async () => {
-      await expect(detox.onTestStart('Test')).rejects.toThrowError(
-        /Invalid test summary was passed/
-      );
-    });
+    describe('with an invalid test summary', () => {
+      it('should validate test summary object', async () => {
+        await expect(detox.onTestStart('Test')).rejects.toThrowError(
+          /Invalid test summary was passed/
+        );
+      });
 
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
-    });
-
-    it('should validate test summary status', async () => {
-      await expect(detox.onTestStart({
-        ...testSummaries.running(),
-        status: undefined,
-      })).rejects.toThrowError(/Invalid test summary status/);
+      it('should validate test summary status', async () => {
+        await expect(detox.onTestStart({
+          ...testSummaries.running(),
+          status: undefined,
+        })).rejects.toThrowError(/Invalid test summary status/);
+      });
     });
 
     describe('with a valid test summary', () => {
-      beforeEach(() => detox.onTestStart(testSummaries.running()));
+      beforeEach(() => {
+        detox.onTestStart(testSummaries.running());
+      });
 
       it('should notify artifacts manager about "testStart', () =>
         expect(artifactsManager.onTestStart).toHaveBeenCalledWith(testSummaries.running()));
 
+      it('should not start pilot if pilot init was not called', async () => {
+        try {
+          await detox.onTestStart('Test');
+        } catch {}
+
+        expect(detox.pilot.start).not.toHaveBeenCalled();
+      });
+
+      it('should start pilot if pilot init was called', async () => {
+        detox.pilot.isInitialized = () => true;
+
+        try {
+          await detox.onTestStart('Test');
+        } catch {}
+
+        expect(detox.pilot.start).toHaveBeenCalled();
+      });
+
       it('should not relaunch app', async () => {
-        await detox.onTestStart(testSummaries.running());
         expect(runtimeDevice.launchApp).not.toHaveBeenCalled();
       });
 
       it('should not dump pending network requests', async () => {
-        await detox.onTestStart(testSummaries.running());
         expect(client().dumpPendingRequests).not.toHaveBeenCalled();
       });
+
     });
   });
 
@@ -352,6 +404,10 @@ describe('DetoxWorker', () => {
 
       it('should notify artifacts manager about "testDone"', () =>
         expect(artifactsManager.onTestDone).toHaveBeenCalledWith(testSummaries.passed()));
+
+      it('should not end pilot if pilot init was not called', async () => {
+        expect(detox.pilot.end).not.toHaveBeenCalled();
+      });
     });
 
     describe('with a failed test summary (due to failed asseration)', () => {
@@ -366,6 +422,22 @@ describe('DetoxWorker', () => {
 
       it('should dump pending network requests', () =>
         expect(client().dumpPendingRequests).toHaveBeenCalled());
+    });
+
+    it('should end pilot with cache enabled if test has passed', async () => {
+      detox.pilot.isInitialized = () => true;
+
+      await detox.onTestDone(testSummaries.passed());
+
+      expect(detox.pilot.end).toHaveBeenCalledWith(true);
+    });
+
+    it('should end pilot without cache if test has failed', async () => {
+      detox.pilot.isInitialized = () => true;
+
+      await detox.onTestDone(testSummaries.failed());
+
+      expect(detox.pilot.end).toHaveBeenCalledWith(false);
     });
   });
 

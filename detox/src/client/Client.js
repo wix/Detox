@@ -225,6 +225,12 @@ class Client {
     }));
   }
 
+  async generateViewHierarchyXml({ shouldInjectTestIds }) {
+    return await this.sendAction(new actions.GenerateViewHierarchyXml({
+      shouldInjectTestIds
+    }));
+  }
+
   async currentStatus() {
     return await this.sendAction(new actions.CurrentStatus());
   }

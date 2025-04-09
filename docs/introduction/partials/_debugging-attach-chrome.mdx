@@ -1,0 +1,23 @@
+Edit your test file. Mark the test you wish to debug as `it.only`, and then add a `debugger` statement
+inside your test to mark a starting point, e.g.:
+
+```diff title="e2e/starter.test.js"
+ describe('Example', () => {
+   beforeAll(async () => {
+     await device.launchApp();
+   });
+   
+-   it('should debug nicely :-)', async () => {
++   it.only('should debug nicely :-)', async () => {
+     await element(by.text('Filter')).tap();
++     debugger;
+
+   });
+```
+
+Open `Google Chrome` and go to `chrome://inspect` tab, where you'll see `./node_modules/.bin/jest` as a remote
+target waiting until you click `inspect` to attach to it.
+
+![](../../img/inspect-brk.png)
+
+Happy debugging!

@@ -13,6 +13,7 @@ describe('Android driver', () => {
   let getAbsoluteBinaryPath;
   let eventEmitter;
   let detoxApi;
+  let espressoDetoxApi;
   let invocationManager;
   let adb;
   let aapt;
@@ -494,6 +495,22 @@ describe('Android driver', () => {
     });
   });
 
+  describe('device tap and longPress', () => {
+    const point = { x: 100, y: 200 };
+    const duration = 900;
+    const shouldIgnoreStatusBar = false;
+
+    it(`should call tap with the right params`, async () => {
+      await uut.tap(point, shouldIgnoreStatusBar);
+      expect(espressoDetoxApi.tap).toHaveBeenCalledWith(point.x, point.y, shouldIgnoreStatusBar);
+    });
+
+    it(`should call longPress with the right params`, async () => {
+      await uut.longPress(point, duration, shouldIgnoreStatusBar);
+      expect(espressoDetoxApi.longPress).toHaveBeenCalledWith(point.x, point.y, duration, shouldIgnoreStatusBar);
+    });
+  });
+
   const setUpModuleDepMocks = () => {
     jest.mock('../../../../utils/logger');
     logger = require('../../../../utils/logger');
@@ -535,6 +552,9 @@ describe('Android driver', () => {
 
     jest.mock('../../../../android/espressoapi/Detox');
     detoxApi = require('../../../../android/espressoapi/Detox');
+
+    jest.mock('../../../../android/espressoapi/EspressoDetox');
+    espressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
 
     const InvocationManager = jest.genMockFromModule('../../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();

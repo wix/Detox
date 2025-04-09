@@ -5,6 +5,7 @@ const Client = require('./client/Client');
 const environmentFactory = require('./environmentFactory');
 const { DetoxRuntimeErrorComposer } = require('./errors');
 const { InvocationManager } = require('./invoke');
+const DetoxPilot = require('./pilot/DetoxPilot');
 const symbols = require('./realms/symbols');
 const AsyncEmitter = require('./utils/AsyncEmitter');
 const uuid = require('./utils/uuid');
@@ -58,6 +59,12 @@ class DetoxWorker {
     this.by = null;
     /** @type {Detox.WebFacade} */
     this.web = null;
+    /** @type {Detox.SystemFacade} */
+    this.system = null;
+    /** @type {Detox.PilotFacade} */
+    this.pilot = null;
+    /** @type {Detox.PilotFacade} */
+    this.copilot = null;
 
     this._deviceCookie = null;
 
@@ -97,7 +104,6 @@ class DetoxWorker {
     // @ts-ignore
     this._sessionConfig.sessionId = sessionConfig.sessionId || uuid.UUID();
     this._runtimeErrorComposer.appsConfig = this._appsConfig;
-
     this._client = new Client(sessionConfig);
     this._client.terminateApp = async () => {
       // @ts-ignore
@@ -105,6 +111,14 @@ class DetoxWorker {
         await this.device.terminateApp();
       }
     };
+    this.pilot = new DetoxPilot();
+    Object.defineProperty(this, 'copilot', {
+      get: () => {
+        console.warn('Warning: "copilot" is deprecated. Please use "pilot" instead.');
+        return this.pilot;
+      },
+      configurable: true,
+    });
 
     yield this._client.connect();
 
@@ -157,11 +171,16 @@ class DetoxWorker {
       const injectedGlobals = {
         ...matchers,
         device: this.device,
+        pilot: this.pilot,
         detox: this,
       };
 
       this._injectedGlobalProperties = Object.keys(injectedGlobals);
       Object.assign(DetoxWorker.global, injectedGlobals);
+      Object.defineProperty(DetoxWorker.global, 'copilot', {
+        get: () => this.copilot,
+        configurable: true,
+      });
     }
 
     // @ts-ignore
@@ -218,7 +237,11 @@ class DetoxWorker {
     yield this._artifactsManager.onRunDescribeStart(...args);
   };
 
-  onTestStart = function* (_signal, testSummary) {
+  onTestStart = function* (_signal, testSummary){
+    if (this.pilot.isInitialized()) {
+      this.pilot.start();
+    }
+
     this._validateTestSummary('beforeEach', testSummary);
 
     yield this._dumpUnhandledErrorsIfAny({
@@ -246,6 +269,10 @@ class DetoxWorker {
       pendingRequests: testSummary.timedOut,
       testName: testSummary.fullName,
     });
+
+    if (this.pilot.isInitialized()) {
+      this.pilot.end(testSummary.status === 'passed');
+    }
   };
 
   onRunDescribeFinish = function* (_signal, ...args) {

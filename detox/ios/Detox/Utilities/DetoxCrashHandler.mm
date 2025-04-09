@@ -21,42 +21,38 @@
 __attribute__ ((visibility ("hidden")))
 OBJC_EXTERN void __DTXHandleCrash(NSException* exception, NSNumber* signal, NSString* other)
 {
-	NSNumber* threadNumber = [[NSThread currentThread] valueForKeyPath:@"private.seqNum"];
-	NSString* queueName = @"";
+    @autoreleasepool {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-	dispatch_queue_t currentQueue = dispatch_get_current_queue();
+        const char * queue_label = dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL);
 #pragma clang diagnostic pop
-	if(currentQueue)
-	{
-		queueName = [NSString stringWithUTF8String:dispatch_queue_get_label(currentQueue)];
-	}
-	
-	NSMutableDictionary* report = [@{@"threadNumber": threadNumber, @"queueName": queueName} mutableCopy];
-	if(exception)
-	{
-		NSString* prefix = @"Exception was thrown: ";
-		if([exception isKindOfClass:DTXTestAssertionException.class])
-		{
-			prefix = @"THIS SHOULD NOT HAVE HAPPENED AND IS A BUG IN DETOX LOGIC. PLEASE OPEN AN ISSUE IN https://github.com/wix/Detox/issues/new/choose AND POST THIS CRASH\n";
-		}
-		
-		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@\n%@\n%@", prefix, exception.name, exception.reason, exception.dtx_demangledCallStackSymbols];
-		report[@"exceptionName"] = exception.name ?: @"<Unknown>";
-		report[@"exceptionReason"] = exception.reason ?: @"<Unknown>";
-	}
-	else if(signal)
-	{
-		report[@"errorDetails"] = [NSString stringWithFormat:@"Signal %@ was raised\n%@", signal, [NSThread dtx_demangledCallStackSymbols]];
-	}
-	else if(other)
-	{
-		report[@"errorDetails"] = [NSString stringWithFormat:@"%@\n%@", other, [NSThread dtx_demangledCallStackSymbols]];;
-	}
-	
-	[DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
-	
-	[NSThread sleepForTimeInterval:5];
+
+        NSMutableDictionary* report = [@{
+            @"threadNumber": [[NSThread currentThread] valueForKeyPath:@"private.seqNum"] ?: @(-1),
+            @"queueName": [NSString stringWithCString:dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)encoding:NSASCIIStringEncoding]
+        } mutableCopy];
+
+        NSString* errorDetails;
+        if (exception) {
+            errorDetails = [NSString stringWithFormat:@"%@\n%@\n%@", exception.name, exception.reason, exception.dtx_demangledCallStackSymbols];
+        } else if (signal) {
+            errorDetails = [NSString stringWithFormat:@"Signal %@ raised\n%@", signal, [NSThread dtx_demangledCallStackSymbols]];
+        } else {
+            errorDetails = [NSString stringWithFormat:@"%@\n%@", other ?: @"", [NSThread dtx_demangledCallStackSymbols]];
+        }
+
+        report[@"errorDetails"] = errorDetails;
+
+        if (NSThread.isMainThread) {
+            [DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
+        } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [DTXDetoxManager.sharedManager notifyOnCrashWithDetails:report];
+        });
+        }
+
+        [NSRunLoop.mainRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    }
 }
 
 static NSSet<NSNumber*>* __supportedSignals;
@@ -115,65 +111,57 @@ OBJC_EXTERN void __DTXHandleSignal(int signal)
 OBJC_EXTERN std::type_info *__cxa_current_exception_type(void);
 OBJC_EXTERN void __cxa_rethrow(void);
 
-thread_local BOOL __alreadyTerminating = NO;
+static thread_local BOOL __alreadyTerminating = NO;
 
 static void (*__old_terminate)(void) = nullptr;
 __attribute__ ((visibility ("hidden")))
-static void __dtx_terminate(void)
+static void __dtx_terminate()
 {
-	if(__alreadyTerminating)
-	{
-		(*__old_terminate)();
-		return;
-	}
-	
-	__alreadyTerminating = YES;
-	
-	std::type_info* exceptionType = __cxa_current_exception_type();
-	if (exceptionType == nullptr)
-	{
-		// No current exception.
-		__DTXHandleCrash(nil, nil, @"Exception of unknown type was thrown");
-		(*__old_terminate)();
-	}
-	else
-	{
-		// There is a current exception. Check if it's an objc exception.
-		@try
-		{
-			__cxa_rethrow();
-		}
-		@catch (NSException* e)
-		{
-			__DTXHandleCrash(e, nil, nil);
-			(*__old_terminate)();
-		}
-		@catch (id obj)
-		{
-			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"ObjC exception of type “%@” was thrown", [obj class]]);
-			(*__old_terminate)();
-		}
-		@catch (...)
-		{
-			const char* exceptionTypeMangledName = exceptionType->name();
-			
-			int status = -1;
-			const char* demangled = abi::__cxa_demangle(exceptionTypeMangledName, NULL, NULL, &status);
-			NSString* exceptionTypeName = nil;
-			if(demangled)
-			{
-				exceptionTypeName = [NSString stringWithUTF8String:demangled];
-				free((void*)demangled);
-			}
-			else
-			{
-				exceptionTypeName = [NSString stringWithUTF8String:exceptionTypeMangledName];
-			}
-			
-			__DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type “%@” was thrown", exceptionTypeName]);
-			(*__old_terminate)();
-		}
-	}
+    static thread_local BOOL terminating = NO;
+    if (terminating) return;
+    terminating = YES;
+
+    @autoreleasepool {
+        try {
+            if (auto eptr = std::current_exception()) {
+                std::rethrow_exception(eptr);
+            }
+        } catch (const std::exception& e) {
+            __DTXHandleCrash(nil, nil, [NSString stringWithUTF8String:e.what()]);
+        } catch (NSException* e)
+        {
+            __DTXHandleCrash(e, nil, nil);
+        } catch (id obj) {
+            __DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"ObjC exception of type “%@” was thrown", [obj class]]);
+        } catch (...) {
+            std::type_info* exceptionType = __cxa_current_exception_type();
+
+            if (exceptionType == nullptr)
+            {
+                __DTXHandleCrash(nil, nil, @"Exception of unknown type was thrown");
+            } else {
+                const char* exceptionTypeMangledName = exceptionType->name();
+
+                int status = -1;
+                const char* demangled = abi::__cxa_demangle(exceptionTypeMangledName, NULL, NULL, &status);
+                NSString* exceptionTypeName = nil;
+                if(demangled)
+                {
+                    exceptionTypeName = [NSString stringWithUTF8String:demangled];
+                    free((void*)demangled);
+                }
+                else
+                {
+                    exceptionTypeName = [NSString stringWithUTF8String:exceptionTypeMangledName];
+                }
+
+
+                __DTXHandleCrash(nil, nil, [NSString stringWithFormat:@"C++ exception of type “%@” was thrown", exceptionTypeName]);
+            }
+        }
+
+        if (__old_terminate) __old_terminate();
+    }
 }
 
 static std::terminate_handler (*__old_std_set_terminate)(std::terminate_handler) = nil;

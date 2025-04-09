@@ -27,7 +27,6 @@ private const val SCROLL_RANGE_SAFE_PERCENT = 0.9f // ScrollHelper.SCROLL_RANGE_
 
 @Config(
     qualifiers = "xxxhdpi", // 1280x1880
-    sdk = [33]
 )
 @RunWith(RobolectricTestRunner::class)
 class ScrollHelperTest {
@@ -95,6 +94,7 @@ class ScrollHelperTest {
         // Calculate where the scroll should end
         val targetX = amountInPx +
             touchSlopPx +
+            safetyMarginPx +
             INSETS_SIZE
 
         assertEquals(targetX, upEvent.x, 0.0f)
@@ -110,6 +110,7 @@ class ScrollHelperTest {
         // Calculate where the scroll should end
         val targetY = amountInPx +
             touchSlopPx +
+            safetyMarginPx +
             INSETS_SIZE
 
         assertEquals(displayWidth / 2.0, upEvent.x.toDouble(), 0.0)

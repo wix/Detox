@@ -194,16 +194,17 @@ public class ScrollHelper {
      * @return a Point object, denoting the scroll start point.
      */
     private static Point getScrollStartPoint(View view, @MotionDir int direction, Float startOffsetPercentX, Float startOffsetPercentY) {
-        Point result = getGlobalViewLocation(view);
+        Point globalViewPoint = getGlobalViewLocation(view);
 
         // 1. Calculate the scroll start point, with respect to the view's location.
         int[] coordinates = getScrollStartOffsetInView(view, direction, startOffsetPercentX, startOffsetPercentY);
 
-        // 2. Make sure that the start point is within the scrollable area, taking into account the system gesture insets.
-        coordinates = applyScreenInsets(view, direction, coordinates[0], coordinates[1]);
+        globalViewPoint.offset(coordinates[0], coordinates[1]);
 
-        result.offset(coordinates[0], coordinates[1]);
-        return result;
+        // 2. Make sure that the start point is within the scrollable area, taking into account the system gesture insets.
+        coordinates = applyScreenInsets(view, direction, globalViewPoint.x, globalViewPoint.y);
+
+        return new Point(coordinates[0], coordinates[1]);
     }
 
     /**
@@ -237,8 +238,8 @@ public class ScrollHelper {
             Log.w(LOG_TAG, "Could not get root window insets");
         } else {
             Insets gestureInsets = rootWindowInsets.getSystemGestureInsets();
-            minX = gestureInsets.left;
-            minY = gestureInsets.top;
+            minX += gestureInsets.left;
+            minY += gestureInsets.top;
             maxX -= gestureInsets.right;
             maxY -= gestureInsets.bottom;
 

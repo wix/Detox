@@ -81,6 +81,12 @@ class DetoxContext {
 
   web = funpermaproxy.callable(() => this[symbols.worker].web);
 
+  system = funpermaproxy.callable(() => this[symbols.worker].system);
+
+  pilot = funpermaproxy.callable(() => this[symbols.worker].pilot);
+
+  copilot = funpermaproxy.callable(() => this[symbols.worker].copilot);
+
   get DetoxConstants() {
     return DetoxConstants;
   }

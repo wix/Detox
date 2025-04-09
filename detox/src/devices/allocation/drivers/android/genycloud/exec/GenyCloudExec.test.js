@@ -19,11 +19,17 @@ describe('Genymotion-cloud executable', () => {
   const instanceUUID = 'mock-uuid';
   const instanceName = 'detox-instance1';
 
-  const givenSuccessResult = () => exec.mockResolvedValue({
+  const givenSuccessJSONResult = () => exec.mockResolvedValue({
     stdout: JSON.stringify(successResponse),
   });
-  const givenErrorResult = () => exec.mockRejectedValue({
+  const givenSuccessTextualResult = () => exec.mockResolvedValue({
+    stdout: successResponse,
+  });
+  const givenErrorJSONResult = () => exec.mockRejectedValue({
     stderr: JSON.stringify(failResponse),
+  });
+  const givenErrorTextualResult = (errorMessage) => exec.mockRejectedValue({
+    stderr: errorMessage,
   });
 
   let exec;
@@ -40,43 +46,62 @@ describe('Genymotion-cloud executable', () => {
     delete process.env.GMSAAS_USER_AGENT_EXTRA_DATA;
   });
 
-  describe.each([
-    ['version', () => uut.getVersion(), `"mock/path/to/gmsaas" --format compactjson --version`],
-    ['Get Recipe', () => uut.getRecipe(recipeName), `"mock/path/to/gmsaas" --format compactjson recipes list --name "${recipeName}"`],
-    ['Get Instance', () => uut.getInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances get ${instanceUUID}`],
-    ['Get Instances', () => uut.getInstances(), `"mock/path/to/gmsaas" --format compactjson instances list -q`],
-    ['Start Instance', () => uut.startInstance(recipeUUID, instanceName), `"mock/path/to/gmsaas" --format compactjson instances start --no-wait ${recipeUUID} "${instanceName}"`, { retries: 0 }],
-    ['ADB Connect', () => uut.adbConnect(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances adbconnect ${instanceUUID}`],
-    ['Stop Instance', () => uut.stopInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances stop ${instanceUUID}`, { retries: 3 }],
-])(`%s command`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
-    it('should execute command by name', async () => {
-      givenSuccessResult();
+  describe('JSON command', () => {
+    describe.each([
+      ['version', () => uut.getVersion(), `"mock/path/to/gmsaas" --format compactjson --version`],
+      ['Get Recipe', () => uut.getRecipe(recipeName), `"mock/path/to/gmsaas" --format compactjson recipes list --name "${recipeName}"`],
+      ['Get Instance', () => uut.getInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances get ${instanceUUID}`],
+      ['Get Instances', () => uut.getInstances(), `"mock/path/to/gmsaas" --format compactjson instances list -q`],
+      ['Start Instance', () => uut.startInstance(recipeUUID, instanceName), `"mock/path/to/gmsaas" --format compactjson instances start --no-wait ${recipeUUID} "${instanceName}"`, { retries: 0 }],
+      ['ADB Connect', () => uut.adbConnect(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances adbconnect ${instanceUUID}`, { retries: 0 }],
+      ['Stop Instance', () => uut.stopInstance(instanceUUID), `"mock/path/to/gmsaas" --format compactjson instances stop ${instanceUUID}`, { retries: 3 }],
+    ])(`%s`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
+      it('should execute command by name', async () => {
+        givenSuccessJSONResult();
 
-      const expectedOptions = {
-        ...expectedExecOptions,
-        statusLogs: {
-          retrying: true,
-        }
-      };
+        await commandExecFn();
+        expect(exec).toHaveBeenCalledWith(expectedExec, expect.objectContaining(expectedExecOptions || {}));
+      });
 
-      await commandExecFn();
-      expect(exec).toHaveBeenCalledWith(
-        expectedExec,
-        expectedOptions,
-      );
+      it('should return the result', async () => {
+        givenSuccessJSONResult();
+
+        const result = await commandExecFn();
+        expect(result).toEqual(successResponse);
+      });
+
+      it('should fail upon an error result', async () => {
+        givenErrorJSONResult();
+
+        await expect(commandExecFn()).rejects.toThrowError(JSON.stringify(failResponse));
+      });
     });
+  });
 
-    it('should return the result', async () => {
-      givenSuccessResult();
+  describe('Textual command', () => {
+    describe.each([
+      ['Doctor', () => uut.doctor(), `"mock/path/to/gmsaas" --format text doctor`, { retries: 0 }],
+    ])(`%s`, (commandName, commandExecFn, expectedExec, expectedExecOptions) => {
+      it('should execute command by name', async () => {
+        givenSuccessTextualResult();
 
-      const result = await commandExecFn();
-      expect(result).toEqual(successResponse);
-    });
+        await commandExecFn();
+        expect(exec).toHaveBeenCalledWith(expectedExec, expect.objectContaining(expectedExecOptions || {}));
+      });
 
-    it('should fail upon an error result', async () => {
-      givenErrorResult();
+      it('should return the result', async () => {
+        givenSuccessTextualResult();
 
-      await expect(commandExecFn()).rejects.toThrowError(JSON.stringify(failResponse));
+        const result = await commandExecFn();
+        expect(result).toEqual(successResponse);
+      });
+
+      it('should fail upon an error result', async () => {
+        const errorMessage = 'Oh no, mocked error has occurred!';
+        givenErrorTextualResult(errorMessage);
+
+        await expect(commandExecFn()).rejects.toThrowError(errorMessage);
+      });
     });
   });
 

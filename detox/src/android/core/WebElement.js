@@ -26,6 +26,10 @@ class WebElement {
     this.atIndex(0);
   }
 
+  asSecured() {
+    throw new DetoxRuntimeError('asSecured() is not supported for Android WebElement');
+  }
+
   atIndex(index) {
     const webViewElementCall = this[_webViewElement]._call;
     const webMatcherCall = this[_webMatcher]._call;

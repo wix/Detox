@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewHierarchy>
+ <UIWindow alpha="1.0" class="UIWindow" focused="false" height="<number>" id="detox_temp_" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" id="detox_temp_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" id="detox_temp_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" id="detox_temp_0_0_0" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+      <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="toggle2ndWebviewButton" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+            <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Show 2nd webview" visibility="visible" width="<number>" x="<number>" y="<number>" />
+           </RCTView>
+          </RCTView>
+         </RCTView>
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" id="toggle3rdWebviewButton" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>">
+            <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Show 3rd webview" visibility="visible" width="<number>" x="<number>" y="<number>" />
+           </RCTView>
+          </RCTView>
+         </RCTView>
+        </RCTView>
+        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+           <RNCWebViewImpl alpha="1.0" class="RNCWebViewImpl" focused="false" height="<number>" id="webViewFormWithScrolling" label="Vertical scroll bar, 4 pages Horizontal scroll bar, 1 page" visibility="visible" width="<number>" x="<number>" y="<number>">
+            <RNCWKWebView alpha="1.0" class="RNCWKWebView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+            	<![CDATA[<html xmlns="http://www.w3.org/1999/xhtml">
+    <body>
+        <h1 id="pageHeadline" aria-label="first-webview">First Webview</h1>
+        <h2>Form</h2>
+        <form>
+            <label for="fname">Your name:</label><br />
+            <input type="text" id="fname" name="fname" maxlength="<number>" /><br />
+            <input type="submit" id="submit" value="Submit" onclick="document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;" />
+        </form>
+
+        <h2>Form Results</h2>
+        <p>Your first name is: <span id="resultFname">No input yet</span></p>
+
+        <h2>Content Editable</h2>
+        <div id="contentEditable" class="contentEditable" contenteditable="true">Name: </div>
+
+        <h2>Text and link</h2>
+        <p>Some text and a <a id="w3link" href="https://www.w3schools.com">link</a>.</p>
+        <p id="bottomParagraph" class="specialParagraph">This is a bottom paragraph with class.</p>
+
+
+</body></html>]]>
+            </RNCWKWebView>
+           </RNCWebViewImpl>
+          </RCTView>
+         </RCTView>
+        </RCTView>
+       </RCTView>
+      </RCTView>
+     </RCTRootContentView>
+    </RCTRootView>
+   </UIDropShadowView>
+  </UITransitionView>
+ </UIWindow>
+</ViewHierarchy>

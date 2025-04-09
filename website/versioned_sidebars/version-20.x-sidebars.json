@@ -16,7 +16,6 @@
       "type": "category",
       "label": "Guides",
       "items": [
-        "guide/investigating-test-failure",
         "guide/test-id",
         "guide/parallel-test-execution",
         "guide/typescript",
@@ -37,12 +36,21 @@
     },
     {
       "type": "category",
+      "label": "Pilot-Powered Detox Testing",
+      "items": [
+        "pilot/testing-with-pilot",
+        "pilot/best-practices"
+      ]
+    },
+    {
+      "type": "category",
       "label": "Troubleshooting",
       "items": [
         "troubleshooting/building-the-app",
         "troubleshooting/running-tests",
         "troubleshooting/synchronization",
-        "troubleshooting/flakiness"
+        "troubleshooting/flakiness",
+        "troubleshooting/element-matching"
       ]
     },
     {
@@ -91,7 +99,9 @@
         "api/actions",
         "api/expect",
         "api/webviews",
-        "api/logger"
+        "api/system",
+        "api/logger",
+        "api/pilot"
       ]
     },
     "api/internals",

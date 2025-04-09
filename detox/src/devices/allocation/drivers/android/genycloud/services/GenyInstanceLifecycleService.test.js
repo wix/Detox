@@ -8,15 +8,37 @@ describe('Genymotion-Cloud instance-lifecycle service', () => {
     }
   });
 
+  const adbDevicesOutput = [
+    'List of devices attached',
+    'localhost:12345\tdevice',
+  ].join('\n');
+
+  let log;
+  /** @type { jest.Mocked<*> } */
+  let retry;
+  let adb;
   let exec;
   let uut;
 
   beforeEach(() => {
+    jest.mock('../../../../../../utils/logger');
+    log = require('../../../../../../utils/logger');
+
+    jest.mock('../../../../../../utils/retry'/*, () => (_options, func) => func()*/);
+    retry = require('../../../../../../utils/retry');
+    retry.mockImplementation((_options, func) => func());
+
+    const ADB = jest.genMockFromModule('../../../../../common/drivers/android/exec/ADB');
+    adb = new ADB();
+    adb.devices.mockResolvedValue({
+      stdout: adbDevicesOutput,
+    });
+
     const GenyCloudExec = jest.genMockFromModule('../exec/GenyCloudExec');
     exec = new GenyCloudExec();
 
     const GenyInstanceLifecycleService = require('./GenyInstanceLifecycleService');
-    uut = new GenyInstanceLifecycleService(exec);
+    uut = new GenyInstanceLifecycleService(exec, adb);
   });
 
   describe('device instance creation', () => {
@@ -62,6 +84,37 @@ describe('Genymotion-Cloud instance-lifecycle service', () => {
       expect(result.uuid).toEqual(instance.uuid);
       expect(result.constructor.name).toContain('Instance');
     });
+
+    it('should wrap the command with a retry', async () => {
+      const instance = anInstance();
+      givenAdbConnectResult(instance);
+      givenRetryOnce();
+
+      await uut.adbConnectInstance(instance.uuid);
+      expect(retry).toHaveBeenCalledWith(expect.objectContaining({ retries: 2 }), expect.any(Function));
+      expect(exec.adbConnect).toHaveBeenCalledTimes(2);
+      expect(exec.adbConnect).toHaveBeenLastCalledWith(instance.uuid);
+    });
+
+    it('should log an adb-devices dump on retry', async () => {
+      const instance = anInstance();
+      givenAdbConnectResult(instance);
+      givenRetryOnce();
+
+      await uut.adbConnectInstance(instance.uuid);
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('adb-connect command failed'), adbDevicesOutput);
+    });
+
+    it('should overcome failing adb-devices dumping attempts', async () => {
+      const adbError = new Error('Yet another unexpected ADB adbError');
+      const instance = anInstance();
+      givenAdbConnectResult(instance);
+      givenRetryOnce();
+      adb.devices.mockRejectedValue(adbError);
+
+      await uut.adbConnectInstance(instance.uuid);
+      expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('adb-connect command failed'), adbError);
+    });
   });
 
   describe('device instance deletion', () => {
@@ -85,4 +138,12 @@ describe('Genymotion-Cloud instance-lifecycle service', () => {
       expect(result.constructor.name).toContain('Instance');
     });
   });
+
+  function givenRetryOnce() {
+    retry.mockImplementationOnce(async ({ conditionFn }, func) => {
+      await func();
+      await conditionFn();
+      return await func();
+    });
+  }
 });

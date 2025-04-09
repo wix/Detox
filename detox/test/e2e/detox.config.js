@@ -53,7 +53,7 @@ const config = {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
-      build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       start: 'react-native start',
       bundleId: 'com.wix.detox-example',
     },
@@ -62,7 +62,7 @@ const config = {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
-      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
     },
 
     'android.debug': {
@@ -108,8 +108,9 @@ const config = {
       headless: Boolean(process.env.CI),
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'Pixel_3A_API_29'
+        avdName: 'Pixel_3a_API_34'
       },
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-aosp-release.apk"]
     },
 
     'android.attached': {
@@ -122,15 +123,17 @@ const config = {
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {
-        recipeUUID: '90450ce0-cdd8-4229-8618-18a1fc195b62',
+        recipeUUID: '9baf12f9-a645-4ffa-a688-0e92584d6194',
       },
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
 
     'android.genycloud.name': {
       type: 'android.genycloud',
       device: {
-        recipeName: 'Detox_Pixel_3A_API_29',
+        recipeName: 'Detox_Pixel_3a_API_34',
       },
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
   },
 

@@ -119,7 +119,7 @@ const webViewFormWithScrolling = `
         </style>
     </head>
     <body>
-        <h1 id="pageHeadline">First Webview</h1>
+        <h1 id="pageHeadline" aria-label="first-webview">First Webview</h1>
         <h2>Form</h2>
         <form>
             <label for="fname">Your name:</label><br>

@@ -2,13 +2,20 @@
 describe('Exec utils', () => {
   let logger;
   let exec;
+  let retry;
   let cpp;
   beforeEach(() => {
     jest.mock('../logger');
     logger = require('../logger');
 
-    jest.mock('child-process-promise');
-    cpp = require('child-process-promise');
+    jest.mock('promisify-child-process');
+    cpp = require('promisify-child-process');
+
+    const mockedRetryActual = jest.requireActual('../retry');
+    const mockedRetry = jest.fn().mockReturnValue(undefined);
+    jest.mock('../retry', () =>
+      (opts, func) => (mockedRetry(opts, func) || mockedRetryActual(opts, func)));
+    retry = mockedRetry;
 
     exec = require('./exec');
   });
@@ -91,8 +98,8 @@ describe('Exec utils', () => {
       args: `--argument 123`,
       statusLogs: {
         trying: 'trying status log',
-        successful: 'successful status log',
-      },
+        successful: 'successful status log'
+      }
     };
     await execWithRetriesAndLogs('bin', options);
 
@@ -110,8 +117,8 @@ describe('Exec utils', () => {
     const options = {
       args: `--argument 123`,
       statusLogs: {
-        retrying: true,
-      },
+        retrying: true
+      }
     };
 
     logger.debug.mockClear();
@@ -225,6 +232,18 @@ describe('Exec utils', () => {
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });
 
+  it(`exec should pass through custom retry-args to retry`, async () => {
+    const options = {
+      retries: 512,
+      interval: 1024,
+      backoff: 'linear',
+    };
+
+    mockCppSuccessful(cpp);
+    await execWithRetriesAndLogs('bin', options);
+    expect(retry).toHaveBeenCalledWith(options, expect.any(Function));
+  });
+
   it(`execAsync command with no arguments runs successfully`, async () => {
     mockCppSuccessful(cpp);
     await exec.execAsync('bin');
@@ -233,20 +252,20 @@ describe('Exec utils', () => {
 });
 
 const returnSuccessfulWithValue = (value) => ({
-    stdout: JSON.stringify(value),
-    stderr: 'err',
-    childProcess: {
-      exitCode: 0
-    }
-  });
+  stdout: JSON.stringify(value),
+  stderr: 'err',
+  childProcess: {
+    exitCode: 0
+  }
+});
 
 const returnErrorWithValue = (value) => ({
-    stdout: 'out',
-    stderr: value,
-    childProcess: {
-      exitCode: 1
-    }
-  });
+  stdout: 'out',
+  stderr: value,
+  childProcess: {
+    exitCode: 1
+  }
+});
 
 function mockCppSuccessful(cpp) {
   const successfulResult = returnSuccessfulWithValue('successful result');

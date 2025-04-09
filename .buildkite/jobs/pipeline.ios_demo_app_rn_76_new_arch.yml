@@ -1,0 +1,10 @@
+  - label: ":ios::react: RN .76 + iOS: Demo app"
+    command:
+      - "nvm install"
+      - "./scripts/demo-projects.ios.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.76.3
+      RCT_NEW_ARCH_ENABLED: 1
+    artifact_paths:
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

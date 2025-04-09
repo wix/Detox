@@ -1,7 +1,9 @@
-const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
+const _ = require('lodash');
+
+const { DetoxInternalError, DetoxRuntimeError } = require('../errors');
 
 function firstEntry(obj) {
-  return Object.entries(obj)[0];
+  return _.entries(obj)[0] || ['value', obj];
 }
 
 function assertType(expectedType) {
@@ -52,6 +54,14 @@ function assertPoint(point) {
   throw new DetoxRuntimeError(`point should be an object with x and y properties, but got ${JSON.stringify(point)}`);
 }
 
+function assertShouldIgnoreStatusBar(shouldIgnoreStatusBar) {
+  if (typeof shouldIgnoreStatusBar === 'boolean') {
+    return true;
+  }
+
+  throw new DetoxRuntimeError('shouldIgnoreStatusBar should be a boolean, but got ' + (shouldIgnoreStatusBar + (' (' + (typeof shouldIgnoreStatusBar + ')'))));
+}
+
 function assertUndefined(arg) {
   if (arg === undefined) {
     return true;
@@ -61,6 +71,14 @@ function assertUndefined(arg) {
   throw new DetoxRuntimeError(`${key} expected to be undefined, but got ${value} (${typeof value})`);
 }
 
+function assertTraceDescription(arg) {
+  if (arg !== undefined) {
+    return true;
+  }
+
+  throw new DetoxInternalError(`traceDescription expected to be defined, but got undefined`);
+}
+
 module.exports = {
   assertEnum,
   assertNormalized,
@@ -68,5 +86,7 @@ module.exports = {
   assertString,
   assertDuration,
   assertPoint,
-  assertUndefined
+  assertShouldIgnoreStatusBar,
+  assertUndefined,
+  assertTraceDescription
 };

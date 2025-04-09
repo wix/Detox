@@ -1,9 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.facebook.react'
+apply plugin: 'kotlin-android'
+
+react {
+    autolinkLibrariesWithApp()
+}
 
 android {
     namespace 'com.example'
 
+    ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion = rootProject.ext.buildToolsVersion
 
     println("[$project] Using buildToolsVersion $buildToolsVersion")
@@ -71,9 +77,7 @@ dependencies {
     // Apply Hermes as the JS engine
     implementation 'com.facebook.react:hermes-android'
 
-    implementation(project(path: ':AsyncStorage')) // !!! Note: not required unless effectively used by your app
-
     // noinspection GradleDynamicVersion
     androidTestImplementation 'com.wix:detox:+'
-    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+    androidTestImplementation 'com.github.wix-incubator:detox-butler:1.0.4'
 }

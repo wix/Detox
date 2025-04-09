@@ -1,0 +1,11 @@
+  - label: ":ios::detox: (Old Arch) RN .76 + iOS: Tests app"
+    command:
+      - "nvm install"
+      - "./scripts/ci.ios.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.76.3
+      RCT_NEW_ARCH_ENABLED: 0
+    artifact_paths:
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/**/allure-report-*.html"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

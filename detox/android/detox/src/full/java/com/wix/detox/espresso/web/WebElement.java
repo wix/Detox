@@ -3,13 +3,13 @@ package com.wix.detox.espresso.web;
 import androidx.test.espresso.web.model.Atom;
 import androidx.test.espresso.web.model.Atoms;
 import androidx.test.espresso.web.model.ElementReference;
-import androidx.test.espresso.web.model.Evaluation;
 import androidx.test.espresso.web.model.SimpleAtom;
 import androidx.test.espresso.web.sugar.Web;
 import androidx.test.espresso.web.webdriver.DriverAtoms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class WebElement {
 
@@ -28,7 +28,7 @@ public class WebElement {
     }
 
     ElementReference get() {
-        List<ElementReference> elements = getWebViewInteraction().perform(matcherAtom).get();
+        List<ElementReference> elements = getWebViewInteraction().withTimeout(30, TimeUnit.SECONDS).perform(matcherAtom).get();
 
         if (elements == null || elements.size() == 0 || index >= elements.size()) {
             throw new RuntimeException(String.format("element was not found at index: %d", index));

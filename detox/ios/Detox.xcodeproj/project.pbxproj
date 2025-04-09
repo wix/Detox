@@ -123,6 +123,7 @@
 		600A0AE02B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600A0ADF2B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift */; };
 		601A40DC2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h in Headers */ = {isa = PBXBuildFile; fileRef = 601A40DA2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h */; };
 		601A40DD2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m in Sources */ = {isa = PBXBuildFile; fileRef = 601A40DB2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m */; };
+		604932B52C8070D5002EFCC9 /* ViewHierarchyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */; };
 		6062B5E12720323700CBDBF0 /* DTXAddressInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */; };
 		6062B5E22720323700CBDBF0 /* DTXSwizzlingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */; };
 		6062B5E32720323700CBDBF0 /* NSArray+Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */; };
@@ -334,6 +335,7 @@
 		600A0ADF2B9C835800937051 /* WebCodeBuilder+createScrollIntoViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebCodeBuilder+createScrollIntoViewAction.swift"; sourceTree = "<group>"; };
 		601A40DA2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WKWebViewConfiguration+Detox.h"; sourceTree = "<group>"; };
 		601A40DB2BA63556007BC8C4 /* WKWebViewConfiguration+Detox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WKWebViewConfiguration+Detox.m"; sourceTree = "<group>"; };
+		604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHierarchyGenerator.swift; sourceTree = "<group>"; };
 		6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXAddressInfo.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXAddressInfo.h; sourceTree = SOURCE_ROOT; };
 		6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DTXSwizzlingHelper.h; path = DetoxSync/DetoxSync/DTXObjectiveCHelpers/DTXSwizzlingHelper.h; sourceTree = SOURCE_ROOT; };
 		6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+Utils.h"; path = "DetoxSync/DetoxSync/DTXObjectiveCHelpers/NSArray+Utils.h"; sourceTree = SOURCE_ROOT; };
@@ -486,21 +488,16 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */,
-				39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */,
 				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
 				39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
 				39CE25A922197F0900D78AA1 /* DetoxInstrumentsManager.h */,
 				39CE25AA22197F0900D78AA1 /* DetoxInstrumentsManager.m */,
+				39DC984A24BB8FCD00FFB224 /* DetoxSync.xcodeproj */,
 				39AB2D30205ABBD90029CD1F /* DetoxUserActivityDispatcher.swift */,
 				39CEFCDA1E34E91B00A09124 /* DetoxUserNotificationDispatcher.swift */,
 				6062B5DB2720323600CBDBF0 /* DTXAddressInfo.h */,
 				6062B5E02720323700CBDBF0 /* DTXAddressInfo.mm */,
-				6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */,
-				6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */,
-				6062B5DE2720323700CBDBF0 /* NSArray+Utils.m */,
-				6062B5DF2720323700CBDBF0 /* Swiftier.h */,
 				39996B4A248555AB009B8E45 /* DTXDurationFormatter.h */,
 				39996B4B248555AB009B8E45 /* DTXDurationFormatter.m */,
 				39DC984424BB8E8900FFB224 /* DTXLogging.h */,
@@ -509,41 +506,47 @@
 				39F6422B1FDD5F3300468FED /* DTXLoggingSubsystem.h */,
 				3980D1062448B52B004812DD /* DTXRunLoopSpinner.h */,
 				3980D10A2448B52B004812DD /* DTXRunLoopSpinner.m */,
+				6062B5DC2720323600CBDBF0 /* DTXSwizzlingHelper.h */,
 				399BF36621933F0C00F96D50 /* ExternalLogging.h */,
 				399BF36721933F0C00F96D50 /* ExternalLogging.m */,
-				60C19619271F11C4000172DD /* fishhook.c */,
 				60C19618271F11C4000172DD /* fishhook.h */,
+				60C19619271F11C4000172DD /* fishhook.c */,
+				39D7BF9024EAE510003E0694 /* LNViewHierarchyDumper.xcodeproj */,
+				6062B5DD2720323700CBDBF0 /* NSArray+Utils.h */,
+				6062B5DE2720323700CBDBF0 /* NSArray+Utils.m */,
 				397CA7A224840449005E8A71 /* NSException+DetoxUtils.swift */,
+				3946CD472566EBCB000A3606 /* NSObject+DetoxUtils.h */,
+				3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */,
+				3946CD422566EBC2000A3606 /* NSObject+DontCrash.h */,
+				3946CD432566EBC2000A3606 /* NSObject+DontCrash.m */,
 				39EECB7A24C0A5AE009C3364 /* NSThread+DetoxUtils.h */,
 				39EECB7B24C0A5AF009C3364 /* NSThread+DetoxUtils.m */,
+				AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */,
+				AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */,
 				39DC985024BB903800FFB224 /* ReactNativeSupport */,
 				39EECB4224BF4FDA009C3364 /* ReactNativeSupport.m */,
 				390DEDDB248D56F600E27BE8 /* String+LocalizedError.swift */,
+				39CF46202A2E1F50004A0CA3 /* String+matchesJSRegex.swift */,
+				6062B5DF2720323700CBDBF0 /* Swiftier.h */,
 				3976BF01246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift */,
 				3980D0FE2448B52A004812DD /* UIApplication+DTXAdditions.h */,
 				3980D1012448B52B004812DD /* UIApplication+DTXAdditions.m */,
-				397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */,
-				397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */,
 				396D455625238BCE0096E7FA /* UIImage+DetoxUtils.h */,
 				396D455525238BCE0096E7FA /* UIImage+DetoxUtils.m */,
-				3946CD472566EBCB000A3606 /* NSObject+DetoxUtils.h */,
-				3946CD482566EBCB000A3606 /* NSObject+DetoxUtils.m */,
+				60E149C52759038F00519EE4 /* UIResponder+First.h */,
+				60E149C62759038F00519EE4 /* UIResponder+First.m */,
+				397CA78A248010B5005E8A71 /* UISlider+DetoxUtils.h */,
+				397CA78B248010B5005E8A71 /* UISlider+DetoxUtils.m */,
+				395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */,
+				395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */,
 				3990BA132457248600B608C8 /* UIView+DetoxUtils.h */,
 				3990BA142457248600B608C8 /* UIView+DetoxUtils.m */,
-				3946CD422566EBC2000A3606 /* NSObject+DontCrash.h */,
-				3946CD432566EBC2000A3606 /* NSObject+DontCrash.m */,
 				396D455125238BB90096E7FA /* UIView+Drawing.h */,
 				396D455025238BB90096E7FA /* UIView+Drawing.m */,
 				390DED81248906FC00E27BE8 /* UIWindow+DetoxUtils.h */,
 				390DED82248906FC00E27BE8 /* UIWindow+DetoxUtils.m */,
+				604932B42C8070D5002EFCC9 /* ViewHierarchyGenerator.swift */,
 				392324DE24781CBD00A3D119 /* WebSocket.swift */,
-				395B06E2256D5A5600941716 /* UIView+DetoxSpeedup.h */,
-				395B06E3256D5A5600941716 /* UIView+DetoxSpeedup.m */,
-				AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */,
-				AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */,
-				60E149C52759038F00519EE4 /* UIResponder+First.h */,
-				60E149C62759038F00519EE4 /* UIResponder+First.m */,
-				39CF46202A2E1F50004A0CA3 /* String+matchesJSRegex.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -940,6 +943,7 @@
 				3976BF02246AC7DE00AA20C7 /* TimeInterval+DetoxUtils.swift in Sources */,
 				600A0A892B966FE200937051 /* WebPredicateType.swift in Sources */,
 				600A0AAA2B998B5500937051 /* WebExpectationModifier.swift in Sources */,
+				604932B52C8070D5002EFCC9 /* ViewHierarchyGenerator.swift in Sources */,
 				39996B4D248555AB009B8E45 /* DTXDurationFormatter.m in Sources */,
 				399BF36921933F0C00F96D50 /* ExternalLogging.m in Sources */,
 				600A0A872B966FBE00937051 /* WebPredicate.swift in Sources */,

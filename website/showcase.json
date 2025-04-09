@@ -4,118 +4,197 @@
     "image": "img/showcase/wix-spaces.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.android",
     "linkApple": "https://apps.apple.com/us/app/spaces-follow-businesses/id1099748482",
-    "shouldStayOnTop": true
+    "shouldStayOnTop": true,
+    "backgroundGradietColor": "rgb(17,109,255)"
   },
   {
     "title": "Wix Owner",
     "image": "img/showcase/wix-owner.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.admin",
     "linkApple": "https://apps.apple.com/us/app/wix-owner-website-builder/id1545924344",
-    "shouldStayOnTop": true
+    "shouldStayOnTop": true,
+    "backgroundGradietColor": "white"
   },
   {
     "title": "Fit by Wix",
     "image": "img/showcase/wix-fit.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.fitness",
     "linkApple": "https://apps.apple.com/us/app/fit-by-wix/id1552621043",
-    "shouldStayOnTop": true
+    "shouldStayOnTop": true,
+    "backgroundGradietColor": "rgb(5,122,105)"
   },
   {
     "title": "Dine by Wix",
     "image": "img/showcase/wix-dine.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wix.restaurants",
     "linkApple": "https://apps.apple.com/us/app/dine-by-wix/id1561524113",
-    "shouldStayOnTop": true
+    "shouldStayOnTop": true,
+    "backgroundGradietColor": "rgb(90,15,127)"
   },
   {
     "title": "Hudl",
     "image": "img/showcase/hudl.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.hudl.hudroid",
-    "linkApple": "https://apps.apple.com/us/app/hudl/id412223222"
+    "linkApple": "https://apps.apple.com/us/app/hudl/id412223222",
+    "backgroundGradietColor": "rgb(255,99,0)"
   },
   {
     "title": "Valora",
     "image": "img/showcase/valora.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=co.clabs.valora",
-    "linkApple": "https://apps.apple.com/us/app/valora-crypto-wallet/id1520414263"
+    "linkApple": "https://apps.apple.com/us/app/valora-crypto-wallet/id1520414263",
+    "backgroundGradietColor": "rgb(123,228,142)"
   },
   {
     "title": "Rocket Chat",
     "image": "img/showcase/rocket-chat.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=chat.rocket.android",
-    "linkApple": "https://apps.apple.com/us/app/rocket-chat/id1148741252"
+    "linkApple": "https://apps.apple.com/us/app/rocket-chat/id1148741252",
+    "backgroundGradietColor": "rgb(245,69,92)"
   },
   {
     "title": "WealthSimple",
     "image": "img/showcase/wealthsimple.png",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.wealthsimple.trade",
-    "linkApple": "https://apps.apple.com/us/app/wealthsimple-invest/id948087968"
+    "linkApple": "https://apps.apple.com/us/app/wealthsimple-invest/id948087968",
+    "backgroundGradietColor": "white"
   },
   {
     "title": "Pitch",
     "image": "img/showcase/pitch.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.pitch.android&gl=IL",
-    "linkApple": "https://apps.apple.com/us/app/pitch-collaborate-on-decks/id1551335606?platform=iphone"
+    "linkApple": "https://apps.apple.com/us/app/pitch-collaborate-on-decks/id1551335606?platform=iphone",
+    "backgroundGradietColor": "red"
   },
   {
     "title": "RN DateTimePicker",
     "titleFontSize": "1.5rem",
     "image": "img/showcase/rn-datetimepicker.png",
-    "linkGitHub": "https://github.com/react-native-datetimepicker/datetimepicker"
+    "linkGitHub": "https://github.com/react-native-datetimepicker/datetimepicker",
+    "backgroundGradietColor": "white"
   },
   {
     "title": "Maiia",
     "image": "img/showcase/maiia.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.cegedim.maiia.patient",
-    "linkApple": "https://apps.apple.com/fr/app/maiia-t%C3%A9l%C3%A9consultation-rdv/id1489590732?agc_click_id=596983166549379072"
+    "linkApple": "https://apps.apple.com/fr/app/maiia-t%C3%A9l%C3%A9consultation-rdv/id1489590732?agc_click_id=596983166549379072",
+    "backgroundGradietColor": "rgb(125,165,180)"
   },
   {
     "title": "Noona",
     "image": "img/showcase/noona.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.timatorgmobile&gl=IL",
-    "linkApple": "https://apps.apple.com/is/app/noona-book-anything/id1448498295"
+    "linkApple": "https://apps.apple.com/is/app/noona-book-anything/id1448498295",
+    "backgroundGradietColor": "white"
   },
   {
     "title": "Omnon Notes",
     "image": "img/showcase/omnon.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.nieratechinc.omnomnotes&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1",
-    "linkApple": "https://apps.apple.com/us/app/omnom-notes/id1505867777?ls=1"
+    "linkApple": "https://apps.apple.com/us/app/omnom-notes/id1505867777?ls=1",
+    "backgroundGradietColor": "rgb(185,234,251)"
   },
   {
     "title": "Bolt Food",
     "image": "img/showcase/bolt-food.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.bolt.deliveryclient",
-    "linkApple": "https://apps.apple.com/us/app/bolt-food/id1451492388"
+    "linkApple": "https://apps.apple.com/us/app/bolt-food/id1451492388",
+    "backgroundGradietColor": "rgb(21, 209, 118)"
   },
   {
     "title": "Next",
     "image": "img/showcase/next.jpg",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.nextinsurance",
-    "linkApple": "https://apps.apple.com/us/app/next-insurance/id1580721755"
+    "linkApple": "https://apps.apple.com/us/app/next-insurance/id1580721755",
+    "backgroundGradietColor": "rgb(173, 216, 230)"
   },
   {
     "title": "PlayerData",
     "image": "img/showcase/player-data.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=uk.co.playerdata.mobile",
-    "linkApple": "https://apps.apple.com/gb/app/playerdata-insight/id1462268462"
+    "linkApple": "https://apps.apple.com/gb/app/playerdata-insight/id1462268462",
+    "backgroundGradietColor": "rgb(52, 211, 48)"
   },
   {
     "title": "Expo",
     "image": "img/showcase/expo.png",
-    "linkWebsite": "https://expo.dev/"
+    "linkWebsite": "https://expo.dev/",
+    "backgroundGradietColor": "white"
   },
   {
     "title": "Currenxie Global Account",
     "titleFontSize": "1.3rem",
     "image": "img/showcase/currenxie.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.currenxiemobilereactnative",
-    "linkApple": "https://apps.apple.com/us/app/currenxie-global-account/id1550022183"
+    "linkApple": "https://apps.apple.com/us/app/currenxie-global-account/id1550022183",
+    "backgroundGradietColor": "rgb(30, 215, 155)"
   },
   {
     "title": "Mercari: Your Marketplace",
     "titleFontSize": "1.3rem",
     "image": "img/showcase/mercari.webp",
     "linkGoogle": "https://play.google.com/store/apps/details?id=com.mercariapp.mercari",
-    "linkApple": "https://apps.apple.com/us/app/mercari-your-marketplace/id896130944"
+    "linkApple": "https://apps.apple.com/us/app/mercari-your-marketplace/id896130944",
+    "backgroundGradietColor": "rgb(94, 109, 243)"
+  },
+  {
+    "title": "DealerCenter",
+    "image": "img/showcase/DealerCenter.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.nowcom.dcmobile&hl=en_US&pli=1",
+    "linkApple": "https://apps.apple.com/us/app/dealercenter/id521054271",
+    "backgroundGradietColor":"rgb(0, 122 , 197)"
+  },
+  {
+    "title": "Bumpy: International Dating",
+    "titleFontSize": "1.2rem",
+    "image": "img/showcase/Bumpy.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=app.bumpy.android",
+    "linkApple": "https://apps.apple.com/us/app/bumpy-international-dating/id1455336523",
+    "backgroundGradietColor": "rgb(68, 200, 205)"
+  },
+  {
+    "title": "Rippling",
+    "image": "img/showcase/Rippling.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.people.rippling&hl=en&gl=US&pli=1",
+    "linkApple": "https://apps.apple.com/us/app/rippling-hr-it-finance/id1231325957",
+    "backgroundGradietColor": "rgb(255,191,28)"
+  },
+  {
+    "title": "Qwil Messenger",
+    "image": "img/showcase/Qwil.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=io.qwil.android&hl=en_US",
+    "linkApple": "https://apps.apple.com/us/app/qwil-messenger/id1356119152",
+    "backgroundGradietColor": "rgb(59, 75, 107)"
+  },
+  {
+    "title": "Abacus for Firefly III",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/Abacus.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=abacus.fireflyiii.android.app",
+    "linkApple": "https://apps.apple.com/us/app/1627093491",
+    "backgroundGradietColor": "rgb(252, 96, 47)"
+  },
+  {
+    "title": "The Newt In Somerset",
+    "titleFontSize": "1.3rem",
+    "image": "img/showcase/theNewt.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.candide.thenewt",
+    "linkApple": "https://apps.apple.com/us/app/the-newt-in-somerset/id1645524424the",
+    "backgroundGradietColor": "rgb(0, 73, 155)"
+  },
+  {
+    "title": "Babylonstoren",
+    "image": "img/showcase/babylonstoren.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.candide.babylonstoren",
+    "linkApple": "https://apps.apple.com/us/app/babylonstoren/id1626456402",
+    "backgroundGradietColor": "rgb(0, 73, 155)"
+  },
+  {
+    "title": "Lyrist",
+    "image": "img/showcase/Lyrist.webp",
+    "linkGoogle": "https://play.google.com/store/apps/details?id=com.rapbook",
+    "linkApple": "https://apps.apple.com/us/app/lyrist-ai-songwriting-toolkit/id1352247113",
+    "backgroundGradietColor": "white"
   }
+
 ]

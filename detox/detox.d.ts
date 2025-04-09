@@ -9,6 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
+import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/core'
 
 declare global {
     namespace Detox {
@@ -33,6 +34,10 @@ declare global {
             logger?: DetoxLoggerConfig;
             session?: DetoxSessionConfig;
             testRunner?: DetoxTestRunnerConfig;
+            /** Build command for the entire configuration, overriding individual app build commands. */
+            build?: string;
+            /** Start command for the entire configuration, overriding individual app start commands. */
+            start?: string;
         };
 
         interface DetoxArtifactsConfig {
@@ -268,6 +273,18 @@ declare global {
              * @see Device#selectApp
              */
             name?: string;
+            /**
+             * Build command to be executed when you run `detox build`
+             * @example 'cd ios && xcodebuild -workspace example.xcworkspace ...'
+             * @example 'cd android && ./gradlew assembleDebug ...'
+             */
+            build?: string;
+            /**
+             * Development server start command to be executed when you run `detox start`
+             * Usually used in debug mode, but it depends on your application setup.
+             * @example 'react-native start'
+             */
+            start?: string;
         };
 
         type DetoxDeviceConfig = DetoxBuiltInDeviceConfig | DetoxCustomDriverConfig;
@@ -317,8 +334,6 @@ declare global {
             type: 'ios.app';
             binaryPath: string;
             bundleId?: string;
-            build?: string;
-            start?: string;
             launchArgs?: Record<string, any>;
         }
 
@@ -326,8 +341,6 @@ declare global {
             type: 'android.apk';
             binaryPath: string;
             bundleId?: string;
-            build?: string;
-            start?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
             /**
@@ -430,6 +443,16 @@ declare global {
             readonly by: ByFacade;
 
             readonly web: WebFacade;
+
+            readonly system: SystemFacade;
+
+            readonly pilot: PilotFacade;
+
+          /**
+           * @deprecated This API is deprecated and will be removed in the next major version.
+           * Please use `pilot` instead of `pilot`.
+           */
+            readonly copilot: PilotFacade;
 
             readonly DetoxConstants: {
                 userNotificationTriggers: {
@@ -748,7 +771,7 @@ declare global {
             uninstallApp(bundle?: string): Promise<void>;
 
             /**
-             * Mock opening the app from URL. sourceApp is an optional parameter to specify source application bundle id.
+             * Mock opening the app from URL. `sourceApp` is an optional parameter to specify source application bundle id (iOS only).
              */
             openURL(url: { url: string; sourceApp?: string }): Promise<void>;
 
@@ -766,6 +789,45 @@ declare global {
              * Takes "portrait" or "landscape" and rotates the device to the given orientation. Currently only available in the iOS Simulator.
              */
             setOrientation(orientation: Orientation): Promise<void>;
+
+            /**
+             * Perform a tap at arbitrary coordinates on the device's screen.
+             * @param point Coordinates in the element's coordinate space. Optional. defaults: x: 100, y: 100
+             * @param shouldIgnoreStatusBar Coordinates will be measured starting from under the status bar. this param will affect only in Android tests. Optional. default: true
+             * @example await device.tap();
+             * @example await device.tap({ x: 100, y: 150 }, false);
+             * @example await device.tap({ x: 100, y: 150 });
+             * @example await device.tap(false);
+             */
+            tap(): Promise<void>;
+            tap(point: Point2D): Promise<void>;
+            tap(point: Point2D, shouldIgnoreStatusBar: boolean): Promise<void>;
+            tap(shouldIgnoreStatusBar: boolean): Promise<void>;
+
+            /**
+             * Perform a long press at arbitrary coordinates on the device's screen. Custom press duration if needed.
+             * @param point Coordinates in the device's coordinate space. Optional. defaults: x: 100, y: 100
+             * @param duration Custom press duration time, in milliseconds. Optional (defaults to the standard long-press duration for Android and 1000 milliseconds for ios).
+             *      Custom durations should be used cautiously, as they can affect test consistency and user experience expectations.
+             *      They are typically necessary when testing components that behave differently from the platform's defaults or when simulating unique user interactions.
+             * @param shouldIgnoreStatusBar Coordinates will be measured starting from under the status bar. this param will affect only in Android tests. Optional. default: true
+             * @example await device.longPress();
+             * @example await device.longPress({ x: 100, y: 150 }, 2000, false);
+             * @example await device.longPress({ x: 100, y: 150 }, 2000);
+             * @example await device.longPress(2000, false);
+             * @example await device.longPress({ x: 100, y: 150 }, false);
+             * @example await device.longPress({ x: 100, y: 150 });
+             * @example await device.longPress(2000);
+             * @example await device.longPress(false);
+             */
+            longPress(): Promise<void>;
+            longPress(point: Point2D, duration: number, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D, duration: number): Promise<void>;
+            longPress(duration: number, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D, shouldIgnoreStatusBar: boolean): Promise<void>;
+            longPress(point: Point2D): Promise<void>;
+            longPress(duration: number): Promise<void>;
+            longPress(shouldIgnoreStatusBar: boolean): Promise<void>;
 
             /**
              * Sets the simulator/emulator location to the given latitude and longitude.
@@ -904,6 +966,18 @@ declare global {
             captureViewHierarchy(name?: string): Promise<string>;
 
             /**
+             * Dump the current view hierarchy of the app as an XML string.
+             * @param [shouldInjectTestIds=false] whether to inject testIDs into the view hierarchy when missing,
+             * to provide an identifiable reference for each element.
+             * @returns a string containing the XML representation of the view hierarchy.
+             * @example
+             * const viewHierarchy = await device.generateViewHierarchyXml();
+             * const viewHierarchyWithInjectedTestIds = await device.generateViewHierarchyXml(true);
+             * @note enabling shouldInjectTestIds changes the actual elements during the test run, use with caution.
+             */
+            generateViewHierarchyXml(shouldInjectTestIds?: boolean): Promise<string>;
+
+            /**
              * Simulate shake (iOS Only)
              */
             shake(): Promise<void>;
@@ -949,11 +1023,19 @@ declare global {
             /**
              * (Android Only)
              * Exposes UiAutomator's UiDevice API (https://developer.android.com/reference/android/support/test/uiautomator/UiDevice).
-             * This is not a part of the official Detox API,
-             * it may break and change whenever an update to UiDevice or UiAutomator gradle dependencies ('androidx.test.uiautomator:uiautomator') is introduced.
+             * This is not a part of the official Detox API and therefore may break / change whenever an update to UiDevice or UiAutomator
+             * Gradle dependencies ('androidx.test.uiautomator:uiautomator') is done.
+             *
              * UIDevice's autogenerated code reference: https://github.com/wix/Detox/blob/master/detox/src/android/espressoapi/UIDevice.js
+             *
+             * @example
+             * // @ts-nocheck
+             * const uiDevice = device.getUiDevice();
+             * const height = await uiDevice.getDisplayHeight();
+             * const width = await uiDevice.getDisplayWidth();
+             * await uiDevice.click(width / 2, height / 2);
              */
-            getUiDevice(): Promise<void>;
+            getUiDevice(): any;
 
             /**
              * (Android Only)
@@ -1038,6 +1120,12 @@ declare global {
              * Collection of web matchers
              */
             readonly web: ByWebFacade;
+
+            /**
+             * Collection of system-level matchers
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             */
+            readonly system: BySystemFacade;
         }
 
         interface ByWebFacade {
@@ -1104,6 +1192,49 @@ declare global {
              * web.element(by.web.tag('mark'))
              */
             tag(tagName: string): WebMatcher;
+
+            /**
+             * (iOS Only) Find an element on the DOM tree by its value
+             * @param value
+             * @example
+             * web.element(by.web.value('hello'))
+             */
+            value(value: string): WebMatcher;
+
+            /**
+             * (iOS Only) Find an element or secured element on the web-view by its accessibility label.
+             * @param text
+             * @example
+             * web.element(by.web.label('Submit')).asSecured()
+             * web.element(by.web.label('Submit'))
+             */
+            label(text: string): MaybeSecuredWebMatcher;
+
+            /**
+             * (iOS Only) Find a secured element on the web-view by its accessibility type.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * web(by.web.type('textField')).asSecured()
+             */
+            type(type: string): SecuredWebMatcher;
+        }
+
+        interface BySystemFacade {
+            /**
+             * Find an element on the System-level by its label
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.text('Allow'))
+             */
+            label(text: string): SystemMatcher;
+
+            /**
+             * Find an element on the System-level by its type
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.type('button'))
+             */
+            type(type: string): SystemMatcher;
         }
 
         interface NativeMatcher {
@@ -1127,21 +1258,42 @@ declare global {
         }
 
         interface WebMatcher {
-            __web__: any; // prevent type coersion
+            __web__: any; // prevent type coercion
+        }
+
+        interface SecuredWebMatcher {
+            __web__: any; // prevent type coercion
+        }
+
+        interface MaybeSecuredWebMatcher {
+            __web__: any; // prevent type coercion
+        }
+
+        interface SystemMatcher {
+          __system__: any; // prevent type coercion
         }
 
         interface ExpectFacade {
             (element: NativeElement): Expect;
 
             (webElement: WebElement): WebExpect;
+
+            (securedWebElement: SecuredWebElement): SecuredWebExpect;
+
+            (systemElement: SystemElement): SystemExpect;
         }
+
+        type MaybeSecuredWebElement<T> = T extends MaybeSecuredWebMatcher ?
+            IndexableMaybeSecuredWebElement & SecuredWebElementFacade :
+            T extends SecuredWebMatcher ? IndexableSecuredWebElement & SecuredWebElementFacade :
+                IndexableWebElement;
 
         interface WebViewElement {
             /**
              * Find a web element by a matcher.
              * @param webMatcher a web matcher for the web element.
              */
-            element(webMatcher: WebMatcher): IndexableWebElement;
+            element<T extends WebMatcher>(webMatcher: T): MaybeSecuredWebElement<T>;
 
             /**
              * Returns the index-th web-view in the UI hierarchy that is matched by the given matcher.
@@ -1162,6 +1314,55 @@ declare global {
              * If there are MORE then one webview element in the UI hierarchy you MUST supply are view matcher.
              */
             (matcher?: NativeMatcher): WebViewElement;
+        }
+
+        interface SecuredWebElementFacade {
+            /**
+             * (iOS Only) Gets the secured webview element as a testing element.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             */
+            asSecured(): IndexableSecuredWebElement;
+        }
+
+        interface SystemFacade {
+            /**
+             * Find an element on the System-level using a system matcher.
+             * @param systemMatcher a system matcher for the system element.
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example
+             * system.element(by.system.label('Allow'))
+             */
+            element(systemMatcher: SystemMatcher): IndexableSystemElement;
+        }
+
+        interface PilotFacade extends Pick<Pilot, "perform" | "autopilot" | "extendAPICatalog"> {
+            /**
+             * Initializes the Pilot with the given prompt handler.
+             * Must be called before any other Pilot methods.
+             * @note Wix-Pilot APIs are still in experimental phase and are subject to changes in the near future.
+             * @param promptHandler The prompt handler to use.
+             */
+            init: (promptHandler: PromptHandler) => void;
+        }
+
+        type PromptHandler = _PromptHandler;
+
+        interface IndexableSystemElement extends SystemElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await system.element(by.system.type('button')).atIndex(1).tap();
+             */
+            atIndex(index: number): SystemElement;
+        }
+
+        interface SystemElement {
+            /**
+             * Simulate a tap on the element.
+             * @note System APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await system.element(by.system.label('Allow')).tap();
+             */
+            tap(): Promise<void>;
         }
 
         interface Expect<R = Promise<void>> {
@@ -1531,12 +1732,97 @@ declare global {
             toExist(): R;
         }
 
+        interface SecuredWebExpect<R = Promise<void>> {
+            /**
+             * (iOS Only) Negate the expectation.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await expect(web.element(by.web.id('sessionTimeout')).asSecured()).not.toExist();
+             */
+            not: this;
+
+            /**
+             * (iOS Only) Expect the view to exist in the webview DOM tree.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await expect(web.element(by.web.id('submitButton')).asSecured()).toExist();
+             */
+            toExist(): R;
+        }
+
+        interface SystemExpect<R = Promise<void>> {
+          /**
+           * Negate the expectation.
+           * @note System APIs are still in experimental phase and are subject to changes in the near future.
+           * @example await expect(system.element(by.system.text('Allow'))).not.toExist();
+           */
+          not: this;
+
+          /**
+           * Expect the view to exist in the system-level.
+           * @note System APIs are still in experimental phase and are subject to changes in the near future.
+           * @example await expect(system.element(by.system.text('Allow'))).toExist();
+           */
+          toExist(): R;
+        }
+
+        interface SecuredWebElement extends SecuredWebElementActions {
+        }
+
+        interface SecuredWebElementActions {
+            /**
+             * (iOS Only) Tap on a secured web element.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().tap();
+             */
+            tap(): Promise<void>;
+
+            /**
+             * (iOS Only) Type text into a web element.
+             * @param text to type
+             * @param isContentEditable whether the element is content-editable, default is false. Ignored on iOS.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().typeText('passcode');
+             */
+            typeText(text: string, isContentEditable: boolean): Promise<void>;
+
+            /**
+             * (iOS Only) Replaces the input content with the new text.
+             * @param text to replace with the old content.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().replaceText('passcode');
+             */
+            replaceText(text: string): Promise<void>;
+
+            /**
+             * (iOS Only) Clears the input content.
+             * @note On Android, not working for content-editable elements.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().clearText();
+             */
+            clearText(): Promise<void>;
+        }
+
         interface IndexableWebElement extends WebElement {
             /**
              * Choose from multiple elements matching the same matcher using index.
-             * @example await web.element(by.web.tag('p')).atIndex(2).tap();
+             * @example await web.element(by.web.tag('p')).asSecured().atIndex(2).tap();
              */
             atIndex(index: number): WebElement;
+        }
+
+        interface IndexableSecuredWebElement extends SecuredWebElement {
+            /**
+             * (iOS Only) Choose from multiple elements matching the same matcher using index.
+             * @note Secured-Web APIs are still in experimental phase and are subject to changes in the near future.
+             * @example await web.element(by.web.type('textField')).asSecured().atIndex(2).tap();
+             */
+            atIndex(index: number): SecuredWebElement & SecuredWebElementFacade;
+        }
+
+        interface IndexableMaybeSecuredWebElement extends WebElement {
+            /**
+             * Choose from multiple elements matching the same matcher using index
+             */
+            atIndex(index: number): WebElement & SecuredWebElementFacade;
         }
 
         interface WebElement extends WebElementActions {
@@ -1691,7 +1977,11 @@ declare global {
              * Launch from URL
              * Mock opening the app from URL to test your app's deep link handling mechanism.
              */
-            url?: any;
+            url?: string;
+            /**
+             * Optional parameter to specify source application bundle id when opening the app from URL (iOS Only).
+             */
+            sourceApp?: string;
             /**
              * Launch with user notifications
              */

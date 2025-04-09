@@ -30,7 +30,6 @@ const sidebars = {
       type: 'category',
       label: 'Guides',
       items: [
-        'guide/investigating-test-failure',
         'guide/test-id',
         'guide/parallel-test-execution',
         'guide/typescript',
@@ -51,12 +50,21 @@ const sidebars = {
     },
     {
       type: 'category',
+      label: 'Pilot-Powered Detox Testing',
+      items: [
+        'pilot/testing-with-pilot',
+        'pilot/best-practices',
+      ]
+    },
+    {
+      type: 'category',
       label: 'Troubleshooting',
       items: [
         'troubleshooting/building-the-app',
         'troubleshooting/running-tests',
         'troubleshooting/synchronization',
         'troubleshooting/flakiness',
+        'troubleshooting/element-matching',
       ]
     },
     {
@@ -105,7 +113,9 @@ const sidebars = {
         'api/actions',
         'api/expect',
         'api/webviews',
+        'api/system',
         'api/logger',
+        'api/pilot',
       ]
     },
     'api/internals',

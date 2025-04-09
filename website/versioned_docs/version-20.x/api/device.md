@@ -416,6 +416,51 @@ if (device.getPlatform() === 'ios') {
 }
 ```
 
+### `device.tap(point, shouldIgnoreStatusBar)`
+
+Perform a tap at arbitrary coordinates on the device's screen.
+
+#### tap parameters
+
+- `point` — Coordinates in the element's coordinate space (default value: `{x: 100, y: 100}`, platforms: Android & IOS) <br/>
+- `shouldIgnoreStatusBar` — Coordinates will be measured starting from under the status bar (default value: `true`, platform: Android) <br/>
+
+#### tap examples
+
+```js
+
+await device.tap();
+await device.tap({ x: 100, y: 150 }, false);
+await device.tap({ x: 100, y: 150 });
+await device.tap(false);
+
+```
+
+### `device.longPress(point, duration, shouldIgnoreStatusBar)`
+
+Perform a long press at arbitrary coordinates on the device's screen. Custom press duration if needed.
+
+#### longPress parameters
+
+- `point` — Coordinates in the element's coordinate space (default value: `{x: 100, y: 100}`, platforms: Android & IOS) <br/>
+- `duration` — Custom press duration time, in milliseconds. (default values: Android: Standard long-press duration.  IOS: 1000 milliseconds, platforms: Android & IOS) <br/>
+- `shouldIgnoreStatusBar` — Coordinates will be measured starting from under the status bar (default value: `true`, platform: Android) <br/>
+
+#### longPress examples
+
+```js
+
+await device.longPress();
+await device.longPress({ x: 100, y: 150 }, 2000, false);
+await device.longPress({ x: 100, y: 150 }, 2000);
+await device.longPress(2000, false);
+await device.longPress({ x: 100, y: 150 }, false);
+await device.longPress({ x: 100, y: 150 });
+await device.longPress(2000);
+await device.longPress(false);
+
+```
+
 ### `device.takeScreenshot([name])`
 
 Takes a screenshot of the device. For full details on taking screenshots with Detox, refer to the [screen-shots guide](../guide/taking-screenshots.md).
@@ -440,6 +485,16 @@ test('Capture view hierarchy', async () => {
   // * on success, to: <artifacts-location>/✓ Capture view hierarchy/myElements.viewhierarchy
   // * on failure, to: <artifacts-location>/✗ Capture view hierarchy/myElements.viewhierarchy
 });
+```
+
+### `device.generateViewHierarchyXml([shouldInjectTestIds])`
+
+Generates a view hierarchy XML of the currently opened application. The XML is returned as a string.
+
+The `shouldInjectTestIds` parameter is optional and defaults to `false`. When set to `true`, Detox will attempt to inject `testID` attributes into the XML for each element if undefined.
+
+```js
+const viewHierarchyXml = await device.generateViewHierarchyXml();
 ```
 
 ### `device.shake()` **iOS Only**

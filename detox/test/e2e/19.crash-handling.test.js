@@ -39,7 +39,7 @@ describe('Crash Handling', () => {
     await expectToThrow(() => element(by.text('Crash')).tap(), 'Detox can\'t seem to connect to the test app(s)!');
   });
 
-  it('Should throw a detailed error upon early app crash', async () => {
+  it('@legacy Should throw a detailed error upon early app crash', async () => {
     const error = await expectToThrow(
       () => relaunchAppWithArgs({ simulateEarlyCrash: true }),
       'The app has crashed');
@@ -52,7 +52,7 @@ describe('Crash Handling', () => {
     if (device.getPlatform() === 'android') {
       jestExpect(error.stack).toContain('\tat java.lang.Thread.run');
     } else {
-      jestExpect(error.stack).toContain('\t0   CoreFoundation');
+      jestExpect(error.stack).toContain('JS Exception');
     }
   });
 

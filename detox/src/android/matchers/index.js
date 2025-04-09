@@ -1,3 +1,5 @@
+const { DetoxRuntimeError } = require('../../errors');
+
 const native = require('./native');
 const web = require('./web');
 
@@ -19,5 +21,12 @@ module.exports = {
     xpath: (value) => new web.XPathMatcher(value),
     href: (value) => new web.LinkTextMatcher(value),
     hrefContains: (value) => new web.PartialLinkTextMatcher(value),
+    label: (_value) => { throw new DetoxRuntimeError('Label matcher is not supported on Android'); },
+    value: (_value) => { throw new DetoxRuntimeError('Value matcher is not supported on Android'); },
   },
+
+  system: {
+    label: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+    type: (_value) => { throw new DetoxRuntimeError('System interactions are not supported on Android, use UiDevice APIs directly instead'); },
+  }
 };

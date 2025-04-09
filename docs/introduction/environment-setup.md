@@ -67,7 +67,7 @@ making it easier to operate Detox from the command line, e.g. `detox test -c ios
 
 It should be installed globally, enabling usage of the command line tools outside your npm scripts:
 
-```bash npm2yarn
+```bash
 npm install detox-cli --global
 ```
 

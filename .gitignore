@@ -81,8 +81,8 @@ fabric.properties
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
 ## Build generated
-ios/build/
-ios/DerivedData/
+*/*/ios/build/
+*/*/ios/DerivedData/
 
 ## Various settings
 *.pbxuser
@@ -93,12 +93,12 @@ ios/DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-ios/xcuserdata/
+*/*/ios/xcuserdata/
 
 ## Other
 *.moved-aside
 *.xcuserstate
-ios/.xcode.env.local
+*/*/ios/.xcode.env.local
 
 ## Obj-C/Swift specific
 *.hmap
@@ -198,6 +198,7 @@ project.xcworkspace
 # Android/IJ
 #
 .gradle
+.cxx
 
 # node.js
 #
@@ -232,3 +233,11 @@ detox/test/artifacts
 Detox-android/
 Detox-ios-src.tbz
 Detox-ios.tbz
+
+
+# Ignore .env files across the project
+**/.env
+
+#ignore yalc
+.yalc/
+yalc.lock

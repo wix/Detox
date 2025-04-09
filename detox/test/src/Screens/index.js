@@ -22,6 +22,7 @@ import LaunchArgsScreen from './LaunchArgsScreen';
 import LaunchNotificationScreen from './LaunchNotificationScreen';
 import PickerViewScreen from './PickerViewScreen';
 import DeviceScreen from './DeviceScreen';
+import DeviceTapScreen from './DeviceTapScreen';
 import OverlayScreen from './OverlayScreen';
 import ElementScreenshotScreen from './ElementScreenshotScreen';
 import CanvasScreenshotScreen from './CanvasScreenshotScreen';
@@ -31,9 +32,13 @@ import VisibilityExpectationScreen from './VisibilityExpectationScreen';
 import VisibilityScreen from './VisibilityScreen';
 import AttributesScreen from './AttributesScreen';
 import DragNDropScreen  from './DragNDropScreen';
+import ShapeMatchGameScreen from "./ShapeMatchGameScreen";
+import SystemDialogsScreen from "./SystemDialogsScreen";
+import AlertScreen from "./AlertScreen";
 
 export {
   SanityScreen,
+  ShapeMatchGameScreen,
   MatchersScreen,
   ActionsScreen,
   IntegActionsScreen,
@@ -57,6 +62,7 @@ export {
   LaunchArgsScreen,
   LaunchNotificationScreen,
   DeviceScreen,
+  DeviceTapScreen,
   OverlayScreen,
   ElementScreenshotScreen,
   CanvasScreenshotScreen,
@@ -65,5 +71,7 @@ export {
   VisibilityExpectationScreen,
   VisibilityScreen,
   AttributesScreen,
-  DragNDropScreen
+  DragNDropScreen,
+  SystemDialogsScreen,
+  AlertScreen,
 };

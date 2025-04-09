@@ -600,7 +600,7 @@ Cannot find module 'jest-cli/build/cli/args'
 
 If you were using `detox-cli` global package, make sure to upgrade it before proceeding to `detox@17.4.7`.
 
-```bash npm2yarn
+```bash
 npm install detox-cli --global
 ```
 

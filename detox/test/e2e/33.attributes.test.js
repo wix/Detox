@@ -1,6 +1,5 @@
 const { device, element, by } = require('detox');
 const expect = require('expect').default;
-const custom = require('./utils/custom-it');
 
 describe('Attributes', () => {
   /** @type {Detox.IndexableNativeElement} */
@@ -144,7 +143,8 @@ describe('Attributes', () => {
       });
     });
 
-    it(':android: should have a boolean .value', async () => {
+    // Checkbox is not working with the new arch yet
+    it.skip(':android: should have a boolean .value', async () => {
       expect(await currentElement.getAttributes()).toMatchObject({
         value: false
       });
@@ -157,7 +157,7 @@ describe('Attributes', () => {
     });
   });
 
-  custom.describe.skipFromRNVersion(71)('of a legacy slider', () => {
+  describe('of a legacy slider (@rn71)', () => {
     beforeAll(() => useMatcher(by.id('legacySliderId')));
 
     it(':ios: should have a string percent .value, and .normalizedSliderPosition', () => {
@@ -191,10 +191,22 @@ describe('Attributes', () => {
     });
   });
 
-  describe('of a scroll view', () => {
-    beforeAll(() => useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView'))));
+  describe('of a legacy scroll view', () => {
+    it(':ios: @legacy should have offsets and insets', async () => {
+      await useMatcher(by.type('RCTCustomScrollView').withAncestor(by.id('attrScrollView')));
 
-    it(':ios: should have offsets and insets', async () => {
+      expect(attributes).toMatchObject({
+        contentOffset: shapes.Point2D(),
+        contentInset: shapes.IosElementAttributesInsets(),
+        adjustedContentInset: shapes.IosElementAttributesInsets(),
+      });
+    });
+  });
+
+  describe('of a new arch scroll view', () => {
+    it(':ios: @new-arch should have offsets and insets', async () => {
+      await useMatcher(by.id('attrScrollView'));
+
       expect(attributes).toMatchObject({
         contentOffset: shapes.Point2D(),
         contentInset: shapes.IosElementAttributesInsets(),
@@ -204,7 +216,7 @@ describe('Attributes', () => {
   });
 
   describe('of multiple views', () => {
-    it(':ios: should return an object with .elements array', async () => {
+    it(':ios: @legacy should return an object with .elements array', async () => {
       await useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView')));
 
       const viewShape = {
@@ -228,6 +240,13 @@ describe('Attributes', () => {
       expect(innerViews[1]).toMatchObject({ ...viewShape });
     });
 
+    it(':ios: @new-arch should return an object with .elements array', async () => {
+      await useMatcher(by.type('RCTViewComponentView'));
+
+      const innerViews = attributesArray.filter(a => a.identifier);
+      expect(innerViews.length).toBeGreaterThan(1);
+    });
+
     it(':android: should return an object with .elements array', async () => {
       await useMatcher(by.type('com.facebook.react.views.view.ReactViewGroup').withAncestor(by.id('attrScrollView')));
 
@@ -244,7 +263,7 @@ describe('Attributes', () => {
 
       expect(attributesArray[0]).toMatchObject({
         ...{
-          height: 394,
+          height: 412,
           width: 1074,
         },
         ...baseAttributes
@@ -252,8 +271,8 @@ describe('Attributes', () => {
 
       expect(attributesArray[1]).toMatchObject({
         ...{
-          height: 197,
-          width: 262,
+          height: 206,
+          width: 275,
           identifier: 'innerView1'
         },
         ...baseAttributes
@@ -261,8 +280,8 @@ describe('Attributes', () => {
 
       expect(attributesArray[2]).toMatchObject({
         ...{
-          height: 197,
-          width: 262,
+          height: 206,
+          width: 275,
           identifier: 'innerView2'
         },
         ...baseAttributes

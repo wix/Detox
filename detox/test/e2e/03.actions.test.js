@@ -1,5 +1,5 @@
+const { isRNNewArch } = require('../../src/utils/rn-consts/rn-consts');
 const driver = require('./drivers/actions-driver').actionsScreenDriver;
-const custom = require('./utils/custom-it');
 
 describe('Actions', () => {
   beforeAll(async () => {
@@ -208,10 +208,10 @@ describe('Actions', () => {
   it('should swipe horizontally by offset from specified positions ', async () => {
     await element(by.id('toggleScrollOverlays')).tap();
 
-    await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.25, 0.85, 0.75);
+    await element(by.id('ScrollViewH')).swipe('left', 'slow', 0.28, 0.85, 0.75);
     await expect(element(by.text('HText1'))).not.toBeVisible(1);
 
-    await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.25, 0.15, 0.25);
+    await element(by.id('ScrollViewH')).swipe('right', 'fast', 0.28, 0.15, 0.25);
     await expect(element(by.text('HText1'))).toBeVisible(1);
   });
 
@@ -227,19 +227,6 @@ describe('Actions', () => {
     await expect(element(by.id('UniqueId007'))).toBeVisible();
   });
 
-  custom.it.skipFromRNVersion(71)('should adjust legacy slider and assert its value', async () => {
-    const reactSliderId = 'legacySliderWithASimpleID';
-    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
-    await element(by.id(reactSliderId)).adjustSliderToPosition(0.75);
-    await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
-    await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
-
-    // on ios the accessibilityLabel is set to the slider value, but not on android
-    if (device.getPlatform() === 'ios') {
-      await expect(element(by.id(reactSliderId))).toHaveValue('75%');
-    }
-  });
-
   it('should adjust slider and assert its value', async () => {
     const reactSliderId = 'sliderWithASimpleID';
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.25);
@@ -247,8 +234,8 @@ describe('Actions', () => {
     await expect(element(by.id(reactSliderId))).not.toHaveSliderPosition(0.74);
     await expect(element(by.id(reactSliderId))).toHaveSliderPosition(0.74, 0.1);
 
-    // on ios the accessibilityLabel is set to the slider value, but not on android
-    if (device.getPlatform() === 'ios') {
+    // On iOS + legacy arch the accessibilityValue is set to the slider value, but not on android
+    if (device.getPlatform() === 'ios' && !isRNNewArch) {
       await expect(element(by.id(reactSliderId))).toHaveValue('75%');
     }
   });

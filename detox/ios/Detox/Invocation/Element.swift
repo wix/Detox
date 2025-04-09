@@ -73,19 +73,28 @@ class Element : NSObject {
 		return element
 	}
 	
-	private func extractScrollView() -> UIScrollView {
-		if let view = self.view as? UIScrollView {
-			return view
-		}
-		else if let view = self.view as? WKWebView {
-			return view.scrollView
-		} else if ReactNativeSupport.isReactNativeApp && NSStringFromClass(type(of: view)) == "RCTScrollView" {
-			return (view.value(forKey: "scrollView") as! UIScrollView)
-		}
-		
-		dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
-	}
-	
+    private func extractScrollView() -> UIScrollView {
+        if let view = self.view as? UIScrollView {
+            return view
+        }
+
+        if let webView = self.view as? WKWebView {
+            return webView.scrollView
+        }
+
+        if ReactNativeSupport.isReactNativeApp {
+            let className = NSStringFromClass(type(of: view))
+            switch className {
+                case "RCTScrollView", "RCTScrollViewComponentView", "RCTEnhancedScrollView":
+                    return (view.value(forKey: "scrollView") as! UIScrollView)
+                default:
+                    break
+            }
+        }
+
+        dtx_fatalError("View “\(self.view.dtx_shortDescription)” is not an instance of “UIScrollView”", viewDescription: debugAttributes)
+    }
+
 	override var description: String {
 		return String(format: "MATCHER(%@)%@", predicate.description, index != nil ? " AT INDEX(\(index!))" : "")
 	}
@@ -180,23 +189,34 @@ class Element : NSObject {
 	}
 	
 	func adjust(toDate date: Date) {
-		if let view = view as? UIDatePicker {
-			view.dtx_adjust(to: date)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", viewDescription: debugAttributes)
-		}
+        var didSetPicker = false
+
+        view.dtx_ifDatePicker { view in
+            view.dtx_adjust(to: date)
+            didSetPicker = true
+        }
+
+        guard didSetPicker else {
+            dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIDatePicker”", viewDescription: debugAttributes)
+        }
+
 	}
 	
 	func setComponent(_ component: Int, toValue value: Any) {
-		if let view = view as? UIPickerView {
-			view.dtx_setComponent(component, toValue: value)
-		} else {
-			dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", viewDescription: debugAttributes)
-		}
+        var didSetPicker = false
+
+        view.dtx_ifPicker { view in
+            view.dtx_setComponent(component, toValue: value)
+            didSetPicker = true
+        }
+
+        guard didSetPicker else {
+            dtx_fatalError("View “\(view.dtx_shortDescription)” is not an instance of “UIPickerView”", viewDescription: debugAttributes)
+        }
 	}
 	
 	func adjust(toNormalizedSliderPosition normalizedSliderPosition: Double) {
-		guard let slider = view as? UISlider else {
+        guard let slider = view.dtx_sliderView else {
 			dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", viewDescription: debugAttributes)
 		}
 		
@@ -258,17 +278,34 @@ class Element : NSObject {
 		return view.accessibilityValue
 	}
 	
-	@objc
-	var normalizedSliderPosition: Double {
-		get {
-			guard let slider = view as? UISlider else {
-				dtx_fatalError("View \(view.dtx_shortDescription) is not instance of “UISlider”", viewDescription: debugAttributes)
-			}
-			
-			return slider.dtx_normalizedSliderPosition
-		}
-	}
-	
+    @objc
+    var normalizedSliderPosition: Double {
+        get {
+            if let slider = view.dtx_sliderView {
+                return slider.dtx_normalizedSliderPosition
+            }
+
+            dtx_fatalError(
+                "View \(view.dtx_shortDescription) is not instance or wrapper of “UISlider”",
+                viewDescription: debugAttributes
+            )
+        }
+    }
+
+    @objc
+    var toggleValue: Double {
+        get {
+            if let toggle = view.dtx_switchView {
+                return toggle.isOn ? 1.0 : 0.0
+            }
+
+            dtx_fatalError(
+                "View \(view.dtx_shortDescription) is not instance or wrapper of “UISwitch”",
+                viewDescription: debugAttributes
+            )
+        }
+    }
+
 	@objc
 	var attributes: [String : Any] {
 		let views = self.views

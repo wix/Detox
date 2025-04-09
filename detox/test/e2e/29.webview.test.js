@@ -15,7 +15,7 @@ describe('WebView', () => {
   describe('single web-view scenario', () => {
     const expectWebViewToMatchSnapshot = async (snapshotName) => {
       const webViewElement = element(by.id('webViewFormWithScrolling'));
-      await expectElementSnapshotToMatch(webViewElement, snapshotName);
+      await expectElementSnapshotToMatch(webViewElement, snapshotName, 0.993);
     };
 
     describe('matchers', () => {
@@ -42,6 +42,10 @@ describe('WebView', () => {
           await expectToThrow(async () => {
             await expect(web.element(by.web.tag('p')).atIndex(100)).toExist();
           });
+        });
+
+        it('should find element by label', async () => {
+          await expect(web.element(by.web.label('first-webview'))).toExist();
         });
       });
 
@@ -320,9 +324,9 @@ describe('WebView', () => {
     it('should throw on multiple matches', async () => {
       await element(by.id('toggle3rdWebviewButton')).tap();
 
-      await jestExpect(async () => {
+      await expectToThrow(async () => {
         await expect(web(by.id('webView')).element(by.web.id('message'))).toExist();
-      }).rejects.toThrowError();
+      });
 
       await device.launchApp();
     });
@@ -358,6 +362,8 @@ describe('WebView', () => {
 describe(':ios: WebView CORS (inner frame)', () => {
   /** @type {Detox.WebViewElement} */
   let webview;
+  let webviewElement;
+
   const mockServer = new MockServer();
 
   beforeAll(async () => {
@@ -386,24 +392,64 @@ describe(':ios: WebView CORS (inner frame)', () => {
     await element(by.id('toggle3rdWebviewButton')).tap();
 
     webview = web(by.id('webView'));
+    webviewElement = element(by.id('webView'));
   };
 
-  it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
-    await launchAndNavigateToInnerFrame(true);
+  describe('detoxDisableWebKitSecurity', () => {
+    it('should find element in cross-origin frame when `detoxDisableWebKitSecurity` is `true`', async () => {
+      await launchAndNavigateToInnerFrame(true);
 
-    await expect(webview.element(by.web.tag('h1'))).toExist();
-    await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+      await expect(webview.element(by.web.tag('h1'))).toExist();
+      await expect(webview.element(by.web.tag('h1'))).toHaveText('Hello World!');
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
+      await launchAndNavigateToInnerFrame(false);
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
+
+    it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
+      await launchAndNavigateToInnerFrame();
+
+      await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    });
   });
 
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is `false`', async () => {
-    await launchAndNavigateToInnerFrame(false);
+  describe('asSecured()', () => {
+    beforeEach(async () => {
+      await launchAndNavigateToInnerFrame();
+    });
 
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
-  });
+    it('should not find non-existing element in cross-origin frame with `asSecured()`', async () => {
+      await expect(web.element(by.web.label('Hello Worldd!')).asSecured()).not.toExist();
+      await expect(web.element(by.web.label('Non-existing element')).atIndex(3).asSecured()).not.toExist();
+    });
 
-  it('should not find element in cross-origin frame when `detoxDisableWebKitSecurity` is not set', async () => {
-    await launchAndNavigateToInnerFrame();
+    it('should find elements in cross-origin frame by type with `asSecured()`', async () => {
+      await expect(web.element(by.web.type('textField')).atIndex(1).asSecured()).toExist();
+    });
 
-    await expect(webview.element(by.web.tag('h1'))).not.toExist();
+    it('should find elements in cross-origin frame by label with `asSecured()`', async () => {
+      await expect(web.element(by.web.label('Hello World!')).asSecured()).toExist();
+    });
+
+    it('should type text in cross-origin frame with `asSecured()`', async () => {
+      await web.element(by.web.type('textField')).atIndex(1).asSecured().typeText('Test');
+      await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.type-text-in', 0.97);
+
+      await web.element(by.web.type('textField')).asSecured().atIndex(1).replaceText('Test 2');
+      await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.replace-text', 0.97);
+
+      await web.element(by.web.type('textField')).asSecured().atIndex(1).clearText();
+      await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.clear-text', 0.97);
+    });
+
+    it('should tap on cross-origin frame element with `asSecured()`', async () => {
+      await web.element(by.web.type('textField')).asSecured().atIndex(1).typeText('Test');
+      await web.element(by.web.label('Submit')).asSecured().tap();
+
+      await expectElementSnapshotToMatch(webviewElement, 'tap-on-cross-origin-frame-element');
+    });
   });
 });

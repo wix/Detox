@@ -3,6 +3,7 @@ module.exports = {
     adjustSliderToPosition: (newPosition) => `adjust slider to position ${newPosition}`,
     clearText: () => 'clear input text',
     getAttributes: () => 'get element attributes',
+    tap: (point) => `tap at ${JSON.stringify(point)}`,
     longPress: (point, duration) => `long press${duration !== null ? ` for ${duration}ms` : ''}${point !== null ? ` at ${JSON.stringify(point)}` : ''}`,
     longPressAndDrag: (duration, startX, startY, targetElement, endX, endY, speed, holdDuration) =>
       `long press and drag from ${startX}, ${startY} to ${endX}, ${endY} with speed ${speed} and hold duration ${holdDuration}`,
@@ -42,6 +43,10 @@ module.exports = {
     getCurrentUrl: () => 'get current url',
     getTitle: () => 'get title',
     full: (actionDescription) => `perform web view action: ${actionDescription}`
+  },
+  systemActionDescription: {
+    tap: () => `tap`,
+    full: (actionDescription) => `perform system action: ${actionDescription}`
   },
   expectDescription: {
     waitFor: (actionDescription) => `wait for expectation while ${actionDescription}`,

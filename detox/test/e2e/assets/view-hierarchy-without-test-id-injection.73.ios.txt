@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewHierarchy>
+ <UIWindow alpha="1.0" class="UIWindow" focused="false" height="<number>" visibility="visible" width="<number>">
+  <UITransitionView alpha="1.0" class="UITransitionView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+   <UIDropShadowView alpha="1.0" class="UIDropShadowView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+    <RCTRootView alpha="1.0" class="RCTRootView" focused="false" height="<number>" visibility="visible" width="<number>" x="<number>" y="<number>">
+     <RCTRootContentView alpha="1.0" class="RCTRootContentView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+      <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+       <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+        <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Welcome Say Hello Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+         <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Welcome" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say Hello" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+         <RCTView alpha="1.0" class="RCTView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>">
+          <RCTTextView alpha="1.0" class="RCTTextView" focused="false" height="<number>" label="Say World" visibility="visible" width="<number>" x="<number>" y="<number>" />
+         </RCTView>
+        </RCTView>
+       </RCTView>
+      </RCTView>
+     </RCTRootContentView>
+    </RCTRootView>
+   </UIDropShadowView>
+  </UITransitionView>
+ </UIWindow>
+</ViewHierarchy>

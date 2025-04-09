@@ -9,7 +9,7 @@ import {
 
 function Block() {
   const subBlocks = _.times(30, (i) => (
-    <SubBlock>{i + 1}</SubBlock>
+    <SubBlock key={i}>{i + 1}</SubBlock>
   ));
 
   return (
@@ -49,7 +49,7 @@ export default class VirtualizedListStressScreen extends Component {
       return <View testID={'stub'} />;
     }
 
-    const blocks = _.times(30, () => (<Block />));
+    const blocks = _.times(30, (i) => (<Block key={`block_${i}`} />));
 
     return (
       <ScrollView testID={'stressContainer'}

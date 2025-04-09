@@ -59,12 +59,12 @@ export default class example extends Component {
   }
 
   renderInlineSeparator() {
-    return <Text style={{width: 10}}> | </Text>;
+    return <Text style={{width: 30, color: 'gray', textAlign: 'center'}}> | </Text>;
   }
 
   renderMainMenu() {
     return (
-      <View style={{flex: 1, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
@@ -82,16 +82,29 @@ export default class example extends Component {
         {this.renderScreenButton('Switch Root', Screens.SwitchRootScreen)}
         {this.renderScreenButton('Timeouts', Screens.TimeoutsScreen)}
         {this.renderScreenButton('Orientation', Screens.Orientation)}
-        {this.renderScreenButton('Permissions', Screens.Permissions)}
+
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Permissions', Screens.Permissions)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Alerts', Screens.AlertScreen)}
+        </View>
+
         {this.renderScreenButton('Network', Screens.NetworkScreen)}
         {this.renderAnimationScreenButtons()}
-        {this.renderScreenButton('Device', Screens.DeviceScreen)}
+
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Device', Screens.DeviceScreen)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Device Tap', Screens.DeviceTapScreen)}
+        </View>
+
         {isIos && this.renderScreenButton('Overlay', Screens.OverlayScreen)}
         {this.renderScreenButton('Location', Screens.LocationScreen)}
         {this.renderScreenButton('DatePicker', Screens.DatePickerScreen)}
         {isIos && this.renderScreenButton('Picker', Screens.PickerViewScreen)}
         {this.renderScreenButton('WebView', Screens.WebViewScreen)}
         {this.renderScreenButton('Attributes', Screens.AttributesScreen)}
+        {isIos && this.renderScreenButton('System Dialogs', Screens.SystemDialogsScreen)}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           {this.renderButton('Crash', () => {
@@ -112,7 +125,13 @@ export default class example extends Component {
 
 
         {isIos && this.renderScreenButton('Shake', Screens.ShakeScreen)}
-        {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
+
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          {this.renderScreenButton('Drag And Drop', Screens.DragNDropScreen)}
+          {this.renderInlineSeparator()}
+          {this.renderScreenButton('Shape Match', Screens.ShapeMatchGameScreen)}
+        </View>
+
         {isIos && this.renderScreenNotifyingButton_iOS('Custom Keyboard', 'customKeyboard')}
 
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>

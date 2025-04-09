@@ -2,14 +2,14 @@ describe('React-Native Animations', () => {
   const _delay = ms => new Promise(res => setTimeout(res, ms));
 
   async function _startTest(driver, options = {}) {
-    let driverControlSegment = element(by.text(driver).withAncestor(by.id('UniqueId_AnimationsScreen_useNativeDriver')));
+    let driverControlSegment = element(by.text(driver));
     await driverControlSegment.tap();
 
     if (options.loops !== undefined) {
       let loopSwitch = element(by.id('UniqueId_AnimationsScreen_enableLoop'));
       await loopSwitch.tap();
       if (device.getPlatform() === 'ios') {
-        await expect(loopSwitch).toHaveValue('1');
+        await expect(loopSwitch).toHaveToggleValue('1');
       }
       await element(by.id('UniqueId_AnimationsScreen_numberOfIterations')).replaceText(String(options.loops));
     }

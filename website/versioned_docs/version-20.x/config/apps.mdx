@@ -74,7 +74,9 @@ To work with multiple apps within the same configuration you should be giving ea
   "configurations": {
     "ios.release": {
       "device": "simulator",
-      "apps": ["driver", "passenger"]
+      "apps": ["driver", "passenger"],
+      "build": "scripts/build-both-apps.sh",
+      "start": "scripts/start-both-apps.sh"
     }
   }
 }
@@ -90,6 +92,9 @@ await device.selectApp('passenger');
 await device.launchApp();
 // ... run tests ...
 ```
+
+As shown in the example above, you can override app build and start commands with a single, configuration-scoped one.
+This may be useful when you have smart scripts for building and starting multiple apps at once.
 
 [`detox build`]: ../cli/build.md
 [`detox start`]: ../cli/start.md

@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "20.21.0",
+  "version": "20.36.4",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -22,23 +22,30 @@
     "clean:android": "pushd android && ./gradlew clean && popd"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.21.0",
-    "react": "18.2.0",
-    "react-native": "0.73.2",
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "react": "18.3.1",
+    "react-native": "0.76.3",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.23.3",
-    "@react-native/babel-preset": "0.73.19",
-    "@react-native/metro-config": "^0.73.2",
-    "@tsconfig/react-native": "^2.0.2",
+    "@babel/preset-env": "^7.25.3",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native-community/cli-platform-ios": "15.0.1",
+    "@react-native/babel-preset": "0.76.3",
+    "@react-native/eslint-config": "0.76.3",
+    "@react-native/metro-config": "0.76.3",
+    "@react-native/typescript-config": "0.76.3",
+    "@tsconfig/react-native": "^3.0.5",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
-    "@types/react": "^18.0.24",
-    "detox": "^20.21.0",
+    "@types/react": "^18.3.1",
+    "@types/react-test-renderer": "^18.0.0",
+    "detox": "^20.36.4",
     "fs-extra": "^9.1.0",
     "jest": "^29.6.3",
+    "react-test-renderer": "18.3.1",
     "ts-jest": "^29.0.3",
-    "typescript": "^5.0.4"
+    "typescript": "^5.3.3"
   }
 }

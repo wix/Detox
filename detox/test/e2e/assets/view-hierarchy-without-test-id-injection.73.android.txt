@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF_8' standalone='yes' ?>
+<ViewHierarchy>
+  <DecorView class="com.android.internal.policy.DecorView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+    <LinearLayout class="android.widget.LinearLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+      <ViewStub class="android.view.ViewStub" width="<number>" height="<number>" visibility="gone" alpha="1.0" focused="false" x="<number>" y="<number>" />
+      <FrameLayout class="android.widget.FrameLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+        <FitWindowsLinearLayout class="androidx.appcompat.widget.FitWindowsLinearLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+          <ViewStubCompat class="androidx.appcompat.widget.ViewStubCompat" width="<number>" height="<number>" visibility="gone" alpha="1.0" focused="false" x="<number>" y="<number>" />
+          <ContentFrameLayout class="androidx.appcompat.widget.ContentFrameLayout" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>">
+            <ReactRootView class="com.facebook.react.ReactRootView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Welcome Say Hello Say World" x="<number>" y="<number>">
+              <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Welcome" x="<number>" y="<number>" text="Welcome" />
+              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say Hello" x="<number>" y="<number>">
+                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say Hello" x="<number>" y="<number>" text="Say Hello" />
+              </ReactViewGroup>
+              <ReactViewGroup class="com.facebook.react.views.view.ReactViewGroup" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say World" x="<number>" y="<number>">
+                <ReactTextView class="com.facebook.react.views.text.ReactTextView" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" label="Say World" x="<number>" y="<number>" text="Say World" />
+              </ReactViewGroup>
+            </ReactRootView>
+          </ContentFrameLayout>
+        </FitWindowsLinearLayout>
+      </FrameLayout>
+    </LinearLayout>
+    <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
+    <View class="android.view.View" width="<number>" height="<number>" visibility="visible" alpha="1.0" focused="false" x="<number>" y="<number>" />
+  </DecorView>
+</ViewHierarchy>

@@ -1,16 +1,15 @@
 package com.wix.detox.espresso.assertion;
 
-import androidx.annotation.NonNull;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+
 import android.view.View;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
-
+import androidx.annotation.NonNull;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewAssertion;
 
-import static androidx.test.espresso.core.internal.deps.guava.base.Preconditions.checkNotNull;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 /**
  * A custom extension of {@link androidx.test.espresso.assertion.ViewAssertions}.
@@ -24,9 +23,8 @@ public class ViewAssertions {
      * which is more suitable for Detox' separated interaction-matcher architecture.
      * See {@link MatchesViewAssertion} for more details.
      */
-    @SuppressWarnings("unchecked")
     public static ViewAssertion matches(final Matcher<? super View> viewMatcher) {
-        return new MatchesViewAssertion((Matcher<? super View>) checkNotNull(viewMatcher));
+        return new MatchesViewAssertion(viewMatcher);
     }
 
     /**

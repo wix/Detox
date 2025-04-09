@@ -10,6 +10,7 @@ const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const GenyRegistry = require('./GenyRegistry');
 
 const events = {
+  GENYCLOUD_INIT: { event: 'GENYCLOUD_INIT' },
   GENYCLOUD_TEARDOWN: { event: 'GENYCLOUD_TEARDOWN' },
 };
 
@@ -40,12 +41,19 @@ class GenyAllocDriver {
     this._instanceCounter = 0;
   }
 
+  async init() {
+    try {
+      await this._adb.startDaemon();
+    } catch (error) {
+      log.warn({ ...events.GENYCLOUD_INIT, error }, 'ADB server start failed; error ignored');
+    }
+  }
+
   /**
    * @param deviceConfig { Object }
    * @return {Promise<GenycloudEmulatorCookie>}
    */
   async allocate(deviceConfig) {
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
     this._assertRecipe(deviceQuery, recipe);
@@ -94,6 +102,16 @@ class GenyAllocDriver {
    * @return {Promise<void>}
    */
   async free(cookie, options = {}) {
+    try {
+      if (!options.shutdown) {
+        await Timer.run(10000, 'waiting for device to respond', async () => {
+          await this._adb.shell(cookie.adbName, 'echo ok');
+        });
+      }
+    } catch {
+      options.shutdown = true;
+    }
+
     // Known issue: cookie won't have a proper 'instance' field due to (de)serialization
     if (options.shutdown) {
       this._genyRegistry.removeInstance(cookie.id);
@@ -115,6 +133,17 @@ class GenyAllocDriver {
 
     const deletionLeaks = (await Promise.all(killPromises)).filter(Boolean);
     this._reportGlobalCleanupSummary(deletionLeaks);
+  }
+
+  /**
+   * The current error we could recover from in the context of Genymotion Cloud is when the device is not found.
+   * The error message will contain the following text adb: device 'localhost:xxxxx' not found
+   * @param error
+   * @returns {boolean}
+   */
+  isRecoverableError(error) {
+    const errorStr = JSON.stringify(error);
+    return errorStr.indexOf('adb: device \'localhost:') !== -1;
   }
 
   emergencyCleanup() {

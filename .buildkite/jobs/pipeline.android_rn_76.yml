@@ -1,0 +1,12 @@
+  - label: ":android::detox: RN .76 + Android: Tests app"
+    command:
+      - "nvm install"
+      - "./scripts/ci.android.sh"
+    env:
+      REACT_NATIVE_VERSION: 0.76.3
+      DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true
+    artifact_paths:
+      - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
+      - "/Users/builder/uibuilder/work/**/allure-report-*.html"
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

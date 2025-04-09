@@ -12,4 +12,5 @@ export interface AllocationDriverBase {
   free(cookie: DeviceCookie, options: DeallocOptions): Promise<void>;
   cleanup?(): Promise<void>;
   emergencyCleanup?(): void;
+  isRecoverableError?(error: any): boolean;
 }

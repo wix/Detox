@@ -7,6 +7,7 @@ const collectCliConfig = require('./collectCliConfig');
 const composeAppsConfig = require('./composeAppsConfig');
 const composeArtifactsConfig = require('./composeArtifactsConfig');
 const composeBehaviorConfig = require('./composeBehaviorConfig');
+const composeCommandsConfig = require('./composeCommandsConfig');
 const composeDeviceConfig = require('./composeDeviceConfig');
 const composeLoggerConfig = require('./composeLoggerConfig');
 const composeRunnerConfig = require('./composeRunnerConfig');
@@ -104,6 +105,11 @@ async function composeDetoxConfig({
     cliConfig,
   });
 
+  const commandsConfig = composeCommandsConfig({
+    appsConfig,
+    localConfig,
+  });
+
   const result = {
     configurationName,
 
@@ -111,6 +117,7 @@ async function composeDetoxConfig({
     artifacts: artifactsConfig,
     behavior: behaviorConfig,
     cli: cliConfig,
+    commands: commandsConfig,
     device: deviceConfig,
     logger: loggerConfig,
     testRunner: runnerConfig,
