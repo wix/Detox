@@ -15,7 +15,7 @@ describe('Device tap', () => {
   });
 
   it('tap on button by coordinates ignoring status bar', async () => {
-    const point = {x: 210, y: 200}
+    const point = {x: 210, y: 225}
     await device.tap(point, true);
     await expect(element(by.text('Button Tapped'))).toBeVisible();
   });
@@ -40,7 +40,7 @@ describe('Device tap', () => {
   });
 
   it('long press on button by coordinates with duration ignoring status bar', async () => {
-    const point = {x: 170, y: 160}
+    const point = {x: 170, y: 185}
     await device.longPress(point, 2000, true);
     await expect(element(by.text('Screen Long Custom Duration Pressed'))).toBeVisible();
   });
