@@ -2,7 +2,9 @@
 
 #import <CoreSpotlight/CoreSpotlight.h>
 #import <React/RCTBundleURLProvider.h>
+#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#endif
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import "example-Swift.h"
@@ -15,7 +17,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.moduleName = @"example";
+    #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
+    // Only in RN 77 and higher
     self.dependencyProvider = [RCTAppDependencyProvider new];
+    #endif
     self.initialProps = @{};
 
     BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
