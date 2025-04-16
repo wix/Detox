@@ -1,6 +1,8 @@
-const os = require('os');
+const path = require('path');
+const process = require('process');
 
 const _ = require('lodash');
+const resolveFrom = require('resolve-from');
 
 const log = require('../utils/logger');
 
@@ -122,10 +124,10 @@ function hasEmptyPositionalArgs(value, key) {
  * @param {Detox.DetoxTestRunnerConfig} config
  */
 function inspectBrkHookDefault(config) {
-  /* istanbul ignore next */
-  config.args.$0 = os.platform() !== 'win32'
-    ? `node --inspect-brk ./node_modules/.bin/jest`
-    : `node --inspect-brk ./node_modules/jest/bin/jest.js`;
+  const cwd = process.cwd();
+  const binAbsolute = resolveFrom(cwd, 'jest/bin/jest');
+  const bin = path.relative(cwd, binAbsolute);
+  config.args.$0 = `node --inspect-brk ${bin}`;
   config.args.runInBand = true;
   delete config.args.w;
   delete config.args.workers;
