@@ -2,6 +2,7 @@
 
 #import <CoreSpotlight/CoreSpotlight.h>
 #import <React/RCTBundleURLProvider.h>
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import "example-Swift.h"
@@ -14,6 +15,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.moduleName = @"example";
+    self.dependencyProvider = [RCTAppDependencyProvider new];
     self.initialProps = @{};
 
     BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];

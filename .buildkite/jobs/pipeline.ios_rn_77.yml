@@ -3,7 +3,7 @@
       - "nvm install"
       - "./scripts/ci.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.76.3
+      REACT_NATIVE_VERSION: 0.77.2
       RCT_NEW_ARCH_ENABLED: 0
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
