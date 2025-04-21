@@ -1,9 +1,9 @@
-  - label: ":ios::detox: RN .76 + iOS: Tests app"
+  - label: ":ios::detox: RN .77 + iOS: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.76.3
+      REACT_NATIVE_VERSION: 0.77.2
       RCT_NEW_ARCH_ENABLED: 1
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
