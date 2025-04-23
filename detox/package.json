@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.36.4",
+  "version": "20.37.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -37,15 +37,15 @@
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
-    "@react-native/babel-preset": "0.76.3",
-    "@react-native/eslint-config": "0.76.3",
-    "@react-native/metro-config": "0.76.3",
-    "@react-native/typescript-config": "0.76.3",
+    "@react-native/babel-preset": "0.77.2",
+    "@react-native/eslint-config": "0.77.2",
+    "@react-native/metro-config": "0.77.2",
+    "@react-native/typescript-config": "0.77.2",
     "@tsconfig/react-native": "^3.0.0",
     "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/jest": "^29.0.0",
+    "@types/jest": "^29.5.13",
     "@types/node": "^14.18.33",
     "@types/node-ipc": "^9.2.0",
     "@types/ws": "^7.4.0",
@@ -62,7 +62,7 @@
     "jest-allure2-reporter": "^2.0.0-beta.18",
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "^3.1.1",
-    "react-native": "0.76.3",
+    "react-native": "0.77.2",
     "react-native-codegen": "^0.0.8",
     "typescript": "~5.3.3",
     "wtfnode": "^0.9.1"
