@@ -48,7 +48,7 @@ async function enterREPL(context = {}) {
         if (!input || !input.trim()) {
           log.warn('Please provide a valid command. Example: .ai Tap on login button');
         } else {
-          await detox.copilot.perform(input);
+          await detox.pilot.perform(input);
         }
       } catch (error) {
         log.error('Failed to execute Detox Pilot command.\n%s', error);
