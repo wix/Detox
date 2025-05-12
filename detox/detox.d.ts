@@ -506,6 +506,8 @@ declare global {
              * await detox.REPL();
              * @example
              * await detox.REPL({ myScreenDriver, usefulConstants });
+             *
+             * @see https://wix.github.io/Detox/docs/guide/detox-repl
              */
             readonly REPL(context?: object): Promise<void>;
         }

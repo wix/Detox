@@ -2,19 +2,25 @@ const internals = require('../../../../internals');
 const { enterREPL } = require('../../../../src/utils/repl');
 
 const log = internals.log.child({ cat: 'lifecycle,jest-environment' });
+const noop = () => {};
 
 class REPLListener {
   constructor({ env }) {
     this._env = env;
-    this._auto = false;
   }
 
-  async setup(events, state) {
+  async setup(_events, state) {
     const repl = internals.config.cli.repl;
 
-    this._auto = repl === 'auto';
     if (repl) {
       state.testTimeout = 2 * 60 * 60 * 1000; // 2 hours
+    }
+
+    if (repl !== 'auto') {
+      Object.assign(this, {
+        hook_failure: noop,
+        test_fn_failure: noop,
+      });
     }
   }
 
@@ -27,14 +33,7 @@ class REPLListener {
   }
 
   async _enterREPL(error) {
-    if (!this._auto) {
-      return;
-    }
-
-    if (error) {
-      log.error(error);
-    }
-
+    log.error(error);
     await enterREPL();
   }
 }

@@ -32,6 +32,7 @@ const sidebars = {
       items: [
         'guide/test-id',
         'guide/parallel-test-execution',
+        'guide/detox-repl',
         'guide/typescript',
         'guide/testing-webviews',
         'guide/genymotion-saas',

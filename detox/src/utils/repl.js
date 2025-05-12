@@ -40,13 +40,13 @@ async function enterREPL(context = {}) {
   });
 
   // Define .ai command for natural language interaction
-  replServer.defineCommand('ai', {
-    help: 'Execute natural language command (e.g. .ai Tap on login button)',
+  replServer.defineCommand('pilot', {
+    help: 'Execute natural language command (e.g. .pilot Tap on login button)',
     async action(input) {
       this.clearBufferedCommand();
       try {
         if (!input || !input.trim()) {
-          log.warn('Please provide a valid command. Example: .ai Tap on login button');
+          log.warn('Please provide a valid command. Example: .pilot Tap on login button');
         } else {
           await detox.pilot.perform(input);
         }
