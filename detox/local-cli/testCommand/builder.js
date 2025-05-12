@@ -141,10 +141,9 @@ module.exports = {
     describe: 'Launch REPL mode. Use --repl=auto to enter REPL on test failures.',
     coerce(value) {
       if (value === undefined) return undefined;
-      if (value === false) return 'false';
-      if (value === true) return 'true';
-      if (typeof value === 'string' && value === 'auto') return 'auto';
-      return 'true';
+      if (value === false || value === 'false') return false;
+      if (value === true || value === 'true') return true;
+      return value;
     },
   }
 };

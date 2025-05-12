@@ -6,6 +6,7 @@ if (process.platform === 'win32') {
 jest.mock('../src/logger/DetoxLogger');
 jest.mock('./utils/jestInternals');
 jest.mock('./utils/interruptListeners');
+jest.mock('./utils/patchJestUtil');
 
 const cp = require('child_process');
 const cpSpawn = cp.spawn;
@@ -447,6 +448,34 @@ describe('CLI', () => {
     await run('--gpu', 'angle_indirect');
     expect(cliCall().env).toHaveProperty('DETOX_GPU');
     expect(cliCall().fullCommand).toMatch(/\bDETOX_GPU="angle_indirect" /);
+  });
+
+  test.each([['--repl', 'true'], ['--repl']])('%s should be passed as environment variable with "true" value', async (...args) => {
+    await run(...args);
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL=true /);
+
+    const patchJestUtil = jest.requireMock('./utils/patchJestUtil');
+    expect(patchJestUtil).toHaveBeenCalled();
+  });
+
+  test.each([['--no-repl'], ['--repl', 'false']])('%s should be passed as environment variable with "false" value', async (...args) => {
+    await run(...args);
+    expect(cliCall().env).not.toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).not.toMatch(/\bDETOX_REPL/);
+  });
+
+  test('--repl auto should be passed as environment variable with "auto" value', async () => {
+    await run('--repl', 'auto');
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL="auto" /);
+  });
+
+  test('--repl followed by non-boolean argument should be correctly disengaged', async () => {
+    await run('--repl', 'some/test/file.js');
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL=true /);
+    expect(cliCall().argv).toContain('some/test/file.js');
   });
 
   test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
