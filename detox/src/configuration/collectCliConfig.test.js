@@ -9,13 +9,17 @@ describe('collectCliConfig', () => {
   let argv, env;
   let logger;
   let __env__;
+  let errorComposer;
+  let DetoxConfigErrorComposer;
 
   beforeEach(() => {
     __env__ = process.env;
     env = process.env = { ...__env__ };
     argv = {};
 
-    collectCliConfig = require('./collectCliConfig');
+    DetoxConfigErrorComposer = require('../errors').DetoxConfigErrorComposer;
+    errorComposer = new DetoxConfigErrorComposer();
+    collectCliConfig = () => require('./collectCliConfig')({ argv, errorComposer });
     logger = require('../utils/logger');
   });
 
@@ -74,6 +78,32 @@ describe('collectCliConfig', () => {
     ]);
   }
 
+  describe('mutual exclusivity', () => {
+    it('should throw error if both --inspect-brk and --repl are set', () => {
+      argv['inspect-brk'] = true;
+      argv['repl'] = true;
+
+      const mutuallyExclusiveError = errorComposer.mutuallyExclusiveCliOptions('--inspect-brk', '--repl');
+      expect(collectCliConfig).toThrow(mutuallyExclusiveError);
+    });
+
+    it('should not throw if only --inspect-brk is set', () => {
+      argv['inspect-brk'] = true;
+
+      expect(collectCliConfig).not.toThrow();
+    });
+
+    it('should not throw if only --repl is set', () => {
+      argv['repl'] = true;
+
+      expect(collectCliConfig).not.toThrow();
+    });
+
+    it('should not throw if neither --inspect-brk nor --repl is set', () => {
+      expect(collectCliConfig).not.toThrow();
+    });
+  });
+
   describe.each([
     ...asString( ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',     'artifacts-location']),
     ...asString( ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY', 'capture-view-hierarchy']),
@@ -112,7 +142,7 @@ describe('collectCliConfig', () => {
       if (!argName) return;
 
       it(`should be extracted from there (${J(input)} -> ${J(expected)})`, () => {
-        expect(collectCliConfig({ argv })[key]).toBe(expected);
+        expect(collectCliConfig()[key]).toBe(expected);
       });
     });
 
@@ -120,7 +150,7 @@ describe('collectCliConfig', () => {
       if (!envName) return;
 
       it(`should be extracted from $DETOX_SNAKE_CASE-named var (${J(input)} -> ${J(expected)})`, () => {
-        expect(collectCliConfig({})[key]).toBe(expected);
+        expect(collectCliConfig()[key]).toBe(expected);
       });
     });
 

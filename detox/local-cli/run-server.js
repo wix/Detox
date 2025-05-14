@@ -1,6 +1,6 @@
 const collectCliConfig = require('../src/configuration/collectCliConfig');
 const composeLoggerConfig = require('../src/configuration/composeLoggerConfig');
-const { DetoxRuntimeError } = require('../src/errors');
+const { DetoxConfigErrorComposer, DetoxRuntimeError } = require('../src/errors');
 const DetoxServer = require('../src/server/DetoxServer');
 const logger = require('../src/utils/logger');
 
@@ -31,12 +31,14 @@ module.exports.handler = async function runServer(argv) {
     throw new DetoxRuntimeError(`The port should be between 1 and 65535, got ${argv.port}`);
   }
 
+  const errorComposer = new DetoxConfigErrorComposer();
+
   await logger.setConfig(composeLoggerConfig({
     // @ts-ignore
     globalConfig: {},
     // @ts-ignore
     localConfig: {},
-    cliConfig: collectCliConfig({ argv }),
+    cliConfig: collectCliConfig({ argv, errorComposer }),
   }));
 
   await new DetoxServer({
