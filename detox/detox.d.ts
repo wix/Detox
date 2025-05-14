@@ -509,7 +509,7 @@ declare global {
              *
              * @see https://wix.github.io/Detox/docs/guide/detox-repl
              */
-            readonly REPL(context?: object): Promise<void>;
+            REPL(context?: object): Promise<void>;
         }
 
         interface Logger {
