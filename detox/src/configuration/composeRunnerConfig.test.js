@@ -48,6 +48,7 @@ describe('composeRunnerConfig', () => {
       bail: false,
       detached: false,
       forwardEnv: false,
+      noRetryArgs: ['shard'],
     });
   });
 
@@ -63,6 +64,7 @@ describe('composeRunnerConfig', () => {
       retries: 1,
       detached: true,
       forwardEnv: true,
+      noRetryArgs: ['shard', 'customArg'],
     };
 
     expect(composeRunnerConfig()).toEqual({
@@ -81,6 +83,7 @@ describe('composeRunnerConfig', () => {
       retries: 1,
       detached: true,
       forwardEnv: true,
+      noRetryArgs: ['shard', 'customArg'],
     });
   });
 
@@ -97,6 +100,7 @@ describe('composeRunnerConfig', () => {
       retries: 1,
       detached: true,
       forwardEnv: true,
+      noRetryArgs: ['anotherArg', 'yetAnotherArg'],
     };
 
     expect(composeRunnerConfig()).toEqual({
@@ -115,6 +119,7 @@ describe('composeRunnerConfig', () => {
       retries: 1,
       detached: true,
       forwardEnv: true,
+      noRetryArgs: ['anotherArg', 'yetAnotherArg'],
     });
   });
 
@@ -229,6 +234,7 @@ describe('composeRunnerConfig', () => {
       bail: true,
       detached: true,
       retries: 1,
+      noRetryArgs: ['shard', 'customArg'],
     };
 
     localConfig.testRunner = {
@@ -244,6 +250,7 @@ describe('composeRunnerConfig', () => {
       bail: false,
       detached: false,
       retries: 3,
+      noRetryArgs: ['anotherArg', 'yetAnotherArg'],
     };
 
     expect(composeRunnerConfig()).toEqual({
@@ -266,6 +273,7 @@ describe('composeRunnerConfig', () => {
       detached: false,
       retries: 3,
       forwardEnv: false,
+      noRetryArgs: ['anotherArg', 'yetAnotherArg'],
     });
   });
 

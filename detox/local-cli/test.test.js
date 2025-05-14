@@ -635,6 +635,27 @@ describe('CLI', () => {
     expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
   });
 
+  test('should remove Jest sharding flags during retries', async () => {
+    mockExitCode(1);
+
+    const context = require('../internals');
+    context.session.testResults = [{
+      testFilePath: 'e2e/failing.test.js',
+      success: false,
+      isPermanentFailure: false,
+    }];
+
+    await run('--retries', 1, '--shard', '1/3').catch(_.noop);
+
+    // First call should include the shard flag
+    expect(cliCall(0).argv).toContain('--shard');
+    expect(cliCall(0).argv).toContain('1/3');
+
+    // Second call (retry) should NOT include the shard flag
+    expect(cliCall(1).argv).not.toContain('--shard');
+    expect(cliCall(1).argv).not.toContain('1/3');
+  });
+
   // Helpers
 
   function tempfile(extension, content) {

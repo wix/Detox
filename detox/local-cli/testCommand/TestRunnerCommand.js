@@ -31,6 +31,7 @@ class TestRunnerCommand {
     this._argv = runnerConfig.args;
     this._detached = runnerConfig.detached;
     this._retries = runnerConfig.retries;
+    this._noRetryArgs = runnerConfig.noRetryArgs;
     this._envHint = this._buildEnvHint(opts.env);
     this._startCommands = this._prepareStartCommands(commands, cliConfig);
     this._envFwd = {};
@@ -86,7 +87,7 @@ class TestRunnerCommand {
         if (--runsLeft > 0) {
           // @ts-ignore
           detox.session.testSessionIndex++; // it is always the primary context, so we can update it
-
+          this._noRetryArgs.forEach(arg => delete this._argv[arg]);
           this._argv._ = testFilesToRetry.map(useForwardSlashes);
           this._logRelaunchError(testFilesToRetry);
         }
