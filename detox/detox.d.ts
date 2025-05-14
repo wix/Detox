@@ -231,6 +231,11 @@ declare global {
              */
             retries?: number;
             /**
+             * Arguments that should not be used during retries.
+             * @default ['shard']
+             */
+            noRetryArgs?: string[];
+            /**
              * When true, tells Detox CLI to cancel next retrying if it gets
              * at least one report about a permanent test suite failure.
              * Has no effect, if {@link DetoxTestRunnerConfig#retries} is
