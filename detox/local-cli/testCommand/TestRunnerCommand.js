@@ -40,6 +40,11 @@ class TestRunnerCommand {
       this._envFwd = this._buildEnvOverride(cliConfig, deviceConfig);
       Object.assign(this._envHint, this._envFwd);
     }
+
+    if (cliConfig.repl) {
+      this._envFwd.DETOX_REPL = cliConfig.repl;
+      this._envHint.DETOX_REPL = cliConfig.repl;
+    }
   }
 
   async execute() {

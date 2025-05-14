@@ -1,6 +1,7 @@
 const detox = require('../internals');
 
 const TestRunnerCommand = require('./testCommand/TestRunnerCommand');
+const patchJestUtil = require('./utils/patchJestUtil');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suites with the test runner specified in the project\'s Detox config';
@@ -18,6 +19,10 @@ module.exports.handler = async function test({ detoxArgs, runnerArgs }) {
     const config = await detox.resolveConfig(opts);
     if (!config.cli.inspectBrk) {
       await detox.init(opts);
+    }
+
+    if (config.cli.repl) {
+      patchJestUtil();
     }
 
     const runnerCommand = new TestRunnerCommand({

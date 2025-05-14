@@ -22,7 +22,7 @@ async function composeDetoxConfig({
   errorComposer = new DetoxConfigErrorComposer(),
   override = undefined,
 }) {
-  const cliConfig = collectCliConfig({ argv });
+  const cliConfig = collectCliConfig({ argv, errorComposer });
   const findupResult = await loadExternalConfig({
     errorComposer,
     configPath: cliConfig.configPath,

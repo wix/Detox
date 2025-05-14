@@ -117,6 +117,17 @@ class DetoxConfigErrorComposer {
   }
   // endregion
 
+  // region CLI options validation
+
+  mutuallyExclusiveCliOptions(option1, option2) {
+    return new DetoxConfigError({
+      message: `The ${J(option1)} and ${J(option2)} options cannot be used together`,
+      hint: `These options are mutually exclusive. Please use either ${option1} or ${option2}, but not both.`
+    });
+  }
+
+  // endregion
+
   // region configuration/index
 
   noConfigurationSpecified() {

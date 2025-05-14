@@ -87,6 +87,16 @@ class DetoxContext {
 
   copilot = funpermaproxy.callable(() => this[symbols.worker].copilot);
 
+  REPL = (context) => {
+    const config = this[symbols.config];
+    const repl = require('../utils/repl');
+    if (config && config.cli && config.cli.repl) {
+      return repl.enterREPL(context);
+    }
+
+    this.log.warn('To use the Detox REPL, you must enable it with either the --repl CLI flag or DETOX_REPL environment variable');
+  };
+
   get DetoxConstants() {
     return DetoxConstants;
   }

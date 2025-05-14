@@ -49,6 +49,10 @@ function splitArgv(argv) {
     detoxArgs['debug-synchronization'] = 3000;
     runnerArgv._.unshift(erroneousPassthrough);
   }
+  if (typeof detoxArgs.repl === 'string' && detoxArgs.repl !== 'auto') {
+    runnerArgv._.unshift(detoxArgs.repl);
+    detoxArgs.repl = true;
+  }
 
   const runnerArgs = disengageBooleanArgs(runnerArgv, getJestBooleanArgs());
   return { detoxArgs, runnerArgs };

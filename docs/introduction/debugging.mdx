@@ -20,6 +20,15 @@ In the Detox world, you can debug either Detox itself (i.e. run it step by step)
 
 Detox tests can be run step-by-step either using an IDE or by using Chrome debugger.
 
+:::tip New in Detox
+
+Detox now supports an interactive **REPL** (Read-Eval-Print Loop) mode for debugging. You can explore app state, issue commands, or pause test execution — all in real time.
+
+Enable it via `--repl` CLI argument and add `await detox.REPL()` in test code.
+
+→ [**See full guide**](../guide/detox-repl.md)
+:::
+
 Start by running Detox using the Detox CLI alongside the inspection argument (`--inspect-brk`) and the file in which the test resides. For example:
 
 ```bash
