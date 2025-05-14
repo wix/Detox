@@ -142,6 +142,31 @@ Default: `false`.
 When true, tells `detox test` to cancel next retrying if it gets at least one report about a [permanent test suite failure](../api/internals.mdx#reporting-test-results).
 Has no effect, if [`testRunner.retries`] is undefined or set to zero.
 
+### `testRunner.noRetryArgs` \[string[]]
+
+Default: `['shard']`.
+
+Specifies an array of command-line argument names that should be removed when retrying failed tests. This is useful for arguments that don't make sense or might cause issues during retry runs.
+
+For example, with the default configuration, when tests fail and are retried, the `shard` argument will be removed from the test runner command:
+
+```bash
+# First run with sharding
+jest --shard=1/3 e2e/tests
+# Retry run without sharding, only running failed tests
+jest path/to/failed/test.js
+```
+
+You can customize this array to include any arguments that should be excluded during retries:
+
+```json
+{
+  "testRunner": {
+    "noRetryArgs": ["shard", "maxWorkers", "customArg"]
+  }
+}
+```
+
 ### `testRunner.detached` \[boolean]
 
 Default: `false`.
@@ -434,3 +459,4 @@ detox test -c ios.sim.debug -- --help
 [`testRunner.args.$0`]: #testrunnerargs0-string
 [`testRunner.inspectBrk`]: #testrunnerinspectbrk-function
 [`testRunner.retries`]: #testrunnerretries-number
+[`testRunner.noRetryArgs`]: #testrunnernoretryargs-string
