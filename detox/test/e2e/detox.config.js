@@ -108,7 +108,7 @@ const config = {
       headless: Boolean(process.env.CI),
       gpuMode: process.env.CI ? 'off' : undefined,
       device: {
-        avdName: 'Pixel_3a_API_34'
+        avdName: 'Pixel_3a_API_35'
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-aosp-release.apk"]
     },
@@ -123,7 +123,7 @@ const config = {
     'android.genycloud.uuid': {
       type: 'android.genycloud',
       device: {
-        recipeUUID: '9baf12f9-a645-4ffa-a688-0e92584d6194',
+        recipeUUID: '544e47fc-ab69-4920-8d82-34509391a7af',
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
@@ -131,7 +131,7 @@ const config = {
     'android.genycloud.name': {
       type: 'android.genycloud',
       device: {
-        recipeName: 'Detox_Pixel_3a_API_34',
+        recipeName: 'Detox_Pixel_3a_API_35',
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
@@ -184,11 +184,11 @@ const config = {
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.debug': {
-      device: 'android.genycloud.uuid',
+      device: 'android.genycloud.name',
       apps: ['android.debug'],
     },
     'android.genycloud.release': {
-      device: 'android.genycloud.uuid',
+      device: 'android.genycloud.name',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.release2': {
