@@ -14,9 +14,9 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 open class MainActivity : ReactActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        setupEdgeToEdgeDisplay()
         super.onCreate(savedInstanceState)
 
-        setupEdgeToEdgeDisplay()
     }
 
     /**
@@ -24,29 +24,24 @@ open class MainActivity : ReactActivity() {
      * Adds padding to the root view to accommodate system bars.
      */
     private fun setupEdgeToEdgeDisplay() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Enable edge-to-edge for Android 11 (API 30) and above
-            enableEdgeToEdge()
+        // Enable edge-to-edge for Android 11 (API 30) and above
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
 
-            // Set up window insets controller
-            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-            windowInsetsController.isAppearanceLightStatusBars = true
-            windowInsetsController.isAppearanceLightNavigationBars = true
+        enableEdgeToEdge()
 
-            // Handle insets
-            window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        // Handle insets
+        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-                // Apply padding to the root view
-                view.setPadding(
-                    view.paddingLeft,
-                    insets.top,
-                    view.paddingRight,
-                    insets.bottom
-                )
+            // Apply padding to the root view
+            view.setPadding(
+                view.paddingLeft,
+                insets.top,
+                view.paddingRight,
+                insets.bottom
+            )
 
-                WindowInsets.CONSUMED
-            }
+            WindowInsets.CONSUMED
         }
     }
 
