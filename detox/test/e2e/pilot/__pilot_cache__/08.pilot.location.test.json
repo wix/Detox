@@ -4,281 +4,62 @@
       "value": {
         "code": "await device.reloadReactNative();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742057515990,
-      "lastAccessTime": 1742057515990
-    },
-    {
-      "value": {
-        "code": "await device.reloadReactNative();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801ffffffffffffffffffffffffe007e007fffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "c6e2b221ac2f715e68dd9ce15f2bbd70"
-      },
-      "creationTime": 1742057579497,
-      "lastAccessTime": 1742057579497
-    },
-    {
-      "value": {
-        "code": "await device.reloadReactNative();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "5642ed97555daeec0440c582cfde94d2"
-      },
-      "creationTime": 1742057668733,
-      "lastAccessTime": 1742057668733
+      "validationMatcher": "// No UI elements need validation for this device-level operation",
+      "creationTime": 1748233484771
     }
   ],
   "{\"currentStep\":\"Launch the app with location permission denied\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"}]}": [
     {
       "value": {
-        "code": "await device.launchApp({\n  newInstance: true,\n  permissions: {\n    location: 'never'\n  }\n});"
+        "code": "await device.launchApp({ \n  newInstance: true, \n  permissions: { location: 'never' } \n});"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742057526932,
-      "lastAccessTime": 1742057526932
+      "validationMatcher": "// No cache validation needed as this is a device launch operation that doesn't interact with specific UI elements",
+      "creationTime": 1748233491833
     }
   ],
-  "{\"currentStep\":\"Navigate to the Location screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'never'\\n  }\\n});\"}]}": [
+  "{\"currentStep\":\"Navigate to the Location screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({ \\n  newInstance: true, \\n  permissions: { location: 'never' } \\n});\"}]}": [
     {
       "value": {
-        "code": "await element(by.label('Location')).tap();"
+        "code": "await element(by.id('detox_temp_0_0_0_1_0_24')).tap();"
       },
-      "snapshotHashes": {
-        "BlockHash": "f81f0000fc3ffffff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "20757e1e18ff76eaa34b1524f1294acc"
-      },
-      "creationTime": 1742057541271,
-      "lastAccessTime": 1742057541271
+      "validationMatcher": "await expect(element(by.id('detox_temp_0_0_0_1_0_24'))).toExist();",
+      "creationTime": 1748233502961
     }
   ],
-  "{\"currentStep\":\"Verify there is an element with the text \\\"Get location\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'never'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.label('Location')).tap();\"}]}": [
+  "{\"currentStep\":\"Verify there is an element with the text \\\"Get location\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({ \\n  newInstance: true, \\n  permissions: { location: 'never' } \\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_24')).tap();\"}]}": [
     {
       "value": {
-        "code": "await expect(element(by.label('Get location'))).toExist();"
+        "code": "await expect(element(by.id('get_location_button'))).toHaveText('Get location');"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057551331,
-      "lastAccessTime": 1742057551331
+      "validationMatcher": "await expect(element(by.id('get_location_button'))).toExist();",
+      "creationTime": 1748233513782
     }
   ],
-  "{\"currentStep\":\"Tap the get location element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'never'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.label('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.label('Get location'))).toExist();\"}]}": [
+  "{\"currentStep\":\"Verify there is an element with the text \\\"Get location\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({ \\n  newInstance: true, \\n  permissions: { location: 'never' } \\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_24')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.id('get_location_button'))).toHaveText('Get location');\",\"error\":\"Test Failed: Failed expectation: TOHAVETEXT(text == “Get location”) WITH MATCHER(id == “get_location_button”)\\n\\nHINT: To print view hierarchy on failed actions/matches, use log-level verbose or higher.\"}]}": [
     {
       "value": {
-        "code": "await element(by.label('Get location')).tap();"
+        "code": "await expect(element(by.id('get_location_button'))).toBeVisible();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057560585,
-      "lastAccessTime": 1742057560585
+      "validationMatcher": "await expect(element(by.id('get_location_button'))).toExist();",
+      "creationTime": 1748233523242
     }
   ],
-  "{\"currentStep\":\"Verify there is an element with the text \\\"User denied access to location services.\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'never'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.label('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.label('Get location'))).toExist();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.label('Get location')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('location_error'))).toHaveText('User denied access to location services.');"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801ffffffffffffffffffffffffe007e007fffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "c6e2b221ac2f715e68dd9ce15f2bbd70"
-      },
-      "creationTime": 1742057569427,
-      "lastAccessTime": 1742057569427
-    }
-  ],
-  "{\"currentStep\":\"Launch the app with location permission always\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"}]}": [
-    {
-      "value": {
-        "code": "await device.launchApp({\n  newInstance: true,\n  permissions: {\n    location: 'always'\n  }\n});"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742057590211,
-      "lastAccessTime": 1742057590211
-    }
-  ],
-  "{\"currentStep\":\"Navigate to the Location screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.text('Location')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "f81f0000fc3ffffff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "20757e1e18ff76eaa34b1524f1294acc"
-      },
-      "creationTime": 1742057611225,
-      "lastAccessTime": 1742057611225
-    }
-  ],
-  "{\"currentStep\":\"Verify there is an element with the text \\\"Get location\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.text('Get location'))).toBeVisible();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057620607,
-      "lastAccessTime": 1742057620607
-    }
-  ],
-  "{\"currentStep\":\"Tap the get location element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toBeVisible();\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.text('Get location')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057629896,
-      "lastAccessTime": 1742057629896
-    }
-  ],
-  "{\"currentStep\":\"Set the device location (-80.125, 66.5)\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toBeVisible();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.text('Get location')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await device.setLocation(-80.125, 66.5);"
-      },
-      "snapshotHashes": {
-        "BlockHash": "8001fffffffffffffffffffffffffc3ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "18e382f06c99b949c34e217fb0c3eb6f"
-      },
-      "creationTime": 1742057639628,
-      "lastAccessTime": 1742057639628
-    }
-  ],
-  "{\"currentStep\":\"Verify that \\\"Latitude: -80.125\\\" is displayed\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toBeVisible();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.text('Get location')).tap();\"},{\"step\":\"Set the device location (-80.125, 66.5)\",\"code\":\"await device.setLocation(-80.125, 66.5);\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('location_latitude'))).toHaveText('Latitude: -80.125');"
-      },
-      "snapshotHashes": {
-        "BlockHash": "8001fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "18e382f06c99b949c34e217fb0c3eb6f"
-      },
-      "creationTime": 1742057648997,
-      "lastAccessTime": 1742057648997
-    }
-  ],
-  "{\"currentStep\":\"Verify that \\\"Longitude: 66.5\\\" is displayed\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission always\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'always'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toBeVisible();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.text('Get location')).tap();\"},{\"step\":\"Set the device location (-80.125, 66.5)\",\"code\":\"await device.setLocation(-80.125, 66.5);\"},{\"step\":\"Verify that \\\"Latitude: -80.125\\\" is displayed\",\"code\":\"await expect(element(by.id('location_latitude'))).toHaveText('Latitude: -80.125');\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('location_longitude'))).toHaveText('Longitude: 66.5');"
-      },
-      "snapshotHashes": {
-        "BlockHash": "8001fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "5642ed97555daeec0440c582cfde94d2"
-      },
-      "creationTime": 1742057659376,
-      "lastAccessTime": 1742057659376
-    }
-  ],
-  "{\"currentStep\":\"Launch the app with location permission just once\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"}]}": [
-    {
-      "value": {
-        "code": "await device.launchApp({\n  newInstance: true,\n  permissions: {\n    location: 'inuse'\n  }\n});"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742057680734,
-      "lastAccessTime": 1742057680734
-    }
-  ],
-  "{\"currentStep\":\"Navigate to the Location screen\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.text('Location')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "20757e1e18ff76eaa34b1524f1294acc"
-      },
-      "creationTime": 1742057694456,
-      "lastAccessTime": 1742057694456
-    }
-  ],
-  "{\"currentStep\":\"Verify there is an element with the text \\\"Get location\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.text('Get location'))).toExist();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057704675,
-      "lastAccessTime": 1742057704675
-    }
-  ],
-  "{\"currentStep\":\"Tap the get location element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toExist();\"}]}": [
+  "{\"currentStep\":\"Tap the get location element\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({ \\n  newInstance: true, \\n  permissions: { location: 'never' } \\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_24')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.id('get_location_button'))).toBeVisible();\"}]}": [
     {
       "value": {
         "code": "await element(by.id('get_location_button')).tap();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffffffffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "4cd3bb9fe1b37ae14fb2ebde0508a3f1"
-      },
-      "creationTime": 1742057713668,
-      "lastAccessTime": 1742057713668
+      "validationMatcher": "await expect(element(by.id('get_location_button'))).toExist();",
+      "creationTime": 1748233529592
     }
   ],
-  "{\"currentStep\":\"Set the device location to (-80.125, 66.5)\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toExist();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.id('get_location_button')).tap();\"}]}": [
+  "{\"currentStep\":\"Verify there is an element with the text \\\"User denied access to location services.\\\"\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission denied\",\"code\":\"await device.launchApp({ \\n  newInstance: true, \\n  permissions: { location: 'never' } \\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_24')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.id('get_location_button'))).toBeVisible();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.id('get_location_button')).tap();\"}]}": [
     {
       "value": {
-        "code": "await device.setLocation(-80.125, 66.5);"
+        "code": "await expect(element(by.id('location_error'))).toHaveText('User denied access to location services.');"
       },
-      "snapshotHashes": {
-        "BlockHash": "8001fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "538cf7ed6522ace641098838c0a8d99c"
-      },
-      "creationTime": 1742057723641,
-      "lastAccessTime": 1742057723641
-    }
-  ],
-  "{\"currentStep\":\"Verify that \\\"Latitude: -80.125\\\" is displayed\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toExist();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.id('get_location_button')).tap();\"},{\"step\":\"Set the device location to (-80.125, 66.5)\",\"code\":\"await device.setLocation(-80.125, 66.5);\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.text('Latitude: -80.125'))).toBeVisible();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c801fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "d7a0e1cede103cc9254b2d63f00053fa"
-      },
-      "creationTime": 1742057733067,
-      "lastAccessTime": 1742057733067
-    }
-  ],
-  "{\"currentStep\":\"Verify that \\\"Longitude: 66.5\\\" is displayed\",\"previousSteps\":[{\"step\":\"Restart the React Native state\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Launch the app with location permission just once\",\"code\":\"await device.launchApp({\\n  newInstance: true,\\n  permissions: {\\n    location: 'inuse'\\n  }\\n});\"},{\"step\":\"Navigate to the Location screen\",\"code\":\"await element(by.text('Location')).tap();\"},{\"step\":\"Verify there is an element with the text \\\"Get location\\\"\",\"code\":\"await expect(element(by.text('Get location'))).toExist();\"},{\"step\":\"Tap the get location element\",\"code\":\"await element(by.id('get_location_button')).tap();\"},{\"step\":\"Set the device location to (-80.125, 66.5)\",\"code\":\"await device.setLocation(-80.125, 66.5);\"},{\"step\":\"Verify that \\\"Latitude: -80.125\\\" is displayed\",\"code\":\"await expect(element(by.text('Latitude: -80.125'))).toBeVisible();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.text('Longitude: 66.5'))).toBeVisible();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "8001fffffffffffffffffffffffff81ffc3ffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "5642ed97555daeec0440c582cfde94d2"
-      },
-      "creationTime": 1742057742789,
-      "lastAccessTime": 1742057742789
+      "validationMatcher": "await expect(element(by.id('location_error'))).toExist();",
+      "creationTime": 1748233536873
     }
   ]
 }
