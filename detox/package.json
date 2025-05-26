@@ -68,7 +68,7 @@
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
-    "@wix-pilot/core": "^3.2.2",
+    "@wix-pilot/core": "^3.3.0",
     "@wix-pilot/detox": "^1.0.11",
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
