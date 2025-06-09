@@ -3,9 +3,10 @@ const { promisify } = require('util');
 
 const glob = require('glob');
 const _ = require('lodash');
-const tempfile = require('tempfile');
 
 const { useForwardSlashes } = require('../../utils/shellUtils');
+const tempfile = require('../../utils/tempfile');
+
 
 const globSync = glob.sync;
 const globAsync = promisify(glob);

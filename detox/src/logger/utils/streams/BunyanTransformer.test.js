@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
+
+const tempfile = require('../../../utils/tempfile');
 
 describe('BunyanTransformer', () => {
   /** @type {import('./BunyanTransformer')} */

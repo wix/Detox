@@ -1,13 +1,14 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
+
 
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
 const { removeMilliseconds } = require('../../utils/dateUtils');
 const { actionDescription } = require('../../utils/invocationTraceDescriptions');
 const mapLongPressArguments = require('../../utils/mapLongPressArguments');
+const tempfile = require('../../utils/tempfile');
 const actions = require('../actions/native');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
 const { ActionInteraction } = require('../interactions/native');

@@ -1,0 +1,52 @@
+describe('tempfile', () => {
+  let tmp;
+  let tempfile;
+
+  beforeEach(() => {
+    jest.mock('tmp');
+    tmp = require('tmp');
+    tempfile = require('./tempfile');
+  });
+
+  const expectTmpCalled = ({ withExtension = '' } = {}) => {
+    const template = `detox-${process.pid}-XXXXXX${withExtension}`;
+    expect(tmp.tmpNameSync).toHaveBeenCalledWith({ template });
+  };
+
+  it(`should enable tmp's graceful cleanup`, () => {
+    expect(tmp.setGracefulCleanup).toHaveBeenCalled();
+  });
+
+  it('should return the value from tmp.tmpNameSync', () => {
+    const mockPath = '/tmp/detox-123-abc123';
+    tmp.tmpNameSync.mockReturnValueOnce(mockPath);
+
+    const result = tempfile();
+    expect(result).toEqual(mockPath);
+  });
+
+  it('should create a temporary file path without extension', () => {
+    tempfile();
+    expectTmpCalled();
+  });
+
+  it('should create a temporary file path with extension', () => {
+    tempfile('txt');
+    expectTmpCalled({ withExtension: '.txt' });
+  });
+
+  it('should handle extension with leading dot', () => {
+    tempfile('.txt');
+    expectTmpCalled({ withExtension: '.txt' });
+  });
+
+  it('should handle empty extension', () => {
+    tempfile('');
+    expectTmpCalled();
+  });
+
+  it('should handle undefined extension', () => {
+    tempfile();
+    expectTmpCalled();
+  });
+});

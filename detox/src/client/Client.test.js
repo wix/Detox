@@ -2,10 +2,11 @@
 jest.useFakeTimers('modern');
 
 const { serializeError } = require('serialize-error');
-const tempfile = require('tempfile');
+
 
 const { validSession } = require('../configuration/configurations.mock');
 const Deferred = require('../utils/Deferred');
+const tempfile = require('../utils/tempfile');
 
 const actions = require('./actions/actions');
 
