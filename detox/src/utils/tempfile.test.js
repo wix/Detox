@@ -9,8 +9,14 @@ describe('tempfile', () => {
     });
 
     it('should work with the real tmp module', () => {
+      const tmpdir = require('node:os').tmpdir();
+      const path = require('node:path');
+
+      const expectedFile = path.join(tmpdir, `detox-${process.pid}-[a-zA-Z0-9]+.log`).replace(/\\/g, '\\\\');
+      const expectedResult = new RegExp(`^${expectedFile}$`);
+
       const result = tempfile('.log');
-      expect(result).toMatch(new RegExp(`^/var[/\\\\].*/detox-${process.pid}-[a-zA-Z0-9]+\\.log$`));
+      expect(result).toMatch(expectedResult);
     });
   });
 
