@@ -2,9 +2,10 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
 
 const appendFile = require('../../../utils/appendFile');
+const tempfile = require('../../../utils/tempfile');
+
 
 const Artifact = require('./Artifact');
 

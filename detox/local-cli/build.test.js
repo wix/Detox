@@ -1,6 +1,6 @@
-const tempfile = require('tempfile');
-
 const { callCli } = require('../__tests__/helpers');
+const tempfile = require('../src/utils/tempfile');
+
 
 describe('build', () => {
   let execSync, detox;

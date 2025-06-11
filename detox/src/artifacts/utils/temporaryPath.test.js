@@ -1,7 +1,8 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
+
+const tempfile = require('../../utils/tempfile');
 
 const temporaryPath = require('./temporaryPath');
 

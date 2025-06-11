@@ -2,8 +2,9 @@ const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
 const yargs = require('yargs');
+
+const tempfile = require('../src/utils/tempfile');
 
 function callCli(modulePath, cmd) {
   return new Promise((resolve, reject) => {

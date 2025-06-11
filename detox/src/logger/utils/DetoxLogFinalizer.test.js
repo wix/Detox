@@ -5,9 +5,9 @@ const { PassThrough } = require('stream');
 
 const fs = require('fs-extra');
 const glob = require('glob');
-const tempfile = require('tempfile');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
+const tempfile = require('../../utils/tempfile');
 const DetoxLogger = require('../DetoxLogger');
 
 const DetoxLogFinalizer = require('./DetoxLogFinalizer');

@@ -9,7 +9,7 @@ describe('AndroidExpect', () => {
 
   beforeEach(() => {
     jest.mock('../utils/logger');
-    jest.mock('tempfile');
+    jest.mock('../utils/tempfile');
     jest.mock('fs-extra');
 
     mockExecutor = new MockExecutor();
@@ -341,7 +341,7 @@ describe('AndroidExpect', () => {
         mockExecutor.executeResult = Promise.resolve(invokeResultInBase64);
 
         fs = require('fs-extra');
-        tempfile = require('tempfile');
+        tempfile = require('../utils/tempfile');
         tempfile.mockReturnValue(tempFilePath);
 
         _element = e.element(e.by.id('FancyElement'));

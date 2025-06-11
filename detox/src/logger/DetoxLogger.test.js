@@ -8,9 +8,10 @@ const os = require('os');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
 
 const sleep = require('../utils/sleep');
+const tempfile = require('../utils/tempfile');
+
 
 jest.retryTimes(2);
 

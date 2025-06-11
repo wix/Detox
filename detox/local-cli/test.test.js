@@ -659,7 +659,8 @@ describe('CLI', () => {
   // Helpers
 
   function tempfile(extension, content) {
-    const tempFilePath = require('tempfile')(extension);
+    const _tempfile = require('../src/utils/tempfile');
+    const tempFilePath = _tempfile(extension);
 
     fs.ensureFileSync(tempFilePath);
     if (content) {

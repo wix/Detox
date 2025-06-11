@@ -1,7 +1,7 @@
 const path = require('path');
 
 const _ = require('lodash');
-const tempfile = require('tempfile');
+const tempfile = require('../../src/utils/tempfile');
 const fs = require('fs-extra');
 const { promisify } = require('util');
 const { execCommand } = require('./utils/exec');

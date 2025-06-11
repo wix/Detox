@@ -11,8 +11,8 @@ describe('expectTwo', () => {
 
   beforeEach(() => {
     jest.mock('../utils/logger');
+    jest.mock('../utils/tempfile');
     jest.mock('fs-extra');
-    jest.mock('tempfile');
 
     fs = require('fs-extra');
     const IosExpect = require('./expectTwo');
@@ -690,7 +690,7 @@ describe('expectTwo', () => {
         screenshotPath: deviceTmpFilePath,
       });
 
-      require('tempfile').mockReturnValue(tmpFilePath);
+      require('../utils/tempfile').mockReturnValue(tmpFilePath);
       result = await e.element(e.by.id('uniqueId')).takeScreenshot(imageName);
     });
 
