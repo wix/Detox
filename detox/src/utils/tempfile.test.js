@@ -2,51 +2,65 @@ describe('tempfile', () => {
   let tmp;
   let tempfile;
 
-  beforeEach(() => {
-    jest.mock('tmp');
-    tmp = require('tmp');
-    tempfile = require('./tempfile');
+  describe('in full integration with tmp module', () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+      tempfile = require('./tempfile');
+    });
+
+    it('should work with the real tmp module', () => {
+      const result = tempfile('.log');
+      expect(result).toMatch(new RegExp(`^/var[/\\\\].*/detox-${process.pid}-[a-zA-Z0-9]+\\.log$`));
+    });
   });
 
-  const expectTmpCalled = ({ withExtension = '' } = {}) => {
-    const template = `detox-${process.pid}-XXXXXX${withExtension}`;
-    expect(tmp.tmpNameSync).toHaveBeenCalledWith({ template });
-  };
+  describe('with mocked tmp module', () => {
+    beforeEach(() => {
+      jest.mock('tmp');
+      tmp = require('tmp');
+      tempfile = require('./tempfile');
+    });
 
-  it(`should enable tmp's graceful cleanup`, () => {
-    expect(tmp.setGracefulCleanup).toHaveBeenCalled();
-  });
+    const expectTmpCalled = ({ withExtension = '' } = {}) => {
+      const template = `detox-${process.pid}-XXXXXX${withExtension}`;
+      expect(tmp.tmpNameSync).toHaveBeenCalledWith({ template });
+    };
 
-  it('should return the value from tmp.tmpNameSync', () => {
-    const mockPath = '/tmp/detox-123-abc123';
-    tmp.tmpNameSync.mockReturnValueOnce(mockPath);
+    it(`should enable tmp's graceful cleanup`, () => {
+      expect(tmp.setGracefulCleanup).toHaveBeenCalled();
+    });
 
-    const result = tempfile();
-    expect(result).toEqual(mockPath);
-  });
+    it('should return the value from tmp.tmpNameSync', () => {
+      const mockPath = '/tmp/detox-123-abc123';
+      tmp.tmpNameSync.mockReturnValueOnce(mockPath);
 
-  it('should create a temporary file path without extension', () => {
-    tempfile();
-    expectTmpCalled();
-  });
+      const result = tempfile();
+      expect(result).toEqual(mockPath);
+    });
 
-  it('should create a temporary file path with extension', () => {
-    tempfile('txt');
-    expectTmpCalled({ withExtension: '.txt' });
-  });
+    it('should create a temporary file path without extension', () => {
+      tempfile();
+      expectTmpCalled();
+    });
 
-  it('should handle extension with leading dot', () => {
-    tempfile('.txt');
-    expectTmpCalled({ withExtension: '.txt' });
-  });
+    it('should create a temporary file path with extension', () => {
+      tempfile('txt');
+      expectTmpCalled({ withExtension: '.txt' });
+    });
 
-  it('should handle empty extension', () => {
-    tempfile('');
-    expectTmpCalled();
-  });
+    it('should handle extension with leading dot', () => {
+      tempfile('.txt');
+      expectTmpCalled({ withExtension: '.txt' });
+    });
 
-  it('should handle undefined extension', () => {
-    tempfile();
-    expectTmpCalled();
+    it('should handle empty extension', () => {
+      tempfile('');
+      expectTmpCalled();
+    });
+
+    it('should handle undefined extension', () => {
+      tempfile();
+      expectTmpCalled();
+    });
   });
 });
