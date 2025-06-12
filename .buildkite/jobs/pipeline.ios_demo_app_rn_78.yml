@@ -7,4 +7,4 @@
     RCT_NEW_ARCH_ENABLED: 1
   artifact_paths:
     - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
-    - "/Users/builder/uibuilder/work/artifacts*.tar.gz" 
+    - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
