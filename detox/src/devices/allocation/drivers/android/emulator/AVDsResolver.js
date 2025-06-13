@@ -7,7 +7,7 @@ class AVDsResolver {
 
   async resolve() {
     const output = await this._emulatorExec.exec(new ListAVDsCommand());
-    const avds = output.trim().split('\n');
+    const avds = output.trim().split('\n').map(x => x.trim());
     return avds;
   }
 }

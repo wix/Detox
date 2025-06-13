@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
 
 const appendFile = require('./appendFile');
+const tempfile = require('./tempfile');
+
 
 describe('appendFile', () => {
   let src, dest;

@@ -1,9 +1,10 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
 
 const fsext = require('./fsext');
+const tempfile = require('./tempfile');
+
 
 test('isDirEmptySync', async () => {
   const tempDir = tempfile();

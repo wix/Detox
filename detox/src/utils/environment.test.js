@@ -3,7 +3,8 @@ const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
+
+const tempfile = require('./tempfile');
 
 describe('Environment', () => {
   let Environment;

@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
-const tempfile = require('tempfile');
+
+const tempfile = require('../../utils/tempfile');
 
 const DeviceRegistry = require('./DeviceRegistry');  // Adjust the path to your actual file
 

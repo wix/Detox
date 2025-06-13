@@ -5,9 +5,10 @@ const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
 
 const childProcess = require('../../../utils/childProcess');
+const tempfile = require('../../../utils/tempfile');
+
 
 describe('SimulatorLogPlugin', () => {
   async function majorWorkflow() {

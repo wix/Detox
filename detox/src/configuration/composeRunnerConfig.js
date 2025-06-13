@@ -36,6 +36,7 @@ function composeRunnerConfig(opts) {
       forwardEnv: false,
       detached: false,
       bail: false,
+      noRetryArgs: ['shard'],
       jest: {
         setupTimeout: 300000,
         teardownTimeout: 30000,

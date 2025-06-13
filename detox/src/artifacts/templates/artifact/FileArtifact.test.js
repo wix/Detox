@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
+
+const tempfile = require('../../../utils/tempfile');
 
 describe('FileArtifact', () => {
   let FileArtifact, fileArtifact, logger, temporaryPath, temporaryData, destinationPath;

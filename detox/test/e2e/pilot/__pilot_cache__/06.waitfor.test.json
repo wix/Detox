@@ -4,270 +4,53 @@
       "value": {
         "code": "await device.reloadReactNative();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742058082863,
-      "lastAccessTime": 1742058082863
-    },
-    {
-      "value": {
-        "code": "await device.reloadReactNative();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "3e8d53787f550af4f5aadd3f0f0c527c"
-      },
-      "creationTime": 1742058179416,
-      "lastAccessTime": 1742058179416
+      "validationMatcher": "// No specific elements need validation for restarting React Native environment",
+      "creationTime": 1748233115453
     }
   ],
   "{\"currentStep\":\"Navigate to the WaitFor screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"}]}": [
     {
       "value": {
-        "code": "await element(by.text('WaitFor')).tap();"
+        "code": "await element(by.id('detox_temp_0_0_0_1_0_10')).tap();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c801f81ffc3ff81ff81ffc1ffc3ff81ff81ff81ffc3ffc3ffc3ff00ff81ff81f",
-        "ViewHierarchyHash": "7deb94004b730aea63c8030457528d5a"
-      },
-      "creationTime": 1742058093760,
-      "lastAccessTime": 1742058093760
+      "validationMatcher": "await expect(element(by.id('detox_temp_0_0_0_1_0_10'))).toExist();",
+      "creationTime": 1748233125004
     }
   ],
-  "{\"currentStep\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeExistenceByToggle'))).not.toExist();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "2c8eaf45187d5ac21f6030830c05a367"
-      },
-      "creationTime": 1742058104434,
-      "lastAccessTime": 1742058104434
-    }
-  ],
-  "{\"currentStep\":\"Tap the \\\"Go\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.id('goButton')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "2c8eaf45187d5ac21f6030830c05a367"
-      },
-      "creationTime": 1742058112646,
-      "lastAccessTime": 1742058112646
-    }
-  ],
-  "{\"currentStep\":\"Wait for the element to appear\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await waitFor(element(by.id('changeExistenceByToggle'))).toExist().withTimeout(2000);"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "2c8eaf45187d5ac21f6030830c05a367"
-      },
-      "creationTime": 1742058124318,
-      "lastAccessTime": 1742058124318
-    }
-  ],
-  "{\"currentStep\":\"Confirm that the element is now visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to appear\",\"code\":\"await waitFor(element(by.id('changeExistenceByToggle'))).toExist().withTimeout(2000);\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeExistenceByToggle'))).toBeVisible();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058135581,
-      "lastAccessTime": 1742058135581
-    }
-  ],
-  "{\"currentStep\":\"Tap the \\\"Go\\\" button again\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to appear\",\"code\":\"await waitFor(element(by.id('changeExistenceByToggle'))).toExist().withTimeout(2000);\"},{\"step\":\"Confirm that the element is now visible\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).toBeVisible();\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.id('goButton')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058145410,
-      "lastAccessTime": 1742058145410
-    }
-  ],
-  "{\"currentStep\":\"Wait for the element to disappear\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to appear\",\"code\":\"await waitFor(element(by.id('changeExistenceByToggle'))).toExist().withTimeout(2000);\"},{\"step\":\"Confirm that the element is now visible\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button again\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await waitFor(element(by.id('changeExistenceByToggle'))).not.toExist().withTimeout(2000);"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058158221,
-      "lastAccessTime": 1742058158221
-    }
-  ],
-  "{\"currentStep\":\"Verify that the element is no longer present\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with ID \\\"changeExistenceByToggle\\\" is not present\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).not.toExist();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to appear\",\"code\":\"await waitFor(element(by.id('changeExistenceByToggle'))).toExist().withTimeout(2000);\"},{\"step\":\"Confirm that the element is now visible\",\"code\":\"await expect(element(by.id('changeExistenceByToggle'))).toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button again\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to disappear\",\"code\":\"await waitFor(element(by.id('changeExistenceByToggle'))).not.toExist().withTimeout(2000);\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeExistenceByToggle'))).not.toExist();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "3e8d53787f550af4f5aadd3f0f0c527c"
-      },
-      "creationTime": 1742058169272,
-      "lastAccessTime": 1742058169272
-    }
-  ],
-  "{\"currentStep\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058191639,
-      "lastAccessTime": 1742058191639
-    }
-  ],
-  "{\"currentStep\":\"Tap the \\\"Go\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.id('goButton')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058199887,
-      "lastAccessTime": 1742058199887
-    }
-  ],
-  "{\"currentStep\":\"Wait for the element to become focused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeFocusByToggle'))).toBeFocused();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058212916,
-      "lastAccessTime": 1742058212916
-    }
-  ],
-  "{\"currentStep\":\"Verify that the element is now focused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to become focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeFocusByToggle'))).toBeFocused();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058224053,
-      "lastAccessTime": 1742058224053
-    }
-  ],
-  "{\"currentStep\":\"Tap the \\\"Go\\\" button again\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to become focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"},{\"step\":\"Verify that the element is now focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"}]}": [
-    {
-      "value": {
-        "code": "await element(by.id('goButton')).tap();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058234603,
-      "lastAccessTime": 1742058234603
-    }
-  ],
-  "{\"currentStep\":\"Wait for the element to lose focus\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to become focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"},{\"step\":\"Verify that the element is now focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button again\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "214d0ae3489796b1ddb633b9eaf322e1"
-      },
-      "creationTime": 1742058246687,
-      "lastAccessTime": 1742058246687
-    }
-  ],
-  "{\"currentStep\":\"Confirm that the element is no longer focused\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Check that an element with ID \\\"changeFocusByToggle\\\" is not focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to become focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"},{\"step\":\"Verify that the element is now focused\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).toBeFocused();\"},{\"step\":\"Tap the \\\"Go\\\" button again\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Wait for the element to lose focus\",\"code\":\"await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();\"}]}": [
-    {
-      "value": {
-        "code": "await expect(element(by.id('changeFocusByToggle'))).not.toBeFocused();"
-      },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "3e8d53787f550af4f5aadd3f0f0c527c"
-      },
-      "creationTime": 1742058257307,
-      "lastAccessTime": 1742058257307
-    }
-  ],
-  "{\"currentStep\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"}]}": [
+  "{\"currentStep\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_10')).tap();\"}]}": [
     {
       "value": {
         "code": "await expect(element(by.text('Text5'))).not.toBeVisible();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058274029,
-      "lastAccessTime": 1742058274029
+      "validationMatcher": "// Verify the Text5 element exists in the view hierarchy\nawait expect(element(by.text('Text5'))).toExist();",
+      "creationTime": 1748233134645
     }
   ],
-  "{\"currentStep\":\"Tap the \\\"Go\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"}]}": [
+  "{\"currentStep\":\"Tap the \\\"Go\\\" button\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_10')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"}]}": [
     {
       "value": {
         "code": "await element(by.id('goButton')).tap();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058283111,
-      "lastAccessTime": 1742058283111
+      "validationMatcher": "await expect(element(by.id('goButton'))).toExist();",
+      "creationTime": 1748233142317
     }
   ],
-  "{\"currentStep\":\"Scroll down in the ScrollView until \\\"Text5\\\" becomes visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
+  "{\"currentStep\":\"Scroll down in the ScrollView until \\\"Text5\\\" becomes visible\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_10')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"}]}": [
     {
       "value": {
         "code": "await waitFor(element(by.text('Text5')))\n  .toBeVisible()\n  .whileElement(by.id('ScrollView'))\n  .scroll(50, 'down');"
       },
-      "snapshotHashes": {
-        "BlockHash": "c8113fff003ffffffffffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "1f380943793b75638e04bc578f98b98a"
-      },
-      "creationTime": 1742058294359,
-      "lastAccessTime": 1742058294359
+      "validationMatcher": "await expect(element(by.id('ScrollView'))).toExist();\nawait expect(element(by.text('Text5'))).toExist();",
+      "creationTime": 1748233151327
     }
   ],
-  "{\"currentStep\":\"Confirm that \\\"Text5\\\" is now visible on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.text('WaitFor')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Scroll down in the ScrollView until \\\"Text5\\\" becomes visible\",\"code\":\"await waitFor(element(by.text('Text5')))\\n  .toBeVisible()\\n  .whileElement(by.id('ScrollView'))\\n  .scroll(50, 'down');\"}]}": [
+  "{\"currentStep\":\"Confirm that \\\"Text5\\\" is now visible on the screen\",\"previousSteps\":[{\"step\":\"Restart the React Native environment\",\"code\":\"await device.reloadReactNative();\"},{\"step\":\"Navigate to the WaitFor screen\",\"code\":\"await element(by.id('detox_temp_0_0_0_1_0_10')).tap();\"},{\"step\":\"Verify that an element with text \\\"Text5\\\" is not visible\",\"code\":\"await expect(element(by.text('Text5'))).not.toBeVisible();\"},{\"step\":\"Tap the \\\"Go\\\" button\",\"code\":\"await element(by.id('goButton')).tap();\"},{\"step\":\"Scroll down in the ScrollView until \\\"Text5\\\" becomes visible\",\"code\":\"await waitFor(element(by.text('Text5')))\\n  .toBeVisible()\\n  .whileElement(by.id('ScrollView'))\\n  .scroll(50, 'down');\"}]}": [
     {
       "value": {
         "code": "await expect(element(by.text('Text5'))).toBeVisible();"
       },
-      "snapshotHashes": {
-        "BlockHash": "c8113ffff247fbbffe7ffffffffffffffffffffffffffffffffffffffffff81f",
-        "ViewHierarchyHash": "f8e7eb70db9e02e80cad96c7f386cfdb"
-      },
-      "creationTime": 1742058312144,
-      "lastAccessTime": 1742058312144
+      "validationMatcher": "await expect(element(by.text('Text5'))).toExist();",
+      "creationTime": 1748233165911
     }
   ]
 }

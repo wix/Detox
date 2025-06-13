@@ -3,7 +3,7 @@ const path = require('path');
 
 const fs = require('fs-extra');
 const _ = require('lodash');
-const tempfile = require('tempfile');
+
 
 const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
@@ -11,6 +11,7 @@ const { actionDescription, expectDescription } = require('../utils/invocationTra
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
+const tempfile = require('../utils/tempfile');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
 const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');

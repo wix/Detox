@@ -6,6 +6,7 @@ if (process.platform === 'win32') {
 jest.mock('../src/logger/DetoxLogger');
 jest.mock('./utils/jestInternals');
 jest.mock('./utils/interruptListeners');
+jest.mock('./utils/patchJestUtil');
 
 const cp = require('child_process');
 const cpSpawn = cp.spawn;
@@ -449,6 +450,34 @@ describe('CLI', () => {
     expect(cliCall().fullCommand).toMatch(/\bDETOX_GPU="angle_indirect" /);
   });
 
+  test.each([['--repl', 'true'], ['--repl']])('%s should be passed as environment variable with "true" value', async (...args) => {
+    await run(...args);
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL=true /);
+
+    const patchJestUtil = jest.requireMock('./utils/patchJestUtil');
+    expect(patchJestUtil).toHaveBeenCalled();
+  });
+
+  test.each([['--no-repl'], ['--repl', 'false']])('%s should be passed as environment variable with "false" value', async (...args) => {
+    await run(...args);
+    expect(cliCall().env).not.toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).not.toMatch(/\bDETOX_REPL/);
+  });
+
+  test('--repl auto should be passed as environment variable with "auto" value', async () => {
+    await run('--repl', 'auto');
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL="auto" /);
+  });
+
+  test('--repl followed by non-boolean argument should be correctly disengaged', async () => {
+    await run('--repl', 'some/test/file.js');
+    expect(cliCall().env).toHaveProperty('DETOX_REPL');
+    expect(cliCall().fullCommand).toMatch(/\bDETOX_REPL=true /);
+    expect(cliCall().argv).toContain('some/test/file.js');
+  });
+
   test('--device-boot-args should be passed as an environment variable (without deprecation warnings)', async () => {
     await run('--device-boot-args="--verbose"');
     expect(cliCall().env).toHaveProperty('DETOX_DEVICE_BOOT_ARGS');
@@ -606,10 +635,32 @@ describe('CLI', () => {
     expect(logger().warn).toHaveBeenCalledWith(expect.stringContaining('$DETOX_ARGV_OVERRIDE is detected'));
   });
 
+  test('should remove Jest sharding flags during retries', async () => {
+    mockExitCode(1);
+
+    const context = require('../internals');
+    context.session.testResults = [{
+      testFilePath: 'e2e/failing.test.js',
+      success: false,
+      isPermanentFailure: false,
+    }];
+
+    await run('--retries', 1, '--shard', '1/3').catch(_.noop);
+
+    // First call should include the shard flag
+    expect(cliCall(0).argv).toContain('--shard');
+    expect(cliCall(0).argv).toContain('1/3');
+
+    // Second call (retry) should NOT include the shard flag
+    expect(cliCall(1).argv).not.toContain('--shard');
+    expect(cliCall(1).argv).not.toContain('1/3');
+  });
+
   // Helpers
 
   function tempfile(extension, content) {
-    const tempFilePath = require('tempfile')(extension);
+    const _tempfile = require('../src/utils/tempfile');
+    const tempFilePath = _tempfile(extension);
 
     fs.ensureFileSync(tempFilePath);
     if (content) {

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 
+const { DetoxConfigErrorComposer } = require('../errors');
 const argparse = require('../utils/argparse');
 
 const asBoolean = (value) => {
@@ -22,12 +23,32 @@ const asNumber = (value) => {
     : undefined;
 };
 
-function collectCliConfig({ argv }) {
+const asBooleanEnum = (value) => {
+  if (value == null || value === '') {
+    return undefined;
+  }
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return value;
+};
+
+/**
+ * @param {object} opts
+ * @param {Record<string, any>} [opts.argv]
+ * @param {DetoxConfigErrorComposer} [opts.errorComposer]
+ */
+function collectCliConfig({ argv, errorComposer }) {
   const env = (key) => argparse.getEnvValue(key);
   const get = (key, fallback) => {
     const value = argv && Reflect.has(argv, key) ? argv[key] : env(key);
     return value === undefined ? fallback : value;
   };
+
+  const inspectBrk = asBoolean(get('inspect-brk'));
+  const repl = asBooleanEnum(get('repl'));
+  if (inspectBrk && repl) {
+    throw errorComposer.mutuallyExclusiveCliOptions('--inspect-brk', '--repl');
+  }
 
   return _.omitBy({
     artifactsLocation: get('artifacts-location'),
@@ -54,8 +75,9 @@ function collectCliConfig({ argv }) {
     reuse: asBoolean(get('reuse')),
     useCustomLogger: asBoolean(get('use-custom-logger')),
     retries: asNumber(get('retries')),
-    inspectBrk: asBoolean(get('inspect-brk')),
     start: get('start'),
+    repl,
+    inspectBrk,
   }, _.isUndefined);
 }
 

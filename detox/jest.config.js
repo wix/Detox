@@ -69,6 +69,7 @@ module.exports = {
     'src/utils/logger.js',
     'src/utils/pipeCommands.js',
     'src/utils/pressAnyKey.js',
+    'src/utils/repl.js',
     'src/utils/shellUtils.js',
     'runners/jest/reporters',
     'runners/jest/testEnvironment',
