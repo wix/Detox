@@ -18,7 +18,7 @@ async function run() {
     packageJson.devDependencies['react-native'] = reactNativeVersion;
   } else {
     const data = await fetch(`https://registry.npmjs.org/react-native/${reactNativeVersion}`);
-    const reactVersion = data.peerDependencies.react.replaceText('^', '');
+    const reactVersion = data.peerDependencies.react.replace('^', '');
 
     console.log(`Changed dependencies:
       react-native: ${reactNativeVersion}
