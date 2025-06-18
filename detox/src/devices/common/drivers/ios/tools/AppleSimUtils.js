@@ -2,6 +2,7 @@
 const path = require('path');
 
 const _ = require('lodash');
+const semver = require('semver');
 
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { joinArgs } = require('../../../../../utils/argparse');
@@ -131,8 +132,9 @@ class AppleSimUtils {
   }
 
   async list(query, listOptions = {}) {
+    const fields = await this._buildFields(listOptions.fields);
     const options = {
-      args: `--list ${joinArgs(query)}`,
+      args: `--list ${joinArgs(query)} ${fields}`,
       retries: 1,
       statusLogs: listOptions.trying ? { trying: listOptions.trying } : undefined,
       maxBuffer: 4 * 1024 * 1024,
@@ -174,7 +176,7 @@ class AppleSimUtils {
   }
 
   async _findDeviceByUDID(udid) {
-    const [device] = await this.list({ byId: udid, maxResults: 1 });
+    const [device] = await this.list({ byId: udid, maxResults: 1 }, { fields: ['udid', 'os', 'version', 'state'] });
     if (!device) {
       throw new DetoxRuntimeError(`Can't find device with UDID = "${udid}"`);
     }
@@ -578,6 +580,15 @@ class AppleSimUtils {
     }
 
     return Number.NaN;
+  }
+
+  async _buildFields(fields) {
+    const version = await environment.getAppleSimUtilsVersion();
+    if (fields && semver.gt(version, '0.9.10')) {
+      return `--fields ${fields.join(',')}`;
+    }
+
+    return '';
   }
 }
 
