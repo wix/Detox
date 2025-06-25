@@ -177,6 +177,13 @@ const getDetoxVersion = _.once(() => {
   return require(path.join(__dirname, '../../package.json')).version;
 });
 
+const getAppleSimUtilsVersion = _.once(async () => {
+  const command = `applesimutils --version`;
+  const output = await execAsync(command);
+  const match = output.match(/(\d+\.\d+\.\d+)$/);
+  return match ? match[1] : '0.0.0';
+});
+
 const getBuildFolderName = _.once(async () => {
   const detoxVersion = getDetoxVersion();
   const xcodeVersion = await execAsync('xcodebuild -version');
@@ -232,6 +239,7 @@ module.exports = {
   getAvdHome,
   getAvdDir,
   getAvdManagerPath,
+  getAppleSimUtilsVersion,
   getAndroidSdkManagerPath,
   getGmsaasPath,
   getDetoxVersion,

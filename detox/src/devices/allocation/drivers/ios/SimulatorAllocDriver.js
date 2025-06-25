@@ -170,7 +170,10 @@ class SimulatorAllocDriver {
   async _queryDevices(deviceQuery) {
     const result = await this._applesimutils.list(
       deviceQuery,
-      `Searching for device ${deviceQuery} ...`
+      {
+        trying: `Searching for device ${deviceQuery} ...`,
+        fields: ['udid', 'os', 'identifier'],
+      }
     );
 
     if (_.isEmpty(result)) {
