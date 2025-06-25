@@ -29,9 +29,9 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.3",
-    "@react-native-community/cli": "^15.0.1",
-    "@react-native-community/cli-platform-android": "^15.0.1",
-    "@react-native-community/cli-platform-ios": "^15.0.1",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native/babel-preset": "0.78.2",
     "@react-native/eslint-config": "0.78.2",
     "@react-native/metro-config": "0.78.2",
