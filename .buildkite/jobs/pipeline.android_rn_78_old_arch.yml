@@ -1,10 +1,12 @@
-  - label: ":ios::detox: RN .76 + iOS: Tests app"
+  - label: ":android::detox: (Old Arch) RN .78 + Android: Tests app"
     command:
       - "nvm install"
-      - "./scripts/ci.ios.sh"
+      - "./scripts/ci.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.76.3
-      RCT_NEW_ARCH_ENABLED: 1
+      REACT_NATIVE_VERSION: 0.78.2
+      DETOX_DISABLE_POD_INSTALL: true
+      DETOX_DISABLE_POSTINSTALL: true
+      ENABLE_NEW_ARCH: false
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
