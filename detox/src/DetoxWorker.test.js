@@ -625,30 +625,30 @@ describe('DetoxWorker', () => {
   });
 
   function mockEnvironmentFactories() {
-    const EnvValidator = jest.genMockFromModule('./devices/validation/EnvironmentValidatorBase');
-    const EnvValidatorFactory = jest.genMockFromModule('./devices/validation/factories').External;
+    const EnvValidator = jest.createMockFromModule('./devices/validation/EnvironmentValidatorBase');
+    const EnvValidatorFactory = jest.createMockFromModule('./devices/validation/factories').External;
     envValidator = new EnvValidator();
     envValidatorFactory = new EnvValidatorFactory();
     envValidatorFactory.createValidator.mockReturnValue(envValidator);
 
-    const ArtifactsManager = jest.genMockFromModule('./artifacts/ArtifactsManager');
-    const ArtifactsManagerFactory = jest.genMockFromModule('./artifacts/factories').External;
+    const ArtifactsManager = jest.createMockFromModule('./artifacts/ArtifactsManager');
+    const ArtifactsManagerFactory = jest.createMockFromModule('./artifacts/factories').External;
     artifactsManager = new ArtifactsManager();
     artifactsManagerFactory = new ArtifactsManagerFactory();
     artifactsManagerFactory.createArtifactsManager.mockReturnValue(artifactsManager);
 
-    const MatchersFactory = jest.genMockFromModule('./matchers/factories/index').External;
+    const MatchersFactory = jest.createMockFromModule('./matchers/factories/index').External;
     matchersFactory = new MatchersFactory();
 
-    const DeviceAllocator = jest.genMockFromModule('./devices/allocation/DeviceAllocator');
-    const DeviceAllocatorFactory = jest.genMockFromModule('./devices/allocation/factories').External;
+    const DeviceAllocator = jest.createMockFromModule('./devices/allocation/DeviceAllocator');
+    const DeviceAllocatorFactory = jest.createMockFromModule('./devices/allocation/factories').External;
     deviceAllocator = new DeviceAllocator();
     deviceAllocatorFactory = new DeviceAllocatorFactory();
     deviceAllocatorFactory.createDeviceAllocator.mockReturnValue(deviceAllocator);
     deviceAllocator.allocate.mockResolvedValue(fakeCookie);
 
-    const RuntimeDevice = jest.genMockFromModule('./devices/runtime/RuntimeDevice');
-    const RuntimeDeviceFactory = jest.genMockFromModule('./devices/runtime/factories').External;
+    const RuntimeDevice = jest.createMockFromModule('./devices/runtime/RuntimeDevice');
+    const RuntimeDeviceFactory = jest.createMockFromModule('./devices/runtime/factories').External;
     runtimeDevice = new RuntimeDevice();
     runtimeDeviceFactory = new RuntimeDeviceFactory();
     runtimeDeviceFactory.createRuntimeDevice.mockReturnValue(runtimeDevice);

@@ -556,7 +556,7 @@ describe('Android driver', () => {
     jest.mock('../../../../android/espressoapi/EspressoDetox');
     espressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
 
-    const InvocationManager = jest.genMockFromModule('../../../../invoke').InvocationManager;
+    const InvocationManager = jest.createMockFromModule('../../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();
   };
 

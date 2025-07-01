@@ -7,7 +7,7 @@ describe('APK validation', () => {
   let aapt;
   let uut;
   beforeEach(() => {
-    const AAPT = jest.genMockFromModule('../exec/AAPT');
+    const AAPT = jest.createMockFromModule('../exec/AAPT');
     aapt = new AAPT();
 
     const ApkValidator = require('./ApkValidator');

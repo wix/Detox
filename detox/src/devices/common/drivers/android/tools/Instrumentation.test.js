@@ -8,7 +8,7 @@ describe('Instrumentation', () => {
   let instrumentationArgs;
   let logger;
   beforeEach(() => {
-    const ADB = jest.genMockFromModule('../exec/ADB');
+    const ADB = jest.createMockFromModule('../exec/ADB');
     adb = new ADB();
 
     jest.mock('../../../../../utils/childProcess');

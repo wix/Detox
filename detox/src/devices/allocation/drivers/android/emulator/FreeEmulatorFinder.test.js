@@ -13,7 +13,7 @@ describe('FreeEmulatorFinder', () => {
   beforeEach(() => {
     fakeDeviceList = new DeviceList();
 
-    const DeviceRegistry = jest.genMockFromModule('../../../DeviceRegistry');
+    const DeviceRegistry = jest.createMockFromModule('../../../DeviceRegistry');
     mockDeviceRegistry = new DeviceRegistry();
     mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 

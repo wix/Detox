@@ -36,10 +36,10 @@ describe('Genymotion-cloud driver', () => {
 
     jest.mock('../../../../../utils/getAbsoluteBinaryPath');
 
-    const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
+    const Emitter = jest.createMockFromModule('../../../../../utils/AsyncEmitter');
     eventEmitter = new Emitter();
 
-    const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
+    const { InvocationManager } = jest.createMockFromModule('../../../../../invoke');
     invocationManager = new InvocationManager();
 
     jest.mock('../../../../common/drivers/android/tools/AppUninstallHelper');

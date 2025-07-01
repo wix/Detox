@@ -29,7 +29,7 @@ describe('Client', () => {
     log = require('../utils/logger');
     log._level.mockReturnValue('debug');
 
-    const AsyncWebSocket = jest.genMockFromModule('./AsyncWebSocket');
+    const AsyncWebSocket = jest.createMockFromModule('./AsyncWebSocket');
     mockAws = new AsyncWebSocket();
     mockAws.isOpen = false;
     mockAws.__appConnected = true;

@@ -41,10 +41,10 @@ describe('Genymotion-Cloud instance launcher', () => {
     retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const InstanceLifecycleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.createMockFromModule('./services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    const GenyCloudExec = jest.genMockFromModule('./exec/GenyCloudExec');
+    const GenyCloudExec = jest.createMockFromModule('./exec/GenyCloudExec');
     genyCloudExec = new GenyCloudExec();
 
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');

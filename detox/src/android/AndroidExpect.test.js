@@ -14,7 +14,7 @@ describe('AndroidExpect', () => {
 
     mockExecutor = new MockExecutor();
 
-    const Emitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    const Emitter = jest.createMockFromModule('../utils/AsyncEmitter');
     emitter = new Emitter();
 
     device = {
