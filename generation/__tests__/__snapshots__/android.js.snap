@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Android generation methods should add a sanitizer for the function with the correct name 1`] = `
-Object {
-  "args": Array [
-    Object {
+{
+  "args": [
+    {
       "type": "Integer",
       "value": 4,
     },
-    Object {
+    {
       "type": "Double",
       "value": 42,
     },
   ],
   "method": "scrollInDirection",
-  "target": Object {
+  "target": {
     "type": "Class",
     "value": "com.wix.detox.espresso.DetoxAction",
   },
@@ -23,15 +23,15 @@ Object {
 exports[`Android generation methods should generate type checks 1`] = `"times should be a number, but got FOO (string)"`;
 
 exports[`Android generation methods should return adapter calls 1`] = `
-Object {
-  "args": Array [
-    Object {
+{
+  "args": [
+    {
       "type": "Integer",
       "value": 3,
     },
   ],
   "method": "multiClick",
-  "target": Object {
+  "target": {
     "type": "Class",
     "value": "com.wix.detox.espresso.DetoxAction",
   },

@@ -29,8 +29,8 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "jest": "^27.0.0",
-    "jest-allure2-reporter": "^2.0.0-beta.18",
+    "jest": "^30.0.3",
+    "jest-allure2-reporter": "^2.2.6",
     "lint-staged": "^6.0.0",
     "prettier": "^1.8.2"
   },
