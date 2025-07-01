@@ -180,16 +180,16 @@ describe('Device', () => {
       });
 
       it(`should throw on call without args`, async () => {
-        await expect(device.selectApp()).rejects.toThrowError(errorComposer.cantSelectEmptyApp());
+        await expect(device.selectApp()).rejects.toThrow(errorComposer.cantSelectEmptyApp());
       });
 
       it(`should throw on app interactions with no selected app`, async () => {
         await device.selectApp(null);
-        await expect(device.launchApp()).rejects.toThrowError(errorComposer.appNotSelected());
+        await expect(device.launchApp()).rejects.toThrow(errorComposer.appNotSelected());
       });
 
       it(`should throw on attempt to select a non-existent app`, async () => {
-        await expect(device.selectApp('nonExistent')).rejects.toThrowError();
+        await expect(device.selectApp('nonExistent')).rejects.toThrow();
       });
     });
 
@@ -402,7 +402,7 @@ describe('Device', () => {
 
     it(`(relaunch) with url and userNofitication should throw`, async () => {
       const device = await aValidDevice();
-      await expect(device.relaunchApp({ url: 'scheme://some.url', userNotification: 'notif' })).rejects.toThrowError();
+      await expect(device.relaunchApp({ url: 'scheme://some.url', userNotification: 'notif' })).rejects.toThrow();
     });
 
     it(`(relaunch) with permissions should send trigger setpermissions before app starts`, async () => {
@@ -532,7 +532,7 @@ describe('Device', () => {
 
       const device = await aValidDevice();
 
-      await expect(device.launchApp(launchParams)).rejects.toThrowError();
+      await expect(device.launchApp(launchParams)).rejects.toThrow();
       expect(device.deviceDriver.deliverPayload).not.toHaveBeenCalled();
     });
 
@@ -692,7 +692,7 @@ describe('Device', () => {
         },
       });
 
-      await expect(device.installUtilBinaries()).rejects.toThrowError();
+      await expect(device.installUtilBinaries()).rejects.toThrow();
     });
 
     it('should not install anything if util-binaries havent been configured', async () => {
@@ -799,7 +799,7 @@ describe('Device', () => {
 
   it(`openURL(notAnObject) should pass to device driver`, async () => {
     const device = await aValidDevice();
-    await expect(device.openURL('url')).rejects.toThrowError();
+    await expect(device.openURL('url')).rejects.toThrow();
   });
 
   it(`reloadReactNative() should pass to device driver`, async () => {
@@ -962,7 +962,7 @@ describe('Device', () => {
   });
 
   it('takeScreenshot(name) should throw an exception if given name is empty', async () => {
-    await expect((await aValidDevice()).takeScreenshot()).rejects.toThrowError(/empty name/);
+    await expect((await aValidDevice()).takeScreenshot()).rejects.toThrow(/empty name/);
   });
 
   it('takeScreenshot(name) should delegate the work to the driver', async () => {

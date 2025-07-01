@@ -174,7 +174,7 @@ describe('DetoxPrimaryContext', () => {
 
       it('cannot be deallocated twice', async () => {
         await deallocateDevice(cookie);
-        await expect(deallocateDevice(cookie)).rejects.toThrowError(/Cannot deallocate device/);
+        await expect(deallocateDevice(cookie)).rejects.toThrow(/Cannot deallocate device/);
       });
 
       describe('and then the context has been cleaned up', () => {
@@ -187,7 +187,7 @@ describe('DetoxPrimaryContext', () => {
         });
 
         it('should not be able to find that cookie anymore', async () => {
-          await expect(deallocateDevice(cookie)).rejects.toThrowError(/Cannot deallocate device/);
+          await expect(deallocateDevice(cookie)).rejects.toThrow(/Cannot deallocate device/);
         });
       });
 

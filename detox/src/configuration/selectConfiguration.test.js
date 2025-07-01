@@ -27,13 +27,13 @@ describe('selectConfiguration', () => {
   it('should throw if there are no .configurations in Detox config', () => {
     configLocation = '';
     delete globalConfig.configurations;
-    expect(select).toThrowError(errorComposer.noConfigurationsInside());
+    expect(select).toThrow(errorComposer.noConfigurationsInside());
   });
 
   it('should throw if there is an empty .configurations object in Detox config and its location is unknown', () => {
     configLocation = '';
     globalConfig.configurations = {};
-    expect(select).toThrowError(errorComposer.noConfigurationsInside());
+    expect(select).toThrow(errorComposer.noConfigurationsInside());
   });
 
   it('should return the name of a single configuration', () => {

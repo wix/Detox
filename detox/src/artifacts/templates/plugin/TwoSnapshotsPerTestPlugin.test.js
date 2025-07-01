@@ -255,7 +255,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
   describe('onCreateExternalArtifact', () => {
     it('should throw error if { artifact } is not defined', async () => {
-      await expect(plugin.onCreateExternalArtifact({ name: 'Hello' })).rejects.toThrowError();
+      await expect(plugin.onCreateExternalArtifact({ name: 'Hello' })).rejects.toThrow();
     });
 
     it('should set snapshot in key-value map and track it', async () => {

@@ -25,7 +25,7 @@ describe('Exec utils', () => {
       const result = await exec.execWithRetriesAndLogs(command, options);
       return result;
     } catch (e) {
-      // Workaround for Jest's expect(...).rejects.toThrowError() not working with thrown plain objects
+      // Workaround for Jest's expect(...).rejects.toThrow() not working with thrown plain objects
       throw new Error(e);
     }
   };
@@ -164,13 +164,13 @@ describe('Exec utils', () => {
 
   it(`exec command with undefined return should throw`, async () => {
     cpp.exec.mockReturnValueOnce(undefined);
-    await expect(execWithRetriesAndLogs('bin')).rejects.toThrowError();
+    await expect(execWithRetriesAndLogs('bin')).rejects.toThrow();
   });
 
   it(`exec command and fail with error code`, async () => {
     mockCppFailure(cpp);
 
-    await expect(execWithRetriesAndLogs('bin', { retries: 0, interval: 1 })).rejects.toThrowError();
+    await expect(execWithRetriesAndLogs('bin', { retries: 0, interval: 1 })).rejects.toThrow();
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
     expect(logger.error.mock.calls).toHaveLength(3);
     expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'EXEC_FAIL' }), expect.anything());
@@ -179,7 +179,7 @@ describe('Exec utils', () => {
   it(`exec command and fail with error code, report only to debug log if verbosity is low`, async () => {
     mockCppFailure(cpp);
 
-    await expect(execWithRetriesAndLogs('bin', { verbosity: 'low', retries: 0, interval: 1 })).rejects.toThrowError();
+    await expect(execWithRetriesAndLogs('bin', { verbosity: 'low', retries: 0, interval: 1 })).rejects.toThrow();
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
     expect(logger.error).not.toHaveBeenCalled();
     expect(logger.debug.mock.calls).toHaveLength(4);
@@ -188,7 +188,7 @@ describe('Exec utils', () => {
   it(`exec command and fail with timeout`, async () => {
     mockCppFailure(cpp);
 
-    await expect(execWithRetriesAndLogs('bin', { timeout: 1, retries: 0, interval: 1 })).rejects.toThrowError();
+    await expect(execWithRetriesAndLogs('bin', { timeout: 1, retries: 0, interval: 1 })).rejects.toThrow();
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, { timeout: 1 });
     expect(logger.error.mock.calls).toHaveLength(3);
   });
@@ -210,7 +210,7 @@ describe('Exec utils', () => {
       .mockRejectedValueOnce(errorResult)
       .mockRejectedValueOnce(errorResult);
 
-    await expect(execWithRetriesAndLogs('bin', { retries: 5, interval: 1 })).rejects.toThrowError();
+    await expect(execWithRetriesAndLogs('bin', { retries: 5, interval: 1 })).rejects.toThrow();
     expect(cpp.exec).toHaveBeenCalledWith(`bin`, {});
     expect(cpp.exec).toHaveBeenCalledTimes(6);
   });

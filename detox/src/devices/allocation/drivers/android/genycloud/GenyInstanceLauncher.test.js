@@ -101,7 +101,7 @@ describe('Genymotion-Cloud instance launcher', () => {
 
       await expect(uut.connect(instanceOffline))
         .rejects
-        .toThrowError(`Timeout waiting for instance ${instanceOffline.uuid} to be ready`);
+        .toThrow(`Timeout waiting for instance ${instanceOffline.uuid} to be ready`);
     });
 
     it('should wait for the cloud instance to become online, with decent retry arguments', async () => {
@@ -153,7 +153,7 @@ describe('Genymotion-Cloud instance launcher', () => {
       givenAnInstanceDeletionError();
 
       const instance = anInstance();
-      await expect(uut.shutdown(instance.uuid)).rejects.toThrowError();
+      await expect(uut.shutdown(instance.uuid)).rejects.toThrow();
     });
 
     it('should remove the instance from the cleanup registry', async () => {

@@ -61,7 +61,7 @@ describe('Genymotion-cloud test environment validator', () => {
 
       await expect(uut.validate())
         .rejects
-        .toThrowError(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
+        .toThrow(`Your Genymotion-Cloud executable (found in ${MOCK_GMSAAS_PATH}) is too old! (version 0.6.0)`);
     });
   });
 

@@ -85,7 +85,7 @@ describe('loadExternalConfig', () => {
   it('should throw noConfigurationAtGivenPath error if the explicitly given config is not found', async () => {
     const configPath = path.join(DIR_PRIORITY, 'non-existent.json');
 
-    await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
+    await expect(loadExternalConfig({ configPath })).rejects.toThrow(
       errorComposer.noConfigurationAtGivenPath(configPath)
     );
   });
@@ -93,7 +93,7 @@ describe('loadExternalConfig', () => {
   it('should throw noConfigurationAtGivenPath error if the "extends" base config is not found', async () => {
     const configPath = path.join(DIR_EXTENDS, 'badPointer.json');
 
-    await expect(loadExternalConfig({ configPath })).rejects.toThrowError(
+    await expect(loadExternalConfig({ configPath })).rejects.toThrow(
       errorComposer
         .setDetoxConfigPath(configPath)
         .setExtends(true)
@@ -102,7 +102,7 @@ describe('loadExternalConfig', () => {
   });
 
   it('should throw failedToReadConfiguration error if the implicitly resolved config throws "Cannot find module..."', async () => {
-    await expect(loadExternalConfig({ cwd: DIR_BADCONFIG })).rejects.toThrowError('something-that-does-not-exist');
+    await expect(loadExternalConfig({ cwd: DIR_BADCONFIG })).rejects.toThrow('something-that-does-not-exist');
   });
 
   it('should fall back to fs-based config path resolution', () => {
@@ -120,6 +120,6 @@ describe('loadExternalConfig', () => {
   it('should rethrow if an unexpected error occurs', async () => {
     const configPath = os.homedir();
 
-    await expect(loadExternalConfig({ configPath })).rejects.toThrowError(/EISDIR/);
+    await expect(loadExternalConfig({ configPath })).rejects.toThrow(/EISDIR/);
   });
 });

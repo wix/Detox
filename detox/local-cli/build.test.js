@@ -103,19 +103,19 @@ describe('build', () => {
   it('fails with an error if a build script has not been found', async () => {
     detox.config.apps.default = {};
     detox.config.commands = [{ appName: 'default', start: 'a command' }];
-    await expect(callCli('./build', 'build')).rejects.toThrowError(/Failed to build/);
+    await expect(callCli('./build', 'build')).rejects.toThrow(/Failed to build/);
   });
 
   it('should ignore missing build command with -s, --silent flag', async () => {
     detox.config.apps.default = {};
-    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrow();
     expect(detox.log.warn).not.toHaveBeenCalled();
   });
 
   it('should print a warning upon user build script failure', async () => {
     detox.config.commands = [{ appName: 'default', build: 'a command' }];
     execSync.mockImplementation(() => { throw new Error('Build failure'); });
-    await expect(callCli('./build', 'build')).rejects.toThrowError(/Build failure/);
+    await expect(callCli('./build', 'build')).rejects.toThrow(/Build failure/);
     expect(detox.log.warn).toHaveBeenCalledWith(expect.stringContaining('You are responsible'));
   });
 
@@ -123,7 +123,7 @@ describe('build', () => {
     detox.config.apps.default = { binaryPath: tempfile() };
     detox.config.commands = [{ appName: 'default', build: ':' }];
 
-    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrow();
     expect(detox.log.warn).toHaveBeenCalledWith(expect.stringContaining('could not find your app at the given binary path'));
   });
 
@@ -132,7 +132,7 @@ describe('build', () => {
     detox.config.apps.app2 = { binaryPath: tempfile() };
     detox.config.commands = [{ appName: 'app1', build: 'app1 build' }, { appName: 'app2', build: 'app2 build' }];
 
-    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrow();
     expect(detox.log.info).toHaveBeenCalledWith(expect.stringContaining('app1'));
     expect(detox.log.info).toHaveBeenCalledWith(expect.stringContaining('app2'));
   });
@@ -141,7 +141,7 @@ describe('build', () => {
     detox.config.apps.default = { binaryPath: tempfile() };
     detox.config.commands = [{ appName: 'default', build: ':' }];
 
-    await expect(callCli('./build', 'build -s')).resolves.not.toThrowError();
+    await expect(callCli('./build', 'build -s')).resolves.not.toThrow();
     expect(detox.log.info).not.toHaveBeenCalledWith(expect.stringContaining('default'));
   });
 });
