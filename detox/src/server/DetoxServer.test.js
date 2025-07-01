@@ -204,7 +204,7 @@ describe('DetoxServer', () => {
   });
 
   function optionsWithMockServer(callback) {
-    const Server = jest.genMockFromModule('ws').Server;
+    const Server = jest.createMockFromModule('ws').Server;
     Server.mockImplementation(function(options, listening) {
       const mockListening = jest.fn().mockImplementation(listening);
       this.address.mockReturnValue({ port: 65534 });

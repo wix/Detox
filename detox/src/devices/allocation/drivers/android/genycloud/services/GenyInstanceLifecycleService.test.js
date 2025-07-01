@@ -28,13 +28,13 @@ describe('Genymotion-Cloud instance-lifecycle service', () => {
     retry = require('../../../../../../utils/retry');
     retry.mockImplementation((_options, func) => func());
 
-    const ADB = jest.genMockFromModule('../../../../../common/drivers/android/exec/ADB');
+    const ADB = jest.createMockFromModule('../../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.devices.mockResolvedValue({
       stdout: adbDevicesOutput,
     });
 
-    const GenyCloudExec = jest.genMockFromModule('../exec/GenyCloudExec');
+    const GenyCloudExec = jest.createMockFromModule('../exec/GenyCloudExec');
     exec = new GenyCloudExec();
 
     const GenyInstanceLifecycleService = require('./GenyInstanceLifecycleService');

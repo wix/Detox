@@ -5,7 +5,7 @@ const testBundleId = 'mock-bundle-id.test';
 describe('Android app uninstall helper', () => {
   let adb;
   beforeEach(() => {
-    const ADBClass = jest.genMockFromModule('../exec/ADB');
+    const ADBClass = jest.createMockFromModule('../exec/ADB');
     adb = new ADBClass();
     adb.isPackageInstalled.mockResolvedValue(true);
   });

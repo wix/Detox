@@ -10,7 +10,7 @@ describe('Monitored instrumentation', () => {
     jest.mock('../../../../../utils/logger');
     logger = require('../../../../../utils/logger');
 
-    const ADB = jest.genMockFromModule('../exec/ADB');
+    const ADB = jest.createMockFromModule('../exec/ADB');
     adb = new ADB();
   });
 

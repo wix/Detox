@@ -6,10 +6,10 @@ describe('Attached android device driver', () => {
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
 
-    const Emitter = jest.genMockFromModule('../../../../../utils/AsyncEmitter');
+    const Emitter = jest.createMockFromModule('../../../../../utils/AsyncEmitter');
     emitter = new Emitter();
 
-    const { InvocationManager } = jest.genMockFromModule('../../../../../invoke');
+    const { InvocationManager } = jest.createMockFromModule('../../../../../invoke');
     const invocationManager = new InvocationManager();
 
     const AttachedAndroidDriver = require('./AttachedAndroidDriver');

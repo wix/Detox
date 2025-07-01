@@ -99,14 +99,14 @@ const anEmptyCommand = () => {
 };
 
 const aCommandMockWithArgsString = (argsString) => {
-  const { ExecCommand } = jest.genMockFromModule('./BinaryExec');
+  const { ExecCommand } = jest.createMockFromModule('./BinaryExec');
   const command = new ExecCommand();
   command._getArgsString.mockReturnValue(argsString);
   return command;
 };
 
 const aCommandMockWithArgs = (commandArgs) => {
-  const { ExecCommand } = jest.genMockFromModule('./BinaryExec');
+  const { ExecCommand } = jest.createMockFromModule('./BinaryExec');
   const command = new ExecCommand();
   command._getArgs.mockReturnValue(commandArgs);
   return command;
