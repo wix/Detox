@@ -304,8 +304,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
           await saveRequest();
 
-          expect(plugin.snapshots.fromTest['testStart'].save).toBeCalledWith('test/testStart.png');
-          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
+          expect(plugin.snapshots.fromTest['testStart'].save).toHaveBeenCalledWith('test/testStart.png');
+          expect(api.untrackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
         });
 
         it('should ultimately save and untrack the second artifact', async () => {
@@ -316,8 +316,8 @@ describe('TwoSnapshotsPerTestPlugin', () => {
 
           await saveRequest();
 
-          expect(plugin.snapshots.fromTest['testDone'].save).toBeCalledWith('test/testDone.png');
-          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testDone']);
+          expect(plugin.snapshots.fromTest['testDone'].save).toHaveBeenCalledWith('test/testDone.png');
+          expect(api.untrackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testDone']);
         });
       });
 
@@ -336,12 +336,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         });
 
         it('should be saved using the suggested name and untracked', async () => {
-          expect(artifact.save).not.toBeCalledWith('test/final_name.png');
+          expect(artifact.save).not.toHaveBeenCalledWith('test/final_name.png');
           expect(api.untrackArtifact).not.toHaveBeenCalled();
 
           await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
 
-          expect(artifact.save).toBeCalledWith('test/final_name.png');
+          expect(artifact.save).toHaveBeenCalledWith('test/final_name.png');
           expect(api.untrackArtifact).toHaveBeenCalled();
         });
       });
@@ -360,12 +360,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         });
 
         it('should be saved using the suggested name and untracked', async () => {
-          expect(artifact.save).not.toBeCalledWith('final_name.png');
+          expect(artifact.save).not.toHaveBeenCalledWith('final_name.png');
           expect(api.untrackArtifact).not.toHaveBeenCalled();
 
           await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
 
-          expect(artifact.save).toBeCalledWith('final_name.png');
+          expect(artifact.save).toHaveBeenCalledWith('final_name.png');
           expect(api.untrackArtifact).toHaveBeenCalled();
         });
       });
@@ -386,12 +386,12 @@ describe('TwoSnapshotsPerTestPlugin', () => {
         });
 
         it('should be saved using the suggested name and untracked', async () => {
-          expect(artifact.save).not.toBeCalledWith('final_name.png');
+          expect(artifact.save).not.toHaveBeenCalledWith('final_name.png');
           expect(api.untrackArtifact).not.toHaveBeenCalled();
 
           await Promise.all(api.requestIdleCallback.mock.calls.map(s => s[0]()));
 
-          expect(artifact.save).toBeCalledWith('final_name.png');
+          expect(artifact.save).toHaveBeenCalledWith('final_name.png');
           expect(api.untrackArtifact).toHaveBeenCalled();
         });
       });
@@ -424,7 +424,7 @@ describe('TwoSnapshotsPerTestPlugin', () => {
           await discardRequest();
 
           expect(plugin.snapshots.fromTest['testStart'].discard).toHaveBeenCalledTimes(1);
-          expect(api.untrackArtifact).toBeCalledWith(plugin.snapshots.fromTest['testStart']);
+          expect(api.untrackArtifact).toHaveBeenCalledWith(plugin.snapshots.fromTest['testStart']);
         });
       });
 

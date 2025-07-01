@@ -39,13 +39,13 @@ describe('InstrumentsArtifactPlugin', () => {
     describe('not exists in plugin', () => {
       it('should not be stopped', async () => {
         await plugin._stopRecordingIfExists();
-        expect(testRecording.stop).not.toBeCalled();
+        expect(testRecording.stop).not.toHaveBeenCalled();
       });
 
       it('should not be started', async () => {
         const event = {};
         await plugin.onLaunchApp(event);
-        expect(testRecording.start).not.toBeCalledWith({
+        expect(testRecording.start).not.toHaveBeenCalledWith({
           dry: true
         });
       });
@@ -58,28 +58,28 @@ describe('InstrumentsArtifactPlugin', () => {
 
       it('should be stopped if exists', async () => {
         await plugin._stopRecordingIfExists();
-        expect(testRecording.stop).toBeCalled();
+        expect(testRecording.stop).toHaveBeenCalled();
       });
 
       it('should be stopped on onBeforeUninstallApp', async () => {
         await plugin.onBeforeUninstallApp();
-        expect(testRecording.stop).toBeCalled();
+        expect(testRecording.stop).toHaveBeenCalled();
       });
 
       it('should be stopped on onBeforeTerminateApp', async () => {
         await plugin.onBeforeTerminateApp();
-        expect(testRecording.stop).toBeCalled();
+        expect(testRecording.stop).toHaveBeenCalled();
       });
 
       it('should be stopped on onBeforeShutdownDevice', async () => {
         await plugin.onBeforeShutdownDevice();
-        expect(testRecording.stop).toBeCalled();
+        expect(testRecording.stop).toHaveBeenCalled();
       });
 
       it('should be started on onLaunchApp', async () => {
         const event = {};
         await plugin.onLaunchApp(event);
-        expect(testRecording.start).toBeCalledWith({
+        expect(testRecording.start).toHaveBeenCalledWith({
           dry: true
         });
       });

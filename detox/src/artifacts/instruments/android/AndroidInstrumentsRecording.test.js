@@ -22,12 +22,12 @@ describe('AndroidInstrumentsRecording', () => {
 
   it('should pull & remove artifact via adb on save', async () => {
     await recording.doSave(artifactPath);
-    expect(mockedAdb.pull).toBeCalledWith(deviceId, temporaryRecordingPath, artifactPath);
-    expect(mockedAdb.rm).toBeCalledWith(deviceId, temporaryRecordingPath, true);
+    expect(mockedAdb.pull).toHaveBeenCalledWith(deviceId, temporaryRecordingPath, artifactPath);
+    expect(mockedAdb.rm).toHaveBeenCalledWith(deviceId, temporaryRecordingPath, true);
   });
 
   it('should remove artifact via adb on discard', async () => {
     await recording.doDiscard(artifactPath);
-    expect(mockedAdb.rm).toBeCalledWith(deviceId, temporaryRecordingPath, true);
+    expect(mockedAdb.rm).toHaveBeenCalledWith(deviceId, temporaryRecordingPath, true);
   });
 });

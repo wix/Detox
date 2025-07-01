@@ -52,7 +52,7 @@ describe('Spawn utils', () => {
 
         await spawn[func](command, flags);
 
-        expect(cpp.spawn).toBeCalledWith(
+        expect(cpp.spawn).toHaveBeenCalledWith(
           command,
           flags,
           expect.objectContaining({
@@ -107,13 +107,13 @@ describe('Spawn utils', () => {
         await spawn[func]('mockCommand', [], { silent: true });
         await nextCycle();
 
-        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
-        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
-        expect(log.trace).not.toBeCalledWith(
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #0');
+        expect(log.trace).not.toHaveBeenCalledWith(
           expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDOUT' })),
           expect.any(String)
         );
-        expect(log.error).not.toBeCalledWith(
+        expect(log.error).not.toHaveBeenCalledWith(
           expect.objectContaining(expect.objectContaining({ event: 'SPAWN_STDERR' })),
           expect.any(String)
         );
@@ -129,9 +129,9 @@ describe('Spawn utils', () => {
         await spawn[func]('mockCommand', []).catch(() => {});
         await nextCycle();
 
-        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
-        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #-2');
-        expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'mockCommand');
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_END' }), 'mockCommand exited with code #-2');
+        expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }), 'Some error.');
       });
 
       it('should log immediate spawn errors', async () => {
@@ -145,9 +145,9 @@ describe('Spawn utils', () => {
         await spawn[func]('command', []);
         await nextCycle();
 
-        expect(log.debug).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
-        expect(log.error).toBeCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
-        expect(log.error).toBeCalledWith(
+        expect(log.debug).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_CMD' }), 'command');
+        expect(log.error).toHaveBeenCalledWith(expect.objectContaining({ event: 'SPAWN_ERROR' }), 'command failed with code = -2');
+        expect(log.error).toHaveBeenCalledWith(
           expect.objectContaining({ event: 'SPAWN_STDERR', stderr: true }),
           'Command `command` not found.'
         );
@@ -166,7 +166,7 @@ describe('Spawn utils', () => {
 
       it('should spawn an attached command with stderr capturing, by default', async () => {
         await spawn.spawnWithRetriesAndLogs(command, flags);
-        expect(cpp.spawn).toBeCalledWith(
+        expect(cpp.spawn).toHaveBeenCalledWith(
           command,
           flags,
           expect.objectContaining({
@@ -211,7 +211,7 @@ describe('Spawn utils', () => {
 
       it('should honor output-capturing options, but force stderr', async () => {
         await spawn.spawnWithRetriesAndLogs(command, flags, { capture: ['stdout'] });
-        expect(cpp.spawn).toBeCalledWith(
+        expect(cpp.spawn).toHaveBeenCalledWith(
           command,
           flags,
           expect.objectContaining({
