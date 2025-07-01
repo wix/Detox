@@ -17,7 +17,7 @@ describe('appendFile', () => {
   });
 
   it('should throw error if source file does not exist', async () => {
-    await expect(appendFile(tempfile(), dest)).rejects.toThrowError(/ENOENT/);
+    await expect(appendFile(tempfile(), dest)).rejects.toThrow(/ENOENT/);
   });
 
   it('should append source file contents to destination file contents', async () => {

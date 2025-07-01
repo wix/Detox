@@ -55,7 +55,7 @@ describe('Android driver', () => {
     it('should break if instrumentation launch fails', async () => {
       instrumentation.launch.mockRejectedValue(new Error('Simulated failure'));
 
-      await expect(uut.launchApp(bundleId, {}, '')).rejects.toThrowError('Simulated failure');
+      await expect(uut.launchApp(bundleId, {}, '')).rejects.toThrow('Simulated failure');
     });
 
     it('should set a termination callback function', async () => {
@@ -220,7 +220,7 @@ describe('Android driver', () => {
 
       it('should not send the data if device prep fails', async () => {
         fileTransfer.prepareDestinationDir.mockRejectedValue(new Error());
-        await expect(uut.launchApp(bundleId, notificationArgs, '')).rejects.toThrowError();
+        await expect(uut.launchApp(bundleId, notificationArgs, '')).rejects.toThrow();
       });
 
       it('should launch instrumentation with a modified notification data URL arg', async () => {
@@ -307,7 +307,7 @@ describe('Android driver', () => {
       setTimeout(waitForCrash.reject, 1, instrumentationError);
 
       try {
-        await expect(promise).rejects.toThrowError(instrumentationError);
+        await expect(promise).rejects.toThrow(instrumentationError);
       } finally {
         clientWait.resolve();
       }
@@ -334,7 +334,7 @@ describe('Android driver', () => {
       setTimeout(waitForCrash.reject, 1, instrumentationError);
 
       try {
-        await expect(promise).rejects.toThrowError(clientCrashError);
+        await expect(promise).rejects.toThrow(clientCrashError);
       } finally {
         clientWait.resolve();
       }
@@ -351,7 +351,7 @@ describe('Android driver', () => {
       instrumentation.waitForCrash.mockRejectedValue(new Error());
 
       await uut.launchApp(bundleId, {}, '');
-      await expect(uut.waitUntilReady()).rejects.toThrowError();
+      await expect(uut.waitUntilReady()).rejects.toThrow();
       expect(instrumentation.abortWaitForCrash).toHaveBeenCalled();
     });
   });
@@ -433,7 +433,7 @@ describe('Android driver', () => {
         .mockRejectedValueOnce(new Error())
         .mockResolvedValueOnce();
 
-      await expect(uut.installUtilBinaries(binaryPaths)).rejects.toThrowError();
+      await expect(uut.installUtilBinaries(binaryPaths)).rejects.toThrow();
       expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
       expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
       expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
@@ -556,7 +556,7 @@ describe('Android driver', () => {
     jest.mock('../../../../android/espressoapi/EspressoDetox');
     espressoDetoxApi = require('../../../../android/espressoapi/EspressoDetox');
 
-    const InvocationManager = jest.genMockFromModule('../../../../invoke').InvocationManager;
+    const InvocationManager = jest.createMockFromModule('../../../../invoke').InvocationManager;
     invocationManager = new InvocationManager();
   };
 

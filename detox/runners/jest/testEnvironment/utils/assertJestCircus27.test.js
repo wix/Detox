@@ -17,6 +17,6 @@ describe('assertSupportedVersion', () => {
     ['26.0.0'],
     ['27.2.4'],
   ])('should throw an error for %j', (version) => {
-    expect(() => assertSupportedVersion(version)).toThrowError(/unsupported jest.*version/);
+    expect(() => assertSupportedVersion(version)).toThrow(/unsupported jest.*version/);
   });
 });

@@ -91,7 +91,7 @@ describe('CLI', () => {
   describe('by default', () => {
     test('by default, should attempt to load config from package.json or .detoxrc', async () => {
       const expectedError = /^Cannot run Detox without a configuration/;
-      await expect(callCli('./test', 'test')).rejects.toThrowError(expectedError);
+      await expect(callCli('./test', 'test')).rejects.toThrow(expectedError);
     });
   });
 
@@ -240,7 +240,7 @@ describe('CLI', () => {
       start: `${startCmd.cmd} --some-start=command`,
     });
 
-    await expect(run).rejects.toThrowError(/Command exited with code 1:.*--some-start=command/);
+    await expect(run).rejects.toThrow(/Command exited with code 1:.*--some-start=command/);
     expect(cliCall(0).argv[1]).toBe('--some-start=command');
     expect(cliCall(1)).toBe(null);
   });

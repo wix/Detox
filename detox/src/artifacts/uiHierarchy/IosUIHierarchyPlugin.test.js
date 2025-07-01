@@ -89,7 +89,7 @@ describe('IosUIHierarchyPlugin', () => {
     it('should validate event.artifact', async () => {
       await expect(plugin.onCreateExternalArtifact({ name: 'invalid' }))
         .rejects
-        .toThrowError(/Expected Artifact instance/);
+        .toThrow(/Expected Artifact instance/);
     });
 
     it('should register snapshots inside and outside of running test', async () => {

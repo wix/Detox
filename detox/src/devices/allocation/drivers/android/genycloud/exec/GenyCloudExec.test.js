@@ -73,7 +73,7 @@ describe('Genymotion-cloud executable', () => {
       it('should fail upon an error result', async () => {
         givenErrorJSONResult();
 
-        await expect(commandExecFn()).rejects.toThrowError(JSON.stringify(failResponse));
+        await expect(commandExecFn()).rejects.toThrow(JSON.stringify(failResponse));
       });
     });
   });
@@ -100,7 +100,7 @@ describe('Genymotion-cloud executable', () => {
         const errorMessage = 'Oh no, mocked error has occurred!';
         givenErrorTextualResult(errorMessage);
 
-        await expect(commandExecFn()).rejects.toThrowError(errorMessage);
+        await expect(commandExecFn()).rejects.toThrow(errorMessage);
       });
     });
   });

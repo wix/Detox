@@ -10,7 +10,7 @@ describe('Monitored instrumentation', () => {
     jest.mock('../../../../../utils/logger');
     logger = require('../../../../../utils/logger');
 
-    const ADB = jest.genMockFromModule('../exec/ADB');
+    const ADB = jest.createMockFromModule('../exec/ADB');
     adb = new ADB();
   });
 
@@ -52,7 +52,7 @@ describe('Monitored instrumentation', () => {
     it('should break if underlying launch fails', async () => {
       instrumentationObj().launch.mockRejectedValue(new Error());
 
-      await expect(uut.launch(deviceId, bundleId, {})).rejects.toThrowError();
+      await expect(uut.launch(deviceId, bundleId, {})).rejects.toThrow();
     });
   });
 
@@ -78,7 +78,7 @@ describe('Monitored instrumentation', () => {
 
       await uut.launch(deviceId, bundleId, {});
 
-      await expect(uut.terminate()).rejects.toThrowError();
+      await expect(uut.terminate()).rejects.toThrow();
     });
 
     it('should allow for termination without launch', async () => {

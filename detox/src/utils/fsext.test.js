@@ -9,7 +9,7 @@ const tempfile = require('./tempfile');
 test('isDirEmptySync', async () => {
   const tempDir = tempfile();
   try {
-    expect(() => fsext.isDirEmptySync(tempDir)).toThrowError(/ENOENT/);
+    expect(() => fsext.isDirEmptySync(tempDir)).toThrow(/ENOENT/);
 
     await fs.ensureDir(tempDir);
     expect(fsext.isDirEmptySync(tempDir)).toBe(true);

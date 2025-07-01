@@ -22,7 +22,7 @@ describe('IOS simulator driver', () => {
     const ClientMock = jest.requireMock('../../../../client/Client');
     client = new ClientMock();
 
-    const AppleSimUtils = jest.genMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
+    const AppleSimUtils = jest.createMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
 
     const SimulatorDriver = require('./SimulatorDriver');
