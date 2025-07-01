@@ -53,11 +53,11 @@ describe('Android generation', () => {
 
       expect(() => {
         fn(3, 42);
-      }).toThrowError();
+      }).toThrow();
 
       expect(() => {
         fn('down', 42);
-      }).not.toThrowError();
+      }).not.toThrow();
 
       expect(fn('down', 42)).toMatchSnapshot();
     });
