@@ -165,7 +165,7 @@ describe('Emulator launcher', () => {
     describe('if shutdown does not go well', () => {
       beforeEach(async () => {
         adb.getState.mockResolvedValue('offline');
-        await expect(uut.shutdown(avdName)).rejects.toThrowError(new RegExp(`Failed to shut down.*${avdName}`));
+        await expect(uut.shutdown(avdName)).rejects.toThrow(new RegExp(`Failed to shut down.*${avdName}`));
       });
 
       it('should keep polling the emulator status until it is "none"', async () => {

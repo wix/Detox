@@ -39,7 +39,7 @@ describe.forPilot('Pilot Actions', () => {
   it('should not succeed in long pressing with point outside the target area', async () => {
     await jestExpect(async () =>
       await pilot.perform('Attempt a long press on the "Long Press on Top Left" button outside its bounds')
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 
   it('should type in an element', async () => {
@@ -129,12 +129,12 @@ describe.forPilot('Pilot Actions', () => {
   it('should assert on invalid intent', async () => {
     await jestExpect(async () =>
       await pilot.perform('Tap the "FOOBAR" button')
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 
   it('should assert on ambiguous intent', async () => {
     await jestExpect(async () =>
       await pilot.perform('Do magic to the element')
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 });

@@ -51,7 +51,7 @@ describe.forPilot('DatePicker', () => {
 
       await jestExpect(async () =>
         await pilot.perform('Set the date picker`s first column to 10th, so the date will be September 10th, 2023')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
   });
 });

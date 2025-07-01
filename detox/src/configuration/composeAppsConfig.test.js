@@ -178,45 +178,45 @@ describe('composeAppsConfig', () => {
         delete localConfig.apps;
         deviceConfig.type = deviceType;
 
-        expect(compose).toThrowError(errorComposer.noAppIsDefined(deviceType));
+        expect(compose).toThrow(errorComposer.noAppIsDefined(deviceType));
       });
 
       test('both app/apps are defined', () => {
         localConfig.app = 'example1';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.ambiguousAppAndApps());
+        expect(compose).toThrow(errorComposer.ambiguousAppAndApps());
       });
 
       test('app is defined as an array', () => {
         localConfig.app = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.multipleAppsConfigArrayTypo());
+        expect(compose).toThrow(errorComposer.multipleAppsConfigArrayTypo());
       });
 
       test('apps are defined as a string', () => {
         localConfig.apps = 'example1';
 
-        expect(compose).toThrowError(errorComposer.multipleAppsConfigShouldBeArray());
+        expect(compose).toThrow(errorComposer.multipleAppsConfigShouldBeArray());
       });
 
       test('"apps" dictionary is undefined', () => {
         delete globalConfig.apps;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.thereAreNoAppConfigs('example1'));
+        expect(compose).toThrow(errorComposer.thereAreNoAppConfigs('example1'));
       });
 
       test('non-existent app, cannot resolve alias', () => {
         localConfig.app = 'elbereth';
 
-        expect(compose).toThrowError(errorComposer.cantResolveAppAlias('elbereth'));
+        expect(compose).toThrow(errorComposer.cantResolveAppAlias('elbereth'));
       });
 
       test('undefined inline app', () => {
         localConfig.apps = ['example1', null];
 
-        expect(compose).toThrowError(
+        expect(compose).toThrow(
           errorComposer.appConfigIsUndefined(['configurations', configurationName, 'apps', 1])
         );
       });
@@ -224,7 +224,7 @@ describe('composeAppsConfig', () => {
       test('apps have no name (collision)', () => {
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
+        expect(compose).toThrow(errorComposer.duplicateAppConfig({
           appName: undefined,
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
@@ -236,7 +236,7 @@ describe('composeAppsConfig', () => {
         globalConfig.apps.example2.name = 'sameApp';
         localConfig.apps = ['example1', 'example2'];
 
-        expect(compose).toThrowError(errorComposer.duplicateAppConfig({
+        expect(compose).toThrow(errorComposer.duplicateAppConfig({
           appName: 'sameApp',
           appPath: ['apps', 'example2'],
           preExistingAppPath: ['apps', 'example1'],
@@ -254,7 +254,7 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.missingAppBinaryPath(
+        expect(compose).toThrow(errorComposer.missingAppBinaryPath(
           ['apps', 'example1']
         ));
       });
@@ -270,7 +270,7 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.malformedAppLaunchArgs(
+        expect(compose).toThrow(errorComposer.malformedAppLaunchArgs(
           ['apps', 'example1']
         ));
       });
@@ -283,7 +283,7 @@ describe('composeAppsConfig', () => {
         deviceConfig.type = deviceType;
         localConfig.app = 'example1';
 
-        expect(compose).toThrowError(errorComposer.unsupportedReversePorts(
+        expect(compose).toThrow(errorComposer.unsupportedReversePorts(
           ['apps', 'example1']
         ));
       });
@@ -298,7 +298,7 @@ describe('composeAppsConfig', () => {
         globalConfig.apps.example1.type = appType;
         deviceConfig.type = deviceType;
 
-        expect(compose).toThrowError(
+        expect(compose).toThrow(
           errorComposer.invalidAppType({
             appPath: ['apps', 'example1'],
             allowedAppTypes: [appType === 'android.apk' ? 'ios.app' : 'android.apk'],

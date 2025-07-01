@@ -63,14 +63,14 @@ describe('retry', () => {
 
   it('should adhere to retries parameter', async () => {
     const mockFn = mockFailingUserFn();
-    await expect(retry({ retries: 2, interval: 1 }, mockFn)).rejects.toThrowError();
+    await expect(retry({ retries: 2, interval: 1 }, mockFn)).rejects.toThrow();
   });
 
   it('should adhere to interval parameter, and sleep for increasingly long intervals (i.e. the default backoff mode)', async () => {
     const mockFn = mockFailingUserFn();
     const baseInterval = 111;
 
-    await expect(retry({ retries: 2, interval: baseInterval }, mockFn)).rejects.toThrowError();
+    await expect(retry({ retries: 2, interval: baseInterval }, mockFn)).rejects.toThrow();
 
     expect(sleep).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledWith(baseInterval, undefined);
@@ -115,7 +115,7 @@ describe('retry', () => {
                             .mockReturnValueOnce(true)
                             .mockReturnValueOnce(false);
 
-    await expect(retry({ retries: 999, interval: 1, conditionFn }, mockFn)).rejects.toThrowError();
+    await expect(retry({ retries: 999, interval: 1, conditionFn }, mockFn)).rejects.toThrow();
 
     expect(mockFn).toHaveBeenCalledTimes(2);
   });
@@ -125,7 +125,7 @@ describe('retry', () => {
     const defaultRetries = 9;
     const defaultInterval = 500;
 
-    await expect(retry(mockFn)).rejects.toThrowError();
+    await expect(retry(mockFn)).rejects.toThrow();
 
     expect(mockFn).toHaveBeenCalledTimes(defaultRetries + 1);
     expect(sleep).toHaveBeenCalledWith(defaultInterval, undefined);

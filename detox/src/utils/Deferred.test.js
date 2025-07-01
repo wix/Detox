@@ -33,10 +33,10 @@ describe('Deferred', () => {
       expect(deferred.promise).toBeInstanceOf(Promise));
 
     it('can be resolved', () =>
-      expect(() => deferred.resolve()).not.toThrowError());
+      expect(() => deferred.resolve()).not.toThrow());
 
     it('can be rejected', () =>
-      expect(() => deferred.reject()).not.toThrowError());
+      expect(() => deferred.reject()).not.toThrow());
 
     describe('and resolved', () => {
       beforeEach(() => deferred.resolve(42));
@@ -71,7 +71,7 @@ describe('Deferred', () => {
         expect(deferred.status).toBe(Deferred.REJECTED));
 
       it('should have a rejected promise', () =>
-        expect(deferred.promise).rejects.toThrowError('RejectionTest'));
+        expect(deferred.promise).rejects.toThrow('RejectionTest'));
 
       it('should indicate an isRejected=true, other statuses as false', () => {
         expect(deferred.isRejected()).toEqual(true);
@@ -86,7 +86,7 @@ describe('Deferred', () => {
           expect(deferred.status).toBe(Deferred.REJECTED));
 
         it('should still have that rejected promise', () =>
-          expect(deferred.promise).rejects.toThrowError('RejectionTest'));
+          expect(deferred.promise).rejects.toThrow('RejectionTest'));
       });
     });
   });
@@ -105,7 +105,7 @@ describe('Deferred', () => {
       deferred = Deferred.rejected(new Error('error mock'));
 
       expect(deferred.status).toBe(Deferred.REJECTED);
-      await expect(deferred.promise).rejects.toThrowError('error mock');
+      await expect(deferred.promise).rejects.toThrow('error mock');
     });
   });
 });

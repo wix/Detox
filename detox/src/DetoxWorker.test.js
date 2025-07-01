@@ -300,14 +300,14 @@ describe('DetoxWorker', () => {
     describe('and environment validation fails', () => {
       it('should fail with an error', async () => {
         envValidator.validate.mockRejectedValue(new Error('Mock validation failure'));
-        await expect(init).rejects.toThrowError('Mock validation failure');
+        await expect(init).rejects.toThrow('Mock validation failure');
       });
     });
 
     describe('and allocation fails', () => {
       it('should fail with an error', async () => {
         detoxContext[symbols.allocateDevice].mockRejectedValue(new Error('Mock validation failure'));
-        await expect(init).rejects.toThrowError('Mock validation failure');
+        await expect(init).rejects.toThrow('Mock validation failure');
       });
     });
 
@@ -337,7 +337,7 @@ describe('DetoxWorker', () => {
 
     describe('with an invalid test summary', () => {
       it('should validate test summary object', async () => {
-        await expect(detox.onTestStart('Test')).rejects.toThrowError(
+        await expect(detox.onTestStart('Test')).rejects.toThrow(
           /Invalid test summary was passed/
         );
       });
@@ -346,7 +346,7 @@ describe('DetoxWorker', () => {
         await expect(detox.onTestStart({
           ...testSummaries.running(),
           status: undefined,
-        })).rejects.toThrowError(/Invalid test summary status/);
+        })).rejects.toThrow(/Invalid test summary status/);
       });
     });
 
@@ -394,10 +394,10 @@ describe('DetoxWorker', () => {
     });
 
     it('should validate non-object test summary', () =>
-      expect(detox.onTestDone).rejects.toThrowError(/Invalid test summary was passed/));
+      expect(detox.onTestDone).rejects.toThrow(/Invalid test summary was passed/));
 
     it('should validate against invalid test summary status', () =>
-      expect(detox.onTestDone({})).rejects.toThrowError(/Invalid test summary status/));
+      expect(detox.onTestDone({})).rejects.toThrow(/Invalid test summary status/));
 
     describe('with a passing test summary', () => {
       beforeEach(() => detox.onTestDone(testSummaries.passed()));
@@ -457,12 +457,12 @@ describe('DetoxWorker', () => {
     describe('before detox.init()', () => {
       describe('has been called', () => {
         it(`should not throw`, async () => {
-          await expect(new Detox(detoxContext).cleanup()).resolves.not.toThrowError();
+          await expect(new Detox(detoxContext).cleanup()).resolves.not.toThrow();
         });
 
         it(`should not try to create a Websocket client`, async () => {
           detox = new Detox(detoxContext);
-          await expect(Promise.all([detox.cleanup(), detox.init()])).resolves.not.toThrowError();
+          await expect(Promise.all([detox.cleanup(), detox.init()])).resolves.not.toThrow();
           await expect(Client).not.toHaveBeenCalled();
         });
       });
@@ -486,7 +486,7 @@ describe('DetoxWorker', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip allocating the device`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(detox);
           await expect(deviceAllocator.allocate).not.toHaveBeenCalled();
@@ -501,7 +501,7 @@ describe('DetoxWorker', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip uninstall the app`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(detox);
           await expect(runtimeDevice.installUtilBinaries).not.toHaveBeenCalled();
@@ -516,7 +516,7 @@ describe('DetoxWorker', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip uninstalling the app`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           deferred.resolve();
           await expect(initPromise).resolves.toBe(detox);
           await expect(runtimeDevice.uninstallApp).not.toHaveBeenCalled();
@@ -531,9 +531,9 @@ describe('DetoxWorker', () => {
         beforeEach(startInit);
 
         it(`should stop the execution and skip installing the app`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           deferred.resolve();
-          await expect(initPromise).resolves.not.toThrowError();
+          await expect(initPromise).resolves.not.toThrow();
           await expect(runtimeDevice.installApp).not.toHaveBeenCalled();
         });
       });
@@ -546,9 +546,9 @@ describe('DetoxWorker', () => {
         beforeEach(startInit);
 
         it(`should not throw, but should reject detox.init() promise`, async () => {
-          await expect(detox.cleanup()).resolves.not.toThrowError();
+          await expect(detox.cleanup()).resolves.not.toThrow();
           deferred.resolve();
-          await expect(initPromise).resolves.not.toThrowError();
+          await expect(initPromise).resolves.not.toThrow();
         });
       });
     });

@@ -22,7 +22,7 @@ describe('Timer', () => {
 
     jest.advanceTimersByTime(1000);
     await expect(timer.run('running this test', () => {}))
-      .rejects.toThrowError(/Exceeded timeout of 999ms while running this test/);
+      .rejects.toThrow(/Exceeded timeout of 999ms while running this test/);
   });
 
   it('should throw if a sequence of actions takes longer', async () => {
@@ -34,7 +34,7 @@ describe('Timer', () => {
     }
 
     await expect(timer.run('running this test', () => {}))
-      .rejects.toThrowError(/Exceeded timeout of 999ms while running this test/);
+      .rejects.toThrow(/Exceeded timeout of 999ms while running this test/);
   });
 
   it('should be clearable', async () => {
@@ -59,7 +59,7 @@ describe('Timer', () => {
     await expect(timer.run('testing', () => 5)).resolves.toBe(5);
     jest.advanceTimersByTime(1);
     await expect(timer.run('testing', () => 5))
-      .rejects.toThrowError(/Exceeded timeout of 600ms while testing/);
+      .rejects.toThrow(/Exceeded timeout of 600ms while testing/);
   });
 
   it('should reset timer after timeout', async () => {
@@ -67,14 +67,14 @@ describe('Timer', () => {
 
     jest.advanceTimersByTime(500);
     await expect(timer.run('testing', () => 5))
-      .rejects.toThrowError(/Exceeded timeout of 500ms while testing/);
+      .rejects.toThrow(/Exceeded timeout of 500ms while testing/);
 
     timer.extend(100);
     await expect(timer.run('testing', () => 5)).resolves.toBe(5);
 
     jest.advanceTimersByTime(100);
     await expect(timer.run('testing', () => 5))
-      .rejects.toThrowError(/Exceeded timeout of 100ms while testing/);
+      .rejects.toThrow(/Exceeded timeout of 100ms while testing/);
   });
 
   it('should run action in time with static method', async () => {
@@ -84,6 +84,6 @@ describe('Timer', () => {
   it('should throw if an action takes longer with static method', async () => {
     const promise = Timer.run(999, 'running this test', () => new Deferred().promise);
     jest.advanceTimersByTime(1000);
-    await expect(promise).rejects.toThrowError(/Exceeded timeout of 999ms while running this test/);
+    await expect(promise).rejects.toThrow(/Exceeded timeout of 999ms while running this test/);
   });
 });
