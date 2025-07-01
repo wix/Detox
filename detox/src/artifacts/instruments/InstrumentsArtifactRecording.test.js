@@ -42,7 +42,7 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = false;
     await recording.doStart();
-    expect(mockedClient.startInstrumentsRecording).not.toBeCalled();
+    expect(mockedClient.startInstrumentsRecording).not.toHaveBeenCalled();
   });
 
   it('should not start instruments recording with connected client and DRY', async () => {
@@ -56,7 +56,7 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = true;
     await recording.doStart({ dry: true });
-    expect(mockedClient.startInstrumentsRecording).not.toBeCalled();
+    expect(mockedClient.startInstrumentsRecording).not.toHaveBeenCalled();
   });
 
   it('should start instruments recording with empty user config', async () => {
@@ -70,7 +70,7 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = true;
     await recording.doStart();
-    expect(mockedClient.startInstrumentsRecording).toBeCalledWith({
+    expect(mockedClient.startInstrumentsRecording).toHaveBeenCalledWith({
       recordingPath: 'SomeRecordingPath'
     });
   });
@@ -87,7 +87,7 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = true;
     await recording.doStart();
-    expect(mockedClient.startInstrumentsRecording).toBeCalledWith({
+    expect(mockedClient.startInstrumentsRecording).toHaveBeenCalledWith({
       recordingPath: 'SomeRecordingPath',
       samplingInterval: 100500
     });
@@ -100,7 +100,7 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = false;
     await recording.doStop();
-    expect(mockedClient.stopInstrumentsRecording).not.toBeCalled();
+    expect(mockedClient.stopInstrumentsRecording).not.toHaveBeenCalled();
   });
 
   it('should stop instruments recording with connected client', async () => {
@@ -110,6 +110,6 @@ describe('InstrumentsArtifactRecording', () => {
     });
     mockedClient.isConnected = true;
     await recording.doStop();
-    expect(mockedClient.stopInstrumentsRecording).toBeCalled();
+    expect(mockedClient.stopInstrumentsRecording).toHaveBeenCalled();
   });
 });

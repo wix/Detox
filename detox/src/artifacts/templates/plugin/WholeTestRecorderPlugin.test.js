@@ -86,8 +86,8 @@ describe('WholeTestRecorderPlugin', () => {
 
         await saveRequest();
 
-        expect(plugin.createdArtifacts[0].save).toBeCalledWith('/tmp/test/fakeArtifact');
-        expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
+        expect(plugin.createdArtifacts[0].save).toHaveBeenCalledWith('/tmp/test/fakeArtifact');
+        expect(api.untrackArtifact).toHaveBeenCalledWith(plugin.createdArtifacts[0]);
       });
     });
   });
@@ -118,8 +118,8 @@ describe('WholeTestRecorderPlugin', () => {
 
         await discardRequest();
 
-        expect(plugin.createdArtifacts[0].discard).toBeCalled();
-        expect(api.untrackArtifact).toBeCalledWith(plugin.createdArtifacts[0]);
+        expect(plugin.createdArtifacts[0].discard).toHaveBeenCalled();
+        expect(api.untrackArtifact).toHaveBeenCalledWith(plugin.createdArtifacts[0]);
       });
     });
   });
