@@ -32,10 +32,9 @@ describe('Genymotion-Cloud recipes service', () => {
   });
 
   describe('getting a recipe by name', () => {
-    // TODO Throw instead of returning null?
-    it('should return null if no recipes found', async () => {
+    it('should throw an error if no recipes found', async () => {
       givenNoRecipes();
-      expect(await uut.getRecipeByName('mock-name')).toEqual(null);
+      await expect(uut.getRecipeByName('mock-name')).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it('should return the recipe if exactly one match is found', async () => {

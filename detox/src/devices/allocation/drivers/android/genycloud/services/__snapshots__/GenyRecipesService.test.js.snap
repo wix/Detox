@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Genymotion-Cloud recipes service getting a recipe by name should throw an error if no recipes found 1`] = `
+"No Genymotion-Cloud recipe found for recipe name "mock-name"
+
+HINT: Please check your recipe name or use recipe UUID instead."
+`;
+
 exports[`Genymotion-Cloud recipes service getting a recipe by name should throw an error if there are multiple matches 1`] = `
 "More than one Genymotion-Cloud recipe found for recipe name mock-recipe-name:
   mock-recipe-name (mock-recipe-uuid)

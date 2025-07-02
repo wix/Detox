@@ -10,7 +10,10 @@ class GenyRecipesService {
   async getRecipeByName(recipeName) {
     const { recipes } = await this.genyCloudExec.getRecipe(recipeName);
     if (!recipes.length) {
-      return null;
+      throw new DetoxRuntimeError({
+        message: `No Genymotion-Cloud recipe found for recipe name "${recipeName}"`,
+        hint: `Please check your recipe name or use recipe UUID instead.`,
+      });
     }
 
     if (recipes.length > 1) {
