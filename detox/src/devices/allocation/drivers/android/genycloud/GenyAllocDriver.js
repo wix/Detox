@@ -3,7 +3,6 @@
  * @typedef {import('../../../../common/drivers/android/cookies').GenycloudEmulatorCookie} GenycloudEmulatorCookie
  */
 
-const { DetoxRuntimeError } = require('../../../../../errors');
 const Timer = require('../../../../../utils/Timer');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
 
@@ -56,7 +55,6 @@ class GenyAllocDriver {
   async allocate(deviceConfig) {
     const deviceQuery = deviceConfig.device;
     const recipe = await this._recipeQuerying.getRecipeFromQuery(deviceQuery);
-    this._assertRecipe(deviceQuery, recipe);
 
     let instance = this._genyRegistry.findFreeInstance(recipe);
     if (!instance) {
@@ -149,15 +147,6 @@ class GenyAllocDriver {
   emergencyCleanup() {
     const instances = this._genyRegistry.getInstances();
     this._reportGlobalCleanupSummary(instances);
-  }
-
-  _assertRecipe(deviceQuery, recipe) {
-    if (!recipe) {
-      throw new DetoxRuntimeError({
-        message: `No Genymotion-Cloud template found to match the configured lookup query: ${JSON.stringify(deviceQuery)}`,
-        hint: `Revisit your detox configuration. Genymotion templates list is available at: https://cloud.geny.io/recipes#custom`,
-      });
-    }
   }
 
   _reportGlobalCleanupSummary(deletionLeaks) {

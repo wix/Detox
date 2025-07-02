@@ -21,13 +21,9 @@ describe('Genymotion-Cloud recipes service', () => {
     name: 'another-mock-recipe-name',
   });
 
-  let logger;
   let exec;
   let uut;
   beforeEach(() => {
-    jest.mock('../../../../../../utils/logger');
-    logger = require('../../../../../../utils/logger');
-
     const GenyCloudExec = jest.genMockFromModule('../exec/GenyCloudExec');
     exec = new GenyCloudExec();
 
@@ -36,15 +32,14 @@ describe('Genymotion-Cloud recipes service', () => {
   });
 
   describe('getting a recipe by name', () => {
-    it('should return null if no recipes found', async () => {
+    it('should throw an error if no recipes found', async () => {
       givenNoRecipes();
-      expect(await uut.getRecipeByName('mock-name')).toEqual(null);
+      await expect(uut.getRecipeByName('mock-name')).rejects.toThrowErrorMatchingSnapshot();
     });
 
-    it('should return 1st match if there are some recipes', async () => {
+    it('should return the recipe if exactly one match is found', async () => {
       const recipe = aRecipe();
-      const recipe2 = anotherRecipe();
-      givenRecipes(recipe, recipe2);
+      givenRecipes(recipe);
 
       const result = await uut.getRecipeByName(recipe.name);
 
@@ -59,31 +54,12 @@ describe('Genymotion-Cloud recipes service', () => {
       expect(result.constructor.name).toContain('Recipe');
     });
 
-    it('should warn if there are multiple matches', async () => {
+    it('should throw an error if there are multiple matches', async () => {
       const recipe = aRecipe();
       const recipe2 = anotherRecipe();
       givenRecipes(recipe, recipe2);
 
-      await uut.getRecipeByName(recipe.name);
-
-      expect(logger.warn).toHaveBeenCalledWith(
-        { event: 'GENYCLOUD_RECIPE_LOOKUP' },
-        [
-          `More than one Genymotion-Cloud recipe found for recipe name ${recipe.name}:`,
-          `  ${recipe.name} (${recipe.uuid})`,
-          `  ${recipe2.name} (${recipe2.uuid})`,
-          `Falling back to ${recipe.name}`,
-        ].join('\n'),
-      );
-    });
-
-    it('should not warn if there is only 1 match', async () => {
-      const recipe = aRecipe();
-      givenRecipes(recipe);
-
-      await uut.getRecipeByName(recipe.name);
-
-      expect(logger.warn).not.toHaveBeenCalled();
+      await expect(uut.getRecipeByName(recipe.name)).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 

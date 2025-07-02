@@ -1,4 +1,4 @@
-const logger = require('../../../../../../utils/logger').child({ cat: 'device' });
+const { DetoxRuntimeError } = require('../../../../../../errors');
 
 const Recipe = require('./dto/GenyRecipe');
 
@@ -10,15 +10,18 @@ class GenyRecipesService {
   async getRecipeByName(recipeName) {
     const { recipes } = await this.genyCloudExec.getRecipe(recipeName);
     if (!recipes.length) {
-      return null;
+      throw new DetoxRuntimeError({
+        message: `No Genymotion-Cloud recipe found for recipe name "${recipeName}"`,
+        hint: `Please check your recipe name or use recipe UUID instead.`,
+      });
     }
 
     if (recipes.length > 1) {
       const recipesInfoList = recipes.map((recipe) => `  ${recipe.name} (${recipe.uuid})`).join('\n');
-      logger.warn(
-        { event: 'GENYCLOUD_RECIPE_LOOKUP' },
-        `More than one Genymotion-Cloud recipe found for recipe name ${recipeName}:\n${recipesInfoList}\nFalling back to ${recipes[0].name}`
-      );
+      throw new DetoxRuntimeError({
+        message: `More than one Genymotion-Cloud recipe found for recipe name ${recipeName}:\n${recipesInfoList}`,
+        hint: `Please specify a unique recipe name or use recipe UUID instead.`,
+      });
     }
     return new Recipe(recipes[0]);
   }
