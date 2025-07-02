@@ -1,7 +1,7 @@
-/**
- * @param {import('./services/GenyRecipesService')} recipesService
- */
 class GenyRecipeQuerying {
+  /**
+   * @param {import('./services/GenyRecipesService')} recipesService
+   */
   constructor(recipesService) {
     this.recipesService = recipesService;
   }

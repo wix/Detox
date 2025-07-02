@@ -3,7 +3,6 @@
  * @typedef {import('../../../../common/drivers/android/cookies').GenycloudEmulatorCookie} GenycloudEmulatorCookie
  */
 
-const { DetoxRuntimeError } = require('../../../../../errors');
 const Timer = require('../../../../../utils/Timer');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
 
