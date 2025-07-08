@@ -543,7 +543,7 @@ describe('CLI', () => {
     await run(...command.split(' '));
 
     expect(cliCall().argv.join(' ')).toMatch(commandMatcher);
-    expect(cliCall().fullCommand).toEqual(expect.objectContaining(envMatcher));
+    expect(cliCall().fullCommand).toMatch(envMatcher);
   });
 
   test('e.g., --debug should be passed through', async () => {

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const findUp = require('find-up');
 const resolveFrom = require('resolve-from');
 const semver = require('semver');
 
@@ -19,11 +20,11 @@ function assertJestCircus27(maybeProjectConfig) {
     });
   }
 
-  const circusPackageJson = path.join(path.dirname(projectConfig.testRunner), 'package.json');
-  if (!fs.existsSync(circusPackageJson)) {
+  const circusPackageJson = findUp.sync('package.json', { cwd: path.dirname(projectConfig.testRunner) });
+  if (!circusPackageJson) {
     throw new DetoxRuntimeError({
       message: 'Check that you have an installed copy of "jest-circus" npm package, exiting.',
-      debugInfo: `Its package.json file is missing: ${circusPackageJson}`,
+      debugInfo: `Its package.json file is missing in the directory: ${path.dirname(projectConfig.testRunner)}`,
     });
   }
 

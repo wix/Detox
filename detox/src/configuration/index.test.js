@@ -40,7 +40,9 @@ describe('composeDetoxConfig', () => {
     it('should throw an error if no config is found at all', async () => {
       await expect(configuration.composeDetoxConfig({
         cwd: os.homedir(),
-      })).rejects.toThrow(errorComposer.noConfigurationSpecified());
+      })).rejects.toThrow(
+        errorComposer.noConfigurationSpecified().message
+      );
     });
 
     it('should throw an error if the local config has the old schema', async () => {

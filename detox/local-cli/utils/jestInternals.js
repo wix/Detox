@@ -81,7 +81,7 @@ async function readJestConfig(argv) {
 
 function getJestBooleanArgs() {
   return _(resolveJestCliArgs())
-    .thru(args => args.options)
+    .thru(args => args.yargsOptions || args.options)
     .pickBy(({ type }) => type === 'boolean')
     .thru(extractKnownKeys)
     .value();
