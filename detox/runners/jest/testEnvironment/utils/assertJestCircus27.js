@@ -49,6 +49,11 @@ function assertJestCircus27(maybeProjectConfig) {
     ].join('\n'));
   }
 
+  if (projectConfig && projectConfig.testEnvironmentOptions) {
+    // TODO: check if we can allow normal cleanup
+    projectConfig.testEnvironmentOptions.globalsCleanup = 'off';
+  }
+
   return maybeProjectConfig;
 }
 
