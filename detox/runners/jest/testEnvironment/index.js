@@ -71,6 +71,11 @@ class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
   }
 
   /** @override */
+  getVmContext() {
+    return super.getVmContext() || global;
+  }
+
+  /** @override */
   async setup() {
     await super.setup();
     await this.initDetox();
