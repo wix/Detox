@@ -18,7 +18,7 @@ const {
   WorkerAssignReporter
 } = require('./listeners');
 const assertExistingContext = require('./utils/assertExistingContext');
-const { assertJestCircus27 } = require('./utils/assertJestCircus27');
+const { validateAndPatchProjectConfig } = require('./utils/validateAndPatchProjectConfig');
 
 const SYNC_CIRCUS_EVENTS = new Set([
   'start_describe_definition',
@@ -35,7 +35,7 @@ const log = detox.log.child({ cat: 'lifecycle,jest-environment' });
  */
 class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
   constructor(config, context) {
-    super(assertJestCircus27(config), assertExistingContext(context));
+    super(validateAndPatchProjectConfig(config), assertExistingContext(context));
 
     /** @private */
     this._shouldManageDetox = detox.getStatus() === 'inactive';

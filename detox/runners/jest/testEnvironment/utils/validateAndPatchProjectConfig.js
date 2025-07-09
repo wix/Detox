@@ -9,7 +9,7 @@ const { log } = require('../../../../internals');
 const detoxPackageJson = require('../../../../package.json');
 const { DetoxRuntimeError } = require('../../../../src/errors');
 
-function assertJestCircus27(maybeProjectConfig) {
+function validateAndPatchProjectConfig(maybeProjectConfig) {
   const projectConfig = maybeProjectConfig.projectConfig || maybeProjectConfig;
 
   if (!/jest-circus/.test(projectConfig.testRunner)) {
@@ -49,8 +49,11 @@ function assertJestCircus27(maybeProjectConfig) {
     ].join('\n'));
   }
 
+  // TODO: This is a workaround to prevent Jest from failing on teardown.
+  // PROBLEM: Detox uses proxies which throw in non-initialized or torn down state on purpose.
+  // So, either we need to implement a distinction between BEFORE and AFTER the test execution,
+  // or we need to change dramatically the way we export those proxies (possible only in a major version bump).
   if (projectConfig && projectConfig.testEnvironmentOptions) {
-    // TODO: check if we can allow normal cleanup
     projectConfig.testEnvironmentOptions.globalsCleanup = 'off';
   }
 
@@ -71,6 +74,6 @@ function assertSupportedVersion(actualVersion) {
 }
 
 module.exports = {
-  assertJestCircus27,
   assertSupportedVersion,
+  validateAndPatchProjectConfig,
 };

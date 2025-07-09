@@ -1,4 +1,4 @@
-const { assertSupportedVersion } = require('./assertJestCircus27');
+const { assertSupportedVersion } = require('./validateAndPatchProjectConfig');
 
 describe('assertSupportedVersion', () => {
   test.each([
