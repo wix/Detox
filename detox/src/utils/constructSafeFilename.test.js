@@ -5,9 +5,9 @@ describe('constructSafeFilename', () => {
     let prefix, name, suffix;
 
     expect(() => constructSafeFilename())
-      .toThrowError();
+      .toThrow();
     expect(() => constructSafeFilename(prefix, name, suffix))
-      .toThrowError();
+      .toThrow();
   });
 
   it('should trim filename to 255 chars', () => {
@@ -32,6 +32,6 @@ describe('constructSafeFilename', () => {
   });
 
   it('should throw exception when non-trimmable prefix and suffix occupy too much space', () => {
-    expect(() => constructSafeFilename('0'.repeat(127), '1', '2'.repeat(128))).toThrowError();
+    expect(() => constructSafeFilename('0'.repeat(127), '1', '2'.repeat(128))).toThrow();
   });
 });

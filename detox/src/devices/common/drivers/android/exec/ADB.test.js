@@ -366,7 +366,7 @@ describe('ADB', () => {
 
     await adb.listInstrumentation(deviceId);
 
-    expect(adb.shell).toBeCalledWith(deviceId, 'pm list instrumentation');
+    expect(adb.shell).toHaveBeenCalledWith(deviceId, 'pm list instrumentation');
   });
 
   it(`getInstrumentationRunner parses the correct runner for the package`, async () => {
@@ -382,7 +382,7 @@ describe('ADB', () => {
 
     const result = await adb.getInstrumentationRunner('aDeviceId', expectedPackage);
 
-    expect(adb.shell).toBeCalledWith('aDeviceId', 'pm list instrumentation');
+    expect(adb.shell).toHaveBeenCalledWith('aDeviceId', 'pm list instrumentation');
     expect(result).toEqual(expectedRunner);
   });
 

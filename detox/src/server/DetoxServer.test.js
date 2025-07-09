@@ -46,13 +46,13 @@ describe('DetoxServer', () => {
     it('should allow getting server port if it is running', async () => {
       try {
         server = new DetoxServer(options);
-        expect(() => server.port).toThrowError(/Cannot get a port/);
+        expect(() => server.port).toThrow(/Cannot get a port/);
 
         await server.open();
         expect(server.port).toBeGreaterThan(1023);
       } finally {
         await server.close();
-        expect(() => server.port).toThrowError(/Cannot get a port/);
+        expect(() => server.port).toThrow(/Cannot get a port/);
       }
     });
 
@@ -105,7 +105,7 @@ describe('DetoxServer', () => {
       });
 
       server = new DetoxServer(options);
-      await expect(server.open()).rejects.toThrowError('TEST_ERROR');
+      await expect(server.open()).rejects.toThrow('TEST_ERROR');
     });
 
     it('should WARN log a message upon unsuccessful server closing (timeout case)', async () => {
@@ -204,7 +204,7 @@ describe('DetoxServer', () => {
   });
 
   function optionsWithMockServer(callback) {
-    const Server = jest.genMockFromModule('ws').Server;
+    const Server = jest.createMockFromModule('ws').Server;
     Server.mockImplementation(function(options, listening) {
       const mockListening = jest.fn().mockImplementation(listening);
       this.address.mockReturnValue({ port: 65534 });

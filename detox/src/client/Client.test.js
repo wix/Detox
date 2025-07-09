@@ -29,7 +29,7 @@ describe('Client', () => {
     log = require('../utils/logger');
     log._level.mockReturnValue('debug');
 
-    const AsyncWebSocket = jest.genMockFromModule('./AsyncWebSocket');
+    const AsyncWebSocket = jest.createMockFromModule('./AsyncWebSocket');
     mockAws = new AsyncWebSocket();
     mockAws.isOpen = false;
     mockAws.__appConnected = true;
@@ -285,7 +285,7 @@ describe('Client', () => {
       expect(jest.getTimerCount()).toBe(1);
 
       deferred.reject(new Error());
-      await expect(sendPromise).rejects.toThrowError();
+      await expect(sendPromise).rejects.toThrow();
       expect(jest.getTimerCount()).toBe(0);
     });
 
@@ -318,7 +318,7 @@ describe('Client', () => {
       const testError = new Error('GenericServerError');
       mockAws.mockResponse('serverError', { error: serializeError(testError) });
 
-      await expect(client.sendAction(anAction())).rejects.toThrowError('GenericServerError');
+      await expect(client.sendAction(anAction())).rejects.toThrow('GenericServerError');
     });
 
     it('should pass action to async web socket', async () => {
@@ -380,7 +380,7 @@ describe('Client', () => {
 
       it(`should throw on a wrong response from device`, async () => {
         mockAws.mockResponse('boo');
-        await expect(client[methodName](params)).rejects.toThrowError();
+        await expect(client[methodName](params)).rejects.toThrow();
       });
     });
   });
@@ -416,7 +416,7 @@ describe('Client', () => {
       });
 
       const viewHierarchyURL = tempfile('.viewhierarchy');
-      await expect(client.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrowError(/Test error to check/m);
+      await expect(client.captureViewHierarchy({ viewHierarchyURL })).rejects.toThrow(/Test error to check/m);
     });
   });
 
@@ -455,7 +455,7 @@ describe('Client', () => {
     it('should send cleanup action (stopRunner=false) to the app if there were failed invocations', async () => {
       await client.connect();
       mockAws.mockResponse('testFailed', { details: 'SomeDetails' });
-      await expect(client.execute(anInvocation)).rejects.toThrowError(/Test Failed.*SomeDetails/);
+      await expect(client.execute(anInvocation)).rejects.toThrow(/Test Failed.*SomeDetails/);
       mockAws.mockResponse('cleanupDone');
       await client.cleanup();
       expect(mockAws.send).toHaveBeenCalledWith(new actions.Cleanup(false), SEND_OPTIONS.TIMED);
@@ -539,7 +539,7 @@ describe('Client', () => {
       mockAws.mockResponse('testFailed',  { details: 'this is an error', viewHierarchy: 'mock-hierarchy' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
-      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
+      await expect(executionPromise).rejects.toThrow(DetoxRuntimeError);
     });
 
     it(`should throw "testFailed" error even if it has no a view hierarchy`, async () => {
@@ -547,14 +547,14 @@ describe('Client', () => {
 
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
-      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
+      await expect(executionPromise).rejects.toThrow(DetoxRuntimeError);
     });
 
     it(`should rethrow an "error" result`, async () => {
       mockAws.mockResponse('error',  { error: 'this is an error' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
-      await expect(executionPromise).rejects.toThrowError(DetoxRuntimeError);
+      await expect(executionPromise).rejects.toThrow(DetoxRuntimeError);
     });
 
     it(`should throw even if a non-error object is thrown`, async () => {
@@ -566,7 +566,7 @@ describe('Client', () => {
       mockAws.mockResponse('unsupportedResult',  { foo: 'bar' });
       const executionPromise = client.execute(anInvocation);
       await expect(executionPromise).rejects.toThrowErrorMatchingSnapshot();
-      await expect(executionPromise).rejects.toThrowError(DetoxInternalError);
+      await expect(executionPromise).rejects.toThrow(DetoxInternalError);
     });
   });
 
@@ -718,10 +718,10 @@ describe('Client', () => {
       it('should reject pending and future requests', async () => {
         // any future requests should be rejected
         mockAws.mockResponse('invokeResult', { result: 'some_result' });
-        await expect(client.sendAction(new actions.Invoke(anInvocation()))).rejects.toThrowError('SIGSEGV whatever');
+        await expect(client.sendAction(new actions.Invoke(anInvocation()))).rejects.toThrow('SIGSEGV whatever');
 
         // pending requests should be rejected
-        await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+        await expect(client.waitUntilDisconnected()).rejects.toThrow('SIGSEGV whatever');
       });
 
       it('should allow new requests after the app reconnects', async () => {
@@ -786,7 +786,7 @@ describe('Client', () => {
       expect(client.terminateApp).toHaveBeenCalledTimes(1);
 
       mockAws.mockEventCallback('appDisconnected');
-      await expect(client.waitUntilDisconnected()).rejects.toThrowError('SIGSEGV whatever');
+      await expect(client.waitUntilDisconnected()).rejects.toThrow('SIGSEGV whatever');
     });
   });
 

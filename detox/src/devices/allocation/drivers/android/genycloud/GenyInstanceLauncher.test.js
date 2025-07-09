@@ -41,10 +41,10 @@ describe('Genymotion-Cloud instance launcher', () => {
     retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const InstanceLifecycleService = jest.genMockFromModule('./services/GenyInstanceLifecycleService');
+    const InstanceLifecycleService = jest.createMockFromModule('./services/GenyInstanceLifecycleService');
     instanceLifecycleService = new InstanceLifecycleService();
 
-    const GenyCloudExec = jest.genMockFromModule('./exec/GenyCloudExec');
+    const GenyCloudExec = jest.createMockFromModule('./exec/GenyCloudExec');
     genyCloudExec = new GenyCloudExec();
 
     const GenyInstanceLauncher = require('./GenyInstanceLauncher');
@@ -101,7 +101,7 @@ describe('Genymotion-Cloud instance launcher', () => {
 
       await expect(uut.connect(instanceOffline))
         .rejects
-        .toThrowError(`Timeout waiting for instance ${instanceOffline.uuid} to be ready`);
+        .toThrow(`Timeout waiting for instance ${instanceOffline.uuid} to be ready`);
     });
 
     it('should wait for the cloud instance to become online, with decent retry arguments', async () => {
@@ -153,7 +153,7 @@ describe('Genymotion-Cloud instance launcher', () => {
       givenAnInstanceDeletionError();
 
       const instance = anInstance();
-      await expect(uut.shutdown(instance.uuid)).rejects.toThrowError();
+      await expect(uut.shutdown(instance.uuid)).rejects.toThrow();
     });
 
     it('should remove the instance from the cleanup registry', async () => {

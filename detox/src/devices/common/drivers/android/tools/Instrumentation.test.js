@@ -8,7 +8,7 @@ describe('Instrumentation', () => {
   let instrumentationArgs;
   let logger;
   beforeEach(() => {
-    const ADB = jest.genMockFromModule('../exec/ADB');
+    const ADB = jest.createMockFromModule('../exec/ADB');
     adb = new ADB();
 
     jest.mock('../../../../../utils/childProcess');
@@ -131,7 +131,7 @@ describe('Instrumentation', () => {
       childProcessUtils.interruptProcess.mockRejectedValue(new Error());
 
       await uut.launch(deviceId, bundleId, []);
-      await expect(invokeTerminationCallback()).rejects.toThrowError();
+      await expect(invokeTerminationCallback()).rejects.toThrow();
     });
 
     it('should not terminate if dispatched twice', async () => {
@@ -158,7 +158,7 @@ describe('Instrumentation', () => {
     it('should break if process interruption fails', async () => {
       childProcessUtils.interruptProcess.mockRejectedValue(new Error());
       await uut.launch(deviceId, bundleId, []);
-      await expect(uut.terminate()).rejects.toThrowError();
+      await expect(uut.terminate()).rejects.toThrow();
     });
 
     it('should not terminate if not running', async () => {

@@ -16,7 +16,7 @@ describe('expectTwo', () => {
 
     fs = require('fs-extra');
     const IosExpect = require('./expectTwo');
-    const AsyncEmitter = jest.genMockFromModule('../utils/AsyncEmitter');
+    const AsyncEmitter = jest.createMockFromModule('../utils/AsyncEmitter');
     invocationManager = new MockExecutor();
     xcuitestRunner = new MockExecutor();
     emitter = new AsyncEmitter();

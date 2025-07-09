@@ -29,23 +29,23 @@ describe('SimulatorInstrumentsRecording', () => {
   it('should move artifact to temporary path', async () => {
     FileArtifact.moveTemporaryFile.mockReturnValueOnce(true);
     await recording.doSave(artifactPath);
-    expect(FileArtifact.moveTemporaryFile).toBeCalledWith(expect.anything(), temporaryRecordingPath, artifactPath);
+    expect(FileArtifact.moveTemporaryFile).toHaveBeenCalledWith(expect.anything(), temporaryRecordingPath, artifactPath);
   });
 
   it('should not warn console on moving artifact success', async () => {
     FileArtifact.moveTemporaryFile.mockReturnValueOnce(true);
     await recording.doSave(artifactPath);
-    expect(log.warn).not.toBeCalled();
+    expect(log.warn).not.toHaveBeenCalled();
   });
 
   it('should warn console only on moving artifact failure', async () => {
     FileArtifact.moveTemporaryFile.mockReturnValueOnce(false);
     await recording.doSave(artifactPath);
-    expect(log.warn).toBeCalled();
+    expect(log.warn).toHaveBeenCalled();
   });
 
   it('should remove artifact on discard', async () => {
     await recording.doDiscard(artifactPath);
-    expect(fs.remove).toBeCalledWith(temporaryRecordingPath);
+    expect(fs.remove).toHaveBeenCalledWith(temporaryRecordingPath);
   });
 });

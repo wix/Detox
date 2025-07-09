@@ -15,11 +15,11 @@ describe('Emulator launcher', () => {
     retry = jest.requireMock('../../../../../utils/retry');
     retry.mockImplementation((options, func) => func());
 
-    const ADB = jest.genMockFromModule('../../../../common/drivers/android/exec/ADB');
+    const ADB = jest.createMockFromModule('../../../../common/drivers/android/exec/ADB');
     adb = new ADB();
     adb.isBootComplete.mockReturnValue(true);
 
-    const { EmulatorExec } = jest.genMockFromModule('../../../../common/drivers/android/emulator/exec/EmulatorExec');
+    const { EmulatorExec } = jest.createMockFromModule('../../../../common/drivers/android/emulator/exec/EmulatorExec');
     emulatorExec = new EmulatorExec();
 
     jest.mock('./launchEmulatorProcess');
@@ -165,7 +165,7 @@ describe('Emulator launcher', () => {
     describe('if shutdown does not go well', () => {
       beforeEach(async () => {
         adb.getState.mockResolvedValue('offline');
-        await expect(uut.shutdown(avdName)).rejects.toThrowError(new RegExp(`Failed to shut down.*${avdName}`));
+        await expect(uut.shutdown(avdName)).rejects.toThrow(new RegExp(`Failed to shut down.*${avdName}`));
       });
 
       it('should keep polling the emulator status until it is "none"', async () => {

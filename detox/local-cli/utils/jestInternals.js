@@ -27,6 +27,14 @@ function getJestLocation() {
   return path.dirname(resolveFrom(cwd, 'jest/package.json'));
 }
 
+function getJestCliArgsJsFilePath(jestCliVersion) {
+  if (semver.gte(jestCliVersion, '30.0.0')) {
+    return 'build/index.js';
+  }
+
+  return semver.gt(jestCliVersion, '29.1.2') ? 'build/args.js' : 'build/cli/args.js';
+}
+
 function resolveJestDependency(jestLocation, dependencyName) {
   const result = resolveFrom.silent(jestLocation, dependencyName);
   if (!result) {
@@ -52,7 +60,7 @@ function resolveJestCliArgs() {
   try {
     const jestCliManifest = resolveJestDependency(jestLocation, 'jest-cli/package.json');
     const jestCliVersion = require(jestCliManifest).version;
-    const argsJsFilePath = semver.gt(jestCliVersion, '29.1.2') ? 'build/args.js' : 'build/cli/args.js';
+    const argsJsFilePath = getJestCliArgsJsFilePath(jestCliVersion);
     const argsJsFile = path.join(path.dirname(jestCliManifest), argsJsFilePath);
 
     return require(argsJsFile);
@@ -73,7 +81,7 @@ async function readJestConfig(argv) {
 
 function getJestBooleanArgs() {
   return _(resolveJestCliArgs())
-    .thru(args => args.options)
+    .thru(args => args.yargsOptions || args.options)
     .pickBy(({ type }) => type === 'boolean')
     .thru(extractKnownKeys)
     .value();

@@ -56,7 +56,7 @@ describe('AsyncWebSocket', () => {
 
   describe('.open()', () => {
     it(`should normally resolve`, async () => {
-      await expect(connect()).resolves.not.toThrowError();
+      await expect(connect()).resolves.not.toThrow();
     });
 
     it(`should reject if called twice simultaneously`, async () => {
@@ -83,11 +83,11 @@ describe('AsyncWebSocket', () => {
     it(`should allow to open a connection after an error`, async () => {
       const promise1 = aws.open();
       socket.mockError(anError());
-      await expect(promise1).rejects.toThrowError();
+      await expect(promise1).rejects.toThrow();
 
       const promise2 = aws.open();
       socket.mockOpen();
-      await expect(promise2).resolves.not.toThrowError();
+      await expect(promise2).resolves.not.toThrow();
     });
   });
 
@@ -204,14 +204,14 @@ describe('AsyncWebSocket', () => {
 
   describe('.close()', () => {
     it('should silently exit if the socket is not open', async () => {
-      await expect(aws.close()).resolves.not.toThrowError();
+      await expect(aws.close()).resolves.not.toThrow();
     });
 
     it('should close the socket when onclose is called', async () => {
       await connect();
       const closePromise = aws.close();
       socket.mockClose();
-      await expect(closePromise).resolves.not.toThrowError();
+      await expect(closePromise).resolves.not.toThrow();
     });
 
     it('should throw on a consequent attempt to close the socket', async () => {
@@ -219,7 +219,7 @@ describe('AsyncWebSocket', () => {
       const closePromise1 = aws.close();
       const closePromise2 = aws.close();
       socket.mockClose();
-      await expect(closePromise1).resolves.not.toThrowError();
+      await expect(closePromise1).resolves.not.toThrow();
       await expect(closePromise2).rejects.toThrowErrorMatchingSnapshot();
     });
 
@@ -359,9 +359,9 @@ describe('AsyncWebSocket', () => {
       socket.mockMessage(generateResponse('currentStatusDone', 2));
       socket.mockMessage(generateResponse('currentStatusDone', 3));
 
-      await expect(response1).resolves.not.toThrowError();
-      await expect(response2).resolves.not.toThrowError();
-      await expect(response3).resolves.not.toThrowError();
+      await expect(response1).resolves.not.toThrow();
+      await expect(response2).resolves.not.toThrow();
+      await expect(response3).resolves.not.toThrow();
     });
   });
 

@@ -33,10 +33,10 @@ describe('composeSessionConfig', () => {
   describe('sessionId', function() {
     it('should pass validations', async () => {
       globalConfig.session = { sessionId: 1234 };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidSessionIdProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidSessionIdProperty());
 
       globalConfig.session = { sessionId: '' };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidSessionIdProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidSessionIdProperty());
     });
 
     describe('when defined in global config', () => {
@@ -69,10 +69,10 @@ describe('composeSessionConfig', () => {
 
     it('should pass validations', async () => {
       globalConfig.session = { server: 1234 };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidServerProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidServerProperty());
 
       globalConfig.session = { server: 'http://invalid-protocol.com' };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidServerProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidServerProperty());
     });
 
     describe('when defined in global config', () => {
@@ -113,7 +113,7 @@ describe('composeSessionConfig', () => {
       });
 
       it('should throw an error if the server is not defined', async () => {
-        await expect(compose).rejects.toThrowError(errorComposer.cannotSkipAutostartWithMissingServer());
+        await expect(compose).rejects.toThrow(errorComposer.cannotSkipAutostartWithMissingServer());
       });
     });
 
@@ -149,10 +149,10 @@ describe('composeSessionConfig', () => {
 
     it('should pass validations', async () => {
       globalConfig.session = { debugSynchronization: -1 };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidDebugSynchronizationProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidDebugSynchronizationProperty());
 
       globalConfig.session = { debugSynchronization: '3000' };
-      await expect(compose()).rejects.toThrowError(errorComposer.invalidDebugSynchronizationProperty());
+      await expect(compose()).rejects.toThrow(errorComposer.invalidDebugSynchronizationProperty());
     });
 
     describe('when defined in global config', () => {

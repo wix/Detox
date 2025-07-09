@@ -17,10 +17,10 @@ describe('mapLongPressArguments', () => {
   });
 
   it('should throw for invalid point', () => {
-    expect(() => mapLongPressArguments({ x: 1 })).toThrowError('point should be an object with x and y properties, but got {"x":1}');
+    expect(() => mapLongPressArguments({ x: 1 })).toThrow('point should be an object with x and y properties, but got {"x":1}');
   });
 
   it('should throw for invalid duration', () => {
-    expect(() => mapLongPressArguments({ x: 1, y: 2 }, '3')).toThrowError('duration should be a number, but got 3 (string)');
+    expect(() => mapLongPressArguments({ x: 1, y: 2 }, '3')).toThrow('duration should be a number, but got 3 (string)');
   });
 });

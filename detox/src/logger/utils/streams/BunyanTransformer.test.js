@@ -94,7 +94,7 @@ describe('BunyanTransformer', () => {
 
   it('should propagate errors from the input streams too', async () => {
     const logStream = transformer.uniteSessionLogs([tempfile()]);
-    await expect(toString(logStream)).rejects.toThrowError(/ENOENT/);
+    await expect(toString(logStream)).rejects.toThrow(/ENOENT/);
   });
 
   //#region Helper functions

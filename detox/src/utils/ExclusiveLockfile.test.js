@@ -52,8 +52,8 @@ describe('ExclusiveLockFile', () => {
   it('should forbid reading and writting outside of exclusive access', async () => {
     const lockfile = new ExclusiveLockFile(filePath);
 
-    expect(() => lockfile.read()).toThrowError(/Forbidden.*to read/);
-    expect(() => lockfile.write(0)).toThrowError(/Forbidden.*to write/);
+    expect(() => lockfile.read()).toThrow(/Forbidden.*to read/);
+    expect(() => lockfile.write(0)).toThrow(/Forbidden.*to write/);
   });
 
   it('should create a lockfile if it does not exist', async () => {
@@ -77,7 +77,7 @@ describe('ExclusiveLockFile', () => {
 
   describe('constructor', () => {
     it('should have 1 required arg', () => {
-      expect(() => new ExclusiveLockFile()).toThrowError(/non-empty string/);
+      expect(() => new ExclusiveLockFile()).toThrow(/non-empty string/);
     });
 
     it('should have default options', () => {

@@ -18,7 +18,7 @@ describe.forPilot('Assertions', () => {
     it('should not assert an element is not visible (by text)', async () => {
       await jestExpect(async () =>
         await pilot.perform('Verify there is element with the text "I am full of text" in the screen')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
 
     it('should assert an element is visible (by id)', async () => {
@@ -30,7 +30,7 @@ describe.forPilot('Assertions', () => {
     it('should not assert an element that does not exist (by id)', async () => {
       await jestExpect(async () =>
         await pilot.perform('Find an element with ID "RandomJunk959" in the screen')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
 
     it('should assert an element has (accessibility) label', async () => {
@@ -42,7 +42,7 @@ describe.forPilot('Assertions', () => {
     it('should not assert an element that does not exist (by label)', async () => {
       await jestExpect(async () =>
         await pilot.perform('Find an element with label "I exist in the screen" in the screen')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
 
     it('assert toggle exist by element type', async () => {
@@ -57,13 +57,13 @@ describe.forPilot('Assertions', () => {
     it.skip('shouldn`t assert an element that does not exist (by type)', async () => {
       await jestExpect(async () =>
         await pilot.perform('Find a Check-box type element in the screen')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
 
     it('shouldn`t assert an element that does not exist (by type, text-field)', async () => {
       await jestExpect(async () =>
         await pilot.perform('Find a text-field element in the screen')
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
 
     it('assert toggle-switch widget false', async () => {
@@ -115,11 +115,11 @@ describe.forPilot('Assertions', () => {
       it('raise error when elements are not in specific order', async () => {
         await jestExpect(async () =>
           await pilot.perform('Verify the toggle element is above the text element')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
 
         await jestExpect(async () =>
           await pilot.perform('Verify that under the image element in the screen there is text element with the text "subtext"')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
       });
 
       // Note: The `not directly` tests are skipped because they are flaky, and not always working as expected.
@@ -133,11 +133,11 @@ describe.forPilot('Assertions', () => {
       it.skip('raise error when elements are not in specific order - not directly', async () => {
         await jestExpect(async () =>
           await pilot.perform('Verify the the image element is above smiling face emoji element')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
 
         await jestExpect(async () =>
           await pilot.perform('Verify there is the text element "I contain some text" under the toggle element')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
       });
 
       it('assert element`s position', async () => {
@@ -150,15 +150,15 @@ describe.forPilot('Assertions', () => {
       it('raise error when elements are not positioned right', async () => {
         await jestExpect(async () =>
           await pilot.perform('Verify there is a smiling face emoji in the center of the screen')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
 
         await jestExpect(async () =>
           await pilot.perform('Verify there is a party emoji in the center of the screen')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
 
         await jestExpect(async () =>
           await pilot.perform('Verify there is a smiling face emoji in the bottom right corner of the screen')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
       });
     });
   });

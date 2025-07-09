@@ -86,7 +86,7 @@ describe('start', () => {
     cmd = buildMockCommand({ exitCode: 0, sleep: 100 });
     detox.config.commands.push({ appName: 'app1', start: 'node --eval="process.exit(3)"' });
     detox.config.commands.push({ appName: 'app2', start: cmd.cmd });
-    await expect(callCli('./start', 'start')).rejects.toThrowError(/Command exited with code 3/);
+    await expect(callCli('./start', 'start')).rejects.toThrow(/Command exited with code 3/);
 
     expect(cmd.calls).toHaveLength(0);
   });

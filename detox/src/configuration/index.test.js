@@ -24,7 +24,7 @@ describe('composeDetoxConfig', () => {
 
   describe('composeDetoxConfig', () => {
     it('should throw an error if no config is found in package.json', async () => {
-      await expect(configuration.composeDetoxConfig({})).rejects.toThrowError(
+      await expect(configuration.composeDetoxConfig({})).rejects.toThrow(
         /external .detoxrc.json configuration/
       );
     });
@@ -34,13 +34,15 @@ describe('composeDetoxConfig', () => {
         argv: {
           'config-path': path.join(__dirname, '__mocks__/configuration/priority/empty.js'),
         },
-      })).rejects.toThrowError(/are no configurations in/);
+      })).rejects.toThrow(/are no configurations in/);
     });
 
     it('should throw an error if no config is found at all', async () => {
       await expect(configuration.composeDetoxConfig({
         cwd: os.homedir(),
-      })).rejects.toThrowError(errorComposer.noConfigurationSpecified());
+      })).rejects.toThrow(
+        errorComposer.noConfigurationSpecified().message
+      );
     });
 
     it('should throw an error if the local config has the old schema', async () => {

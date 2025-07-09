@@ -5,7 +5,7 @@ const testBundleId = 'mock-bundle-id.test';
 describe('Android app uninstall helper', () => {
   let adb;
   beforeEach(() => {
-    const ADBClass = jest.genMockFromModule('../exec/ADB');
+    const ADBClass = jest.createMockFromModule('../exec/ADB');
     adb = new ADBClass();
     adb.isPackageInstalled.mockResolvedValue(true);
   });
@@ -23,7 +23,7 @@ describe('Android app uninstall helper', () => {
 
   it('should fail if app uninstall fails', async () => {
     adb.uninstall.mockRejectedValue(new Error('mocked error in adb.uninstall'));
-    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrowError();
+    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrow();
   });
 
   it('should avoid uninstalling app if not already installed', async () => {
@@ -45,7 +45,7 @@ describe('Android app uninstall helper', () => {
       .mockResolvedValueOnce(true)
       .mockRejectedValueOnce(new Error('mocked error in adb.uninstall'));
 
-    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrowError();
+    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrow();
   });
 
   it('should avoid uninstalling test binary if not already installed', async () => {

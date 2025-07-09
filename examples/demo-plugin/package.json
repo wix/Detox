@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "detox": "^20.40.0",
-    "jest": "^29.0.0"
+    "jest": "^30.0.3"
   },
   "detox": {
     "testRunner": {

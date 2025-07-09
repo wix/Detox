@@ -85,7 +85,7 @@ describe('SimulatorInstrumentsPlugin', () => {
     const plugin = new SimulatorInstrumentsPlugin(pluginConfig);
     preparePathForArtifact.mockReturnValueOnce(testPath);
     const path = await plugin.preparePathForTestArtifact(testSummary);
-    expect(preparePathForArtifact).toBeCalledWith('test.dtxrec', testSummary);
+    expect(preparePathForArtifact).toHaveBeenCalledWith('test.dtxrec', testSummary);
     expect(path).toBe(testPath);
   });
 });

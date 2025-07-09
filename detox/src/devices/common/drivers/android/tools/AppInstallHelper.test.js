@@ -6,14 +6,14 @@ describe('Android app installation helper', () => {
   let adb;
 
   beforeEach(() => {
-    const ADBMock = jest.genMockFromModule('../exec/ADB');
+    const ADBMock = jest.createMockFromModule('../exec/ADB');
     adb = new ADBMock();
   });
 
   let fileTransfer;
   let uut;
   beforeEach(() => {
-    const FileTransfer = jest.genMockFromModule('./FileTransfer');
+    const FileTransfer = jest.createMockFromModule('./FileTransfer');
     fileTransfer = new FileTransfer(adb, '/mock-destination-dir');
 
     const AppInstallHelper = require('./AppInstallHelper');
