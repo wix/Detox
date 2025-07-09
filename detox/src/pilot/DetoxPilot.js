@@ -5,11 +5,16 @@ const detox = require('../..');
 
 /** @type {Detox.PilotFacade} */
 class DetoxPilot {
-  init(promptHandler) {
-     this.pilot = new Pilot({
+  init(maybePromptHandler) {
+    const options = maybePromptHandler.promptHandler ? {
       frameworkDriver: new DetoxFrameworkDriver(detox),
-      promptHandler: promptHandler
-    });
+      ...maybePromptHandler,
+    } : {
+      frameworkDriver: new DetoxFrameworkDriver(detox),
+      promptHandler: maybePromptHandler,
+    };
+
+    this.pilot = new Pilot(options);
   }
 
   start(){
