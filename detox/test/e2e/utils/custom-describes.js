@@ -23,7 +23,9 @@ describe.forPilot = (description, fn) => {
           console.warn('Cannot access the LLM service without Wix BO environment. Relying on cached responses only.');
         }
         try {
-          await pilot.init(new WixPromptHandler());
+          await pilot.init({
+            promptHandler: new WixPromptHandler(),
+          });
         } catch (error) {
           if (error.message.includes('Pilot has already been initialized')) {
             // Ignore already initialized error
