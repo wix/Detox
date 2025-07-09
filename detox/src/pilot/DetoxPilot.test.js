@@ -21,12 +21,35 @@ describe('DetoxPilot', () => {
   });
 
   describe('init', () => {
-    it('should initialize pilot with correct parameters', () => {
+    it('should initialize pilot with correct parameters (legacy signature)', () => {
       detoxPilot.init(mockPromptHandler);
 
       expect(Pilot).toHaveBeenCalledWith({
         frameworkDriver: expect.any(DetoxFrameworkDriver),
         promptHandler: mockPromptHandler,
+      });
+    });
+
+    it('should initialize pilot with correct parameters (new signature)', () => {
+      detoxPilot.init({
+        promptHandler: mockPromptHandler,
+        options: {
+          cacheOptions: {
+            shouldUseCache: true,
+            shouldOverrideCache: false,
+          },
+        },
+      });
+
+      expect(Pilot).toHaveBeenCalledWith({
+        frameworkDriver: expect.any(DetoxFrameworkDriver),
+        promptHandler: mockPromptHandler,
+        options: {
+          cacheOptions: {
+            shouldUseCache: true,
+            shouldOverrideCache: false,
+          },
+        },
       });
     });
   });
