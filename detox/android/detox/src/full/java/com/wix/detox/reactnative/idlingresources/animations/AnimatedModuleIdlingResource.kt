@@ -27,7 +27,7 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
     override fun getName() = AnimatedModuleIdlingResource::class.java.name
 
     override fun getDebugName(): String {
-        return "AnimatedModule"
+        return "ui"
     }
 
     override fun getBusyHint(): Map<String, Any> {

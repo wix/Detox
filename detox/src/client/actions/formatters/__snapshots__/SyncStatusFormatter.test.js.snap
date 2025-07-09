@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Sync Status Formatter assertions should throw error when \`app_status\` is \`busy\` but \`busy_resources\` is empty 1`] = `
 "Given sync status is not compatible with the status schema (\`SyncStatusSchema.js\`), given status: {"app_status":"busy","busy_resources":[]}.
@@ -229,6 +229,13 @@ exports[`Sync Status Formatter busy status should format "ui" correctly #3 1`] =
 "The app is busy with the following tasks:
 • UI elements are busy:
   - Reason: foo."
+`;
+
+exports[`Sync Status Formatter busy status should format "ui" correctly with Fabric UI properties 1`] = `
+"The app is busy with the following tasks:
+• UI elements are busy:
+  - Mount items pending: 5.
+  - View command mount items pending: 2."
 `;
 
 exports[`Sync Status Formatter busy status should format "unknown" correctly 1`] = `

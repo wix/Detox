@@ -310,7 +310,7 @@ describe('Client', () => {
       jest.advanceTimersByTime(validSession.debugSynchronization);
       await fastForwardAllPromises();
 
-      expect(log.debug).toHaveBeenCalledWith({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');
+      expect(log.debug).toHaveBeenCalledWith({ event: 'APP_STATUS' }, 'Failed to execute the current status query.', expect.any(Error));
       expect(jest.getTimerCount()).toBe(0);
     });
 
