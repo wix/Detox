@@ -1185,10 +1185,17 @@ declare global {
             label(label: string | RegExp): NativeMatcher;
 
             /**
-             * Find an element by native view type.
-             * @example await element(by.type('RCTImageView'));
+             * Find an element by native view type OR semantic type.
+             * Supports both platform-specific class names and cross-platform semantic types.
+             * @example 
+             * // Platform-specific class names:
+             * await element(by.type('RCTImageView')); // iOS
+             * 
+             * // Cross-platform semantic types:
+             * await element(by.type('image'));
              */
-            type(nativeViewType: string): NativeMatcher;
+            type(typeOrSemanticType: string): NativeMatcher;
+
 
             /**
              * Find an element with an accessibility trait. (iOS only)
