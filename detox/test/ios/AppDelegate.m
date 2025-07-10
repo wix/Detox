@@ -8,6 +8,7 @@
 #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #endif
+#import <React-RCTAppDelegate/RCTDefaultReactNativeFactoryDelegate.h>
 
 @interface ReactNativeDelegate : RCTDefaultReactNativeFactoryDelegate
 @end
