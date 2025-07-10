@@ -8,4 +8,4 @@
       REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
-      - "/Users/builder/uibuilder/work/artifacts*.tar.gz" 
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"

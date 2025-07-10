@@ -8,4 +8,4 @@
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
-      - "/Users/builder/uibuilder/work/artifacts*.tar.gz" 
+      - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
