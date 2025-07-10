@@ -2,12 +2,25 @@
 
 #import <CoreSpotlight/CoreSpotlight.h>
 #import <React/RCTBundleURLProvider.h>
-#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
-#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
-#endif
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import "example-Swift.h"
+#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#endif
+
+@interface ReactNativeDelegate : RCTDefaultReactNativeFactoryDelegate
+@end
+
+@implementation ReactNativeDelegate
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+#if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+#else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+@end
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 @end
@@ -16,35 +29,24 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.moduleName = @"example";
-    #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
-    // Only in RN 77 and higher
-    self.dependencyProvider = [RCTAppDependencyProvider new];
-    #endif
-    self.initialProps = @{};
+    self.reactNativeDelegate = [ReactNativeDelegate new];
+    self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeDelegate];
+#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
+    self.reactNativeDelegate.dependencyProvider = [RCTAppDependencyProvider new];
+#endif
 
-    BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.reactNativeFactory startReactNativeWithModuleName:@"example"
+                                                   inWindow:self.window
+                                             launchOptions:launchOptions];
 
+    // Your custom setup
     [self setupNotifications];
     [self setupScreenManager];
     [self setupApplicationStateObservers];
     [UIViewController swizzleMotionEnded];
 
-    return result;
-}
-
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-    return [self bundleURL];
-}
-
-- (NSURL *)bundleURL
-{
-#if DEBUG
-    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-#else
-    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
+    return YES;
 }
 
 #pragma mark - Setup Methods
