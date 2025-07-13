@@ -43,7 +43,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.reactNativeFactory startReactNativeWithModuleName:@"example"
                                                    inWindow:self.window
-                                             launchOptions:launchOptions];    
+                                             launchOptions:launchOptions];
     
     // Your custom setup
     [self setupNotifications];
