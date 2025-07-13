@@ -15,6 +15,10 @@
 
 @implementation ReactNativeDelegate
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+    return [self bundleURL];
+}
+
+- (NSURL *) bundleURL {
 #if DEBUG
     return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
@@ -39,8 +43,8 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.reactNativeFactory startReactNativeWithModuleName:@"example"
                                                    inWindow:self.window
-                                             launchOptions:launchOptions];
-
+                                             launchOptions:launchOptions];    
+    
     // Your custom setup
     [self setupNotifications];
     [self setupScreenManager];
