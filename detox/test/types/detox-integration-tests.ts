@@ -1,10 +1,11 @@
 import type { Circus } from '@jest/types';
+import { pilot } from 'detox';
 import {
-  globalSetup,
-  globalTeardown,
   DetoxCircusEnvironment,
   DetoxCircusListener,
-  DetoxCircusListenerConstructorOpts
+  DetoxCircusListenerConstructorOpts,
+  globalSetup,
+  globalTeardown
 } from 'detox/runners/jest';
 
 class NoneListener implements DetoxCircusListener {}
@@ -141,6 +142,35 @@ class CustomEnvironment extends DetoxCircusEnvironment {
       NoneListener,
       OmniListener,
     });
+  }
+
+  async initDetox() {
+    const instance: DetoxInternals.Worker = await super.initDetox();
+
+    // Test 1: setDefaults should work with partial config
+    pilot.setDefaults({
+      testContext: {
+        getCurrentTestFilePath: () => '/default/path.js',
+      }
+    });
+
+    // Test 2: Simple approach with promptHandler
+    pilot.init({
+      async runPrompt(_prompt: string, _image?: string): Promise<string> {
+        return 'mock response';
+      },
+
+      isSnapshotImageSupported(): boolean {
+        return true;
+      },
+    });
+
+    // Test 3: Verify the methods are available after init
+    await pilot.perform('tap on login button');
+    await pilot.autopilot('log into the app');
+    pilot.extendAPICatalog([]);
+
+    return instance;
   }
 
   handleTestEvent(event: Circus.Event, state: Circus.State): void | Promise<void> {

@@ -9,7 +9,7 @@
 // * Dor Ben Baruch <https://github.com/Dor256>
 
 import { BunyanDebugStreamOptions } from 'bunyan-debug-stream';
-import type { Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/core'
+import type { Config as PilotConfig, Pilot, PromptHandler as _PromptHandler } from '@wix-pilot/core'
 
 declare global {
     namespace Detox {
@@ -1361,6 +1361,12 @@ declare global {
              * @param promptHandler The prompt handler to use.
              */
             init: (promptHandler: PromptHandler) => void;
+            /**
+             * Sets the default values for the Pilot configuration.
+             * This method is not part of the public API and is subject to change.
+             * @internal
+             */
+            setDefaults(defaults: Partial<PilotConfig>): void;
         }
 
         type PromptHandler = _PromptHandler;
