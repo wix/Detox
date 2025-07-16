@@ -274,7 +274,7 @@ class Client {
           status = await this.currentStatus();
           log.info({ event: 'APP_STATUS' }, status);
         } catch (_e) {
-          log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.');
+          log.debug({ event: 'APP_STATUS' }, 'Failed to execute the current status query.', _e);
           this._slowInvocationStatusHandle = null;
         }
 
