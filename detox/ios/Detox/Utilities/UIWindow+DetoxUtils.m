@@ -11,84 +11,121 @@
 #import "DTXAppleInternals.h"
 #import "NSObject+DetoxUtils.h"
 #import "UIView+DetoxUtils.h"
+#import <WebKit/WebKit.h>
 
 extern NSArray* DTXChildElements(id element);
 
-static void _DTXElementDescription(NSObject<UIAccessibilityIdentification>* element, NSMutableString* storage)
+static NSInteger _DTXClampedInt(double value)
 {
-	[storage appendFormat:@"<%@: %p", element.class, element];
-
-	if([element __isKindOfUIView])
-	{
-		UIView* view = (id)element;
-		CGRect frame = view.frame;
-		[storage appendFormat:@"; frame = (%g %g; %g %g)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
-	}
-	else
-	{
-		CGRect axFrame = [element dtx_bounds];
-		[storage appendFormat:@"; ax.frame = (%g %g; %g %g)", axFrame.origin.x, axFrame.origin.y, axFrame.size.width, axFrame.size.height];
-	}
-
-	NSString* identifier = [element respondsToSelector:@selector(accessibilityIdentifier)] ? [element accessibilityIdentifier] : nil;
-	if(identifier.length > 0)
-	{
-		[storage appendFormat:@"; ax.id = \"%@\"", identifier];
-	}
-
-	NSString* text = [[element dtx_text] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-	if(text.length > 0)
-	{
-		[storage appendFormat:@"; text = \"%@\"", text];
-	}
-
-	NSString* label = [[element accessibilityLabel] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-	if(label.length > 0)
-	{
-		[storage appendFormat:@"; ax.label = \"%@\"", label];
-	}
-
-	NSString* value = [[element accessibilityValue] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-	if(value.length > 0)
-	{
-		[storage appendFormat:@"; ax.value = \"%@\"", value];
-	}
-
-	if([element __isKindOfUIView])
-	{
-		UIView* view = (id)element;
-		CALayer* layer = view.layer;
-		[storage appendFormat:@"; layer = <%@: %p>", layer.class, layer];
-	}
-
-	[storage appendString:@">"];
-
-	//	+ <AnnoyingWindow: 0x7fa2f2c1d760; baseClass = UIWindow; frame = (0 0; 428 926); autoresize = W+H; gestureRecognizers = <NSArray: 0x600002ffb3c0>; layer = <UIWindowLayer: 0x600002781960>>
-
-//	[storage appendString:view.description];
+	return (NSInteger)MIN(MAX(value, (double)NSIntegerMin), (double)NSIntegerMax);
 }
 
-static void _DTXRecursiveDescribe(id element, NSMutableString* storage, NSUInteger level)
+static void _DTXReplaceOccurrences(NSMutableString* string, NSString* target, NSString* replacement)
 {
-	if(level == 1)
+	[string replaceOccurrencesOfString:target withString:replacement options:0 range:NSMakeRange(0, string.length)];
+}
+
+static NSString* _DTXEscapeXML(NSString* string)
+{
+	if(string == nil)
 	{
-		[storage appendString:@"   + "];
+		return @"";
 	}
-	else
+
+	NSMutableString* rv = [string mutableCopy];
+	_DTXReplaceOccurrences(rv, @"&", @"&amp;");
+	_DTXReplaceOccurrences(rv, @"<", @"&lt;");
+	_DTXReplaceOccurrences(rv, @">", @"&gt;");
+	_DTXReplaceOccurrences(rv, @"\"", @"&quot;");
+	return rv;
+}
+
+static NSDictionary* _DTXGetElementAttributes(UIView* view)
+{
+	NSMutableDictionary* attributes = [NSMutableDictionary new];
+	attributes[@"class"] = NSStringFromClass(view.class);
+	attributes[@"width"] = @(_DTXClampedInt(CGRectGetWidth(view.frame))).stringValue;
+	attributes[@"height"] = @(_DTXClampedInt(CGRectGetHeight(view.frame))).stringValue;
+	attributes[@"visibility"] = view.hidden ? @"invisible" : @"visible";
+	attributes[@"alpha"] = [NSString stringWithFormat:@"%.1f", view.alpha];
+	attributes[@"focused"] = view.isFocused ? @"true" : @"false";
+
+	if (view.accessibilityValue.length > 0) {
+		attributes[@"value"] = view.accessibilityValue;
+	}
+	if (view.accessibilityLabel.length > 0) {
+		attributes[@"label"] = view.accessibilityLabel;
+	}
+	if (view.tag != 0) {
+		attributes[@"tag"] = @(view.tag).stringValue;
+	}
+	if (view.superview != nil) {
+		CGPoint originInSuperview = [view convertPoint:CGPointZero toView:view.superview];
+		attributes[@"x"] = @(_DTXClampedInt(originInSuperview.x)).stringValue;
+		attributes[@"y"] = @(_DTXClampedInt(originInSuperview.y)).stringValue;
+	}
+	if (view.accessibilityIdentifier.length > 0) {
+		attributes[@"id"] = view.accessibilityIdentifier;
+	}
+
+	NSString* text = [view dtx_text];
+	if (text.length > 0) {
+		attributes[@"text"] = text;
+	}
+
+	// Add memory address for unique identification and debugging
+	attributes[@"ptr"] = [NSString stringWithFormat:@"%p", view];
+
+	return attributes;
+}
+
+static void _DTXAppendRecursiveXMLDescription(id element, NSMutableString* storage, NSUInteger depth)
+{
+	if([element isKindOfClass:UIView.class] == NO)
 	{
-		for(NSUInteger idx = 0; idx < level; idx++)
+		return;
+	}
+
+	UIView* view = element;
+
+	NSString* indent = [@"" stringByPaddingToLength:depth * 4 withString:@" " startingAtIndex:0];
+	[storage appendFormat:@"\n%@", indent];
+
+	NSString* elementName = NSStringFromClass(view.class);
+	[storage appendFormat:@"<%@", elementName];
+
+	NSDictionary* attributes = _DTXGetElementAttributes(view);
+	NSArray* sortedKeys = [attributes.allKeys sortedArrayUsingSelector:@selector(compare:)];
+	for(NSString* key in sortedKeys)
+	{
+		NSString* value = attributes[key];
+		if(value.length > 0)
 		{
-			[storage appendString:@"   | "];
+			[storage appendFormat:@" %@=\"%@\"", key, _DTXEscapeXML(value)];
 		}
 	}
 
-	_DTXElementDescription(element, storage);
-	[storage appendString:@"\n"];
-
 	NSArray* children = DTXChildElements(element);
-	for(id child in children)
+	if([element isKindOfClass:WKWebView.class])
 	{
-		_DTXRecursiveDescribe(child, storage, level + 1);
+		[storage appendString:@">"];
+		[storage appendFormat:@"\n%@    <![CDATA[WebView content cannot be extracted synchronously.]]>", indent];
+		[storage appendFormat:@"\n%@</%@>", indent, elementName];
+		return;
+	}
+
+	if (children.count == 0)
+	{
+		[storage appendString:@" />"];
+	}
+	else
+	{
+		[storage appendString:@">"];
+		for(id child in [children reverseObjectEnumerator])
+		{
+			_DTXAppendRecursiveXMLDescription(child, storage, depth + 1);
+		}
+		[storage appendFormat:@"\n%@</%@>", indent, elementName];
 	}
 }
 
@@ -113,11 +150,7 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 {
 	NSMutableString* rv;
 	@autoreleasepool {
-		id x = [self valueForKey:@"_FBSScene"];
-		id y = [x valueForKey:@"identifier"];
-		id z = [self valueForKeyPath:@"session.persistentIdentifier"];
-
-		rv = [NSMutableString stringWithFormat:@"<%@: %p; scene = <%@: %p; identifier: %@>; persistentIdentifier = %@; activationState = %@>\n", self.class, self, [x class], x, y, z, _DTXNSStringFromUISceneActivationState(self.activationState)];
+		rv = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<ViewHierarchy>"];
 
 		NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:self];
 		for (UIWindow* window in windows)
@@ -127,8 +160,10 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 			{
 				continue;
 			}
-			_DTXRecursiveDescribe(window, rv, 1);
+			_DTXAppendRecursiveXMLDescription(window, rv, 1);
 		}
+
+		[rv appendString:@"\n</ViewHierarchy>"];
 	}
 
 	return rv;
