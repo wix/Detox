@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIWindowScene (DetoxUtils)
 
 - (NSString*)dtx_recursiveDescription;
+- (void)dtx_saveScreenshotToPath:(NSURL*)path fileName:(NSString*)fileName;
+- (void)dtx_saveViewHierarchyToPath:(NSURL*)path fileName:(NSString*)fileName;
 
 @end
 

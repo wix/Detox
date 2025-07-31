@@ -459,8 +459,6 @@ BOOL __DTXPointEqualToPoint(CGPoint a, CGPoint b)
 {
     NSMutableDictionary* rv = [NSMutableDictionary new];
 
-    rv[@"viewHierarchy"] = [[UIWindow dtx_keyWindowScene] dtx_recursiveDescription];
-
     NSMutableArray* windowDescriptions = [NSMutableArray new];
 
     UIWindowScene* scene = UIWindow.dtx_keyWindow.windowScene;

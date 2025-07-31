@@ -9,9 +9,13 @@
 #import "UIWindow+DetoxUtils.h"
 
 #import "DTXAppleInternals.h"
+#import "DTXLogging.h"
 #import "NSObject+DetoxUtils.h"
 #import "UIView+DetoxUtils.h"
 #import <WebKit/WebKit.h>
+#import "UIImage+DetoxUtils.h"
+
+DTX_CREATE_LOG(UIWindow_DetoxUtils)
 
 extern NSArray* DTXChildElements(id element);
 
@@ -145,7 +149,7 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 {
 	NSMutableString* rv;
 	@autoreleasepool {
-		rv = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<ViewHierarchy>"];
+		rv = [NSMutableString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<ViewHierarchy>"];
 
 		NSArray<UIWindow*>* windows = [UIWindow dtx_allWindowsForScene:self];
 		for (UIWindow* window in windows)
@@ -162,6 +166,25 @@ static NSString* _DTXNSStringFromUISceneActivationState(UISceneActivationState s
 	}
 
 	return rv;
+}
+
+- (void)dtx_saveScreenshotToPath:(NSURL*)path fileName:(NSString*)fileName
+{
+	UIWindow* keyWindow = [UIWindow dtx_keyWindow];
+	UIImage* image = [keyWindow dtx_imageFromView];
+
+	[image dtx_saveToPath:path fileName:fileName];
+}
+
+- (void)dtx_saveViewHierarchyToPath:(NSURL*)path fileName:(NSString*)fileName
+{
+	NSString* xmlContent = [self dtx_recursiveDescription];
+	NSURL* fileURL = [path URLByAppendingPathComponent:fileName];
+	NSError* error;
+	BOOL success = [xmlContent writeToFile:fileURL.path atomically:YES encoding:NSUTF8StringEncoding error:&error];
+	if (!success) {
+		dtx_log_error(@"Failed to save view hierarchy to %@: %@", fileURL.path, error);
+	}
 }
 
 @end

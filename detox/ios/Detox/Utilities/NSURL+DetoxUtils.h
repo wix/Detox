@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSURL*)visibilityFailingScreenshotsPath;
 + (NSURL*)visibilityFailingRectsPath;
 + (NSURL*)elementsScreenshotPath;
++ (NSURL*)testFailedArtifactsPath;
++ (nullable NSURL*)dtx_artifactsRootURL;
++ (void)dtx_setArtifactsRootURL:(nullable NSURL*)url;
 
 @end
 

@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)dtx_saveToPath:(NSURL*)path fileName:(NSString*)name;
 
+- (UIImage*)dtx_imageByResizingToScale:(CGFloat)scale;
+- (NSString*)dtx_toBase64;
+
 @end
 
 NS_ASSUME_NONNULL_END

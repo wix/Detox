@@ -258,27 +258,52 @@ public class DetoxManager : NSObject, WebSocketDelegate {
                 return
             case "invoke":
                 DTXSyncManager.enqueueMainQueueIdleClosure {
+                    if UserDefaults.standard.bool(forKey: "detoxDebugArtifacts") {
+                        let artifactsURL = NSURL.testFailedArtifactsPath().appendingPathComponent(NSUUID().uuidString)
+                        try? FileManager.default.createDirectory(at: artifactsURL, withIntermediateDirectories: true, attributes: nil)
+                        NSURL.dtx_setArtifactsRootURL(artifactsURL)
+                    }
+
                     InvocationManager.invoke(dictionaryRepresentation: params) { result, error in
                         if let error = error {
                             let params: NSMutableDictionary = ["details": error.localizedDescription]
                             params.addEntries(from: (error as NSError).userInfo)
 
-                            if UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") == false {
-                                let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
-                                do {
-                                    try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
-                                    params["viewHierarchyURL"] = url.path
-                                } catch {}
-                            }
+                            if UserDefaults.standard.bool(forKey: "detoxDebugArtifacts") {
+                                if let artifactsURL = NSURL.dtx_artifactsRoot() {
+                                    params["artifactsURL"] = artifactsURL.path
 
-                            if UserDefaults.standard.bool(forKey: "detoxDebugVisibility") {
-                                params["visibilityFailingScreenshotsURL"] = NSURL.visibilityFailingScreenshotsPath().path
-                                params["visibilityFailingRectsURL"] = NSURL.visibilityFailingRectsPath().path
+                                    if let scene = UIWindow.dtx_keyWindowScene() as? UIWindowScene {
+                                        scene.dtx_saveScreenshot(toPath: artifactsURL, fileName: "ui.png")
+                                        scene.dtx_saveViewHierarchy(toPath: artifactsURL, fileName: "ui.xml")
+                                    }
+                                }
+                            } else {
+                                if let scene = UIWindow.dtx_keyWindowScene() as? UIWindowScene {
+                                    params["viewHierarchy"] = scene.dtx_recursiveDescription()
+                                }
+
+                                if !UserDefaults.standard.bool(forKey: "detoxDisableHierarchyDump") {
+                                    let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(NSUUID().uuidString).viewhierarchy")
+                                    do {
+                                        try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
+                                        params["viewHierarchyURL"] = url.path
+                                    } catch {}
+                                }
+
+                                if UserDefaults.standard.bool(forKey: "detoxDebugVisibility") {
+                                    params["visibilityFailingScreenshotsURL"] = NSURL.visibilityFailingScreenshotsPath().path
+                                    params["visibilityFailingRectsURL"] = NSURL.visibilityFailingRectsPath().path
+                                }
                             }
 
                             self.safeSend(action: "testFailed", params: params as! [String : Any], messageId: messageId)
                         } else {
                             self.safeSend(action: "invokeResult", params: result ?? [:], messageId: messageId)
+                        }
+
+                        if UserDefaults.standard.bool(forKey: "detoxDebugArtifacts") {
+                            NSURL.dtx_setArtifactsRootURL(nil)
                         }
                     }
                 }

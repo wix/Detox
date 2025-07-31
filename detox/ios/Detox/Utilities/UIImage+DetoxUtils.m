@@ -98,4 +98,20 @@
 	[UIImagePNGRepresentation(self) writeToURL:[NSURL fileURLWithPath:combinedPath.path] atomically:YES];
 }
 
+- (UIImage *)dtx_imageByResizingToScale:(CGFloat)scale
+{
+	CGSize newSize = CGSizeMake(self.size.width * scale, self.size.height * scale);
+	UIGraphicsBeginImageContextWithOptions(newSize, YES, self.scale);
+	[self drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+	UIImage* rv = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+
+	return rv;
+}
+
+- (NSString *)dtx_toBase64
+{
+	return [UIImagePNGRepresentation(self) base64EncodedStringWithOptions:0];
+}
+
 @end
