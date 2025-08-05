@@ -34,16 +34,25 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
     self.reactNativeDelegate = [ReactNativeDelegate new];
     self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeDelegate];
-#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
     self.reactNativeDelegate.dependencyProvider = [RCTAppDependencyProvider new];
-#endif
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self.reactNativeFactory startReactNativeWithModuleName:@"example"
                                                    inWindow:self.window
-                                             launchOptions:launchOptions];
+                                             launchOptions:launchOptions];    
+#else
+    self.moduleName = @"example";
+    #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
+    // Only in RN 77 and higher
+    self.dependencyProvider = [RCTAppDependencyProvider new];
+    #endif
+    self.initialProps = @{};
+
+    BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
+#endif
     
     // Your custom setup
     [self setupNotifications];
