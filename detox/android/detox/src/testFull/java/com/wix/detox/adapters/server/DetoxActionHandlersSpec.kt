@@ -1,8 +1,11 @@
 package com.wix.detox.adapters.server
 
 import android.content.Context
+import androidx.test.espresso.AmbiguousViewMatcherException
+import androidx.test.espresso.NoMatchingViewException
 import com.wix.detox.TestEngineFacade
 import com.wix.detox.UTHelpers.yieldToOtherThreads
+import com.wix.detox.espresso.errors.DetoxExceptionWithHierarchy
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
@@ -139,9 +142,11 @@ object DetoxActionHandlersSpec : Spek({
                         eq(messageId))
             }
 
-            it("should handle an InvocationTargetException and extract view hierarchy") {
-                val targetException = Exception("before View Hierarchy: after")
-                val exception = InvocationTargetException(targetException)
+            it("should handle DetoxExceptionWithHierarchy and extract xmlHierarchy") {
+                val detoxException = object : RuntimeException("Test exception"), DetoxExceptionWithHierarchy {
+                    override val xmlHierarchy: String = "<ViewHierarchy><TestView/></ViewHierarchy>"
+                }
+                val exception = InvocationTargetException(detoxException)
                 whenever(methodInvocationMock.invoke(isA<String>())).thenThrow(exception)
 
                 uut().handle(params, messageId)
@@ -149,14 +154,14 @@ object DetoxActionHandlersSpec : Spek({
                 verify(outboundServerAdapter).sendMessage(
                         eq("testFailed"),
                         argThat {
-                            this["details"] == "before\n" &&
-                            this["viewHierarchy"] == "after" &&
+                            this["details"] == "Test exception\n" &&
+                            this["viewHierarchy"] == "<ViewHierarchy><TestView/></ViewHierarchy>" &&
                             size == 2
                         },
                         eq(messageId))
             }
 
-            it("should handle a non-view-hierarchy InvocationTargetException") {
+            it("should handle non-Detox exceptions with null viewHierarchy") {
                 val rootException = RuntimeException("root-exception-mock")
                 val targetException = Exception("target-exception-mock", rootException)
                 val exception = InvocationTargetException(targetException)
@@ -167,11 +172,11 @@ object DetoxActionHandlersSpec : Spek({
                 verify(outboundServerAdapter).sendMessage(
                         eq("testFailed"),
                         argThat {
-                            this["details"] == "root-exception-mock" &&
-                            size == 1
+                            this["details"] == "root-exception-mock\n" &&
+                            this["viewHierarchy"] == null &&
+                            size == 2
                         },
                         eq(messageId))
-
             }
         }
 
