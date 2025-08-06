@@ -24,10 +24,13 @@ NS_SWIFT_NAME(AppDelegate)
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 #endif
 
-@property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) id screenManager;
+
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
+@property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) ReactNativeDelegate *reactNativeDelegate;
 @property (nonatomic, strong) RCTReactNativeFactory *reactNativeFactory;
+#endif
 
 - (void)showOverlayMessageWithMessage:(NSString *)message;
 
