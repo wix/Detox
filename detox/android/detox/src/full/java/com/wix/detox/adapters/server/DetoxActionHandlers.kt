@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.wix.detox.TestEngineFacade
 import com.wix.detox.common.extractRootCause
+import com.wix.detox.espresso.errors.DetoxExceptionWithHierarchy
+import com.wix.detox.espresso.hierarchy.ViewHierarchyGenerator
 import com.wix.detox.instruments.DetoxInstrumentsException
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.invoke.MethodInvocation
@@ -47,8 +49,6 @@ class InvokeActionHandler @JvmOverloads constructor(
         private val errorParse: (e: Throwable?) -> String = Log::getStackTraceString)
     : DetoxActionHandler {
 
-    private val VIEW_HIERARCHY_TEXT = "View Hierarchy:"
-
     override fun handle(params: String, messageId: Long) {
         try {
             val invocationResult = methodInvocation.invoke(params)
@@ -63,17 +63,17 @@ class InvokeActionHandler @JvmOverloads constructor(
         }
     }
 
-    private fun extractFailurePayload(e: InvocationTargetException): Map<String, Any?>
-        = e.targetException.message?.let { message: String ->
-            if (message.contains(VIEW_HIERARCHY_TEXT)) {
-                val error = message.substringBefore(VIEW_HIERARCHY_TEXT).trim()
-                val viewHierarchy = message.substringAfter(VIEW_HIERARCHY_TEXT).trim()
-                mapOf<String, Any?>("details" to "${error}\n", "viewHierarchy" to viewHierarchy)
-            } else {
-                val error = extractRootCause(e.targetException)
-                mapOf<String, Any?>("details" to error.message)
-            }
-        } ?: emptyMap()
+    private fun extractFailurePayload(e: InvocationTargetException): Map<String, Any?> {
+        val error = extractRootCause(e.targetException)
+        val errorMessage = error.message ?: "Unknown error"
+        val viewHierarchy = if (error is DetoxExceptionWithHierarchy) {
+            error.xmlHierarchy
+        } else {
+            null
+        }
+
+        return mapOf<String, Any?>("details" to "${errorMessage}\n", "viewHierarchy" to viewHierarchy)
+    }
 }
 
 class CleanupActionHandler(

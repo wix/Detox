@@ -125,6 +125,12 @@ class DetoxCircusEnvironment extends WithEmitter(NodeEnvironment) {
       await detox.installWorker(opts);
     }
 
+    detox.worker.pilot.setDefaults({
+      testContext: {
+        getCurrentTestFilePath: () => path.resolve(this.testPath),
+      },
+    });
+
     return detox.worker;
   }
 

@@ -219,6 +219,12 @@
                         "type":"number",
                         "minimum":1
                       },
+                      "mount_items":{
+                        "type":"number"
+                      },
+                      "view_command_mount_items":{
+                        "type":"number"
+                      },
                       "reason":{
                         "type":"string"
                       }

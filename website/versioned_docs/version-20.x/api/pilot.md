@@ -27,18 +27,17 @@ For a more detailed guide on integrating Wix Pilot in your tests, refer to the \
 
 ## Methods
 
-- [`pilot.init()`](#pilotinitprompthandler-detox)
+- [`pilot.init()`](#pilotinitprompthandler)
 - [`pilot.perform()`](#pilotperformsteps)
 - [`pilot.autopilot()`](#pilotautopilotgoal)
 
-## `pilot.init(promptHandler, detox)`
+## `pilot.init(promptHandler)`
 
 Initializes Pilot with the given prompt handler. Must be called before any other Pilot methods.
 
 **Parameters:**
 
 - `promptHandler` (PromptHandler): An object implementing the [`PromptHandler`](#prompthandler-interface) interface.
-- `detox` (DetoxInstance): The Detox instance to integrate with Wix Pilot.
 
 **Example:**
 
@@ -48,7 +47,7 @@ const OpenAIPromptHandler = require('./OpenAIPromptHandler');
 
 beforeAll(() => {
   const promptHandler = new OpenAIPromptHandler('YOUR_OPENAI_API_KEY');
-  pilot.init(promptHandler, detox);
+  pilot.init(promptHandler);
 });
 ```
 
