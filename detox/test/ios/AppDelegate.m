@@ -8,6 +8,8 @@
 #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
 #import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #endif
+
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
 #import <React-RCTAppDelegate/RCTDefaultReactNativeFactoryDelegate.h>
 
 @interface ReactNativeDelegate : RCTDefaultReactNativeFactoryDelegate
@@ -26,6 +28,7 @@
 #endif
 }
 @end
+#endif
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 @end
@@ -62,6 +65,22 @@
 
     return YES;
 }
+
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR < 79
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+    return [self bundleURL];
+}
+
+- (NSURL *)bundleURL
+{
+#if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+#else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+#endif
 
 #pragma mark - Setup Methods
 
