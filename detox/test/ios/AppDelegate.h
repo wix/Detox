@@ -1,7 +1,4 @@
 #import <UIKit/UIKit.h>
-#import <React/RCTBridge.h>
-#import <React-RCTAppDelegate/RCTReactNativeFactory.h>
-
 #import "ReactNativeVersionExtracted.h"
 
 #if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR < 79
@@ -10,6 +7,9 @@
 #elif __has_include(<React_RCTAppDelegate/RCTAppDelegate.h>)
 #import <React_RCTAppDelegate/RCTAppDelegate.h>
 #endif
+#else
+#import <React/RCTBridge.h>
+#import <React-RCTAppDelegate/RCTReactNativeFactory.h>
 #endif
 
 @class ReactNativeDelegate;
