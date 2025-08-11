@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
-  'android.emulator': 2,
+  'android.emulator': 1,
   'android.genycloud': 5,
   'ios.simulator': 2,
 };
