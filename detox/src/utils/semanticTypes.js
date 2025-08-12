@@ -11,23 +11,23 @@ const SEMANTIC_TYPE_MAPPINGS = {
 
   // Input fields
   'input-field': {
-    ios: ['RCTTextInput', 'RCTMultilineTextInput', 'UITextField', 'UITextView'],
+    ios: ['RCTTextInputView', 'RCTMultilineTextInputView', 'UITextField', 'UITextView'],
     android: ['android.widget.EditText', 'com.facebook.react.views.textinput.ReactEditText']
   },
 
   // Text elements
   'text': {
-    ios: ['RCTText', 'UILabel'],
+    ios: ['RCTText', 'RCTParagraphComponentView', 'UILabel'],
     android: ['android.widget.TextView', 'com.facebook.react.views.text.ReactTextView']
   },
 
   // Button elements
   'button': {
-    ios: ['RCTButton', 'UIButton'],
-    android: ['android.widget.Button', 'com.facebook.react.views.view.ReactViewGroup']
+    ios: ['UIButton', 'RCTTouchableOpacity', 'RCTTouchableHighlight', 'RCTTouchableWithoutFeedback'],
+    android: ['android.widget.Button', 'android.widget.ImageButton']
   },
 
-  // Scroll containers
+  // Scroll containers - The UITableView inherits from scrollview so it could also show up here...
   'scrollview': {
     ios: ['RCTScrollView', 'UIScrollView'],
     android: ['android.widget.ScrollView', 'androidx.core.widget.NestedScrollView', 'com.facebook.react.views.scroll.ReactScrollView']
@@ -35,32 +35,32 @@ const SEMANTIC_TYPE_MAPPINGS = {
 
   // Lists
   'list': {
-    ios: ['RCTFlatList', 'UITableView', 'UICollectionView'],
+    ios: ['UITableView', 'UICollectionView', 'RCTScrollView'],
     android: ['android.widget.ListView', 'androidx.recyclerview.widget.RecyclerView', 'com.facebook.react.views.scroll.ReactScrollView']
   },
 
   // Switches/Toggles
   'switch': {
-    ios: ['RCTSwitch', 'UISwitch'],
+    ios: ['UISwitch'],
     android: ['android.widget.Switch', 'androidx.appcompat.widget.SwitchCompat', 'com.facebook.react.views.switchview.ReactSwitch']
   },
 
   // Sliders
   'slider': {
-    ios: ['RCTSlider', 'UISlider'],
+    ios: ['UISlider'],
     android: ['android.widget.SeekBar', 'com.facebook.react.views.slider.ReactSlider']
   },
 
   // Picker/Selector
   'picker': {
-    ios: ['RCTPicker', 'UIPickerView'],
-    android: ['android.widget.Spinner', 'com.facebook.react.views.picker.ReactPickerManager']
+    ios: ['UIPickerView'],
+    android: ['android.widget.Spinner', 'androidx.appcompat.widget.AppCompatSpinner']
   },
 
   // Activity indicators/Progress
   'activity-indicator': {
-    ios: ['RCTActivityIndicatorView', 'UIActivityIndicatorView'],
-    android: ['android.widget.ProgressBar', 'com.facebook.react.views.progressbar.ReactProgressBarViewManager']
+    ios: ['UIActivityIndicatorView'],
+    android: ['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar']
   }
 };
 
