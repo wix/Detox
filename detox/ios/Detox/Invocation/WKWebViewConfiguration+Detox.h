@@ -13,10 +13,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface WKWebView (DetoxSecurity)
-
-- (instancetype)dtx_initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
-
-@end
-
 NS_ASSUME_NONNULL_END

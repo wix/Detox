@@ -11,6 +11,12 @@
 typedef struct OpaqueWKPreferences* WKPreferencesRef;
 extern void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef, bool);
 
+
+@interface WKWebView (DetoxSecurity)
+- (instancetype)dtx_initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
+@end
+
+
 @interface DTXFakeWKPreferencesRef: NSObject
 @property (nonatomic) void* _apiObject;
 @end
