@@ -115,6 +115,7 @@ class ReactNativeIdlingResources(
         loopers.clear()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun unregisterIdlingResources() {
         IdlingResourcesName.entries.forEach {
             removeIdlingResource(it)
