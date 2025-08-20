@@ -1,4 +1,5 @@
 jest.mock('../../../../ios/XCUITestRunner');
+jest.mock('./AppStateResetShim');
 
 // @ts-nocheck
 describe('IOS simulator driver', () => {
@@ -12,6 +13,9 @@ describe('IOS simulator driver', () => {
   let eventEmitter;
   let applesimutils;
   let uut;
+  let AppStateResetShimMock;
+  let appStateResetShimInstance;
+
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter({
@@ -24,6 +28,16 @@ describe('IOS simulator driver', () => {
 
     const AppleSimUtils = jest.createMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
+
+    // Mock AppStateResetShim
+    AppStateResetShimMock = jest.requireMock('./AppStateResetShim');
+    appStateResetShimInstance = {
+      backupApp: jest.fn().mockResolvedValue(),
+      restoreApp: jest.fn().mockResolvedValue(),
+      cleanup: jest.fn().mockResolvedValue(),
+      resetMultipleApps: jest.fn().mockResolvedValue(),
+    };
+    AppStateResetShimMock.mockImplementation(() => appStateResetShimInstance);
 
     const SimulatorDriver = require('./SimulatorDriver');
     uut = new SimulatorDriver(
@@ -256,9 +270,30 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
 
-    it('fails to match a face by passing to AppleSimUtils', async () => {
+    it('fails to match a finger by passing to AppleSimUtils', async () => {
       await uut.unmatchFinger();
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
+    });
+  });
+
+  describe('.resetAppState', () => {
+    it('should reset app state using the shim', async () => {
+      await uut.resetAppState(bundleId);
+      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, [bundleId]);
+    });
+
+    it('should use default bundleId when none provided', async () => {
+      uut._bundleId = 'default.bundle';
+      await uut.resetAppState();
+      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, ['default.bundle']);
+    });
+
+    it('should handle multiple bundleIds', async () => {
+      const bundleId1 = 'com.app1';
+      const bundleId2 = 'com.app2';
+
+      await uut.resetAppState(bundleId1, bundleId2);
+      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, [bundleId1, bundleId2]);
     });
   });
 });
