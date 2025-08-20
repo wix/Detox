@@ -85,6 +85,13 @@ declare global {
                  */
                 keepLockFile?: boolean;
             };
+            /**
+             * When true, Detox will use device.resetAppState() instead of uninstalling
+             * and reinstalling the app during device.launchApp({delete: true}).
+             *
+             * @default false
+             */
+            optimizeReinstall?: boolean;
             launchApp?: 'auto' | 'manual';
             cleanup?: {
                 shutdownDevice?: boolean;
@@ -772,6 +779,28 @@ declare global {
              * @example await device.reloadReactNative()
              */
             reloadReactNative(): Promise<void>;
+
+            /**
+             * Resets the app state by clearing app data and restoring it to a clean state.
+             *
+             * On Android, this command clears the app's data using the `pm clear` command,
+             * effectively resetting the app to its initial installed state without uninstalling it.
+             *
+             * On iOS, Detox uses a shim to back up, delete, and restore the app's data.
+             * This process ensures the app is returned to a clean state.
+             *
+             * @param bundleIds Optional bundle IDs to reset. If none provided, resets the current app.
+             * @example
+             * // Reset current app state
+             * await device.resetAppState();
+             * @example
+             * // Reset specific app state
+             * await device.resetAppState('com.example.app');
+             * @example
+             * // Reset multiple apps
+             * await device.resetAppState('com.app1', 'com.app2');
+             */
+            resetAppState(...bundleIds: string[]): Promise<void>;
 
             /**
              * By default, installApp() with no params will install the app file defined in the current configuration.

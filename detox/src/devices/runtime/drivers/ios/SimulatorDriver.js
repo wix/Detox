@@ -15,6 +15,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const traceInvocationCall = require('../../../../utils/traceInvocationCall').bind(null, log);
 
+const AppStateResetShim = require('./AppStateResetShim');
 const IosDriver = require('./IosDriver');
 
 /**
@@ -43,6 +44,7 @@ class SimulatorDriver extends IosDriver {
     this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
     this._applesimutils = deps.applesimutils;
+    this._appStateResetShim = new AppStateResetShim(this._applesimutils);
   }
 
   withAction(xcuitestRunner, action, traceDescription, ...params) {
@@ -87,6 +89,12 @@ class SimulatorDriver extends IosDriver {
     const { udid } = this;
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this._applesimutils.uninstall(udid, bundleId);
+  }
+
+  async resetAppState(...bundleIds) {
+    const { udid } = this;
+    const _bundleIds = bundleIds.length > 0 ? bundleIds : [this._bundleId];
+    await this._appStateResetShim.resetMultipleApps(udid, _bundleIds);
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
