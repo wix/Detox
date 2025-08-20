@@ -30,6 +30,7 @@ function composeBehaviorConfig({
           keepLockFile: false,
           reinstallApp: undefined,
         },
+        optimizeReinstall: false,
         launchApp: 'auto',
         cleanup: {
           shutdownDevice: false,
