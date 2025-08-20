@@ -104,24 +104,24 @@ Please make sure you have the most recent version of both tools installed, since
 
 ##### Supported Permissions
 
-| Permission | Values                  | Notes                                                         |
-|------------|-------------------------|---------------------------------------------------------------|
-| location   | always / inuse / never / unset | inuse - provides location access only when the app is in use  |
-| contacts   | YES / NO / unset / limited     | limited - grants limited access to contacts                   |
-| photos     | YES / NO / unset / limited     | limited - grants limited access to photos                     |
-| calendar   | YES / NO / unset        |                                                               |
-| camera     | YES / NO / unset        |                                                               |
-| medialibrary | YES / NO / unset      |                                                               |
-| microphone | YES / NO / unset        |                                                               |
-| motion     | YES / NO / unset        |                                                               |
-| reminders  | YES / NO / unset        |                                                               |
-| siri       | YES / NO / unset        |                                                               |
-| notifications | YES / NO / unset     | Requires AppleSimUtils; unsupported by simctl                |
-| health     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| homekit    | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| speech     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| faceid     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| userTracking | YES / NO / unset      | Requires AppleSimUtils; unsupported by simctl                |
+| Permission    | Values                         | Notes                                                        |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| location      | always / inuse / never / unset | inuse - provides location access only when the app is in use |
+| contacts      | YES / NO / unset / limited     | limited - grants limited access to contacts                  |
+| photos        | YES / NO / unset / limited     | limited - grants limited access to photos                    |
+| calendar      | YES / NO / unset               |                                                              |
+| camera        | YES / NO / unset               |                                                              |
+| medialibrary  | YES / NO / unset               |                                                              |
+| microphone    | YES / NO / unset               |                                                              |
+| motion        | YES / NO / unset               |                                                              |
+| reminders     | YES / NO / unset               |                                                              |
+| siri          | YES / NO / unset               |                                                              |
+| notifications | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| health        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| homekit       | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| speech        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| faceid        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| userTracking  | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
 
 Check Detox's [own test suite](https://github.com/wix/Detox/blob/master/detox/test/e2e/13.permissions.test.js) for usage examples.
 
@@ -165,7 +165,7 @@ Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 
 
 Before launching the application, it is uninstalled and then reinstalled.
 
-A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary). Default is `false`.
+When [`optimizeReinstall: true`](../config/behavior.mdx#behavioroptimizereinstall-boolean) is set to `true` in the behavior configuration, this will use [`device.resetAppState()`](#deviceresetappstatebundleids) instead of [`device.uninstallApp()`](#deviceuninstallapp) for faster app reset. Default is `false`.
 
 ```js
 await device.launchApp({delete: true});
@@ -326,6 +326,8 @@ To uninstall another app, specify its bundle id
 await device.uninstallApp('other.bundle.id');
 ```
 
+**Note:** For app state reset operations, consider using [`device.resetAppState()`](#deviceresetappstatebundleids) which is more efficient than uninstall/install cycles.
+
 ### `device.openURL({url, sourceApp[optional]})`
 
 Mock opening the app from URL. `sourceApp` is an optional **iOS-only** parameter to specify source application bundle id.
@@ -395,6 +397,25 @@ Exclude synchronization with respect to network activity (i.e. don’t wait for 
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
+```
+
+### `device.resetAppState([...bundleIds])`
+
+Resets the app state by clearing app data and restoring it to a clean state.
+
+On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it.
+
+On iOS, Detox uses a shim to back up, delete, and restore the app's data. This process ensures the app is returned to a clean state.
+
+```js
+// Reset current app state
+await device.resetAppState();
+
+// Reset specific app state
+await device.resetAppState('com.example.app');
+
+// Reset multiple apps
+await device.resetAppState('com.app1', 'com.app2');
 ```
 
 ### `device.resetContentAndSettings()` **iOS Only**
