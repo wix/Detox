@@ -1,3 +1,4 @@
+// @ts-nocheck
 describe('Temp file transfer', () => {
   let adb;
   let uut;
@@ -10,8 +11,8 @@ describe('Temp file transfer', () => {
   });
 
   it('should use the default temp-dir', async () => {
-    await uut.prepareDestinationDir('device-id');
+    await uut.prepareDestinationDir();
 
-    expect(adb.shell).toHaveBeenCalledWith('device-id', `rm -fr /data/local/tmp/detox`);
+    expect(adb.shell).toHaveBeenCalledWith(`rm -fr /data/local/tmp/detox`);
   });
 });

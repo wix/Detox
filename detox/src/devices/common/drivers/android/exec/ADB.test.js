@@ -36,7 +36,7 @@ describe('ADB', () => {
     spawnWithRetriesAndLogs = require('../../../../../utils/childProcess').spawnWithRetriesAndLogs;
 
     ADB = require('./ADB');
-    adb = new ADB();
+    adb = new ADB({ deviceId });
   });
 
   describe('devices', () => {
@@ -101,7 +101,7 @@ describe('ADB', () => {
   });
 
   it('should await device boot', async () => {
-    await adb.waitForDevice(deviceId);
+    await adb.waitForDevice();
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining(`"${adbBinPath}" -s ${deviceId} wait-for-device`),
@@ -110,7 +110,7 @@ describe('ADB', () => {
 
   it('should install an APK (api≤22)', async () => {
     jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 22);
-    await adb.install(deviceId, 'path/to/bin.apk');
+    await adb.install('path/to/bin.apk');
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(
       adbBinPath,
@@ -120,7 +120,7 @@ describe('ADB', () => {
 
   it('should install an APK (api≥23)', async () => {
     jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 23);
-    await adb.install(deviceId, 'path/to/bin.apk');
+    await adb.install('path/to/bin.apk');
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(
       adbBinPath,
@@ -135,7 +135,7 @@ describe('ADB', () => {
       capture: ['stdout'],
       encoding: 'utf8',
     };
-    await adb.install(deviceId, 'path/to/bin.apk');
+    await adb.install('path/to/bin.apk');
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.any(Array), expectedOptions);
   });
@@ -150,7 +150,7 @@ describe('ADB', () => {
       retries: 99,
       timeout: 1337,
     };
-    await adb.install(deviceId, 'dont-care/path');
+    await adb.install('dont-care/path');
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.any(Array), expect.objectContaining({
       retries: 99,
       interval: 123123,
@@ -189,7 +189,7 @@ describe('ADB', () => {
     const lat = 30.5;
     const lon = -70.5;
 
-    await adb.setLocation(deviceId, lat, lon);
+    await adb.setLocation(lat, lon);
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator emu "geo fix -70.5 30.5"`),
@@ -204,18 +204,18 @@ describe('ADB', () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () =>
       `u0_a19        2199  1701 3554600  70264 0                   0 s com.google.android.ext.services `);
 
-    expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(2199);
+    expect(await adb.pidof('com.google.android.ext.services')).toBe(2199);
   });
 
   it(`pidof (failure)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () => '');
-    expect(await adb.pidof('', 'com.google.android.ext.services')).toBe(NaN);
+    expect(await adb.pidof('com.google.android.ext.services')).toBe(NaN);
   });
 
   it('push', async () => {
     const sourceFile = '/mock-source/file.xyz';
     const destFile = '/sdcard/file.abc';
-    await adb.push(deviceId, sourceFile, destFile);
+    await adb.push(sourceFile, destFile);
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
@@ -225,7 +225,7 @@ describe('ADB', () => {
   it('should remote-install (api≤22)', async () => {
     jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 22);
     const binaryPath = '/mock-path/filename.mock';
-    await adb.remoteInstall(deviceId, binaryPath);
+    await adb.remoteInstall(binaryPath);
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(
       adbBinPath,
@@ -236,7 +236,7 @@ describe('ADB', () => {
   it('should remote-install (api≥22)', async () => {
     jest.spyOn(adb, 'apiLevel').mockImplementation(async () => 23);
     const binaryPath = '/mock-path/filename.mock';
-    await adb.remoteInstall(deviceId, binaryPath);
+    await adb.remoteInstall(binaryPath);
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(
       adbBinPath,
@@ -252,7 +252,7 @@ describe('ADB', () => {
       encoding: 'utf8',
     };
     const binaryPath = '/mock-path/filename.mock';
-    await adb.install(deviceId, binaryPath);
+    await adb.install(binaryPath);
 
     expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), expect.any(Array), expectedOptions);
   });
@@ -260,7 +260,7 @@ describe('ADB', () => {
   it('global text-typing', async () => {
     const text = 'some-text-with spaces';
     const expectedText = 'some-text-with%sspaces';
-    await adb.typeText(deviceId, text);
+    await adb.typeText(text);
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
       expect.stringContaining(`-s mockEmulator shell "input text ${expectedText}"`),
       expect.anything());
@@ -279,47 +279,47 @@ describe('ADB', () => {
         mUserInactiveOverrideFromWindowManager=false
       `);
 
-      await adb.unlockScreen(deviceId);
+      await adb.unlockScreen();
     }
 
     describe('when unlocking an awake and unlocked device', function() {
       beforeEach(async () => unlockScreenWithPowerStatus('Awake', '-1'));
 
       it('should not press power button', () =>
-        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+        expect(adb.shell).not.toHaveBeenCalledWith('input keyevent KEYCODE_POWER'));
 
       it('should not press menu button', () =>
-        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+        expect(adb.shell).not.toHaveBeenCalledWith('input keyevent KEYCODE_MENU'));
     });
 
     describe('when unlocking a sleeping and locked device', function() {
       beforeEach(async () => unlockScreenWithPowerStatus('Asleep', '10000'));
 
       it('should press power button first', () =>
-        expect(adb.shell.mock.calls[1]).toEqual([deviceId, 'input keyevent KEYCODE_POWER']));
+        expect(adb.shell.mock.calls[1]).toEqual(['input keyevent KEYCODE_POWER']));
 
       it('should press menu afterwards', () =>
-        expect(adb.shell.mock.calls[2]).toEqual([deviceId, 'input keyevent KEYCODE_MENU']));
+        expect(adb.shell.mock.calls[2]).toEqual(['input keyevent KEYCODE_MENU']));
     });
 
     describe('when unlocking an awake but locked device', function() {
       beforeEach(async () => unlockScreenWithPowerStatus('Awake', '10000'));
 
       it('should not press power button', () =>
-        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+        expect(adb.shell).not.toHaveBeenCalledWith('input keyevent KEYCODE_POWER'));
 
       it('should press menu button', () =>
-        expect(adb.shell).toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+        expect(adb.shell).toHaveBeenCalledWith('input keyevent KEYCODE_MENU'));
     });
 
     describe('when unlocking a sleeping but unlocked device', function() {
       beforeEach(async () => unlockScreenWithPowerStatus('Asleep', '-1'));
 
       it('should press power button', () =>
-        expect(adb.shell).toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_POWER'));
+        expect(adb.shell).toHaveBeenCalledWith('input keyevent KEYCODE_POWER'));
 
       it('should not press menu button', () =>
-        expect(adb.shell).not.toHaveBeenCalledWith(deviceId, 'input keyevent KEYCODE_MENU'));
+        expect(adb.shell).not.toHaveBeenCalledWith('input keyevent KEYCODE_MENU'));
     });
   });
 
@@ -329,13 +329,13 @@ describe('ADB', () => {
     it('should spawn instrumentation', async () => {
       const userArgs = [];
       const expectedArgs = ['-s', deviceId, 'shell', 'am', 'instrument', '-w', '-r', testRunner];
-      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      await adb.spawnInstrumentation(userArgs, testRunner);
       expect(spawnAndLog).toHaveBeenCalledWith(adbBinPath, expectedArgs, expect.any(Object));
     });
 
     it('should pass through additional args', async () => {
       const userArgs = ['-mock', '-args'];
-      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      await adb.spawnInstrumentation(userArgs, testRunner);
       expect(spawnAndLog).toHaveBeenCalledWith(adbBinPath, expect.arrayContaining([...userArgs, testRunner]), expect.any(Object));
     });
 
@@ -345,7 +345,7 @@ describe('ADB', () => {
       };
       const userArgs = [];
 
-      await adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      await adb.spawnInstrumentation(userArgs, testRunner);
 
       expect(spawnAndLog).toHaveBeenCalledWith(adbBinPath, expect.any(Array), expectedOptions);
     });
@@ -355,18 +355,17 @@ describe('ADB', () => {
       const mockPromise = Promise.resolve('mock');
       spawnAndLog.mockReturnValue(mockPromise);
 
-      const childProcessPromise = adb.spawnInstrumentation(deviceId, userArgs, testRunner);
+      const childProcessPromise = adb.spawnInstrumentation(userArgs, testRunner);
       expect(childProcessPromise).toEqual(mockPromise);
     });
   });
 
   it(`listInstrumentation passes the right deviceId`, async () => {
-    const deviceId = 'aDeviceId';
     jest.spyOn(adb, 'shell');
 
-    await adb.listInstrumentation(deviceId);
+    await adb.listInstrumentation();
 
-    expect(adb.shell).toHaveBeenCalledWith(deviceId, 'pm list instrumentation');
+    expect(adb.shell).toHaveBeenCalledWith('pm list instrumentation');
   });
 
   it(`getInstrumentationRunner parses the correct runner for the package`, async () => {
@@ -380,37 +379,37 @@ describe('ADB', () => {
 
     jest.spyOn(adb, 'shell').mockImplementation(async () => instrumentationRunnersShellOutput);
 
-    const result = await adb.getInstrumentationRunner('aDeviceId', expectedPackage);
+    const result = await adb.getInstrumentationRunner(expectedPackage);
 
-    expect(adb.shell).toHaveBeenCalledWith('aDeviceId', 'pm list instrumentation');
+    expect(adb.shell).toHaveBeenCalledWith('pm list instrumentation');
     expect(result).toEqual(expectedRunner);
   });
 
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
-      await adb.disableAndroidAnimations(deviceId);
+      await adb.disableAndroidAnimations();
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global animator_duration_scale 0"`, { retries: 1 });
     });
 
     it('should disable window animations', async () => {
-      await adb.disableAndroidAnimations(deviceId);
+      await adb.disableAndroidAnimations();
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global window_animation_scale 0"`, { retries: 1 });
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
-      await adb.disableAndroidAnimations(deviceId);
+      await adb.disableAndroidAnimations();
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global transition_animation_scale 0"`, { retries: 1 });
     });
   });
 
   describe('WiFi toggle', () => {
     it('should enable wifi', async () => {
-      await adb.setWiFiToggle(deviceId, true);
+      await adb.setWiFiToggle(true);
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi enable"`, { retries: 1 });
     });
 
     it('should disable wifi', async () => {
-      await adb.setWiFiToggle(deviceId, false);
+      await adb.setWiFiToggle(false);
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi disable"`, { retries: 1 });
     });
   });
