@@ -65,7 +65,7 @@ describe('Android driver', () => {
 
     it('should adb-reverse the detox server port', async () => {
       await uut.launchApp(bundleId, {}, '');
-      await expect(adb.reverse).toHaveBeenCalledWith(adbName, detoxServerPort.toString());
+      await expect(adb.reverse).toHaveBeenCalledWith(detoxServerPort.toString());
     });
   });
 
@@ -75,13 +75,13 @@ describe('Android driver', () => {
       await invokeTerminationCallbackFn();
     });
 
-    it('should clear out the termination callback function', () =>
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+    it('should adb-unreverse the detox server port', () => {
+      expect(adb.reverseRemove).toHaveBeenCalledWith(detoxServerPort.toString());
+    });
 
-    it('should adb-unreverse the detox server port', () =>
-      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, detoxServerPort.toString()));
-
-    const extractTerminationCallbackFn = () => instrumentation.setTerminationFn.mock.calls[0][0];
+    const extractTerminationCallbackFn = () => {
+      return instrumentation.setTerminationFn.mock.calls[0][0];
+    };
     const invokeTerminationCallbackFn = async () => {
       const fn = extractTerminationCallbackFn();
       await fn();
@@ -97,8 +97,10 @@ describe('Android driver', () => {
     it('should terminate instrumentation', () =>
       expect(instrumentation.terminate).toHaveBeenCalled());
 
-    it('should clear out the termination callback function', () =>
-      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null));
+    it('should clean up and un-reverse the detox server port', () => {
+      expect(instrumentation.setTerminationFn).toHaveBeenCalledWith(null);
+      expect(adb.reverseRemove).toHaveBeenCalledWith(detoxServerPort.toString());
+    });
 
     it('should terminate ADB altogether', () =>
       expect(adb.terminate).toHaveBeenCalled());
@@ -210,12 +212,12 @@ describe('Android driver', () => {
     describe('in app launch (with dedicated arg)', () => {
       it('should prepare the device for receiving notification data file', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
+        expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith();
       });
 
       it('should transfer the notification data file to the device', async () => {
         await uut.launchApp(bundleId, notificationArgs, '');
-        expect(fileTransfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+        expect(fileTransfer.send).toHaveBeenCalledWith(notificationArgs.detoxUserNotificationDataURL, 'notification.json');
       });
 
       it('should not send the data if device prep fails', async () => {
@@ -249,8 +251,8 @@ describe('Android driver', () => {
         it('should pre-transfer notification data to device', async () => {
           await spec.applyFn();
 
-          expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith(adbName);
-          expect(fileTransfer.send).toHaveBeenCalledWith(adbName, notificationArgs.detoxUserNotificationDataURL, 'notification.json');
+          expect(fileTransfer.prepareDestinationDir).toHaveBeenCalledWith();
+          expect(fileTransfer.send).toHaveBeenCalledWith(notificationArgs.detoxUserNotificationDataURL, 'notification.json');
         });
 
         it('should start the app with notification data using invocation-manager', async () => {
@@ -368,14 +370,14 @@ describe('Android driver', () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
       expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
-      expect(adb.install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(binaryPath));
+      expect(adb.install).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
 
     it('should adb-install the test binary', async () => {
       await uut.installApp(binaryPath, testBinaryPath);
 
       expect(getAbsoluteBinaryPath).toHaveBeenCalledWith(binaryPath);
-      expect(adb.install).toHaveBeenCalledWith(adbName, mockGetAbsoluteBinaryPathImpl(testBinaryPath));
+      expect(adb.install).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(testBinaryPath));
     });
 
     it('should resort to auto test-binary path resolution, if not specific', async () => {
@@ -386,7 +388,7 @@ describe('Android driver', () => {
       await uut.installApp(binaryPath, undefined);
 
       expect(fs.existsSync).toHaveBeenCalledWith(expectedTestBinPath);
-      expect(adb.install).toHaveBeenCalledWith(adbName, expectedTestBinPath);
+      expect(adb.install).toHaveBeenCalledWith(expectedTestBinPath);
     });
 
     it('should throw if auto test-binary path resolves an invalid file', async () => {
@@ -423,8 +425,8 @@ describe('Android driver', () => {
 
     it('should install using an app-install helper', async () => {
       await uut.installUtilBinaries(binaryPaths);
-      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(binaryPaths[0]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(binaryPaths[1]);
     });
 
     it('should break if one installation fails', async () => {
@@ -434,25 +436,27 @@ describe('Android driver', () => {
         .mockResolvedValueOnce();
 
       await expect(uut.installUtilBinaries(binaryPaths)).rejects.toThrow();
-      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(binaryPaths[0]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(binaryPaths[1]);
       expect(appInstallHelper.install).toHaveBeenCalledTimes(2);
     });
 
     it('should not install if already installed', async () => {
       adb.isPackageInstalled.mockResolvedValueOnce(false).mockResolvedValueOnce(true);
       await uut.installUtilBinaries(binaryPaths);
-      expect(appInstallHelper.install).toHaveBeenCalledWith(adbName, binaryPaths[0]);
-      expect(appInstallHelper.install).not.toHaveBeenCalledWith(adbName, binaryPaths[1]);
+      expect(appInstallHelper.install).toHaveBeenCalledWith(binaryPaths[0]);
+      expect(appInstallHelper.install).not.toHaveBeenCalledWith(binaryPaths[1]);
     });
 
     it('should properly check for preinstallation', async () => {
       const packageId = 'mockPackageId';
-      const binaryPath = 'some/path/file.apk';
+      const binaryPath = binaryPaths[0];
+
+      adb.isPackageInstalled.mockResolvedValue(false);
       aapt.getPackageName.mockResolvedValue(packageId);
 
       await uut.installUtilBinaries([binaryPath]);
-      expect(adb.isPackageInstalled).toHaveBeenCalledWith(adbName, packageId);
+      expect(adb.isPackageInstalled).toHaveBeenCalledWith(packageId);
       expect(aapt.getPackageName).toHaveBeenCalledWith(mockGetAbsoluteBinaryPathImpl(binaryPath));
     });
   });
@@ -462,22 +466,22 @@ describe('Android driver', () => {
 
     it(`should invoke ADB's reverse`, async () => {
       await uut.reverseTcpPort(port);
-      expect(adb.reverse).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverse).toHaveBeenCalledWith(port);
     });
 
     it(`should invoke ADB's reverse, given a device handle`, async () => {
       await uut.reverseTcpPort(port);
-      expect(adb.reverse).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverse).toHaveBeenCalledWith(port);
     });
 
     it(`should invoke ADB's reverse-remove`, async () => {
       await uut.unreverseTcpPort(port);
-      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverseRemove).toHaveBeenCalledWith(port);
     });
 
     it(`should invoke ADB's reverse-remove, given a device handle`, async () => {
       await uut.unreverseTcpPort(port);
-      expect(adb.reverseRemove).toHaveBeenCalledWith(adbName, port);
+      expect(adb.reverseRemove).toHaveBeenCalledWith(port);
     });
   });
 
@@ -485,13 +489,13 @@ describe('Android driver', () => {
     const text = 'text to type';
 
     it(`should invoke ADB's text typing`, async () => {
-      await uut.typeText( text);
-      expect(adb.typeText).toHaveBeenCalledWith(adbName, text);
+      await uut.typeText(text);
+      expect(adb.typeText).toHaveBeenCalledWith(text);
     });
 
     it(`should invoke ADB's text typing, given a device handle`, async () => {
       await uut.typeText(text);
-      expect(adb.typeText).toHaveBeenCalledWith(adbName, text);
+      expect(adb.typeText).toHaveBeenCalledWith(text);
     });
   });
 
@@ -565,6 +569,17 @@ describe('Android driver', () => {
     const MonitoredInstrumentation = require('../../../common/drivers/android/tools/MonitoredInstrumentation');
     instrumentation = new MonitoredInstrumentation();
     mockInstrumentationDead();
+
+    let terminationFn = null;
+    instrumentation.setTerminationFn.mockImplementation((fn) => {
+      terminationFn = fn;
+    });
+
+    instrumentation.terminate.mockImplementation(async () => {
+      if (terminationFn) {
+        await terminationFn();
+      }
+    });
 
     jest.mock('../../../common/drivers/android/exec/ADB');
     const ADB = jest.requireMock('../../../common/drivers/android/exec/ADB');

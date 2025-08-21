@@ -14,7 +14,7 @@ class ADBLogcatPlugin extends LogArtifactPlugin {
 
   async onBeforeLaunchApp(event) {
     await super.onBeforeLaunchApp(event);
-    this._lastTimestamp = await this._adb.now(event.deviceId);
+    this._lastTimestamp = await this._adb.bind({ deviceId: event.deviceId }).now();
   }
 
   async onLaunchApp(event) {

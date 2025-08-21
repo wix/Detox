@@ -6,14 +6,14 @@ class FileTransfer {
     this._dir = destinationDir;
   }
 
-  async prepareDestinationDir(deviceId) {
-    await this._adb.shell(deviceId, `rm -fr ${this._dir}`);
-    await this._adb.shell(deviceId, `mkdir -p ${this._dir}`);
+  async prepareDestinationDir() {
+    await this._adb.shell(`rm -fr ${this._dir}`);
+    await this._adb.shell(`mkdir -p ${this._dir}`);
   }
 
-  async send(deviceId, sourcePath, destinationFilename) {
+  async send(sourcePath, destinationFilename) {
     const destinationPath = path.posix.join(this._dir, destinationFilename);
-    await this._adb.push(deviceId, sourcePath, destinationPath);
+    await this._adb.push(sourcePath, destinationPath);
     return destinationPath;
   }
 }

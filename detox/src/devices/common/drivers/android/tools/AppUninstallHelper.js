@@ -3,14 +3,14 @@ class AppUninstallHelper {
     this._adb = adb;
   }
 
-  async uninstall(deviceId, bundleId) {
-    if (await this._adb.isPackageInstalled(deviceId, bundleId)) {
-      await this._adb.uninstall(deviceId, bundleId);
+  async uninstall(bundleId) {
+    if (await this._adb.isPackageInstalled(bundleId)) {
+      await this._adb.uninstall(bundleId);
     }
 
     const testBundleId = `${bundleId}.test`;
-    if (await this._adb.isPackageInstalled(deviceId, testBundleId)) {
-      await this._adb.uninstall(deviceId, testBundleId);
+    if (await this._adb.isPackageInstalled(testBundleId)) {
+      await this._adb.uninstall(testBundleId);
     }
   }
 }
