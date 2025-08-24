@@ -24,25 +24,35 @@ extern void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef, bool);
 @implementation DTXFakeWKPreferencesRef
 @end
 
-/// Set web-security policy for WebKit (e.g. CORS restriction).
+
 /// Backwards compatible implementation for iOS < 18 and iOS 18+
+/// Wrap the `WKPreferences*`  in a `WKPreferencesRef`
+WKPreferencesRef getWKPrefsRef(WKPreferences* prefs) {
+    if (@available(iOS 18.0, *)) {
+        void *prefsPtr = (__bridge void *)(prefs);
+        return (WKPreferencesRef)prefsPtr;
+        
+    } else {
+        DTXFakeWKPreferencesRef* fakeRef = [DTXFakeWKPreferencesRef new];
+        
+        Ivar ivar = class_getInstanceVariable([WKPreferences class], "_preferences");
+        void* realPreferences = (void*)(((uintptr_t)prefs) + ivar_getOffset(ivar));
+        fakeRef._apiObject = realPreferences;
+        
+        return (__bridge WKPreferencesRef)fakeRef;
+    }
+}
+
+/// Set web-security policy for WebKit (e.g. CORS restriction).
+///
+/// @note Since we can't access the `WKPreferencesSetWebSecurityEnabled` directly with
+///  a `WKPreferences*`, we wrap it in a `WKPreferencesRef` in the getWKPrefsRef function, which can be passed to this function.
+/// This private API is not officially supported on iOS, and generally used for debugging / testing
+///  purposes on MacOS only. So there's no guarantee that it will work in the future.
 void DTXPreferencesSetWebSecurityEnabled(WKPreferences* prefs, bool enabled) {
 	if (!prefs) return;
 	
-	if (@available(iOS 18.0, *)) {
-		void *prefsPtr = (__bridge void *)(prefs);
-        WKPreferencesRef prefsRef = (WKPreferencesRef)prefsPtr;
-        WKPreferencesSetWebSecurityEnabled(prefsRef, enabled);
-        
-	} else {
-		DTXFakeWKPreferencesRef* fakeRef = [DTXFakeWKPreferencesRef new];
-		
-		Ivar ivar = class_getInstanceVariable([WKPreferences class], "_preferences");
-		void* realPreferences = (void*)(((uintptr_t)prefs) + ivar_getOffset(ivar));
-		fakeRef._apiObject = realPreferences;
-		
-		WKPreferencesSetWebSecurityEnabled((__bridge WKPreferencesRef)fakeRef, enabled);
-	}
+     WKPreferencesSetWebSecurityEnabled(getWKPrefsRef(prefs), enabled);
 }
 
 @implementation WKWebViewConfiguration (Detox)
