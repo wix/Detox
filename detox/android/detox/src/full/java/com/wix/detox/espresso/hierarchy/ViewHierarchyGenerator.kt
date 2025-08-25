@@ -49,6 +49,13 @@ object ViewHierarchyGenerator {
         }
     }
 
+    @JvmStatic
+    fun generateXml(rootView: View, shouldInjectTestIds: Boolean): String {
+        return runBlocking {
+            generateXmlFromViews(listOf(rootView), shouldInjectTestIds)
+        }
+    }
+
     private suspend fun generateXmlFromViews(rootViews: List<View?>?, shouldInjectTestIds: Boolean): String {
         return StringWriter().use { writer ->
             val serializer = Xml.newSerializer().apply {

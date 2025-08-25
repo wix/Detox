@@ -5,6 +5,8 @@ import android.util.Log
 import com.wix.detox.adapters.server.*
 import com.wix.detox.common.DetoxLog
 import com.wix.detox.espresso.UiControllerSpy
+import com.wix.detox.espresso.DetoxFailureHandler
+import androidx.test.espresso.Espresso
 import com.wix.detox.instruments.DetoxInstrumentsManager
 import com.wix.detox.reactnative.ReactNativeExtension
 import com.wix.invoke.MethodInvocation
@@ -116,6 +118,9 @@ object DetoxMain {
 
     private fun initEspresso() {
         UiControllerSpy.attachThroughProxy()
+
+        // Set up custom failure handler that replaces human-readable hierarchy with XML format
+        Espresso.setFailureHandler(DetoxFailureHandler())
     }
 
     private fun initReactNative() {

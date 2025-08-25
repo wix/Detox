@@ -18,7 +18,7 @@ describe('DetoxSession', () => {
     jest.mock('../utils/logger');
     logger = require('../utils/logger');
 
-    DetoxConnection = jest.genMockFromModule('./DetoxConnection');
+    DetoxConnection = jest.createMockFromModule('./DetoxConnection');
     DetoxSession = require('./DetoxSession');
     session = new DetoxSession('aSession');
   });

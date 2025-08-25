@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const findUp = require('find-up');
 const resolveFrom = require('resolve-from');
 const semver = require('semver');
 
@@ -8,7 +9,7 @@ const { log } = require('../../../../internals');
 const detoxPackageJson = require('../../../../package.json');
 const { DetoxRuntimeError } = require('../../../../src/errors');
 
-function assertJestCircus27(maybeProjectConfig) {
+function validateAndPatchProjectConfig(maybeProjectConfig) {
   const projectConfig = maybeProjectConfig.projectConfig || maybeProjectConfig;
 
   if (!/jest-circus/.test(projectConfig.testRunner)) {
@@ -19,11 +20,11 @@ function assertJestCircus27(maybeProjectConfig) {
     });
   }
 
-  const circusPackageJson = path.join(path.dirname(projectConfig.testRunner), 'package.json');
-  if (!fs.existsSync(circusPackageJson)) {
+  const circusPackageJson = findUp.sync('package.json', { cwd: path.dirname(projectConfig.testRunner) });
+  if (!circusPackageJson) {
     throw new DetoxRuntimeError({
       message: 'Check that you have an installed copy of "jest-circus" npm package, exiting.',
-      debugInfo: `Its package.json file is missing: ${circusPackageJson}`,
+      debugInfo: `Its package.json file is missing in the directory: ${path.dirname(projectConfig.testRunner)}`,
     });
   }
 
@@ -48,6 +49,14 @@ function assertJestCircus27(maybeProjectConfig) {
     ].join('\n'));
   }
 
+  // TODO: This is a workaround to prevent Jest from failing on teardown.
+  // PROBLEM: Detox uses proxies which throw in non-initialized or torn down state on purpose.
+  // So, either we need to implement a distinction between BEFORE and AFTER the test execution,
+  // or we need to change dramatically the way we export those proxies (possible only in a major version bump).
+  if (projectConfig && projectConfig.testEnvironmentOptions) {
+    projectConfig.testEnvironmentOptions.globalsCleanup = 'off';
+  }
+
   return maybeProjectConfig;
 }
 
@@ -65,6 +74,6 @@ function assertSupportedVersion(actualVersion) {
 }
 
 module.exports = {
-  assertJestCircus27,
   assertSupportedVersion,
+  validateAndPatchProjectConfig,
 };

@@ -24,7 +24,7 @@ describe('Genymotion-Cloud recipes service', () => {
   let exec;
   let uut;
   beforeEach(() => {
-    const GenyCloudExec = jest.genMockFromModule('../exec/GenyCloudExec');
+    const GenyCloudExec = jest.createMockFromModule('../exec/GenyCloudExec');
     exec = new GenyCloudExec();
 
     const GenyRecipesService = require('./GenyRecipesService');

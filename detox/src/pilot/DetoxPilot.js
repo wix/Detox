@@ -5,10 +5,18 @@ const detox = require('../..');
 
 /** @type {Detox.PilotFacade} */
 class DetoxPilot {
+  /**
+   * @param {Partial<import('@wix-pilot/core').Config>} [defaults] Arbitrary config defaults for the Pilot.
+   */
+  constructor(defaults = {}) {
+    this._defaults = defaults;
+  }
+
   init(promptHandler) {
-     this.pilot = new Pilot({
+    this.pilot = new Pilot({
+      ...this._defaults,
       frameworkDriver: new DetoxFrameworkDriver(detox),
-      promptHandler: promptHandler
+      promptHandler: promptHandler,
     });
   }
 
@@ -43,6 +51,14 @@ class DetoxPilot {
 
   isInitialized(){
     return !!this.pilot;
+  }
+
+  /**
+   * @param {Partial<import('@wix-pilot/core').Config>} [defaults] Arbitrary config defaults for the Pilot.
+   * @internal
+   */
+  setDefaults(defaults) {
+    Object.assign(this._defaults, defaults);
   }
 }
 

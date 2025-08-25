@@ -460,11 +460,11 @@ describe('composeDeviceConfig', () => {
             }
             deviceConfig.device.misspelled = 'value';
 
-            expect(compose).toThrowError(errorComposer.missingDeviceMatcherProperties(alias(), expectedProps));
+            expect(compose).toThrow(errorComposer.missingDeviceMatcherProperties(alias(), expectedProps));
 
             // ...and now prove the opposite:
             deviceConfig.device[_.sample(expectedProps)] = 'someValue';
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -499,7 +499,7 @@ describe('composeDeviceConfig', () => {
             it('should throw if .bootArgs are malformed (e.g., array)', () => {
               deviceConfig.bootArgs = ['--someArg'];
 
-              expect(compose).toThrowError(
+              expect(compose).toThrow(
                 errorComposer.malformedDeviceProperty(alias(), 'bootArgs')
               );
             });
@@ -508,7 +508,7 @@ describe('composeDeviceConfig', () => {
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.bootArgs = [0xAC, 0xDC];
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -531,7 +531,7 @@ describe('composeDeviceConfig', () => {
             it('should throw if .forceAdbInstall is malformed (e.g., string)', () => {
               deviceConfig.forceAdbInstall = 'yes';
 
-              expect(compose).toThrowError(
+              expect(compose).toThrow(
                 errorComposer.malformedDeviceProperty(alias(), 'forceAdbInstall')
               );
             });
@@ -540,7 +540,7 @@ describe('composeDeviceConfig', () => {
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.forceAdbInstall = /anything/;
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -560,16 +560,16 @@ describe('composeDeviceConfig', () => {
 
             test(`should throw if value is not a string`, () => {
               deviceConfig.gpuMode = ['auto'];
-              expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'gpuMode'));
+              expect(compose).toThrow(errorComposer.malformedDeviceProperty(alias(), 'gpuMode'));
             });
 
             test(`should throw if value is not in (${KNOWN_GPU_MODES})`, () => {
               for (const gpuMode of KNOWN_GPU_MODES) {
                 deviceConfig.gpuMode = gpuMode;
-                expect(compose).not.toThrowError();
+                expect(compose).not.toThrow();
 
                 deviceConfig.gpuMode = gpuMode.slice(1);
-                expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'gpuMode'));
+                expect(compose).toThrow(errorComposer.malformedDeviceProperty(alias(), 'gpuMode'));
               }
             });
           });
@@ -577,7 +577,7 @@ describe('composeDeviceConfig', () => {
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.gpuMode = class Whatever {};
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -599,19 +599,19 @@ describe('composeDeviceConfig', () => {
 
             test(`should throw if value is not a boolean (e.g., string)`, () => {
               deviceConfig.headless = `${Math.random() > 0.5}`;
-              expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'headless'));
+              expect(compose).toThrow(errorComposer.malformedDeviceProperty(alias(), 'headless'));
             });
 
             test('should not throw if value is a boolean', () => {
               deviceConfig.headless = false;
-              expect(compose).not.toThrowError();
+              expect(compose).not.toThrow();
             });
           });
 
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.headless = NaN;
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -631,14 +631,14 @@ describe('composeDeviceConfig', () => {
 
             test(`should throw if value is not a boolean (e.g., string)`, () => {
               deviceConfig.readonly = `${Math.random() > 0.5}`; // string
-              expect(compose).toThrowError(errorComposer.malformedDeviceProperty(alias(), 'readonly'));
+              expect(compose).toThrow(errorComposer.malformedDeviceProperty(alias(), 'readonly'));
             });
           });
 
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.readonly = () => {};
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
 
@@ -661,7 +661,7 @@ describe('composeDeviceConfig', () => {
             it('should throw if .utilBinaryPaths are malformed (array of non-strings)', () => {
               deviceConfig.utilBinaryPaths = [{ path: 'valid/path/not/in/array' }];
 
-              expect(compose).toThrowError(
+              expect(compose).toThrow(
                 errorComposer.malformedDeviceProperty(alias(), 'utilBinaryPaths')
               );
             });
@@ -669,7 +669,7 @@ describe('composeDeviceConfig', () => {
             it('should throw if device.utilBinaryPaths are malformed (string)', () => {
               deviceConfig.utilBinaryPaths = 'valid/path/not/in/array';
 
-              expect(compose).toThrowError(
+              expect(compose).toThrow(
                 errorComposer.malformedDeviceProperty(alias(), 'utilBinaryPaths')
               );
             });
@@ -678,7 +678,7 @@ describe('composeDeviceConfig', () => {
           test('should be disabled for custom devices', () => {
             setConfig('./customDriver', configType);
             deviceConfig.utilBinaryPaths = 42;
-            expect(compose).not.toThrowError();
+            expect(compose).not.toThrow();
           });
         });
       });

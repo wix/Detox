@@ -58,7 +58,7 @@ module.exports = async () => {
         require.resolve('./utils/rnSkipper'),
       ]
     },
-    'testRunner': './test/node_modules/jest-circus/runner',
+    'testRunner': './test/node_modules/jest-circus/build/runner',
     'testMatch': [
       '<rootDir>/test/e2e/**/*.test.{js,ts}',
       '<rootDir>/test/e2e-unhappy/**/*.test.{js,ts}',

@@ -400,11 +400,11 @@ describe('DetoxLogger', () => {
     afterEach(teardownSuite);
 
     it('should not allow setting config in a child logger', async () => {
-      await expect(logger().child().setConfig({ level: 'info' })).rejects.toThrowError(/Trying to set a config in a non-root logger/);
+      await expect(logger().child().setConfig({ level: 'info' })).rejects.toThrow(/Trying to set a config in a non-root logger/);
     });
 
     it('should not allow closing the entire logging capability from a child logger', async () => {
-      await expect(logger().child().close()).rejects.toThrowError(/Trying to close file streams from a non-root logger/);
+      await expect(logger().child().close()).rejects.toThrow(/Trying to close file streams from a non-root logger/);
     });
 
     it('should escape properties conflicting with Bunyan internal ones', async () => {

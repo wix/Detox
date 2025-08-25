@@ -11,10 +11,10 @@ describe('AVD validator', () => {
     jest.mock('../../../../../utils/environment');
     environment = require('../../../../../utils/environment');
 
-    const AVDsResolver = jest.genMockFromModule('./AVDsResolver');
+    const AVDsResolver = jest.createMockFromModule('./AVDsResolver');
     avdsResolver = new AVDsResolver();
 
-    const EmulatorVersionResolver = jest.genMockFromModule('./EmulatorVersionResolver');
+    const EmulatorVersionResolver = jest.createMockFromModule('./EmulatorVersionResolver');
     versionResolver = new EmulatorVersionResolver();
     versionResolver.resolve.mockResolvedValue('');
 

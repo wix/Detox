@@ -86,4 +86,54 @@ describe('DetoxPilot', () => {
       expect(() => detoxPilot.end()).toThrow('DetoxPilot is not initialized');
     });
   });
+
+  describe('setDefaults', () => {
+    it('should merge defaults into init configuration', () => {
+      const testDefaults = {
+        testContext: {
+          someProperty: 'test-value'
+        }
+      };
+
+      detoxPilot.setDefaults(testDefaults);
+      detoxPilot.init(mockPromptHandler);
+
+      expect(Pilot).toHaveBeenCalledWith({
+        frameworkDriver: expect.any(DetoxFrameworkDriver),
+        promptHandler: mockPromptHandler,
+        testContext: {
+          someProperty: 'test-value'
+        }
+      });
+    });
+
+    it('should work like merge - multiple setDefaults calls accumulate', () => {
+      const firstDefaults = {
+        testContext: {
+          property1: 'value1'
+        }
+      };
+
+      const secondDefaults = {
+        cacheOptions: {
+          property2: 'value2'
+        }
+      };
+
+      detoxPilot.setDefaults(firstDefaults);
+      detoxPilot.setDefaults(secondDefaults);
+      detoxPilot.init(mockPromptHandler);
+
+      expect(Pilot).toHaveBeenCalledWith({
+        frameworkDriver: expect.any(DetoxFrameworkDriver),
+        promptHandler: mockPromptHandler,
+        testContext: {
+          property1: 'value1'
+        },
+        cacheOptions: {
+          property2: 'value2'
+        }
+      });
+    });
+  });
 });

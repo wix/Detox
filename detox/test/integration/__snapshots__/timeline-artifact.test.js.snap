@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Timeline integration test Flaky test should deterministically produce a timeline artifact 1`] = `
 [
@@ -152,10 +152,7 @@ exports[`Timeline integration test Flaky test should deterministically produce a
     }
     if (config.resetMocks) {
       runtime.resetAllMocks();
-      if (
-        config.fakeTimers.enableGlobally &&
-        config.fakeTimers.legacyFakeTimers
-      ) {
+      if (config.fakeTimers.enableGlobally && config.fakeTimers.legacyFakeTimers) {
         // during setup, this cannot be null (and it's fine to explode if it is)
         environment.fakeTimers.useFakeTimers();
       }
@@ -549,10 +546,7 @@ Detox CLI is going to restart the test runner with those files...
     }
     if (config.resetMocks) {
       runtime.resetAllMocks();
-      if (
-        config.fakeTimers.enableGlobally &&
-        config.fakeTimers.legacyFakeTimers
-      ) {
+      if (config.fakeTimers.enableGlobally && config.fakeTimers.legacyFakeTimers) {
         // during setup, this cannot be null (and it's fine to explode if it is)
         environment.fakeTimers.useFakeTimers();
       }
@@ -968,10 +962,7 @@ exports[`Timeline integration test Focused test should deterministically produce
     }
     if (config.resetMocks) {
       runtime.resetAllMocks();
-      if (
-        config.fakeTimers.enableGlobally &&
-        config.fakeTimers.legacyFakeTimers
-      ) {
+      if (config.fakeTimers.enableGlobally && config.fakeTimers.legacyFakeTimers) {
         // during setup, this cannot be null (and it's fine to explode if it is)
         environment.fakeTimers.useFakeTimers();
       }
@@ -1419,10 +1410,7 @@ exports[`Timeline integration test Skipped test should deterministically produce
     }
     if (config.resetMocks) {
       runtime.resetAllMocks();
-      if (
-        config.fakeTimers.enableGlobally &&
-        config.fakeTimers.legacyFakeTimers
-      ) {
+      if (config.fakeTimers.enableGlobally && config.fakeTimers.legacyFakeTimers) {
         // during setup, this cannot be null (and it's fine to explode if it is)
         environment.fakeTimers.useFakeTimers();
       }
@@ -1626,4 +1614,3 @@ exports[`Timeline integration test Skipped test should deterministically produce
   },
 ]
 `;
-

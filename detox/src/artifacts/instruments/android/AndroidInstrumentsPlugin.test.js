@@ -70,7 +70,7 @@ describe('AndroidInstrumentsPlugin', () => {
 
     const plugin = new AndroidInstrumentsPlugin(pluginConfig);
     const path = await plugin.preparePathForTestArtifact(testSummary);
-    expect(preparePathForArtifact).toBeCalledWith('test.dtxplain', testSummary);
+    expect(preparePathForArtifact).toHaveBeenCalledWith('test.dtxplain', testSummary);
     expect(path).toBe(preparedPath);
   });
 });

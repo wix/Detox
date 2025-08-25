@@ -35,11 +35,11 @@ class FabricUIManagerIdlingResources(
     }
 
     override fun getDebugName(): String {
-        return "Fabric UI"
+        return "ui"
     }
 
     override fun getBusyHint(): Map<String, Any> {
-        return mapOf("mountItems" to getMountItemsSize(), "viewCommandMountItems" to getViewCommandMountItemsSize())
+        return mapOf("mount_items" to getMountItemsSize(), "view_command_mount_items" to getViewCommandMountItemsSize())
     }
 
     override fun getName() = FabricUIManagerIdlingResources::class.java.name

@@ -2,12 +2,33 @@
 
 #import <CoreSpotlight/CoreSpotlight.h>
 #import <React/RCTBundleURLProvider.h>
-#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
-#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
-#endif
 #import <React/RCTLinkingManager.h>
 #import <UserNotifications/UserNotifications.h>
 #import "example-Swift.h"
+#if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
+#endif
+
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
+#import <React-RCTAppDelegate/RCTDefaultReactNativeFactoryDelegate.h>
+
+@interface ReactNativeDelegate : RCTDefaultReactNativeFactoryDelegate
+@end
+
+@implementation ReactNativeDelegate
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
+    return [self bundleURL];
+}
+
+- (NSURL *) bundleURL {
+#if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+#else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+@end
+#endif
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
 @end
@@ -16,6 +37,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
+    self.reactNativeDelegate = [ReactNativeDelegate new];
+    self.reactNativeFactory = [[RCTReactNativeFactory alloc] initWithDelegate:self.reactNativeDelegate];
+    self.reactNativeDelegate.dependencyProvider = [RCTAppDependencyProvider new];
+
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.reactNativeFactory startReactNativeWithModuleName:@"example"
+                                                   inWindow:self.window
+                                             launchOptions:launchOptions];    
+#else
     self.moduleName = @"example";
     #if __has_include(<ReactAppDependencyProvider/RCTAppDependencyProvider.h>)
     // Only in RN 77 and higher
@@ -24,15 +55,18 @@
     self.initialProps = @{};
 
     BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
-
+#endif
+    
+    // Your custom setup
     [self setupNotifications];
     [self setupScreenManager];
     [self setupApplicationStateObservers];
     [UIViewController swizzleMotionEnded];
 
-    return result;
+    return YES;
 }
 
+#if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR < 79
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
     return [self bundleURL];
@@ -46,6 +80,7 @@
     return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
+#endif
 
 #pragma mark - Setup Methods
 

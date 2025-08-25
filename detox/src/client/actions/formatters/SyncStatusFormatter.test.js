@@ -267,6 +267,23 @@ describe('Sync Status Formatter', () => {
       await expect(format(busyStatus)).toMatchSnapshot();
     });
 
+    it('should format "ui" correctly with Fabric UI properties', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'ui',
+            description: {
+              mount_items: 5,
+              view_command_mount_items: 2
+            }
+          }
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
     it('should format "network" correctly', async () => {
       let busyStatus = {
         app_status: 'busy',

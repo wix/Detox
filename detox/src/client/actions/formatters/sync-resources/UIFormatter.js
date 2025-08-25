@@ -10,6 +10,8 @@ const propertyToDescriptionMapping = {
   'view_controller_will_disappear_count': `View controllers will disappear`,
   'view_needs_display_count': `View needs display`,
   'view_needs_layout_count': `View needs layout`,
+  'mount_items': `Mount items pending`,
+  'view_command_mount_items': `View command mount items pending`,
   'reason': `Reason`
 };
 

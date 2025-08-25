@@ -20,7 +20,7 @@ describe.forPilot('Visibility', () => {
       it('should be falsy when at least 51% visibility is required', async () => {
         await jestExpect(async () =>
           await pilot.perform('Verify the purple rectangle is 51% visible')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
       });
     });
 
@@ -38,7 +38,7 @@ describe.forPilot('Visibility', () => {
       it('should be falsy when at least 26% visibility is required', async () => {
         await jestExpect(async () =>
           await pilot.perform('Verify the purple rectangle is exactly 26% visible')
-        ).rejects.toThrowError();
+        ).rejects.toThrow();
       });
     });
   });

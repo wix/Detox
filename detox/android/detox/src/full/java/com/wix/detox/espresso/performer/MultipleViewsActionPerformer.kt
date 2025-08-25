@@ -2,10 +2,10 @@ package com.wix.detox.espresso.performer
 
 import com.wix.detox.espresso.DetoxMatcher
 import com.wix.detox.espresso.ViewActionWithResult
+import com.wix.detox.espresso.errors.DetoxNoMatchingViewException
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewAction
 import org.hamcrest.Matcher
 
@@ -25,7 +25,7 @@ class MultipleViewsActionPerformer(
                 (action as? ViewActionWithResult<*>)?.getResult()?.let { results.add(it) }
 
                 index++
-            } catch (e: NoMatchingViewException) {
+            } catch (e: DetoxNoMatchingViewException) {
                 if (index == 0) {
                     throw e
                 }
