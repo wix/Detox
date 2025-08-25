@@ -10,7 +10,6 @@ module.exports = {
   text: (value) => new native.TextMatcher(value),
   traits: (value) => new native.TraitsMatcher(value),
   type: (value) => new native.TypeMatcher(value),
-  semanticType: (value) => new native.SemanticTypeMatcher(value),
   value: (value) => new native.ValueMatcher(value),
 
   web: {

@@ -810,8 +810,8 @@ describe('expectTwo', () => {
       expect(testCall).toDeepEqual(jsonOutput);
     });
 
-    it(`should parse correct JSON for semantic type 'image' using by.semanticType()`, async () => {
-      const testCall = await e.element(e.by.semanticType('image')).tap();
+    it(`should parse correct JSON for semantic type 'image' using by.type()`, async () => {
+      const testCall = await e.element(e.by.type('image')).tap();
       const jsonOutput = {
         invocation: {
           type: 'action',
@@ -833,47 +833,6 @@ describe('expectTwo', () => {
       };
 
       expect(testCall).toDeepEqual(jsonOutput);
-    });
-
-    it(`should parse correct JSON for semantic type 'button' using by.semanticType()`, async () => {
-      const testCall = await e.element(e.by.semanticType('button')).tap();
-      const jsonOutput = {
-        invocation: {
-          type: 'action',
-          action: 'tap',
-          predicate: {
-            type: 'or',
-            predicates: [
-              {
-                type: 'type',
-                value: 'UIButton'
-              },
-              {
-                type: 'type',
-                value: 'RCTTouchableOpacity'
-              },
-              {
-                type: 'type',
-                value: 'RCTTouchableHighlight'
-              },
-              {
-                type: 'type',
-                value: 'RCTTouchableWithoutFeedback'
-              }
-            ]
-          }
-        }
-      };
-
-      expect(testCall).toDeepEqual(jsonOutput);
-    });
-
-    it(`should throw error for unknown semantic type`, () => {
-      expect(() => e.by.semanticType('unknownType')).toThrow('Unknown semantic type: unknownType. Available types: image, input-field, text, button, scrollview, list, switch, slider, picker, activity-indicator');
-    });
-
-    it(`should throw error for non-string semantic type`, () => {
-      expect(() => e.by.semanticType(123)).toThrow('semanticType should be a string, but got 123 (number)');
     });
   });
 

@@ -2,6 +2,12 @@
  * Semantic type mappings for cross-platform component matching
  */
 
+// Shared class mappings for aliases
+const ACTIVITY_INDICATOR_CLASSES = {
+  ios: ['UIActivityIndicatorView'],
+  android: ['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar']
+};
+
 const SEMANTIC_TYPE_MAPPINGS = {
   // Images
   'image': {
@@ -48,7 +54,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
   // Sliders
   'slider': {
     ios: ['UISlider'],
-    android: ['android.widget.SeekBar', 'com.facebook.react.views.slider.ReactSlider']
+    android: ['android.widget.SeekBar']
   },
 
   // Picker/Selector
@@ -58,10 +64,10 @@ const SEMANTIC_TYPE_MAPPINGS = {
   },
 
   // Activity indicators/Progress
-  'activity-indicator': {
-    ios: ['UIActivityIndicatorView'],
-    android: ['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar']
-  }
+  'activity-indicator': ACTIVITY_INDICATOR_CLASSES,
+
+  // Progress (alias for activity-indicator)
+  'progress': ACTIVITY_INDICATOR_CLASSES
 };
 
 /**
@@ -70,7 +76,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
  * @param {string} platform - The platform ('ios' or 'android')
  * @returns {string[]} Array of class names for the platform
  */
-function getClassNamesForSemanticType(semanticType, platform) {
+function getClasses(semanticType, platform) {
   const mapping = SEMANTIC_TYPE_MAPPINGS[semanticType];
   if (!mapping) {
     throw new Error(`Unknown semantic type: ${semanticType}. Available types: ${Object.keys(SEMANTIC_TYPE_MAPPINGS).join(', ')}`);
@@ -88,12 +94,17 @@ function getClassNamesForSemanticType(semanticType, platform) {
  * Get all available semantic types
  * @returns {string[]} Array of available semantic type names
  */
-function getAvailableSemanticTypes() {
+function getTypes() {
   return Object.keys(SEMANTIC_TYPE_MAPPINGS);
+}
+
+function includes(value) {
+  return getTypes().includes(value);
 }
 
 module.exports = {
   SEMANTIC_TYPE_MAPPINGS,
-  getClassNamesForSemanticType,
-  getAvailableSemanticTypes
+  getClasses,
+  getTypes,
+  includes,
 };

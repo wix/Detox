@@ -1,6 +1,6 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
-const { getClassNamesForSemanticType, getAvailableSemanticTypes } = require('../../matchers/semanticTypes');
+const semanticTypes = require('../../matchers/semanticTypes');
 const { isRegExp } = require('../../utils/isRegExp');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
@@ -30,36 +30,21 @@ class IdMatcher extends NativeMatcher {
 }
 
 class TypeMatcher extends NativeMatcher {
-  constructor(value) {
+  constructor(typeOrSemanticType) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(value));
-  }
-}
+    if (semanticTypes.includes(typeOrSemanticType)) {
+      const classNames = semanticTypes.getClasses(typeOrSemanticType, 'android');
+      const combinedMatcher = classNames
+        .map(className => new NativeMatcher(invoke.callDirectly(DetoxMatcherApi.matcherForClass(className))))
+        .reduce((acc, matcher) => acc ? acc.or(matcher) : matcher, null);
 
-class SemanticTypeMatcher extends NativeMatcher {
-  constructor(semanticType) {
-    super();
-
-    // Validate that it's a known semantic type
-    if (!getAvailableSemanticTypes().includes(semanticType)) {
-      const available = getAvailableSemanticTypes().join(', ');
-      throw new DetoxRuntimeError(`Unknown semantic type: ${semanticType}. Available types: ${available}`);
+      if (!combinedMatcher) {
+        throw new DetoxRuntimeError(`No class names found for semantic type: ${typeOrSemanticType}`);
+      }
+      this._call = combinedMatcher._call;
+    } else {
+      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(typeOrSemanticType));
     }
-
-    // Create matcher for all class names for this semantic type
-    const classNames = getClassNamesForSemanticType(semanticType, 'android');
-
-    let combinedMatcher = null;
-    for (let i = 0; i < classNames.length; i++) {
-      const matcher = new NativeMatcher(invoke.callDirectly(DetoxMatcherApi.matcherForClass(classNames[i])));
-      combinedMatcher = combinedMatcher ? combinedMatcher.or(matcher) : matcher;
-    }
-
-    if (!combinedMatcher) {
-      throw new DetoxRuntimeError(`No class names found for semantic type: ${semanticType}`);
-    }
-
-    this._call = combinedMatcher._call;
   }
 }
 
@@ -133,7 +118,6 @@ module.exports = {
   ShallowLabelMatcher,
   IdMatcher,
   TypeMatcher,
-  SemanticTypeMatcher,
   TraitsMatcher,
   VisibleMatcher,
   ExistsMatcher,
