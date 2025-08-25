@@ -5,13 +5,13 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 
+const { getClassNamesForSemanticType, getAvailableSemanticTypes } = require('../matchers/semanticTypes');
 const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
 const { isRegExp } = require('../utils/isRegExp');
 const log = require('../utils/logger').child({ cat: 'ws-client, ws' });
 const mapLongPressArguments = require('../utils/mapLongPressArguments');
-const { getClassNamesForSemanticType, getAvailableSemanticTypes } = require('../utils/semanticTypes');
 const tempfile = require('../utils/tempfile');
 const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, log);
 
@@ -394,6 +394,10 @@ class By {
     return new Matcher().type(type);
   }
 
+  semanticType(semanticType) {
+    return new Matcher().semanticType(semanticType);
+  }
+
   text(text) {
     return new Matcher().text(text);
   }
@@ -443,17 +447,22 @@ class Matcher {
 
   type(type) {
     if (typeof type !== 'string') throw new Error('type should be a string, but got ' + (type + (' (' + (typeof type + ')'))));
-    // Check if it's a known semantic type first
-    if (getAvailableSemanticTypes().includes(type)) {
-      // It's a semantic type
-      const classNames = getClassNamesForSemanticType(type, 'ios');
-      const predicates = classNames.map(className => ({ type: 'type', value: className }));
-      this.predicate = { type: 'or', predicates };
-    } else {
-      // Not a semantic type, treat as regular class name
-      this.predicate = { type: 'type', value: type };
+    this.predicate = { type: 'type', value: type };
+    return this;
+  }
+
+  semanticType(semanticType) {
+    if (typeof semanticType !== 'string') throw new Error('semanticType should be a string, but got ' + (semanticType + (' (' + (typeof semanticType + ')'))));
+
+    // Validate that it's a known semantic type
+    if (!getAvailableSemanticTypes().includes(semanticType)) {
+      const available = getAvailableSemanticTypes().join(', ');
+      throw new Error(`Unknown semantic type: ${semanticType}. Available types: ${available}`);
     }
-    
+
+    const classNames = getClassNamesForSemanticType(semanticType, 'ios');
+    const predicates = classNames.map(className => ({ type: 'type', value: className }));
+    this.predicate = { type: 'or', predicates };
     return this;
   }
 
