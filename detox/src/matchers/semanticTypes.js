@@ -96,4 +96,4 @@ module.exports = {
   SEMANTIC_TYPE_MAPPINGS,
   getClassNamesForSemanticType,
   getAvailableSemanticTypes
-};   
+};
