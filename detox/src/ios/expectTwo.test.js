@@ -793,6 +793,49 @@ describe('expectTwo', () => {
     });
   });
 
+  describe('semantic types', () => {
+    it(`should parse correct JSON for regular class name using by.type()`, async () => {
+      const testCall = await e.element(e.by.type('CustomUIView')).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'action',
+          action: 'tap',
+          predicate: {
+            type: 'type',
+            value: 'CustomUIView'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+
+    it(`should parse correct JSON for semantic type 'image' using by.type()`, async () => {
+      const testCall = await e.element(e.by.type('image')).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'action',
+          action: 'tap',
+          predicate: {
+            type: 'or',
+            predicates: [
+              {
+                type: 'type',
+                value: 'RCTImageView'
+              },
+              {
+                type: 'type',
+                value: 'UIImageView'
+              }
+            ]
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+    });
+  });
+
   describe('web views', () => {
     it(`should parse expect(web(by.id('webViewId').element(web(by.label('tapMe')))).toExist()`, async () => {
       const testCall = await e.expect(e.web(e.by.id('webViewId')).atIndex(1).element(e.by.web.label('tapMe')).atIndex(2)).toExist();
