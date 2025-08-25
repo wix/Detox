@@ -37,6 +37,42 @@ describe('Native Matchers', () => {
       }).not.toThrow();
     });
 
+    it('should handle exclusion objects for semantic types', () => {
+      semanticTypes.includes.mockReturnValue(true);
+      semanticTypes.getClasses.mockReturnValue([
+        {
+          className: 'android.widget.ProgressBar',
+          excludes: ['android.widget.AbsSeekBar']
+        },
+        {
+          className: 'androidx.core.widget.ContentLoadingProgressBar',
+          excludes: ['android.widget.AbsSeekBar']
+        }
+      ]);
+
+      expect(() => {
+        new TypeMatcher('activity-indicator');
+      }).not.toThrow();
+    });
+
+    it('should handle mixed string and exclusion objects', () => {
+      semanticTypes.includes.mockReturnValue(true);
+      semanticTypes.getClasses.mockReturnValue([
+        {
+          className: 'android.widget.ProgressBar',
+          excludes: ['android.widget.AbsSeekBar']
+        },
+        {
+          className: 'androidx.core.widget.ContentLoadingProgressBar',
+          excludes: ['android.widget.AbsSeekBar']
+        }
+      ]);
+
+      expect(() => {
+        new TypeMatcher('progress');
+      }).not.toThrow();
+    });
+
     it('should handle regular class names when not semantic types', () => {
       semanticTypes.includes.mockReturnValue(false);
 
