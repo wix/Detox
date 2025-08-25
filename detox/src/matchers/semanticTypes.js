@@ -5,7 +5,12 @@
 // Shared class mappings for aliases
 const ACTIVITY_INDICATOR_CLASSES = {
   ios: ['UIActivityIndicatorView'],
-  android: ['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar']
+  android: [
+    {
+      include: ['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar'],
+      exclude: ['android.widget.AbsSeekBar']
+    }
+  ]
 };
 
 const SEMANTIC_TYPE_MAPPINGS = {
@@ -24,7 +29,12 @@ const SEMANTIC_TYPE_MAPPINGS = {
   // Text elements
   'text': {
     ios: ['RCTText', 'RCTParagraphComponentView', 'UILabel'],
-    android: ['android.widget.TextView', 'com.facebook.react.views.text.ReactTextView']
+    android: [
+      {
+        include: ['android.widget.TextView', 'com.facebook.react.views.text.ReactTextView'],
+        exclude: ['android.widget.EditText', 'android.widget.Button']
+      }
+    ]
   },
 
   // Button elements
@@ -74,7 +84,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
  * Get platform-specific class names for a semantic type
  * @param {string} semanticType - The semantic type (e.g., 'image', 'input-field')
  * @param {string} platform - The platform ('ios' or 'android')
- * @returns {string[]} Array of class names for the platform
+ * @returns {Array<string|object>} Array of class names or matcher objects for the platform
  */
 function getClasses(semanticType, platform) {
   const mapping = SEMANTIC_TYPE_MAPPINGS[semanticType];
@@ -87,7 +97,24 @@ function getClasses(semanticType, platform) {
     throw new Error(`Platform ${platform} not supported for semantic type ${semanticType}`);
   }
 
-  return classNames;
+  return classNames.map(item => {
+    if (typeof item === 'string') {
+      return item;
+    } else if (item.include && item.exclude) {
+      if (Array.isArray(item.include)) {
+        return item.include.map(className => ({
+          className,
+          excludes: item.exclude
+        }));
+      } else {
+        return {
+          className: item.include,
+          excludes: item.exclude
+        };
+      }
+    }
+    return item;
+  }).flat();
 }
 
 /**

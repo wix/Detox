@@ -1,26 +1,21 @@
-// @ts-nocheck
 const semanticTypes = require('./semanticTypes');
 
 describe('semanticTypes', () => {
+  const testMatrix = [];
+  const semanticTypeList = semanticTypes.getTypes();
+  const platforms = ['ios', 'android'];
+
   describe('getClasses', () => {
-    it('should return iOS class names for image type', () => {
-      const classNames = semanticTypes.getClasses('image', 'ios');
-      expect(classNames).toEqual(['RCTImageView', 'UIImageView']);
+
+    semanticTypeList.forEach(semanticType => {
+      platforms.forEach(platform => {
+        testMatrix.push([semanticType, platform]);
+      });
     });
 
-    it('should return Android class names for image type', () => {
-      const classNames = semanticTypes.getClasses('image', 'android');
-      expect(classNames).toEqual(['android.widget.ImageView', 'com.facebook.react.views.image.ReactImageView']);
-    });
-
-    it('should return iOS class names for input-field type', () => {
-      const classNames = semanticTypes.getClasses('input-field', 'ios');
-      expect(classNames).toEqual(['RCTTextInputView', 'RCTMultilineTextInputView', 'UITextField', 'UITextView']);
-    });
-
-    it('should return Android class names for input-field type', () => {
-      const classNames = semanticTypes.getClasses('input-field', 'android');
-      expect(classNames).toEqual(['android.widget.EditText', 'com.facebook.react.views.textinput.ReactEditText']);
+    test.each(testMatrix)('should return class names for %s on %s', (semanticType, platform) => {
+      const classNames = semanticTypes.getClasses(semanticType, platform);
+      expect(classNames).toMatchSnapshot(`${semanticType}-${platform}`);
     });
 
     it('should throw error for unknown semantic type', () => {
@@ -35,56 +30,71 @@ describe('semanticTypes', () => {
       }).toThrow('Platform windows not supported for semantic type image');
     });
 
-    it('should return iOS class names for scrollview type', () => {
-      const classNames = semanticTypes.getClasses('scrollview', 'ios');
-      expect(classNames).toEqual(['RCTScrollView', 'UIScrollView']);
-    });
-
-    it('should return Android class names for scrollview type', () => {
-      const classNames = semanticTypes.getClasses('scrollview', 'android');
-      expect(classNames).toEqual([
-        'android.widget.ScrollView',
-        'androidx.core.widget.NestedScrollView',
-        'com.facebook.react.views.scroll.ReactScrollView'
-      ]);
-    });
-
-    it('should return iOS class names for progress type', () => {
-      const classNames = semanticTypes.getClasses('progress', 'ios');
-      expect(classNames).toEqual(['UIActivityIndicatorView']);
-    });
-
-    it('should return Android class names for progress type', () => {
-      const classNames = semanticTypes.getClasses('progress', 'android');
-      expect(classNames).toEqual(['android.widget.ProgressBar', 'androidx.core.widget.ContentLoadingProgressBar']);
-    });
-
     it('should return same classes for progress and activity-indicator', () => {
-      expect(semanticTypes.getClasses('progress', 'ios')).toEqual(
-        semanticTypes.getClasses('activity-indicator', 'ios')
-      );
-      expect(semanticTypes.getClasses('progress', 'android')).toEqual(
-        semanticTypes.getClasses('activity-indicator', 'android')
-      );
+      platforms.forEach(platform => {
+        expect(semanticTypes.getClasses('progress', platform)).toEqual(
+          semanticTypes.getClasses('activity-indicator', platform)
+        );
+      });
+    });
+
+    it('should handle exclusion objects correctly', () => {
+      const classNames = semanticTypes.getClasses('activity-indicator', 'android');
+
+      expect(classNames).toHaveLength(2);
+      expect(classNames[0]).toHaveProperty('className', 'android.widget.ProgressBar');
+      expect(classNames[0]).toHaveProperty('excludes', ['android.widget.AbsSeekBar']);
+      expect(classNames[1]).toHaveProperty('className', 'androidx.core.widget.ContentLoadingProgressBar');
+      expect(classNames[1]).toHaveProperty('excludes', ['android.widget.AbsSeekBar']);
+    });
+
+    it('should handle text exclusions to prevent EditText and Button conflicts', () => {
+      const classNames = semanticTypes.getClasses('text', 'android');
+
+      expect(classNames).toHaveLength(2);
+      expect(classNames[0]).toHaveProperty('className', 'android.widget.TextView');
+      expect(classNames[0]).toHaveProperty('excludes', ['android.widget.EditText', 'android.widget.Button']);
+      expect(classNames[1]).toHaveProperty('className', 'com.facebook.react.views.text.ReactTextView');
+      expect(classNames[1]).toHaveProperty('excludes', ['android.widget.EditText', 'android.widget.Button']);
+    });
+
+    it('should handle single string include with exclusions', () => {
+      const originalMapping = semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-single'];
+      semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-single'] = {
+        android: [{
+          include: 'android.widget.TestView',
+          exclude: ['android.widget.ExcludedView']
+        }]
+      };
+
+      const classNames = semanticTypes.getClasses('test-single', 'android');
+
+      expect(classNames).toHaveLength(1);
+      expect(classNames[0]).toHaveProperty('className', 'android.widget.TestView');
+      expect(classNames[0]).toHaveProperty('excludes', ['android.widget.ExcludedView']);
+
+      delete semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-single'];
+    });
+
+    it('should handle unexpected item types gracefully', () => {
+      semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-fallback'] = {
+        android: [{ unexpectedProperty: 'someValue' }]
+      };
+
+      const classNames = semanticTypes.getClasses('test-fallback', 'android');
+
+      expect(classNames).toHaveLength(1);
+      expect(classNames[0]).toEqual({ unexpectedProperty: 'someValue' });
+
+      delete semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-fallback'];
     });
   });
 
   describe('getTypes', () => {
-    it('should return all available semantic types', () => {
+    it('should return all semantic types from mappings', () => {
       const types = semanticTypes.getTypes();
-      expect(types).toEqual([
-        'image',
-        'input-field',
-        'text',
-        'button',
-        'scrollview',
-        'list',
-        'switch',
-        'slider',
-        'picker',
-        'activity-indicator',
-        'progress'
-      ]);
+      const mappingKeys = Object.keys(semanticTypes.SEMANTIC_TYPE_MAPPINGS);
+      expect(types).toEqual(mappingKeys);
     });
 
     it('should return an array', () => {
@@ -100,19 +110,29 @@ describe('semanticTypes', () => {
 
   describe('includes', () => {
     it('should return true for valid semantic types', () => {
-      expect(semanticTypes.includes('image')).toBe(true);
-      expect(semanticTypes.includes('button')).toBe(true);
-      expect(semanticTypes.includes('input-field')).toBe(true);
-      expect(semanticTypes.includes('text')).toBe(true);
-      expect(semanticTypes.includes('progress')).toBe(true);
-      expect(semanticTypes.includes('activity-indicator')).toBe(true);
+      semanticTypeList.forEach(semanticType => {
+        expect(semanticTypes.includes(semanticType)).toBe(true);
+      });
     });
 
     it('should return false for invalid semantic types', () => {
       expect(semanticTypes.includes('unknown-type')).toBe(false);
-      expect(semanticTypes.includes('UIButton')).toBe(false);
-      expect(semanticTypes.includes('com.example.CustomView')).toBe(false);
       expect(semanticTypes.includes('')).toBe(false);
+
+      const buttonClasses = semanticTypes.getClasses('button', 'ios');
+      const imageClasses = semanticTypes.getClasses('image', 'android');
+
+      buttonClasses.forEach(className => {
+        if (typeof className === 'string') {
+          expect(semanticTypes.includes(className)).toBe(false);
+        }
+      });
+
+      imageClasses.forEach(className => {
+        if (typeof className === 'string') {
+          expect(semanticTypes.includes(className)).toBe(false);
+        }
+      });
     });
 
     it('should return false for non-string values', () => {
@@ -131,14 +151,26 @@ describe('semanticTypes', () => {
         const androidClassNames = semanticTypes.getClasses(semanticType, 'android');
         const iosClassNames = semanticTypes.getClasses(semanticType, 'ios');
 
-        // Both platforms should always return at least one class name
         expect(androidClassNames.length).toBeGreaterThan(0);
         expect(iosClassNames.length).toBeGreaterThan(0);
 
-        // All class names should be non-empty strings
-        [...androidClassNames, ...iosClassNames].forEach(className => {
-          expect(typeof className).toBe('string');
-          expect(className.length).toBeGreaterThan(0);
+        [...androidClassNames, ...iosClassNames].forEach(item => {
+          if (typeof item === 'string') {
+            expect(item.length).toBeGreaterThan(0);
+          } else if (typeof item === 'object' && item !== null) {
+            expect(item).toHaveProperty('className');
+            expect(item).toHaveProperty('excludes');
+            expect(typeof item.className).toBe('string');
+            expect(item.className.length).toBeGreaterThan(0);
+            expect(Array.isArray(item.excludes)).toBe(true);
+            expect(item.excludes.length).toBeGreaterThan(0);
+            item.excludes.forEach(excludeClass => {
+              expect(typeof excludeClass).toBe('string');
+              expect(excludeClass.length).toBeGreaterThan(0);
+            });
+          } else {
+            fail(`Invalid class name type: ${typeof item}`);
+          }
         });
       });
     });
