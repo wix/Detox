@@ -4,7 +4,7 @@ const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
   'android.emulator': 3,
-  'android.genycloud': 5,
+  'android.genycloud': 1,
   'ios.simulator': 2,
 };
 
