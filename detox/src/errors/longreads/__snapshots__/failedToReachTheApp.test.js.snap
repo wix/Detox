@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`failedToReachTheApp .evenThoughAppWasLaunched() 1`] = `
 [DetoxRuntimeError: Detox can't seem to connect to the test app(s)!
