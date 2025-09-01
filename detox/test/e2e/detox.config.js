@@ -192,15 +192,15 @@ const config = {
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.debug': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
       apps: ['android.debug'],
     },
     'android.genycloud.release': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.release2': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.release-arm64': {

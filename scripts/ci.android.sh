@@ -25,7 +25,7 @@ pushd detox/test
 
 run_f "npm run build:android"
 
-if [ "$USE_ANDROID_ARM64" = "true" ]; then
+if [ "$USE_GENYCLOUD_ARM64" = "true" ]; then
   run_f "npm run e2e:android:genycloud-arm64"
 else
   run_f "npm run e2e:android:genycloud"
