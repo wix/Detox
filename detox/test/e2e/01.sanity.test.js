@@ -18,6 +18,7 @@ describe('Sanity', () => {
     await expect(element(by.text('Welcome'))).toBeVisible();
     await expect(element(by.text('Say Hello'))).toBeVisible();
     await expect(element(by.text('Say World'))).toBeVisible();
+    await expect(element(by.text('Say Goodbye'))).not.toBeVisible();
   });
 
   it('should show hello screen after tap', async () => {
