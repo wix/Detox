@@ -30,7 +30,7 @@ if [ "$USE_GENYCLOUD_ARM64" = "true" ]; then
 else
   run_f "npm run e2e:android:genycloud"
 fi
-cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcovcp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
+cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
 
 run_f "npm run e2e:android -- e2e/01* e2e/02* e2e/03.actions*"
 cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
