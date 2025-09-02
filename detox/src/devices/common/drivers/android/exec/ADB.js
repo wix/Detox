@@ -148,6 +148,10 @@ class ADB {
     await this.shell(deviceId, `am force-stop ${appId}`);
   }
 
+  async clearAppData(deviceId, packageId) {
+    return await this.shell(deviceId, `pm clear ${packageId}`);
+  }
+
   async setLocation(deviceId, lat, lon) {
     // NOTE: QEMU for Android for the telnet part relies on C stdlib
     // function `strtod` which is locale-sensitive, meaning that depending

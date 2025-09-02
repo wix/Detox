@@ -29,6 +29,14 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
+  it('resetAppState() + relaunch() - should tap successfully', async () => {
+    await device.resetAppState();
+    await device.relaunchApp();
+    await element(by.text('Sanity')).tap();
+    await element(by.text('Say Hello')).tap();
+    await expect(element(by.text('Hello!!!'))).toBeVisible();
+  });
+
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
     await device.launchApp({newInstance: true});
     await element(by.text('Sanity')).tap();
