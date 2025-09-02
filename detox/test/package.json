@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.41.1",
+  "version": "20.40.2",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -14,7 +14,7 @@
     "packager": "react-native start",
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
-    "e2e:android": "detox test -c android.emu.release",
+    "e2e:android": "detox test -c android.emu.release --record-videos failing",
     "e2e:android:genycloud": "detox test -c android.genycloud.release",
     "e2e:android:genycloud-arm64": "detox test -c android.genycloud.release-arm64",
     "e2e:android-debug": "detox test -c android.emu.debug",
@@ -67,7 +67,7 @@
     "@typescript-eslint/parser": "^6.16.0",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
-    "detox": "^20.41.1",
+    "detox": "^20.40.2",
     "detox-allure2-adapter": "^1.0.0-alpha.8",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
