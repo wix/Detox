@@ -5,6 +5,7 @@
     env:
       REACT_NATIVE_VERSION: 0.79.5
       RCT_NEW_ARCH_ENABLED: 1
+      USE_GOOGLE_ARM64: true
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
     artifact_paths:

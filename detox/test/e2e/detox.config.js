@@ -135,6 +135,14 @@ const config = {
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
     },
+
+    'android.genycloud.name-arm64': {
+      type: 'android.genycloud',
+      device: {
+        recipeName: 'Detox_Pixel_3a_API_35',
+      },
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
+    },
   },
 
   configurations: {
@@ -184,15 +192,19 @@ const config = {
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.debug': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
       apps: ['android.debug'],
     },
     'android.genycloud.release': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.release2': {
-      device: 'android.genycloud.name',
+      device: 'android.genycloud.uuid',
+      apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.genycloud.release-arm64': {
+      device: 'android.genycloud.name-arm64',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'stub': {

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AsyncWebSocket .close() should throw on a consequent attempt to close the socket 1`] = `
 "Detected an attempt to close an already closing or closed web socket.

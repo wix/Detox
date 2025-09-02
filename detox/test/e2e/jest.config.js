@@ -5,9 +5,9 @@ const { resolveConfig } = require('detox/internals');
 const maxWorkersMap = {
   'android.emulator': 2,
   'android.genycloud': 5,
+  'android.genycloud-arm64': 2,
   'ios.simulator': 2,
 };
-
 
 module.exports = async () => {
   const config = await resolveConfig();
@@ -47,6 +47,11 @@ module.exports = async () => {
     reporters.push('<rootDir>/test/node_modules/jest-junit');
   }
 
+  let deviceType = config.device.type;
+  if (config.configurationName.endsWith('arm64')) {
+    deviceType += '-arm64';
+  }
+
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
@@ -70,7 +75,7 @@ module.exports = async () => {
     'reporters': reporters,
     'verbose': true,
     'bail': false,
-    'maxWorkers': process.env.CI ? maxWorkersMap[config.device.type] || 1 : 1,
+    'maxWorkers': process.env.CI ? maxWorkersMap[deviceType] || 1 : 1,
     'collectCoverageFrom': [
       'src/**/*.js',
       '!**/__test/**',
