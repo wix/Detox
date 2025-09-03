@@ -36,7 +36,9 @@ class GenyInstanceLifecycleService {
     };
 
     const result = await retry(options, doAdbConnect);
-    return new Instance(result.instance);
+    const instance = new Instance(result.instance);
+    this._adb = this._adb.bind({ deviceId: instance.adbName });
+    return instance;
   }
 
   async deleteInstance(instanceUUID) {

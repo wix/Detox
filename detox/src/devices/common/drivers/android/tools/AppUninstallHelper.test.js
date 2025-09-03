@@ -1,3 +1,4 @@
+// @ts-nocheck
 const deviceId = 'mock-device-id';
 const bundleId = 'mock-bundle-id';
 const testBundleId = 'mock-bundle-id.test';
@@ -17,27 +18,27 @@ describe('Android app uninstall helper', () => {
   });
 
   it('should uninstall the app\'s binary using adb', async () => {
-    await uut.uninstall(deviceId, bundleId);
-    expect(adb.uninstall).toHaveBeenCalledWith(deviceId, bundleId);
+    await uut.uninstall(bundleId);
+    expect(adb.uninstall).toHaveBeenCalledWith(bundleId);
   });
 
   it('should fail if app uninstall fails', async () => {
     adb.uninstall.mockRejectedValue(new Error('mocked error in adb.uninstall'));
-    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrow();
+    await expect(uut.uninstall(bundleId)).rejects.toThrow();
   });
 
   it('should avoid uninstalling app if not already installed', async () => {
     adb.isPackageInstalled.mockResolvedValue(false);
 
-    await uut.uninstall(deviceId, bundleId);
+    await uut.uninstall(bundleId);
 
-    expect(adb.isPackageInstalled).toHaveBeenCalledWith(deviceId, bundleId);
-    expect(adb.uninstall).not.toHaveBeenCalledWith(deviceId, bundleId);
+    expect(adb.isPackageInstalled).toHaveBeenCalledWith(bundleId);
+    expect(adb.uninstall).not.toHaveBeenCalledWith(bundleId);
   });
 
   it('should uninstall the test binary using adb', async () => {
-    await uut.uninstall(deviceId, bundleId);
-    expect(adb.uninstall).toHaveBeenCalledWith(deviceId, testBundleId);
+    await uut.uninstall(bundleId);
+    expect(adb.uninstall).toHaveBeenCalledWith(testBundleId);
   });
 
   it('should fail if test binary uninstall fails', async () => {
@@ -45,7 +46,7 @@ describe('Android app uninstall helper', () => {
       .mockResolvedValueOnce(true)
       .mockRejectedValueOnce(new Error('mocked error in adb.uninstall'));
 
-    await expect(uut.uninstall(deviceId, bundleId)).rejects.toThrow();
+    await expect(uut.uninstall(bundleId)).rejects.toThrow();
   });
 
   it('should avoid uninstalling test binary if not already installed', async () => {
@@ -53,9 +54,9 @@ describe('Android app uninstall helper', () => {
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(false);
 
-    await uut.uninstall(deviceId, bundleId);
+    await uut.uninstall(bundleId);
 
-    expect(adb.isPackageInstalled).toHaveBeenCalledWith(deviceId, testBundleId);
-    expect(adb.uninstall).not.toHaveBeenCalledWith(deviceId, testBundleId);
+    expect(adb.isPackageInstalled).toHaveBeenCalledWith(testBundleId);
+    expect(adb.uninstall).not.toHaveBeenCalledWith(testBundleId);
   });
 });

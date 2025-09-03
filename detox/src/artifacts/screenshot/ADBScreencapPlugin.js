@@ -11,24 +11,24 @@ class ADBScreencapPlugin extends ScreenshotArtifactPlugin {
   }
 
   createTestArtifact() {
-    const adb = this._adb;
     const deviceId = this.context.deviceId;
+    const adb = this._adb.bind({ deviceId });
     const pathToScreenshotOnDevice = this._devicePathBuilder.buildTemporaryArtifactPath('.png');
 
     return new Artifact({
       name: 'ADBScreencapRecording',
 
       async start() {
-        await adb.screencap(deviceId, pathToScreenshotOnDevice);
+        await adb.screencap(pathToScreenshotOnDevice);
       },
 
       async save(artifactPath) {
-        await adb.pull(deviceId, pathToScreenshotOnDevice, artifactPath);
-        await adb.rm(deviceId, pathToScreenshotOnDevice);
+        await adb.pull(pathToScreenshotOnDevice, artifactPath);
+        await adb.rm(pathToScreenshotOnDevice);
       },
 
       async discard() {
-        await adb.rm(deviceId, pathToScreenshotOnDevice);
+        await adb.rm(pathToScreenshotOnDevice);
       },
     });
   }

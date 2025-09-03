@@ -8,6 +8,8 @@ const { escape } = require('../../../../../utils/pipeCommands');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
+const ADBCache = require('./ADBCache');
+
 const DEFAULT_EXEC_OPTIONS = {
   retries: 1,
 };
@@ -17,11 +19,25 @@ const DEFAULT_INSTALL_OPTIONS = {
 };
 
 class ADB {
-  constructor() {
-    this._cachedApiLevels = new Map();
-    this.defaultExecOptions = DEFAULT_EXEC_OPTIONS;
-    this.installOptions = DEFAULT_INSTALL_OPTIONS;
-    this.adbBin = getAdbPath();
+  constructor(options = {}) {
+    this.adbBin = options.adbBin || getAdbPath();
+    this.deviceId = options.deviceId;
+    this.defaultExecOptions = options.defaultExecOptions || DEFAULT_EXEC_OPTIONS;
+    this.installOptions = options.installOptions || DEFAULT_INSTALL_OPTIONS;
+    this._cache = options.cache || ADBCache.instance;
+  }
+
+  get _cachedApiLevels() {
+    return this._cache.apiLevels;
+  }
+
+  bind(options) {
+    return new ADB({
+      adbBin: this.adbBin,
+      cache: this._cache,
+      deviceId: this.deviceId,
+      ...options,
+    });
   }
 
   async startDaemon() {
@@ -43,9 +59,9 @@ class ADB {
     return { devices, stdout };
   }
 
-  async getState(deviceId) {
+  async getState() {
     try {
-      const output = await this.adbCmd(deviceId, `get-state`, {
+      const output = await this.adbCmd(this.deviceId, `get-state`, {
         verbosity: 'low'
       });
 
@@ -60,23 +76,23 @@ class ADB {
     }
   }
 
-  async unlockScreen(deviceId) {
+  async unlockScreen() {
     const {
       mWakefulness,
       mUserActivityTimeoutOverrideFromWindowManager,
-    } = await this._getPowerStatus(deviceId);
+    } = await this._getPowerStatus();
 
     if (mWakefulness === 'Asleep' || mWakefulness === 'Dozing') {
-      await this.pressPowerDevice(deviceId);
+      await this.pressPowerDevice();
     }
 
     if (mUserActivityTimeoutOverrideFromWindowManager === '10000') { // screen is locked
-      await this.pressOptionsMenu(deviceId);
+      await this.pressOptionsMenu();
     }
   }
 
-  async _getPowerStatus(deviceId) {
-    const stdout = await this.shell(deviceId, `dumpsys power | grep "^[ ]*m[UW].*="`, { retries: 5 });
+  async _getPowerStatus() {
+    const stdout = await this.shell(`dumpsys power | grep "^[ ]*m[UW].*="`, { retries: 5 });
     return stdout
       .split('\n')
       .map(s => s.trim().split('='))
@@ -86,69 +102,69 @@ class ADB {
       }), {});
   }
 
-  async pressOptionsMenu(deviceId) {
-    await this._sendKeyEvent(deviceId, 'KEYCODE_MENU');
+  async pressOptionsMenu() {
+    await this._sendKeyEvent('KEYCODE_MENU');
   }
 
-  async pressPowerDevice(deviceId) {
-    await this._sendKeyEvent(deviceId, 'KEYCODE_POWER');
+  async pressPowerDevice() {
+    await this._sendKeyEvent('KEYCODE_POWER');
   }
 
-  async typeText(deviceId, text) {
+  async typeText(text) {
     const actualText = text.replace(/ /g, '%s');
-    await this.shell(deviceId, `input text ${actualText}`);
+    await this.shell(`input text ${actualText}`);
   }
 
-  async _sendKeyEvent(deviceId, keyevent) {
-    await this.shell(deviceId, `input keyevent ${keyevent}`);
+  async _sendKeyEvent(keyevent) {
+    await this.shell(`input keyevent ${keyevent}`);
   }
 
-  async now(deviceId) {
-    return this.shell(deviceId, `date +"%m-%d %T.000"`);
+  async now() {
+    return this.shell(`date +"%m-%d %T.000"`);
   }
 
-  async isPackageInstalled(deviceId, packageId) {
-    const output = await this.shell(deviceId, `pm list packages ${packageId}`);
+  async isPackageInstalled(packageId) {
+    const output = await this.shell(`pm list packages ${packageId}`);
     const packageRegexp = new RegExp(`^package:${escape.inQuotedRegexp(packageId)}$`, 'm');
     const isInstalled = packageRegexp.test(output);
 
     return isInstalled;
   }
 
-  async install(deviceId, _apkPath) {
+  async install(_apkPath) {
     const apkPath = escape.inQuotedString(_apkPath);
-    const apiLvl = await this.apiLevel(deviceId);
+    const apiLvl = await this.apiLevel();
     const command = (apiLvl >= 23)
       ? `install -r -g -t ${apkPath}`
       : `install -rg ${apkPath}`;
-    const result = await this.adbCmdSpawned(deviceId, command, this.installOptions);
+    const result = await this.adbCmdSpawned(this.deviceId, command, this.installOptions);
 
     const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
     if (failure) {
       throw new DetoxRuntimeError({
-        message: `Failed to install app on ${deviceId}: ${apkPath}`,
+        message: `Failed to install app on ${this.deviceId}: ${apkPath}`,
         debugInfo: failure,
       });
     }
   }
 
-  async remoteInstall(deviceId, path) {
-    const apiLvl = await this.apiLevel(deviceId);
+  async remoteInstall(path) {
+    const apiLvl = await this.apiLevel();
     const command = (apiLvl >= 23)
       ? `pm install -r -g -t ${path}`
       : `pm install -rg ${path}`;
-    return this.shellSpawned(deviceId, command, this.installOptions);
+    return this.shellSpawned(command, this.installOptions);
   }
 
-  async uninstall(deviceId, appId) {
-    await this.adbCmd(deviceId, `uninstall ${appId}`);
+  async uninstall(appId) {
+    await this.adbCmd(this.deviceId, `uninstall ${appId}`);
   }
 
-  async terminate(deviceId, appId) {
-    await this.shell(deviceId, `am force-stop ${appId}`);
+  async terminate(appId) {
+    await this.shell(`am force-stop ${appId}`);
   }
 
-  async setLocation(deviceId, lat, lon) {
+  async setLocation(lat, lon) {
     // NOTE: QEMU for Android for the telnet part relies on C stdlib
     // function `strtod` which is locale-sensitive, meaning that depending
     // on user environment you'll have to send either comma-separated
@@ -166,16 +182,16 @@ class ADB {
     const dot = `${lon} ${lat}`;
     const comma = dot.replace(/\./g, ',');
 
-    await this.emu(deviceId, `geo fix ${dot}`);
-    await this.emu(deviceId, `geo fix ${comma}`);
+    await this.emu(`geo fix ${dot}`);
+    await this.emu(`geo fix ${comma}`);
   }
 
-  async pidof(deviceId, bundleId) {
+  async pidof(bundleId) {
     const bundleIdRegex = escape.inQuotedRegexp(bundleId) + '$';
     const command = `ps | grep "${bundleIdRegex}"`;
     const options = { silent: true };
 
-    const processes = await this.shell(deviceId, command, options).catch(() => '');
+    const processes = await this.shell(command, options).catch(() => '');
     if (!processes) {
       return NaN;
     }
@@ -183,8 +199,8 @@ class ADB {
     return parseInt(processes.split(' ').filter(Boolean)[1], 10);
   }
 
-  async getFileSize(deviceId, filename) {
-    const { stdout, stderr } = await this.adbCmd(deviceId, 'shell du ' + filename).catch(e => e);
+  async getFileSize(filename) {
+    const { stdout, stderr } = await this.adbCmd(this.deviceId, 'shell du ' + filename).catch(e => e);
 
     if (stderr.includes('No such file or directory')) {
       return -1;
@@ -193,49 +209,49 @@ class ADB {
     return Number(stdout.slice(0, stdout.indexOf(' ')));
   }
 
-  async isBootComplete(deviceId) {
+  async isBootComplete() {
     try {
-      const bootComplete = await this.shell(deviceId, `getprop dev.bootcomplete`, { retries: 0, silent: true });
+      const bootComplete = await this.shell(`getprop dev.bootcomplete`, { retries: 0, silent: true });
       return (bootComplete === '1');
     } catch (ex) {
       return false;
     }
   }
 
-  async waitForDevice(deviceId) {
-    return await this.adbCmd(deviceId, 'wait-for-device');
+  async waitForDevice() {
+    return await this.adbCmd(this.deviceId, 'wait-for-device');
   }
 
-  async apiLevel(deviceId) {
-    if (this._cachedApiLevels.has(deviceId)) {
-      return this._cachedApiLevels.get(deviceId);
+  async apiLevel() {
+    if (this._cachedApiLevels.has(this.deviceId)) {
+      return this._cachedApiLevels.get(this.deviceId);
     }
 
-    const lvl = Number(await this.shell(deviceId, `getprop ro.build.version.sdk`, { retries: 5 }));
-    this._cachedApiLevels.set(deviceId, lvl);
+    const lvl = Number(await this.shell(`getprop ro.build.version.sdk`, { retries: 5 }));
+    this._cachedApiLevels.set(this.deviceId, lvl);
 
     return lvl;
   }
 
-  async disableAndroidAnimations(deviceId) {
-    await this.shell(deviceId, `settings put global animator_duration_scale 0`);
-    await this.shell(deviceId, `settings put global window_animation_scale 0`);
-    await this.shell(deviceId, `settings put global transition_animation_scale 0`);
+  async disableAndroidAnimations() {
+    await this.shell(`settings put global animator_duration_scale 0`);
+    await this.shell(`settings put global window_animation_scale 0`);
+    await this.shell(`settings put global transition_animation_scale 0`);
   }
 
-  async setWiFiToggle(deviceId, state) {
+  async setWiFiToggle(state) {
     const value = (state === true ? 'enable' : 'disable');
-    await this.shell(deviceId, `svc wifi ${value}`);
+    await this.shell(`svc wifi ${value}`);
   }
 
-  async screencap(deviceId, path) {
-    await this.shell(deviceId, `screencap ${path}`);
+  async screencap(path) {
+    await this.shell(`screencap ${path}`);
   }
 
   /***
    * @returns ChildProcessPromise
    */
-  screenrecord(deviceId, { path, size, bitRate, timeLimit, verbose }) {
+  screenrecord({ path, size, bitRate, timeLimit, verbose }) {
     const [width = 0, height = 0] = size || [];
 
     const _size = (width > 0) && (height > 0)
@@ -253,18 +269,18 @@ class ADB {
     const _verbose = verbose ? ['--verbose'] : [];
     const screenRecordArgs = [..._size, ..._bitRate, ..._timeLimit, ..._verbose, path];
 
-    return this.spawn(deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
+    return this.spawn(this.deviceId, ['shell', 'screenrecord', ...screenRecordArgs]);
   }
 
   /***
    * @returns ChildProcessPromise
    */
-  logcat(deviceId, { file, pid, time }) {
+  logcat({ file, pid, time }) {
     let shellCommand = 'logcat';
 
     // HACK: cannot make this function async, otherwise ChildProcessPromise.childProcess field will get lost,
     // and this will break interruptProcess() call for any logcat promise.
-    const apiLevel = this._cachedApiLevels.get(deviceId);
+    const apiLevel = this._cachedApiLevels.get(this.deviceId);
     if (time && apiLevel >= 21) {
       shellCommand += ` -T "${time}"`;
     }
@@ -288,38 +304,38 @@ class ADB {
       }
     }
 
-    return this.spawn(deviceId, ['shell', shellCommand]);
+    return this.spawn(this.deviceId, ['shell', shellCommand]);
   }
 
-  async push(deviceId, src, dst) {
-    await this.adbCmd(deviceId, `push "${src}" "${dst}"`);
+  async push(src, dst) {
+    await this.adbCmd(this.deviceId, `push "${src}" "${dst}"`);
   }
 
-  async pull(deviceId, src, dst = '') {
-    await this.adbCmd(deviceId, `pull "${src}" "${dst}"`);
+  async pull(src, dst = '') {
+    await this.adbCmd(this.deviceId, `pull "${src}" "${dst}"`);
   }
 
-  async rm(deviceId, path, force = false) {
-    await this.shell(deviceId, `rm ${force ? '-f' : ''} "${path}"`);
+  async rm(path, force = false) {
+    await this.shell(`rm ${force ? '-f' : ''} "${path}"`);
   }
 
   /***
    * @returns {ChildProcessPromise}
    */
-  spawnInstrumentation(deviceId, userArgs, testRunner) {
+  spawnInstrumentation(userArgs, testRunner) {
     const spawnArgs = ['shell', 'am', 'instrument', '-w', '-r', ...userArgs, testRunner];
-    return this.spawn(deviceId, spawnArgs, { detached: false });
+    return this.spawn(this.deviceId, spawnArgs, { detached: false });
   }
 
-  async listInstrumentation(deviceId) {
-    return this.shell(deviceId, 'pm list instrumentation');
+  async listInstrumentation() {
+    return this.shell('pm list instrumentation');
   }
 
-  async getInstrumentationRunner(deviceId, bundleId) {
-    const instrumentationRunners = await this.listInstrumentation(deviceId);
+  async getInstrumentationRunner(bundleId) {
+    const instrumentationRunners = await this.listInstrumentation();
     const instrumentationRunner = this._instrumentationRunnerForBundleId(instrumentationRunners, bundleId);
     if (instrumentationRunner === 'undefined') {
-      throw new DetoxRuntimeError(`No instrumentation runner found on device ${deviceId} for package ${bundleId}`);
+      throw new DetoxRuntimeError(`No instrumentation runner found on device ${this.deviceId} for package ${bundleId}`);
     }
 
     return instrumentationRunner;
@@ -330,31 +346,35 @@ class ADB {
     return _.get(runnerForBundleRegEx.exec(instrumentationRunners), [1], 'undefined');
   }
 
-  async shell(deviceId, command, options) {
-    const result = await this.adbCmd(deviceId, `shell "${escape.inQuotedString(command)}"`, options);
+  async shell(command, options) {
+    const result = await this.adbCmd(this.deviceId, `shell "${escape.inQuotedString(command)}"`, options);
     return result.stdout.trim();
   }
 
-  async shellSpawned(deviceId, command, options) {
+  async shellSpawned(command, options) {
     const _command = `shell ${command}`;
-    const result = await this.adbCmdSpawned(deviceId, _command, options);
+    const result = await this.adbCmdSpawned(this.deviceId, _command, options);
     return result.stdout.trim();
   }
 
-  async emu(deviceId, cmd, options) {
-    return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+  async emu(cmd, options) {
+    return (await this.adbCmd(this.deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
   }
 
-  async reverse(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse tcp:${port} tcp:${port}`);
+  async reverse(port) {
+    await this.adbCmd(this.deviceId, `reverse tcp:${port} tcp:${port}`);
   }
 
-  async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+  async reverseRemove(port) {
+    await this.adbCmd(this.deviceId, `reverse --remove tcp:${port}`);
   }
 
-  async emuKill(deviceId) {
-    return this.adbCmd(deviceId, `emu kill`);
+  async reverseList() {
+    const { stdout } = await this.adbCmd(this.deviceId, `reverse --list`);
+  }
+
+  async emuKill() {
+    return this.adbCmd(this.deviceId, `emu kill`);
   }
 
   async adbCmd(deviceId, params, options = {}) {
