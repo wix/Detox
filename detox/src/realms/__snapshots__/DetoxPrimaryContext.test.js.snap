@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DetoxPrimaryContext when initialized should reject further initializations 1`] = `
 "Cannot initialize primary Detox context more than once.

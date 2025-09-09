@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`globals sanitize_android_direction should fail with unknown value 1`] = `"direction must be a 'left'/'right'/'up'/'down', got kittens"`;
 

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Genymotion-Cloud recipes service getting a recipe by name should throw an error if no recipes found 1`] = `
 "No Genymotion-Cloud recipe found for recipe name "mock-name"
