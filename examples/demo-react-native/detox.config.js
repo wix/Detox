@@ -47,7 +47,7 @@ module.exports = {
       headless: Boolean(process.env.CI),
       device: {
         type: "iPhone 15 Pro Max",
-        os: "18.0.0"
+        os: "17.0.1"
       }
     },
     emulator: {
