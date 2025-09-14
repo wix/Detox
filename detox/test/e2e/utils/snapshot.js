@@ -1,18 +1,19 @@
 const fs = require('fs-extra');
 const { ssim } = require('ssim.js');
 const { PNG } = require('pngjs');
-const { isRNNewArch } = require('../../../src/utils/rn-consts/rn-consts');
+const { isRNNewArch, rnVersion } = require('../../../src/utils/rn-consts/rn-consts');
 
-const rnMinorVer = require('../../../src/utils/rn-consts/rn-consts').rnVersion.minor;
+const rnMinorVer = rnVersion.minor;
 const jestExpect = require('expect').default;
 
 // Threshold for SSIM comparison, if two images have SSIM score below this threshold, they are considered different.
 const SSIM_SCORE_THRESHOLD = 0.997;
 
-async function expectElementSnapshotToMatch(elementOrDevice, snapshotName, ssimThreshold = SSIM_SCORE_THRESHOLD) {
+async function expectElementSnapshotToMatch(elementOrDevice, snapshotName, ssimThreshold = SSIM_SCORE_THRESHOLD, androidSdk) {
   const bitmapPath = await elementOrDevice.takeScreenshot(snapshotName);
   const isNewArchString = isRNNewArch ? '.new-arch' : '';
-  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}${isNewArchString}.png`;
+  const androidSdkString = androidSdk ? `-sdk${androidSdk}` : '';
+  const expectedBitmapPath = `./e2e/assets/${snapshotName}.${device.getPlatform()}${androidSdkString}${isNewArchString}.png`;
 
   if (await fs.pathExists(expectedBitmapPath) === false || process.env.UPDATE_SNAPSHOTS === 'true') {
     await fs.copy(bitmapPath, expectedBitmapPath, { overwrite: true });
@@ -21,11 +22,11 @@ async function expectElementSnapshotToMatch(elementOrDevice, snapshotName, ssimT
   }
 }
 
-async function expectDeviceSnapshotToMatch(snapshotName, ssimThreshold = SSIM_SCORE_THRESHOLD) {
+async function expectDeviceSnapshotToMatch(snapshotName, ssimThreshold = SSIM_SCORE_THRESHOLD, androidSdk) {
   // Set status bar to consistent state for snapshot. Currently, doesn't work on iOS 17.
   await device.setStatusBar({ time: '2024-03-08T09:41:00-07:00' });
 
-  await expectElementSnapshotToMatch(device, snapshotName, ssimThreshold);
+  await expectElementSnapshotToMatch(device, snapshotName, ssimThreshold, androidSdk);
 }
 
 async function expectSSIMToBeClose(bitmapPath, expectedBitmapPath, ssimThreshold) {
