@@ -16,19 +16,19 @@ import androidx.test.espresso.IdlingResource.ResourceCallback
  * #### How does this wrapper fix flapping?
  *
  * This wrapper requires the wrapped resource to report itself as "idle" multiple times consecutively
- * before the wrapper itself is considered idle. This effectively lengthens the busy period,
- * significantly reducing the likelihood of it being missed by the idle interrogation process.
+ * before the wrapper itself is considered idle. This dramatically reduces the likelihood of it's busy phase being
+ * missed by the idle interrogation process.
  */
 class StabilizedIdlingResource(
     private val idlingResource: DetoxIdlingResource,
-    private val length: Int): DetoxIdlingResource(), ResourceCallback {
+    private val size: Int): DetoxIdlingResource(), ResourceCallback {
 
-    private val name = "${idlingResource.name} (stable@$length)"
+    private val name = "${idlingResource.name} (stable@$size)"
     private var idleCounter = 0
 
     init {
-        if (length <= 1) {
-            throw IllegalArgumentException("Gate size must be > 1 in order for this to make sense")
+        if (size <= 1) {
+            throw IllegalArgumentException("Size must be > 1 in order for the usage of this class to make sense")
         }
         idlingResource.registerIdleTransitionCallback(this)
     }
@@ -36,10 +36,10 @@ class StabilizedIdlingResource(
     /**
      * Implemented according to these 3 guiding principles:
      * 1. As long as the actual resource is busy - we consider ourselves busy too.
-     * 2. Once actual resource is idle enough times in a row - we consider ourselves "idle", in a sticky way
-     *   (indefinitely).
-     * 3. Before officially transitioning ourselves idle -> busy, we first have to actively notify Espresso about it via
-     *   the callback.
+     * 2. Once actual resource is idle enough times in a row - we consider ourselves "idle", in a *sticky* way
+     *   (until it returns "busy" in an interrogation).
+     * 3. Espresso requires that just before we officially transition ourselves -- idle -> busy, we actively notify it
+     *   via the callback.
      */
     @Synchronized
     override fun checkIdle(): Boolean {
@@ -48,14 +48,14 @@ class StabilizedIdlingResource(
             return false
         }
 
-        if (idleCounter < length) {
+        if (idleCounter < size) {
             idleCounter++
 
-            if (idleCounter == length) {
+            if (idleCounter == size) {
                 notifyIdle()
             }
         }
-        return (idleCounter == length)
+        return (idleCounter == size)
     }
 
     /**
