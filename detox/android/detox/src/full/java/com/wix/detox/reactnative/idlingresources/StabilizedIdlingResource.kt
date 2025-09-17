@@ -1,22 +1,23 @@
 package com.wix.detox.reactnative.idlingresources
 
 import androidx.test.espresso.IdlingResource.ResourceCallback
-
 /**
- * This can be used as a wrapper over actual idling resources which have an extreme flapping nature. It is meant to
- * artificially stabilize them, in the price of longer "busy" state periods.
+ * A wrapper for idling resources that exhibit "flapping" behavior.
+ * This wrapper artificially stabilizes them by mindfully extending their "busy" state periods.
  *
  * #### What does flapping mean?
  *
- * In some idling resources, the busy periods can be extremely short. While theoretically that shouldn't be an issue,
- * in the real world (e.g. in a React Native environment) the amount of idling resources can pile up. Unfortunately, the
- * idle interrogation process cannot take place "atomically", and with many resources involved it can end up missing
- * out on the busy periods of those that flap during the actual interrogation itself.
+ * Some idling resources have extremely short busy periods. While this shouldn't theoretically be an issue,
+ * in real-world scenarios (e.g., a React Native environment), the number of idling resources can accumulate.
+ * Unfortunately, the process of checking if all resources are idle (idle interrogation)
+ * isn't atomic. With many resources involved, this process might miss those brief busy periods
+ * of resources that "flap" (quickly switch between busy and idle) during the interrogation.
  *
  * #### How does this wrapper fix flapping?
  *
- * By demanding the wrapped resource to prove "idle" several times in row before actually considering ourselves idle, the
- * wrapper helps stretch the busy period, substantially reducing the odds of it being missed by the interrogator.
+ * This wrapper requires the wrapped resource to report itself as "idle" multiple times consecutively
+ * before the wrapper itself is considered idle. This effectively lengthens the busy period,
+ * significantly reducing the likelihood of it being missed by the idle interrogation process.
  */
 class StabilizedIdlingResource(
     private val idlingResource: DetoxIdlingResource,
