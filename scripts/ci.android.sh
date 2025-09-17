@@ -25,15 +25,12 @@ pushd detox/test
 
 run_f "npm run build:android"
 
-if [ "$USE_GENYCLOUD_ARM64" = "true" ]; then
-  run_f "npm run e2e:android:genycloud-arm64"
+if [ "$USE_GOOGLE_ARM64" = "true" ]; then
+  run_f "npm run e2e:android"
 else
   run_f "npm run e2e:android:genycloud"
 fi
 cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
-
-run_f "npm run e2e:android -- e2e/01* e2e/02* e2e/03.actions*"
-cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
 
 run_f "scripts/ci_unhappy.sh android"
 
