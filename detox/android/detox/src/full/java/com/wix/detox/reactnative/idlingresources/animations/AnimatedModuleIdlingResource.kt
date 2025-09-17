@@ -8,12 +8,11 @@ import com.facebook.react.animated.NativeAnimatedModule
 import com.facebook.react.animated.NativeAnimatedNodesManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
+import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
-
-private const val LOG_TAG = "Detox"
 
 class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
@@ -27,7 +26,7 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
     override fun checkIdle(): Boolean {
         val animatedModule = getAnimatedModule()
         if (animatedModule == null) {
-            Log.w(LOG_TAG, "AnimatedModule is idle because animatedModule is not available")
+            Log.w(LOG_TAG, "AnimatedModule is idle because the native-module is not available")
             return false
         }
 
