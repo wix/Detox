@@ -1,10 +1,12 @@
 package com.wix.detox.espresso.hierarchy
 
+import android.util.DisplayMetrics
 import android.util.Xml
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.TextView
+import com.wix.detox.espresso.DeviceDisplay
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -63,6 +65,7 @@ object ViewHierarchyGenerator {
                 startDocument(Xml.Encoding.UTF_8.name, true)
                 setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true)
                 startTag("", "ViewHierarchy")
+                attribute("", "density", DeviceDisplay.getDensity().toString())
             }
 
             rootViews?.forEach { rootView ->
