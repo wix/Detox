@@ -59,7 +59,11 @@ module.exports = async () => {
       'eventListeners': [
         'jest-metadata/environment-listener',
         'jest-allure2-reporter/environment-listener',
-        require.resolve('detox-allure2-adapter'),
+        [require.resolve('detox-allure2-adapter'), {
+          deviceLogs: true,
+          deviceScreenshots: true,
+          deviceVideos: false,
+        }],
         require.resolve('./utils/rnSkipper'),
       ]
     },
