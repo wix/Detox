@@ -120,15 +120,13 @@ class RuntimeDevice {
       ? params.newInstance
       : this._processes[bundleId] == null;
 
-    if (params.delete) {
+    if (params.resetAppState) {
       await this.terminateApp(bundleId);
-
-      if (this._behaviorConfig.optimizeReinstall) {
-        await this.resetAppState(bundleId);
-      } else {
-        await this.uninstallApp();
-        await this.installApp();
-      }
+      await this.resetAppState(bundleId);
+    } else if (params.delete) {
+      await this.terminateApp(bundleId);
+      await this.uninstallApp();
+      await this.installApp();
     } else if (newInstance) {
       await this.terminateApp(bundleId);
     }

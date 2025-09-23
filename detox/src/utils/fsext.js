@@ -20,7 +20,11 @@ async function getDirectories (rootPath) {
 }
 
 module.exports = {
+  copy: fs.copy,
+  ensureDir: fs.ensureDir,
+  exists: fs.exists,
   getDirectories,
   isDirEmptySync,
   readdirSync: fs.readdirSync,
+  remove: fs.remove,
 };

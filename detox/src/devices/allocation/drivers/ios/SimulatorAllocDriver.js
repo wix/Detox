@@ -7,6 +7,7 @@
 const _ = require('lodash');
 
 const { DetoxRuntimeError } = require('../../../../errors');
+const SimulatorAppCache = require('../../../common/drivers/ios/tools/SimulatorAppCache');
 const log = require('../../../../utils/logger').child({ cat: 'device,device-allocation' });
 
 const SimulatorQuery = require('./SimulatorQuery');
@@ -24,6 +25,7 @@ class SimulatorAllocDriver {
   constructor({ detoxConfig, deviceRegistry, applesimutils }) {
     this._deviceRegistry = deviceRegistry;
     this._applesimutils = applesimutils;
+    this._appCache = new SimulatorAppCache({ applesimutils });
     this._launchInfo = {};
     this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
   }
@@ -58,7 +60,9 @@ class SimulatorAllocDriver {
   async postAllocate(deviceCookie) {
     const { udid } = deviceCookie;
     const { deviceConfig } = this._launchInfo[udid];
+
     await this._applesimutils.boot(udid, deviceConfig.bootArgs, deviceConfig.headless);
+    await this._appCache.cleanup(udid);
 
     return {
       id: udid,
@@ -86,12 +90,15 @@ class SimulatorAllocDriver {
   }
 
   async cleanup() {
+    const sessionDevices = await this._deviceRegistry.readSessionDevices();
+    const deviceIds = sessionDevices.getIds();
+
     if (this._shouldShutdown) {
-      const sessionDevices = await this._deviceRegistry.readSessionDevices();
-      const shutdownPromises = sessionDevices.getIds().map((udid) => this._doShutdown(udid));
+      const shutdownPromises = deviceIds.map((udid) => this._doShutdown(udid));
       await Promise.all(shutdownPromises);
     }
 
+    await Promise.all(deviceIds.map((udid) => this._appCache.cleanup(udid)));
     await this._deviceRegistry.unregisterSessionDevices();
   }
 

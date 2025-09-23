@@ -1,7 +1,7 @@
-jest.mock('../../../../ios/XCUITestRunner');
-jest.mock('./AppStateResetShim');
-
 // @ts-nocheck
+jest.mock('../../../../ios/XCUITestRunner');
+jest.mock('./AppStateResetFallback');
+
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
   const type = 'Chika';
@@ -13,8 +13,8 @@ describe('IOS simulator driver', () => {
   let eventEmitter;
   let applesimutils;
   let uut;
-  let AppStateResetShimMock;
-  let appStateResetShimInstance;
+  let AppStateResetFallbackMock;
+  let appStateResetFallbackInstance;
 
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
@@ -29,15 +29,9 @@ describe('IOS simulator driver', () => {
     const AppleSimUtils = jest.createMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
 
-    // Mock AppStateResetShim
-    AppStateResetShimMock = jest.requireMock('./AppStateResetShim');
-    appStateResetShimInstance = {
-      backupApp: jest.fn().mockResolvedValue(),
-      restoreApp: jest.fn().mockResolvedValue(),
-      cleanup: jest.fn().mockResolvedValue(),
-      resetMultipleApps: jest.fn().mockResolvedValue(),
-    };
-    AppStateResetShimMock.mockImplementation(() => appStateResetShimInstance);
+    AppStateResetFallbackMock = jest.requireMock('./AppStateResetFallback');
+    appStateResetFallbackInstance = new AppStateResetFallbackMock();
+    AppStateResetFallbackMock.mockImplementation(() => appStateResetFallbackInstance);
 
     const SimulatorDriver = require('./SimulatorDriver');
     uut = new SimulatorDriver(
@@ -260,17 +254,17 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
-    it('fails to match a face by passing to AppleSimUtils', async () => {
+    it('unmatches a face by passing to AppleSimUtils', async () => {
       await uut.unmatchFace();
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
-    it('matches a face by passing to AppleSimUtils', async () => {
+    it('matches a finger by passing to AppleSimUtils', async () => {
       await uut.matchFinger();
       expect(applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
 
-    it('fails to match a finger by passing to AppleSimUtils', async () => {
+    it('unmatches a finger by passing to AppleSimUtils', async () => {
       await uut.unmatchFinger();
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
@@ -279,13 +273,13 @@ describe('IOS simulator driver', () => {
   describe('.resetAppState', () => {
     it('should reset app state using the shim', async () => {
       await uut.resetAppState(bundleId);
-      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, [bundleId]);
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, [bundleId]);
     });
 
     it('should use default bundleId when none provided', async () => {
       uut._bundleId = 'default.bundle';
       await uut.resetAppState();
-      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, ['default.bundle']);
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, ['default.bundle']);
     });
 
     it('should handle multiple bundleIds', async () => {
@@ -293,7 +287,7 @@ describe('IOS simulator driver', () => {
       const bundleId2 = 'com.app2';
 
       await uut.resetAppState(bundleId1, bundleId2);
-      expect(appStateResetShimInstance.resetMultipleApps).toHaveBeenCalledWith(udid, [bundleId1, bundleId2]);
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, [bundleId1, bundleId2]);
     });
   });
 });
