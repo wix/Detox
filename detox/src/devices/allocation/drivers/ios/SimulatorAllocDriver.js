@@ -172,7 +172,7 @@ class SimulatorAllocDriver {
       deviceQuery,
       {
         trying: `Searching for device ${deviceQuery} ...`,
-        fields: ['udid', 'os', 'identifier'],
+        fields: ['udid', 'name', 'deviceType', 'os', 'identifier'],
       }
     );
 
