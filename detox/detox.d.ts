@@ -779,7 +779,7 @@ declare global {
              * On Android, this command clears the app's data using the `pm clear` command,
              * effectively resetting the app to its initial installed state without uninstalling it.
              *
-             * On iOS, Detox uses a fallback mechanism - it backs up, deletes and installs the app again.
+             * On iOS, Detox uses a fallback mechanism - it backs up, deletes and installs the app from cache.
              * This process ensures the app is returned to a clean state.
              *
              * @param bundleIds Optional bundle IDs to reset. If none provided, resets the currently selected app.

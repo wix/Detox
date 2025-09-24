@@ -163,7 +163,7 @@ Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 
 
 #### 6. `resetAppState`—Reset App State Before Launching
 
-Resets the app’s state and launches without necesarily performing a full uninstall/reinstall cycle.
+Resets the app’s state and launches without necessarily performing a full uninstall/reinstall cycle.
 
 - Android: clears app data using `pm clear`, which is typically faster than reinstalling.
 - iOS: uninstalls and reinstalls the app to restore a clean state.
