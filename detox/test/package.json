@@ -41,7 +41,7 @@
     "@react-native-segmented-control/segmented-control": "^2.5.6",
     "moment": "^2.30.1",
     "react": "19.1.0",
-    "react-native": "0.80.2",
+    "react-native": "0.81.4",
     "react-native-launch-arguments": "^4.0.2",
     "react-native-permissions": "^5.2.1",
     "react-native-webview": "^13.13.1",

@@ -62,7 +62,7 @@
     "jest-allure2-reporter": "^2.2.6",
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "^3.1.1",
-    "react-native": "0.80.2",
+    "react-native": "0.81.4",
     "react-native-codegen": "^0.0.8",
     "typescript": "~5.3.3",
     "wtfnode": "^0.9.1"
