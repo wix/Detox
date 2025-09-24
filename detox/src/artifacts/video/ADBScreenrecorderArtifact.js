@@ -8,7 +8,7 @@ class ADBVideoRecording extends Artifact {
   constructor(config) {
     super(config);
 
-    this.adb = config.adb;
+    this.adb = config.adb.bind({ deviceId: config.deviceId });
     this.deviceId = config.deviceId;
     this.pathToVideoOnDevice = config.pathToVideoOnDevice;
     this.screenRecordOptions = config.screenRecordOptions || {};
@@ -18,7 +18,7 @@ class ADBVideoRecording extends Artifact {
   }
 
   async doStart() {
-    this.processPromise = this.adb.screenrecord(this.deviceId, {
+    this.processPromise = this.adb.screenrecord({
       ...this.screenRecordOptions,
       path: this.pathToVideoOnDevice
     });
@@ -40,17 +40,17 @@ class ADBVideoRecording extends Artifact {
 
   async doSave(artifactPath) {
     await this._waitWhileVideoIsBusy;
-    await this.adb.pull(this.deviceId, this.pathToVideoOnDevice, artifactPath);
-    await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
+    await this.adb.pull(this.pathToVideoOnDevice, artifactPath);
+    await this.adb.rm(this.pathToVideoOnDevice);
   }
 
   async doDiscard() {
     await this._waitWhileVideoIsBusy;
-    await this.adb.rm(this.deviceId, this.pathToVideoOnDevice);
+    await this.adb.rm(this.pathToVideoOnDevice);
   }
 
   async _assertVideoIsBeingRecorded() {
-    const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
+    const size = await this.adb.getFileSize(this.pathToVideoOnDevice);
 
     if (size < 1) {
       throw new DetoxRuntimeError({
@@ -60,7 +60,7 @@ class ADBVideoRecording extends Artifact {
   }
 
   async _assertVideoIsNotOpenedByProcesses() {
-    const size = await this.adb.getFileSize(this.deviceId, this.pathToVideoOnDevice);
+    const size = await this.adb.getFileSize(this.pathToVideoOnDevice);
 
     if (size < 1) {
       throw new DetoxRuntimeError({
