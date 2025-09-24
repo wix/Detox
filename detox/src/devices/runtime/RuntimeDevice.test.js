@@ -355,13 +355,11 @@ describe('Device', () => {
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
-    it(`(relaunch) with delete=true (optimized mode)`, async () => {
+    it(`(relaunch) with resetAppState=true`, async () => {
       const expectedArgs = expectedDriverArgs;
-      const device = await aValidDevice({
-        behaviorConfig: { optimizeReinstall: true }
-      });
+      const device = await aValidDevice({});
 
-      await device.relaunchApp({ delete: true });
+      await device.relaunchApp({ resetAppState: true });
 
       expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
       expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();

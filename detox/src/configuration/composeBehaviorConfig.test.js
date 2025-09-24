@@ -25,7 +25,6 @@ describe('composeBehaviorConfig', () => {
         exposeGlobals: true,
         reinstallApp: true,
       },
-      optimizeReinstall: false,
       launchApp: 'auto',
       cleanup: {
         shutdownDevice: false,
@@ -57,7 +56,6 @@ describe('composeBehaviorConfig', () => {
             reinstallApp: false,
           },
           launchApp: 'manual',
-          optimizeReinstall: true,
           cleanup: {
             shutdownDevice: true,
           },
@@ -82,7 +80,6 @@ describe('composeBehaviorConfig', () => {
               reinstallApp: true,
             },
             launchApp: 'auto',
-            optimizeReinstall: false,
             cleanup: {
               shutdownDevice: false,
             },

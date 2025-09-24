@@ -85,13 +85,6 @@ declare global {
                  */
                 keepLockFile?: boolean;
             };
-            /**
-             * When true, Detox will use device.resetAppState() instead of uninstalling
-             * and reinstalling the app during device.launchApp({delete: true}).
-             *
-             * @default false
-             */
-            optimizeReinstall?: boolean;
             launchApp?: 'auto' | 'manual';
             cleanup?: {
                 shutdownDevice?: boolean;
@@ -786,10 +779,10 @@ declare global {
              * On Android, this command clears the app's data using the `pm clear` command,
              * effectively resetting the app to its initial installed state without uninstalling it.
              *
-             * On iOS, Detox uses a shim to back up, delete, and restore the app's data.
+             * On iOS, Detox uses a fallback mechanism - it backs up, deletes and installs the app again.
              * This process ensures the app is returned to a clean state.
              *
-             * @param bundleIds Optional bundle IDs to reset. If none provided, resets the current app.
+             * @param bundleIds Optional bundle IDs to reset. If none provided, resets the currently selected app.
              * @example
              * // Reset current app state
              * await device.resetAppState();
@@ -2043,6 +2036,13 @@ declare global {
              * Launch with user activity
              */
             userActivity?: any;
+            /**
+             * Similar to {@link Detox.DeviceLaunchAppConfig.delete | { delete: true }}, but instead of uninstalling and installing the app,
+             * it runs {@link Detox.Device.resetAppState | device.resetAppState()} instead.
+             * @example
+             * await device.launchApp({resetAppState: true});
+             */
+            resetAppState?: boolean;
             /**
              * Launch into a fresh installation
              * A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is false.

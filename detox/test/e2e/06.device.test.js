@@ -37,6 +37,15 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
+  it.failing('uninstall() + resetAppState() - should fail', async () => {
+    try {
+      await device.uninstallApp();
+      await device.resetAppState();
+    } finally {
+      await device.installApp();
+    }
+  });
+
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
     await device.launchApp({newInstance: true});
     await element(by.text('Sanity')).tap();

@@ -149,7 +149,15 @@ class ADB {
   }
 
   async clearAppData(deviceId, packageId) {
-    return await this.shell(deviceId, `pm clear ${packageId}`);
+    try {
+      return await this.shell(deviceId, `pm clear ${packageId}`);
+    } catch (reason) {
+      throw new DetoxRuntimeError({
+        message: `Failed to clear ${packageId} app data on ${deviceId}`,
+        hint: `Please verify that the package is installed on the device:\nadb -s ${deviceId} shell pm list packages ${packageId}`,
+        debugInfo: reason,
+      });
+    }
   }
 
   async setLocation(deviceId, lat, lon) {

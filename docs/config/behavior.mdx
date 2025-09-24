@@ -18,7 +18,6 @@ you have a few options to change. These are the default behavior values:
       "reinstallApp": true,
       "exposeGlobals": true,
     },
-    "optimizeReinstall": false,
     "launchApp": "auto",
     "cleanup": {
       "shutdownDevice": false
@@ -68,21 +67,6 @@ be waiting until you launch it manually from IDE and press any key to resume the
 execution. This is useful when you want to [debug the native codebase](../introduction/debugging.mdx) when running Detox tests.
 
 Also, setting it to `manual` resets `behavior.reinstallApp` to _false_.
-
-### `behavior.optimizeReinstall` \[boolean]
-
-Default: `false`.
-
-When _true_, Detox will use [`device.resetAppState()`](../api/device.md#deviceresetappstatebundleids) instead of uninstalling and reinstalling the app during [`device.launchApp({delete: true})`](../api/device.md#devicelaunchappparams).
-
-```js
-// In your detox.config.js
-module.exports = {
-  behavior: {
-    optimizeReinstall: true
-  }
-};
-```
 
 ### `behavior.cleanup.shutdownDevice` \[boolean]
 
