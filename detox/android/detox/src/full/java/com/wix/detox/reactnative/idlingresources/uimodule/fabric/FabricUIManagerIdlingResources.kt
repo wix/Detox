@@ -50,7 +50,12 @@ class FabricUIManagerIdlingResources(
 
     private fun getMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
-        val mountItems = Reflect.on(mountItemDispatcher).field("mMountItems").get<ConcurrentLinkedQueue<*>>()
+        val mountItemsFiledName = if (ReactNativeInfo.rnVersion().minor > 80) {
+            "mountItems"
+        } else {
+            "mMountItems"
+        }
+        val mountItems = Reflect.on(mountItemDispatcher).field(mountItemsFiledName).get<ConcurrentLinkedQueue<*>>()
         return mountItems.size
     }
 
@@ -62,8 +67,13 @@ class FabricUIManagerIdlingResources(
 
     private fun getViewCommandMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
+        val viewCommandMountItemsFiledName = if (ReactNativeInfo.rnVersion().minor > 80) {
+            "viewCommandMountItems"
+        } else {
+            "mViewCommandMountItems"
+        }
         val viewCommandMountItems =
-            Reflect.on(mountItemDispatcher).field("mViewCommandMountItems").get<ConcurrentLinkedQueue<*>>()
+            Reflect.on(mountItemDispatcher).field(viewCommandMountItemsFiledName).get<ConcurrentLinkedQueue<*>>()
         return viewCommandMountItems.size
     }
 

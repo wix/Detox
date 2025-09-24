@@ -47,4 +47,5 @@ ext.rnInfo = [
     isRN78OrHigher: rnMajorVer >= 78,
     isRN79OrHigher: rnMajorVer >= 79,
     isRN80OrHigher: rnMajorVer >= 80,
+    isRN81OrHigher: rnMajorVer >= 81,
 ]
