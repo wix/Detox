@@ -19,8 +19,21 @@ async function getDirectories (rootPath) {
   return dirs.sort();
 }
 
+async function remove(filePath) {
+  if (await fs.exists(filePath)) {
+    await fs.remove(filePath);
+    return true;
+  }
+
+  return false;
+}
+
 module.exports = {
+  copy: fs.copy,
+  ensureDir: fs.ensureDir,
+  exists: fs.exists,
   getDirectories,
   isDirEmptySync,
   readdirSync: fs.readdirSync,
+  remove,
 };

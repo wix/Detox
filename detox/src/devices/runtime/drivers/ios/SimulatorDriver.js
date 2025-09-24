@@ -15,6 +15,7 @@ const log = require('../../../../utils/logger').child({ cat: 'device' });
 const pressAnyKey = require('../../../../utils/pressAnyKey');
 const traceInvocationCall = require('../../../../utils/traceInvocationCall').bind(null, log);
 
+const AppStateResetFallback = require('./AppStateResetFallback');
 const IosDriver = require('./IosDriver');
 
 /**
@@ -37,12 +38,15 @@ class SimulatorDriver extends IosDriver {
   constructor(deps, { udid, type, bootArgs, headless }) {
     super(deps);
 
+    this.getBundleIdFromBinary = _.memoize(this.getBundleIdFromBinary.bind(this));
+
     this.udid = udid;
     this._type = type;
     this._bootArgs = bootArgs;
     this._headless = headless;
     this._deviceName = `${udid} (${this._type})`;
     this._applesimutils = deps.applesimutils;
+    this._appStateResetFallback = new AppStateResetFallback({ applesimutils: this._applesimutils });
   }
 
   withAction(xcuitestRunner, action, traceDescription, ...params) {
@@ -80,13 +84,24 @@ class SimulatorDriver extends IosDriver {
   }
 
   async installApp(binaryPath) {
-    await this._applesimutils.install(this.udid, getAbsoluteBinaryPath(binaryPath));
+    const absoluteBinaryPath = getAbsoluteBinaryPath(binaryPath);
+    await this._applesimutils.install(this.udid, absoluteBinaryPath);
+
+    const bundleId = await this.getBundleIdFromBinary(binaryPath);
+    await this._appStateResetFallback.invalidate(this.udid, bundleId);
   }
 
   async uninstallApp(bundleId) {
     const { udid } = this;
     await this.emitter.emit('beforeUninstallApp', { deviceId: udid, bundleId });
     await this._applesimutils.uninstall(udid, bundleId);
+    await this._appStateResetFallback.invalidate(udid, bundleId);
+  }
+
+  async resetAppState(...bundleIds) {
+    const { udid } = this;
+    const _bundleIds = bundleIds.length > 0 ? bundleIds : [this._bundleId];
+    await this._appStateResetFallback.resetAppState(udid, _bundleIds);
   }
 
   async launchApp(bundleId, launchArgs, languageAndLocale) {
@@ -186,6 +201,7 @@ class SimulatorDriver extends IosDriver {
     await this._applesimutils.shutdown(this.udid);
     await this.emitter.emit('shutdownDevice', { deviceId: this.udid });
     await this._applesimutils.resetContentAndSettings(this.udid);
+    await this._appStateResetFallback.invalidate(this.udid);
     await this._applesimutils.boot(this.udid, this._bootArgs, this._headless);
     await this.emitter.emit('bootDevice', { deviceId: this.udid });
   }

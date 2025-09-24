@@ -20,6 +20,7 @@ function which(executable, path) {
 const DETOX_LIBRARY_ROOT_PATH = path.join(appdatapath.appDataPath(), 'Detox');
 const MISSING_SDK_ERROR = `$ANDROID_SDK_ROOT is not defined, set the path to the SDK installation directory into $ANDROID_SDK_ROOT,
 Go to https://developer.android.com/studio/command-line/variables.html for more details`;
+const DETOX_APPS_CACHE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'apps-cache');
 const DETOX_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'global-context.json');
 const DEVICE_REGISTRY_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.json');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
@@ -217,6 +218,16 @@ function getDetoxLibraryRootPath() {
   return DETOX_LIBRARY_ROOT_PATH;
 }
 
+function getDetoxAppsCachePath(udid, bundleId) {
+  if (udid && bundleId) {
+    return path.join(DETOX_APPS_CACHE_PATH, udid, bundleId);
+  } else if (udid) {
+    return path.join(DETOX_APPS_CACHE_PATH, udid);
+  } else {
+    return DETOX_APPS_CACHE_PATH;
+  }
+}
+
 function getDetoxLockFilePath() {
   return DETOX_LOCK_FILE_PATH;
 }
@@ -249,6 +260,7 @@ module.exports = {
   getXCUITestRunnerPath,
   getAndroidSDKPath,
   getAndroidEmulatorPath,
+  getDetoxAppsCachePath,
   getDetoxLibraryRootPath,
   getDetoxLockFilePath,
   getDeviceRegistryPath,

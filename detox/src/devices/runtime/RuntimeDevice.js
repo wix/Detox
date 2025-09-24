@@ -31,6 +31,7 @@ class RuntimeDevice {
       'pressBack',
       'relaunchApp',
       'reloadReactNative',
+      'resetAppState',
       'resetContentAndSettings',
       'resetStatusBar',
       'reverseTcpPort',
@@ -119,7 +120,10 @@ class RuntimeDevice {
       ? params.newInstance
       : this._processes[bundleId] == null;
 
-    if (params.delete) {
+    if (params.resetAppState) {
+      await this.terminateApp(bundleId);
+      await this.resetAppState(bundleId);
+    } else if (params.delete) {
       await this.terminateApp(bundleId);
       await this.uninstallApp();
       await this.installApp();
@@ -259,6 +263,11 @@ class RuntimeDevice {
   async uninstallApp(bundleId) {
     const _bundleId = bundleId || this._bundleId;
     await this.deviceDriver.uninstallApp(_bundleId);
+  }
+
+  async resetAppState(...bundleIds) {
+    const _bundleIds = bundleIds.length > 0 ? bundleIds : [this._bundleId];
+    await this.deviceDriver.resetAppState(..._bundleIds);
   }
 
   async installUtilBinaries() {

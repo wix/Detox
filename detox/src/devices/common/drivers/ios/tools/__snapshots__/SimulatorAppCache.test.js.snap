@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`SimulatorAppCache backup should throw error when app not found on device 1`] = `
+[DetoxRuntimeError: App with bundle ID 'com.test.app' is not installed on this device (test-device-123). Please install the app first before attempting to reset its state.
+
+HINT: To check apps installed on the device, use: xcrun simctl listapps test-device-123
+
+Command failed: node -e process.exitCode=1]
+`;
+
+exports[`SimulatorAppCache restore should throw error when cache not found 1`] = `
+[DetoxInternalError: No backup found for bundle ID 'com.test.app' on device test-device-123. This should not happen unless you're calling SimulatorAppCache#restore() directly.
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues]
+`;

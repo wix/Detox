@@ -1,6 +1,7 @@
-jest.mock('../../../../ios/XCUITestRunner');
-
 // @ts-nocheck
+jest.mock('../../../../ios/XCUITestRunner');
+jest.mock('./AppStateResetFallback');
+
 describe('IOS simulator driver', () => {
   const udid = 'UD-1D-MOCK';
   const type = 'Chika';
@@ -12,6 +13,9 @@ describe('IOS simulator driver', () => {
   let eventEmitter;
   let applesimutils;
   let uut;
+  let AppStateResetFallbackMock;
+  let appStateResetFallbackInstance;
+
   beforeEach(() => {
     const AsyncEmitter = require('../../../../utils/AsyncEmitter');
     eventEmitter = new AsyncEmitter({
@@ -24,6 +28,10 @@ describe('IOS simulator driver', () => {
 
     const AppleSimUtils = jest.createMockFromModule('../../../common/drivers/ios/tools/AppleSimUtils');
     applesimutils = new AppleSimUtils();
+
+    AppStateResetFallbackMock = jest.requireMock('./AppStateResetFallback');
+    appStateResetFallbackInstance = new AppStateResetFallbackMock();
+    AppStateResetFallbackMock.mockImplementation(() => appStateResetFallbackInstance);
 
     const SimulatorDriver = require('./SimulatorDriver');
     uut = new SimulatorDriver(
@@ -191,6 +199,29 @@ describe('IOS simulator driver', () => {
     });
   });
 
+  describe('.installApp', () => {
+    it('should install via AppleSimUtils and invalidate cache with bundleId and binary path', async () => {
+      const binaryPath = '/tmp/MyApp.app';
+      const resolvedBundleId = 'com.example.myapp';
+
+      uut.getBundleIdFromBinary = jest.fn().mockResolvedValue(resolvedBundleId);
+
+      await uut.installApp(binaryPath);
+
+      expect(applesimutils.install).toHaveBeenCalledWith(udid, binaryPath);
+      expect(appStateResetFallbackInstance.invalidate).toHaveBeenCalledWith(udid, resolvedBundleId);
+    });
+  });
+
+  describe('.uninstallApp', () => {
+    it('should uninstall via AppleSimUtils and invalidate specific app cache', async () => {
+      await uut.uninstallApp(bundleId);
+
+      expect(applesimutils.uninstall).toHaveBeenCalledWith(udid, bundleId);
+      expect(appStateResetFallbackInstance.invalidate).toHaveBeenCalledWith(udid, bundleId);
+    });
+  });
+
   describe('.resetContentAndSettings', () => {
     it('should shut the device down', async () => {
       await uut.resetContentAndSettings();
@@ -205,6 +236,11 @@ describe('IOS simulator driver', () => {
     it('should relaunch the simulator', async () => {
       await uut.resetContentAndSettings();
       expect(applesimutils.boot).toHaveBeenCalledWith(udid, bootArgs, true);
+    });
+
+    it('should invalidate the apps cache', async () => {
+      await uut.resetContentAndSettings();
+      expect(appStateResetFallbackInstance.invalidate).toHaveBeenCalledWith(udid);
     });
   });
 
@@ -246,19 +282,40 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
-    it('fails to match a face by passing to AppleSimUtils', async () => {
+    it('unmatches a face by passing to AppleSimUtils', async () => {
       await uut.unmatchFace();
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Face');
     });
 
-    it('matches a face by passing to AppleSimUtils', async () => {
+    it('matches a finger by passing to AppleSimUtils', async () => {
       await uut.matchFinger();
       expect(applesimutils.matchBiometric).toHaveBeenCalledWith(udid, 'Finger');
     });
 
-    it('fails to match a face by passing to AppleSimUtils', async () => {
+    it('unmatches a finger by passing to AppleSimUtils', async () => {
       await uut.unmatchFinger();
       expect(applesimutils.unmatchBiometric).toHaveBeenCalledWith(udid, 'Finger');
+    });
+  });
+
+  describe('.resetAppState', () => {
+    it('should reset app state using the shim', async () => {
+      await uut.resetAppState(bundleId);
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, [bundleId]);
+    });
+
+    it('should use default bundleId when none provided', async () => {
+      uut._bundleId = 'default.bundle';
+      await uut.resetAppState();
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, ['default.bundle']);
+    });
+
+    it('should handle multiple bundleIds', async () => {
+      const bundleId1 = 'com.app1';
+      const bundleId2 = 'com.app2';
+
+      await uut.resetAppState(bundleId1, bundleId2);
+      expect(appStateResetFallbackInstance.resetAppState).toHaveBeenCalledWith(udid, [bundleId1, bundleId2]);
     });
   });
 });
