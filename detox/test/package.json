@@ -68,7 +68,7 @@
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
     "detox": "^20.41.3",
-    "detox-allure2-adapter": "^1.0.0-alpha.8",
+    "detox-allure2-adapter": "1.0.0-alpha.29",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
     "execa": "^5.1.1",
