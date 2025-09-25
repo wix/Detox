@@ -30,7 +30,8 @@ module.exports = async () => {
       'version.node': process.version,
       'version.jest': await $.manifest('jest', 'version'),
       'version.jest-metadata': await $.manifest('jest-metadata', 'version'),
-      'version.allure-reporter': await $.manifest('jest-allure2-reporter', 'version'),
+      'version.allure-reporter': require('jest-allure2-reporter/package.json').version,
+      'version.detox-allure2-adapter': require('detox-allure2-adapter/package.json').version,
       ..._(process.env)
         .pickBy((_1, key) => key.match(/detox/i))
         .mapKeys((_1, key) => 'env.' + key)
