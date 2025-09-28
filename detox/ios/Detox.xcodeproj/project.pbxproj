@@ -134,6 +134,8 @@
 		60C1961B271F11C4000172DD /* fishhook.c in Sources */ = {isa = PBXBuildFile; fileRef = 60C19619271F11C4000172DD /* fishhook.c */; };
 		60E149C72759038F00519EE4 /* UIResponder+First.h in Headers */ = {isa = PBXBuildFile; fileRef = 60E149C52759038F00519EE4 /* UIResponder+First.h */; };
 		60E149C82759038F00519EE4 /* UIResponder+First.m in Sources */ = {isa = PBXBuildFile; fileRef = 60E149C62759038F00519EE4 /* UIResponder+First.m */; };
+		7D3919B02E89062800D16E3A /* DetoxSwiftBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D3919AD2E89062800D16E3A /* DetoxSwiftBridge.h */; };
+		7D3919B12E89062800D16E3A /* DetoxSwiftBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3919AE2E89062800D16E3A /* DetoxSwiftBridge.m */; };
 		AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4781092636F7CF006774CD /* NSURL+DetoxUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */; };
 /* End PBXBuildFile section */
@@ -346,6 +348,8 @@
 		60C19619271F11C4000172DD /* fishhook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fishhook.c; path = DetoxSync/DetoxSync/fishhook/fishhook.c; sourceTree = SOURCE_ROOT; };
 		60E149C52759038F00519EE4 /* UIResponder+First.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIResponder+First.h"; sourceTree = "<group>"; };
 		60E149C62759038F00519EE4 /* UIResponder+First.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+First.m"; sourceTree = "<group>"; };
+		7D3919AD2E89062800D16E3A /* DetoxSwiftBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetoxSwiftBridge.h; sourceTree = "<group>"; };
+		7D3919AE2E89062800D16E3A /* DetoxSwiftBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetoxSwiftBridge.m; sourceTree = "<group>"; };
 		AD4781062636F7CE006774CD /* NSURL+DetoxUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+DetoxUtils.h"; sourceTree = "<group>"; };
 		AD4781072636F7CF006774CD /* NSURL+DetoxUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+DetoxUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -488,6 +492,7 @@
 		3980D130244C42E7004812DD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				7D3919AF2E89062800D16E3A /* SwiftSupport */,
 				397CA7982483F07D005E8A71 /* ApproximateEquality.swift */,
 				39E91C06247D6BB00099F8F3 /* DetoxCrashHandler.h */,
 				39FFD9451FD730A600C97030 /* DetoxCrashHandler.mm */,
@@ -724,6 +729,15 @@
 			name = Runtime;
 			sourceTree = "<group>";
 		};
+		7D3919AF2E89062800D16E3A /* SwiftSupport */ = {
+			isa = PBXGroup;
+			children = (
+				7D3919AD2E89062800D16E3A /* DetoxSwiftBridge.h */,
+				7D3919AE2E89062800D16E3A /* DetoxSwiftBridge.m */,
+			);
+			path = SwiftSupport;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -755,6 +769,7 @@
 				3980D10F2448B52C004812DD /* UIApplication+DTXAdditions.h in Headers */,
 				3980D1172448B52C004812DD /* DTXRunLoopSpinner.h in Headers */,
 				AD4781082636F7CF006774CD /* NSURL+DetoxUtils.h in Headers */,
+				7D3919B02E89062800D16E3A /* DetoxSwiftBridge.h in Headers */,
 				6062B5E32720323700CBDBF0 /* NSArray+Utils.h in Headers */,
 				3980D135244C4373004812DD /* UIView+DetoxMatchers.h in Headers */,
 				3980D16D244DDCD7004812DD /* UIScrollView+DetoxActions.h in Headers */,
@@ -993,6 +1008,7 @@
 				39FFD9471FD730A600C97030 /* DetoxCrashHandler.mm in Sources */,
 				3980D136244C4373004812DD /* UIView+DetoxMatchers.m in Sources */,
 				392324DF24781CBD00A3D119 /* WebSocket.swift in Sources */,
+				7D3919B12E89062800D16E3A /* DetoxSwiftBridge.m in Sources */,
 				600A0AB42B99B1DF00937051 /* WebCodeBuilder+createExpectation.swift in Sources */,
 				60C1961B271F11C4000172DD /* fishhook.c in Sources */,
 				600A0A7B2B9376D600937051 /* WebCodeBuilder.swift in Sources */,

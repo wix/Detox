@@ -8,6 +8,7 @@
 
 #import "ReactNativeSupport.h"
 #import "ReactNativeHeaders.h"
+#import "DetoxSwiftBridge.h"
 
 #include <dlfcn.h>
 #include <stdatomic.h>
@@ -68,6 +69,13 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
     NSObject<UIApplicationDelegate> *appDelegate = UIApplication.sharedApplication.delegate;
     
     NSObject *rootViewFactory = nil;
+    
+    rootViewFactory = [DetoxSwiftBridge getRootViewFactory];
+    if (rootViewFactory != nil) {
+        dtx_log_info(@"Using Swift bridge to access root view factory");
+        return [rootViewFactory valueForKey:@"reactHost"];
+    }
+    
     @try {
         rootViewFactory = [appDelegate valueForKey:@"rootViewFactory"];
     } @catch (NSException *exception) {
@@ -75,7 +83,7 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
             NSObject *reactNativeFactory = [appDelegate valueForKey:@"reactNativeFactory"];
             rootViewFactory = [reactNativeFactory valueForKey:@"rootViewFactory"];
         } @catch (NSException *exception) {
-            [NSException raise:@"Invalid AppDelegate" format:@"Could not access rootViewFactory. Make sure your AppDelegate either: Inherits from RCTAppDelegate Or defines 'reactNativeFactory'" ];
+            [NSException raise:@"Invalid AppDelegate" format:@"Could not access rootViewFactory. Make sure your AppDelegate either: Inherits from RCTAppDelegate, defines 'reactNativeFactory', or implements DetoxReactNativeBridgeProtocol for Swift AppDelegates" ];
         }
     }
     return [rootViewFactory valueForKey:@"reactHost"];
