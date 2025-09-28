@@ -50,23 +50,24 @@ DTX_CREATE_LOG(SwiftBridge);
         return nil;
     }
     
-    Class objectClass = [object class];
+    @try {
+        NSObject *value = [object valueForKey:propertyName];
+        if (value) return value;
+    } @catch (NSException *exception) {}
     
+    Class objectClass = [object class];
     while (objectClass) {
         unsigned int ivarCount;
         Ivar *ivars = class_copyIvarList(objectClass, &ivarCount);
         
         for (unsigned int i = 0; i < ivarCount; i++) {
-            Ivar ivar = ivars[i];
-            const char *ivarName = ivar_getName(ivar);
-            
+            const char *ivarName = ivar_getName(ivars[i]);
             if (ivarName) {
                 NSString *ivarNameString = [NSString stringWithUTF8String:ivarName];
-                
-                if ([ivarNameString containsString:propertyName]) {
-                    NSObject *value = object_getIvar(object, ivar);
+                if ([ivarNameString isEqualToString:propertyName] ||
+                    [ivarNameString isEqualToString:[@"_" stringByAppendingString:propertyName]]) {
+                    NSObject *value = object_getIvar(object, ivars[i]);
                     if (value) {
-                        dtx_log_info(@"Found Swift property '%@' using ivar '%@'", propertyName, ivarNameString);
                         free(ivars);
                         return value;
                     }
@@ -75,21 +76,9 @@ DTX_CREATE_LOG(SwiftBridge);
         }
         
         free(ivars);
-        
         objectClass = class_getSuperclass(objectClass);
     }
     
-    @try {
-        NSObject *value = [object valueForKey:propertyName];
-        if (value) {
-            dtx_log_info(@"Found property '%@' using KVC fallback", propertyName);
-            return value;
-        }
-    } @catch (NSException *exception) {
-        dtx_log_debug(@"KVC fallback failed for property '%@': %@", propertyName, exception.reason);
-    }
-    
-    dtx_log_debug(@"Could not find property '%@' in object of class %@", propertyName, NSStringFromClass([object class]));
     return nil;
 }
 
