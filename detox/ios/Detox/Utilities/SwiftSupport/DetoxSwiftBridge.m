@@ -50,11 +50,6 @@ DTX_CREATE_LOG(SwiftBridge);
         return nil;
     }
     
-    @try {
-        NSObject *value = [object valueForKey:propertyName];
-        if (value) return value;
-    } @catch (NSException *exception) {}
-    
     Class objectClass = [object class];
     while (objectClass) {
         unsigned int ivarCount;
