@@ -80,7 +80,7 @@
     "nyc": "^15.1.0",
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
-    "react-native-codegen": "^0.0.8",
+    
     "typescript": "^5.3.3"
   },
   "jest-junit": {
