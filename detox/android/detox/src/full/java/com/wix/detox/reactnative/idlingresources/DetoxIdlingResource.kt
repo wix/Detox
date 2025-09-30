@@ -19,7 +19,6 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
         paused.set(false)
     }
 
-
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         this.callback = callback
     }
@@ -36,7 +35,6 @@ abstract class DetoxIdlingResource : DescriptiveIdlingResource {
     }
 
     protected abstract fun checkIdle(): Boolean
-
 
     fun notifyIdle() {
         callback?.onTransitionToIdle()

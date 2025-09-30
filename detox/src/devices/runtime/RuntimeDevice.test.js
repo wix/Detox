@@ -347,11 +347,23 @@ describe('Device', () => {
 
     it(`(relaunch) with delete=true`, async () => {
       const expectedArgs = expectedDriverArgs;
-      const device = await aValidDevice();
+      const device = await aValidDevice({});
 
       await device.relaunchApp({ delete: true });
 
       driverMock.expectReinstallCalled();
+      driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
+    });
+
+    it(`(relaunch) with resetAppState=true`, async () => {
+      const expectedArgs = expectedDriverArgs;
+      const device = await aValidDevice({});
+
+      await device.relaunchApp({ resetAppState: true });
+
+      expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
+      expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
+      expect(driverMock.driver.installApp).not.toHaveBeenCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
     });
 
@@ -1022,4 +1034,25 @@ describe('Device', () => {
 
     return driverMock.driver.installApp.mock.calls[0][0];
   }
+
+  it('should call resetAppState on the driver', async () => {
+    const device = await aValidDevice();
+    await device.resetAppState();
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
+  });
+
+  it('should call resetAppState with custom bundleId', async () => {
+    const device = await aValidDevice();
+    const customBundleId = 'com.custom.app';
+    await device.resetAppState(customBundleId);
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(customBundleId);
+  });
+
+  it('should call resetAppState with multiple bundleIds', async () => {
+    const device = await aValidDevice();
+    const bundleId1 = 'com.app1';
+    const bundleId2 = 'com.app2';
+    await device.resetAppState(bundleId1, bundleId2);
+    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId1, bundleId2);
+  });
 });

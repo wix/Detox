@@ -31,6 +31,12 @@ describe('constructSafeFilename', () => {
     expect(actual).toBe(expected);
   });
 
+  it('should replace $ with _', () => {
+    const actual = constructSafeFilename('', '1$2', '');
+    const expected = '1_2';
+    expect(actual).toBe(expected);
+  });
+
   it('should throw exception when non-trimmable prefix and suffix occupy too much space', () => {
     expect(() => constructSafeFilename('0'.repeat(127), '1', '2'.repeat(128))).toThrow();
   });

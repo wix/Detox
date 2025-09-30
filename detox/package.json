@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.41.1",
+  "version": "20.42.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -68,7 +68,7 @@
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
-    "@wix-pilot/core": "^3.4.1",
+    "@wix-pilot/core": "^3.4.2",
     "@wix-pilot/detox": "^1.0.13",
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",
