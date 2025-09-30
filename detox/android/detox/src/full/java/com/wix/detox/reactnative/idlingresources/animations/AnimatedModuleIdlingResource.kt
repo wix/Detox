@@ -9,6 +9,7 @@ import com.facebook.react.animated.NativeAnimatedNodesManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
@@ -72,15 +73,19 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
     private val nodesManager: NativeAnimatedNodesManager
 
     init {
-        operationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == "mOperations" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("mOperations property cannot be accessed")).let {
+        val operationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "operations" else "mOperations"
+        val preOperationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "preOperations" else "mPreOperations"
+
+
+        operationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == operationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$operationsQueueName property cannot be accessed")).let {
 
                 it.isAccessible = true
                 OperationsQueueReflected(it.get(animatedModule) as Any)
             }
 
-        preOperationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == "mPreOperations" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("mPreOperations property cannot be accessed")).let {
+        preOperationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == preOperationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$preOperationsQueueName property cannot be accessed")).let {
 
                 it.isAccessible = true
                 OperationsQueueReflected(it.get(animatedModule) as Any)
