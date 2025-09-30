@@ -23,6 +23,7 @@ mkdir -p coverage
 ### E2E self-tests
 pushd detox/test
 
+run_f "npm run build:android-debug" # Workaround for asyncstorage issue https://github.com/react-native-async-storage/async-storage/issues/1216. Can be removed after fixing it
 run_f "npm run build:android"
 
 if [ "$USE_GOOGLE_ARM64" = "true" ]; then
