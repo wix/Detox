@@ -32,7 +32,7 @@
     "verify-artifacts:android": "jest ./scripts/verify_artifacts_are_not_missing.android.test.js --testEnvironment node"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/checkbox": "^0.5.15",
     "@react-native-community/datetimepicker": "^8.0.0",
     "@react-native-community/geolocation": "^3.4.0",
@@ -80,7 +80,7 @@
     "nyc": "^15.1.0",
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
-    
+
     "typescript": "^5.3.3"
   },
   "jest-junit": {
