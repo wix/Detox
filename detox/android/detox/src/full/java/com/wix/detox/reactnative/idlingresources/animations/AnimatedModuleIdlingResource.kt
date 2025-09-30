@@ -11,6 +11,7 @@ import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -108,10 +109,21 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
 
 class OperationsQueueReflected(private val operationsQueue: Any) {
     fun isEmpty(): Boolean {
-        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("isEmpty method cannot be reached")
-
-        isEmptyMethod.isAccessible = true
-        return isEmptyMethod.call(operationsQueue) as Boolean
+        return if (ReactNativeInfo.rnVersion().minor > 79) {
+            // React Native 0.80+: isEmpty is a Kotlin property
+            val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" } ?:
+                throw DetoxErrors.DetoxIllegalStateException("isEmpty property cannot be reached for RN 0.80+")
+            
+            isEmptyProperty.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
+        } else {
+            // React Native 0.79 and below: isEmpty is a Java method
+            val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" } ?:
+                throw DetoxErrors.DetoxIllegalStateException("isEmpty method cannot be reached for RN 0.79 and below")
+            
+            isEmptyMethod.isAccessible = true
+            isEmptyMethod.call(operationsQueue) as Boolean
+        }
     }
 }
