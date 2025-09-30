@@ -109,21 +109,21 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
 
 class OperationsQueueReflected(private val operationsQueue: Any) {
     fun isEmpty(): Boolean {
-        return if (ReactNativeInfo.rnVersion().minor > 79) {
-            // React Native 0.80+: isEmpty is a Kotlin property
-            val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" } ?:
-                throw DetoxErrors.DetoxIllegalStateException("isEmpty property cannot be reached for RN 0.80+")
-            
+        // Try method first (works in release builds)
+        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" }
+        if (isEmptyMethod != null) {
+            isEmptyMethod.isAccessible = true
+            return isEmptyMethod.call(operationsQueue) as Boolean
+        }
+        
+        // Fallback to property (works in debug builds for RN 0.80+)
+        val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" }
+        if (isEmptyProperty != null) {
             isEmptyProperty.isAccessible = true
             @Suppress("UNCHECKED_CAST")
-            (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
-        } else {
-            // React Native 0.79 and below: isEmpty is a Java method
-            val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" } ?:
-                throw DetoxErrors.DetoxIllegalStateException("isEmpty method cannot be reached for RN 0.79 and below")
-            
-            isEmptyMethod.isAccessible = true
-            isEmptyMethod.call(operationsQueue) as Boolean
+            return (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
         }
+        
+        throw DetoxErrors.DetoxIllegalStateException("isEmpty method/property cannot be reached")
     }
 }
