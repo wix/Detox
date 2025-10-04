@@ -498,6 +498,23 @@ describe('Android driver', () => {
     });
   });
 
+  describe('setPermissions', () => {
+    it('should grant and revoke specific permissions', async () => {
+      const bundleId = 'com.example.app';
+      const permissions = {
+        'android.permission.CAMERA': true,
+        'android.permission.ACCESS_FINE_LOCATION': false,
+        'android.permission.RECORD_AUDIO': true,
+      };
+
+      await uut.setPermissions(bundleId, permissions);
+
+      expect(adb.grantPermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.CAMERA');
+      expect(adb.revokePermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.ACCESS_FINE_LOCATION');
+      expect(adb.grantPermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.RECORD_AUDIO');
+    });
+  });
+
   describe('text-typing (global)', () => {
     const text = 'text to type';
 

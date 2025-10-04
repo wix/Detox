@@ -48,6 +48,119 @@ describe('composeAppsConfig', () => {
     cliConfig,
   });
 
+  describe('given a plain configuration', () => {
+    beforeEach(() => {
+      localConfig = {
+        type: 'ios.simulator',
+        device: 'Phone',
+        binaryPath: 'path/to/app',
+        bundleId: 'com.example.app',
+        build: 'echo OK',
+        permissions: {
+          calendar: 'YES',
+        },
+        launchArgs: {
+          hello: 'world',
+        }
+      };
+    });
+
+    it.each([
+      ['ios.none', 'ios.app'],
+      ['ios.simulator', 'ios.app'],
+    ])('should infer type and app properties for %j', (deviceType, appType) => {
+      deviceConfig.type = deviceType;
+      expect(compose()).toEqual({
+        default: {
+          ...localConfig,
+          type: appType,
+          device: undefined,
+        },
+      });
+    });
+
+    it.each([
+      ['android.attached', 'android.apk'],
+      ['android.emulator', 'android.apk'],
+      ['android.genycloud', 'android.apk'],
+    ])('should infer type and app properties for %j', (deviceType, appType) => {
+      deviceConfig.type = deviceType;
+      expect(compose()).toEqual({
+        default: {
+          ...localConfig,
+          type: appType,
+          device: undefined,
+          permissions: undefined,
+        },
+      });
+    });
+
+    it('should take it as-is for unknown device type', () => {
+      deviceConfig.type = './customDriver';
+      localConfig = { ...deviceConfig };
+      expect(compose()).toEqual({
+        default: localConfig
+      });
+    });
+
+    it('should ignore mistyped Android properties for iOS app', () => {
+      deviceConfig.type = 'ios.simulator';
+      localConfig.testBinaryPath = 'somePath';
+
+      const appConfig = compose().default;
+      expect(appConfig.testBinaryPath).toBe(undefined);
+    });
+
+    it('should include Android properties for Android app', () => {
+      deviceConfig.type = 'android.emulator';
+      localConfig.testBinaryPath = 'somePath';
+
+      const appConfig = compose().default;
+      expect(appConfig.testBinaryPath).toBe('somePath');
+    });
+
+    it.each([
+      ['ios.none'],
+      ['ios.simulator'],
+      ['android.attached'],
+      ['android.emulator'],
+      ['android.genycloud'],
+    ])('should ignore non-recognized properties for %j', (deviceType) => {
+      deviceConfig.type = deviceType;
+      localConfig.testBinaryPath2 = 'somePath';
+      expect(compose().default.testBinaryPath2).toBe(undefined);
+    });
+
+    describe('.launchArgs', () => {
+      it('when it it is a string, should throw', () => {
+        localConfig.launchArgs = '-detoxAppArgument NO';
+        expect(compose).toThrowError(errorComposer.malformedAppLaunchArgs(['configurations', configurationName]));
+      });
+
+      it('when it is an object with nullish properties, it should omit them', () => {
+        localConfig.launchArgs.nully = null;
+        localConfig.launchArgs.undefiny = undefined;
+        localConfig.launchArgs.aString = 'proveYourself';
+        localConfig.launchArgs.anObject = { a: 1 };
+        localConfig.launchArgs.anInteger = 2;
+
+        expect(compose().default.launchArgs).toEqual({
+          hello: 'world',
+          aString: 'proveYourself',
+          anInteger: 2,
+          anObject: { a: 1 },
+        });
+      });
+    });
+
+    describe('given an unknown device type', () => {
+      it('should transfer the config as-is, for backward compatibility', () => {
+        deviceConfig.type = './myDriver';
+        expect(compose()).toEqual({ default: localConfig });
+      });
+    });
+  });
+
   describe('given a configuration with single app', () => {
     beforeEach(() => {
       deviceConfig.type = 'ios.simulator';
