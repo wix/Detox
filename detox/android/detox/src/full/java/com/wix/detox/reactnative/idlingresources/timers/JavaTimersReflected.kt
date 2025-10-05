@@ -25,7 +25,7 @@ object JavaTimersReflected {
         } else {
             "mReactHost"
         }
-        val javaTimerManagerFiledName = if (ReactNativeInfo.rnVersion().minor > 79) {
+        val javaTimerManagerFieldName = if (ReactNativeInfo.rnVersion().minor > 79) {
             "javaTimerManager"
         } else {
             "mJavaTimerManager"
@@ -33,6 +33,6 @@ object JavaTimersReflected {
 
         val reactHost = Reflect.on(reactContext).field(reactHostFieldName).get<Any>()
         val reactInstance = Reflect.on(reactHost).field("mReactInstance").get<Any>()
-        return Reflect.on(reactInstance).field(javaTimerManagerFiledName).get() as JavaTimerManager
+        return Reflect.on(reactInstance).field(javaTimerManagerFieldName).get() as JavaTimerManager
     }
 }
