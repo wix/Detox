@@ -105,13 +105,13 @@ describe('loadExternalConfig', () => {
     await expect(loadExternalConfig({ cwd: DIR_BADCONFIG })).rejects.toThrow('something-that-does-not-exist');
   });
 
-  it('should fall back to fs-based config path resolution', () => {
+  it('should fall back to fs-based config path resolution', async () => {
     const absoluteConfigPath = path.join(DIR_PRIORITY, 'detox-config.json');
     const relativeConfigPath = path.relative(process.cwd(), absoluteConfigPath);
 
-    const absoluteConfig = loadExternalConfig({ configPath: absoluteConfigPath });
+    const absoluteConfig = await loadExternalConfig({ configPath: absoluteConfigPath });
     expect(logger.warn).not.toHaveBeenCalled();
-    const relativeConfig = loadExternalConfig({ configPath: relativeConfigPath });
+    const relativeConfig = await loadExternalConfig({ configPath: relativeConfigPath });
     expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('legacy filesystem'));
 
     expect(absoluteConfig).toEqual(relativeConfig);
