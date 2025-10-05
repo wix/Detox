@@ -3,7 +3,7 @@
       - "nvm install"
       - "./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.81.0
+      REACT_NATIVE_VERSION: 0.81.4
       RCT_NEW_ARCH_ENABLED: 1
       REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
       DETOX_DISABLE_POD_INSTALL: true
