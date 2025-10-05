@@ -1,6 +1,5 @@
 package com.wix.detox.reactnative.idlingresources.timers
 
-import android.os.Debug
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.JavaTimerManager
 import com.wix.detox.reactnative.ReactNativeInfo
@@ -21,7 +20,7 @@ object JavaTimersReflected {
     }
 
     private fun getTimersManager(reactContext: ReactContext): JavaTimerManager {
-        val reactHostFiledName = if (ReactNativeInfo.rnVersion().minor > 79) {
+        val reactHostFieldName = if (ReactNativeInfo.rnVersion().minor > 79) {
             "reactHost"
         } else {
             "mReactHost"
@@ -32,7 +31,7 @@ object JavaTimersReflected {
             "mJavaTimerManager"
         }
 
-        val reactHost = Reflect.on(reactContext).field(reactHostFiledName).get<Any>()
+        val reactHost = Reflect.on(reactContext).field(reactHostFieldName).get<Any>()
         val reactInstance = Reflect.on(reactHost).field("mReactInstance").get<Any>()
         return Reflect.on(reactInstance).field(javaTimerManagerFiledName).get() as JavaTimerManager
     }
