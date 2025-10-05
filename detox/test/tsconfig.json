@@ -17,13 +17,16 @@
   "rootDir": ".",
   "include": [
     "**/*.js",
-    "**/*.ts"
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "coverage",
     "e2e/**/*.js",
     "e2e-unhappy/**/*.js",
     "integration/**/*.js",
-    "types/*.ts"
+    "types/*.ts",
+    "**/node_modules",
+    "**/Pods"
   ]
 }
