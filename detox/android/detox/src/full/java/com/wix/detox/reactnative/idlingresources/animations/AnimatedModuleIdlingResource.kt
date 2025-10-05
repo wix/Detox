@@ -9,7 +9,9 @@ import com.facebook.react.animated.NativeAnimatedNodesManager
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -72,15 +74,19 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
     private val nodesManager: NativeAnimatedNodesManager
 
     init {
-        operationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == "mOperations" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("mOperations property cannot be accessed")).let {
+        val operationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "operations" else "mOperations"
+        val preOperationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "preOperations" else "mPreOperations"
+
+
+        operationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == operationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$operationsQueueName property cannot be accessed")).let {
 
                 it.isAccessible = true
                 OperationsQueueReflected(it.get(animatedModule) as Any)
             }
 
-        preOperationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == "mPreOperations" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("mPreOperations property cannot be accessed")).let {
+        preOperationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == preOperationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$preOperationsQueueName property cannot be accessed")).let {
 
                 it.isAccessible = true
                 OperationsQueueReflected(it.get(animatedModule) as Any)
@@ -103,10 +109,21 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
 
 class OperationsQueueReflected(private val operationsQueue: Any) {
     fun isEmpty(): Boolean {
-        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" } ?:
-            throw DetoxErrors.DetoxIllegalStateException("isEmpty method cannot be reached")
-
-        isEmptyMethod.isAccessible = true
-        return isEmptyMethod.call(operationsQueue) as Boolean
+        // Try method first (works in release builds)
+        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" }
+        if (isEmptyMethod != null) {
+            isEmptyMethod.isAccessible = true
+            return isEmptyMethod.call(operationsQueue) as Boolean
+        }
+        
+        // Fallback to property (works in debug builds for RN 0.80+)
+        val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" }
+        if (isEmptyProperty != null) {
+            isEmptyProperty.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            return (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
+        }
+        
+        throw DetoxErrors.DetoxIllegalStateException("isEmpty method/property cannot be reached")
     }
 }

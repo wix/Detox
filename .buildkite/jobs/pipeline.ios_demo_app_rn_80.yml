@@ -1,9 +1,9 @@
-  - label: ":ios::react: RN .79 + iOS: Demo app"
+  - label: ":ios::react: RN .80 + iOS: Demo app"
     command:
       - "nvm install"
       - "./scripts/demo-projects.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.79.5
+      REACT_NATIVE_VERSION: 0.80.2
       RCT_NEW_ARCH_ENABLED: 1
       REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
     artifact_paths:
