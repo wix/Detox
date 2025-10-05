@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
@@ -63,6 +65,7 @@ class RuntimeDevice {
     this._emitter = eventEmitter;
     this._errorComposer = runtimeErrorComposer;
 
+    /** @type {Detox.DetoxAppConfig | null} */
     this._currentApp = null;
     this._currentAppLaunchArgs = new LaunchArgsEditor();
     this._processes = {};
@@ -257,6 +260,10 @@ class RuntimeDevice {
       for (const port of currentApp.reversePorts) {
         await this.reverseTcpPort(port);
       }
+    }
+
+    if (!_.isEmpty(currentApp.permissions)) {
+      await this.deviceDriver.setPermissions(currentApp.bundleId, currentApp.permissions);
     }
   }
 
