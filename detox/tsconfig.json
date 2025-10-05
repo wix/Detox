@@ -19,7 +19,8 @@
     "globals.d.ts",
     "index.d.ts",
     "**/*.js",
-    "**/*.ts"
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "android",
@@ -27,6 +28,8 @@
     "allure-results",
     "coverage",
     "ios",
-    "test"
+    "test",
+    "**/node_modules",
+    "**/Pods"
   ]
 }
