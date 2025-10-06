@@ -5,6 +5,7 @@ import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.ConcurrentLinkedQueue
