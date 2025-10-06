@@ -69,10 +69,16 @@ class InvokeActionHandler @JvmOverloads constructor(
         val viewHierarchy = if (error is DetoxExceptionWithHierarchy) {
             error.xmlHierarchy
         } else {
-            null
+            generateFallbackViewHierarchy()
         }
 
         return mapOf<String, Any?>("details" to "${errorMessage}\n", "viewHierarchy" to viewHierarchy)
+    }
+
+    private fun generateFallbackViewHierarchy() = try {
+        ViewHierarchyGenerator.generateXml(shouldInjectTestIds = false)
+    } catch (e: Exception) {
+        null
     }
 }
 

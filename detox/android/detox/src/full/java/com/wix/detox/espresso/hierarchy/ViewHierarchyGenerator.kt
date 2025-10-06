@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.widget.TextView
 import com.wix.detox.espresso.DeviceDisplay
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
+import com.wix.detox.inquiry.ViewLifecycleRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -162,6 +163,9 @@ object ViewHierarchyGenerator {
             "label" to (view.getAccessibilityLabel()?.toString() ?: "")
         )
 
+        // Add lifecycle information from ViewLifecycleRegistry
+        addLifecycleAttributes(view, attributes)
+
         val location = IntArray(2).apply { view.getLocationInWindow(this) }
         attributes["x"] = location[0].toString()
         attributes["y"] = location[1].toString()
@@ -199,5 +203,65 @@ object ViewHierarchyGenerator {
         View.INVISIBLE -> "invisible"
         View.GONE -> "gone"
         else -> "unknown"
+    }
+
+    /**
+     * Add lifecycle attributes to the view attributes map.
+     * This includes information about recent animations, updates, and mounts.
+     */
+    private fun addLifecycleAttributes(view: View, attributes: MutableMap<String, String>) {
+        try {
+            // Check if view was recently animated (within last 1.5 seconds)
+            if (ViewLifecycleRegistry.wasRecentlyAnimated(view, 1500)) {
+                attributes["recentlyAnimated"] = "true"
+
+                // Add animation count if available
+                val lifecycleInfo = ViewLifecycleRegistry.getLifecycleInfo(view)
+                lifecycleInfo?.let { info ->
+                    attributes["animationCount"] = info.animationCount.toString()
+                    attributes["lastAnimateTime"] = info.lastAnimateTime.toString()
+                }
+            }
+
+            // Check if view was recently updated (within last 1 second)
+            if (ViewLifecycleRegistry.wasRecentlyUpdated(view, 1000)) {
+                attributes["recentlyUpdated"] = "true"
+
+                val lifecycleInfo = ViewLifecycleRegistry.getLifecycleInfo(view)
+                lifecycleInfo?.let { info ->
+                    attributes["updateCount"] = info.updateCount.toString()
+                    attributes["lastUpdateTime"] = info.lastUpdateTime.toString()
+                }
+            }
+
+            // Check if view was recently mounted (within last 5 seconds)
+            if (ViewLifecycleRegistry.wasRecentlyMounted(view, 5000)) {
+                attributes["recentlyMounted"] = "true"
+
+                val lifecycleInfo = ViewLifecycleRegistry.getLifecycleInfo(view)
+                lifecycleInfo?.let { info ->
+                    attributes["mountTime"] = info.mountTime.toString()
+                }
+            }
+
+            // Check for problematic animations
+            if (ViewLifecycleRegistry.hasCustomEvent(view, "problematic_animation", 2000)) {
+                attributes["problematicAnimation"] = "true"
+            }
+
+            // Add any other custom events
+            val lifecycleInfo = ViewLifecycleRegistry.getLifecycleInfo(view)
+            lifecycleInfo?.let { info ->
+                if (info.customEvents.isNotEmpty()) {
+                    val customEvents = info.customEvents.keys.joinToString(",")
+                    attributes["customEvents"] = customEvents
+                }
+            }
+
+        } catch (e: Exception) {
+            // Silently ignore errors to avoid breaking the hierarchy generation
+            // Log at debug level for debugging
+            android.util.Log.d("ViewHierarchyGenerator", "Failed to add lifecycle attributes", e)
+        }
     }
 }
