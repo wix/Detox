@@ -1,12 +1,13 @@
-let createBlacklist;
-try {
-  createBlacklist = require('metro-config/src/defaults/blacklist');
-} catch (ex) {
-  createBlacklist = require('metro-bundler').createBlacklist;
-}
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
-module.exports = {
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ */
+const config = {
   resolver: {
-    blacklistRE: createBlacklist([/test\/.*/, /detox\/node_modules\/.*/]),
+    blockList: [/test\/.*/, /detox\/node_modules\/.*/],
   },
 };
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);
