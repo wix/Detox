@@ -24,18 +24,18 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",
     "react": "19.1.0",
-    "react-native": "0.80.2",
+    "react-native": "0.81.4",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.3",
-    "@react-native-community/cli": "19.1.1",
-    "@react-native-community/cli-platform-android": "19.1.1",
-    "@react-native-community/cli-platform-ios": "19.1.1",
-    "@react-native/babel-preset": "0.80.2",
-    "@react-native/eslint-config": "0.80.2",
-    "@react-native/metro-config": "0.80.2",
-    "@react-native/typescript-config": "0.80.2",
+    "@react-native-community/cli": "20.0.0",
+    "@react-native-community/cli-platform-android": "20.0.0",
+    "@react-native-community/cli-platform-ios": "20.0.0",
+    "@react-native/babel-preset": "0.81.4",
+    "@react-native/eslint-config": "0.81.4",
+    "@react-native/metro-config": "0.81.4",
+    "@react-native/typescript-config": "0.81.4",
     "@tsconfig/react-native": "^3.0.5",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.1",
@@ -46,6 +46,6 @@
     "jest": "^30.0.3",
     "react-test-renderer": "19.1.0",
     "ts-jest": "^29.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "~5.8.3"
   }
 }

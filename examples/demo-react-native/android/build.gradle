@@ -2,10 +2,10 @@ buildscript {
     apply from: '../../../detox/android/rninfo.gradle'
 
     ext {
-        kotlinVersion = '2.0.21'
-        buildToolsVersion = '35.0.0'
-        compileSdkVersion = 35
-        targetSdkVersion = 35
+        kotlinVersion = '2.1.20'
+        buildToolsVersion = '36.0.0'
+        compileSdkVersion = 36
+        targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         minSdkVersion = 26
     }
