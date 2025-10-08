@@ -31,7 +31,7 @@ class MainApplication : Application(), ReactApplication {
         override val isNewArchEnabled: Boolean
             get() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
 
-        override val isHermesEnabled: Boolean?
+        override val isHermesEnabled: Boolean
             get() = BuildConfig.IS_HERMES_ENABLED
     }
 
