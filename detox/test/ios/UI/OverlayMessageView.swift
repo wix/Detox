@@ -8,7 +8,7 @@ import UIKit
 @objc class OverlayMessageView: UIView {
     private var timer: Timer?
     private(set) var message: String
-    private let displayDuration: TimeInterval = 3.0
+    private var displayDuration: TimeInterval = 2.0
 
     private let messageLabel: UILabel = {
         let label = UILabel()
