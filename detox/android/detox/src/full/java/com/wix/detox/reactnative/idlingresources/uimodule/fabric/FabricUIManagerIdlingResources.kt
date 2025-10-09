@@ -140,7 +140,7 @@ class FabricUIManagerIdlingResources(
                     32 -> { // INSTRUCTION_UPDATE_PROPS
                         val viewTag = intBuffer[i++]
                         val props = objBuffer[j++] as? com.facebook.react.bridge.ReadableMap
-                        
+
                         // Track animated view update
                         trackAnimatedViewUpdate(viewTag, props)
                     }
@@ -204,14 +204,7 @@ class FabricUIManagerIdlingResources(
             val view = getViewByTag(fabricUIManager as Any, viewTag)
 
             if (view != null) {
-                // Check if this is an animated update
-                val isAnimated = isAnimatedPropsUpdate(props)
-
-                if (isAnimated) {
-                    ViewLifecycleRegistry.markAnimated(view)
-                } else {
-                    ViewLifecycleRegistry.markUpdated(view)
-                }
+                com.wix.detox.inquiry.DetoxFabricAnimationHook.hookSynchronouslyUpdateViewOnUIThread(viewTag, props, fabricUIManager as com.facebook.react.fabric.FabricUIManager)
             }
         } catch (e: Exception) {
             // Silently ignore errors to avoid breaking the idling resource
@@ -225,11 +218,11 @@ class FabricUIManagerIdlingResources(
         return try {
             // Get MountingManager from FabricUIManager
             val mountingManager = Reflect.on(fabricUIManager).field("mMountingManager").get<Any>()
-            
+
             // Get SurfaceMountingManager for the view
             val getSurfaceManagerMethod = mountingManager.javaClass.getMethod("getSurfaceManagerForView", Int::class.java)
             val surfaceMountingManager = getSurfaceManagerMethod.invoke(mountingManager, viewTag)
-            
+
             if (surfaceMountingManager != null) {
                 // Get the actual Android View
                 val getViewMethod = surfaceMountingManager.javaClass.getMethod("getView", Int::class.java)
@@ -242,35 +235,5 @@ class FabricUIManagerIdlingResources(
         }
     }
 
-    /**
-     * Check if this is an animated props update.
-     */
-    private fun isAnimatedPropsUpdate(props: com.facebook.react.bridge.ReadableMap?): Boolean {
-        if (props == null) {
-            Log.i("DetoxFabricDebug", "Props is null - not animated")
-            return false
-        }
-
-        val animatedKeys = setOf(
-            "transform", "opacity", "scaleX", "scaleY", "scale",
-            "translateX", "translateY", "rotateX", "rotateY", "rotateZ",
-            "backgroundColor", "borderRadius", "borderWidth"
-        )
-
-        Log.i("DetoxFabricDebug", "Checking props for animated keys...")
-
-        val iterator = props.keySetIterator()
-        while (iterator.hasNextKey()) {
-            val key = iterator.nextKey()
-            Log.i("DetoxFabricDebug", "Checking key: $key")
-            if (animatedKeys.any { key.contains(it, ignoreCase = true) }) {
-                Log.i("DetoxFabricDebug", "Found animated key: $key")
-                return true
-            }
-        }
-
-        Log.i("DetoxFabricDebug", "No animated keys found")
-        return false
-    }
 
 }

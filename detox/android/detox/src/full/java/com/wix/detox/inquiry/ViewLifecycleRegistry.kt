@@ -66,7 +66,7 @@ object ViewLifecycleRegistry {
      */
     fun markAnimated(view: View) {
         val now = System.currentTimeMillis()
-        
+
         viewLifecycleInfo.compute(view) { _, existing ->
             val info = existing ?: ViewLifecycleInfo(view)
             info.copy(
