@@ -321,7 +321,17 @@ object FabricAnimationsInquirer {
                     val view = uiManager.resolveView(tag)
                     if (view != null) {
                         ViewLifecycleRegistry.markAnimated(view)
-                        Log.i(LOG_TAG, "Animating view: tag=$tag, class=${view.javaClass.simpleName}, id=${view.id}")
+
+                        // Get view coordinates and dimensions
+                        val left = view.left
+                        val top = view.top
+                        val right = view.right
+                        val bottom = view.bottom
+                        val width = right - left
+                        val height = bottom - top
+
+                        Log.i(LOG_TAG, "Animating view: tag=$tag, class=${view.javaClass.simpleName}, id=${view.id}, " +
+                                "bounds=[$left,$top,$right,$bottom], size=${width}x${height}")
                     } else {
                         Log.w(LOG_TAG, "Could not resolve view for tag: $tag")
                     }
