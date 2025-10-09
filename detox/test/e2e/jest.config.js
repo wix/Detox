@@ -14,7 +14,7 @@ module.exports = async () => {
 
   /** @type {import('jest-allure2-reporter').ReporterOptions} */
   const jestAllure2ReporterOptions = {
-    extends: require.resolve('detox-allure2-adapter/preset-allure'),
+    extends: require('detox-allure2-adapter/preset-allure'),
     overwrite: !process.env.CI,
     testCase: {
       labels: {
@@ -58,14 +58,14 @@ module.exports = async () => {
     'testEnvironment': './test/e2e/testEnvironment.js',
     'testEnvironmentOptions': {
       'eventListeners': [
-        'jest-metadata/environment-listener',
-        'jest-allure2-reporter/environment-listener',
-        [require.resolve('detox-allure2-adapter'), {
+        require('jest-metadata/environment-listener'),
+        require('jest-allure2-reporter/environment-listener'),
+        [require('detox-allure2-adapter'), {
           deviceLogs: true,
           deviceScreenshots: true,
           deviceVideos: false,
         }],
-        require.resolve('./utils/rnSkipper'),
+        require('./utils/rnSkipper'),
       ]
     },
     'testRunner': './test/node_modules/jest-circus/build/runner',
