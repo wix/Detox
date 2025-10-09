@@ -6,9 +6,11 @@ import androidx.annotation.UiThread
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.animated.NativeAnimatedModule
 import com.facebook.react.animated.NativeAnimatedNodesManager
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.inquiry.FabricAnimationsInquirer
 import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import kotlin.reflect.KProperty1
@@ -34,6 +36,9 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
 
         if (animatedModule.hasQueuedAnimations() ||
             animatedModule.hasActiveAnimations()) {
+            if (reactContext is ReactApplicationContext) {
+                FabricAnimationsInquirer.logAnimatingViews(reactContext)
+            }
             Choreographer.getInstance().postFrameCallback(this)
             return false
         }
@@ -115,7 +120,7 @@ class OperationsQueueReflected(private val operationsQueue: Any) {
             isEmptyMethod.isAccessible = true
             return isEmptyMethod.call(operationsQueue) as Boolean
         }
-        
+
         // Fallback to property (works in debug builds for RN 0.80+)
         val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" }
         if (isEmptyProperty != null) {
@@ -123,7 +128,7 @@ class OperationsQueueReflected(private val operationsQueue: Any) {
             @Suppress("UNCHECKED_CAST")
             return (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
         }
-        
+
         throw DetoxErrors.DetoxIllegalStateException("isEmpty method/property cannot be reached")
     }
 }
