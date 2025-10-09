@@ -26,19 +26,19 @@ module.exports = {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
       "build": "xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
-      "start": "scripts/start-rn.sh ios",
+      "start": "sh scripts/start-rn.sh ios",
     },
     "android.debug": {
       "type": "android.apk",
       "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
-      "build": "cd android ; ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug ; cd -",
-      "start": "scripts/start-rn.sh android",
+      "build": "cd android && gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+      "start": "sh scripts/start-rn.sh android",
       reversePorts: [8081]
     },
     "android.release": {
       "type": "android.apk",
       "binaryPath": "android/app/build/outputs/apk/release/app-release.apk",
-      "build": "cd android ; ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release ; cd -"
+      "build": "cd android && gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd .."
     }
   },
   devices: {

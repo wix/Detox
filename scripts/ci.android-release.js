@@ -19,7 +19,7 @@ function run() {
   log('Accepting all Android SDK licenses...');
   exec.execSync(`yes | ${process.env.ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses`);
   process.chdir('detox/android');
-  exec.execSync(`./gradlew clean detox:publish -Dversion=${futureVersion}`);
+  exec.execSync(`gradlew clean detox:publish -Dversion=${futureVersion}`);
   process.chdir('../Detox-android/');
   exec.execSync(`tar -zcf ARCHIVE_${futureVersion}.tgz *`);
   process.chdir(`../../`);
