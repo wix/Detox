@@ -5,6 +5,7 @@ import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 class FabricUIManagerIdlingResources(
     private val reactContext: ReactContext
-) : DetoxIdlingResource(), Choreographer.FrameCallback  {
+) : DetoxIdlingResource(), Choreographer.FrameCallback {
 
     override fun checkIdle(): Boolean {
         return if (getViewCommandMountItemsSize() == 0 && getMountItemsSize() == 0) {
@@ -50,7 +51,12 @@ class FabricUIManagerIdlingResources(
 
     private fun getMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
-        val mountItems = Reflect.on(mountItemDispatcher).field("mMountItems").get<ConcurrentLinkedQueue<*>>()
+        val filedName = if (ReactNativeInfo.rnVersion().minor >= 81) {
+            "mountItems"
+        } else {
+            "mMountItems"
+        }
+        val mountItems = Reflect.on(mountItemDispatcher).field(filedName).get<ConcurrentLinkedQueue<*>>()
         return mountItems.size
     }
 
@@ -62,8 +68,13 @@ class FabricUIManagerIdlingResources(
 
     private fun getViewCommandMountItemsSize(): Int {
         val mountItemDispatcher = getMountItemDispatcher()
+        val filedName = if (ReactNativeInfo.rnVersion().minor >= 81) {
+            "viewCommandMountItems"
+        } else {
+            "mViewCommandMountItems"
+        }
         val viewCommandMountItems =
-            Reflect.on(mountItemDispatcher).field("mViewCommandMountItems").get<ConcurrentLinkedQueue<*>>()
+            Reflect.on(mountItemDispatcher).field(filedName).get<ConcurrentLinkedQueue<*>>()
         return viewCommandMountItems.size
     }
 

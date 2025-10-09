@@ -54,6 +54,10 @@ android {
         ]
         */
 
+        // RN 0.81+ sets usesCleartextTraffic automatically, but older versions need it explicitly
+        if (!rnInfo.isRN81OrHigher) {
+            manifestPlaceholders = [usesCleartextTraffic: "true"]
+        }
         missingDimensionStrategy 'detox', 'full'
     }
     splits {
