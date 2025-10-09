@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.41.1",
+  "version": "20.43.0",
   "bin": {
     "detox": "local-cli/cli.js"
   },
@@ -34,13 +34,13 @@
     "postinstall": "node scripts/postinstall.js"
   },
   "devDependencies": {
-    "@react-native-community/cli": "18.0.0",
-    "@react-native-community/cli-platform-android": "18.0.0",
-    "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.5",
-    "@react-native/eslint-config": "0.79.5",
-    "@react-native/metro-config": "0.79.5",
-    "@react-native/typescript-config": "0.79.5",
+    "@react-native-community/cli": "19.1.1",
+    "@react-native-community/cli-platform-android": "19.1.1",
+    "@react-native-community/cli-platform-ios": "19.1.1",
+    "@react-native/babel-preset": "0.80.2",
+    "@react-native/eslint-config": "0.80.2",
+    "@react-native/metro-config": "0.80.2",
+    "@react-native/typescript-config": "0.80.2",
     "@tsconfig/react-native": "^3.0.0",
     "@types/bunyan": "^1.8.8",
     "@types/child-process-promise": "^2.2.1",
@@ -62,13 +62,13 @@
     "jest-allure2-reporter": "^2.2.6",
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "^3.1.1",
-    "react-native": "0.79.5",
+    "react-native": "0.80.2",
     "react-native-codegen": "^0.0.8",
     "typescript": "~5.3.3",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
-    "@wix-pilot/core": "^3.4.1",
+    "@wix-pilot/core": "^3.4.2",
     "@wix-pilot/detox": "^1.0.13",
     "ajv": "^8.6.3",
     "bunyan": "^1.8.12",

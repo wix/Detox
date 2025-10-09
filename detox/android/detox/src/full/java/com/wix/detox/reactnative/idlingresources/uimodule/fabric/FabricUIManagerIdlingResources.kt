@@ -42,7 +42,7 @@ class FabricUIManagerIdlingResources(
         return mapOf("mount_items" to getMountItemsSize(), "view_command_mount_items" to getViewCommandMountItemsSize())
     }
 
-    override fun getName() = FabricUIManagerIdlingResources::class.java.name
+    override fun getName(): String = FabricUIManagerIdlingResources::class.java.name
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow()

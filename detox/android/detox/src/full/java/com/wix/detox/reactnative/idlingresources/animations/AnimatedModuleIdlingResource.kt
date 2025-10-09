@@ -2,44 +2,38 @@ package com.wix.detox.reactnative.idlingresources.animations
 
 import android.util.Log
 import android.view.Choreographer
+import androidx.annotation.UiThread
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.animated.NativeAnimatedModule
+import com.facebook.react.animated.NativeAnimatedNodesManager
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.common.DetoxErrors
+import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
-private const val LOG_TAG = "Detox"
-
-
-/**
- * Created by simonracz on 25/08/2017.
- */
-/**
- *
- * Espresso IdlingResource for React Native's Animated Module.
- *
- *
- * Hooks up to React Native internals to monitor the state of the animations.
- *
- */
 class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
 
-    override fun getName() = AnimatedModuleIdlingResource::class.java.name
+    private var animatedModule: AnimatedModuleFacade? = null
 
-    override fun getDebugName(): String {
-        return "ui"
-    }
-
-    override fun getBusyHint(): Map<String, Any> {
-        return mapOf("reason" to "Animations running on screen")
-    }
+    override fun getName(): String = AnimatedModuleIdlingResource::class.java.name
+    override fun getDebugName() = "ui"
+    override fun getBusyHint(): Map<String, Any> = mapOf("reason" to "Animations running on screen")
 
     override fun checkIdle(): Boolean {
-        val animatedModule = reactContext.getNativeModule(NativeAnimatedModule::class.java)
-        val hasAnimations = animatedModule?.nodesManager?.hasActiveAnimations() ?: false
+        val animatedModule = getAnimatedModule()
+        if (animatedModule == null) {
+            Log.w(LOG_TAG, "AnimatedModule is idle because the native-module is not available")
+            return false
+        }
 
-        if (hasAnimations) {
-            Log.i(LOG_TAG, "AnimatedModule is busy.")
+        if (animatedModule.hasQueuedAnimations() ||
+            animatedModule.hasActiveAnimations()) {
             Choreographer.getInstance().postFrameCallback(this)
             return false
         }
@@ -60,5 +54,76 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
+    }
+
+    private fun getAnimatedModule(): AnimatedModuleFacade? =
+         if (animatedModule != null) {
+            animatedModule
+        } else {
+            reactContext.getNativeModule(NativeAnimatedModule::class.java)?.let {
+                AnimatedModuleFacade(it).also { nativeModule ->
+                    animatedModule = nativeModule
+                }
+            }
+        }
+}
+
+private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedModule) {
+    private val operationsQueue: OperationsQueueReflected
+    private val preOperationsQueue: OperationsQueueReflected
+    private val nodesManager: NativeAnimatedNodesManager
+
+    init {
+        val operationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "operations" else "mOperations"
+        val preOperationsQueueName = if (ReactNativeInfo.rnVersion().minor > 79) "preOperations" else "mPreOperations"
+
+
+        operationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == operationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$operationsQueueName property cannot be accessed")).let {
+
+                it.isAccessible = true
+                OperationsQueueReflected(it.get(animatedModule) as Any)
+            }
+
+        preOperationsQueue = (NativeAnimatedModule::class.memberProperties.find { it.name == preOperationsQueueName } ?:
+            throw DetoxErrors.DetoxIllegalStateException("$preOperationsQueueName property cannot be accessed")).let {
+
+                it.isAccessible = true
+                OperationsQueueReflected(it.get(animatedModule) as Any)
+            }
+
+        nodesManager = animatedModule.nodesManager ?:
+            throw DetoxErrors.DetoxIllegalStateException("AnimatedModule exists but nodesManager is null")
+    }
+
+    @UiThread
+    fun hasQueuedAnimations(): Boolean =
+        !preOperationsQueue.isEmpty() ||
+        !operationsQueue.isEmpty()
+
+    @UiThread
+    fun hasActiveAnimations(): Boolean {
+        return nodesManager.hasActiveAnimations()
+    }
+}
+
+class OperationsQueueReflected(private val operationsQueue: Any) {
+    fun isEmpty(): Boolean {
+        // Try method first (works in release builds)
+        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" }
+        if (isEmptyMethod != null) {
+            isEmptyMethod.isAccessible = true
+            return isEmptyMethod.call(operationsQueue) as Boolean
+        }
+        
+        // Fallback to property (works in debug builds for RN 0.80+)
+        val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" }
+        if (isEmptyProperty != null) {
+            isEmptyProperty.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            return (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
+        }
+        
+        throw DetoxErrors.DetoxIllegalStateException("isEmpty method/property cannot be reached")
     }
 }

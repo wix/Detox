@@ -41,7 +41,8 @@ function constructSafeFilename(prefix = '', trimmable = '', suffix = '') {
 
   const trimmed = trimmable.slice(-MAX_FILE_LENGTH + nonTrimmableLength);
   const unsafe = prefix + trimmed + suffix;
-  const sanitized = sanitize(unsafe, sanitizeOptions);
+  const sanitized = sanitize(unsafe, sanitizeOptions)
+    .replace(/\$/g, sanitizeOptions.replacement);
 
   return sanitized;
 }
