@@ -8,7 +8,14 @@ import UIKit
 @objc class OverlayMessageView: UIView {
     private var timer: Timer?
     private(set) var message: String
-    private var displayDuration: TimeInterval = 2.0
+    
+    private func getDisplayDuration() -> TimeInterval {
+        if #available(iOS 18, *) {
+            return 3.0
+        } else {
+            return 2.0
+        }
+    }
 
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -72,7 +79,7 @@ import UIKit
     }
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: displayDuration, repeats: false) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: getDisplayDuration(), repeats: false) { [weak self] _ in
             self?.removeFromSuperview()
         }
     }
