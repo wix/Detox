@@ -1,4 +1,5 @@
 const { device, element, by } = require('detox');
+const { rnVersion } = require('../../src/utils/rn-consts/rn-consts');
 const expect = require('expect').default;
 
 describe('Attributes', () => {
@@ -97,7 +98,7 @@ describe('Attributes', () => {
     beforeAll(() => useMatcher(by.id('textGroupRoot')));
 
     it('should have a label based on text concatenation', () => {
-      
+
       expect(attributes).toMatchObject({ label: EXPECTED_TEXT });
     });
   });
