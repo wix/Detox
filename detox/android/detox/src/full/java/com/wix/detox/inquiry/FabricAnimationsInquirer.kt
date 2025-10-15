@@ -27,6 +27,10 @@ object FabricAnimationsInquirer {
     private var propMappingField: Field? = null
     private var nodeValueField: Field? = null
     private var offsetField: Field? = null
+    private var preOperationsField: Field? = null
+    private var operationsField: Field? = null
+    private var mQueueField: Field? = null
+    private var mPeekedOperationField: Field? = null
 
     fun logAnimatingViews(reactContext: ReactApplicationContext) {
         try {
@@ -38,13 +42,33 @@ object FabricAnimationsInquirer {
             val nodesManager = getNodesManager(reactContext) ?: return
             Log.d(LOG_TAG, "Got nodesManager: ${nodesManager.javaClass.simpleName}")
 
-            // Check if there are any active animations first
+            // Check for both queued and active animations
+            val animatedModule = reactContext.getNativeModule(NativeAnimatedModule::class.java)
+            if (animatedModule == null) {
+                Log.d(LOG_TAG, "NativeAnimatedModule not found")
+                return
+            }
+
+            // Check queued animations first
+            val hasQueued = checkQueuedAnimations(animatedModule)
+            Log.d(LOG_TAG, "hasQueuedAnimations() returned: $hasQueued")
+
+            // Check active animations
             val hasActive = nodesManager.hasActiveAnimations()
             Log.d(LOG_TAG, "hasActiveAnimations() returned: $hasActive")
 
-            if (!hasActive) {
-                Log.d(LOG_TAG, "No active animations detected")
+            if (!hasQueued && !hasActive) {
+                Log.d(LOG_TAG, "No queued or active animations detected")
                 return
+            }
+
+            if (hasQueued) {
+                Log.d(LOG_TAG, "Found queued animations - analyzing operations queue")
+                val queuedViewTags = analyzeQueuedOperations(animatedModule)
+                if (queuedViewTags.isNotEmpty()) {
+                    Log.d(LOG_TAG, "Found ${queuedViewTags.size} views with queued animations: $queuedViewTags")
+                    logViews(reactContext, queuedViewTags)
+                }
             }
 
             // Get all animated nodes from the graph
@@ -171,7 +195,7 @@ object FabricAnimationsInquirer {
         val visited = mutableSetOf<AnimatedNode>()
 
         while (queue.isNotEmpty()) {
-            val node = queue.poll()
+            val node = queue.poll() ?: continue
             if (node in visited) {
                 continue
             }
@@ -181,15 +205,15 @@ object FabricAnimationsInquirer {
             val nodeType = node.javaClass.simpleName
             when (nodeType) {
                 "PropsAnimatedNode" -> {
-                    allRelevantNodes.add(node)
+                    allRelevantNodes.add(node as Any)
                     Log.d(LOG_TAG, "Found PropsAnimatedNode: $nodeType")
                 }
                 "StyleAnimatedNode" -> {
-                    allRelevantNodes.add(node)
+                    allRelevantNodes.add(node as Any)
                     Log.d(LOG_TAG, "Found StyleAnimatedNode: $nodeType")
                 }
                 "ValueAnimatedNode" -> {
-                    allRelevantNodes.add(node)
+                    allRelevantNodes.add(node as Any)
                     Log.d(LOG_TAG, "Found ValueAnimatedNode: $nodeType")
                 }
                 else -> {
@@ -247,6 +271,7 @@ object FabricAnimationsInquirer {
                             // Log the property mapping to see what properties are being animated
                             try {
                                 val propNodeMappingField = findOrCacheField(node.javaClass, "propNodeMapping", "propNodeMappingField")
+                                @Suppress("UNCHECKED_CAST")
                                 val propNodeMapping = propNodeMappingField?.get(node) as? Map<String, Int>
                                 if (propNodeMapping != null) {
                                     Log.d(LOG_TAG, "View $viewTag has animated properties: ${propNodeMapping.keys}")
@@ -263,6 +288,7 @@ object FabricAnimationsInquirer {
                         // Try to access propMapping to see what properties it handles
                         try {
                             val propMappingField = findOrCacheField(node.javaClass, "propMapping", "propMappingField")
+                            @Suppress("UNCHECKED_CAST")
                             val propMapping = propMappingField?.get(node) as? Map<String, Int>
                             if (propMapping != null) {
                                 Log.d(LOG_TAG, "StyleAnimatedNode handles properties: ${propMapping.keys}")
@@ -436,5 +462,168 @@ object FabricAnimationsInquirer {
         Log.w(LOG_TAG, "  - PropsAnimatedNodes without view: $propsNodesWithoutView")
 
         return -1
+    }
+
+    private fun checkQueuedAnimations(animatedModule: NativeAnimatedModule): Boolean {
+        return try {
+            // Check mPreOperations queue (Android field name)
+            val preOperationsField = findOrCacheField(animatedModule.javaClass, "mPreOperations", "preOperationsField")
+            val preOperations = preOperationsField?.get(animatedModule)
+            val preOperationsEmpty = checkOperationsQueueEmpty(preOperations)
+            Log.d(LOG_TAG, "mPreOperations queue empty: $preOperationsEmpty")
+
+            // Check mOperations queue (Android field name)
+            val operationsField = findOrCacheField(animatedModule.javaClass, "mOperations", "operationsField")
+            val operations = operationsField?.get(animatedModule)
+            val operationsEmpty = checkOperationsQueueEmpty(operations)
+            Log.d(LOG_TAG, "mOperations queue empty: $operationsEmpty")
+
+            val hasQueued = !preOperationsEmpty || !operationsEmpty
+            Log.d(LOG_TAG, "Has queued animations: $hasQueued")
+            hasQueued
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to check queued animations", e)
+            false
+        }
+    }
+
+    private fun checkOperationsQueueEmpty(operationsQueue: Any?): Boolean {
+        if (operationsQueue == null) {
+            Log.d(LOG_TAG, "Operations queue is null")
+            return true
+        }
+
+        return try {
+            // Try to get isEmpty method
+            val isEmptyMethod = operationsQueue.javaClass.getDeclaredMethod("isEmpty")
+            isEmptyMethod.isAccessible = true
+            val isEmpty = isEmptyMethod.invoke(operationsQueue) as Boolean
+            Log.d(LOG_TAG, "Operations queue isEmpty() result: $isEmpty")
+            isEmpty
+        } catch (e: Exception) {
+            Log.d(LOG_TAG, "Could not call isEmpty() on operations queue, trying property access")
+            try {
+                // Fallback to property access
+                val isEmptyProperty = operationsQueue.javaClass.getDeclaredField("isEmpty")
+                isEmptyProperty.isAccessible = true
+                val isEmpty = isEmptyProperty.get(operationsQueue) as Boolean
+                Log.d(LOG_TAG, "Operations queue isEmpty property: $isEmpty")
+                isEmpty
+            } catch (e2: Exception) {
+                Log.e(LOG_TAG, "Could not access isEmpty property on operations queue", e2)
+                true // Assume empty if we can't determine
+            }
+        }
+    }
+
+    private fun analyzeQueuedOperations(animatedModule: NativeAnimatedModule): Set<Int> {
+        val viewTags = mutableSetOf<Int>()
+        try {
+            Log.d(LOG_TAG, "Analyzing queued operations...")
+
+            // Analyze mPreOperations queue (Android field name)
+            val preOperationsField = findOrCacheField(animatedModule.javaClass, "mPreOperations", "preOperationsField")
+            val preOperations = preOperationsField?.get(animatedModule)
+            if (preOperations != null) {
+                Log.d(LOG_TAG, "Analyzing mPreOperations queue...")
+                val preOpsViewTags = analyzeOperationsQueue(preOperations, "mPreOperations")
+                viewTags.addAll(preOpsViewTags)
+            }
+
+            // Analyze mOperations queue (Android field name)
+            val operationsField = findOrCacheField(animatedModule.javaClass, "mOperations", "operationsField")
+            val operations = operationsField?.get(animatedModule)
+            if (operations != null) {
+                Log.d(LOG_TAG, "Analyzing mOperations queue...")
+                val opsViewTags = analyzeOperationsQueue(operations, "mOperations")
+                viewTags.addAll(opsViewTags)
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to analyze queued operations", e)
+        }
+        return viewTags
+    }
+
+    private fun analyzeOperationsQueue(operationsQueue: Any, queueName: String): Set<Int> {
+        val viewTags = mutableSetOf<Int>()
+        try {
+            // Log queue class information first
+            Log.d(LOG_TAG, "$queueName queue class: ${operationsQueue.javaClass.simpleName}")
+            Log.d(LOG_TAG, "$queueName queue fields: ${operationsQueue.javaClass.declaredFields.map { it.name }}")
+
+            // Try to access the internal mQueue field (ConcurrentLinkedQueue)
+            val mQueueField = findOrCacheField(operationsQueue.javaClass, "mQueue", "mQueueField")
+            if (mQueueField != null) {
+                val mQueue = mQueueField.get(operationsQueue)
+                Log.d(LOG_TAG, "Found mQueue in $queueName: $mQueue")
+
+                // Try to get queue size
+                try {
+                    val sizeMethod = mQueue.javaClass.getDeclaredMethod("size")
+                    sizeMethod.isAccessible = true
+                    val size = sizeMethod.invoke(mQueue) as Int
+                    Log.d(LOG_TAG, "$queueName mQueue size: $size")
+                } catch (e: Exception) {
+                    Log.d(LOG_TAG, "Could not get size of $queueName mQueue")
+                }
+
+                // Try to peek at queue contents (without removing)
+                try {
+                    val peekMethod = mQueue.javaClass.getDeclaredMethod("peek")
+                    peekMethod.isAccessible = true
+                    val peekedOperation = peekMethod.invoke(mQueue)
+                    if (peekedOperation != null) {
+                        Log.d(LOG_TAG, "Peeked operation from $queueName: ${peekedOperation.javaClass.simpleName}")
+
+                        // Try to extract view tags from the operation
+                        val operationViewTags = extractViewTagsFromOperation(peekedOperation)
+                        viewTags.addAll(operationViewTags)
+                    }
+                } catch (e: Exception) {
+                    Log.d(LOG_TAG, "Could not peek at $queueName queue contents: ${e.message}")
+                }
+            }
+
+            // Try to access mPeekedOperation field
+            val mPeekedOperationField = findOrCacheField(operationsQueue.javaClass, "mPeekedOperation", "mPeekedOperationField")
+            if (mPeekedOperationField != null) {
+                val mPeekedOperation = mPeekedOperationField.get(operationsQueue)
+                if (mPeekedOperation != null) {
+                    Log.d(LOG_TAG, "Found mPeekedOperation in $queueName: ${mPeekedOperation.javaClass.simpleName}")
+
+                    // Try to extract view tags from the peeked operation
+                    val peekedViewTags = extractViewTagsFromOperation(mPeekedOperation)
+                    viewTags.addAll(peekedViewTags)
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to analyze $queueName queue", e)
+        }
+        return viewTags
+    }
+
+    private fun extractViewTagsFromOperation(operation: Any): Set<Int> {
+        val viewTags = mutableSetOf<Int>()
+        try {
+            Log.d(LOG_TAG, "Analyzing operation: ${operation.javaClass.simpleName}")
+
+            // Try to find view tags in the operation's fields
+            val fields = operation.javaClass.declaredFields
+            for (field in fields) {
+                field.isAccessible = true
+                val value = field.get(operation)
+                Log.d(LOG_TAG, "Operation field ${field.name}: $value (${value?.javaClass?.simpleName})")
+
+                // Look for integer fields that might be view tags
+                if (value is Int && value > 0) {
+                    Log.d(LOG_TAG, "Found potential view tag: $value")
+                    viewTags.add(value)
+                }
+            }
+        } catch (e: Exception) {
+            Log.d(LOG_TAG, "Failed to extract view tags from operation: ${e.message}")
+        }
+        return viewTags
     }
 }
