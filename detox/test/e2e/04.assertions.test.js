@@ -1,3 +1,6 @@
+
+const { rnVersion } = require('../../src/utils/rn-consts/rn-consts');
+
 const driver = {
   navToScreen: async () => {
     await device.reloadReactNative();
@@ -39,7 +42,12 @@ describe('Assertions', () => {
   });
 
   it('should assert a sub-element has a computed (accessibility) label', async () => {
-    await expect(driver.subtextElement).toHaveLabel('This is some subtext');
+
+    if (rnVersion.major >= 81) {
+      await expect(driver.subtextElement).toHaveLabel('This is some, subtext');
+    } else {
+      await expect(driver.subtextElement).toHaveLabel('This is some subtext');
+    }
   });
 
   it('should assert an element has (accessibility) id', async () => {
