@@ -18,7 +18,7 @@ class UIModuleIdlingResource(private val reactContext: ReactContext)
     private val uiManagerModuleReflected = UIManagerModuleReflected(reactContext)
 
     override fun getName(): String = UIModuleIdlingResource::class.java.name
-    override fun getDebugName(): String = " ui"
+    override fun getDebugName(): String = "ui"
     override fun getBusyHint(): Map<String, Any> {
         return mapOf("reason" to "UI rendering activity")
     }
