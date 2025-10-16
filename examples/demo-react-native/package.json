@@ -46,6 +46,6 @@
     "jest": "^30.0.3",
     "react-test-renderer": "19.1.0",
     "ts-jest": "^29.4.0",
-    "typescript": "~5.8.3"
+    "typescript": "^5.8.3"
   }
 }

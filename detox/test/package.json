@@ -80,7 +80,7 @@
     "nyc": "^15.1.0",
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
-    "typescript": "~5.8.3"
+    "typescript": "^5.8.3"
   },
   "jest-junit": {
     "suiteName": "Detox E2E tests",
