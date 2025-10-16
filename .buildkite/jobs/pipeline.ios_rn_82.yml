@@ -1,11 +1,12 @@
-  - label: ":ios::detox: RN .80 + iOS: Tests app"
+  - label: ":ios::detox: RN .82 + iOS: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.ios.sh"
     env:
-      REACT_NATIVE_VERSION: 0.80.2
+      REACT_NATIVE_VERSION: 0.82.0
       RCT_NEW_ARCH_ENABLED: 1
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/**/allure-report-*.html"
       - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
+
