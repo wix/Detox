@@ -27,10 +27,6 @@ android {
             abiFilters 'armeabi-v7a', 'x86', 'x86_64', 'arm64-v8a'
         }
 
-        // RN 0.81+ sets usesCleartextTraffic automatically, but older versions need it explicitly
-        if (!rnInfo.isRN81OrHigher) {
-            manifestPlaceholders = [usesCleartextTraffic: "true"]
-        }
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'com.example.DetoxTestAppJUnitRunner'
     }
