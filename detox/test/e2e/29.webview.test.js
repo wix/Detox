@@ -5,7 +5,6 @@ const {expectToThrow} = require('./utils/custom-expects');
 const jestExpect = require('expect').default;
 
 const MockServer = require('../mock-server/mock-server');
-const sleep = require('../../src/utils/sleep');
 
 describe('WebView', () => {
   beforeEach(async () => {
@@ -206,7 +205,6 @@ describe('WebView', () => {
             await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-content-editable-1');
 
             await contentEditableElement.typeText('er', true);
-            await sleep(10);
             await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-content-editable-2');
           });
         });
