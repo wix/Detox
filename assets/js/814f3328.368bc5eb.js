@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkwebsite=globalThis.webpackChunkwebsite||[]).push([[7472],{55513:t=>{t.exports=JSON.parse('{"title":"All our posts","items":[{"title":"Introducing Detox Copilot","permalink":"/Detox/blog/2024/10/09/detox-copilot-is-out"},{"title":"Detox 20 is out","permalink":"/Detox/blog/2022/11/10/detox-20-is-out"}]}')}}]);
