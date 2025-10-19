@@ -90,11 +90,15 @@ describe('Attributes', () => {
   });
 
   describe('of a text group', () => {
-    const EXPECTED_TEXT = 'InnerText1 InnerText2';
+    let EXPECTED_TEXT = 'InnerText1 InnerText2';
+    if (rnVersion.minor >= 81) {
+      EXPECTED_TEXT = 'InnerText1, InnerText2';
+    }
 
     beforeAll(() => useMatcher(by.id('textGroupRoot')));
 
     it('should have a label based on text concatenation', () => {
+
       expect(attributes).toMatchObject({ label: EXPECTED_TEXT });
     });
   });
