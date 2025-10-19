@@ -109,7 +109,7 @@ const config = {
       device: {
         avdName: 'Pixel_3a_API_35'
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-aosp-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"]
     },
 
     'android.attached': {
@@ -124,7 +124,7 @@ const config = {
       device: {
         recipeUUID: '9baf12f9-a645-4ffa-a688-0e92584d6194',
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-genymotion-release.apk"]
     },
 
     'android.genycloud.name': {
@@ -132,7 +132,7 @@ const config = {
       device: {
         recipeName: 'Detox_Pixel_3a_API_34',
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-genymotion-release.apk"]
     },
 
     'android.genycloud.name-arm64': {
@@ -140,7 +140,7 @@ const config = {
       device: {
         recipeName: 'Detox_Pixel_3a_API_35',
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.0.4-genymotion-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-genymotion-release.apk"]
     },
   },
 
