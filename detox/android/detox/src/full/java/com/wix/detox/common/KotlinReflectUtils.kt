@@ -8,7 +8,13 @@ import kotlin.reflect.jvm.isAccessible
 
 object KotlinReflectUtils {
 
-    fun <T> getPropertyValue(instance: Any, propertyName: String): T? {
+
+    /**
+     * This function should be used only on kotlin properties that have custom getters.
+     * In Release builds, such properties are compiled away into getter methods.
+     * In Debug builds, such properties exist as fields.
+     */
+    fun <T> getPropertyValueWithCustomGetter(instance: Any, propertyName: String): T? {
         // In Release builds, properties are compiled away into getter methods.
         val method = instance::class.memberFunctions.find { it.name == propertyName }
         if (method != null) {

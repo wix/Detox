@@ -42,7 +42,7 @@ describe('Assertions', () => {
   });
 
   it('should assert a sub-element has a computed (accessibility) label', async () => {
-    if (rnVersion.minor >= 81 && device.getPlatform() === 'ios') {
+    if (rnVersion.minor >= 81) {
       await expect(driver.subtextElement).toHaveLabel('This is some, subtext');
     } else {
       await expect(driver.subtextElement).toHaveLabel('This is some subtext');

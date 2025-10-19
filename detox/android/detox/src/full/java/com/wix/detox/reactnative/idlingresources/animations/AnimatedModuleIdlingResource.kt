@@ -12,8 +12,6 @@ import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.common.KotlinReflectUtils
 import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -110,7 +108,7 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
 
 class OperationsQueueReflected(private val operationsQueue: Any) {
     fun isEmpty(): Boolean {
-        KotlinReflectUtils.getPropertyValue<Boolean>(operationsQueue, "isEmpty")?.let {
+        KotlinReflectUtils.getPropertyValueWithCustomGetter<Boolean>(operationsQueue, "isEmpty")?.let {
             return it
         }
 
