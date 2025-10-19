@@ -8,14 +8,6 @@ import kotlin.reflect.jvm.isAccessible
 
 object KotlinReflectUtils {
 
-    /**
-     * Uses Kotlin reflection to get the value of a property from an instance.
-     * Works in both debug and release builds.
-     *
-     * @param instance The object instance from which to retrieve the property value.
-     * @param propertyName The name of the property whose value is to be retrieved.
-     * @return The value of the property, or null if not found or inaccessible.
-     */
     fun <T> getPropertyValue(instance: Any, propertyName: String): T? {
         // In Release builds, properties are compiled away into getter methods.
         val method = instance::class.memberFunctions.find { it.name == propertyName }
