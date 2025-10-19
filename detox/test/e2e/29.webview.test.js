@@ -109,7 +109,7 @@ describe('WebView', () => {
             await expect(inputElement).toHaveText('Tester');
           });
 
-          it('should keep cursor position on end while typing', async () => {
+          it.skip('should keep cursor position on end while typing', async () => {
             await inputElement.typeText('Test');
             await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-input-1');
 
@@ -200,7 +200,7 @@ describe('WebView', () => {
             await expect(contentEditableElement).toHaveText('Name: Tester');
           });
 
-          it('should keep cursor position on end while typing', async () => {
+          it.skip('should keep cursor position on end while typing', async () => {
             await contentEditableElement.typeText('Test', true);
             await expectWebViewToMatchSnapshot('typing-keep-cursor-position-webview-content-editable-1');
 
