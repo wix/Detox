@@ -1,6 +1,6 @@
 {
   "name": "detox-test",
-  "version": "20.43.0",
+  "version": "20.44.0",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -67,7 +67,7 @@
     "@typescript-eslint/parser": "^6.16.0",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",
-    "detox": "^20.43.0",
+    "detox": "^20.44.0",
     "detox-allure2-adapter": "1.0.0-alpha.34",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
