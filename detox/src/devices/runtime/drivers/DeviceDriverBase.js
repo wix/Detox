@@ -91,6 +91,10 @@ class DeviceDriverBase {
     return '';
   }
 
+  async resetAppState(..._bundleIds) {
+    return undefined;
+  }
+
   async uninstallApp() {
     return '';
   }

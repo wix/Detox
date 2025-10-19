@@ -17,6 +17,7 @@ describe("Test", () => {
     });
 
     beforeAll(async () => {
+        await device.launchApp({ resetAppState: true });
         await device.reloadReactNative();
 
         await device.setStatusBar({ time: "12:34" });

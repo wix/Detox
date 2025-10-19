@@ -16,7 +16,6 @@ import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
 
-
 private const val LOG_TAG = "DetoxRNIdleRes"
 
 class ReactNativeIdlingResources(
@@ -115,6 +114,7 @@ class ReactNativeIdlingResources(
         loopers.clear()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun unregisterIdlingResources() {
         IdlingResourcesName.entries.forEach {
             removeIdlingResource(it)

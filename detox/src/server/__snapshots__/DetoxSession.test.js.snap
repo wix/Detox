@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DetoxSession edge cases should warn on (already) empty app deassignment 1`] = `
 "DetoxInternalError: no app is connected to the session aSession

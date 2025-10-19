@@ -774,6 +774,28 @@ declare global {
             reloadReactNative(): Promise<void>;
 
             /**
+             * Resets the app state by clearing app data and restoring it to a clean state.
+             *
+             * On Android, this command clears the app's data using the `pm clear` command,
+             * effectively resetting the app to its initial installed state without uninstalling it.
+             *
+             * On iOS, Detox uses a fallback mechanism - it backs up, deletes and installs the app from cache.
+             * This process ensures the app is returned to a clean state.
+             *
+             * @param bundleIds Optional bundle IDs to reset. If none provided, resets the currently selected app.
+             * @example
+             * // Reset current app state
+             * await device.resetAppState();
+             * @example
+             * // Reset specific app state
+             * await device.resetAppState('com.example.app');
+             * @example
+             * // Reset multiple apps
+             * await device.resetAppState('com.app1', 'com.app2');
+             */
+            resetAppState(...bundleIds: string[]): Promise<void>;
+
+            /**
              * By default, installApp() with no params will install the app file defined in the current configuration.
              * To install another app, specify its path
              * @example await device.installApp();
@@ -2014,6 +2036,13 @@ declare global {
              * Launch with user activity
              */
             userActivity?: any;
+            /**
+             * Similar to {@link Detox.DeviceLaunchAppConfig.delete | { delete: true }}, but instead of uninstalling and installing the app,
+             * it runs {@link Detox.Device.resetAppState | device.resetAppState()} instead.
+             * @example
+             * await device.launchApp({resetAppState: true});
+             */
+            resetAppState?: boolean;
             /**
              * Launch into a fresh installation
              * A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is false.

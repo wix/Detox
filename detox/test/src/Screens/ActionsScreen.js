@@ -187,6 +187,7 @@ export default class ActionsScreen extends Component {
           <ScrollView testID='ScrollView799' refreshControl={
             <RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.onRefresh.bind(this)} title="Loading..." />
           }>
+            <Text style={styles.item}>Pull down to see RefreshControl indicator</Text>
           </ScrollView>
         </View>
 

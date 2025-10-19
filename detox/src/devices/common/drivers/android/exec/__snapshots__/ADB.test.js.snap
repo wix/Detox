@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ADB clearAppData should throw an error if the package is not installed 1`] = `
+"Failed to clear com.example.app app data on mockEmulator
+
+HINT: Please verify that the package is installed on the device:
+adb -s mockEmulator shell pm list packages com.example.app
+
+Command failed"
+`;

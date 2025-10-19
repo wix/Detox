@@ -104,24 +104,24 @@ Please make sure you have the most recent version of both tools installed, since
 
 ##### Supported Permissions
 
-| Permission | Values                  | Notes                                                         |
-|------------|-------------------------|---------------------------------------------------------------|
-| location   | always / inuse / never / unset | inuse - provides location access only when the app is in use  |
-| contacts   | YES / NO / unset / limited     | limited - grants limited access to contacts                   |
-| photos     | YES / NO / unset / limited     | limited - grants limited access to photos                     |
-| calendar   | YES / NO / unset        |                                                               |
-| camera     | YES / NO / unset        |                                                               |
-| medialibrary | YES / NO / unset      |                                                               |
-| microphone | YES / NO / unset        |                                                               |
-| motion     | YES / NO / unset        |                                                               |
-| reminders  | YES / NO / unset        |                                                               |
-| siri       | YES / NO / unset        |                                                               |
-| notifications | YES / NO / unset     | Requires AppleSimUtils; unsupported by simctl                |
-| health     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| homekit    | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| speech     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| faceid     | YES / NO / unset        | Requires AppleSimUtils; unsupported by simctl                |
-| userTracking | YES / NO / unset      | Requires AppleSimUtils; unsupported by simctl                |
+| Permission    | Values                         | Notes                                                        |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| location      | always / inuse / never / unset | inuse - provides location access only when the app is in use |
+| contacts      | YES / NO / unset / limited     | limited - grants limited access to contacts                  |
+| photos        | YES / NO / unset / limited     | limited - grants limited access to photos                    |
+| calendar      | YES / NO / unset               |                                                              |
+| camera        | YES / NO / unset               |                                                              |
+| medialibrary  | YES / NO / unset               |                                                              |
+| microphone    | YES / NO / unset               |                                                              |
+| motion        | YES / NO / unset               |                                                              |
+| reminders     | YES / NO / unset               |                                                              |
+| siri          | YES / NO / unset               |                                                              |
+| notifications | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| health        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| homekit       | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| speech        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| faceid        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| userTracking  | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
 
 Check Detox's [own test suite](https://github.com/wix/Detox/blob/master/detox/test/e2e/13.permissions.test.js) for usage examples.
 
@@ -161,17 +161,27 @@ await device.launchApp({userActivity: activity, newInstance: false}); //Reuse ex
 
 Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 to read about the full effect of the `newInstance` argument.
 
-#### 6. `delete`—Delete and Reinstall Application Before Launching
+#### 6. `resetAppState`—Reset App State Before Launching
 
-Before launching the application, it is uninstalled and then reinstalled.
+Resets the app’s state and launches without necessarily performing a full uninstall/reinstall cycle.
 
-A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary). Default is `false`.
+- Android: clears app data using `pm clear`, which is typically faster than reinstalling.
+- iOS: uninstalls and reinstalls the app to restore a clean state.
+
+```js
+await device.launchApp({resetAppState: true});
+```
+
+#### 7. `delete`—Delete and Reinstall Application Before Launching
+
+Uninstalls the app and then reinstalls it before launching. Slower than `resetAppState`,
+but guarantees a completely fresh install of the app and all its data.
 
 ```js
 await device.launchApp({delete: true});
 ```
 
-#### 7. `launchArgs`—Additional Process Launch Arguments
+#### 8. `launchArgs`—Additional Process Launch Arguments
 
 Launches the app on the device with on-site, user-specified launch arguments:
 
@@ -186,7 +196,7 @@ await device.launchApp({
 
 This is the most explicit and straightforward way of setting launch arguments. Refer to the [launch arguments guide](../guide/launch-args.md) for a complete overview on app launch arguments.
 
-#### 8. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
+#### 9. `disableTouchIndicators`—Disable Touch Indicators (iOS Only)
 
 Disables touch indicators on iOS. Default is `false`.
 
@@ -194,7 +204,7 @@ Disables touch indicators on iOS. Default is `false`.
 await device.launchApp({disableTouchIndicators: true});
 ```
 
-#### 9. `languageAndLocale`—Launch with a Specific Language and/or Local (iOS Only)
+#### 10. `languageAndLocale`—Launch with a Specific Language and/or Local (iOS Only)
 
 Launch the app with a specific system language
 
@@ -231,7 +241,7 @@ describe.each([
 });
 ```
 
-#### 10. `detoxEnableSynchronization`—Initialize Detox with synchronization enabled or disabled at app launch
+#### 11. `detoxEnableSynchronization`—Initialize Detox with synchronization enabled or disabled at app launch
 
 Launches the app with the synchronization mechanism enabled or disabled. Useful if the app cannot be synchronized during the launch process. Synchronization can later be enabled using `device.enableSynchronization()`.
 
@@ -242,7 +252,7 @@ await device.launchApp({
 });
 ```
 
-#### 11. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
+#### 12. `detoxURLBlacklistRegex`—Initialize the URL Blacklist at app launch
 
 Launches the app with a URL blacklist to disable network synchronization on certain endpoints.
 Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
@@ -257,7 +267,7 @@ await device.launchApp({
 });
 ```
 
-#### 12. `detoxDisableWebKitSecurity`—Disable WebKit Security (iOS Only)
+#### 13. `detoxDisableWebKitSecurity`—Disable WebKit Security (iOS Only)
 
 Disables WebKit security on iOS. Default is `false`.
 
@@ -325,6 +335,8 @@ To uninstall another app, specify its bundle id
 ```js
 await device.uninstallApp('other.bundle.id');
 ```
+
+**Note:** For app state reset operations, consider using [`device.resetAppState()`](#deviceresetappstatebundleids) which is more efficient than uninstall/install cycles.
 
 ### `device.openURL({url, sourceApp[optional]})`
 
@@ -395,6 +407,25 @@ Exclude synchronization with respect to network activity (i.e. don’t wait for 
 
 ```js
 await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
+```
+
+### `device.resetAppState([...bundleIds])`
+
+Resets the app state by clearing app data and restoring it to a clean state.
+
+On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it.
+
+On iOS, Detox uses a fallback that uninstalls and installs your app again to achieve a clean state.
+
+```js
+// Reset current app state
+await device.resetAppState();
+
+// Reset specific app state
+await device.resetAppState('com.example.app');
+
+// Reset multiple apps
+await device.resetAppState('com.app1', 'com.app2');
 ```
 
 ### `device.resetContentAndSettings()` **iOS Only**

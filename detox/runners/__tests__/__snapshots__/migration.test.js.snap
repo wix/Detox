@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`file migration should work for: jest-circus/environment 1`] = `
 "[DEPRECATION] Detox detected an attempt to require a module from an outdated location, please change in your project:

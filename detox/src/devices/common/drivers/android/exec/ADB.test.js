@@ -414,4 +414,19 @@ describe('ADB', () => {
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi disable"`, { retries: 1 });
     });
   });
+
+  describe('clearAppData', () => {
+    it('should invoke pm clear for given package', async () => {
+      await adb.clearAppData(deviceId, 'com.example.app');
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm clear com.example.app"`),
+        expect.any(Object)
+      );
+    });
+
+    it('should throw an error if the package is not installed', async () => {
+      execWithRetriesAndLogs.mockRejectedValue('Command failed');
+      await expect(adb.clearAppData(deviceId, 'com.example.app')).rejects.toThrowErrorMatchingSnapshot();
+    });
+  });
 });

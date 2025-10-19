@@ -84,6 +84,12 @@ class AndroidDriver extends DeviceDriverBase {
     await this.appUninstallHelper.uninstall(this.adbName, bundleId);
   }
 
+  async resetAppState(...bundleIds) {
+    for (const bundleId of bundleIds) {
+      await this.adb.clearAppData(this.adbName, bundleId);
+    }
+  }
+
   async installUtilBinaries(paths) {
     for (const path of paths) {
       const packageId = await this.getBundleIdFromBinary(path);

@@ -26,6 +26,7 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 	return [DTXReactNativeSupport hasReactNative];
 }
 
+
 + (void)reloadApp
 {
     // Early return if React Native is not present
@@ -41,9 +42,7 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
     }
 
     // Try New Architecture reload approach
-    NSObject<UIApplicationDelegate> *appDelegate = UIApplication.sharedApplication.delegate;
-    NSObject *rootViewFactory = [appDelegate valueForKey:@"rootViewFactory"];
-    NSObject *reactHost = [rootViewFactory valueForKey:@"reactHost"];
+    NSObject *reactHost = [self getReactHost];
 
     SEL reloadCommand = NSSelectorFromString(@"didReceiveReloadCommand");
     if (reactHost && [reactHost respondsToSelector:reloadCommand]) {
@@ -64,5 +63,23 @@ static NSString *const RCTReloadNotification = @"RCTReloadNotification";
 {
 	[DTXReactNativeSupport waitForReactNativeLoadWithCompletionHandler:handler];
 }
+
++ (NSObject *) getReactHost {
+    NSObject<UIApplicationDelegate> *appDelegate = UIApplication.sharedApplication.delegate;
+    
+    NSObject *rootViewFactory = nil;
+    @try {
+        rootViewFactory = [appDelegate valueForKey:@"rootViewFactory"];
+    } @catch (NSException *exception) {
+        @try {
+            NSObject *reactNativeFactory = [appDelegate valueForKey:@"reactNativeFactory"];
+            rootViewFactory = [reactNativeFactory valueForKey:@"rootViewFactory"];
+        } @catch (NSException *exception) {
+            [NSException raise:@"Invalid AppDelegate" format:@"Could not access rootViewFactory. Make sure your AppDelegate either: Inherits from RCTAppDelegate Or defines 'reactNativeFactory'" ];
+        }
+    }
+    return [rootViewFactory valueForKey:@"reactHost"];
+}
+
 
 @end

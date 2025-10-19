@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DetoxLogger - main functionality - should format messages according to the log level: debug 1`] = `
 "00:00:00.000 detox[PID] i  BLUE SCREEN OF DEATH
