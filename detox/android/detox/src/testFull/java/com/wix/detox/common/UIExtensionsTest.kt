@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.wix.detox.UTHelpers.mockViewHierarchy
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -36,7 +37,8 @@ class UIExtensionsTest {
     fun `should return accessibility label according to children's content-description, recursively`() {
         val contentDescription1st = "cd.1"
         val contentDescription2nd = "cd.2"
-        val expectedLabel = "$contentDescription1st, $contentDescription2nd"
+        val expectedLabel =
+            if (ReactNativeInfo.rnVersion().minor >= 81) "$contentDescription1st, $contentDescription2nd" else "$contentDescription1st $contentDescription2nd"
 
 
         val parent: ViewGroup = mock()
