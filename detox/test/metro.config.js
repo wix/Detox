@@ -1,16 +1,3 @@
-let createBlacklist;
-try {
-  // RN .64
-  createBlacklist = require('metro-config/src/defaults/exclusionList');
-} catch (ex) {
-  try {
-    createBlacklist = require('metro-config/src/defaults/blacklist');
-  } catch (e) {
-    createBlacklist = require('metro-bundler').createBlacklist;
-  }
-}
-
-
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
 /**
@@ -19,14 +6,10 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
  *
  * @type {import('@react-native/metro-config').MetroConfig}
  */
-const config = {};
-const baseConfig = mergeConfig(getDefaultConfig(__dirname), config);
-
-
-
-module.exports = {
-  ...baseConfig,
+const config = {
   resolver: {
-    blacklistRE: createBlacklist([/detox\/node_modules\/react-native\/.*/]),
+    blockList: [/detox\/node_modules\/react-native\/.*/],
   },
 };
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);

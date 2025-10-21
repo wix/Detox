@@ -43,6 +43,7 @@
 -keep class kotlin.LazyKt { *; }
 
 -keep class androidx.concurrent.futures.** { *; }
+-keep class androidx.tracing.** { *; }
 
 -dontwarn androidx.appcompat.**
 -dontwarn javax.lang.model.element.**
