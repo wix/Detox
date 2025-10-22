@@ -10,11 +10,9 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
-import com.wix.detox.inquiry.FabricAnimationsInquirer
+import com.wix.detox.common.KotlinReflectUtils
 import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -114,19 +112,8 @@ private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedMod
 
 class OperationsQueueReflected(private val operationsQueue: Any) {
     fun isEmpty(): Boolean {
-        // Try method first (works in release builds)
-        val isEmptyMethod = operationsQueue::class.memberFunctions.find { it.name == "isEmpty" }
-        if (isEmptyMethod != null) {
-            isEmptyMethod.isAccessible = true
-            return isEmptyMethod.call(operationsQueue) as Boolean
-        }
-
-        // Fallback to property (works in debug builds for RN 0.80+)
-        val isEmptyProperty = operationsQueue::class.memberProperties.find { it.name == "isEmpty" }
-        if (isEmptyProperty != null) {
-            isEmptyProperty.isAccessible = true
-            @Suppress("UNCHECKED_CAST")
-            return (isEmptyProperty as KProperty1<Any, *>).get(operationsQueue) as Boolean
+        KotlinReflectUtils.getPropertyValueWithCustomGetter<Boolean>(operationsQueue, "isEmpty")?.let {
+            return it
         }
 
         throw DetoxErrors.DetoxIllegalStateException("isEmpty method/property cannot be reached")
