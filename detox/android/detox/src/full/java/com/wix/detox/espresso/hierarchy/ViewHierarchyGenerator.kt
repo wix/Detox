@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.widget.TextView
 import com.wix.detox.espresso.DeviceDisplay
 import com.wix.detox.reactnative.ui.getAccessibilityLabel
+import com.wix.detox.inquiry.ViewLifecycleRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -168,6 +169,20 @@ object ViewHierarchyGenerator {
 
         if (view is TextView) {
             attributes["text"] = view.text.toString()
+        }
+
+        // Inject animation metadata
+        val animationMetadata = ViewLifecycleRegistry.getAnimationMetadata(view)
+        if (animationMetadata != null) {
+            animationMetadata.animated?.let {
+                attributes["lastAnimated"] = animationMetadata.getAnimationDurationMs()?.toString() ?: "0"
+            }
+            animationMetadata.updated?.let {
+                attributes["lastUpdated"] = animationMetadata.getUpdateDurationMs()?.toString() ?: "0"
+            }
+            if (ViewLifecycleRegistry.isAnimating(view)) {
+                attributes["animating"] = "true"
+            }
         }
 
         val currentTestId = view.tag?.toString() ?: ""

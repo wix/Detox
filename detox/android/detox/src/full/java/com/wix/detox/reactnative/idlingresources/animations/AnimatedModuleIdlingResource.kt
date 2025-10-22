@@ -6,6 +6,7 @@ import androidx.annotation.UiThread
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.animated.NativeAnimatedModule
 import com.facebook.react.animated.NativeAnimatedNodesManager
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
 import com.wix.detox.common.DetoxErrors
 import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
@@ -33,6 +34,9 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
 
         if (animatedModule.hasQueuedAnimations() ||
             animatedModule.hasActiveAnimations()) {
+            if (reactContext is ReactApplicationContext) {
+                FabricAnimationsInquirer.logAnimatingViews(reactContext)
+            }
             Choreographer.getInstance().postFrameCallback(this)
             return false
         }
