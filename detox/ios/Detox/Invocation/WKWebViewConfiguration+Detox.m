@@ -36,20 +36,29 @@ extern void WKPreferencesSetWebSecurityEnabled(WKPreferencesRef, bool);
 /// This private API is not officially supported on iOS, and generally used for debugging / testing
 ///  purposes on MacOS only. So there's no guarantee that it will work in the future.
 void DTXPreferencesSetWebSecurityEnabled(WKPreferences* prefs, bool enabled) {
-    if (!prefs) return;
+    Ivar ivar = NULL;
     
     if (@available(iOS 18.0, *)) {
-        void *prefsPtr = (__bridge void *)(prefs);
-        WKPreferencesSetWebSecurityEnabled((WKPreferencesRef)prefsPtr, enabled);
-        
+        unsigned int ivarCount;
+        Ivar *ivars = class_copyIvarList([WKPreferences class], &ivarCount);
+        if (ivars) {
+            for (unsigned int i = 0; i < ivarCount; i++) {
+                const char *ivarName = ivar_getName(ivars[i]);
+                if (ivarName && strcmp(ivarName, "_preferences") == 0) {
+                    ivar = ivars[i];
+                    break;
+                }
+            }
+            free(ivars);
+        }
     } else {
-        DTXFakeWKPreferencesRef* fakeRef = [DTXFakeWKPreferencesRef new];
-        
-        Ivar ivar = class_getInstanceVariable([WKPreferences class], "_preferences");
-        void* realPreferences = (void*)(((uintptr_t)prefs) + ivar_getOffset(ivar));
-        fakeRef._apiObject = realPreferences;
-        WKPreferencesSetWebSecurityEnabled((__bridge WKPreferencesRef)fakeRef, enabled);
+        ivar = class_getInstanceVariable([WKPreferences class], "_preferences");
     }
+    
+    DTXFakeWKPreferencesRef* fakeRef = [DTXFakeWKPreferencesRef new];
+    void* realPreferences = (void*)(((uintptr_t)prefs) + ivar_getOffset(ivar));
+    fakeRef._apiObject = realPreferences;
+    WKPreferencesSetWebSecurityEnabled((__bridge WKPreferencesRef)fakeRef, enabled);
 }
 
 @implementation WKWebViewConfiguration (Detox)
@@ -133,7 +142,7 @@ void DTXPreferencesSetWebSecurityEnabled(WKPreferences* prefs, bool enabled) {
 @implementation WKWebView (DetoxSecurity)
 
 - (instancetype)dtx_initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration {
-	BOOL shouldDisable = [configuration shouldDisableWebKitSecurity];
+    BOOL shouldDisable = [configuration shouldDisableWebKitSecurity];
 	if (shouldDisable) {
 		if (!configuration.preferences) {
 			configuration.preferences = [[WKPreferences alloc] init];
