@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKWebViewConfiguration (Detox)
 
+- (BOOL)shouldDisableWebKitSecurity;
+
 @end
 
 NS_ASSUME_NONNULL_END
