@@ -40,16 +40,16 @@ void DTXPreferencesSetWebSecurityEnabled(WKPreferences* prefs, bool enabled) {
     
     if (@available(iOS 18.0, *)) {
         unsigned int ivarCount;
-        Ivar *ivars = class_copyIvarList([WKPreferences class], &ivarCount);
-        if (ivars) {
+        Ivar *ivarList = class_copyIvarList([WKPreferences class], &ivarCount);
+        if (ivarList) {
             for (unsigned int i = 0; i < ivarCount; i++) {
-                const char *ivarName = ivar_getName(ivars[i]);
+                const char *ivarName = ivar_getName(ivarList[i]);
                 if (ivarName && strcmp(ivarName, "_preferences") == 0) {
-                    ivar = ivars[i];
+                    ivar = ivarList[i];
                     break;
                 }
             }
-            free(ivars);
+            free(ivarList);
         }
     } else {
         ivar = class_getInstanceVariable([WKPreferences class], "_preferences");
