@@ -5,6 +5,24 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 
+const semanticTypes = require('../matchers/semanticTypes');
+
+// Functions for semantic type predicate creation
+const createTypePredicate = (className) => ({ type: 'type', value: className });
+
+const createOrPredicate = (predicates) => ({ type: 'or', predicates });
+
+const createExclusionPredicate = (className, excludes) => ({
+  type: 'and',
+  predicates: [
+    createTypePredicate(className),
+    {
+      type: 'not',
+      predicate: createOrPredicate(excludes.map(createTypePredicate))
+    }
+  ]
+});
+
 const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
@@ -440,9 +458,21 @@ class Matcher {
     return this;
   }
 
-  type(type) {
-    if (typeof type !== 'string') throw new Error('type should be a string, but got ' + (type + (' (' + (typeof type + ')'))));
-    this.predicate = { type: 'type', value: type };
+    type(typeOrSemanticType) {
+    if (typeof typeOrSemanticType !== 'string') throw new Error('type should be a string, but got ' + (typeOrSemanticType + (' (' + (typeof typeOrSemanticType + ')'))));
+
+    if (semanticTypes.includes(typeOrSemanticType)) {
+      const classNames = semanticTypes.getClasses(typeOrSemanticType, 'ios');
+      const predicates = classNames.map(item => {
+        if (typeof item === 'string') return createTypePredicate(item);
+        if (!item.className || !item.excludes) return createTypePredicate(item);
+        return createExclusionPredicate(item.className, item.excludes);
+      });
+      this.predicate = createOrPredicate(predicates);
+    } else {
+      this.predicate = { type: 'type', value: typeOrSemanticType };
+    }
+
     return this;
   }
 
