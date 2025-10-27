@@ -429,4 +429,24 @@ describe('ADB', () => {
       await expect(adb.clearAppData(deviceId, 'com.example.app')).rejects.toThrowErrorMatchingSnapshot();
     });
   });
+
+  describe('grantPermission', () => {
+    it('should invoke pm grant for given package and permission', async () => {
+      await adb.grantPermission(deviceId, 'com.example.app', 'android.permission.CAMERA');
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm grant com.example.app android.permission.CAMERA"`),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('revokePermission', () => {
+    it('should invoke pm revoke for given package and permission', async () => {
+      await adb.revokePermission(deviceId, 'com.example.app', 'android.permission.CAMERA');
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm revoke com.example.app android.permission.CAMERA"`),
+        expect.any(Object)
+      );
+    });
+  });
 });
