@@ -12,7 +12,7 @@ buildscript {
         compileSdkVersion = 36
         targetSdkVersion = 36
         minSdkVersion = 26
-        appCompatVersion = '1.7.0'
+        appCompatVersion = '1.7.1'
     }
     ext.detoxKotlinVersion = ext.kotlinVersion
 
