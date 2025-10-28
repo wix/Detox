@@ -76,7 +76,6 @@
 		60FDFD6E2D2E9EC400804B82 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		60FDFD752D2E9ED500804B82 /* AppDelegate+OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+OverlayView.swift"; sourceTree = "<group>"; };
 		60FDFD922D2EAF5300804B82 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7D2B472B2E895877002EA9EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = example/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB365D90AFEA3B194709EC80 /* libPods-example-ci.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-example-ci.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB1A20253B7141FDBC1B751E /* Pods-example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-example.release.xcconfig"; path = "Target Support Files/Pods-example/Pods-example.release.xcconfig"; sourceTree = "<group>"; };
@@ -110,7 +109,6 @@
 			children = (
 				60FDFD6D2D2E9EC400804B82 /* AppDelegate.h */,
 				60FDFD6E2D2E9EC400804B82 /* AppDelegate.m */,
-				7D2B472B2E895877002EA9EF /* AppDelegate.swift */,
 				60E207952D21B0B400E6DBD2 /* AppDelegate Extensions */,
 				60493BD72D10D967002853A0 /* example.entitlements */,
 				6088689B2D1A9F070070D199 /* example-Bridging-Header.h */,
