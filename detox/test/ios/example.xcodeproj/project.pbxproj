@@ -25,11 +25,11 @@
 		60A403A92D21EAE3004344C3 /* UIViewController+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A403A82D21EADE004344C3 /* UIViewController+Shake.swift */; };
 		60A403AA2D21EAE3004344C3 /* UIViewController+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A403A82D21EADE004344C3 /* UIViewController+Shake.swift */; };
 		60FDFD722D2E9EC400804B82 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD6E2D2E9EC400804B82 /* AppDelegate.m */; };
-		60FDFD742D2E9EC400804B82 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD6E2D2E9EC400804B82 /* AppDelegate.m */; };
 		60FDFD762D2E9ED500804B82 /* AppDelegate+OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD752D2E9ED500804B82 /* AppDelegate+OverlayView.swift */; };
 		60FDFD772D2E9ED500804B82 /* AppDelegate+OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD752D2E9ED500804B82 /* AppDelegate+OverlayView.swift */; };
 		60FDFD932D2EAF5300804B82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD922D2EAF5300804B82 /* main.m */; };
 		60FDFD942D2EAF5300804B82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD922D2EAF5300804B82 /* main.m */; };
+		7D2B472D2E8958A0002EA9EF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FDFD6E2D2E9EC400804B82 /* AppDelegate.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90CCD0BA1322566EB1285DC2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		96E5C284421F3B8DEE84764F /* libPods-example-ci.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB365D90AFEA3B194709EC80 /* libPods-example-ci.a */; };
@@ -511,10 +511,10 @@
 			files = (
 				60FDFD942D2EAF5300804B82 /* main.m in Sources */,
 				60A403AA2D21EAE3004344C3 /* UIViewController+Shake.swift in Sources */,
+				7D2B472D2E8958A0002EA9EF /* AppDelegate.m in Sources */,
 				6051227F2D356C5900781AE2 /* ShakeEventEmitter.m in Sources */,
 				608868AB2D1AA19B0070D199 /* NativeScreenManager.swift in Sources */,
 				608868D32D1D696E0070D199 /* OverlayMessageView.swift in Sources */,
-				60FDFD742D2E9EC400804B82 /* AppDelegate.m in Sources */,
 				60FDFD762D2E9ED500804B82 /* AppDelegate+OverlayView.swift in Sources */,
 				6051227C2D356C3B00781AE2 /* NativeModule.m in Sources */,
 				608868B22D1AA1FB0070D199 /* CustomKeyboardDelegate.swift in Sources */,
