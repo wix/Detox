@@ -34,6 +34,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
       adbName: deviceCookie.adbName,
       avdName: deviceConfig.device.avdName,
       forceAdbInstall: deviceConfig.forceAdbInstall,
+      setupDemoMode: true,
     };
 
     const { AndroidEmulatorRuntimeDriver } = require('../drivers');
