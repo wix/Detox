@@ -88,6 +88,10 @@ class RuntimeDevice {
     return this._currentAppLaunchArgs;
   }
 
+  async init() {
+    return await this.deviceDriver.init();
+  }
+
   async selectApp(name) {
     if (name === undefined) {
       throw this._errorComposer.cantSelectEmptyApp();

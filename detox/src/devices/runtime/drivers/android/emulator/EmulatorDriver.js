@@ -16,8 +16,10 @@ class EmulatorDriver extends AndroidDriver {
    * @param deps { EmulatorDriverDeps }
    * @param props { EmulatorDriverProps }
    */
-  constructor(deps, { adbName, avdName, forceAdbInstall }) {
-    super(deps, { adbName });
+  constructor(deps, props) {
+    super(deps, props);
+
+    const { adbName, avdName, forceAdbInstall } = props;
 
     this._deviceName = `${adbName} (${avdName})`;
     this._forceAdbInstall = forceAdbInstall;

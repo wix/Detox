@@ -21,6 +21,9 @@ class DeviceDriverBase {
     this.emitter = eventEmitter;
   }
 
+  async init() {
+  }
+
   /**
    * @returns { String | undefined }
    */

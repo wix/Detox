@@ -19,11 +19,15 @@ const sleep = require('../../../../utils/sleep');
 const apkUtils = require('../../../common/drivers/android/tools/apk');
 const DeviceDriverBase = require('../DeviceDriverBase');
 
+const DeviceInitCache = require('./DeviceInitCache');
+
 const log = logger.child({ cat: 'device' });
+const demoInitCache = new DeviceInitCache();
 
 /**
  * @typedef AndroidDriverProps
  * @property adbName { String } The unique identifier associated with ADB
+ * @property setupDemoMode { Boolean } Whether to put the device into demo mode on init
  */
 
 /**
@@ -44,7 +48,7 @@ class AndroidDriver extends DeviceDriverBase {
    * @param deps { AndroidDriverDeps }
    * @param props { AndroidDriverProps }
    */
-  constructor(deps, { adbName }) {
+  constructor(deps, { adbName, setupDemoMode }) {
     super(deps);
 
     this.adbName = adbName;
@@ -59,10 +63,22 @@ class AndroidDriver extends DeviceDriverBase {
     this.instrumentation = deps.instrumentation;
 
     this.uiDevice = new UiDeviceProxy(this.invocationManager).getUIDevice();
+    this._setupDemoMode = setupDemoMode;
   }
 
   getExternalId() {
     return this.adbName;
+  }
+
+  async init() {
+    if (this._setupDemoMode) {
+      if (demoInitCache.isInitialized(this.adbName)) {
+        log.info(`Skipping demo-mode setup for ${this.getExternalId()} (already initialized once)`);
+      } else {
+        await this._initDemoMode();
+        demoInitCache.markInitialized(this.adbName);
+      }
+    }
   }
 
   async getBundleIdFromBinary(apkPath) {
@@ -266,7 +282,7 @@ class AndroidDriver extends DeviceDriverBase {
     const call = duration ? EspressoDetoxApi.longPress(x, y, duration, _shouldIgnoreStatusBar): EspressoDetoxApi.longPress(x, y, _shouldIgnoreStatusBar);
     await this.invocationManager.execute(call);
   }
-  
+
   async generateViewHierarchyXml(shouldInjectTestIds) {
     const hierarchy = await this.invocationManager.execute(DetoxApi.generateViewHierarchyXml(shouldInjectTestIds));
     return hierarchy.result;
@@ -429,6 +445,54 @@ class AndroidDriver extends DeviceDriverBase {
       `${separator}\n\n` +
       'Press any key to continue...'
     );
+  }
+
+  async _initDemoMode() {
+    const adb = {
+      shell: async (cmd) => {
+        await this.adb.shell(this.adbName, cmd);
+        await sleep(200);
+      },
+    };
+
+    log.info(`Running demo-mode setup for ${this.getExternalId()}`);
+    await this._setupKeyboardBehavior(adb);
+    await this._setupPointerIndicators(adb);
+    await this._setupNavigationMode(adb);
+    await this._setupStatusBar(adb);
+    log.info(`Finished demo-mode setup for ${this.getExternalId()}`);
+  }
+
+  async _setupKeyboardBehavior(adb) {
+    // Force-hide the on-screen keyboard
+    await adb.shell('settings put Secure show_ime_with_hard_keyboard 0');
+  }
+
+  async _setupPointerIndicators(adb) {
+    await adb.shell('settings put system show_touches 1');
+    await adb.shell('settings put system pointer_location 1');
+  }
+
+  async _setupNavigationMode(adb) {
+    await adb.shell('cmd overlay enable com.android.internal.systemui.navbar.threebutton');
+  }
+
+  // Ref: https://android.googlesource.com/platform/frameworks/base/+/master/packages/SystemUI/docs/demo_mode.md
+  async _setupStatusBar(adb) {
+    // Enable, then get out (= reset status-bar) and back into demo mode
+    await adb.shell('settings put global sysui_demo_allowed 1');
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command exit');
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command enter');
+
+    // Force status bar content
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command notifications -e visible false');
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 -e fully true');
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
+    // Best to keep this last due to a "charging" indicator animation which can
+    // break UI changes made by consequent commands
+    await adb.shell('am broadcast -a com.android.systemui.demo -e command battery -e level 100 -e plugged true');
+    await sleep(1500); // Wait for the animation to finish
   }
 }
 
