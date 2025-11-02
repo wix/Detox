@@ -1,8 +1,15 @@
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const invoke = require('../../invoke');
+const semanticTypes = require('../../matchers/semanticTypes');
 const { isRegExp } = require('../../utils/isRegExp');
 const { NativeMatcher } = require('../core/NativeMatcher');
 const DetoxMatcherApi = require('../espressoapi/DetoxMatcher');
+
+const createClassMatcher = (className) =>
+  new NativeMatcher(invoke.callDirectly(DetoxMatcherApi.matcherForClass(className)));
+
+const combineWithOr = (matchers) =>
+  matchers.reduce((acc, matcher) => acc?.or(matcher) ?? matcher, null);
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
@@ -29,9 +36,29 @@ class IdMatcher extends NativeMatcher {
 }
 
 class TypeMatcher extends NativeMatcher {
-  constructor(value) {
+  constructor(typeOrSemanticType) {
     super();
-    this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(value));
+    if (semanticTypes.includes(typeOrSemanticType)) {
+      const classNames = semanticTypes.getClasses(typeOrSemanticType, 'android');
+
+      const matchers = classNames.map(item => {
+        if (typeof item === 'string') return createClassMatcher(item);
+        if (!item.className || !item.excludes) return createClassMatcher(item);
+
+        const includeMatcher = createClassMatcher(item.className);
+        const excludeCombined = combineWithOr(item.excludes.map(createClassMatcher));
+
+        return includeMatcher.and(excludeCombined.not);
+      });
+
+      const combinedMatcher = combineWithOr(matchers);
+      if (!combinedMatcher) {
+        throw new DetoxRuntimeError(`No class names found for semantic type: ${typeOrSemanticType}`);
+      }
+      this._call = combinedMatcher._call;
+    } else {
+      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(typeOrSemanticType));
+    }
   }
 }
 
