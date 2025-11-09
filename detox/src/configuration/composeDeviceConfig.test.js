@@ -684,5 +684,190 @@ describe('composeDeviceConfig', () => {
       });
     });
 
+    describe('systemUI property validation', () => {
+      beforeEach(() => {
+        setConfig('android.emulator', 'aliased');
+        givenConfigValidationSuccess();
+      });
+
+      describe('valid configurations', () => {
+        it('should accept string "minimal"', () => {
+          deviceConfig.systemUI = 'minimal';
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept object with all properties', () => {
+          deviceConfig.systemUI = {
+            keyboard: 'hide',
+            touches: 'show',
+            pointerLocationBar: 'hide',
+            navigationMode: '3-button',
+            statusBar: {
+              notifications: 'hide',
+              wifiSignal: 'strong',
+              cellSignal: 'strong',
+              networkBar: 'hidden',
+              batteryLevel: 'full',
+              charging: true,
+              clock: '12:34',
+            },
+          };
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept object with extends property', () => {
+          deviceConfig.systemUI = {
+            extends: 'minimal',
+            navigationMode: 'gesture',
+            statusBar: {
+              charging: false,
+            },
+          };
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept partial object configuration', () => {
+          deviceConfig.systemUI = {
+            keyboard: 'hide',
+            touches: 'show',
+          };
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept empty object', () => {
+          deviceConfig.systemUI = {};
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept valid statusBar.clock format', () => {
+          deviceConfig.systemUI = {
+            statusBar: {
+              clock: '12:34',
+            },
+          };
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept valid statusBar.cellSignal values', () => {
+          ['strong', 'weak', 'none'].forEach(cellSignal => {
+            deviceConfig.systemUI = {
+              statusBar: {
+                cellSignal,
+              },
+            };
+            expect(compose).not.toThrow();
+          });
+        });
+      });
+
+      describe('invalid configurations', () => {
+        it('should reject non-string, non-object values', () => {
+          deviceConfig.systemUI = 42;
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid string values', () => {
+          deviceConfig.systemUI = 'invalid';
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid extends value', () => {
+          deviceConfig.systemUI = { extends: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid keyboard value', () => {
+          deviceConfig.systemUI = { keyboard: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid touches value', () => {
+          deviceConfig.systemUI = { touches: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid pointerLocationBar value', () => {
+          deviceConfig.systemUI = { pointerLocationBar: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid navigationMode value', () => {
+          deviceConfig.systemUI = { navigationMode: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject non-object statusBar', () => {
+          deviceConfig.systemUI = { statusBar: 'invalid' };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.notifications', () => {
+          deviceConfig.systemUI = { statusBar: { notifications: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.wifiSignal', () => {
+          deviceConfig.systemUI = { statusBar: { wifiSignal: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.cellSignal', () => {
+          deviceConfig.systemUI = { statusBar: { cellSignal: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.batteryLevel', () => {
+          deviceConfig.systemUI = { statusBar: { batteryLevel: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.charging', () => {
+          deviceConfig.systemUI = { statusBar: { charging: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.clock (non-string)', () => {
+          deviceConfig.systemUI = { statusBar: { clock: 1234 } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.clock (wrong format)', () => {
+          deviceConfig.systemUI = { statusBar: { clock: 'invalid' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+
+        it('should reject invalid statusBar.clock (wrong format - missing colon)', () => {
+          deviceConfig.systemUI = { statusBar: { clock: '1234' } };
+          expect(compose).toThrow('Expected \'minimal\' or object');
+        });
+      });
+
+      describe('device type restrictions', () => {
+        it('should reject systemUI for ios.simulator', () => {
+          setConfig('ios.simulator', 'aliased');
+          deviceConfig.systemUI = 'minimal';
+          expect(compose).toThrow('does not support "systemUI" property');
+        });
+
+        it('should reject systemUI for android.attached', () => {
+          setConfig('android.attached', 'aliased');
+          deviceConfig.systemUI = 'minimal';
+          expect(compose).toThrow('does not support "systemUI" property');
+        });
+
+        it('should accept systemUI for android.emulator', () => {
+          setConfig('android.emulator', 'aliased');
+          deviceConfig.systemUI = 'minimal';
+          expect(compose).not.toThrow();
+        });
+
+        it('should accept systemUI for android.genycloud', () => {
+          setConfig('android.genycloud', 'aliased');
+          deviceConfig.systemUI = 'minimal';
+          expect(compose).not.toThrow();
+        });
+      });
+    });
+
   });
 });

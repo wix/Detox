@@ -363,6 +363,37 @@ declare global {
             [prop: string]: unknown;
         }
 
+        // SystemUI Configuration Types
+        interface DetoxSystemUIStatusBarConfig {
+            notifications?: 'show' | 'hide';
+            wifiSignal?: 'strong' | 'weak' | 'none';
+            /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
+            cellSignal?: 'strong' | 'weak' | 'none';
+            batteryLevel?: 'full' | 'half' | 'low';
+            charging?: boolean;
+            /** In "hhmm" format (e.g. "1234" for 12:34) */
+            clock?: string;
+        }
+
+        // TODO Revisit, align show/hide vs visible/hidden schemas or just switch to booleans
+        interface DetoxSystemUIConfig {
+            extends?: DetoxSystemUIPreset;
+
+            /**
+             * Note: For 'hide' to work in Google emulators, need to set `hw.keyboard=yes` in AVD configuration (i.e.
+             * in manually `config.ini` file or via AVD Manager on Android Studio).
+             */
+            keyboard?: 'hide' | 'show';
+            touches?: 'hide' | 'show';
+            pointerLocationBar?: 'hide' | 'show';
+            navigationMode?: '3-button' | 'gesture';
+            statusBar?: DetoxSystemUIStatusBarConfig;
+        }
+
+        type DetoxSystemUIPreset = 'minimal';
+
+        type DetoxSystemUI = DetoxSystemUIPreset | DetoxSystemUIConfig;
+
         type DetoxBuiltInDeviceConfig =
             | DetoxIosSimulatorDriverConfig
             | DetoxAttachedAndroidDriverConfig
@@ -378,6 +409,9 @@ declare global {
         interface DetoxSharedAndroidDriverConfig {
             forceAdbInstall?: boolean;
             utilBinaryPaths?: string[];
+
+            /** Disclaimer: Some features are not seamlessly supported by all Android versions and vendors. */
+            systemUI?: DetoxSystemUI;
         }
 
         interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {

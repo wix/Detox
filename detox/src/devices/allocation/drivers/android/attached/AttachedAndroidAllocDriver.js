@@ -1,12 +1,10 @@
 /**
- * @typedef {import('../../AllocationDriverBase').AllocationDriverBase} AllocationDriverBase
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
  */
 
-/**
- * @implements {AllocationDriverBase}
- */
-class AttachedAndroidAllocDriver {
+const AndroidAllocDriver = require('../AndroidAllocDriver');
+
+class AttachedAndroidAllocDriver extends AndroidAllocDriver {
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
@@ -14,7 +12,7 @@ class AttachedAndroidAllocDriver {
    * @param {import('../FreeDeviceFinder')} options.freeDeviceFinder
    */
   constructor({ adb, deviceRegistry, freeDeviceFinder }) {
-    this._adb = adb;
+    super({ adb });
     this._deviceRegistry = deviceRegistry;
     this._freeDeviceFinder = freeDeviceFinder;
   }
@@ -36,13 +34,17 @@ class AttachedAndroidAllocDriver {
 
   /**
    * @param {AndroidDeviceCookie} deviceCookie
-   * @returns {Promise<void>}
+   * @param {{ deviceConfig: Detox.DetoxSharedAndroidDriverConfig }} configs
+   * @returns {Promise<AndroidDeviceCookie>}
    */
-  async postAllocate(deviceCookie) {
+  async postAllocate(deviceCookie, configs) {
     const { adbName } = deviceCookie;
 
+    await super.postAllocate(deviceCookie, configs);
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
+
+    return deviceCookie;
   }
 
   /**

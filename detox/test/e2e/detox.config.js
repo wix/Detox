@@ -109,7 +109,11 @@ const config = {
       device: {
         avdName: 'Pixel_3a_API_35'
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
+      systemUI: {
+        extends: 'minimal',
+        pointerLocationBar: 'show',
+      },
     },
 
     'android.attached': {

@@ -362,10 +362,16 @@ class RuntimeDevice {
     return this.deviceDriver.getUiDevice();
   }
 
+  /**
+   * @Deprecated
+   */
   async setStatusBar(params) {
     await this.deviceDriver.setStatusBar(params);
   }
 
+  /**
+   * @Deprecated
+   */
   async resetStatusBar() {
     await this.deviceDriver.resetStatusBar();
   }
