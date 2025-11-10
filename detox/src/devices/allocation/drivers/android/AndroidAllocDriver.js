@@ -31,13 +31,19 @@ const batteryPercent = {
   low: 20,
 };
 
+const navigationModesDictionary = {
+  '3-button': 'com.android.internal.systemui.navbar.threebutton',
+//      '2-button': 'com.android.internal.systemui.navbar.twobutton',
+  'gesture': 'com.android.internal.systemui.navbar.gestural',
+};
+
 /**
  *
- * @param {any | undefined} value
+ * @param {any | undefined | null} value
  * @param {(value: any) => any | undefined} fn
  * @returns {any | undefined}
  */
-const undefinedOrMap = (value, fn) => value === undefined ? undefined : fn(value);
+const nullishOrMap = (value, fn) => (value === undefined || value === null) ? undefined : fn(value);
 
 /**
  * @abstract {AllocationDriverBase}
@@ -107,7 +113,7 @@ class AndroidAllocDriver {
    * @param {Detox.DetoxSystemUIConfig} systemUIConfig
    */
   async _setupKeyboardBehavior(adb, systemUIConfig) {
-    const showKbd = undefinedOrMap(systemUIConfig.keyboard, (keyboard) => Number(keyboard === 'show'));
+    const showKbd = nullishOrMap(systemUIConfig.keyboard, (keyboard) => Number(keyboard === 'show'));
 
     if (showKbd !== undefined) {
       await adb.shell(`settings put Secure show_ime_with_hard_keyboard ${showKbd}`);
@@ -119,12 +125,12 @@ class AndroidAllocDriver {
    * @param {Detox.DetoxSystemUIConfig} systemUIConfig
    */
   async _setupPointerIndicators(adb, systemUIConfig) {
-    const showTouches = undefinedOrMap(systemUIConfig.touches, (touches) => Number(touches === 'show'));
+    const showTouches = nullishOrMap(systemUIConfig.touches, (touches) => Number(touches === 'show'));
     if (showTouches !== undefined) {
       await adb.shell(`settings put system show_touches ${showTouches}`);
     }
 
-    const showPointerLocationBar = undefinedOrMap(systemUIConfig.pointerLocationBar, (pointerLocationBar) => Number(pointerLocationBar === 'show'));
+    const showPointerLocationBar = nullishOrMap(systemUIConfig.pointerLocationBar, (pointerLocationBar) => Number(pointerLocationBar === 'show'));
     if (showPointerLocationBar !== undefined) {
       await adb.shell(`settings put system pointer_location 1`);
     }
@@ -135,13 +141,7 @@ class AndroidAllocDriver {
    * @param {Detox.DetoxSystemUIConfig} systemUIConfig
    */
   async _setupNavigationMode(adb, systemUIConfig) {
-    const navigationModesDictionary = {
-      '3-button': 'com.android.internal.systemui.navbar.threebutton',
-//      '2-button': 'com.android.internal.systemui.navbar.twobutton',
-      'gesture': 'com.android.internal.systemui.navbar.gestural',
-    };
-
-    const navigationMode = undefinedOrMap(systemUIConfig.navigationMode, (navigationMode) => navigationModesDictionary[navigationMode]);
+    const navigationMode = nullishOrMap(systemUIConfig.navigationMode, (navigationMode) => navigationModesDictionary[navigationMode]);
     if (navigationMode !== undefined) {
       await adb.shell(`cmd overlay enable ${navigationMode}`);
     }
@@ -165,12 +165,12 @@ class AndroidAllocDriver {
     await adb.shell('am broadcast -a com.android.systemui.demo -e command enter');
 
     // Force status bar content
-    const notificationsVisible = undefinedOrMap(statusBarConfig.notifications, (notifications) => Number(notifications === 'show'));
+    const notificationsVisible = nullishOrMap(statusBarConfig.notifications, (notifications) => Number(notifications === 'show'));
     if (notificationsVisible !== undefined) {
       await adb.shell(`am broadcast -a com.android.systemui.demo -e command notifications -e visible ${notificationsVisible}`);
     }
 
-    const wifiSignal = statusBarConfig.wifiSignal;
+    const wifiSignal = nullishOrMap(statusBarConfig.wifiSignal, (wifiSignal) => wifiSignal);
     if (wifiSignal !== undefined) {
       await adb.shell('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
       if (wifiSignal !== 'none') {
@@ -179,7 +179,7 @@ class AndroidAllocDriver {
       }
     }
 
-    const cellSignal = statusBarConfig.cellSignal;
+    const cellSignal = nullishOrMap(statusBarConfig.cellSignal, (cellSignal) => cellSignal);
     if (cellSignal !== undefined) {
       await adb.shell('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
       if (cellSignal !== 'none') {
@@ -188,15 +188,15 @@ class AndroidAllocDriver {
       }
     }
 
-    const clock = statusBarConfig.clock;
+    const clock = nullishOrMap(statusBarConfig.clock, (clock) => clock);
     if (clock !== undefined) {
       await adb.shell(`am broadcast -a com.android.systemui.demo -e command clock -e hhmm ${clock}`);
     }
 
     // Best to keep this last due to a "charging" indicator animation which can
     // break UI changes made by consequent commands
-    const batteryLevel = undefinedOrMap(statusBarConfig.batteryLevel, (level) => batteryPercent[level]);
-    const charging = undefinedOrMap(statusBarConfig.charging, (isCharging) => String(isCharging));
+    const batteryLevel = nullishOrMap(statusBarConfig.batteryLevel, (level) => batteryPercent[level]);
+    const charging = nullishOrMap(statusBarConfig.charging, (isCharging) => String(isCharging));
     if (batteryLevel !== undefined || charging !== undefined) {
       const command = 'am broadcast -a com.android.systemui.demo -e command battery' +
         (batteryLevel !== undefined ? ` -e level ${batteryLevel}` : '') +

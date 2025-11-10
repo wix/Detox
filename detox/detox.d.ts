@@ -365,14 +365,14 @@ declare global {
 
         // SystemUI Configuration Types
         interface DetoxSystemUIStatusBarConfig {
-            notifications?: 'show' | 'hide';
-            wifiSignal?: 'strong' | 'weak' | 'none';
+            notifications?: 'show' | 'hide' | null;
+            wifiSignal?: 'strong' | 'weak' | 'none' | null;
             /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
-            cellSignal?: 'strong' | 'weak' | 'none';
-            batteryLevel?: 'full' | 'half' | 'low';
-            charging?: boolean;
+            cellSignal?: 'strong' | 'weak' | 'none' | null;
+            batteryLevel?: 'full' | 'half' | 'low' | null;
+            charging?: boolean | null;
             /** In "hhmm" format (e.g. "1234" for 12:34) */
-            clock?: string;
+            clock?: string | null;
         }
 
         // TODO Revisit, align show/hide vs visible/hidden schemas or just switch to booleans
@@ -383,10 +383,11 @@ declare global {
              * Note: For 'hide' to work in Google emulators, need to set `hw.keyboard=yes` in AVD configuration (i.e.
              * in manually `config.ini` file or via AVD Manager on Android Studio).
              */
-            keyboard?: 'hide' | 'show';
-            touches?: 'hide' | 'show';
-            pointerLocationBar?: 'hide' | 'show';
-            navigationMode?: '3-button' | 'gesture';
+            keyboard?: 'hide' | 'show' | null;
+            touches?: 'hide' | 'show' | null;
+            pointerLocationBar?: 'hide' | 'show' | null;
+            /** Note: 2-button mode is not supported in recent Android versions; Detox ignores it to avoid confusion. */
+            navigationMode?: '3-button' | 'gesture' | null;
             statusBar?: DetoxSystemUIStatusBarConfig;
         }
 
