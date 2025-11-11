@@ -68,7 +68,11 @@ class SystemUICfgHelper {
     }
 
     if (_.isObject(systemUI) && systemUI.extends === 'minimal') {
-      return _.merge({}, minimalConfigPreset, systemUI);
+      return _.chain({})
+        .merge(minimalConfigPreset)
+        .merge(systemUI)
+        .omit('extends')
+        .value();
     }
 
     return systemUI;
@@ -96,7 +100,7 @@ class SystemUICfgHelper {
 
     const showPointerLocationBar = nullishOrMap(systemUIConfig.pointerLocationBar, (pointerLocationBar) => Number(pointerLocationBar === 'show'));
     if (showPointerLocationBar !== undefined) {
-      await this._adb.shell(`settings put system pointer_location 1`);
+      await this._adb.shell(`settings put system pointer_location ${showPointerLocationBar}`);
     }
   }
 
