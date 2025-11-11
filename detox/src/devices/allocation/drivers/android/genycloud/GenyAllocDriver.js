@@ -70,7 +70,7 @@ class GenyAllocDriver extends AndroidAllocDriver {
 
   /**
    * @param {GenycloudEmulatorCookie} cookie
-   * @param {{ deviceConfig: Detox.DetoxDeviceConfig }} configs
+   * @param {{ deviceConfig: Detox.DetoxSharedAndroidDriverConfig }} configs
    * @returns {Promise<GenycloudEmulatorCookie>}
    */
   async postAllocate(cookie, configs) {

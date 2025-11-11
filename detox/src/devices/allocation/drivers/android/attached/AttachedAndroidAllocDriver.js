@@ -40,9 +40,9 @@ class AttachedAndroidAllocDriver extends AndroidAllocDriver {
   async postAllocate(deviceCookie, configs) {
     const { adbName } = deviceCookie;
 
-    await super.postAllocate(deviceCookie, configs);
     await this._adb.apiLevel(adbName);
     await this._adb.unlockScreen(adbName);
+    await super.postAllocate(deviceCookie, configs);
 
     return deviceCookie;
   }
