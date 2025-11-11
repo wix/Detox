@@ -158,7 +158,7 @@ function validateSystemUIConfig(systemUI, deviceAlias, errorComposer) {
 
     // Validate statusBar.clock
     if (systemUI.statusBar.clock !== undefined && systemUI.statusBar.clock !== null) {
-      if (!_.isString(systemUI.statusBar.clock) || !/^\d{2}:\d{2}$/.test(systemUI.statusBar.clock)) {
+      if (!_.isString(systemUI.statusBar.clock) || !/^\d{2}\d{2}$/.test(systemUI.statusBar.clock)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
@@ -254,7 +254,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
   if (deviceConfig.systemUI !== undefined) {
     validateSystemUIConfig(deviceConfig.systemUI, deviceAlias, errorComposer);
-    
+
     if (!deviceConfig.type.match(/^android\.(emulator|genycloud)$/)) {
       throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'systemUI');
     }

@@ -709,7 +709,7 @@ describe('composeDeviceConfig', () => {
               networkBar: 'hidden',
               batteryLevel: 'full',
               charging: true,
-              clock: '12:34',
+              clock: '1234',
             },
           };
           expect(compose).not.toThrow();
@@ -742,7 +742,7 @@ describe('composeDeviceConfig', () => {
         it('should accept valid statusBar.clock format', () => {
           deviceConfig.systemUI = {
             statusBar: {
-              clock: '12:34',
+              clock: '1234',
             },
           };
           expect(compose).not.toThrow();
@@ -836,9 +836,9 @@ describe('composeDeviceConfig', () => {
           expect(compose).toThrow('Expected \'minimal\' or object');
         });
 
-        it('should reject invalid statusBar.clock (wrong format - missing colon)', () => {
+        it('should accept statusBar.clock', () => {
           deviceConfig.systemUI = { statusBar: { clock: '1234' } };
-          expect(compose).toThrow('Expected \'minimal\' or object');
+          expect(compose).not.toThrow();
         });
       });
 

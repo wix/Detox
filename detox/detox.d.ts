@@ -363,19 +363,9 @@ declare global {
             [prop: string]: unknown;
         }
 
-        // SystemUI Configuration Types
-        interface DetoxSystemUIStatusBarConfig {
-            notifications?: 'show' | 'hide' | null;
-            wifiSignal?: 'strong' | 'weak' | 'none' | null;
-            /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
-            cellSignal?: 'strong' | 'weak' | 'none' | null;
-            batteryLevel?: 'full' | 'half' | 'low' | null;
-            charging?: boolean | null;
-            /** In "hhmm" format (e.g. "1234" for 12:34) */
-            clock?: string | null;
-        }
+        type DetoxSystemUIPreset = 'minimal';
+        type DetoxSystemUI = DetoxSystemUIPreset | DetoxSystemUIConfig;
 
-        // TODO Revisit, align show/hide vs visible/hidden schemas or just switch to booleans
         interface DetoxSystemUIConfig {
             extends?: DetoxSystemUIPreset;
 
@@ -391,9 +381,16 @@ declare global {
             statusBar?: DetoxSystemUIStatusBarConfig;
         }
 
-        type DetoxSystemUIPreset = 'minimal';
-
-        type DetoxSystemUI = DetoxSystemUIPreset | DetoxSystemUIConfig;
+        interface DetoxSystemUIStatusBarConfig {
+            notifications?: 'show' | 'hide' | null;
+            wifiSignal?: 'strong' | 'weak' | 'none' | null;
+            /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
+            cellSignal?: 'strong' | 'weak' | 'none' | null;
+            batteryLevel?: 'full' | 'half' | 'low' | null;
+            charging?: boolean | null;
+            /** In "hhmm" format (e.g. "1234" for 12:34) */
+            clock?: string | null;
+        }
 
         type DetoxBuiltInDeviceConfig =
             | DetoxIosSimulatorDriverConfig

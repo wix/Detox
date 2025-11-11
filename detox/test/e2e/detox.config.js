@@ -113,6 +113,9 @@ const config = {
       systemUI: {
         extends: 'minimal',
         pointerLocationBar: 'show',
+        statusBar: {
+          clock: '1948',
+        },
       },
     },
 
