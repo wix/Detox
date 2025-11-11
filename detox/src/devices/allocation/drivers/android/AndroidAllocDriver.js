@@ -4,7 +4,6 @@
  */
 
 const log = require('../../../../utils/logger').child({ __filename });
-const sleep = require('../../../../utils/sleep');
 
 const DeviceInitCache = require('./DeviceInitCache');
 const SystemUIDemoMode = require('./SystemUICfgHelper');
@@ -53,7 +52,6 @@ class AndroidAllocDriver {
     const adbWrapper = {
       shell: async (cmd) => {
         await this._adb.shell(deviceCookie.adbName, cmd);
-        await sleep(200);
       },
     };
 
