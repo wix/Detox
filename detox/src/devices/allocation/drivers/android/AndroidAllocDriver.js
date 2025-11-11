@@ -6,7 +6,10 @@
 const log = require('../../../../utils/logger').child({ __filename });
 const sleep = require('../../../../utils/sleep');
 
+const DeviceInitCache = require('./DeviceInitCache');
 const SystemUIDemoMode = require('./SystemUICfgHelper');
+
+const systemUIInitCache = new DeviceInitCache();
 
 /**
  * @abstract {AllocationDriverBase}
@@ -27,11 +30,16 @@ class AndroidAllocDriver {
    * @param {{ deviceConfig: Detox.DetoxSharedAndroidDriverConfig }} configs
    * @returns {Promise<DeviceCookie>}
    */
-  async postAllocate(deviceCookie, configs) {
-    const { deviceConfig } = configs;
+  async postAllocate(deviceCookie, { deviceConfig }) {
+    const { adbName } = deviceCookie;
 
     if (deviceConfig.systemUI) {
-      await this._setupSystemUI(deviceCookie, deviceConfig);
+      if (systemUIInitCache.hasInitialized(adbName)) {
+        log.debug(`Skipping System UI setup for ${adbName}, already initialized`);
+      } else {
+        await this._setupSystemUI(deviceCookie, deviceConfig);
+        systemUIInitCache.setInitialized(adbName);
+      }
     }
     return deviceCookie;
   }
