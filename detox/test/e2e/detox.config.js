@@ -111,8 +111,10 @@ const config = {
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
       systemUI: {
-        extends: 'minimal',
+        extends: 'genymotion',
         pointerLocationBar: 'show',
+        touches: 'show',
+        navigationMode: '3-button',
         statusBar: {
           clock: '1948',
         },

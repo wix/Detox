@@ -6,8 +6,8 @@
 const log = require('../../../../utils/logger').child({ __filename });
 const sleep = require('../../../../utils/sleep');
 
-const DeviceInitCache = require('./DeviceInitCache');
-const SystemUIDemoMode = require('./SystemUICfgHelper');
+const DeviceInitCache = require('./utils/DeviceInitCache');
+const SystemUIDemoMode = require('./utils/SystemUICfgHelper');
 
 const systemUIInitCache = new DeviceInitCache();
 
@@ -46,6 +46,7 @@ class AndroidAllocDriver {
 
   /**
    * @param {DeviceCookie & { adbName: string }} deviceCookie
+   * @param {Detox.DetoxSharedAndroidDriverConfig} deviceConfig
    * @private
    */
   async _setupSystemUI(deviceCookie, deviceConfig) {

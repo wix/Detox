@@ -1,4 +1,4 @@
-describe('SystemUICfgHelper', () => {
+describe('Android system UI configuration helper', () => {
   const minimalPreset = {
     keyboard: 'hide',
     touches: 'show',
@@ -8,8 +8,19 @@ describe('SystemUICfgHelper', () => {
       wifiSignal: 'strong',
       cellSignal: 'none',
       batteryLevel: 'full',
-      charging: true,
+      charging: false,
       clock: '1337',
+    },
+  };
+
+  const genymotionPreset = {
+    keyboard: 'hide',
+    statusBar: {
+      notifications: 'hide',
+      wifiSignal: 'strong',
+      cellSignal: 'none',
+      batteryLevel: 'full',
+      charging: true,
     },
   };
 
@@ -22,8 +33,8 @@ describe('SystemUICfgHelper', () => {
       shell: jest.fn().mockResolvedValue(undefined),
     };
 
-    jest.mock('../../../../utils/sleep', () => jest.fn().mockResolvedValue(undefined));
-    mockSleep = require('../../../../utils/sleep');
+    jest.mock('../../../../../utils/sleep', () => jest.fn().mockResolvedValue(undefined));
+    mockSleep = require('../../../../../utils/sleep');
 
     const SystemUICfgHelper = require('./SystemUICfgHelper');
     uut = new SystemUICfgHelper({ adb: mockAdb });
@@ -56,6 +67,11 @@ describe('SystemUICfgHelper', () => {
       expect(result).toEqual(minimalPreset);
     });
 
+    it('should use genymotion preset', () => {
+      const result = uut.resolveConfig('genymotion');
+      expect(result).toEqual(genymotionPreset);
+    });
+
     it('should (deep!) merge extended preset when extends is specified', () => {
       const systemUI = {
         extends: 'minimal',
@@ -78,7 +94,7 @@ describe('SystemUICfgHelper', () => {
           // preset:
           cellSignal: 'none',
           batteryLevel: 'full',
-          charging: true,
+          charging: false,
           clock: '1337',
         },
         // preset:
@@ -89,14 +105,16 @@ describe('SystemUICfgHelper', () => {
   });
 
   describe('setupKeyboardBehavior', () => {
+    const keyboardCmd = (show) => `settings put Secure show_ime_with_hard_keyboard ${show ? 1 : 0}`;
+
     it('should set keyboard to show when keyboard is "show"', async () => {
       await uut.setupKeyboardBehavior({ keyboard: 'show' });
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put Secure show_ime_with_hard_keyboard 1');
+      expect(mockAdb.shell).toHaveBeenCalledWith(keyboardCmd(true));
     });
 
     it('should set keyboard to hide when keyboard is "hide"', async () => {
       await uut.setupKeyboardBehavior({ keyboard: 'hide' });
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put Secure show_ime_with_hard_keyboard 0');
+      expect(mockAdb.shell).toHaveBeenCalledWith(keyboardCmd(false));
     });
 
     it('should not call adb.shell when keyboard is undefined', async () => {
@@ -111,15 +129,18 @@ describe('SystemUICfgHelper', () => {
   });
 
   describe('setupPointerIndicators', () => {
+    const touchesCmd = (show) => `settings put system show_touches ${show ? 1 : 0}`;
+    const pointerLocationCmd = (show) => `settings put system pointer_location ${show ? 1 : 0}`;
+
     describe('touches', () => {
       it('should set show_touches to 1 when touches is "show"', async () => {
         await uut.setupPointerIndicators({ touches: 'show' });
-        expect(mockAdb.shell).toHaveBeenCalledWith('settings put system show_touches 1');
+        expect(mockAdb.shell).toHaveBeenCalledWith(touchesCmd(true));
       });
 
       it('should set show_touches to 0 when touches is "hide"', async () => {
         await uut.setupPointerIndicators({ touches: 'hide' });
-        expect(mockAdb.shell).toHaveBeenCalledWith('settings put system show_touches 0');
+        expect(mockAdb.shell).toHaveBeenCalledWith(touchesCmd(false));
       });
 
       it('should not call adb.shell for show_touches when touches is undefined', async () => {
@@ -136,12 +157,12 @@ describe('SystemUICfgHelper', () => {
     describe('pointerLocationBar', () => {
       it('should set pointer_location to 1 when pointerLocationBar is "show"', async () => {
         await uut.setupPointerIndicators({ pointerLocationBar: 'show' });
-        expect(mockAdb.shell).toHaveBeenCalledWith('settings put system pointer_location 1');
+        expect(mockAdb.shell).toHaveBeenCalledWith(pointerLocationCmd(true));
       });
 
       it('should set pointer_location when pointerLocationBar is "hide"', async () => {
         await uut.setupPointerIndicators({ pointerLocationBar: 'hide' });
-        expect(mockAdb.shell).toHaveBeenCalledWith('settings put system pointer_location 0');
+        expect(mockAdb.shell).toHaveBeenCalledWith(pointerLocationCmd(false));
       });
 
       it('should not call adb.shell for pointer_location when pointerLocationBar is undefined', async () => {
@@ -161,21 +182,24 @@ describe('SystemUICfgHelper', () => {
         pointerLocationBar: 'show',
       });
 
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put system show_touches 1');
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put system pointer_location 1');
+      expect(mockAdb.shell).toHaveBeenCalledWith(touchesCmd(true));
+      expect(mockAdb.shell).toHaveBeenCalledWith(pointerLocationCmd(true));
       expect(mockAdb.shell).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('setupNavigationMode', () => {
+    const navThreeButtonCmd = () => 'cmd overlay enable com.android.internal.systemui.navbar.threebutton';
+    const navGestureCmd = () => 'cmd overlay enable com.android.internal.systemui.navbar.gestural';
+
     it('should enable 3-button navigation when navigationMode is "3-button"', async () => {
       await uut.setupNavigationMode({ navigationMode: '3-button' });
-      expect(mockAdb.shell).toHaveBeenCalledWith('cmd overlay enable com.android.internal.systemui.navbar.threebutton');
+      expect(mockAdb.shell).toHaveBeenCalledWith(navThreeButtonCmd());
     });
 
     it('should enable gesture navigation when navigationMode is "gesture"', async () => {
       await uut.setupNavigationMode({ navigationMode: 'gesture' });
-      expect(mockAdb.shell).toHaveBeenCalledWith('cmd overlay enable com.android.internal.systemui.navbar.gestural');
+      expect(mockAdb.shell).toHaveBeenCalledWith(navGestureCmd());
     });
 
     it('should not call adb.shell when navigationMode is undefined', async () => {
@@ -190,16 +214,23 @@ describe('SystemUICfgHelper', () => {
   });
 
   describe('setupStatusBar', () => {
+    const demoModeAllowedCmd = () => 'settings put global sysui_demo_allowed 1';
+    const demoExitCmd = () => 'am broadcast -a com.android.systemui.demo -e command exit';
+    const demoEnterCmd = () => 'am broadcast -a com.android.systemui.demo -e command enter';
+    const notificationsCmd = (show) => `am broadcast -a com.android.systemui.demo -e command notifications -e visible ${show ? 1 : 0}`;
+    const wifiHideCmd = () => 'am broadcast -a com.android.systemui.demo -e command network -e wifi hide';
+    const wifiShowCmd = (level) => `am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level ${level} -e fully true`;
+    const mobileHideCmd = () => 'am broadcast -a com.android.systemui.demo -e command network -e mobile hide';
+    const mobileShowCmd = (level) => `am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level ${level} -e fully true -e datatype none`;
+    const clockCmd = (time = '1234') => `am broadcast -a com.android.systemui.demo -e command clock -e hhmm ${time}`;
     /**
-     * @param {object} opts
+     * @param {{ batteryLevel?: number, charging?: boolean }} opts
      * @returns {string}
      */
     const batteryCmd = ({ batteryLevel, charging }) =>
       `am broadcast -a com.android.systemui.demo -e command battery` +
         (batteryLevel !== undefined ? ` -e level ${batteryLevel}` : '') +
         (charging !== undefined ? ` -e plugged ${charging}` : '');
-
-    const clockCmd = (time = '1234') => `am broadcast -a com.android.systemui.demo -e command clock -e hhmm ${time}`;
 
     it('should not call adb.shell when statusBar is undefined', async () => {
       await uut.setupStatusBar({});
@@ -210,9 +241,9 @@ describe('SystemUICfgHelper', () => {
     it('should initialize demo mode and enter it', async () => {
       await uut.setupStatusBar({ statusBar: {} });
 
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put global sysui_demo_allowed 1');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command exit');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command enter');
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoModeAllowedCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoExitCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoEnterCmd());
     });
 
     describe('notifications', () => {
@@ -221,7 +252,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { notifications: 'show' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command notifications -e visible 1');
+        expect(mockAdb.shell).toHaveBeenCalledWith(notificationsCmd(true));
       });
 
       it('should set notifications to hidden when notifications is "hide"', async () => {
@@ -229,7 +260,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { notifications: 'hide' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command notifications -e visible 0');
+        expect(mockAdb.shell).toHaveBeenCalledWith(notificationsCmd(false));
       });
 
       it('should not set notifications when notifications is undefined', async () => {
@@ -257,7 +288,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { wifiSignal: 'none' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
+        expect(mockAdb.shell).toHaveBeenCalledWith(wifiHideCmd());
         expect(mockAdb.shell).not.toHaveBeenCalledWith(
           expect.stringContaining('network -e wifi show')
         );
@@ -268,8 +299,8 @@ describe('SystemUICfgHelper', () => {
           statusBar: { wifiSignal: 'strong' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 -e fully true');
+        expect(mockAdb.shell).toHaveBeenCalledWith(wifiHideCmd());
+        expect(mockAdb.shell).toHaveBeenCalledWith(wifiShowCmd(4));
       });
 
       it('should show wifi with weak signal when wifiSignal is "weak"', async () => {
@@ -277,8 +308,8 @@ describe('SystemUICfgHelper', () => {
           statusBar: { wifiSignal: 'weak' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 2 -e fully true');
+        expect(mockAdb.shell).toHaveBeenCalledWith(wifiHideCmd());
+        expect(mockAdb.shell).toHaveBeenCalledWith(wifiShowCmd(2));
       });
 
       it('should not set wifi when wifiSignal is undefined', async () => {
@@ -306,7 +337,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { cellSignal: 'none' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
+        expect(mockAdb.shell).toHaveBeenCalledWith(mobileHideCmd());
         expect(mockAdb.shell).not.toHaveBeenCalledWith(
           expect.stringContaining('network -e mobile show')
         );
@@ -317,8 +348,8 @@ describe('SystemUICfgHelper', () => {
           statusBar: { cellSignal: 'strong' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 4 -e fully true -e datatype none');
+        expect(mockAdb.shell).toHaveBeenCalledWith(mobileHideCmd());
+        expect(mockAdb.shell).toHaveBeenCalledWith(mobileShowCmd(4));
       });
 
       it('should show mobile with weak signal when cellSignal is "weak"', async () => {
@@ -326,8 +357,8 @@ describe('SystemUICfgHelper', () => {
           statusBar: { cellSignal: 'weak' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 2 -e fully true -e datatype none');
+        expect(mockAdb.shell).toHaveBeenCalledWith(mobileHideCmd());
+        expect(mockAdb.shell).toHaveBeenCalledWith(mobileShowCmd(2));
       });
 
       it('should not set mobile when cellSignal is undefined', async () => {
@@ -383,9 +414,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { batteryLevel: 'full' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith(
-          'am broadcast -a com.android.systemui.demo -e command battery -e level 100'
-        );
+        expect(mockAdb.shell).toHaveBeenCalledWith(batteryCmd({ batteryLevel: 100 }));
         expect(mockSleep).toHaveBeenCalledWith(1500);
       });
 
@@ -394,9 +423,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { batteryLevel: 'half' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith(
-          'am broadcast -a com.android.systemui.demo -e command battery -e level 50'
-        );
+        expect(mockAdb.shell).toHaveBeenCalledWith(batteryCmd({ batteryLevel: 50 }));
         expect(mockSleep).toHaveBeenCalledWith(1500);
       });
 
@@ -405,9 +432,7 @@ describe('SystemUICfgHelper', () => {
           statusBar: { batteryLevel: 'low' },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith(
-          'am broadcast -a com.android.systemui.demo -e command battery -e level 20'
-        );
+        expect(mockAdb.shell).toHaveBeenCalledWith(batteryCmd({ batteryLevel: 20 }));
         expect(mockSleep).toHaveBeenCalledWith(1500);
       });
 
@@ -500,7 +525,7 @@ describe('SystemUICfgHelper', () => {
           },
         });
 
-        expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command battery -e plugged false');
+        expect(mockAdb.shell).toHaveBeenCalledWith(batteryCmd({ charging: false }));
       });
     });
 
@@ -516,18 +541,17 @@ describe('SystemUICfgHelper', () => {
         },
       });
 
-      expect(mockAdb.shell).toHaveBeenCalledWith('settings put global sysui_demo_allowed 1');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command exit');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command enter');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command notifications -e visible 1');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi hide');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 -e fully true');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 2 -e fully true -e datatype none');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0915');
-      expect(mockAdb.shell).toHaveBeenCalledWith('am broadcast -a com.android.systemui.demo -e command battery -e level 50 -e plugged true');
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoModeAllowedCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoExitCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(demoEnterCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(notificationsCmd(true));
+      expect(mockAdb.shell).toHaveBeenCalledWith(wifiHideCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(wifiShowCmd(4));
+      expect(mockAdb.shell).toHaveBeenCalledWith(mobileHideCmd());
+      expect(mockAdb.shell).toHaveBeenCalledWith(mobileShowCmd(2));
+      expect(mockAdb.shell).toHaveBeenCalledWith(clockCmd('0915'));
+      expect(mockAdb.shell).toHaveBeenCalledWith(batteryCmd({ batteryLevel: 50, charging: true }));
       expect(mockSleep).toHaveBeenCalledWith(1500);
     });
   });
 });
-

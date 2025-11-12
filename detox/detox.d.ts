@@ -363,7 +363,7 @@ declare global {
             [prop: string]: unknown;
         }
 
-        type DetoxSystemUIPreset = 'minimal';
+        type DetoxSystemUIPreset = 'minimal' | 'genymotion';
         type DetoxSystemUI = DetoxSystemUIPreset | DetoxSystemUIConfig;
 
         interface DetoxSystemUIConfig {

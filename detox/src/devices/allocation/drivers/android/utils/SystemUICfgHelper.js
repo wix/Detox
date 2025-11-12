@@ -1,27 +1,12 @@
 /**
- * @typedef {import('../../../common/drivers/DeviceCookie').DeviceCookie} DeviceCookie
+ * @typedef {import('../../../../common/drivers/DeviceCookie').DeviceCookie} DeviceCookie
  */
 
 const _ = require('lodash');
 
-const sleep = require('../../../../utils/sleep');
+const sleep = require('../../../../../utils/sleep');
 
-/**
- * @type Detox.DetoxSystemUIConfig
- */
-const minimalConfigPreset = {
-  keyboard: 'hide',
-  touches: 'show',
-  navigationMode: '3-button',
-  statusBar: {
-    notifications: 'hide',
-    wifiSignal: 'strong',
-    cellSignal: 'none',
-    batteryLevel: 'full',
-    charging: true,
-    clock: '1337',
-  },
-};
+const presets = require('./systemUICfgPresets');
 
 const batteryPrecents = {
   full: 100,
@@ -64,12 +49,21 @@ class SystemUICfgHelper {
    */
   resolveConfig(systemUI) {
     if (systemUI === 'minimal') {
-      return minimalConfigPreset;
+      return presets.minimal;
     }
 
-    if (_.isObject(systemUI) && systemUI.extends === 'minimal') {
+    if (systemUI === 'genymotion') {
+      return presets.genymotion;
+    }
+
+    if (_.isObject(systemUI) && systemUI.extends) {
+      const preset = presets[systemUI.extends];
+      if (!preset) {
+        return systemUI;
+      }
+
       return _.chain({})
-        .merge(minimalConfigPreset)
+        .merge(preset)
         .merge(systemUI)
         .omit('extends')
         .value();

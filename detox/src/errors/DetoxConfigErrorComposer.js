@@ -407,7 +407,7 @@ Please check your Detox config${this._atPath()}`,
       case 'readonly':
         return this._invalidPropertyType('readonly', 'a boolean value', deviceAlias);
       case 'systemUI':
-        return this._invalidPropertyType('systemUI', "'minimal' or object", deviceAlias);
+        return this._invalidPropertyType('systemUI', "'minimal', 'genymotion' or an object", deviceAlias);
       default:
         throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
     }

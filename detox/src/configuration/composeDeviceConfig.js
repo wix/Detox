@@ -67,96 +67,82 @@ function composeDeviceConfigFromAliased(opts) {
  * @param {DetoxConfigErrorComposer} errorComposer - Error composer instance
  */
 function validateSystemUIConfig(systemUI, deviceAlias, errorComposer) {
-  // Option 1: String value 'minimal'
   if (_.isString(systemUI)) {
-    if (systemUI !== 'minimal') {
+    if (!['minimal', 'genymotion'].includes(systemUI)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
     return;
   }
 
-  // Option 2 & 3: Object configuration
   if (!_.isObject(systemUI)) {
     throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
   }
 
-  // Validate extends property (Option 3)
   if (systemUI.extends !== undefined) {
-    if (systemUI.extends !== 'minimal') {
+    if (!['minimal', 'genymotion'].includes(systemUI.extends)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 
-  // Validate keyboard property
   if (systemUI.keyboard !== undefined && systemUI.keyboard !== null) {
     if (!['hide', 'show'].includes(systemUI.keyboard)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 
-  // Validate touches property
   if (systemUI.touches !== undefined && systemUI.touches !== null) {
     if (!['hide', 'show'].includes(systemUI.touches)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 
-  // Validate pointerLocationBar property
   if (systemUI.pointerLocationBar !== undefined && systemUI.pointerLocationBar !== null) {
     if (!['hide', 'show'].includes(systemUI.pointerLocationBar)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 
-  // Validate navigationMode property
   if (systemUI.navigationMode !== undefined && systemUI.navigationMode !== null) {
     if (!['3-button', 'gesture'].includes(systemUI.navigationMode)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 
-  // Validate statusBar object
   if (systemUI.statusBar !== undefined && systemUI.statusBar !== null) {
     if (!_.isObject(systemUI.statusBar)) {
       throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
     }
 
-    // Validate statusBar.notifications
     if (systemUI.statusBar.notifications !== undefined && systemUI.statusBar.notifications !== null) {
       if (!['hide', 'show'].includes(systemUI.statusBar.notifications)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
 
-    // Validate statusBar.wifiSignal
     if (systemUI.statusBar.wifiSignal !== undefined && systemUI.statusBar.wifiSignal !== null) {
       if (!['weak', 'strong', 'none'].includes(systemUI.statusBar.wifiSignal)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
 
-    // Validate statusBar.cellSignal
     if (systemUI.statusBar.cellSignal !== undefined && systemUI.statusBar.cellSignal !== null) {
       if (!['strong', 'weak', 'none'].includes(systemUI.statusBar.cellSignal)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
 
-    // Validate statusBar.batteryLevel
     if (systemUI.statusBar.batteryLevel !== undefined && systemUI.statusBar.batteryLevel !== null) {
       if (!['full', 'half', 'low'].includes(systemUI.statusBar.batteryLevel)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
 
-    // Validate statusBar.charging
     if (systemUI.statusBar.charging !== undefined && systemUI.statusBar.charging !== null) {
       if (!_.isBoolean(systemUI.statusBar.charging)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
       }
     }
 
-    // Validate statusBar.clock
     if (systemUI.statusBar.clock !== undefined && systemUI.statusBar.clock !== null) {
       if (!_.isString(systemUI.statusBar.clock) || !/^\d{2}\d{2}$/.test(systemUI.statusBar.clock)) {
         throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
