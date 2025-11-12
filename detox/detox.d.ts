@@ -363,11 +363,11 @@ declare global {
             [prop: string]: unknown;
         }
 
-        type DetoxSystemUIPreset = 'minimal' | 'genymotion';
-        type DetoxSystemUI = DetoxSystemUIPreset | DetoxSystemUIConfig;
+        type DetoxSystemUIPresetName = 'minimal' | 'genymotion';
+        type DetoxSystemUI = DetoxSystemUIPresetName | DetoxSystemUIConfig;
 
         interface DetoxSystemUIConfig {
-            extends?: DetoxSystemUIPreset;
+            extends?: DetoxSystemUIPresetName;
 
             /**
              * Note: For 'hide' to work in Google emulators, need to set `hw.keyboard=yes` in AVD configuration (i.e.

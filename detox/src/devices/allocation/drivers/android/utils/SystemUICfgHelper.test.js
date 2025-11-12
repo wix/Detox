@@ -53,13 +53,7 @@ describe('Android system UI configuration helper', () => {
       const result = uut.resolveConfig(systemUI);
 
       expect(result).toBe(systemUI);
-      expect(result).toEqual({
-        keyboard: 'show',
-        touches: 'hide',
-        statusBar: {
-          notifications: 'show',
-        },
-      });
+      expect(result).toStrictEqual(systemUI);
     });
 
     it('should use minimal preset', () => {
@@ -72,35 +66,25 @@ describe('Android system UI configuration helper', () => {
       expect(result).toEqual(genymotionPreset);
     });
 
+    it('should throw when invalid preset name is provided', () => {
+      expect(() => uut.resolveConfig('non-existing-preset'))
+        .toThrow("Invalid system UI preset name 'non-existing-preset'");
+    });
+
     it('should (deep!) merge extended preset when extends is specified', () => {
-      const systemUI = {
-        extends: 'minimal',
+      const expectedOverrides = {
         keyboard: 'show',
         statusBar: {
           notifications: 'show',
-          wifiSignal: 'weak',
         },
+      };
+      const systemUI = {
+        extends: 'minimal',
+        ...expectedOverrides,
       };
 
       const result = uut.resolveConfig(systemUI);
-
-      expect(result).toEqual({
-        extends: undefined,
-        keyboard: 'show',
-        statusBar: {
-          notifications: 'show',
-          wifiSignal: 'weak',
-
-          // preset:
-          cellSignal: 'none',
-          batteryLevel: 'full',
-          charging: false,
-          clock: '1337',
-        },
-        // preset:
-        touches: 'show',
-        navigationMode: '3-button',
-      });
+      expect(result).toMatchSnapshot();
     });
   });
 

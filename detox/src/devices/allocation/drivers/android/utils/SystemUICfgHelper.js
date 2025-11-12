@@ -4,6 +4,7 @@
 
 const _ = require('lodash');
 
+const { DetoxConfigError } = require('../../../../../errors');
 const sleep = require('../../../../../utils/sleep');
 
 const presets = require('./systemUICfgPresets');
@@ -44,32 +45,28 @@ class SystemUICfgHelper {
   /**
    * Resolves the system UI configuration, handling presets and extends.
    *
-   * @param {Detox.DetoxSystemUI} systemUI
+   * @param {Detox.DetoxSystemUI} systemUICfg
    * @returns {Detox.DetoxSystemUIConfig}
    */
-  resolveConfig(systemUI) {
-    if (systemUI === 'minimal') {
-      return presets.minimal;
+  resolveConfig(systemUICfg) {
+    const preset = _.isString(systemUICfg) && this._resolvePreset(systemUICfg);
+    if (preset) {
+      return preset;
     }
 
-    if (systemUI === 'genymotion') {
-      return presets.genymotion;
-    }
+    /** @type {Detox.DetoxSystemUIConfig} */
+    // @ts-ignore
+    const _systemUICfg = systemUICfg;
 
-    if (_.isObject(systemUI) && systemUI.extends) {
-      const preset = presets[systemUI.extends];
-      if (!preset) {
-        return systemUI;
-      }
-
+    if (_systemUICfg.extends) {
+      const preset = this._resolvePreset(_systemUICfg.extends);
       return _.chain({})
         .merge(preset)
-        .merge(systemUI)
+        .merge(_systemUICfg)
         .omit('extends')
         .value();
     }
-
-    return systemUI;
+    return _systemUICfg;
   }
 
   /**
@@ -164,6 +161,19 @@ class SystemUICfgHelper {
       await this._adb.shell(command);
       await sleep(1500); // Wait for the charging animation to finish
     }
+  }
+
+  /**
+   * @param {Detox.DetoxSystemUI} presetName
+   * @returns {Detox.DetoxSystemUIConfig | null}
+   * @private
+   */
+  _resolvePreset(presetName) {
+    const preset = presets[presetName];
+    if (!preset) {
+      throw new DetoxConfigError(`Invalid system UI preset name '${presetName}'`);
+    }
+    return preset;
   }
 }
 
