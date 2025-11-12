@@ -98,7 +98,7 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 16',
+        type: 'iPhone 16 Pro Max',
         os: '18.5'
       },
     },
