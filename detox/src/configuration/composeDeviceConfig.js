@@ -241,7 +241,7 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
   if (deviceConfig.systemUI !== undefined) {
     validateSystemUIConfig(deviceConfig.systemUI, deviceAlias, errorComposer);
 
-    if (!deviceConfig.type.match(/^android\.(emulator|genycloud)$/)) {
+    if (!deviceConfig.type.match(/^android\.(emulator|genycloud|attached)$/)) {
       throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
