@@ -16,6 +16,7 @@ const batteryPrecents = {
 };
 
 const navigationModes = {
+//  For clarity: 2-button mode is not supported in recent Android versions; Detox ignores it to avoid confusion
 //  '2-button': 'com.android.internal.systemui.navbar.twobutton',
   '3-button': 'com.android.internal.systemui.navbar.threebutton',
   'gesture': 'com.android.internal.systemui.navbar.gestural',
@@ -37,9 +38,15 @@ class SystemUICfgHelper {
   /**
    * @param {object} options
    * @param {object} options.adb An ADB shell wrapper with a shell method
+   * @param {string} options.adbName The ADB device name
    */
-  constructor({ adb }) {
-    this._adb = adb;
+  constructor({ adb, adbName }) {
+    this._adb = {
+      shell: async (cmd) => {
+        await adb.shell(adbName, cmd);
+        await sleep(200);
+      },
+    };
   }
 
   /**

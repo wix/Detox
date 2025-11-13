@@ -37,7 +37,7 @@ describe('Android system UI configuration helper', () => {
     mockSleep = require('../../../../../utils/sleep');
 
     const SystemUICfgHelper = require('./SystemUICfgHelper');
-    uut = new SystemUICfgHelper({ adb: mockAdb });
+    uut = new SystemUICfgHelper({ adb: mockAdb, adbName: 'test-device' });
   });
 
   describe('resolveConfig', () => {

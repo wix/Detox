@@ -9,8 +9,6 @@ const sleep = require('../../../../utils/sleep');
 const DeviceInitCache = require('./utils/DeviceInitCache');
 const SystemUIDemoMode = require('./utils/SystemUICfgHelper');
 
-const systemUIInitCache = new DeviceInitCache();
-
 /**
  * @abstract {AllocationDriverBase}
  */
@@ -23,6 +21,7 @@ class AndroidAllocDriver {
     adb
   }) {
     this._adb = adb;
+    this._systemUIInitCache = new DeviceInitCache();
   }
 
   /**
@@ -34,11 +33,11 @@ class AndroidAllocDriver {
     const { adbName } = deviceCookie;
 
     if (deviceConfig.systemUI) {
-      if (systemUIInitCache.hasInitialized(adbName)) {
+      if (this._systemUIInitCache.hasInitialized(adbName)) {
         log.debug(`Skipping System UI setup for ${adbName}, already initialized`);
       } else {
         await this._setupSystemUI(deviceCookie, deviceConfig);
-        systemUIInitCache.setInitialized(adbName);
+        this._systemUIInitCache.setInitialized(adbName);
       }
     }
     return deviceCookie;
@@ -51,14 +50,8 @@ class AndroidAllocDriver {
    */
   async _setupSystemUI(deviceCookie, deviceConfig) {
     const { adbName } = deviceCookie;
-    const adbWrapper = {
-      shell: async (cmd) => {
-        await this._adb.shell(deviceCookie.adbName, cmd);
-        await sleep(200);
-      },
-    };
-
-    const systemUIDemoMode = new SystemUIDemoMode({ adb: adbWrapper });
+    
+    const systemUIDemoMode = new SystemUIDemoMode({ adb: this._adb, adbName });
     const systemUIConfig = systemUIDemoMode.resolveConfig(deviceConfig.systemUI);
 
     log.debug(`Running keyboard behavior setup for ${adbName}`);
