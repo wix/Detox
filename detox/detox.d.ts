@@ -363,6 +363,13 @@ declare global {
             [prop: string]: unknown;
         }
 
+        /**
+         * `minimal`: Configuration for a minimal system UI.
+         * `genymotion`: Configuration for a Genymotion-equivalent system UI.
+         *
+         * Visit https://github.com/wix/Detox/blob/master/detox/src/devices/allocation/drivers/android/utils/systemUICfgPresets.js to learn about
+         * the specifics of each preset.
+         */
         type DetoxSystemUIPresetName = 'minimal' | 'genymotion';
         type DetoxSystemUI = DetoxSystemUIPresetName | DetoxSystemUIConfig;
 
