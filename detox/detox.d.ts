@@ -363,6 +363,42 @@ declare global {
             [prop: string]: unknown;
         }
 
+        /**
+         * `minimal`: Configuration for a minimal system UI.
+         * `genymotion`: Configuration for a Genymotion-equivalent system UI.
+         *
+         * Visit https://github.com/wix/Detox/blob/master/detox/src/devices/allocation/drivers/android/utils/systemUICfgPresets.js to learn about
+         * the specifics of each preset.
+         */
+        type DetoxSystemUIPresetName = 'minimal' | 'genymotion';
+        type DetoxSystemUI = DetoxSystemUIPresetName | DetoxSystemUIConfig;
+
+        interface DetoxSystemUIConfig {
+            extends?: DetoxSystemUIPresetName;
+
+            /**
+             * Note: For 'hide' to work in Google emulators, need to set `hw.keyboard=yes` in AVD configuration (i.e.
+             * in manually `config.ini` file or via AVD Manager on Android Studio).
+             */
+            keyboard?: 'hide' | 'show' | null;
+            touches?: 'hide' | 'show' | null;
+            pointerLocationBar?: 'hide' | 'show' | null;
+            /** Note: 2-button mode is not supported in recent Android versions; Detox ignores it to avoid confusion. */
+            navigationMode?: '3-button' | 'gesture' | null;
+            statusBar?: DetoxSystemUIStatusBarConfig;
+        }
+
+        interface DetoxSystemUIStatusBarConfig {
+            notifications?: 'show' | 'hide' | null;
+            wifiSignal?: 'strong' | 'weak' | 'none' | null;
+            /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
+            cellSignal?: 'strong' | 'weak' | 'none' | null;
+            batteryLevel?: 'full' | 'half' | 'low' | null;
+            charging?: boolean | null;
+            /** In "hhmm" format (e.g. "1234" for 12:34) */
+            clock?: string | null;
+        }
+
         type DetoxBuiltInDeviceConfig =
             | DetoxIosSimulatorDriverConfig
             | DetoxAttachedAndroidDriverConfig
@@ -378,6 +414,9 @@ declare global {
         interface DetoxSharedAndroidDriverConfig {
             forceAdbInstall?: boolean;
             utilBinaryPaths?: string[];
+
+            /** Disclaimer: Some features are not seamlessly supported by all Android versions and vendors. */
+            systemUI?: DetoxSystemUI;
         }
 
         interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {
