@@ -6,6 +6,14 @@ const launchArgs = {
   micro: 'soft',
 };
 
+const defaultIOSPermissions = {
+  calendar: 'YES',
+  notifications: 'YES',
+  camera: 'YES',
+  photos: 'YES',
+};
+
+
 /** @type {Detox.DetoxConfig} */
 const config = {
   extends: 'detox-allure2-adapter/preset-detox',
@@ -56,13 +64,15 @@ const config = {
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       start: 'react-native start',
       bundleId: 'com.wix.detox-example',
+      permissions: defaultIOSPermissions,
     },
 
     'ios.release': {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
-      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      permissions: defaultIOSPermissions,
     },
 
     'android.debug': {

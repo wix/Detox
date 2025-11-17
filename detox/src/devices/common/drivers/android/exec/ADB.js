@@ -160,6 +160,14 @@ class ADB {
     }
   }
 
+  async grantPermission(deviceId, packageId, permission) {
+    await this.shell(deviceId, `pm grant ${packageId} ${permission}`);
+  }
+
+  async revokePermission(deviceId, packageId, permission) {
+    await this.shell(deviceId, `pm revoke ${packageId} ${permission}`);
+  }
+
   async setLocation(deviceId, lat, lon) {
     // NOTE: QEMU for Android for the telnet part relies on C stdlib
     // function `strtod` which is locale-sensitive, meaning that depending
