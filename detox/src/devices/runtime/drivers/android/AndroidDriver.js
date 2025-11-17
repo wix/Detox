@@ -266,7 +266,7 @@ class AndroidDriver extends DeviceDriverBase {
     const call = duration ? EspressoDetoxApi.longPress(x, y, duration, _shouldIgnoreStatusBar): EspressoDetoxApi.longPress(x, y, _shouldIgnoreStatusBar);
     await this.invocationManager.execute(call);
   }
-  
+
   async generateViewHierarchyXml(shouldInjectTestIds) {
     const hierarchy = await this.invocationManager.execute(DetoxApi.generateViewHierarchyXml(shouldInjectTestIds));
     return hierarchy.result;

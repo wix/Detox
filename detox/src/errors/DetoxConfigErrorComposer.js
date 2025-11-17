@@ -406,6 +406,8 @@ Please check your Detox config${this._atPath()}`,
         return this._invalidPropertyType('headless', 'a boolean value', deviceAlias);
       case 'readonly':
         return this._invalidPropertyType('readonly', 'a boolean value', deviceAlias);
+      case 'systemUI':
+        return this._invalidPropertyType('systemUI', "'minimal', 'genymotion' or an object", deviceAlias);
       default:
         throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
     }
@@ -425,6 +427,8 @@ Please check your Detox config${this._atPath()}`,
         return this._unsupportedPropertyByDeviceType('readonly', ['android.emulator'], deviceAlias);
       case 'utilBinaryPaths':
         return this._unsupportedPropertyByDeviceType('utilBinaryPaths', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
+      case 'systemUI':
+        return this._unsupportedPropertyByDeviceType('systemUI', ['android.emulator', 'android.genycloud', 'android.attached'], deviceAlias);
       default:
         throw new DetoxInternalError(`Composing .unsupportedDeviceProperty(${propertyName}) is not implemented`);
     }

@@ -61,6 +61,97 @@ function composeDeviceConfigFromAliased(opts) {
 }
 
 /**
+ * Validates systemUI configuration
+ * @param {string | object} systemUI - The systemUI configuration
+ * @param {string} deviceAlias - The device alias for error reporting
+ * @param {DetoxConfigErrorComposer} errorComposer - Error composer instance
+ */
+function validateSystemUIConfig(systemUI, deviceAlias, errorComposer) {
+  if (_.isString(systemUI)) {
+    if (!['minimal', 'genymotion'].includes(systemUI)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+    return;
+  }
+
+  if (!_.isObject(systemUI)) {
+    throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+  }
+
+  if (systemUI.extends !== undefined) {
+    if (!['minimal', 'genymotion'].includes(systemUI.extends)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+  }
+
+  if (systemUI.keyboard !== undefined && systemUI.keyboard !== null) {
+    if (!['hide', 'show'].includes(systemUI.keyboard)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+  }
+
+  if (systemUI.touches !== undefined && systemUI.touches !== null) {
+    if (!['hide', 'show'].includes(systemUI.touches)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+  }
+
+  if (systemUI.pointerLocationBar !== undefined && systemUI.pointerLocationBar !== null) {
+    if (!['hide', 'show'].includes(systemUI.pointerLocationBar)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+  }
+
+  if (systemUI.navigationMode !== undefined && systemUI.navigationMode !== null) {
+    if (!['3-button', 'gesture'].includes(systemUI.navigationMode)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+  }
+
+  if (systemUI.statusBar !== undefined && systemUI.statusBar !== null) {
+    if (!_.isObject(systemUI.statusBar)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+    }
+
+    if (systemUI.statusBar.notifications !== undefined && systemUI.statusBar.notifications !== null) {
+      if (!['hide', 'show'].includes(systemUI.statusBar.notifications)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+
+    if (systemUI.statusBar.wifiSignal !== undefined && systemUI.statusBar.wifiSignal !== null) {
+      if (!['weak', 'strong', 'none'].includes(systemUI.statusBar.wifiSignal)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+
+    if (systemUI.statusBar.cellSignal !== undefined && systemUI.statusBar.cellSignal !== null) {
+      if (!['strong', 'weak', 'none'].includes(systemUI.statusBar.cellSignal)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+
+    if (systemUI.statusBar.batteryLevel !== undefined && systemUI.statusBar.batteryLevel !== null) {
+      if (!['full', 'half', 'low'].includes(systemUI.statusBar.batteryLevel)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+
+    if (systemUI.statusBar.charging !== undefined && systemUI.statusBar.charging !== null) {
+      if (!_.isBoolean(systemUI.statusBar.charging)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+
+    if (systemUI.statusBar.clock !== undefined && systemUI.statusBar.clock !== null) {
+      if (!_.isString(systemUI.statusBar.clock) || !/^\d{2}\d{2}$/.test(systemUI.statusBar.clock)) {
+        throw errorComposer.malformedDeviceProperty(deviceAlias, 'systemUI');
+      }
+    }
+  }
+}
+
+/**
  * @param {DetoxConfigErrorComposer} errorComposer
  * @param {Detox.DetoxDeviceConfig} deviceConfig
  * @param {String | undefined} deviceAlias
@@ -144,6 +235,14 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
     if (deviceConfig.type !== 'android.emulator') {
       throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'readonly');
+    }
+  }
+
+  if (deviceConfig.systemUI !== undefined) {
+    validateSystemUIConfig(deviceConfig.systemUI, deviceAlias, errorComposer);
+
+    if (!deviceConfig.type.match(/^android\.(emulator|genycloud|attached)$/)) {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'systemUI');
     }
   }
 

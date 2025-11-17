@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Android system UI configuration helper resolveConfig should (deep!) merge extended preset when extends is specified 1`] = `
+{
+  "keyboard": "show",
+  "navigationMode": "3-button",
+  "statusBar": {
+    "batteryLevel": "full",
+    "cellSignal": "none",
+    "charging": false,
+    "clock": "1337",
+    "notifications": "show",
+    "wifiSignal": "strong",
+  },
+  "touches": "show",
+}
+`;
