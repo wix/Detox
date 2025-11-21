@@ -19,8 +19,9 @@ class Client {
    * @param {number} debugSynchronization
    * @param {string} server
    * @param {string} sessionId
+   * @param {boolean} [ignoreUnexpectedMessages]
    */
-  constructor({ debugSynchronization, server, sessionId  }) {
+  constructor({ debugSynchronization, server, sessionId, ignoreUnexpectedMessages }) {
     this._onAppConnected = this._onAppConnected.bind(this);
     this._onAppReady = this._onAppReady.bind(this);
     this._onAppUnresponsive = this._onAppUnresponsive.bind(this);
@@ -40,7 +41,7 @@ class Client {
     this._appTerminationHandle = null;
 
     this._successfulTestRun = true; // flag for cleanup
-    this._asyncWebSocket = new AsyncWebSocket(server);
+    this._asyncWebSocket = new AsyncWebSocket(server, { ignoreUnexpectedMessages });
     this._serverUrl = server;
 
     this.setEventCallback('appConnected', this._onAppConnected);

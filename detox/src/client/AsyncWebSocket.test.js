@@ -385,6 +385,54 @@ describe('AsyncWebSocket', () => {
       delete error.stack;
       expect(error).toMatchSnapshot();
     });
+
+    it('should throw on unexpected message types by default', async () => {
+      await connect();
+
+      const response = aws.send(generateRequest());
+      socket.mockMessage({ type: 'unknownMessageType', messageId: 999 });
+
+      await expect(response).rejects.toThrow('Unexpected message received over the web socket: unknownMessageType');
+    });
+
+    it('should log warning instead of throwing when ignoreUnexpectedMessages is enabled via options', async () => {
+      aws = new AsyncWebSocket(config.server, { ignoreUnexpectedMessages: true });
+      await connect();
+
+      socket.mockMessage({ type: 'unknownMessageType', messageId: 999 });
+
+      expect(log.warn).toHaveBeenCalledWith(
+        { messageId: 999, type: 'unknownMessageType' },
+        'Unexpected message received over the web socket: unknownMessageType (ignored due to configuration)'
+      );
+    });
+
+    it('should log warning instead of throwing when DETOX_IGNORE_UNEXPECTED_WS_MESSAGES env var is set', async () => {
+      process.env.DETOX_IGNORE_UNEXPECTED_WS_MESSAGES = 'true';
+      aws = new AsyncWebSocket(config.server);
+      await connect();
+
+      socket.mockMessage({ type: 'unknownMessageType', messageId: 999 });
+
+      expect(log.warn).toHaveBeenCalledWith(
+        { messageId: 999, type: 'unknownMessageType' },
+        'Unexpected message received over the web socket: unknownMessageType (ignored due to configuration)'
+      );
+
+      delete process.env.DETOX_IGNORE_UNEXPECTED_WS_MESSAGES;
+    });
+
+    it('should still log debug for late responses when ignoreUnexpectedMessages is enabled', async () => {
+      aws = new AsyncWebSocket(config.server, { ignoreUnexpectedMessages: true });
+      await connect();
+      aws.send(generateRequest(1));
+      aws.resetInFlightPromises();
+
+      socket.mockMessage({ type: 'someReply', messageId: 1 });
+      
+      expect(log.debug).toHaveBeenCalledWith({ messageId: 1 }, 'late response');
+      expect(log.warn).not.toHaveBeenCalled();
+    });
   });
 
   function connect() {
