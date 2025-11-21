@@ -202,5 +202,45 @@ describe('composeSessionConfig', () => {
       });
     });
   });
-});
 
+  describe('ignoreUnexpectedMessages', function () {
+    describe('by default', () => {
+      it('should be undefined', async () => {
+        const config = await compose();
+        expect(config.ignoreUnexpectedMessages).toBeUndefined();
+      });
+    });
+
+    it('should pass validations', async () => {
+      globalConfig.session = { ignoreUnexpectedMessages: 'true' };
+      await expect(compose()).rejects.toThrow(errorComposer.invalidIgnoreUnexpectedMessagesProperty());
+
+      globalConfig.session = { ignoreUnexpectedMessages: 1 };
+      await expect(compose()).rejects.toThrow(errorComposer.invalidIgnoreUnexpectedMessagesProperty());
+    });
+
+    describe('when defined in global config', () => {
+      beforeEach(() => {
+        globalConfig.session = { ignoreUnexpectedMessages: true };
+      });
+
+      it('should use that value', async () => {
+        expect(await compose()).toMatchObject({
+          ignoreUnexpectedMessages: true,
+        });
+      });
+
+      describe('and in local config', () => {
+        beforeEach(() => {
+          localConfig.session = { ignoreUnexpectedMessages: false };
+        });
+
+        it('should use the local config value', async () => {
+          expect(await compose()).toMatchObject({
+            ignoreUnexpectedMessages: false,
+          });
+        });
+      });
+    });
+  });
+});

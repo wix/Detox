@@ -678,6 +678,18 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  invalidIgnoreUnexpectedMessagesProperty() {
+    return new DetoxConfigError({
+      message: `session.ignoreUnexpectedMessages should be a boolean value`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
   invalidTestRunnerProperty(isGlobal) {
     const testRunner = _.get(
       isGlobal
