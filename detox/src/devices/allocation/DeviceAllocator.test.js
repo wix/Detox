@@ -47,24 +47,36 @@ describe('Device allocator', () => {
   describe('#postAllocate()', function() {
     test('should post-allocate via driver', async () => {
       const cookie = { id: 'mock' };
+      const deviceConfig = {
+        type: 'some-device-type',
+        device: 'some query',
+      };
 
       allocDriver.postAllocate = jest.fn();
-      await expect(deviceAllocator.postAllocate(cookie)).resolves.toBe(cookie);
-      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+      await expect(deviceAllocator.postAllocate(cookie, { deviceConfig })).resolves.toBe(cookie);
+      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie, { deviceConfig });
     });
 
     test('should replace the cookie if the driver returns a new one', async () => {
       const cookie = { id: 'mock' };
       const newCookie = { id: 'new mock' };
+      const deviceConfig = {
+        type: 'some-device-type',
+        device: 'some query',
+      };
 
       allocDriver.postAllocate = jest.fn().mockResolvedValue(newCookie);
-      await expect(deviceAllocator.postAllocate(cookie)).resolves.toBe(newCookie);
-      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie);
+      await expect(deviceAllocator.postAllocate(cookie, { deviceConfig })).resolves.toBe(newCookie);
+      expect(allocDriver.postAllocate).toHaveBeenCalledWith(cookie, { deviceConfig });
     });
 
     test('should not post-allocate if the driver does not implement this function', async () => {
+      const deviceConfig = {
+        type: 'some-device-type',
+        device: 'some query',
+      };
       delete allocDriver.postAllocate;
-      await expect(deviceAllocator.postAllocate({ id: 'mock' })).resolves.not.toThrow();
+      await expect(deviceAllocator.postAllocate({ id: 'mock' }, { deviceConfig })).resolves.not.toThrow();
     });
   });
 
