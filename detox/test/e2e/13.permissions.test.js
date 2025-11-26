@@ -1,4 +1,5 @@
 const { RESULTS } = require('react-native-permissions');
+const { isIOS18OrHigher } = require('./utils/deviceInfo');
 
 const BASIC_PERMISSIONS_TO_CHECK = [
   'userTracking',
@@ -183,7 +184,8 @@ describe(':ios: Permissions', () => {
         await device.launchApp({ permissions, delete: true });
         await element(by.text('Permissions')).tap();
 
-        await expect(faceid).toHaveText(RESULTS.BLOCKED);
+        // iOS 18+ changed behavior: FaceID permissions set to NO now return DENIED instead of BLOCKED
+        await expect(faceid).toHaveText(isIOS18OrHigher() ? RESULTS.DENIED : RESULTS.BLOCKED);
       });
     });
   });

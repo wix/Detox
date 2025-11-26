@@ -99,7 +99,7 @@ const config = {
       headless: Boolean(process.env.CI),
       device: {
         type: 'iPhone 16 Pro Max',
-        os: '18.5'
+        os: '26.0.1'
       },
     },
 
