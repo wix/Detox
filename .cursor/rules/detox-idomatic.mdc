@@ -1,0 +1,8 @@
+---
+description: Rules to help Cursor write code that is more Detox idomatic
+globs: *.js
+alwaysApply: false
+---
+- Whenever an Error needs to be thrown, prefer throwing a DetoxRuntimeError with a proper message and hint.
+
+- Minimize comments usage, especially in-line ones. Leave comments where things are exceptionally unclear for some reason.
