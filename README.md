@@ -1,4 +1,4 @@
-<!-- markdownlint-configure-file { "first-line-heading": 0 } -->
+https://github.com/wix/Detox.git<!-- markdownlint-configure-file { "first-line-heading": 0 } -->
 
 [![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://stand-with-ukraine.pp.ua)
 
