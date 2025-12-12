@@ -11,12 +11,12 @@ SCRIPTS_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source $SCRIPTS_PATH/demo-projects.sh
 
 pushd detox
-run_f "npm run build:android"
+run_f "yarn build:android"
 popd
 
 pushd examples/demo-react-native
-  run_f "npm run build:android-debug"
-  run_f "npm run test:android-debug"
+  run_f "yarn build:android-debug"
+  run_f "yarn test:android-debug"
 
   # Run tests in release mode with bloated JS bundle:
   source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh android
@@ -29,12 +29,12 @@ if [ "$REACT_NATIVE_COMPAT_TEST" = "true" ]; then
 fi
 
 pushd examples/demo-plugin
-  run_f "npm run test:plugin"
+  run_f "yarn test:plugin"
 popd
 
 # Detox Native
 ##
 
 pushd detox
-  run_f "npm run build:android-native"
+  run_f "yarn build:android-native"
 popd
