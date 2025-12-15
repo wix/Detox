@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Genymotion-cloud test environment validator health validations should throw if gmsaas doctor detects an error 1`] = `
 [DetoxRuntimeError: Error: gmsaas is not configured properly

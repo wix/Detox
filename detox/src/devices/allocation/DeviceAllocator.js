@@ -50,13 +50,14 @@ class DeviceAllocator {
 
   /**
    * @param {DeviceCookie} cookie
+   * @param {{ deviceConfig: Detox.DetoxDeviceConfig }} [configs]
    * @returns {Promise<DeviceCookie>}
    */
-  async postAllocate(cookie) {
+  async postAllocate(cookie, configs) {
     const tid = this._ids.get(cookie.id);
     return await log.trace.complete({ data: cookie, id: tid }, `post-allocate: ${cookie.id}`, async () => {
       const updatedCookie = typeof this._driver.postAllocate === 'function'
-        ? await this._driver.postAllocate(cookie)
+        ? await this._driver.postAllocate(cookie, configs)
         : undefined;
 
       return updatedCookie || cookie;

@@ -2,7 +2,7 @@
 
 DATE=`date '+%Y-%m-%d_%H-%M-%S'`
 SCRIPTS_DIR=$(dirname "$0")
-GENERATE_IFRAME="$(readlink -f "${SCRIPTS_DIR}/create_iframe_html.js")"
+GENERATE_REDIRECT="$(readlink -f "${SCRIPTS_DIR}/create_redirect_html.js")"
 
 pack() {
   local BASE_NAME=$1
@@ -21,20 +21,20 @@ pack() {
   fi
 }
 
-generate_iframe() {
-  node "${GENERATE_IFRAME}" "$@"
+generate_redirect() {
+  node "${GENERATE_REDIRECT}" "$@"
 }
 
 upload_to_surge() {
   local TIMESTAMP=$(date +%Y%m%d%H%M%S)
   local SURGE_PROJECT=$1
-  local IFRAME_TITLE=$2
+  local REDIRECT_TITLE=$2
   local SURGE_SUBDOMAIN="${SURGE_PROJECT}-${TIMESTAMP}"
   local SURGE_DOMAIN="${SURGE_SUBDOMAIN}.surge.sh"
 
   if [ -d "${SURGE_PROJECT}" ]; then
     surge --domain "${SURGE_DOMAIN}" --project "${SURGE_PROJECT}" && \
-    generate_iframe>>"${SURGE_SUBDOMAIN}.html" "https://${SURGE_DOMAIN}" "${IFRAME_TITLE}"
+    generate_redirect>>"${SURGE_SUBDOMAIN}.html" "https://${SURGE_DOMAIN}" "${REDIRECT_TITLE}"
   else
     echo "Could not find directory named ${SURGE_PROJECT}."
   fi

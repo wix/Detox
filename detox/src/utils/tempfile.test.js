@@ -13,7 +13,7 @@ describe('tempfile', () => {
       const path = require('node:path');
 
       const expectedFile = path.join(tmpdir, `detox-${process.pid}-[a-zA-Z0-9]+.log`).replace(/\\/g, '\\\\');
-      const expectedResult = new RegExp(`^${expectedFile}$`);
+      const expectedResult = new RegExp(`^(?:/private)?${expectedFile}$`);
 
       const result = tempfile('.log');
       expect(result).toMatch(expectedResult);

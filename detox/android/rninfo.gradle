@@ -42,4 +42,10 @@ ext.rnInfo = [
     isRN73OrHigher: rnMajorVer >= 73,
     isRN74OrHigher: rnMajorVer >= 74,
     isRN75OrHigher: rnMajorVer >= 75,
+    isRN76OrHigher: rnMajorVer >= 76,
+    isRN77OrHigher: rnMajorVer >= 77,
+    isRN78OrHigher: rnMajorVer >= 78,
+    isRN79OrHigher: rnMajorVer >= 79,
+    isRN80OrHigher: rnMajorVer >= 80,
+    isRN81OrHigher: rnMajorVer >= 81,
 ]

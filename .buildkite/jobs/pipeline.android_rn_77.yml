@@ -4,6 +4,7 @@
       - "./scripts/ci.android.sh"
     env:
       REACT_NATIVE_VERSION: 0.77.2
+      RCT_NEW_ARCH_ENABLED: 1
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
     artifact_paths:

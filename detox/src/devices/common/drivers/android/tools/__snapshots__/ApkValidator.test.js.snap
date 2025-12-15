@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`APK validation App APK validation should throw a descriptive error if app APK happens to be a test APK 1`] = `
 "App APK at path mock-bin-path was detected as the *test* APK!

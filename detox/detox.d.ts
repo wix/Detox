@@ -363,6 +363,42 @@ declare global {
             [prop: string]: unknown;
         }
 
+        /**
+         * `minimal`: Configuration for a minimal system UI.
+         * `genymotion`: Configuration for a Genymotion-equivalent system UI.
+         *
+         * Visit https://github.com/wix/Detox/blob/master/detox/src/devices/allocation/drivers/android/utils/systemUICfgPresets.js to learn about
+         * the specifics of each preset.
+         */
+        type DetoxSystemUIPresetName = 'minimal' | 'genymotion';
+        type DetoxSystemUI = DetoxSystemUIPresetName | DetoxSystemUIConfig;
+
+        interface DetoxSystemUIConfig {
+            extends?: DetoxSystemUIPresetName;
+
+            /**
+             * Note: For 'hide' to work in Google emulators, need to set `hw.keyboard=yes` in AVD configuration (i.e.
+             * in manually `config.ini` file or via AVD Manager on Android Studio).
+             */
+            keyboard?: 'hide' | 'show' | null;
+            touches?: 'hide' | 'show' | null;
+            pointerLocationBar?: 'hide' | 'show' | null;
+            /** Note: 2-button mode is not supported in recent Android versions; Detox ignores it to avoid confusion. */
+            navigationMode?: '3-button' | 'gesture' | null;
+            statusBar?: DetoxSystemUIStatusBarConfig;
+        }
+
+        interface DetoxSystemUIStatusBarConfig {
+            notifications?: 'show' | 'hide' | null;
+            wifiSignal?: 'strong' | 'weak' | 'none' | null;
+            /** Disclaimer: Some Android versions fail to set the network type (3g, lte, etc.) */
+            cellSignal?: 'strong' | 'weak' | 'none' | null;
+            batteryLevel?: 'full' | 'half' | 'low' | null;
+            charging?: boolean | null;
+            /** In "hhmm" format (e.g. "1234" for 12:34) */
+            clock?: string | null;
+        }
+
         type DetoxBuiltInDeviceConfig =
             | DetoxIosSimulatorDriverConfig
             | DetoxAttachedAndroidDriverConfig
@@ -378,6 +414,9 @@ declare global {
         interface DetoxSharedAndroidDriverConfig {
             forceAdbInstall?: boolean;
             utilBinaryPaths?: string[];
+
+            /** Disclaimer: Some features are not seamlessly supported by all Android versions and vendors. */
+            systemUI?: DetoxSystemUI;
         }
 
         interface DetoxAttachedAndroidDriverConfig extends DetoxSharedAndroidDriverConfig {
@@ -772,6 +811,28 @@ declare global {
              * @example await device.reloadReactNative()
              */
             reloadReactNative(): Promise<void>;
+
+            /**
+             * Resets the app state by clearing app data and restoring it to a clean state.
+             *
+             * On Android, this command clears the app's data using the `pm clear` command,
+             * effectively resetting the app to its initial installed state without uninstalling it.
+             *
+             * On iOS, Detox uses a fallback mechanism - it backs up, deletes and installs the app from cache.
+             * This process ensures the app is returned to a clean state.
+             *
+             * @param bundleIds Optional bundle IDs to reset. If none provided, resets the currently selected app.
+             * @example
+             * // Reset current app state
+             * await device.resetAppState();
+             * @example
+             * // Reset specific app state
+             * await device.resetAppState('com.example.app');
+             * @example
+             * // Reset multiple apps
+             * await device.resetAppState('com.app1', 'com.app2');
+             */
+            resetAppState(...bundleIds: string[]): Promise<void>;
 
             /**
              * By default, installApp() with no params will install the app file defined in the current configuration.
@@ -2025,6 +2086,13 @@ declare global {
              * Launch with user activity
              */
             userActivity?: any;
+            /**
+             * Similar to {@link Detox.DeviceLaunchAppConfig.delete | { delete: true }}, but instead of uninstalling and installing the app,
+             * it runs {@link Detox.Device.resetAppState | device.resetAppState()} instead.
+             * @example
+             * await device.launchApp({resetAppState: true});
+             */
+            resetAppState?: boolean;
             /**
              * Launch into a fresh installation
              * A flag that enables relaunching into a fresh installation of the app (it will uninstall and install the binary again), default is false.

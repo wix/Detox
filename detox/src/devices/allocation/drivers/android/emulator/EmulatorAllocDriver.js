@@ -1,18 +1,15 @@
 /**
- * @typedef {import('../../AllocationDriverBase').AllocationDriverBase} AllocationDriverBase
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
  */
 
 const _ = require('lodash');
 
 const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
+const AndroidAllocDriver = require('../AndroidAllocDriver');
 
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
 
-/**
- * @implements {AllocationDriverBase}
- */
-class EmulatorAllocDriver {
+class EmulatorAllocDriver extends AndroidAllocDriver {
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
@@ -34,7 +31,7 @@ class EmulatorAllocDriver {
     emulatorVersionResolver,
     emulatorLauncher
   }) {
-    this._adb = adb;
+    super({ adb });
     this._avdValidator = avdValidator;
     this._deviceRegistry = deviceRegistry;
     this._emulatorVersionResolver = emulatorVersionResolver;
@@ -88,14 +85,19 @@ class EmulatorAllocDriver {
 
   /**
    * @param {AndroidDeviceCookie} deviceCookie
+   * @param {{ deviceConfig: Detox.DetoxSharedAndroidDriverConfig }} configs
+   * @returns {Promise<AndroidDeviceCookie>}
    */
-  async postAllocate(deviceCookie) {
+  async postAllocate(deviceCookie, configs) {
     const { adbName } = deviceCookie;
 
     await this._emulatorLauncher.awaitEmulatorBoot(adbName);
     await this._adb.apiLevel(adbName);
     await this._adb.disableAndroidAnimations(adbName);
     await this._adb.unlockScreen(adbName);
+    await super.postAllocate(deviceCookie, configs);
+
+    return deviceCookie;
   }
 
   /**

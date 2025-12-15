@@ -627,7 +627,12 @@ static void _DTXTypeText(NSString* text)
 {
     UIImage *image = [self.dtx_view dtx_imageFromView];
     NSURL *path = [NSURL elementsScreenshotPath];
-    NSString *fileName = [NSString stringWithFormat:@"ImageScreenshot_%@.png", name != nil ? name : self];
+    NSString *fileName;
+    if (name != nil) {
+        fileName = [NSString stringWithFormat:@"ImageScreenshot_%@.png", name];
+    } else {
+        fileName = [NSString stringWithFormat:@"ImageScreenshot_%p.png", self];
+    }
     [image dtx_saveToPath:path fileName:fileName];
 
     return [path URLByAppendingPathComponent:fileName isDirectory:false];;

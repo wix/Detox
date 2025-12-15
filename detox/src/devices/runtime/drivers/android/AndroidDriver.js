@@ -84,6 +84,12 @@ class AndroidDriver extends DeviceDriverBase {
     await this.appUninstallHelper.uninstall(this.adbName, bundleId);
   }
 
+  async resetAppState(...bundleIds) {
+    for (const bundleId of bundleIds) {
+      await this.adb.clearAppData(this.adbName, bundleId);
+    }
+  }
+
   async installUtilBinaries(paths) {
     for (const path of paths) {
       const packageId = await this.getBundleIdFromBinary(path);
@@ -260,7 +266,7 @@ class AndroidDriver extends DeviceDriverBase {
     const call = duration ? EspressoDetoxApi.longPress(x, y, duration, _shouldIgnoreStatusBar): EspressoDetoxApi.longPress(x, y, _shouldIgnoreStatusBar);
     await this.invocationManager.execute(call);
   }
-  
+
   async generateViewHierarchyXml(shouldInjectTestIds) {
     const hierarchy = await this.invocationManager.execute(DetoxApi.generateViewHierarchyXml(shouldInjectTestIds));
     return hierarchy.result;

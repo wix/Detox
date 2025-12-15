@@ -2,44 +2,32 @@ package com.wix.detox.reactnative.idlingresources.animations
 
 import android.util.Log
 import android.view.Choreographer
+import androidx.annotation.UiThread
 import androidx.test.espresso.IdlingResource.ResourceCallback
 import com.facebook.react.animated.NativeAnimatedModule
+import com.facebook.react.animated.NativeAnimatedNodesManager
 import com.facebook.react.bridge.ReactContext
+import com.wix.detox.common.DetoxErrors
+import com.wix.detox.common.DetoxLog.Companion.LOG_TAG
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 
-private const val LOG_TAG = "Detox"
-
-
-/**
- * Created by simonracz on 25/08/2017.
- */
-/**
- *
- * Espresso IdlingResource for React Native's Animated Module.
- *
- *
- * Hooks up to React Native internals to monitor the state of the animations.
- *
- */
 class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
 
-    override fun getName() = AnimatedModuleIdlingResource::class.java.name
+    private var animatedModule: AnimatedModuleFacade? = null
 
-    override fun getDebugName(): String {
-        return "ui"
-    }
-
-    override fun getBusyHint(): Map<String, Any> {
-        return mapOf("reason" to "Animations running on screen")
-    }
+    override fun getName(): String = AnimatedModuleIdlingResource::class.java.name
+    override fun getDebugName() = "ui"
+    override fun getBusyHint(): Map<String, Any> = mapOf("reason" to "Animations running on screen")
 
     override fun checkIdle(): Boolean {
-        val animatedModule = reactContext.getNativeModule(NativeAnimatedModule::class.java)
-        val hasAnimations = animatedModule?.nodesManager?.hasActiveAnimations() ?: false
+        val animatedModule = getAnimatedModule()
+        if (animatedModule == null) {
+            Log.w(LOG_TAG, "AnimatedModule is idle because the native-module is not available")
+            return false
+        }
 
-        if (hasAnimations) {
-            Log.i(LOG_TAG, "AnimatedModule is busy.")
+        if (animatedModule.hasActiveAnimations()) {
             Choreographer.getInstance().postFrameCallback(this)
             return false
         }
@@ -60,5 +48,26 @@ class AnimatedModuleIdlingResource(private val reactContext: ReactContext) : Det
 
     override fun doFrame(frameTimeNanos: Long) {
         isIdleNow
+    }
+
+    private fun getAnimatedModule(): AnimatedModuleFacade? =
+        if (animatedModule != null) {
+            animatedModule
+        } else {
+            reactContext.getNativeModule(NativeAnimatedModule::class.java)?.let {
+                AnimatedModuleFacade(it).also { nativeModule ->
+                    animatedModule = nativeModule
+                }
+            }
+        }
+}
+
+private class AnimatedModuleFacade(private val animatedModule: NativeAnimatedModule) {
+    private val nodesManager: NativeAnimatedNodesManager = animatedModule.nodesManager
+        ?: throw DetoxErrors.DetoxIllegalStateException("AnimatedModule exists but nodesManager is null")
+
+    @UiThread
+    fun hasActiveAnimations(): Boolean {
+        return nodesManager.hasActiveAnimations()
     }
 }

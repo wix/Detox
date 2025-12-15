@@ -481,6 +481,23 @@ describe('Android driver', () => {
     });
   });
 
+  describe('resetAppState', () => {
+    it('should clear app data for a single bundleId', async () => {
+      await uut.resetAppState(bundleId);
+      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+    });
+
+    it('should clear app data for multiple bundleIds', async () => {
+      const bundleId1 = 'com.example.app1';
+      const bundleId2 = 'com.example.app2';
+
+      await uut.resetAppState(bundleId1, bundleId2);
+
+      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId1);
+      expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId2);
+    });
+  });
+
   describe('text-typing (global)', () => {
     const text = 'text to type';
 

@@ -5,9 +5,9 @@ const { resolveConfig } = require('detox/internals');
 const maxWorkersMap = {
   'android.emulator': 3,
   'android.genycloud': 5,
+  'android.genycloud-arm64': 2,
   'ios.simulator': 2,
 };
-
 
 module.exports = async () => {
   const config = await resolveConfig();
@@ -30,7 +30,8 @@ module.exports = async () => {
       'version.node': process.version,
       'version.jest': await $.manifest('jest', 'version'),
       'version.jest-metadata': await $.manifest('jest-metadata', 'version'),
-      'version.allure-reporter': await $.manifest('jest-allure2-reporter', 'version'),
+      'version.allure-reporter': require('jest-allure2-reporter/package.json').version,
+      'version.detox-allure2-adapter': require('detox-allure2-adapter/package.json').version,
       ..._(process.env)
         .pickBy((_1, key) => key.match(/detox/i))
         .mapKeys((_1, key) => 'env.' + key)
@@ -47,6 +48,11 @@ module.exports = async () => {
     reporters.push('<rootDir>/test/node_modules/jest-junit');
   }
 
+  let deviceType = config.device.type;
+  if (config.configurationName.endsWith('arm64')) {
+    deviceType += '-arm64';
+  }
+
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
@@ -54,7 +60,11 @@ module.exports = async () => {
       'eventListeners': [
         'jest-metadata/environment-listener',
         'jest-allure2-reporter/environment-listener',
-        require.resolve('detox-allure2-adapter'),
+        [require.resolve('detox-allure2-adapter'), {
+          deviceLogs: true,
+          deviceScreenshots: true,
+          deviceVideos: false,
+        }],
         require.resolve('./utils/rnSkipper'),
       ]
     },
@@ -70,7 +80,7 @@ module.exports = async () => {
     'reporters': reporters,
     'verbose': true,
     'bail': false,
-    'maxWorkers': process.env.CI ? maxWorkersMap[config.device.type] || 1 : 1,
+    'maxWorkers': process.env.CI ? maxWorkersMap[deviceType] || 1 : 1,
     'collectCoverageFrom': [
       'src/**/*.js',
       '!**/__test/**',

@@ -8,7 +8,7 @@ export interface DeallocOptions {
 export interface AllocationDriverBase {
   init?(): Promise<void>;
   allocate(deviceConfig: any): Promise<DeviceCookie>;
-  postAllocate?(deviceCookie: DeviceCookie): Promise<DeviceCookie | void>;
+  postAllocate?(deviceCookie: DeviceCookie, configs?: { deviceConfig: Detox.DetoxDeviceConfig }): Promise<DeviceCookie | void>;
   free(cookie: DeviceCookie, options: DeallocOptions): Promise<void>;
   cleanup?(): Promise<void>;
   emergencyCleanup?(): void;

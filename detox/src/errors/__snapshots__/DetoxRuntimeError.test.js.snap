@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DetoxRuntimeError should be created with empty object 1`] = `[DetoxRuntimeError]`;
 

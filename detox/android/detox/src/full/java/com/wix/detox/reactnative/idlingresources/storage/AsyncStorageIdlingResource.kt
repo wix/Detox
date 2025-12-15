@@ -1,6 +1,5 @@
 package com.wix.detox.reactnative.idlingresources.storage
 
-import android.util.Log
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactContext
@@ -9,35 +8,16 @@ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
 import org.joor.Reflect
 import java.util.concurrent.Executor
 
-private const val LOG_TAG = "AsyncStorageIR"
-
 private typealias SExecutorReflectedGenFnType = (executor: Executor) -> SerialExecutorReflected
 
 private val defaultSExecutorReflectedGenFn: SExecutorReflectedGenFnType =
     { executor: Executor -> SerialExecutorReflected(executor) }
 
-private class ModuleReflected(module: NativeModule, sexecutorReflectedGen: SExecutorReflectedGenFnType) {
-    private val executorReflected: SerialExecutorReflected
-
-    init {
-        val reflected = Reflect.on(module)
-        val executor: Executor = reflected.field("executor").get()
-        executorReflected = sexecutorReflectedGen(executor)
-    }
-
-    val sexecutor: SerialExecutorReflected
-        get() = executorReflected
-}
-
-class AsyncStorageIdlingResource
-@JvmOverloads constructor(
+class AsyncStorageIdlingResource @JvmOverloads constructor(
     private val reactContext: ReactContext,
     private val sexecutorReflectedGenFn: SExecutorReflectedGenFnType = defaultSExecutorReflectedGenFn,
-    private val rnHelpers: RNHelpers = RNHelpers()
+    private val rnHelpers: RNHelpers = RNHelpers(),
 ) : DetoxIdlingResource() {
-
-    val logTag: String
-        get() = LOG_TAG
 
     private val moduleReflected: ModuleReflected? = null
     private var idleCheckTask: Runnable? = null
@@ -86,13 +66,14 @@ class AsyncStorageIdlingResource
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
         super.registerIdleTransitionCallback(callback)
+
+        // TODO Don't do?
         enqueueIdleCheckTask()
     }
 
     override fun checkIdle(): Boolean =
         checkIdleInternal().also { idle ->
             if (!idle) {
-                Log.d(logTag, "Async-storage is busy!")
                 enqueueIdleCheckTask()
             }
         }
@@ -116,4 +97,17 @@ class AsyncStorageIdlingResource
     private fun clearIdleCheckTask() {
         idleCheckTask = null
     }
+}
+
+private class ModuleReflected(module: NativeModule, sexecutorReflectedGen: SExecutorReflectedGenFnType) {
+    private val executorReflected: SerialExecutorReflected
+
+    init {
+        val reflected = Reflect.on(module)
+        val executor: Executor = reflected.field("executor").get()
+        executorReflected = sexecutorReflectedGen(executor)
+    }
+
+    val sexecutor: SerialExecutorReflected
+        get() = executorReflected
 }

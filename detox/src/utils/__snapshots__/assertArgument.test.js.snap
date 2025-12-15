@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`assertDuration should throw for "42" 1`] = `"duration should be a number, but got 42 (string)"`;
 

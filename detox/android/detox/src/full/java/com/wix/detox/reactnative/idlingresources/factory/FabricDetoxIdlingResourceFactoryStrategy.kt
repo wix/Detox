@@ -1,9 +1,9 @@
 package com.wix.detox.reactnative.idlingresources.factory
 
 import com.facebook.react.ReactApplication
-import com.wix.detox.reactnative.getCurrentReactContext
 import com.wix.detox.reactnative.getCurrentReactContextSafe
 import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
+import com.wix.detox.reactnative.idlingresources.StabilizedIdlingResource
 import com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
@@ -23,7 +23,7 @@ class FabricDetoxIdlingResourceFactoryStrategy(private val reactApplication: Rea
                 IdlingResourcesName.Animations to AnimatedModuleIdlingResource(reactContext),
                 IdlingResourcesName.Timers to FabricTimersIdlingResource(reactContext),
                 IdlingResourcesName.Network to NetworkIdlingResource(reactContext),
-                IdlingResourcesName.AsyncStorage to AsyncStorageIdlingResource(reactContext)
+                IdlingResourcesName.AsyncStorage to StabilizedIdlingResource(AsyncStorageIdlingResource(reactContext), 2)
             )
 
             return@withContext result

@@ -1,10 +1,10 @@
 /**
- * @typedef {import('../../AllocationDriverBase').AllocationDriverBase} AllocationDriverBase
  * @typedef {import('../../../../common/drivers/android/cookies').GenycloudEmulatorCookie} GenycloudEmulatorCookie
  */
 
 const Timer = require('../../../../../utils/Timer');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
+const AndroidAllocDriver = require('../AndroidAllocDriver');
 
 const GenyRegistry = require('./GenyRegistry');
 
@@ -13,10 +13,7 @@ const events = {
   GENYCLOUD_TEARDOWN: { event: 'GENYCLOUD_TEARDOWN' },
 };
 
-/**
- * @implements {AllocationDriverBase}
- */
-class GenyAllocDriver {
+class GenyAllocDriver extends AndroidAllocDriver {
   /**
    * @param {object} options
    * @param {import('../../../../common/drivers/android/exec/ADB')} options.adb
@@ -32,7 +29,7 @@ class GenyAllocDriver {
     instanceLauncher,
     recipeQuerying,
   }) {
-    this._adb = adb;
+    super({ adb });
     this._detoxSessionId = detoxSession.id;
     this._genyRegistry = genyRegistry;
     this._instanceLauncher = instanceLauncher;
@@ -73,8 +70,10 @@ class GenyAllocDriver {
 
   /**
    * @param {GenycloudEmulatorCookie} cookie
+   * @param {{ deviceConfig: Detox.DetoxSharedAndroidDriverConfig }} configs
+   * @returns {Promise<GenycloudEmulatorCookie>}
    */
-  async postAllocate(cookie) {
+  async postAllocate(cookie, configs) {
     const instance = await this._instanceLauncher.connect(cookie.instance);
     this._genyRegistry.updateInstance(instance);
 
@@ -87,6 +86,8 @@ class GenyAllocDriver {
         await this._adb.apiLevel(adbName);
       });
     }
+
+    await super.postAllocate(cookie, configs);
 
     return {
       ...cookie,

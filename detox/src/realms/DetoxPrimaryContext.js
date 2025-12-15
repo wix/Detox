@@ -174,7 +174,7 @@ class DetoxPrimaryContext extends DetoxContext {
     this[_cookieAllocators][deviceCookie.id] = deviceAllocator;
 
     try {
-      return await deviceAllocator.postAllocate(deviceCookie);
+      return await deviceAllocator.postAllocate(deviceCookie, { deviceConfig });
     } catch (e) {
       try {
         await deviceAllocator.free(deviceCookie, { shutdown: true });

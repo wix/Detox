@@ -11,8 +11,8 @@ const {
 class DetoxReporter extends DetoxReporterDispatcher {
   constructor(globalConfig) {
     super(globalConfig, {
-      DetoxSummaryReporter,
       DetoxVerboseReporter,
+      DetoxSummaryReporter,
       DetoxIPCReporter,
     });
   }
