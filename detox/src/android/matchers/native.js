@@ -9,7 +9,7 @@ const createClassMatcher = (className) =>
   new NativeMatcher(invoke.callDirectly(DetoxMatcherApi.matcherForClass(className)));
 
 const combineWithOr = (matchers) =>
-  matchers.reduce((acc, matcher) => acc?.or(matcher) ?? matcher, null);
+  matchers.reduce((acc, matcher) => acc.or(matcher));
 
 class LabelMatcher extends NativeMatcher {
   constructor(value) {
@@ -38,27 +38,21 @@ class IdMatcher extends NativeMatcher {
 class TypeMatcher extends NativeMatcher {
   constructor(typeOrSemanticType) {
     super();
-    if (semanticTypes.includes(typeOrSemanticType)) {
-      const classNames = semanticTypes.getClasses(typeOrSemanticType, 'android');
+    this._rawType = typeOrSemanticType;
 
-      const matchers = classNames.map(item => {
-        if (typeof item === 'string') return createClassMatcher(item);
-        if (!item.className || !item.excludes) return createClassMatcher(item);
+    const descriptors = semanticTypes.getClasses(typeOrSemanticType, 'android');
+    const matchers = descriptors.map(({ className, excludes }) => {
+      const includeMatcher = createClassMatcher(className);
+      return excludes.length
+        ? includeMatcher.and(combineWithOr(excludes.map(createClassMatcher)).not)
+        : includeMatcher;
+    });
 
-        const includeMatcher = createClassMatcher(item.className);
-        const excludeCombined = combineWithOr(item.excludes.map(createClassMatcher));
-
-        return includeMatcher.and(excludeCombined.not);
-      });
-
-      const combinedMatcher = combineWithOr(matchers);
-      if (!combinedMatcher) {
-        throw new DetoxRuntimeError(`No class names found for semantic type: ${typeOrSemanticType}`);
-      }
-      this._call = combinedMatcher._call;
-    } else {
-      this._call = invoke.callDirectly(DetoxMatcherApi.matcherForClass(typeOrSemanticType));
+    const combinedMatcher = combineWithOr(matchers);
+    if (!combinedMatcher) {
+      throw new DetoxRuntimeError(`No class names found for: ${typeOrSemanticType}`);
     }
+    this._call = combinedMatcher._call;
   }
 }
 

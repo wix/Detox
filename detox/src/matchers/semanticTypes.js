@@ -16,7 +16,7 @@ const ACTIVITY_INDICATOR_CLASSES = {
 const SEMANTIC_TYPE_MAPPINGS = {
   // Images
   'image': {
-    ios: ['RCTImageView', 'UIImageView'],
+    ios: ['RCTImageView', 'RCTImageComponentView', 'UIImageView'],
     android: ['android.widget.ImageView', 'com.facebook.react.views.image.ReactImageView']
   },
 
@@ -26,7 +26,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
     android: ['android.widget.EditText', 'com.facebook.react.views.textinput.ReactEditText']
   },
 
-  // Text elements
+  // Text elements (includes both old and new arch classes)
   'text': {
     ios: ['RCTText', 'RCTParagraphComponentView', 'UILabel'],
     android: [
@@ -37,7 +37,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
     ]
   },
 
-  // Button elements
+  // Button elements (includes both old and new arch classes)
   'button': {
     ios: ['UIButton', 'RCTTouchableOpacity', 'RCTTouchableHighlight', 'RCTTouchableWithoutFeedback'],
     android: ['android.widget.Button', 'android.widget.ImageButton']
@@ -45,7 +45,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
 
   // Scroll containers - The UITableView inherits from scrollview so it could also show up here...
   'scrollview': {
-    ios: ['RCTScrollView', 'UIScrollView'],
+    ios: ['RCTScrollView', 'RCTScrollViewComponentView', 'UIScrollView'],
     android: ['android.widget.ScrollView', 'androidx.core.widget.NestedScrollView', 'com.facebook.react.views.scroll.ReactScrollView']
   },
 
@@ -89,7 +89,7 @@ const SEMANTIC_TYPE_MAPPINGS = {
 function getClasses(semanticType, platform) {
   const mapping = SEMANTIC_TYPE_MAPPINGS[semanticType];
   if (!mapping) {
-    throw new Error(`Unknown semantic type: ${semanticType}. Available types: ${Object.keys(SEMANTIC_TYPE_MAPPINGS).join(', ')}`);
+    return [{ className: semanticType, excludes: [] }];
   }
 
   const classNames = mapping[platform];
@@ -99,7 +99,7 @@ function getClasses(semanticType, platform) {
 
   return classNames.map(item => {
     if (typeof item === 'string') {
-      return item;
+      return { className: item, excludes: [] };
     } else if (item.include && item.exclude) {
       if (Array.isArray(item.include)) {
         return item.include.map(className => ({
@@ -113,7 +113,7 @@ function getClasses(semanticType, platform) {
         };
       }
     }
-    return item;
+    return { className: item, excludes: [] };
   }).flat();
 }
 

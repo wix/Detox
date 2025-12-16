@@ -147,6 +147,15 @@ class Predicate : CustomStringConvertible, CustomDebugStringConvertible {
           compoundPredicate = AndCompoundPredicate(predicates: innerPredicates, modifiers: modifiers)
         }
         return compoundPredicate
+      case Kind.or:
+        let predicatesDictionaryRepresentation = dictionaryRepresentation[Keys.predicates] as! [[String: Any]]
+        let innerPredicates = predicatesDictionaryRepresentation.compactMap { try? Predicate.with(dictionaryRepresentation: $0) }
+        guard !innerPredicates.isEmpty else {
+          fatalError("No valid predicates found in OR compound predicate")
+        }
+        return innerPredicates.count == 1
+          ? innerPredicates.first!
+          : OrCompoundPredicate(predicates: innerPredicates, modifiers: modifiers)
       default:
         fatalError("Unknown predicate type \(kind)")
     }
