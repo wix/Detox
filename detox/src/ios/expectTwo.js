@@ -461,18 +461,13 @@ class Matcher {
     type(typeOrSemanticType) {
     if (typeof typeOrSemanticType !== 'string') throw new Error('type should be a string, but got ' + (typeOrSemanticType + (' (' + (typeof typeOrSemanticType + ')'))));
 
-    if (semanticTypes.includes(typeOrSemanticType)) {
-      const classNames = semanticTypes.getClasses(typeOrSemanticType, 'ios');
-      const predicates = classNames.map(item => {
-        if (typeof item === 'string') return createTypePredicate(item);
-        if (!item.className || !item.excludes) return createTypePredicate(item);
-        return createExclusionPredicate(item.className, item.excludes);
-      });
-      this.predicate = createOrPredicate(predicates);
-    } else {
-      this.predicate = { type: 'type', value: typeOrSemanticType };
-    }
+    const descriptors = semanticTypes.getClasses(typeOrSemanticType, 'ios');
+    const predicates = descriptors.map(({ className, excludes }) =>
+      excludes.length ? createExclusionPredicate(className, excludes) : createTypePredicate(className)
+    );
 
+    this.predicate = predicates.length > 1 ? createOrPredicate(predicates) : predicates[0];
+    this.predicate.rawType = typeOrSemanticType;
     return this;
   }
 
