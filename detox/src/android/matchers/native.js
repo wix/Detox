@@ -38,7 +38,6 @@ class IdMatcher extends NativeMatcher {
 class TypeMatcher extends NativeMatcher {
   constructor(typeOrSemanticType) {
     super();
-    this._rawType = typeOrSemanticType;
 
     const descriptors = semanticTypes.getClasses(typeOrSemanticType, 'android');
     const matchers = descriptors.map(({ className, excludes }) => {
@@ -52,7 +51,7 @@ class TypeMatcher extends NativeMatcher {
     if (!combinedMatcher) {
       throw new DetoxRuntimeError(`No class names found for: ${typeOrSemanticType}`);
     }
-    this._call = combinedMatcher._call;
+    this._call = { ...combinedMatcher._call, rawType: typeOrSemanticType };
   }
 }
 
