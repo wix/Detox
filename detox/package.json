@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.46.0",
+  "version": "20.47.0-smoke.0",
   "bin": "local-cli/cli.js",
   "repository": {
     "type": "git",
