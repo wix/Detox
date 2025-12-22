@@ -24,28 +24,30 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: Bootstrap Lerna
-        run: npx lerna@6 bootstrap --no-ci
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
       - name: Lint source project
-        run: npm run lint
+        run: yarn lint
         working-directory: detox
       - name: Lint test project
-        run: npm run lint
+        run: yarn lint
         working-directory: detox/test
       - name: Typings
-        run: npm test
+        run: yarn test
         working-directory: detox/test
       - name: Unit tests
-        run: npm run unit
+        run: yarn unit
         working-directory: detox
       - name: Integration tests
-        run: npm run integration
+        run: yarn integration
         working-directory: detox/test
       - name: Generation tests
-        run: npm test
+        run: yarn test
         working-directory: generation
       - name: Pack Allure results
         run: zip -r allure-results.zip detox/allure-results detox/test/allure-results generation/allure-results
@@ -63,16 +65,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: Bootstrap Lerna (Light)
-        run: npx lerna@6 bootstrap --no-ci --include-dependents --include-dependencies --scope=detox-test
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
         env:
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
       - name: Unit tests
-        run: npm run unit -- --coverageThreshold "{}"
+        run: yarn unit --coverageThreshold "{}"
         working-directory: detox
       - name: Integration tests
-        run: npm run integration
+        run: yarn integration
         working-directory: detox/test
       - name: Pack Allure results
         run: |

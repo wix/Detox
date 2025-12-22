@@ -25,5 +25,8 @@
   "dependencies": {
     "chalk": "^4.0.0"
   },
-  "homepage": "https://github.com/wix/Detox"
+  "homepage": "https://github.com/wix/Detox",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
