@@ -31,7 +31,7 @@ cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
 
 if [ "$TEST_GENYCLOUD_SANITY" = "true" ]; then
   # Sanity-test support for genycloud (though not ARM)
-  run_f "yarn e2e:android:genycloud -- e2e/01* e2e/02* e2e/03.actions*"
+  run_f "yarn e2e:android:genycloud e2e/01* e2e/02* e2e/03.actions*"
   cp coverage/lcov.info ../../coverage/e2e-genycloud-ci.lcov
 fi
 
