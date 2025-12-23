@@ -129,7 +129,7 @@ class SystemUICfgHelper {
     await this._adb.shell('am broadcast -a com.android.systemui.demo -e command enter');
 
     // Force status bar content
-    const notificationsVisible = nullishOrMap(statusBarConfig.notifications, (notifications) => Number(notifications === 'show'));
+    const notificationsVisible = nullishOrMap(statusBarConfig.notifications, (notifications) => (notifications === 'show'));
     if (notificationsVisible !== undefined) {
       await this._adb.shell(`am broadcast -a com.android.systemui.demo -e command notifications -e visible ${notificationsVisible}`);
     }
@@ -145,7 +145,7 @@ class SystemUICfgHelper {
 
     const cellSignal = nullishOrMap(statusBarConfig.cellSignal, (cellSignal) => cellSignal);
     if (cellSignal !== undefined) {
-      await this._adb.shell('am broadcast -a com.android.systemui.demo -e command network -e mobile hide');
+      await this._adb.shell('am broadcast -a com.android.systemui.demo -e command network -e mobile hide -e satellite hide');
       if (cellSignal !== 'none') {
         const cellLevel = cellSignal === 'strong' ? 4 : 2;
         await this._adb.shell(`am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level ${cellLevel} -e fully true -e datatype none`);

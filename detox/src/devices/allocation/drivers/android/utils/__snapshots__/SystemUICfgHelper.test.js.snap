@@ -15,3 +15,18 @@ exports[`Android system UI configuration helper resolveConfig should (deep!) mer
   "touches": "show",
 }
 `;
+
+exports[`Android system UI configuration helper setupStatusBar should handle all statusBar properties together 1`] = `
+[
+  "settings put global sysui_demo_allowed 1",
+  "am broadcast -a com.android.systemui.demo -e command exit",
+  "am broadcast -a com.android.systemui.demo -e command enter",
+  "am broadcast -a com.android.systemui.demo -e command notifications -e visible true",
+  "am broadcast -a com.android.systemui.demo -e command network -e wifi hide",
+  "am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 -e fully true",
+  "am broadcast -a com.android.systemui.demo -e command network -e mobile hide -e satellite hide",
+  "am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 2 -e fully true -e datatype none",
+  "am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0915",
+  "am broadcast -a com.android.systemui.demo -e command battery -e level 50 -e plugged true",
+]
+`;

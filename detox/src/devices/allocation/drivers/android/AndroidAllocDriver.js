@@ -4,10 +4,11 @@
  */
 
 const log = require('../../../../utils/logger').child({ __filename });
-const sleep = require('../../../../utils/sleep');
 
 const DeviceInitCache = require('./utils/DeviceInitCache');
 const SystemUIDemoMode = require('./utils/SystemUICfgHelper');
+
+const SYS_UI_CFG = { event: 'DEVICE_SYS_UI_CFG' };
 
 /**
  * @abstract {AllocationDriverBase}
@@ -34,7 +35,7 @@ class AndroidAllocDriver {
 
     if (deviceConfig.systemUI) {
       if (this._systemUIInitCache.hasInitialized(adbName)) {
-        log.debug(`Skipping System UI setup for ${adbName}, already initialized`);
+        log.debug(SYS_UI_CFG, `Skipping System UI setup for ${adbName}, already initialized`);
       } else {
         await this._setupSystemUI(deviceCookie, deviceConfig);
         this._systemUIInitCache.setInitialized(adbName);
@@ -50,18 +51,18 @@ class AndroidAllocDriver {
    */
   async _setupSystemUI(deviceCookie, deviceConfig) {
     const { adbName } = deviceCookie;
-    
+
     const systemUIDemoMode = new SystemUIDemoMode({ adb: this._adb, adbName });
     const systemUIConfig = systemUIDemoMode.resolveConfig(deviceConfig.systemUI);
 
-    log.debug(`Running keyboard behavior setup for ${adbName}`);
+    log.debug(SYS_UI_CFG, `Running keyboard behavior setup for ${adbName}`);
     await systemUIDemoMode.setupKeyboardBehavior(systemUIConfig);
 
-    log.debug(`Running system UI setup for ${adbName}`);
+    log.debug(SYS_UI_CFG, `Running system UI setup for ${adbName}`);
     await systemUIDemoMode.setupPointerIndicators(systemUIConfig);
     await systemUIDemoMode.setupNavigationMode(systemUIConfig);
     await systemUIDemoMode.setupStatusBar(systemUIConfig);
-    log.debug(`Finished system UI setup for ${adbName}`);
+    log.debug(SYS_UI_CFG, `Finished system UI setup for ${adbName}`);
   }
 }
 
