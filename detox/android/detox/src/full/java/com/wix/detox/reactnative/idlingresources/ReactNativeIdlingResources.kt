@@ -43,6 +43,7 @@ class ReactNativeIdlingResources(
     fun unregisterAll() {
         unregisterMQThreadsInterrogators()
         unregisterIdlingResources()
+        syncIdlingResources()
     }
 
     fun pauseNetworkSynchronization() = pauseIdlingResource(IdlingResourcesName.Network)
@@ -77,8 +78,8 @@ class ReactNativeIdlingResources(
     }
 
     private fun setupMQThreadsInterrogator(looperName: LooperName) {
-        reactApplication.getCurrentReactContext()?.let {
-            val mqThreadsReflector = MQThreadsReflector(it)
+        reactApplication.getCurrentReactContext()?.let { reactContext ->
+            val mqThreadsReflector = MQThreadsReflector(reactContext)
             val looper = when (looperName) {
                 LooperName.JS -> mqThreadsReflector.getJSMQueue()?.getLooper()
                 LooperName.NativeModules -> mqThreadsReflector.getNativeModulesQueue()?.getLooper()
@@ -108,10 +109,42 @@ class ReactNativeIdlingResources(
     }
 
     private fun unregisterMQThreadsInterrogators() {
-        loopers.values.forEach {
-            IdlingRegistry.getInstance().unregisterLooperAsIdlingResource(it)
+        loopers.values.forEach { looper ->
+            IdlingRegistry.getInstance().unregisterLooperAsIdlingResource(looper)
+            clearLooperHandlerCache(looper)
         }
         loopers.clear()
+    }
+
+    /**
+     * Workaround for Espresso 3.7.0+ where LooperIdlingResourceInterrogationHandler
+     * caches handlers in a static map but doesn't clear them on release().
+     * This causes re-registered loopers to get stale handlers with releasing=true.
+     *
+     * For older Espresso versions without this static cache, this is a no-op.
+     */
+    private fun clearLooperHandlerCache(looper: Looper) {
+        try {
+            val handlerClass = Class.forName("androidx.test.espresso.base.LooperIdlingResourceInterrogationHandler")
+            val instsField = handlerClass.getDeclaredField("insts")
+            instsField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            val insts = instsField.get(null) as java.util.concurrent.ConcurrentHashMap<String, Any>
+
+            val name = String.format(
+                java.util.Locale.ROOT,
+                "LooperIdlingResource-%s-%s",
+                looper.thread.id,
+                looper.thread.name
+            )
+            insts.remove(name)
+        } catch (_: ClassNotFoundException) {
+            // Expected for older Espresso versions - silently ignore
+        } catch (_: NoSuchFieldException) {
+            // Expected for Espresso versions with different implementation - silently ignore
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "Failed to clear looper handler cache", e)
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
