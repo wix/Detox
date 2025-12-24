@@ -13,10 +13,9 @@ pushd examples/demo-react-native
     run_f "pod install"
   popd
 
-  run_f "npm run build:ios-debug"
-  run_f "npm run test:ios-debug"
+  run_f "yarn build:ios-debug"
+  run_f "yarn test:ios-debug"
 
   # Run tests with bloated JS bundle:
   source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh ios
 popd
-

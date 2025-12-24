@@ -20,17 +20,11 @@ The exhaustive list of LTS codenames (e.g. `lts/iron`)  can be found at [CODENAM
 
 :::
 
-## Setting Up The Monorepo Management
+## Setting Up The Monorepo
 
-Our repository is a monorepo, which means it contains multiple Detox-related projects and packages. [Read more about our repository structure](../code/overview.md#repository-structure).
+Our repository is a monorepo managed with [Yarn 4 workspaces](https://yarnpkg.com/features/workspaces), which means it contains multiple Detox-related projects and packages. [Read more about our repository structure](../code/overview.md#repository-structure).
 
 To set up the monorepo locally, follow these steps:
-
-Install the monorepo management tool, `lerna`:
-
-```bash
-npm install lerna@6.x.x --global
-```
 
 Clone the repository and navigate to the project directory:
 
@@ -40,10 +34,10 @@ cd detox
 git submodule update --init --recursive
 ```
 
-From the project's root directory, install and link the internal projects:
+From the project's root directory, install dependencies and link the internal projects:
 
 ```bash
-lerna bootstrap
+yarn install
 ```
 
 ## Installing Common Dependencies

@@ -203,10 +203,10 @@ describe('Android system UI configuration helper', () => {
     const demoModeAllowedCmd = () => 'settings put global sysui_demo_allowed 1';
     const demoExitCmd = () => 'am broadcast -a com.android.systemui.demo -e command exit';
     const demoEnterCmd = () => 'am broadcast -a com.android.systemui.demo -e command enter';
-    const notificationsCmd = (show) => `am broadcast -a com.android.systemui.demo -e command notifications -e visible ${show ? 1 : 0}`;
+    const notificationsCmd = (show) => `am broadcast -a com.android.systemui.demo -e command notifications -e visible ${show}`;
     const wifiHideCmd = () => 'am broadcast -a com.android.systemui.demo -e command network -e wifi hide';
     const wifiShowCmd = (level) => `am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level ${level} -e fully true`;
-    const mobileHideCmd = () => 'am broadcast -a com.android.systemui.demo -e command network -e mobile hide';
+    const mobileHideCmd = () => 'am broadcast -a com.android.systemui.demo -e command network -e mobile hide -e satellite hide';
     const mobileShowCmd = (level) => `am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level ${level} -e fully true -e datatype none`;
     const clockCmd = (time = '1234') => `am broadcast -a com.android.systemui.demo -e command clock -e hhmm ${time}`;
     /**
@@ -527,16 +527,8 @@ describe('Android system UI configuration helper', () => {
         },
       });
 
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, demoModeAllowedCmd());
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, demoExitCmd());
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, demoEnterCmd());
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, notificationsCmd(true));
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, wifiHideCmd());
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, wifiShowCmd(4));
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, mobileHideCmd());
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, mobileShowCmd(2));
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, clockCmd('0915'));
-      expect(mockAdb.shell).toHaveBeenCalledWith(adbName, batteryCmd({ batteryLevel: 50, charging: true }));
+      const adbShellCmds = mockAdb.shell.mock.calls.map((/** @type {string[]} */ call) => call[1]);
+      expect(adbShellCmds).toMatchSnapshot();
       expect(mockSleep).toHaveBeenCalledWith(1500);
     });
   });

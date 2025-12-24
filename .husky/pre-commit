@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Strip registry-specific URLs from yarn.lock to keep it portable
+if [ -f yarn.lock ] && git diff --cached --name-only | grep -q "yarn.lock"; then
+  if grep -q "__archiveUrl" yarn.lock; then
+    echo "[husky::precommit] stripping __archiveUrl entries from yarn.lock..." >&2
+
+    # Cross-platform sed in-place (macOS requires '', Linux doesn't)
+    # Handle both formats: ::__archiveUrl= and %3A%3A__archiveUrl= (URL-encoded)
+    if [ "$(uname)" = "Darwin" ]; then
+      sed -i '' 's/::__archiveUrl=[^"]*//g' yarn.lock
+      sed -i '' 's/%3A%3A__archiveUrl=[^"]*//g' yarn.lock
+    else
+      sed -i 's/::__archiveUrl=[^"]*//g' yarn.lock
+      sed -i 's/%3A%3A__archiveUrl=[^"]*//g' yarn.lock
+    fi
+
+    git add yarn.lock
+  fi
+
+  echo "[husky::precommit] validating yarn.lock..." >&2
+  yarn install --immutable --mode skip-build || {
+    echo "[husky::precommit] error: yarn.lock validation failed" >&2
+    exit 1
+  }
+fi

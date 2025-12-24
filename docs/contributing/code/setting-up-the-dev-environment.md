@@ -16,35 +16,50 @@ Currently, we require `lts/iron` (Node.js 20.x) for our development environment.
 
 :::tip
 
-The exhaustive list of LTS codenames (e.g. `lts/iron`)  can be found at [CODENAMES.md](https://github.com/nodejs/Release/blob/main/CODENAMES.md) in the Node.js repository.
+The exhaustive list of LTS codenames (e.g. `lts/iron`) can be found at [CODENAMES.md](https://github.com/nodejs/Release/blob/main/CODENAMES.md) in the Node.js repository.
 
 :::
 
-## Setting Up The Monorepo Management
+## Setting Up The Monorepo
 
-Our repository is a monorepo, which means it contains multiple Detox-related projects and packages. [Read more about our repository structure](../code/overview.md#repository-structure).
+Our repository is a monorepo managed with Yarn workspaces. [Read more about our repository structure](../code/overview.md#repository-structure).
 
 To set up the monorepo locally, follow these steps:
 
-Install the monorepo management tool, `lerna`:
+### 1. Enable Corepack
+
+Corepack is Node.js's built-in package manager manager. Enable it to use the correct Yarn version:
 
 ```bash
-npm install lerna@6.x.x --global
+corepack enable
 ```
 
-Clone the repository and navigate to the project directory:
+### 2. Clone the Repository
 
 ```bash
 git clone git@github.com:wix/Detox.git
-cd detox
+cd Detox
 git submodule update --init --recursive
 ```
 
-From the project's root directory, install and link the internal projects:
+### 3. Install Dependencies
 
 ```bash
-lerna bootstrap
+yarn install
 ```
+
+:::note For Wix Internal Contributors
+
+Set the internal registry before installing:
+
+```bash
+export YARN_NPM_REGISTRY_SERVER="<company's private npm registry>"
+yarn install
+```
+
+You can add this export to your shell profile (`~/.zshrc` or `~/.bashrc`) to make it permanent.
+
+:::
 
 ## Installing Common Dependencies
 
@@ -71,6 +86,25 @@ brew install watchman
 ```bash
 gem install xcpretty
 ```
+
+## Switching React Native Versions
+
+To test against different React Native versions:
+
+```bash
+REACT_NATIVE_VERSION=0.77.0 ./scripts/change_all_react_native_versions.sh
+```
+
+This updates the relevant `package.json` files and regenerates the lock file.
+
+## Common Commands
+
+| Command | Description |
+|---------|-------------|
+| `yarn install` | Install all dependencies |
+| `yarn workspaces foreach -A run build` | Build all packages |
+| `yarn workspace detox test` | Run detox tests |
+| `yarn workspace detox lint` | Run linting |
 
 [react-native-cli]: https://www.npmjs.com/package/react-native-cli
 [Watchman]: https://facebook.github.io/watchman/

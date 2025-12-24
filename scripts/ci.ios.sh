@@ -22,11 +22,11 @@ pushd detox/test
 ## After this command sims are available again
 xcrun simctl list > /dev/null
 
-run_f "npm run build:ios"
-run_f "npm run e2e:ios"
+run_f "yarn build:ios"
+run_f "yarn e2e:ios"
 cp coverage/lcov.info ../../coverage/e2e-ios-ci.lcov
 
 run_f "scripts/ci_unhappy.sh ios"
 
-# run_f "npm run verify-artifacts:ios"
+# run_f "yarn verify-artifacts:ios"
 popd

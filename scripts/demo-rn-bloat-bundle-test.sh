@@ -13,11 +13,11 @@ echo "Bloating the demo project bundle for $OS_PLATFORM"
 cp $BUNDLE_PATH $BUNDLE_PATH.original
 
 # Bloat the bundle:
-npm run bloat-bundle -- ./$BUNDLE_FILE
+yarn bloat-bundle ./$BUNDLE_FILE
 
 # Run the tests:
-npm run build:$OS_PLATFORM-release
-npm run test:$OS_PLATFORM-release
+yarn build:$OS_PLATFORM-release
+yarn test:$OS_PLATFORM-release
 
 # Reverse the bloating:
 mv $BUNDLE_PATH.original $BUNDLE_PATH
