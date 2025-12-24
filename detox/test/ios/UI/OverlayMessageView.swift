@@ -11,7 +11,7 @@ import UIKit
     
     private func getDisplayDuration() -> TimeInterval {
         if #available(iOS 18, *) {
-            return 3.0
+            return 3.5
         } else {
             return 2.0
         }
