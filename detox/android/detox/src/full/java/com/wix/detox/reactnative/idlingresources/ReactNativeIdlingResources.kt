@@ -15,6 +15,7 @@ import com.wix.detox.reactnative.idlingresources.looper.MQThreadsReflector
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
+import java.util.concurrent.ConcurrentHashMap
 
 private const val LOG_TAG = "DetoxRNIdleRes"
 
@@ -125,25 +126,20 @@ class ReactNativeIdlingResources(
      */
     private fun clearLooperHandlerCache(looper: Looper) {
         try {
-            val handlerClass = Class.forName("androidx.test.espresso.base.LooperIdlingResourceInterrogationHandler")
-            val instsField = handlerClass.getDeclaredField("insts")
-            instsField.isAccessible = true
-            @Suppress("UNCHECKED_CAST")
-            val insts = instsField.get(null) as java.util.concurrent.ConcurrentHashMap<String, Any>
+            val insts: ConcurrentHashMap<String, Any> =
+                Reflect.on("androidx.test.espresso.base.LooperIdlingResourceInterrogationHandler")
+                    .field("insts")
+                    .get()
 
-            val name = String.format(
-                java.util.Locale.ROOT,
-                "LooperIdlingResource-%s-%s",
-                looper.thread.id,
-                looper.thread.name
-            )
-            insts.remove(name)
-        } catch (_: ClassNotFoundException) {
-            // Expected for older Espresso versions - silently ignore
-        } catch (_: NoSuchFieldException) {
-            // Expected for Espresso versions with different implementation - silently ignore
+            for ((key, handler) in insts) {
+                val handlerLooper: Looper? = Reflect.on(handler).field("looper").get()
+                if (handlerLooper === looper) {
+                    insts.remove(key)
+                    break
+                }
+            }
         } catch (e: Exception) {
-            Log.w(LOG_TAG, "Failed to clear looper handler cache", e)
+            // Expected for older Espresso versions or different implementations - silently ignore
         }
     }
 
