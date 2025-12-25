@@ -342,6 +342,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.react.native;
 				PRODUCT_NAME = example;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -356,6 +357,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wix.demo.react.native;
 				PRODUCT_NAME = example;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
