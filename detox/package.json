@@ -16,6 +16,7 @@
     "*.json",
     "*.d.ts",
     "!**/__*__/**",
+    "!**/*.mock.json",
     "!**/*.test.js",
     "!**/*.snap",
     "!jest.config.js",
