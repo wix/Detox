@@ -10,7 +10,7 @@ function run() {
   logSection(`Pre-calculating future version... (versionType=${versionType})`);
 
   const npmTag = getReleaseNpmTag();
-  const preid = npmTag === 'latest' ? '' : `--preid=${npmTag}`;
+  const preid = versionType.includes("pre") ? `--preid=${npmTag}` : '';
   exec.execSync(`npm version ${versionType} ${preid} --no-git-tag-version`);
   const futureVersion = getVersionSafe();
   log('Version is: ' + futureVersion);
