@@ -40,7 +40,7 @@ function isDryRun() {
 }
 
 function getPackageJsonPath() {
-  return `${process.cwd()}/detox/package.json`;
+  return `${process.cwd()}/package.json`;
 }
 
 function readPackageJson() {
