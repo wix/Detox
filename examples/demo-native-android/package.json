@@ -7,7 +7,7 @@
     "detox-server": "detox run-server"
   },
   "devDependencies": {
-    "detox": "^20.46.0"
+    "detox": "workspace:*"
   },
   "detox": {}
 }

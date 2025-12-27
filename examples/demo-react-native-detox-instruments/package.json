@@ -3,7 +3,7 @@
   "version": "20.46.0",
   "private": true,
   "devDependencies": {
-    "detox": "^20.46.0"
+    "detox": "workspace:*"
   },
   "detox": {
     "configurations": {

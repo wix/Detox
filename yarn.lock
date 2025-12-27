@@ -9998,7 +9998,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "demo-plugin@workspace:examples/demo-plugin"
   dependencies:
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
     jest: "npm:^30.0.3"
   languageName: unknown
   linkType: soft
@@ -10007,7 +10007,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "demo-react-native-detox-instruments@workspace:examples/demo-react-native-detox-instruments"
   dependencies:
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10126,7 +10126,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "detox-demo-native-android@workspace:examples/demo-native-android"
   dependencies:
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10134,7 +10134,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "detox-demo-native-ios@workspace:examples/demo-native-ios"
   dependencies:
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -10168,7 +10168,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^6.16.0"
     axios: "npm:^1.7.7"
     cross-env: "npm:^7.0.3"
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
     detox-allure2-adapter: "npm:1.0.0-alpha.34"
     eslint: "npm:^8.56.0"
     eslint-plugin-jest: "npm:^28.11.0"
@@ -10193,7 +10193,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"detox@npm:^20.46.0, detox@workspace:detox":
+"detox@workspace:*, detox@workspace:detox":
   version: 0.0.0-use.local
   resolution: "detox@workspace:detox"
   dependencies:
@@ -11702,7 +11702,7 @@ __metadata:
     "@types/jest": "npm:^29.2.1"
     "@types/react": "npm:^19.1.0"
     "@types/react-test-renderer": "npm:^19.1.0"
-    detox: "npm:^20.46.0"
+    detox: "workspace:*"
     fs-extra: "npm:^9.1.0"
     jest: "npm:^30.0.3"
     react: "npm:19.1.1"
