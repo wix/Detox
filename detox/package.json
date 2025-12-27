@@ -3,6 +3,19 @@
   "description": "E2E tests and automation for mobile",
   "version": "20.46.1",
   "bin": "local-cli/cli.js",
+  "files": [
+    "android",
+    "detox-native",
+    "Detox-android",
+    "Detox-ios-*.tbz",
+    "local-cli",
+    "runners",
+    "scripts",
+    "src",
+    "*.js",
+    "*.json",
+    "*.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/wix/Detox.git"
