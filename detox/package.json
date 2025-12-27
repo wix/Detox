@@ -14,7 +14,12 @@
     "src",
     "*.js",
     "*.json",
-    "*.d.ts"
+    "*.d.ts",
+    "!**/__*__/**",
+    "!**/*.test.js",
+    "!**/*.snap",
+    "!jest.config.js",
+    "!wallaby.js"
   ],
   "repository": {
     "type": "git",
