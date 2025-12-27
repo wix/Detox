@@ -37,6 +37,13 @@ async function composeSessionConfig(options) {
     }
   }
 
+  if (session.ignoreUnexpectedMessages != null) {
+    const value = session.ignoreUnexpectedMessages;
+    if (typeof value !== 'boolean') {
+      throw errorComposer.invalidIgnoreUnexpectedMessagesProperty();
+    }
+  }
+
   if (Number.parseInt(cliConfig.debugSynchronization, 10) >= 0) {
     session.debugSynchronization = +cliConfig.debugSynchronization;
   }
