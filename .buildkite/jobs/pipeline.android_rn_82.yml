@@ -1,9 +1,9 @@
-  - label: ":android::detox: RN .82 + Android: Tests app"
+  - label: ":android::detox: RN .83 + Android: Tests app"
     command:
       - "nvm install"
       - "./scripts/ci.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.82.0
+      REACT_NATIVE_VERSION: 0.83.0
       RCT_NEW_ARCH_ENABLED: 1
       TEST_GENYCLOUD_SANITY: true
       DETOX_DISABLE_POD_INSTALL: true
