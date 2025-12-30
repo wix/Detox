@@ -63,7 +63,9 @@
     "retext-syntax-urls": "^3.1.1",
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
-    "unified": "^10.1.0"
+    "surge": "^0.24.0",
+    "unified": "^10.1.0",
+    "zx": "^8.0.0"
   },
   "version": "20.46.3"
 }

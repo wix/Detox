@@ -23,17 +23,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - uses: dorny/paths-filter@v2
         id: changes
         with:
           filters: |
             website:
               - 'website/**'
-      - name: Test Build
+      - name: Security check (npq)
+        working-directory: ./website
+        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
+      - name: Install and build
         working-directory: ./website
         run: |
-          npm i
-          npm run build
+          yarn install
+          yarn build
   gh-release:
     if: github.event_name != 'pull_request'
     permissions:
@@ -44,9 +49,14 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+      - name: Security check (npq)
+        working-directory: ./website
+        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Release to GitHub Pages
         env:
           USE_SSH: true
@@ -55,9 +65,9 @@ jobs:
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
           cd website/
-          npm i
-          npm run build
-          npx docusaurus deploy
+          yarn install
+          yarn build
+          yarn docusaurus deploy
   performance:
     needs: gh-release
     runs-on: ubuntu-latest
