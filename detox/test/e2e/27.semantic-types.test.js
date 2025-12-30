@@ -3,7 +3,7 @@ const jestExpect = require('expect').default;
 describe('Semantic Types', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await element(by.text('Matchers')).tap();
+    await element(by.text('Semantic Types')).tap();
   });
 
   it('should match image elements by semantic type using by.type()', async () => {
@@ -12,12 +12,10 @@ describe('Semantic Types', () => {
 
   it('should match text elements by semantic type using by.type()', async () => {
     await expect(element(by.type('text')).atIndex(0)).toBeVisible();
-    await expect(element(by.type('text').and(by.text('Label')))).toBeVisible();
+    await expect(element(by.type('text').and(by.text('Text Element')))).toBeVisible();
   });
 
   it('should match input field elements by semantic type using by.type()', async () => {
-    await device.reloadReactNative();
-    await element(by.text('Actions')).tap();
     await expect(element(by.type('input-field')).atIndex(0)).toBeVisible();
     await element(by.type('input-field')).atIndex(0).typeText('Test');
     await expect(element(by.type('input-field')).atIndex(0)).toHaveText('Test');

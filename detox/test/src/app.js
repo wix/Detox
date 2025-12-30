@@ -71,6 +71,7 @@ export default class example extends Component {
         {this.renderScreenButton('Language', Screens.LanguageScreen)}
         {this.renderScreenButton('Sanity', Screens.SanityScreen)}
         {this.renderScreenButton('Matchers', Screens.MatchersScreen)}
+        {this.renderScreenButton('Semantic Types', Screens.SemanticTypesScreen)}
         {this.renderScreenButton('Actions', Screens.ActionsScreen)}
         {this.renderScreenButton('Visibility Expectation', Screens.VisibilityExpectationScreen)}
         {isIos && this.renderScreenButton('Visibility Debug Artifacts', Screens.VisibilityScreen)}
