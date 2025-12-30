@@ -33,7 +33,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - uses: bahmutov/npm-install@v1
-        with:
-          useLockFile: false
-      - run: npm run docs:lint
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Security check (npq)
+        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
+      - name: Install dependencies
+        run: yarn install --immutable
+      - run: yarn docs:lint

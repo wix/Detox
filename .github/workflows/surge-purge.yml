@@ -16,12 +16,14 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-
-      - name: Install surge
-        run: npm -g install surge
-
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Security check (npq)
+        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
+      - name: Install dependencies
+        run: yarn install --immutable
       - name: Teardown old domains
-        run: npx zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
+        run: yarn zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
         env:
           SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
