@@ -1,6 +1,7 @@
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
@@ -8,6 +9,7 @@ describe('Device', () => {
 
   it('relaunchApp - should tap successfully', async () => {
     await device.relaunchApp();
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
@@ -15,6 +17,7 @@ describe('Device', () => {
 
   it('relaunchApp({delete: true}) - should tap successfully', async () => {
     await device.relaunchApp({delete: true});
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
@@ -24,6 +27,7 @@ describe('Device', () => {
     await device.uninstallApp();
     await device.installApp();
     await device.relaunchApp();
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
@@ -32,6 +36,7 @@ describe('Device', () => {
   it('resetAppState() + relaunch() - should tap successfully', async () => {
     await device.resetAppState();
     await device.relaunchApp();
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
@@ -55,6 +60,7 @@ describe('Device', () => {
 
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
     await device.launchApp({newInstance: true});
+    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await device.sendToHome();
