@@ -32,6 +32,7 @@ class AndroidEmulator extends RuntimeDriverFactoryAndroid {
   _createDriver(deviceCookie, deps, { deviceConfig }) {
     const props = {
       adbName: deviceCookie.adbName,
+      adbServerPort: deviceCookie.adbServerPort,
       avdName: deviceConfig.device.avdName,
       forceAdbInstall: deviceConfig.forceAdbInstall,
     };

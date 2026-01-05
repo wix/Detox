@@ -81,13 +81,32 @@ describe('BinaryExec', () => {
       expect(spawn).toHaveBeenCalledWith(binaryPath, commandArgs, expect.anything());
     });
 
+    it('should specify spawn options', async () => {
+      const command = anEmptyCommand();
+      const stdout = null;
+      const stderr = null;
+
+      await binaryExec.spawn(command, stdout, stderr);
+
+      expect(spawn.mock.calls).toMatchSnapshot();
+    });
+
+    it('should merge default options with user options', async () => {
+      const command = anEmptyCommand();
+      const customOptions = { env: { TEST_VAR: 'test' } };
+
+      await binaryExec.spawn(command, null, null, customOptions);
+
+      expect(spawn.mock.calls).toMatchSnapshot();
+    });
+
     it('should chain-return spawn result', async () => {
+      const command = anEmptyCommand();
       const spawnResult = Promise.resolve('mock result');
       spawn.mockReturnValue(spawnResult);
 
-      const command = anEmptyCommand();
-
       const result = binaryExec.spawn(command);
+
       expect(result).toEqual(spawnResult);
     });
   });

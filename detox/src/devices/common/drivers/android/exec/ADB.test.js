@@ -10,6 +10,7 @@ describe('ADB', () => {
   let execWithRetriesAndLogs;
   let spawnAndLog;
   let spawnWithRetriesAndLogs;
+  let adbPortRegistry;
 
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
@@ -35,6 +36,13 @@ describe('ADB', () => {
     spawnAndLog = require('../../../../../utils/childProcess').spawnAndLog;
     spawnWithRetriesAndLogs = require('../../../../../utils/childProcess').spawnWithRetriesAndLogs;
 
+    jest.mock('../AdbPortRegistry', () => ({
+      register: jest.fn(),
+      getPort: jest.fn().mockReturnValue(undefined),
+      unregister: jest.fn(),
+    }));
+    adbPortRegistry = require('../AdbPortRegistry');
+
     ADB = require('./ADB');
     adb = new ADB();
   });
@@ -50,7 +58,7 @@ describe('ADB', () => {
 
     it(`should invoke ADB`, async () => {
       await adb.devices();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  devices`, { verbosity: 'high', retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" devices`, { verbosity: 'high', retries: 1 });
       expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
     });
 
@@ -96,7 +104,51 @@ describe('ADB', () => {
   describe('ADB Daemon (server)', () => {
     it('should start the daemon', async () => {
       await adb.startDaemon();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}"  start-server`, { retries: 0, verbosity: 'high' });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" start-server`, { retries: 0, verbosity: 'high' });
+    });
+  });
+
+  describe('ADB Port Registry integration', () => {
+    beforeEach(() => {
+      adbPortRegistry.getPort.mockReturnValue(undefined);
+    });
+
+    it('should include -P flag when port is found in registry for adbCmd', async () => {
+      const port = 5038;
+      adbPortRegistry.getPort.mockReturnValue(port);
+
+      await adb.adbCmd(deviceId, 'devices');
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-P ${port} -s ${deviceId} devices`),
+        expect.any(Object)
+      );
+    });
+
+    it('should include -P flag when port is found in registry for adbCmdSpawned', async () => {
+      const port = 5038;
+      adbPortRegistry.getPort.mockReturnValue(port);
+
+      await adb.adbCmdSpawned(deviceId, 'install test.apk');
+
+      expect(spawnWithRetriesAndLogs).toHaveBeenCalledWith(
+        adbBinPath,
+        expect.arrayContaining(['-P', String(port), '-s', deviceId]),
+        expect.any(Object)
+      );
+    });
+
+    it('should include -P flag when port is found in registry for spawn', async () => {
+      const port = 5038;
+      adbPortRegistry.getPort.mockReturnValue(port);
+
+      adb.spawn(deviceId, ['shell', 'command']);
+
+      expect(spawnAndLog).toHaveBeenCalledWith(
+        adbBinPath,
+        expect.arrayContaining(['-P', String(port), '-s', deviceId]),
+        undefined
+      );
     });
   });
 

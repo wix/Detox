@@ -17,6 +17,7 @@ class RuntimeDevice {
     runtimeErrorComposer,
   }, deviceDriver) {
     const methodNames = [
+      'init',
       'captureViewHierarchy',
       'clearKeychain',
       'disableSynchronization',
@@ -86,6 +87,10 @@ class RuntimeDevice {
 
   get appLaunchArgs() {
     return this._currentAppLaunchArgs;
+  }
+
+  async init() {
+    await this.deviceDriver.init();
   }
 
   async selectApp(name) {

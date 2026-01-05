@@ -5,6 +5,7 @@ const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { getAdbPath } = require('../../../../../utils/environment');
 const { escape } = require('../../../../../utils/pipeCommands');
+const adbPortRegistry = require('../AdbPortRegistry');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -370,8 +371,10 @@ class ADB {
   }
 
   async adbCmd(deviceId, params, options = {}) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    const cmd = `"${this.adbBin}" ${serial} ${params}`;
+    const port = adbPortRegistry.getPort(deviceId);
+    const portFlag = port ? `-P ${port} ` : '';
+    const serial = deviceId ? `-s ${deviceId} ` : '';
+    const cmd = `"${this.adbBin}" ${portFlag}${serial}${params}`.replace(/\s+/g, ' ').trim();
     const _options = {
       ...this.defaultExecOptions,
       ...options,
@@ -382,7 +385,9 @@ class ADB {
   async adbCmdSpawned(deviceId, command, spawnOptions = {}) {
     const flags = command.split(/\s+/);
     const serial = deviceId ? ['-s', deviceId] : [];
-    const _flags = [...serial, ...flags];
+    const port = deviceId ? adbPortRegistry.getPort(deviceId) : undefined;
+    const portFlag = port ? ['-P', String(port)] : [];
+    const _flags = [...portFlag, ...serial, ...flags];
     const _spawnOptions = {
       ...this.defaultExecOptions,
       ...spawnOptions,
@@ -397,7 +402,9 @@ class ADB {
    */
   spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
-    return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
+    const port = deviceId ? adbPortRegistry.getPort(deviceId) : undefined;
+    const portFlag = port ? ['-P', String(port)] : [];
+    return spawnAndLog(this.adbBin, [...portFlag, ...serial, ...params], spawnOptions);
   }
 }
 

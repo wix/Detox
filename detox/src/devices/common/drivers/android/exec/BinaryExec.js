@@ -27,11 +27,12 @@ class BinaryExec {
     return await execAsync(`"${this.binary}" ${command._getArgsString()}`);
   }
 
-  spawn(command, stdout, stderr) {
+  spawn(command, stdout, stderr, options = {}) {
     return spawnAndLog(this.binary, command._getArgs(), {
       detached: true,
       encoding: 'utf8',
-      stdio: ['ignore', stdout, stderr]
+      stdio: ['ignore', stdout, stderr],
+      ...options
     });
   }
 }

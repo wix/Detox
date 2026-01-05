@@ -1,10 +1,24 @@
+/**
+ * @typedef {import('../../../../common/drivers/android/emulator/exec/EmulatorExec').EmulatorExec} EmulatorExec
+ * @typedef {import('../../../../common/drivers/android/exec/ADB')} ADB
+ * @typedef {import('../../../../common/drivers/android/emulator/exec/EmulatorExec').LaunchCommand} LaunchCommand
+ */
+
 const fs = require('fs');
 
 const _ = require('lodash');
 
 const unitLogger = require('../../../../../utils/logger').child({ cat: 'device' });
+const adbPortRegistry = require('../../../../common/drivers/android/AdbPortRegistry');
 
-function launchEmulatorProcess(emulatorExec, adb, emulatorLaunchCommand) {
+/**
+ * @param { EmulatorExec } emulatorExec - Instance for executing emulator commands
+ * @param { ADB } adb - Instance of the Android Debug Bridge handler
+ * @param { LaunchCommand } emulatorLaunchCommand - The command describing how to launch the emulator
+ * @param { number|undefined } adbServerPort - Port number for ADB server, if any
+ * @returns { Promise<any> } A Promise that resolves when the emulator process is launched and ready
+ */
+function launchEmulatorProcess(emulatorExec, adb, emulatorLaunchCommand, adbServerPort) {
   let childProcessOutput;
   const portName = emulatorLaunchCommand.port ? `-${emulatorLaunchCommand.port}` : '';
   const tempLog = `./${emulatorLaunchCommand.avdName}${portName}.log`;
@@ -26,8 +40,17 @@ function launchEmulatorProcess(emulatorExec, adb, emulatorLaunchCommand) {
   let log = unitLogger.child({ fn: 'boot' });
   log.debug({ event: 'SPAWN_CMD' }, emulatorExec.toString(), emulatorLaunchCommand.toString());
 
-  const childProcessPromise = emulatorExec.spawn(emulatorLaunchCommand, stdout, stderr);
+  const childProcessPromise = emulatorExec.spawn(emulatorLaunchCommand, stdout, stderr, {
+    env: {
+      ...process.env,
+      ANDROID_ADB_SERVER_PORT: adbServerPort ? String(adbServerPort) : undefined,
+    },
+  });
   childProcessPromise.childProcess.unref();
+
+  if (adbServerPort) {
+    adbPortRegistry.register(emulatorLaunchCommand.adbName, adbServerPort);
+  }
 
   log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 

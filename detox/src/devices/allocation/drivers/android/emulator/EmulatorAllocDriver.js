@@ -1,5 +1,6 @@
 /**
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
+ * @typedef {import('../../../../common/drivers/android/cookies').EmulatorDeviceCookie} EmulatorDeviceCookie
  */
 
 const _ = require('lodash');
@@ -8,6 +9,8 @@ const log = require('../../../../../utils/logger').child({ cat: 'device,device-a
 const AndroidAllocDriver = require('../AndroidAllocDriver');
 
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
+
+const ADB_SERVER_BASE_PORT = 5037;
 
 class EmulatorAllocDriver extends AndroidAllocDriver {
   /**
@@ -40,6 +43,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     this._freePortFinder = freePortFinder;
     this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
     this._fixAvdConfigIniSkinNameIfNeeded = _.memoize(this._fixAvdConfigIniSkinNameIfNeeded.bind(this));
+    this._adbServerPortCounter = ADB_SERVER_BASE_PORT;
   }
 
   async init() {
@@ -48,13 +52,15 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
 
   /**
    * @param deviceConfig
-   * @returns {Promise<AndroidDeviceCookie>}
+   * @returns {Promise<EmulatorDeviceCookie>}
    */
   async allocate(deviceConfig) {
     const avdName = deviceConfig.device.avdName;
 
     await this._avdValidator.validate(avdName, deviceConfig.headless);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
+
+    const adbServerPort = ++this._adbServerPortCounter;
 
     const adbName = await this._deviceRegistry.registerDevice(async () => {
       let adbName = await this._freeDeviceFinder.findFreeDevice(avdName);
@@ -70,6 +76,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
           avdName,
           adbName,
           port,
+          adbServerPort,
         });
       }
 
@@ -80,6 +87,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
       id: adbName,
       adbName,
       name: `${adbName} (${avdName})`,
+      adbServerPort,
     };
   }
 

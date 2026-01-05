@@ -39,6 +39,9 @@ class DeviceDriverBase {
     return {};
   }
 
+  async init() {
+  }
+
   async launchApp() {
     return NaN;
   }
