@@ -26,11 +26,10 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Security check (npq)
-        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npx npq install --immutable
         env:
+          NPQ_PKG_MGR: yarn
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
       - name: Lint source project
@@ -69,11 +68,10 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Security check (npq)
-        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npx npq install --immutable
         env:
+          NPQ_PKG_MGR: yarn
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
       - name: Unit tests

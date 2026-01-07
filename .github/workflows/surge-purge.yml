@@ -18,10 +18,8 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Security check (npq)
-        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Install dependencies
-        run: yarn install --immutable
+        run: NPQ_PKG_MGR=yarn npx npq install --immutable
       - name: Teardown old domains
         run: yarn zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
         env:

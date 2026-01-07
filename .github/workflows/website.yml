@@ -31,13 +31,10 @@ jobs:
           filters: |
             website:
               - 'website/**'
-      - name: Security check (npq)
-        working-directory: ./website
-        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Install and build
         working-directory: ./website
         run: |
-          yarn install
+          NPQ_PKG_MGR=yarn npx npq install
           yarn build
   gh-release:
     if: github.event_name != 'pull_request'
@@ -54,9 +51,6 @@ jobs:
       - uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
-      - name: Security check (npq)
-        working-directory: ./website
-        run: npx npq@3.14.0 install --pkgMgr yarn --dry-run
       - name: Release to GitHub Pages
         env:
           USE_SSH: true
@@ -65,7 +59,7 @@ jobs:
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
           cd website/
-          yarn install
+          NPQ_PKG_MGR=yarn npx npq install
           yarn build
           yarn docusaurus deploy
   performance:
