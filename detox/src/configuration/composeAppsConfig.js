@@ -19,13 +19,7 @@ const CLI_PARSER_OPTIONS = {
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfig(opts) {
-  const { localConfig } = opts;
-  const isPlainConfig = localConfig.binaryPath && !localConfig.app && !localConfig.apps;
-
-  const appsConfig = isPlainConfig
-    ? composeAppsConfigFromPlain(opts)
-    : composeAppsConfigFromAliased(opts);
-
+  const appsConfig = composeAppsConfigFromAliased(opts);
   overrideAppLaunchArgs(appsConfig, opts.cliConfig);
 
   return appsConfig;
@@ -36,67 +30,7 @@ function composeAppsConfig(opts) {
  * @param {string} opts.configurationName
  * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
  * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxPlainConfiguration} opts.localConfig
- * @returns {Record<string, Detox.DetoxAppConfig>}
- */
-function composeAppsConfigFromPlain(opts) {
-  const { errorComposer, localConfig } = opts;
-
-  if (localConfig.app || localConfig.apps) {
-    throw errorComposer.oldSchemaHasAppAndApps();
-  }
-
-  /** @type {Detox.DetoxAppConfig} */
-  let appConfig;
-
-  switch (opts.deviceConfig.type) {
-    case 'android.attached':
-    case 'android.emulator':
-    case 'android.genycloud':
-      appConfig = {
-        type: 'android.apk',
-        binaryPath: localConfig.binaryPath,
-        bundleId: localConfig.bundleId,
-        build: localConfig.build,
-        testBinaryPath: localConfig.testBinaryPath,
-        launchArgs: localConfig.launchArgs,
-        permissions: localConfig.permissions,
-      }; break;
-    case 'ios.none':
-    case 'ios.simulator':
-      appConfig = {
-        type: 'ios.app',
-        binaryPath: localConfig.binaryPath,
-        bundleId: localConfig.bundleId,
-        build: localConfig.build,
-        launchArgs: localConfig.launchArgs,
-        permissions: localConfig.permissions,
-      };
-      break;
-    default:
-      appConfig = {
-        ...localConfig,
-      };
-  }
-
-  validateAppConfig({
-    errorComposer,
-    appConfig,
-    deviceConfig: opts.deviceConfig,
-    appPath: ['configurations', opts.configurationName],
-  });
-
-  return {
-    default: _.omitBy(appConfig, _.isUndefined),
-  };
-}
-
-/**
- * @param {DetoxConfigErrorComposer} opts.errorComposer
- * @param {string} opts.configurationName
- * @param {Detox.DetoxDeviceConfig} opts.deviceConfig
- * @param {Detox.DetoxConfig} opts.globalConfig
- * @param {Detox.DetoxAliasedConfiguration} opts.localConfig
+ * @param {Detox.DetoxConfiguration} opts.localConfig
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfigFromAliased(opts) {

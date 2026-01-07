@@ -1,4 +1,6 @@
 // @ts-nocheck
+jest.mock('../../../../../utils/logger');
+
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
@@ -10,9 +12,11 @@ describe('ADB', () => {
   let execWithRetriesAndLogs;
   let spawnAndLog;
   let spawnWithRetriesAndLogs;
+  let logger;
 
   beforeEach(() => {
-    jest.mock('../../../../../utils/logger');
+    logger = require('../../../../../utils/logger');
+
     jest.mock('../../../../../utils/environment');
     require('../../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
@@ -430,36 +434,7 @@ describe('ADB', () => {
     });
   });
 
-  describe('grantPermission', () => {
-    it('should invoke pm grant for given package and permission', async () => {
-      await adb.grantPermission(deviceId, 'com.example.app', 'android.permission.CAMERA');
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm grant com.example.app android.permission.CAMERA"`),
-        expect.any(Object)
-      );
-    });
-  });
-
-  describe('revokePermission', () => {
-    it('should invoke pm revoke for given package and permission', async () => {
-      await adb.revokePermission(deviceId, 'com.example.app', 'android.permission.CAMERA');
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm revoke com.example.app android.permission.CAMERA"`),
-        expect.any(Object)
-      );
-    });
-  });
-
   describe('grantAllPermissions', () => {
-    let logger;
-    let logWarn;
-
-    beforeEach(() => {
-      logger = require('../../../../../utils/logger');
-      logWarn = jest.fn();
-      logger.child = jest.fn().mockReturnValue({ warn: logWarn });
-    });
-
     it('should invoke pm grant --all-permissions for given package', async () => {
       await adb.grantAllPermissions(deviceId, 'com.example.app');
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
@@ -476,11 +451,8 @@ describe('ADB', () => {
 
       await adb.grantAllPermissions(deviceId, 'com.example.app');
 
-      expect(logWarn).toHaveBeenCalledWith(
-        expect.stringContaining('Cannot restore permissions after resetAppState()')
-      );
-      expect(logWarn).toHaveBeenCalledWith(
-        expect.stringContaining('Either update to Android 14+ or add explicit permissions')
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Cannot restore permissions after resetAppState(). Please update Android version to API 35 or higher.'
       );
     });
 

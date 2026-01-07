@@ -29,9 +29,9 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
-  it('resetAppState() + launch() - should tap successfully', async () => {
+  it('resetAppState() + relaunch() - should tap successfully', async () => {
     await device.resetAppState();
-    await device.launchApp();
+    await device.relaunchApp();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();

@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const DetoxRuntimeError = require('../../errors/DetoxRuntimeError');
 const debug = require('../../utils/debug'); // debug utils, leave here even if unused
 const log = require('../../utils/logger').child({ cat: 'device' });
@@ -261,10 +259,6 @@ class RuntimeDevice {
         await this.reverseTcpPort(port);
       }
     }
-
-    if (!_.isEmpty(currentApp.permissions)) {
-      await this.deviceDriver.setPermissions(currentApp.bundleId, currentApp.permissions);
-    }
   }
 
   async uninstallApp(bundleId) {
@@ -275,15 +269,6 @@ class RuntimeDevice {
   async resetAppState(...bundleIds) {
     const _bundleIds = bundleIds.length > 0 ? bundleIds : [this._bundleId];
     await this.deviceDriver.resetAppState(..._bundleIds);
-
-    if (bundleIds.length > 0) {
-      for (const bundleId of _bundleIds) {
-        const appConfig = this._findAppConfigByBundleId(bundleId);
-        await this.deviceDriver.setPermissions(bundleId, appConfig ? appConfig.permissions : undefined);
-      }
-    } else {
-      await this.deviceDriver.setPermissions(this._bundleId, this._currentApp.permissions);
-    }
   }
 
   async installUtilBinaries() {
@@ -403,11 +388,6 @@ class RuntimeDevice {
     }
     return this._currentApp;
   }
-
-  _findAppConfigByBundleId(bundleId) {
-    return Object.values(this._appsConfig).find(app => app.bundleId === bundleId);
-  }
-
   async _sendPayload(key, params) {
     const payloadFilePath = this.deviceDriver.createPayloadFile(params);
     const payload = {

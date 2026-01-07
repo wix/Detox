@@ -340,7 +340,6 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             launchArgs?: Record<string, any>;
-            permissions?: IOSAppPermissions;
         }
 
         interface DetoxAndroidAppConfig {
@@ -349,7 +348,6 @@ declare global {
             bundleId?: string;
             testBinaryPath?: string;
             launchArgs?: Record<string, any>;
-            permissions?: AndroidAppPermissions;
             /**
              * TCP ports to `adb reverse` upon the installation.
              * E.g. 8081 - to be able to access React Native packager in Debug mode.
@@ -2029,10 +2027,6 @@ declare global {
             userTracking?: UserTrackingPermission;
         }
 
-        type AppPermissions = IOSAppPermissions | AndroidAppPermissions;
-        type IOSAppPermissions = DevicePermissions;
-        type AndroidAppPermissions = Record<string, boolean>;
-
         type BasicPermissionState = 'YES' | 'NO' | 'unset';
         type ExtendedPermissionState = 'YES' | 'NO' | 'unset' | 'limited';
         type LocationPermission = 'always' | 'inuse' | 'never' | 'unset';
@@ -2063,7 +2057,7 @@ declare global {
              * Set runtime permissions
              * Grant or deny runtime permissions for your application.
              */
-            permissions?: AppPermissions;
+            permissions?: DevicePermissions;
             /**
              * Launch from URL
              * Mock opening the app from URL to test your app's deep link handling mechanism.

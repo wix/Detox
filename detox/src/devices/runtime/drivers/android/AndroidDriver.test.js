@@ -482,12 +482,13 @@ describe('Android driver', () => {
   });
 
   describe('resetAppState', () => {
-    it('should clear app data for a single bundleId', async () => {
+    it('should clear app data and grant all permissions for a single bundleId', async () => {
       await uut.resetAppState(bundleId);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
     });
 
-    it('should clear app data for multiple bundleIds', async () => {
+    it('should clear app data and grant all permissions for multiple bundleIds', async () => {
       const bundleId1 = 'com.example.app1';
       const bundleId2 = 'com.example.app2';
 
@@ -495,43 +496,8 @@ describe('Android driver', () => {
 
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId1);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId2);
-    });
-  });
-
-  describe('setPermissions', () => {
-    it('should grant and revoke specific permissions', async () => {
-      const bundleId = 'com.example.app';
-      const permissions = {
-        'android.permission.CAMERA': true,
-        'android.permission.ACCESS_FINE_LOCATION': false,
-        'android.permission.RECORD_AUDIO': true,
-      };
-
-      await uut.setPermissions(bundleId, permissions);
-
-      expect(adb.grantPermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.CAMERA');
-      expect(adb.revokePermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.ACCESS_FINE_LOCATION');
-      expect(adb.grantPermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.RECORD_AUDIO');
-    });
-
-    it('should try to grant all permissions when permissions is undefined', async () => {
-      const bundleId = 'com.example.app';
-
-      await uut.setPermissions(bundleId, undefined);
-
-      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
-      expect(adb.grantPermission).not.toHaveBeenCalled();
-      expect(adb.revokePermission).not.toHaveBeenCalled();
-    });
-
-    it('should try to grant all permissions when permissions is empty object', async () => {
-      const bundleId = 'com.example.app';
-
-      await uut.setPermissions(bundleId, {});
-
-      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
-      expect(adb.grantPermission).not.toHaveBeenCalled();
-      expect(adb.revokePermission).not.toHaveBeenCalled();
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId1);
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId2);
     });
   });
 

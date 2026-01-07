@@ -189,7 +189,6 @@ class SimulatorDriver extends IosDriver {
   }
 
   async setPermissions(bundleId, permissions) {
-    if (_.isEmpty(permissions)) return;
     await this._applesimutils.setPermissions(this.udid, bundleId, permissions);
   }
 

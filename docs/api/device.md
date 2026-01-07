@@ -91,7 +91,7 @@ If set to `false`, the device will try to resume the app (e.g. bring from foregr
 await device.launchApp({newInstance: true});
 ```
 
-#### 2. `permissions`—Set Runtime Permissions
+#### 2. `permissions`—Set Runtime Permissions (iOS Only)
 
 Grants or denies runtime permissions to your application. This will cause the app to terminate before permissions are applied.
 
@@ -102,11 +102,30 @@ await device.launchApp({permissions: {calendar: 'YES'}});
 Detox uses [AppleSimUtils](https://github.com/wix/AppleSimulatorUtils) and [`xcrun simctl`](https://nshipster.com/simctl/) to implement this functionality for iOS simulators.
 Please make sure you have the most recent version of both tools installed, since we rely on their latest versions.
 
-For Android, permissions are specified as freeform strings with boolean values (e.g., `android.permission.CAMERA: true`).
+##### Supported Permissions
 
-As a reference, you can also use this [table of possible permissions](#permissions).
+| Permission    | Values                         | Notes                                                        |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| location      | always / inuse / never / unset | inuse - provides location access only when the app is in use |
+| contacts      | YES / NO / unset / limited     | limited - grants limited access to contacts                  |
+| photos        | YES / NO / unset / limited     | limited - grants limited access to photos                    |
+| calendar      | YES / NO / unset               |                                                              |
+| camera        | YES / NO / unset               |                                                              |
+| medialibrary  | YES / NO / unset               |                                                              |
+| microphone    | YES / NO / unset               |                                                              |
+| motion        | YES / NO / unset               |                                                              |
+| reminders     | YES / NO / unset               |                                                              |
+| siri          | YES / NO / unset               |                                                              |
+| notifications | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| health        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| homekit       | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| speech        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| faceid        | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
+| userTracking  | YES / NO / unset               | Requires AppleSimUtils; unsupported by simctl                |
 
-##### 3. `url`—Launching with URL
+Check Detox's [own test suite](https://github.com/wix/Detox/blob/master/detox/test/e2e/13.permissions.test.js) for usage examples.
+
+#### 3. `url`—Launching with URL
 
 Launches the app with the specified URL to test your app’s deep link handling mechanism.
 
@@ -146,7 +165,7 @@ Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 
 
 Resets the app's state and launches without necessarily performing a full uninstall/reinstall cycle.
 
-- Android: clears app data using `pm clear`, which is typically faster than reinstalling. After clearing, runtime permissions are automatically restored (see [`device.resetAppState()`](#deviceresetappstatebundleids) for details).
+- Android: clears app data using `pm clear`, which is typically faster than reinstalling.
 - iOS: uninstalls and reinstalls the app to restore a clean state.
 
 ```js
@@ -394,10 +413,7 @@ await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
 
 Resets the app state by clearing app data and restoring it to a clean state.
 
-On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it. **After clearing, Detox automatically restores runtime permissions:**
-
-- If your app config includes a `permissions` map, those specific permissions are re-granted.
-- If no permissions map is configured, Detox attempts to restore all permissions automatically (requires Android 14+). On older Android versions, you'll see a warning suggesting to either update Android or add explicit permissions to your app config.
+On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it. **After clearing, Detox automatically restores all runtime permissions** (requires Android 15+). On older Android versions, you'll see a warning suggesting to update to Android 15+.
 
 On iOS, Detox uses a fallback that uninstalls and installs your app again to achieve a clean state.
 
@@ -599,59 +615,4 @@ await device.pressBack();
 Exposes [`UiAutomator`’s `UiDevice` API](https://developer.android.com/reference/androidx/test/uiautomator/UiDevice).
 **This is not a part of the official Detox API**, it may break and change whenever an update to `UiDevice` or `UiAutomator` Gradle dependencies (`androidx.test.uiautomator:uiautomator`) is introduced.
 
-[`UiDevice`’s autogenerated code](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/src/android/espressoapi/UIDevice.js)
-
-### Permissions
-
-When you are [configuring the apps](APIRef.Configuration.md#apps-configurations) list in your
-Detox config file or [launching the app](#2-permissionsset-runtime-permissions),
-you can give certain permissions beforehand to it to avoid this inconvenient modal:
-
-![iOS permissions modal](img/ios-permissions.png)
-
-#### iOS Permissions
-
-Here is the exhaustive permissions list that Detox currently supports for iOS:
-
-| Permission    | Values                                                  |
-|---------------|---------------------------------------------------------|
-| calendar      | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| camera        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| contacts      | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| faceid        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| health        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| homekit       | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| location      | `'always' &#124; 'inuse' &#124; 'never' &#124; 'unset'` |
-| medialibrary  | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| microphone    | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| motion        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| notification  | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| photos        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| reminders     | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| siri          | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| speech        | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-| userTracking  | `'YES' &#124; 'NO' &#124; 'unset'`                      |
-
-#### Android Permissions
-
-For Android, permissions are specified as freeform strings using the standard Android permission names with boolean values (`true` for granted, `false` for denied). Examples:
-
-```js
-permissions: {
-  'android.permission.CAMERA': true,
-  'android.permission.ACCESS_FINE_LOCATION': true,
-  'android.permission.ACCESS_COARSE_LOCATION': false,
-  'android.permission.INTERNET': true,
-  'android.permission.SYSTEM_ALERT_WINDOW': true
-}
-```
-
-Common Android permissions include:
-- `android.permission.CAMERA`
-- `android.permission.ACCESS_FINE_LOCATION`
-- `android.permission.ACCESS_COARSE_LOCATION`
-- `android.permission.INTERNET`
-- `android.permission.SYSTEM_ALERT_WINDOW`
-- `android.permission.RECORD_AUDIO`
-- `android.permission.READ_EXTERNAL_STORAGE`
-- `android.permission.WRITE_EXTERNAL_STORAGE`
+[`UiDevice`'s autogenerated code](https://github.com/wix/Detox/tree/a9a09246c05733f6b91cfcc0dba05a4714abca92/detox/src/android/espressoapi/UIDevice.js)

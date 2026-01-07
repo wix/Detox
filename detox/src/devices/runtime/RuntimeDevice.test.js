@@ -362,7 +362,6 @@ describe('Device', () => {
       await device.relaunchApp({ resetAppState: true });
 
       expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
-      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId, undefined);
       expect(driverMock.driver.uninstallApp).not.toHaveBeenCalled();
       expect(driverMock.driver.installApp).not.toHaveBeenCalled();
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs);
@@ -651,35 +650,9 @@ describe('Device', () => {
       expect(driverMock.driver.installApp).toHaveBeenCalledWith('newAppPath', device._deviceConfig.testBinaryPath);
     });
 
-    it(`with a custom app permissions should setPermissions after installing`, async () => {
-      const device = await aValidDevice({
-        appsConfig: {
-          default: {
-            permissions: {
-              calendar: 'NO',
-              camera: 'YES',
-            },
-          },
-        },
-      });
-
-      driverMock.driver.setPermissions.mockRejectedValue(new Error('Should be called last!'));
-      driverMock.driver.installApp.mockImplementation(() => {
-        driverMock.driver.setPermissions.mockReset();
-      });
-
-      await device.installApp();
-      expect(driverMock.driver.setPermissions).toHaveBeenCalledWith('test.bundle', {
-        calendar: 'NO',
-        camera: 'YES',
-      });
-    });
-
     it(`with no args should use the default path given in configuration`, async () => {
       const device = await aValidDevice();
       await device.installApp();
-
-      expect(driverMock.driver.setPermissions).not.toHaveBeenCalled();
       expect(driverMock.driver.installApp).toHaveBeenCalledWith(device._currentApp.binaryPath, device._currentApp.testBinaryPath);
       expect(driverMock.driver.reverseTcpPort).not.toHaveBeenCalled();
     });
@@ -1062,78 +1035,24 @@ describe('Device', () => {
     return driverMock.driver.installApp.mock.calls[0][0];
   }
 
-  it('should call resetAppState and setPermissions on the driver', async () => {
+  it('should call resetAppState on the driver', async () => {
     const device = await aValidDevice();
     await device.resetAppState();
     expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
-    expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId, undefined);
   });
 
-  it('should call resetAppState with custom bundleId and setPermissions with its permissions', async () => {
+  it('should call resetAppState with custom bundleId', async () => {
+    const device = await aValidDevice();
     const customBundleId = 'com.custom.app';
-    const device = await aValidDevice({
-      appsConfig: {
-        default: {
-          bundleId: 'test.bundle',
-        },
-        custom: {
-          bundleId: customBundleId,
-          permissions: {
-            'android.permission.CAMERA': true,
-          },
-        },
-      },
-    });
-    await device.selectApp('custom');
     await device.resetAppState(customBundleId);
     expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(customBundleId);
-    expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(customBundleId, {
-      'android.permission.CAMERA': true,
-    });
   });
 
-  it('should call resetAppState and setPermissions for multiple bundleIds', async () => {
+  it('should call resetAppState with multiple bundleIds', async () => {
+    const device = await aValidDevice();
     const bundleId1 = 'com.app1';
     const bundleId2 = 'com.app2';
-    const device = await aValidDevice({
-      appsConfig: {
-        default: {
-          bundleId: 'test.bundle',
-        },
-        app1: {
-          bundleId: bundleId1,
-          permissions: {
-            'android.permission.CAMERA': true,
-          },
-        },
-        app2: {
-          bundleId: bundleId2,
-          permissions: {
-            'android.permission.ACCESS_FINE_LOCATION': true,
-          },
-        },
-      },
-    });
     await device.resetAppState(bundleId1, bundleId2);
     expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId1, bundleId2);
-    expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId1, {
-      'android.permission.CAMERA': true,
-    });
-    expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId2, {
-      'android.permission.ACCESS_FINE_LOCATION': true,
-    });
-  });
-
-  it('should call setPermissions with undefined when app config has no permissions', async () => {
-    const device = await aValidDevice({
-      appsConfig: {
-        default: {
-          bundleId: 'test.bundle',
-        },
-      },
-    });
-    await device.resetAppState();
-    expect(driverMock.driver.resetAppState).toHaveBeenCalledWith(bundleId);
-    expect(driverMock.driver.setPermissions).toHaveBeenCalledWith(bundleId, undefined);
   });
 });
