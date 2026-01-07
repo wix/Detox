@@ -5,8 +5,11 @@ const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { getAdbPath } = require('../../../../../utils/environment');
 const { escape } = require('../../../../../utils/pipeCommands');
+const logger = require('../../../../../utils/logger');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
+
+const log = logger.child({ cat: 'device' });
 
 const DEFAULT_EXEC_OPTIONS = {
   retries: 1,
@@ -166,6 +169,23 @@ class ADB {
 
   async revokePermission(deviceId, packageId, permission) {
     await this.shell(deviceId, `pm revoke ${packageId} ${permission}`);
+  }
+
+  async grantAllPermissions(deviceId, packageId) {
+    try {
+      await this.shell(deviceId, `pm grant --all-permissions ${packageId}`);
+    } catch (e) {
+      // On older Android, --all-permissions flag is ignored → "no permission specified"
+      const message = (typeof e === 'string' ? e : e.stderr || e.message || '').toString();
+      if (message.includes('no permission specified')) {
+        log.warn(
+          `Cannot restore permissions after resetAppState() - Android version too old.\n` +
+          `Either update to Android 14+ or add explicit permissions to your app config.`
+        );
+      } else {
+        throw e; // Re-throw unexpected errors
+      }
+    }
   }
 
   async setLocation(deviceId, lat, lon) {

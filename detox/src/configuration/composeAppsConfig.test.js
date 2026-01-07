@@ -90,16 +90,14 @@ describe('composeAppsConfig', () => {
           ...localConfig,
           type: appType,
           device: undefined,
-          permissions: undefined,
         },
       });
     });
 
     it('should take it as-is for unknown device type', () => {
       deviceConfig.type = './customDriver';
-      localConfig = { ...deviceConfig };
       expect(compose()).toEqual({
-        default: localConfig
+        default: localConfig,
       });
     });
 
@@ -134,7 +132,7 @@ describe('composeAppsConfig', () => {
     describe('.launchArgs', () => {
       it('when it it is a string, should throw', () => {
         localConfig.launchArgs = '-detoxAppArgument NO';
-        expect(compose).toThrowError(errorComposer.malformedAppLaunchArgs(['configurations', configurationName]));
+        expect(compose).toThrow(errorComposer.malformedAppLaunchArgs(['configurations', configurationName]));
       });
 
       it('when it is an object with nullish properties, it should omit them', () => {

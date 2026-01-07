@@ -3,7 +3,6 @@ const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1
 const defaultAndroidPermissions = {
   'android.permission.CAMERA': true,
   'android.permission.ACCESS_FINE_LOCATION': true,
-  'android.permission.INTERNET': true,
   'android.permission.RECORD_AUDIO': true,
 };
 

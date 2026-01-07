@@ -85,6 +85,11 @@ class AndroidDriver extends DeviceDriverBase {
   }
 
   async setPermissions(bundleId, permissions) {
+    if (_.isEmpty(permissions)) {
+      await this.adb.grantAllPermissions(this.adbName, bundleId);
+      return;
+    }
+
     for (const [permission, granted] of Object.entries(permissions)) {
       if (granted) {
         await this.adb.grantPermission(this.adbName, bundleId, permission);

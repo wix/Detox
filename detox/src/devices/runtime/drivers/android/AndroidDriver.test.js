@@ -513,6 +513,26 @@ describe('Android driver', () => {
       expect(adb.revokePermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.ACCESS_FINE_LOCATION');
       expect(adb.grantPermission).toHaveBeenCalledWith(adbName, bundleId, 'android.permission.RECORD_AUDIO');
     });
+
+    it('should try to grant all permissions when permissions is undefined', async () => {
+      const bundleId = 'com.example.app';
+
+      await uut.setPermissions(bundleId, undefined);
+
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
+      expect(adb.grantPermission).not.toHaveBeenCalled();
+      expect(adb.revokePermission).not.toHaveBeenCalled();
+    });
+
+    it('should try to grant all permissions when permissions is empty object', async () => {
+      const bundleId = 'com.example.app';
+
+      await uut.setPermissions(bundleId, {});
+
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
+      expect(adb.grantPermission).not.toHaveBeenCalled();
+      expect(adb.revokePermission).not.toHaveBeenCalled();
+    });
   });
 
   describe('text-typing (global)', () => {

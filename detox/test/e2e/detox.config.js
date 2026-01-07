@@ -71,7 +71,7 @@ const config = {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
-      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example_ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=YES -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       permissions: defaultIOSPermissions,
     },
 

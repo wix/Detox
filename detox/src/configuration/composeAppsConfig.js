@@ -19,7 +19,13 @@ const CLI_PARSER_OPTIONS = {
  * @returns {Record<string, Detox.DetoxAppConfig>}
  */
 function composeAppsConfig(opts) {
-  const appsConfig = composeAppsConfigFromAliased(opts);
+  const { localConfig } = opts;
+  const isPlainConfig = localConfig.binaryPath && !localConfig.app && !localConfig.apps;
+
+  const appsConfig = isPlainConfig
+    ? composeAppsConfigFromPlain(opts)
+    : composeAppsConfigFromAliased(opts);
+
   overrideAppLaunchArgs(appsConfig, opts.cliConfig);
 
   return appsConfig;

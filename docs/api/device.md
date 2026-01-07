@@ -144,9 +144,9 @@ Read more in [here](../guide/mocking-user-activity.md). Go back to subsection 1 
 
 #### 6. `resetAppState`—Reset App State Before Launching
 
-Resets the app’s state and launches without necessarily performing a full uninstall/reinstall cycle.
+Resets the app's state and launches without necessarily performing a full uninstall/reinstall cycle.
 
-- Android: clears app data using `pm clear`, which is typically faster than reinstalling.
+- Android: clears app data using `pm clear`, which is typically faster than reinstalling. After clearing, runtime permissions are automatically restored (see [`device.resetAppState()`](#deviceresetappstatebundleids) for details).
 - iOS: uninstalls and reinstalls the app to restore a clean state.
 
 ```js
@@ -394,7 +394,10 @@ await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
 
 Resets the app state by clearing app data and restoring it to a clean state.
 
-On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it.
+On Android, this command clears the app's data using the `pm clear` command, effectively resetting the app to its initial installed state without uninstalling it. **After clearing, Detox automatically restores runtime permissions:**
+
+- If your app config includes a `permissions` map, those specific permissions are re-granted.
+- If no permissions map is configured, Detox attempts to restore all permissions automatically (requires Android 14+). On older Android versions, you'll see a warning suggesting to either update Android or add explicit permissions to your app config.
 
 On iOS, Detox uses a fallback that uninstalls and installs your app again to achieve a clean state.
 

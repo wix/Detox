@@ -449,4 +449,47 @@ describe('ADB', () => {
       );
     });
   });
+
+  describe('grantAllPermissions', () => {
+    let logger;
+    let logWarn;
+
+    beforeEach(() => {
+      logger = require('../../../../../utils/logger');
+      logWarn = jest.fn();
+      logger.child = jest.fn().mockReturnValue({ warn: logWarn });
+    });
+
+    it('should invoke pm grant --all-permissions for given package', async () => {
+      await adb.grantAllPermissions(deviceId, 'com.example.app');
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm grant --all-permissions com.example.app"`),
+        expect.any(Object)
+      );
+    });
+
+    it('should log warning on "no permission specified" error (older Android)', async () => {
+      execWithRetriesAndLogs.mockRejectedValueOnce({
+        stderr: 'Error: no permission specified',
+        message: 'Error: no permission specified',
+      });
+
+      await adb.grantAllPermissions(deviceId, 'com.example.app');
+
+      expect(logWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Cannot restore permissions after resetAppState()')
+      );
+      expect(logWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Either update to Android 14+ or add explicit permissions')
+      );
+    });
+
+    it('should re-throw unexpected errors', async () => {
+      const unexpectedError = new Error('Unexpected error');
+      execWithRetriesAndLogs.mockRejectedValueOnce(unexpectedError);
+
+      await expect(adb.grantAllPermissions(deviceId, 'com.example.app'))
+        .rejects.toThrow('Unexpected error');
+    });
+  });
 });
