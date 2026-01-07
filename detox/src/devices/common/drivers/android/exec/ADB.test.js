@@ -36,38 +36,41 @@ describe('ADB', () => {
     spawnAndLog = require('../../../../../utils/childProcess').spawnAndLog;
     spawnWithRetriesAndLogs = require('../../../../../utils/childProcess').spawnWithRetriesAndLogs;
 
-    jest.mock('../AdbPortRegistry', () => ({
-      register: jest.fn(),
-      getPort: jest.fn().mockReturnValue(undefined),
-      unregister: jest.fn(),
-    }));
+    jest.mock('../AdbPortRegistry');
     adbPortRegistry = require('../AdbPortRegistry');
+    adbPortRegistry.getAllPorts.mockReturnValue([]);
 
     ADB = require('./ADB');
     adb = new ADB();
   });
 
   describe('devices', () => {
+
+    const mockDeviceEntry = 'MOCK_SERIAL\tdevice';
+    const wifiDeviceEntry = '192.168.60.101:6666\tdevice';
+    const emulatorEntry = 'emulator-5554\tdevice';
+    const emulator5556Entry = 'emulator-5556\toffline';
     const mockDevices = [
-      'MOCK_SERIAL\tdevice',
-      '192.168.60.101:6666\tdevice',
-      'emulator-5554\tdevice',
-      'emulator-5556\toffline',
+      mockDeviceEntry,
+      wifiDeviceEntry,
+      emulatorEntry,
+      emulator5556Entry,
     ];
-    const adbDevices = ['List of devices attached', ...mockDevices, ''].join('\n');
+    const adbDevicesStdout = (devicePairs) => (['List of devices attached', ...devicePairs, '']).join('\n');
+    const allAdbDevices = adbDevicesStdout(mockDevices);
 
     it(`should invoke ADB`, async () => {
       await adb.devices();
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" devices`, { verbosity: 'high', retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`"${adbBinPath}" .*devices`)), { verbosity: 'high', retries: 1 });
       expect(execWithRetriesAndLogs).toHaveBeenCalledTimes(1);
     });
 
     it('should return proper, type-based device handles', async () => {
-      execWithRetriesAndLogs.mockReturnValue({ stdout: adbDevices });
+      execWithRetriesAndLogs.mockReturnValue({ stdout: allAdbDevices });
 
       const { devices, stdout } = await adb.devices();
 
-      expect(stdout).toBe(adbDevices);
+      expect(stdout).toBe(allAdbDevices);
       expect(devices).toHaveLength(4);
       expect(devices).toEqual([
         DeviceHandle.mock.instances[0],
@@ -98,6 +101,20 @@ describe('ADB', () => {
 
       await adb.devices(options);
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), options);
+    });
+
+    it('should process devices correctly when adbPortRegistry.getAllPorts() returns a port array only on the 2nd call', async () => {
+      const regPort = 5038;
+      adbPortRegistry.getAllPorts.mockReturnValue([regPort]);
+      execWithRetriesAndLogs
+        .mockReturnValueOnce({ stdout: adbDevicesStdout([emulatorEntry]) }) // Result for the standard port (5037)
+        .mockReturnValueOnce({ stdout: adbDevicesStdout([emulator5556Entry]) }); // Result for the port from the adb-ports registry
+
+      const { devices } = await adb.devices();
+
+      expect(devices).toHaveLength(2);
+      expect(EmulatorHandle).toHaveBeenCalledWith(emulatorEntry);
+      expect(EmulatorHandle).toHaveBeenCalledWith(emulator5556Entry);
     });
   });
 

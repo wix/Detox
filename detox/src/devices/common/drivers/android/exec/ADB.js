@@ -17,6 +17,8 @@ const DEFAULT_INSTALL_OPTIONS = {
   retries: 3,
 };
 
+const ADB_SERVER_BASE_PORT = 5037;
+
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
@@ -25,23 +27,39 @@ class ADB {
     this.adbBin = getAdbPath();
   }
 
+  get baseServerPort() {
+    return ADB_SERVER_BASE_PORT;
+  }
+
   async startDaemon() {
     await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
   }
 
   async devices(options) {
-    const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high', ...options });
-    /** @type {DeviceHandle[]} */
-    const devices = _.chain(stdout)
-      .trim()
-      .split('\n')
-      .slice(1)
-      .map(s => _.trim(s))
-      .map(s => s.startsWith('emulator-')
-        ? new EmulatorHandle(s)
-        : new DeviceHandle(s))
-      .value();
-    return { devices, stdout };
+    let devices = [];
+    const stdouts = [];
+    const ports = [ADB_SERVER_BASE_PORT, ...adbPortRegistry.getAllPorts()];
+
+    for (const port of ports) {
+      const { stdout } = await this.adbCmdWithPort('', port, 'devices', { verbosity: 'high', ...options });
+      devices.push(
+        _.chain(stdout)
+          .trim()
+          .split('\n')
+          .slice(1)
+          .map(s => _.trim(s))
+          .value()
+      );
+      stdouts.push(stdout);
+    }
+
+    return {
+      devices: _.flatten(devices)
+        .map(s => s.startsWith('emulator-')
+          ? new EmulatorHandle(s)
+          : new DeviceHandle(s)),
+      stdout: stdouts.join('\n'),
+    };
   }
 
   async getState(deviceId) {
@@ -371,7 +389,10 @@ class ADB {
   }
 
   async adbCmd(deviceId, params, options = {}) {
-    const port = adbPortRegistry.getPort(deviceId);
+    return this.adbCmdWithPort(deviceId, adbPortRegistry.getPort(deviceId), params, options);
+  }
+
+  async adbCmdWithPort(deviceId, port, params, options = {}) {
     const portFlag = port ? `-P ${port} ` : '';
     const serial = deviceId ? `-s ${deviceId} ` : '';
     const cmd = `"${this.adbBin}" ${portFlag}${serial}${params}`.replace(/\s+/g, ' ').trim();

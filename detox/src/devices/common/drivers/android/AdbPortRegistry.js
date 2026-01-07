@@ -18,6 +18,13 @@ class AdbPortRegistry {
   getPort(adbName) {
     return this._registry.get(adbName);
   }
+
+  /**
+   * @returns { number[] }
+   */
+  getAllPorts() {
+    return this._registry.values().toArray();
+  }
 }
 
 module.exports = new AdbPortRegistry();
