@@ -2,6 +2,7 @@
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
+  const baseAdbServerPort = 5037;
 
   let ADB;
   let adb;
@@ -11,6 +12,7 @@ describe('ADB', () => {
   let spawnAndLog;
   let spawnWithRetriesAndLogs;
   let adbPortRegistry;
+  let isPortTaken;
 
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
@@ -38,14 +40,16 @@ describe('ADB', () => {
 
     jest.mock('../AdbPortRegistry');
     adbPortRegistry = require('../AdbPortRegistry');
-    adbPortRegistry.getAllPorts.mockReturnValue([]);
+
+    jest.mock('../../../../../utils/netUtils');
+    isPortTaken = require('../../../../../utils/netUtils').isPortTaken;
+    isPortTaken.mockResolvedValueOnce(true);
 
     ADB = require('./ADB');
     adb = new ADB();
   });
 
   describe('devices', () => {
-
     const mockDeviceEntry = 'MOCK_SERIAL\tdevice';
     const wifiDeviceEntry = '192.168.60.101:6666\tdevice';
     const emulatorEntry = 'emulator-5554\tdevice';
@@ -78,10 +82,10 @@ describe('ADB', () => {
         EmulatorHandle.mock.instances[0],
         EmulatorHandle.mock.instances[1],
       ]);
-      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[0]);
-      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[1]);
-      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[2]);
-      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[3]);
+      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[0], baseAdbServerPort);
+      expect(DeviceHandle).toHaveBeenCalledWith(mockDevices[1], baseAdbServerPort);
+      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[2], baseAdbServerPort);
+      expect(EmulatorHandle).toHaveBeenCalledWith(mockDevices[3], baseAdbServerPort);
     });
 
     it(`should return an empty list if no devices are available`, async () => {
@@ -103,18 +107,16 @@ describe('ADB', () => {
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(expect.any(String), options);
     });
 
-    it('should process devices correctly when adbPortRegistry.getAllPorts() returns a port array only on the 2nd call', async () => {
-      const regPort = 5038;
-      adbPortRegistry.getAllPorts.mockReturnValue([regPort]);
+    it('should process devices correctly when emulators are on multiple adb-server', async () => {
       execWithRetriesAndLogs
         .mockReturnValueOnce({ stdout: adbDevicesStdout([emulatorEntry]) }) // Result for the standard port (5037)
         .mockReturnValueOnce({ stdout: adbDevicesStdout([emulator5556Entry]) }); // Result for the port from the adb-ports registry
 
-      const { devices } = await adb.devices();
+      const { devices } = await adb.devices({}, [baseAdbServerPort, baseAdbServerPort + 1]);
 
       expect(devices).toHaveLength(2);
-      expect(EmulatorHandle).toHaveBeenCalledWith(emulatorEntry);
-      expect(EmulatorHandle).toHaveBeenCalledWith(emulator5556Entry);
+      expect(EmulatorHandle).toHaveBeenCalledWith(emulatorEntry, baseAdbServerPort);
+      expect(EmulatorHandle).toHaveBeenCalledWith(emulator5556Entry, baseAdbServerPort + 1);
     });
   });
 

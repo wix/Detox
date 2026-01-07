@@ -4,8 +4,6 @@ const FreeDeviceFinder = require('./FreeDeviceFinder');
 const { deviceOffline, emulator5556, ip5557, localhost5555 } = require('./__mocks__/handles');
 
 describe('FreeDeviceFinder', () => {
-  const mockAdb = { devices: jest.fn() };
-
   /** @type {DeviceList} */
   let fakeDeviceList;
   let mockDeviceRegistry;
@@ -17,42 +15,35 @@ describe('FreeDeviceFinder', () => {
     mockDeviceRegistry = new DeviceRegistry();
     mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 
+    const mockAdb = /** @type {any} */ ({});
     uut = new FreeDeviceFinder(mockAdb, mockDeviceRegistry);
   });
 
   it('should return the only device when it matches, is online and not already taken by other workers', async () => {
-    mockAdbDevices([emulator5556]);
-
-    const result = await uut.findFreeDevice(emulator5556.adbName);
-    expect(result).toEqual(emulator5556.adbName);
+    const result = await uut.findFreeDevice([emulator5556], emulator5556.adbName);
+    expect(result).toEqual(emulator5556);
   });
 
   it('should return null when there are no devices', async () => {
-    mockAdbDevices([]);
-
-    const result = await uut.findFreeDevice(emulator5556.adbName);
+    const result = await uut.findFreeDevice([], emulator5556.adbName);
     expect(result).toEqual(null);
   });
 
   it('should return null when device is already taken by other workers', async () => {
-    mockAdbDevices([emulator5556]);
     mockAllDevicesTaken();
 
-    expect(await uut.findFreeDevice(emulator5556.adbName)).toEqual(null);
+    expect(await uut.findFreeDevice([emulator5556], emulator5556.adbName)).toEqual(null);
   });
 
   it('should return null when device is offline', async () => {
-    mockAdbDevices([deviceOffline]);
-    expect(await uut.findFreeDevice(deviceOffline.adbName)).toEqual(null);
+    expect(await uut.findFreeDevice([deviceOffline], deviceOffline.adbName)).toEqual(null);
   });
 
   it('should return first device that matches a regular expression', async () => {
-    mockAdbDevices([emulator5556, localhost5555, ip5557]);
     const localhost = '^localhost:\\d+$';
-    expect(await uut.findFreeDevice(localhost)).toBe(localhost5555.adbName);
+    expect(await uut.findFreeDevice([emulator5556, localhost5555, ip5557], localhost)).toBe(localhost5555);
   });
 
-  const mockAdbDevices = (devices) => mockAdb.devices.mockResolvedValue({ devices });
   const mockAllDevicesTaken = () => {
     fakeDeviceList.add(emulator5556.adbName, { busy: true });
     fakeDeviceList.add(localhost5555.adbName, { busy: true });

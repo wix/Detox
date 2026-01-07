@@ -4,6 +4,7 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { getAdbPath } = require('../../../../../utils/environment');
+const { isPortTaken } = require('../../../../../utils/netUtils');
 const { escape } = require('../../../../../utils/pipeCommands');
 const adbPortRegistry = require('../AdbPortRegistry');
 const DeviceHandle = require('../tools/DeviceHandle');
@@ -17,7 +18,7 @@ const DEFAULT_INSTALL_OPTIONS = {
   retries: 3,
 };
 
-const ADB_SERVER_BASE_PORT = 5037;
+const ADB_SERVER_PORT = 5037;
 
 class ADB {
   constructor() {
@@ -27,37 +28,42 @@ class ADB {
     this.adbBin = getAdbPath();
   }
 
-  get baseServerPort() {
-    return ADB_SERVER_BASE_PORT;
+  get defaultServerPort() {
+    return ADB_SERVER_PORT;
   }
 
   async startDaemon() {
     await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
   }
 
-  async devices(options) {
-    let devices = [];
+  /**
+   * @returns {Promise<{devices: DeviceHandle[], stdout: string}>}
+   */
+  async devices(options, ports = [ADB_SERVER_PORT]) {
+    const devicesByPort = {};
     const stdouts = [];
-    const ports = [ADB_SERVER_BASE_PORT, ...adbPortRegistry.getAllPorts()];
 
-    for (const port of ports) {
+    for (let port of ports) {
       const { stdout } = await this.adbCmdWithPort('', port, 'devices', { verbosity: 'high', ...options });
-      devices.push(
-        _.chain(stdout)
-          .trim()
-          .split('\n')
-          .slice(1)
-          .map(s => _.trim(s))
-          .value()
-      );
+      devicesByPort[port] = _.chain(stdout)
+        .trim()
+        .split('\n')
+        .slice(1)
+        .map(s => _.trim(s))
+        .value();
       stdouts.push(stdout);
     }
 
+    const devices =
+      _.flatMap(Object.keys(devicesByPort), port =>
+        _.map(devicesByPort[port],
+            s => s.startsWith('emulator-')
+              ? new EmulatorHandle(s, Number(port))
+              : new DeviceHandle(s, Number(port))
+        ));
+
     return {
-      devices: _.flatten(devices)
-        .map(s => s.startsWith('emulator-')
-          ? new EmulatorHandle(s)
-          : new DeviceHandle(s)),
+      devices,
       stdout: stdouts.join('\n'),
     };
   }

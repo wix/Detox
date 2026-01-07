@@ -13,17 +13,17 @@ class AdbPortRegistry {
 
   /**
    * @param { string } adbName
+   */
+  unregister(adbName) {
+    this._registry.delete(adbName);
+  }
+
+  /**
+   * @param { string } adbName
    * @returns { number | undefined }
    */
   getPort(adbName) {
     return this._registry.get(adbName);
-  }
-
-  /**
-   * @returns { number[] }
-   */
-  getAllPorts() {
-    return this._registry.values().toArray();
   }
 }
 

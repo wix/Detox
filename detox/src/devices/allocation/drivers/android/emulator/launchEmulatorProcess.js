@@ -9,7 +9,6 @@ const fs = require('fs');
 const _ = require('lodash');
 
 const unitLogger = require('../../../../../utils/logger').child({ cat: 'device' });
-const adbPortRegistry = require('../../../../common/drivers/android/AdbPortRegistry');
 
 /**
  * @param { EmulatorExec } emulatorExec - Instance for executing emulator commands
@@ -47,10 +46,6 @@ function launchEmulatorProcess(emulatorExec, adb, emulatorLaunchCommand, adbServ
     },
   });
   childProcessPromise.childProcess.unref();
-
-  if (adbServerPort) {
-    adbPortRegistry.register(emulatorLaunchCommand.adbName, adbServerPort);
-  }
 
   log = log.child({ child_pid: childProcessPromise.childProcess.pid });
 

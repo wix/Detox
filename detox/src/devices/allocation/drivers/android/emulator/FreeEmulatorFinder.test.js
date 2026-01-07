@@ -2,8 +2,6 @@ const DeviceList = require('../../../DeviceList');
 const { emulator5556, localhost5555, mockAvdName } = require('../__mocks__/handles');
 
 describe('FreeEmulatorFinder', () => {
-  const mockAdb = { devices: jest.fn() };
-
   /** @type {DeviceList} */
   let fakeDeviceList;
   /** @type {jest.Mocked<import('../../../DeviceRegistry')>} */
@@ -18,24 +16,20 @@ describe('FreeEmulatorFinder', () => {
     mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 
     const FreeEmulatorFinder = require('./FreeEmulatorFinder');
+    const mockAdb = /** @type {any} */ ({});
     uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry);
   });
 
   it('should return device when it is an emulator and avdName matches', async () => {
-    mockAdbDevices([emulator5556]);
-    const result = await uut.findFreeDevice(mockAvdName);
-    expect(result).toBe(emulator5556.adbName);
+    const result = await uut.findFreeDevice([emulator5556], mockAvdName);
+    expect(result).toBe(emulator5556);
   });
 
   it('should return null when avdName does not match', async () => {
-    mockAdbDevices([emulator5556]);
-    expect(await uut.findFreeDevice('wrongAvdName')).toBe(null);
+    expect(await uut.findFreeDevice([emulator5556], 'wrongAvdName')).toBe(null);
   });
 
   it('should return null when not an emulator', async () => {
-    mockAdbDevices([localhost5555]);
-    expect(await uut.findFreeDevice(mockAvdName)).toBe(null);
+    expect(await uut.findFreeDevice([localhost5555], mockAvdName)).toBe(null);
   });
-
-  const mockAdbDevices = (devices) => mockAdb.devices.mockResolvedValue({ devices });
 });

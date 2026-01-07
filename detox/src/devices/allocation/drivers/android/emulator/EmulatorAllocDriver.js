@@ -1,11 +1,13 @@
 /**
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
  * @typedef {import('../../../../common/drivers/android/cookies').EmulatorDeviceCookie} EmulatorDeviceCookie
+ * @typedef {import('../../../../common/drivers/android/tools/DeviceHandle')} DeviceHandle
  */
 
 const _ = require('lodash');
 
 const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
+const { isPortTaken } = require('../../../../../utils/netUtils');
 const adbPortRegistry = require('../../../../common/drivers/android/AdbPortRegistry');
 const AndroidAllocDriver = require('../AndroidAllocDriver');
 
@@ -42,7 +44,6 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     this._freePortFinder = freePortFinder;
     this._shouldShutdown = detoxConfig.behavior.cleanup.shutdownDevice;
     this._fixAvdConfigIniSkinNameIfNeeded = _.memoize(this._fixAvdConfigIniSkinNameIfNeeded.bind(this));
-    this._nextAdbServerPort = adb.baseServerPort + 1;
   }
 
   async init() {
@@ -63,26 +64,34 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     let adbName;
 
     await this._deviceRegistry.registerDevice(async () => {
-      adbName = await this._freeDeviceFinder.findFreeDevice(avdName);
+      const candidates = await this._getAllDevices();
+      const device = await this._freeDeviceFinder.findFreeDevice(candidates, avdName);
 
-      if (adbName) {
-        adbServerPort = adbPortRegistry.getPort(adbName);
+      if (device) {
+        adbName = device.adbName;
+        adbServerPort = device.adbServerPort;
+        adbPortRegistry.register(adbName, adbServerPort);
       } else {
         const port = await this._freePortFinder.findFreePort();
 
         adbName = `emulator-${port}`;
-        adbServerPort = this._nextAdbServerPort++;
+        adbServerPort = this._getFreeAdbServerPort(candidates);
+        adbPortRegistry.register(adbName, adbServerPort);
 
-        await this._emulatorLauncher.launch({
-          bootArgs: deviceConfig.bootArgs,
-          gpuMode: deviceConfig.gpuMode,
-          headless: deviceConfig.headless,
-          readonly: deviceConfig.readonly,
-          avdName,
-          adbName,
-          port,
-          adbServerPort,
-        });
+        try {
+          await this._emulatorLauncher.launch({
+            bootArgs: deviceConfig.bootArgs,
+            gpuMode: deviceConfig.gpuMode,
+            headless: deviceConfig.headless,
+            readonly: deviceConfig.readonly,
+            avdName,
+            adbName,
+            port,
+            adbServerPort,
+          });
+        } catch (e) {
+          adbPortRegistry.unregister(adbName);
+        }
       }
 
       return adbName;
@@ -131,7 +140,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
 
   async cleanup() {
     if (this._shouldShutdown) {
-      const { devices } = await this._adb.devices();
+      const devices = await this._getAllDevices();
       const actualEmulators = devices.map((device) => device.adbName);
       const sessionDevices = await this._deviceRegistry.readSessionDevices();
       const emulatorsToShutdown = _.intersection(sessionDevices.getIds(), actualEmulators);
@@ -158,6 +167,32 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     const rawBinaryVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     const binaryVersion = _.get(rawBinaryVersion, 'major');
     return await patchAvdSkinConfig(avdName, binaryVersion);
+  }
+
+  /**
+   * @returns {Promise<DeviceHandle[]>}
+   * @private
+   */
+  async _getAllDevices() {
+    const adbServers = await this._getRunningAdbServers();
+    return (await this._adb.devices({}, adbServers)).devices;
+  }
+
+  /**
+   * @returns {Promise<number[]>}
+   * @private
+   */
+  async _getRunningAdbServers() {
+    const ports = [];
+    for (let port = this._adb.defaultServerPort + 1; await isPortTaken(port); port++) {
+      ports.push(port);
+    }
+    return ports;
+  }
+
+  _getFreeAdbServerPort(currentDevices) {
+    const maxPortDevice = _.maxBy(currentDevices, 'adbServerPort');
+    return _.get(maxPortDevice, 'adbServerPort', this._adb.defaultServerPort) + 1;
   }
 }
 
