@@ -4,7 +4,6 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { getAdbPath } = require('../../../../../utils/environment');
-const { isPortTaken } = require('../../../../../utils/netUtils');
 const { escape } = require('../../../../../utils/pipeCommands');
 const adbPortRegistry = require('../AdbPortRegistry');
 const DeviceHandle = require('../tools/DeviceHandle');

@@ -16,8 +16,7 @@ describe('FreeEmulatorFinder', () => {
     mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 
     const FreeEmulatorFinder = require('./FreeEmulatorFinder');
-    const mockAdb = /** @type {any} */ ({});
-    uut = new FreeEmulatorFinder(mockAdb, mockDeviceRegistry);
+    uut = new FreeEmulatorFinder(mockDeviceRegistry);
   });
 
   it('should return device when it is an emulator and avdName matches', async () => {

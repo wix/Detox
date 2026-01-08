@@ -19,7 +19,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
     const avdValidator = new AVDValidator(avdsResolver, emulatorVersionResolver);
 
     const FreeEmulatorFinder = require('../drivers/android/emulator/FreeEmulatorFinder');
-    const freeEmulatorFinder = new FreeEmulatorFinder(adb, deviceRegistry);
+    const freeEmulatorFinder = new FreeEmulatorFinder(deviceRegistry);
 
     const FreePortFinder = require('../drivers/android/emulator/FreePortFinder');
     const freePortFinder = new FreePortFinder();
@@ -49,7 +49,7 @@ class AndroidAttached extends DeviceAllocatorFactory {
     const deviceRegistry = new DeviceRegistry({ sessionId: detoxSession.id });
 
     const FreeDeviceFinder = require('../drivers/android/FreeDeviceFinder');
-    const freeDeviceFinder = new FreeDeviceFinder(adb, deviceRegistry);
+    const freeDeviceFinder = new FreeDeviceFinder(deviceRegistry);
 
     const AttachedAndroidAllocDriver = require('../drivers/android/attached/AttachedAndroidAllocDriver');
     return new AttachedAndroidAllocDriver({ adb, deviceRegistry, freeDeviceFinder });

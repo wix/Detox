@@ -12,7 +12,6 @@ describe('ADB', () => {
   let spawnAndLog;
   let spawnWithRetriesAndLogs;
   let adbPortRegistry;
-  let isPortTaken;
 
   beforeEach(() => {
     jest.mock('../../../../../utils/logger');
@@ -40,10 +39,6 @@ describe('ADB', () => {
 
     jest.mock('../AdbPortRegistry');
     adbPortRegistry = require('../AdbPortRegistry');
-
-    jest.mock('../../../../../utils/netUtils');
-    isPortTaken = require('../../../../../utils/netUtils').isPortTaken;
-    isPortTaken.mockResolvedValueOnce(true);
 
     ADB = require('./ADB');
     adb = new ADB();

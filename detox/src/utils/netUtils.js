@@ -5,8 +5,9 @@ const net = require('net');
  * Uses a two-step approach:
  * 1. First tries to connect to the port (detects services like ADB that are listening)
  * 2. If connection fails, tries to bind to the port (detects if port is in use)
- * @param {number} port - The port number to check
- * @returns {Promise<boolean>} - Resolves to true if the port is taken, false if it's available
+ *
+ * @param {number} port
+ * @returns {Promise<boolean>}
  */
 async function isPortTaken(port) {
   return new Promise((resolve, reject) => {
@@ -36,15 +37,9 @@ async function isPortTaken(port) {
       resolve(true);
     });
 
-    socket.once('error', /** @param {NodeJS.ErrnoException} err */ (err) => {
+    socket.once('error', /** @param {NodeJS.ErrnoException} _err */ (_err) => {
       clearTimeout(timeout);
-      if (err.code === 'ECONNREFUSED') {
-        // Connection refused means nothing is listening, try binding to confirm
-        tryBind();
-      } else {
-        // Other errors might indicate port is in use, try binding to confirm
-        tryBind();
-      }
+      tryBind();
     });
 
     socket.connect(port, 'localhost');

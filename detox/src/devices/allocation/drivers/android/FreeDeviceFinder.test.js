@@ -15,8 +15,7 @@ describe('FreeDeviceFinder', () => {
     mockDeviceRegistry = new DeviceRegistry();
     mockDeviceRegistry.getTakenDevicesSync.mockImplementation(() => fakeDeviceList);
 
-    const mockAdb = /** @type {any} */ ({});
-    uut = new FreeDeviceFinder(mockAdb, mockDeviceRegistry);
+    uut = new FreeDeviceFinder(mockDeviceRegistry);
   });
 
   it('should return the only device when it matches, is online and not already taken by other workers', async () => {

@@ -9,11 +9,9 @@ const DEVICE_LOOKUP = { event: 'DEVICE_LOOKUP' };
 
 class FreeDeviceFinder {
   /**
-   * @param {import('../../../common/drivers/android/exec/ADB')} adb
    * @param {import('../../DeviceRegistry')} deviceRegistry
    */
-  constructor(adb, deviceRegistry) {
-    this.adb = adb;
+  constructor(deviceRegistry) {
     this.deviceRegistry = deviceRegistry;
   }
 
