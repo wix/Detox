@@ -76,7 +76,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
         const port = await this._freePortFinder.findFreePort();
 
         adbName = `emulator-${port}`;
-        adbServerPort = this._getFreeAdbServerPort(candidates);
+        adbServerPort = this._getFreeAdbServerPort(candidates, useSeparateAdbServers);
         adbPortRegistry.register(adbName, adbServerPort);
 
         try {
@@ -198,7 +198,11 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     return ports;
   }
 
-  _getFreeAdbServerPort(currentDevices) {
+  _getFreeAdbServerPort(currentDevices, useSeparateAdbServers) {
+    if (!useSeparateAdbServers) {
+      return this._adb.defaultServerPort;
+    }
+    
     const maxPortDevice = _.maxBy(currentDevices, 'adbServerPort');
     return _.get(maxPortDevice, 'adbServerPort', this._adb.defaultServerPort) + 1;
   }
