@@ -56,6 +56,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
    */
   async allocate(deviceConfig) {
     const avdName = deviceConfig.device.avdName;
+    const useSeparateAdbServers = deviceConfig.useSeparateAdbServers === true;
 
     await this._avdValidator.validate(avdName, deviceConfig.headless);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
@@ -64,7 +65,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     let adbName;
 
     await this._deviceRegistry.registerDevice(async () => {
-      const candidates = await this._getAllDevices();
+      const candidates = await this._getAllDevices(useSeparateAdbServers);
       const device = await this._freeDeviceFinder.findFreeDevice(candidates, avdName);
 
       if (device) {
@@ -133,6 +134,8 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     if (options.shutdown) {
       await this._doShutdown(adbName);
       await this._deviceRegistry.unregisterDevice(adbName);
+
+      adbPortRegistry.unregister(adbName);
     } else {
       await this._deviceRegistry.releaseDevice(adbName);
     }
@@ -140,7 +143,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
 
   async cleanup() {
     if (this._shouldShutdown) {
-      const devices = await this._getAllDevices();
+      const devices = await this._getAllDevices(true);
       const actualEmulators = devices.map((device) => device.adbName);
       const sessionDevices = await this._deviceRegistry.readSessionDevices();
       const emulatorsToShutdown = _.intersection(sessionDevices.getIds(), actualEmulators);
@@ -170,23 +173,28 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
   }
 
   /**
+   * @param {boolean} useSeparateAdbServers
    * @returns {Promise<DeviceHandle[]>}
    * @private
    */
-  async _getAllDevices() {
-    const adbServers = await this._getRunningAdbServers();
+  async _getAllDevices(useSeparateAdbServers) {
+    const adbServers = await this._getRunningAdbServers(useSeparateAdbServers);
     return (await this._adb.devices({}, adbServers)).devices;
   }
 
   /**
+   * @param {boolean} useSeparateAdbServers
    * @returns {Promise<number[]>}
    * @private
    */
-  async _getRunningAdbServers() {
-    const ports = [];
-    for (let port = this._adb.defaultServerPort + 1; await isPortTaken(port); port++) {
-      ports.push(port);
-    }
+  async _getRunningAdbServers(useSeparateAdbServers = true) {
+    const ports = [this._adb.defaultServerPort];
+
+    if (useSeparateAdbServers) {
+        for (let port = this._adb.defaultServerPort + 1; await isPortTaken(port); port++) {
+          ports.push(port);
+        }
+    }    
     return ports;
   }
 

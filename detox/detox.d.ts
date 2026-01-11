@@ -434,6 +434,13 @@ declare global {
              * @default true
              */
             readonly?: boolean;
+            /**
+             * When `true`, each emulator uses its own separate ADB server on a separate port. This is the
+             * opposite of Android's default, which is to share a single ADB server on the default port (5037). The default
+             * has been found to be unstable and is therefore not recommended.
+             * @default true
+             */
+            useSeparateAdbServers?: boolean;
         }
 
         interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {

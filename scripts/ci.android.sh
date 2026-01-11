@@ -29,6 +29,18 @@ run_f "yarn build:android"
 run_f "yarn e2e:android"
 cp coverage/lcov.info ../../coverage/e2e-emulator-ci.lcov
 
+if [ "$TEST_SINGLE_ADB_SERVER_SANITY" = "true" ]; then
+  ### Custom backwards-compatible test for single ADB server
+  killall adb
+  run_f "yarn e2e:android.single-adb-server e2e/01* e2e/02*"
+  cp coverage/lcov.info ../../coverage/e2e-emulator-single-adb-server-ci.lcov
+  ADB_SERVER_COUNT=$(ps -ef | grep adb | grep -v "grep" | grep '' -c)
+  if [ "$ADB_SERVER_COUNT" -gt 1 ]; then
+    echo "[FAIL] ADB server count is greater than 1: $ADB_SERVER_COUNT"
+    exit 1
+  fi
+fi
+
 if [ "$TEST_GENYCLOUD_SANITY" = "true" ]; then
   # Sanity-test support for genycloud (though not ARM)
   run_f "yarn e2e:android:genycloud e2e/01* e2e/02* e2e/03.actions*"

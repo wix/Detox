@@ -33,7 +33,9 @@ class EmulatorDriver extends AndroidDriver {
     // IMPORTANT: This approach relies on a premise where this runtime driver is unique within it's running
     // process. It will not work in a multi-device-in-one-process environment (case in which the registry should
     // be reconsidered).
-    process.env.ANDROID_ADB_SERVER_PORT = this._adbServerPort;
+    if (this._adbServerPort) {
+      process.env.ANDROID_ADB_SERVER_PORT = this._adbServerPort;
+    }
   }
 
   getDeviceName() {
