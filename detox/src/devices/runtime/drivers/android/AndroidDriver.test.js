@@ -482,12 +482,13 @@ describe('Android driver', () => {
   });
 
   describe('resetAppState', () => {
-    it('should clear app data for a single bundleId', async () => {
+    it('should clear app data and grant all permissions for a single bundleId', async () => {
       await uut.resetAppState(bundleId);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId);
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId);
     });
 
-    it('should clear app data for multiple bundleIds', async () => {
+    it('should clear app data and grant all permissions for multiple bundleIds', async () => {
       const bundleId1 = 'com.example.app1';
       const bundleId2 = 'com.example.app2';
 
@@ -495,6 +496,8 @@ describe('Android driver', () => {
 
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId1);
       expect(adb.clearAppData).toHaveBeenCalledWith(adbName, bundleId2);
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId1);
+      expect(adb.grantAllPermissions).toHaveBeenCalledWith(adbName, bundleId2);
     });
   });
 

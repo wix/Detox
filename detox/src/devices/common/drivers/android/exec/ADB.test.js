@@ -1,4 +1,6 @@
 // @ts-nocheck
+jest.mock('../../../../../utils/logger');
+
 describe('ADB', () => {
   const deviceId = 'mockEmulator';
   const adbBinPath = `/Android/sdk-mock/platform-tools/adb`;
@@ -10,9 +12,11 @@ describe('ADB', () => {
   let execWithRetriesAndLogs;
   let spawnAndLog;
   let spawnWithRetriesAndLogs;
+  let logger;
 
   beforeEach(() => {
-    jest.mock('../../../../../utils/logger');
+    logger = require('../../../../../utils/logger');
+
     jest.mock('../../../../../utils/environment');
     require('../../../../../utils/environment').getAdbPath.mockReturnValue(adbBinPath);
 
@@ -427,6 +431,37 @@ describe('ADB', () => {
     it('should throw an error if the package is not installed', async () => {
       execWithRetriesAndLogs.mockRejectedValue('Command failed');
       await expect(adb.clearAppData(deviceId, 'com.example.app')).rejects.toThrowErrorMatchingSnapshot();
+    });
+  });
+
+  describe('grantAllPermissions', () => {
+    it('should invoke pm grant --all-permissions for given package', async () => {
+      await adb.grantAllPermissions(deviceId, 'com.example.app');
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm grant --all-permissions com.example.app"`),
+        expect.any(Object)
+      );
+    });
+
+    it('should log warning on "no permission specified" error (older Android)', async () => {
+      execWithRetriesAndLogs.mockRejectedValueOnce({
+        stderr: 'Error: no permission specified',
+        message: 'Error: no permission specified',
+      });
+
+      await adb.grantAllPermissions(deviceId, 'com.example.app');
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Cannot restore permissions after resetAppState(). Please update Android version to API 35 or higher.'
+      );
+    });
+
+    it('should re-throw unexpected errors', async () => {
+      const unexpectedError = new Error('Unexpected error');
+      execWithRetriesAndLogs.mockRejectedValueOnce(unexpectedError);
+
+      await expect(adb.grantAllPermissions(deviceId, 'com.example.app'))
+        .rejects.toThrow('Unexpected error');
     });
   });
 });
