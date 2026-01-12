@@ -87,6 +87,7 @@ class AndroidDriver extends DeviceDriverBase {
   async resetAppState(...bundleIds) {
     for (const bundleId of bundleIds) {
       await this.adb.clearAppData(this.adbName, bundleId);
+      await this.adb.grantAllPermissions(this.adbName, bundleId);
     }
   }
 

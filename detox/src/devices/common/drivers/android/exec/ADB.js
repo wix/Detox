@@ -4,10 +4,13 @@ const _ = require('lodash');
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require('../../../../../utils/childProcess');
 const { getAdbPath } = require('../../../../../utils/environment');
+const logger = require('../../../../../utils/logger');
 const { escape } = require('../../../../../utils/pipeCommands');
 const adbPortRegistry = require('../AdbPortRegistry');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
+
+const log = logger.child({ cat: 'device' });
 
 const DEFAULT_EXEC_OPTIONS = {
   retries: 1,
@@ -181,6 +184,21 @@ class ADB {
         hint: `Please verify that the package is installed on the device:\nadb -s ${deviceId} shell pm list packages ${packageId}`,
         debugInfo: reason,
       });
+    }
+  }
+
+  async grantAllPermissions(deviceId, packageId) {
+    try {
+      await this.shell(deviceId, `pm grant --all-permissions ${packageId}`);
+    } catch (e) {
+      const message = e.stderr || e.message || '';
+      if (message.includes('no permission specified')) {
+        log.warn(
+          `Cannot restore permissions after resetAppState(). Please update Android version to API 35 or higher.`
+        );
+      } else {
+        throw e;
+      }
     }
   }
 
