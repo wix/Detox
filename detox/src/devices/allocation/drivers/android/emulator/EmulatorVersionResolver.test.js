@@ -97,6 +97,6 @@ describe('Emulator binary version', () => {
 
   it('should log the version', async () => {
     await uut.resolve();
-    expect(log.debug).toHaveBeenCalledWith({ success: true }, expect.any(String), expect.objectContaining(expectedVersion));
+    expect(log.debug).toHaveBeenCalledWith({ success: true }, `Detected emulator binary version ${expectedVersionRaw}`);
   });
 });
