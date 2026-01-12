@@ -37,8 +37,8 @@ describe('Device', () => {
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
-  it('launch({ resetAppState: true }) - should preserve permissions', async () => {
-    await device.launchApp({ resetAppState: true });
+  it('launch({ resetAppState: true }) - should keep permissions', async () => {
+    await device.launchApp({ resetAppState: true, permissions: { location: 'always' } });
     await element(by.text('Location')).tap();
     await element(by.id('get_location_button')).tap();
     await waitFor(element(by.id('location_latitude'))).toBeVisible().withTimeout(5000);
