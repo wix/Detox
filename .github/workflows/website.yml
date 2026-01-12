@@ -19,18 +19,12 @@ jobs:
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610
         with:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            website:
-              - 'website/**'
       - name: Install and build
         working-directory: ./website
         run: |
@@ -42,8 +36,8 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610
         with:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
@@ -66,7 +60,7 @@ jobs:
     needs: gh-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
       - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
       - name: Lighthouse
         uses: foo-software/lighthouse-check-action@master
@@ -74,7 +68,7 @@ jobs:
           urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
           outputDirectory: ${{ github.workspace }}/tmp/artifacts
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Lighthouse reports
           path: ${{ github.workspace }}/tmp/artifacts
