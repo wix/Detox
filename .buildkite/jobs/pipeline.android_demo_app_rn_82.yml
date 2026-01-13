@@ -1,9 +1,9 @@
-  - label: ":android::react: RN .82 + Android: Demo app"
+  - label: ":android::react: RN .83 + Android: Demo app"
     command:
       - "nvm install"
       - "./scripts/demo-projects.android.sh"
     env:
-      REACT_NATIVE_VERSION: 0.82.0
+      REACT_NATIVE_VERSION: 0.83.0
       RCT_NEW_ARCH_ENABLED: 1
       REACT_NATIVE_COMPAT_TEST: true # Only set 'true' in jobs with the latest supported RN
       DETOX_DISABLE_POD_INSTALL: true

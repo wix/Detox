@@ -98,8 +98,8 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 15 Pro Max',
-        os: '17.0.1'
+        type: 'iPhone 16 Pro Max',
+        os: '18.5'
       },
     },
 
@@ -107,7 +107,7 @@ const config = {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
       device: {
-        avdName: 'Pixel_3a_API_35'
+        avdName: 'Pixel_3a_API_36'
       },
       utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
       systemUI: {

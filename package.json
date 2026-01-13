@@ -1,13 +1,23 @@
 {
   "name": "root",
   "private": true,
+  "packageManager": "yarn@4.12.0",
+  "workspaces": [
+    "detox",
+    "detox-cli",
+    "detox/test",
+    "examples/*",
+    "generation",
+    "website"
+  ],
   "scripts": {
+    "prepare": "husky",
     "docs:markdownlint": "markdownlint -p .remarkignore '**/*.md'",
     "docs:remark": "remark .",
-    "docs:lint": "npm run docs:markdownlint && npm run docs:remark",
-    "docs:fix": "npm run docs:remark -- -o && npm run docs:markdownlint -- --fix",
-    "test:e2e:ios": "pushd detox/test && npm run e2e:ios && popd",
-    "test:e2e:android": "pushd detox/test && npm run e2e:android && popd",
+    "docs:lint": "yarn docs:markdownlint && yarn docs:remark",
+    "docs:fix": "yarn docs:remark -o && yarn docs:markdownlint --fix",
+    "test:e2e:ios": "cd detox/test && yarn e2e:ios",
+    "test:e2e:android": "cd detox/test && yarn e2e:android",
     "release": "node scripts/ci.release.js",
     "package:android": "node scripts/ci.android-release.js",
     "package:ios": "scripts/ci.ios-release.sh",
@@ -24,7 +34,7 @@
   "devDependencies": {
     "chalk": "^4.0.0",
     "dictionary-en": "^3.1.0",
-    "lerna": "^6.6.2",
+    "husky": "^9.0.0",
     "lodash": "4.17.x",
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
@@ -53,7 +63,9 @@
     "retext-syntax-urls": "^3.1.1",
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
-    "unified": "^10.1.0"
+    "surge": "^0.24.0",
+    "unified": "^10.1.0",
+    "zx": "^8.0.0"
   },
-  "version": "20.46.0"
+  "version": "20.46.3"
 }

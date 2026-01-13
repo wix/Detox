@@ -63,6 +63,7 @@ class RuntimeDevice {
     this._emitter = eventEmitter;
     this._errorComposer = runtimeErrorComposer;
 
+    /** @type {Detox.DetoxAppConfig | null} */
     this._currentApp = null;
     this._currentAppLaunchArgs = new LaunchArgsEditor();
     this._processes = {};

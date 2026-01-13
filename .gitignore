@@ -220,7 +220,15 @@ detox/DetoxBuild
 examples/demo-native-ios/Build
 examples/demo-native-ios/ModuleCache
 
-yarn.lock
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 detox/ios_src
 package-lock.json
 /detox/src/devices/detox/notifications/notification.json
@@ -232,6 +240,8 @@ detox/test/artifacts
 
 Detox-android/
 Detox-ios-src.tbz
+Detox-ios-framework.tbz
+Detox-ios-xcuitest.tbz
 Detox-ios.tbz
 
 
@@ -241,3 +251,5 @@ Detox-ios.tbz
 #ignore yalc
 .yalc/
 yalc.lock
+/scripts/publishing-e2e/
+.npmrc

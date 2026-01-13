@@ -1,6 +1,6 @@
 {
   "name": "detox-cli",
-  "version": "20.26.0",
+  "version": "20.46.3",
   "description": "Optional wrapper for Detox CLI, meant to be installed globally",
   "main": "cli.js",
   "scripts": {
@@ -25,5 +25,8 @@
   "dependencies": {
     "chalk": "^4.0.0"
   },
-  "homepage": "https://github.com/wix/Detox"
+  "homepage": "https://github.com/wix/Detox",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }

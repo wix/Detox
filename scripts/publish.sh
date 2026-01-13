@@ -8,8 +8,16 @@ fi
 echo "[Publish] VERSION_TYPE=$VERSION_TYPE"
 echo ""
 
-echo "[Publish] Starting lerna publish..."
-lerna publish --cd-version "$VERSION_TYPE" --yes --skip-git
+echo "[Publish] Bumping version..."
+yarn version $VERSION_TYPE
+
+VERSION=$(node -p "require('./package.json').version")
+
+echo "[Publish] Publishing detox@$VERSION..."
+cd detox && npm publish && cd ..
+
+echo "[Publish] Publishing detox-cli@$VERSION..."
+cd detox-cli && npm publish && cd ..
 
 echo "[Publish] Updating Github..."
 git add -A

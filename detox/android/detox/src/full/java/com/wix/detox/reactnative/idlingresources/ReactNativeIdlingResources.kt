@@ -15,6 +15,7 @@ import com.wix.detox.reactnative.idlingresources.looper.MQThreadsReflector
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
+import java.util.concurrent.ConcurrentHashMap
 
 private const val LOG_TAG = "DetoxRNIdleRes"
 
@@ -43,6 +44,7 @@ class ReactNativeIdlingResources(
     fun unregisterAll() {
         unregisterMQThreadsInterrogators()
         unregisterIdlingResources()
+        syncIdlingResources()
     }
 
     fun pauseNetworkSynchronization() = pauseIdlingResource(IdlingResourcesName.Network)
@@ -77,8 +79,8 @@ class ReactNativeIdlingResources(
     }
 
     private fun setupMQThreadsInterrogator(looperName: LooperName) {
-        reactApplication.getCurrentReactContext()?.let {
-            val mqThreadsReflector = MQThreadsReflector(it)
+        reactApplication.getCurrentReactContext()?.let { reactContext ->
+            val mqThreadsReflector = MQThreadsReflector(reactContext)
             val looper = when (looperName) {
                 LooperName.JS -> mqThreadsReflector.getJSMQueue()?.getLooper()
                 LooperName.NativeModules -> mqThreadsReflector.getNativeModulesQueue()?.getLooper()
@@ -108,10 +110,37 @@ class ReactNativeIdlingResources(
     }
 
     private fun unregisterMQThreadsInterrogators() {
-        loopers.values.forEach {
-            IdlingRegistry.getInstance().unregisterLooperAsIdlingResource(it)
+        loopers.values.forEach { looper ->
+            IdlingRegistry.getInstance().unregisterLooperAsIdlingResource(looper)
+            clearLooperHandlerCache(looper)
         }
         loopers.clear()
+    }
+
+    /**
+     * Workaround for Espresso 3.7.0+ where LooperIdlingResourceInterrogationHandler
+     * caches handlers in a static map but doesn't clear them on release().
+     * This causes re-registered loopers to get stale handlers with releasing=true.
+     *
+     * For older Espresso versions without this static cache, this is a no-op.
+     */
+    private fun clearLooperHandlerCache(looper: Looper) {
+        try {
+            val insts: ConcurrentHashMap<String, Any> =
+                Reflect.on("androidx.test.espresso.base.LooperIdlingResourceInterrogationHandler")
+                    .field("insts")
+                    .get()
+
+            for ((key, handler) in insts) {
+                val handlerLooper: Looper? = Reflect.on(handler).field("looper").get()
+                if (handlerLooper === looper) {
+                    insts.remove(key)
+                    break
+                }
+            }
+        } catch (e: Exception) {
+            // Expected for older Espresso versions or different implementations - silently ignore
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
