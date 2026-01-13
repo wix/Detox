@@ -27,7 +27,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
-        run: npx npq install --immutable
+        run: yes | npx npq install --immutable
         env:
           NPQ_PKG_MGR: yarn
           DETOX_DISABLE_POD_INSTALL: true
@@ -69,7 +69,8 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
-        run: npx npq install --immutable
+        run: echo y | npx npq install --immutable
+        shell: bash
         env:
           NPQ_PKG_MGR: yarn
           DETOX_DISABLE_POD_INSTALL: true

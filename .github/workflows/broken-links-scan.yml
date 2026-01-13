@@ -17,5 +17,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
-        run: NPQ_PKG_MGR=yarn npx npq install --immutable
+        run: yes | npx npq install --immutable
+        env:
+          NPQ_PKG_MGR: yarn
       - run: yarn remark -r .remarkrc.nightly.mjs .

@@ -19,7 +19,9 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
-        run: NPQ_PKG_MGR=yarn npx npq install --immutable
+        run: yes | npx npq install --immutable
+        env:
+          NPQ_PKG_MGR: yarn
       - name: Teardown old domains
         run: yarn zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
         env:

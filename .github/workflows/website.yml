@@ -27,8 +27,10 @@ jobs:
         run: corepack enable
       - name: Install and build
         working-directory: ./website
+        env:
+          NPQ_PKG_MGR: yarn
         run: |
-          NPQ_PKG_MGR=yarn npx npq install
+          yes | npx npq install
           yarn build
   gh-release:
     if: github.event_name != 'pull_request'
@@ -49,11 +51,12 @@ jobs:
         env:
           USE_SSH: true
           GIT_USER: git
+          NPQ_PKG_MGR: yarn
         run: |
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
           cd website/
-          NPQ_PKG_MGR=yarn npx npq install
+          yes | npx npq install
           yarn build
           yarn docusaurus deploy
   performance:
