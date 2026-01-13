@@ -1367,6 +1367,53 @@ HINT: Check that in your Detox config at path:
 }]
 `;
 
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        ignoreUnexpectedMessages: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        ignoreUnexpectedMessages: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should point to global session if there is one 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    ignoreUnexpectedMessages: 'not a boolean'
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidServerProperty should create a generic error, if the config location is not known 1`] = `
 [DetoxConfigError: session.server property is not a valid WebSocket URL
 

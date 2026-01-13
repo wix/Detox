@@ -41,7 +41,7 @@ class Client {
     this._appTerminationHandle = null;
 
     this._successfulTestRun = true; // flag for cleanup
-    this._asyncWebSocket = new AsyncWebSocket(server, { ignoreUnexpectedMessages });
+    this._asyncWebSocket = new AsyncWebSocket({ url: server, ignoreUnexpectedMessages });
     this._serverUrl = server;
 
     this.setEventCallback('appConnected', this._onAppConnected);

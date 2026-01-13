@@ -745,6 +745,47 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.invalidIgnoreUnexpectedMessagesProperty', () => {
+      beforeEach(() => {
+        build = () => builder.invalidIgnoreUnexpectedMessagesProperty();
+        builder.setConfigurationName('android.release');
+        builder.setDetoxConfig({
+          configurations: {
+            'android.release': {
+              type: 'android.emulator',
+              device: {
+                avdName: 'Pixel_2_API_29',
+              },
+              session: {
+                ignoreUnexpectedMessages: 'true',
+              },
+            }
+          }
+        });
+      });
+
+      it('should create a generic error, if the config location is not known', () => {
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error with a hint, if the config location is known', () => {
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should point to global session if there is one', () => {
+        builder.setDetoxConfig({
+          session: {
+            ignoreUnexpectedMessages: 'not a boolean',
+          },
+          configurations: {},
+        });
+
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
     describe('.invalidTestRunnerProperty', () => {
       beforeEach(() => {
         build = (isGlobal) => builder.invalidTestRunnerProperty(isGlobal);

@@ -15,7 +15,7 @@ const DEFAULT_SEND_OPTIONS = {
 };
 
 class AsyncWebSocket {
-  constructor(url, options = {}) {
+  constructor({ url, ignoreUnexpectedMessages }) {
     this._url = url;
     this._ws = null;
     this._eventCallbacks = {};
@@ -23,7 +23,7 @@ class AsyncWebSocket {
     this._opening = null;
     this._closing = null;
     this._abortedMessageIds = new Set();
-    this._ignoreUnexpectedMessages = options.ignoreUnexpectedMessages ?? 
+    this._ignoreUnexpectedMessages = ignoreUnexpectedMessages ??
       (process.env.DETOX_IGNORE_UNEXPECTED_WS_MESSAGES === 'true');
 
     this.inFlightPromises = {};
