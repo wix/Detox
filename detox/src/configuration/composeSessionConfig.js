@@ -48,6 +48,10 @@ async function composeSessionConfig(options) {
     session.debugSynchronization = +cliConfig.debugSynchronization;
   }
 
+  if (cliConfig.ignoreUnexpectedWsMessages != null) {
+    session.ignoreUnexpectedMessages = cliConfig.ignoreUnexpectedWsMessages;
+  }
+
   const result = {
     autoStart: !session.server,
     debugSynchronization: 10000,

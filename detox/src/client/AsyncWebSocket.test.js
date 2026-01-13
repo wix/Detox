@@ -407,21 +407,6 @@ describe('AsyncWebSocket', () => {
       );
     });
 
-    it('should log warning instead of throwing when DETOX_IGNORE_UNEXPECTED_WS_MESSAGES env var is set', async () => {
-      process.env.DETOX_IGNORE_UNEXPECTED_WS_MESSAGES = 'true';
-      aws = new AsyncWebSocket({ url: config.server });
-      await connect();
-
-      socket.mockMessage({ type: 'unknownMessageType', messageId: 999 });
-
-      expect(log.warn).toHaveBeenCalledWith(
-        { messageId: 999, type: 'unknownMessageType' },
-        'Unexpected message received over the web socket: unknownMessageType (ignored due to configuration)'
-      );
-
-      delete process.env.DETOX_IGNORE_UNEXPECTED_WS_MESSAGES;
-    });
-
     it('should still log debug for late responses when ignoreUnexpectedMessages is enabled', async () => {
       aws = new AsyncWebSocket({ url: config.server, ignoreUnexpectedMessages: true });
       await connect();

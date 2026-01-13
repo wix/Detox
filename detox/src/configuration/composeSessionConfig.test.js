@@ -240,6 +240,23 @@ describe('composeSessionConfig', () => {
             ignoreUnexpectedMessages: false,
           });
         });
+
+        describe('and in CLI config', () => {
+          it('should use CLI config value when true', async () => {
+            cliConfig.ignoreUnexpectedWsMessages = true;
+            expect(await compose()).toMatchObject({
+              ignoreUnexpectedMessages: true,
+            });
+          });
+
+          it('should use CLI config value when false', async () => {
+            localConfig.session = { ignoreUnexpectedMessages: true };
+            cliConfig.ignoreUnexpectedWsMessages = false;
+            expect(await compose()).toMatchObject({
+              ignoreUnexpectedMessages: false,
+            });
+          });
+        });
       });
     });
   });
