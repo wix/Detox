@@ -44,9 +44,12 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - uses: webfactory/ssh-agent@v0.5.0
-        with:
-          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GH_PAGES_DEPLOY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
       - name: Release to GitHub Pages
         env:
           USE_SSH: true
@@ -59,19 +62,3 @@ jobs:
           yes | npx npq install
           yarn build
           yarn docusaurus deploy
-  performance:
-    needs: gh-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
-      - run: mkdir -p ${{ github.workspace }}/tmp/artifacts
-      - name: Lighthouse
-        uses: foo-software/lighthouse-check-action@master
-        with:
-          urls: 'https://wix.github.io/Detox/,https://wix.github.io/Detox/docs/next/demo/'
-          outputDirectory: ${{ github.workspace }}/tmp/artifacts
-      - name: Upload artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: Lighthouse reports
-          path: ${{ github.workspace }}/tmp/artifacts

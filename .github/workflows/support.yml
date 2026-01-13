@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Add comment and close issue
-        if: github.event.action == 'labeled' && contains(github.event.label.name, 'type: question/stack overflow')
+        if: ${{ github.event.action == 'labeled' && contains(github.event.label.name, 'type: question/stack overflow') }}
         run: |
           gh issue comment ${{ github.event.issue.number }} --body "This issue appears to be a general usage or support question.
 
