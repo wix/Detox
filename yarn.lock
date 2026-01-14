@@ -10130,18 +10130,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detox-allure2-adapter@npm:1.0.0-alpha.42":
-  version: 1.0.0-alpha.42
-  resolution: "detox-allure2-adapter@npm:1.0.0-alpha.42"
+"detox-allure2-adapter@npm:1.0.0-alpha.34":
+  version: 1.0.0-alpha.34
+  resolution: "detox-allure2-adapter@npm:1.0.0-alpha.34"
   dependencies:
     archiver: "npm:^6.0.1"
-    logkitten: "npm:^1.3.3"
+    logkitten: "npm:^1.3.1"
     screenkitten: "npm:^1.0.0"
     videokitten: "npm:^1.0.1"
   peerDependencies:
-    detox: ">=20.41.0"
-    jest-allure2-reporter: ^2.2.8
-  checksum: 10/c7a71589bdcd74349e4194c34ed0cea64185924a4c5015ead6b26d9426cf1e2af40b88a36bc44d262175d2407ce695c9d92d1506bf5fb8a01858a88ac6afac81
+    detox: 20.14.2-smoke.0 || >20.14.5
+    jest-allure2-reporter: ^2.0.0-beta.15
+  checksum: 10/a0197ba9e81d6034900f8a37df58d45bc4a3896de3b5f7a5413b330a9b28aa33ae5b0b23867f13d7b229ef1917517c702b9918a45d30f675a8eb2d690f885399
   languageName: node
   linkType: hard
 
@@ -10202,7 +10202,7 @@ __metadata:
     axios: "npm:^1.7.7"
     cross-env: "npm:^7.0.3"
     detox: "workspace:*"
-    detox-allure2-adapter: "npm:1.0.0-alpha.42"
+    detox-allure2-adapter: "npm:1.0.0-alpha.34"
     eslint: "npm:^8.56.0"
     eslint-plugin-jest: "npm:^28.11.0"
     eslint-plugin-unicorn: "npm:^50.0.1"
@@ -17242,7 +17242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"logkitten@npm:^1.3.3":
+"logkitten@npm:^1.3.1":
   version: 1.3.3
   resolution: "logkitten@npm:1.3.3"
   checksum: 10/3b0603596277cedacb8763bfbcff666e2be58e741e1d70f9459feb2c986cd959b9e5451238463d4982a8bae2ad4241450246035ef545d46864d29bdffbafa433
