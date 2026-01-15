@@ -802,7 +802,8 @@ describe('expectTwo', () => {
           action: 'tap',
           predicate: {
             type: 'type',
-            value: 'CustomUIView'
+            value: 'CustomUIView',
+            rawType: 'CustomUIView'
           }
         }
       };
@@ -826,8 +827,9 @@ describe('expectTwo', () => {
               {
                 type: 'type',
                 value: 'UIImageView'
-              }
-            ]
+              },
+            ],
+            rawType: 'image'
           }
         }
       };

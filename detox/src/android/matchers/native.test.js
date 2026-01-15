@@ -1,5 +1,4 @@
 // @ts-nocheck
-// Mock the semanticTypes module before importing anything that depends on it
 jest.mock('../../matchers/semanticTypes', () => ({
   getTypes: jest.fn(),
   getClasses: jest.fn(),

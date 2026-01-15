@@ -7,7 +7,6 @@ const _ = require('lodash');
 
 const semanticTypes = require('../matchers/semanticTypes');
 
-// Functions for semantic type predicate creation
 const createTypePredicate = (className) => ({ type: 'type', value: className });
 
 const createOrPredicate = (predicates) => ({ type: 'or', predicates });
