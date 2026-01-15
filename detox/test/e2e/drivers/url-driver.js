@@ -16,7 +16,10 @@ const driver = {
     }),
   },
 
-  navToUrlScreen: () => element(by.text('Init URL')).tap(),
+  navToUrlScreen: async () => {
+    await element(by.id('main-menu-scroll')).scrollTo('bottom');
+    await element(by.text('Init URL')).tap();
+  },
   assertUrl: (url) => expect(element(by.text(url))).toBeVisible(),
   assertNoUrl: (url) => expect(element(by.text(url))).not.toBeVisible(),
 };

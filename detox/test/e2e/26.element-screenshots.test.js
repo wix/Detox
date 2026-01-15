@@ -18,6 +18,7 @@ describe('Element screenshots', () => {
 
   beforeEach(async () => {
     await device.reloadReactNative();
+    await element(by.id('main-menu-scroll')).scrollTo('bottom');
     await element(by.text('Element-Screenshots')).tap();
     fancyElement = element(by.id('fancyElement'));
   });
