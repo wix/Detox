@@ -826,6 +826,10 @@ describe('expectTwo', () => {
               },
               {
                 type: 'type',
+                value: 'RCTImageComponentView'
+              },
+              {
+                type: 'type',
                 value: 'UIImageView'
               },
             ],

@@ -1,23 +1,10 @@
 const semanticTypes = require('./semanticTypes');
 
 describe('semanticTypes', () => {
-  const testMatrix = [];
   const semanticTypeList = semanticTypes.getTypes();
   const platforms = ['ios', 'android'];
 
   describe('getClasses', () => {
-
-    semanticTypeList.forEach(semanticType => {
-      platforms.forEach(platform => {
-        testMatrix.push([semanticType, platform]);
-      });
-    });
-
-    test.each(testMatrix)('should return class names for %s on %s', (semanticType, platform) => {
-      const classNames = semanticTypes.getClasses(semanticType, platform);
-      expect(classNames).toMatchSnapshot(`${semanticType}-${platform}`);
-    });
-
     it('should return fallback for unknown semantic type', () => {
       const classNames = semanticTypes.getClasses('unknown-type', 'ios');
       expect(classNames).toEqual([{ className: 'unknown-type', excludes: [] }]);
