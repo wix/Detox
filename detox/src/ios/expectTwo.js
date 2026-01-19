@@ -1,9 +1,10 @@
 // @ts-nocheck
 const path = require('path');
+
 const fs = require('fs-extra');
 const _ = require('lodash');
-const semanticTypes = require('../matchers/semanticTypes');
 
+const semanticTypes = require('../matchers/semanticTypes');
 const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
