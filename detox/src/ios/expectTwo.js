@@ -4,21 +4,6 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const semanticTypes = require('../matchers/semanticTypes');
 
-const createTypePredicate = (className) => ({ type: 'type', value: className });
-
-const createOrPredicate = (predicates) => ({ type: 'or', predicates });
-
-const createExclusionPredicate = (className, excludes) => ({
-  type: 'and',
-  predicates: [
-    createTypePredicate(className),
-    {
-      type: 'not',
-      predicate: createOrPredicate(excludes.map(createTypePredicate))
-    }
-  ]
-});
-
 const { assertTraceDescription, assertEnum, assertNormalized } = require('../utils/assertArgument');
 const { removeMilliseconds } = require('../utils/dateUtils');
 const { actionDescription, expectDescription } = require('../utils/invocationTraceDescriptions');
@@ -31,6 +16,18 @@ const traceInvocationCall = require('../utils/traceInvocationCall').bind(null, l
 const { systemElement, systemMatcher, systemExpect, isSystemElement } = require('./system');
 const { webElement, webMatcher, webExpect, isWebElement } = require('./web');
 
+const createTypePredicate = (className) => ({ type: 'type', value: className });
+const createOrPredicate = (predicates) => ({ type: 'or', predicates });
+const createExclusionPredicate = (className, excludes) => ({
+  type: 'and',
+  predicates: [
+    createTypePredicate(className),
+    {
+      type: 'not',
+      predicate: createOrPredicate(excludes.map(createTypePredicate))
+    }
+  ]
+});
 
 const assertDirection = assertEnum(['left', 'right', 'up', 'down']);
 const assertSpeed = assertEnum(['fast', 'slow']);
