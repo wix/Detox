@@ -1,6 +1,7 @@
 describe('Device Orientation', () => {
   beforeEach(async() => {
     await device.reloadReactNative();
+    await element(by.id('main-menu-scroll')).scrollTo('bottom');
     await element(by.text('Orientation')).tap();
     await expect(element(by.id('currentOrientation'))).toExist();
   });
