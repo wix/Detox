@@ -59,7 +59,6 @@ describe('semanticTypes', () => {
     });
 
     it('should handle single string include with exclusions', () => {
-      const originalMapping = semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-single'];
       semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-single'] = {
         android: [{
           include: 'android.widget.TestView',
@@ -169,7 +168,7 @@ describe('semanticTypes', () => {
               expect(excludeClass.length).toBeGreaterThan(0);
             });
           } else {
-            fail(`Invalid class name type: ${typeof item}`);
+            throw new Error(`Invalid class name type: ${typeof item}`);
           }
         });
       });

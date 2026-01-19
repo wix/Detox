@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const _ = require('lodash');
 
-
 const semanticTypes = require('../matchers/semanticTypes');
 
 const createTypePredicate = (className) => ({ type: 'type', value: className });
