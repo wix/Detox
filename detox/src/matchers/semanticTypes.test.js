@@ -18,10 +18,9 @@ describe('semanticTypes', () => {
       expect(classNames).toMatchSnapshot(`${semanticType}-${platform}`);
     });
 
-    it('should throw error for unknown semantic type', () => {
-      expect(() => {
-        semanticTypes.getClasses('unknown-type', 'ios');
-      }).toThrow('Unknown semantic type: unknown-type');
+    it('should return fallback for unknown semantic type', () => {
+      const classNames = semanticTypes.getClasses('unknown-type', 'ios');
+      expect(classNames).toEqual([{ className: 'unknown-type', excludes: [] }]);
     });
 
     it('should throw error for unsupported platform', () => {
@@ -83,7 +82,8 @@ describe('semanticTypes', () => {
       const classNames = semanticTypes.getClasses('test-fallback', 'android');
 
       expect(classNames).toHaveLength(1);
-      expect(classNames[0]).toEqual({ unexpectedProperty: 'someValue' });
+      expect(classNames[0]).toHaveProperty('className');
+      expect(classNames[0]).toHaveProperty('excludes', []);
 
       delete semanticTypes.SEMANTIC_TYPE_MAPPINGS['test-fallback'];
     });
@@ -121,16 +121,12 @@ describe('semanticTypes', () => {
       const buttonClasses = semanticTypes.getClasses('button', 'ios');
       const imageClasses = semanticTypes.getClasses('image', 'android');
 
-      buttonClasses.forEach(className => {
-        if (typeof className === 'string') {
-          expect(semanticTypes.includes(className)).toBe(false);
-        }
+      buttonClasses.forEach(item => {
+        expect(semanticTypes.includes(item.className)).toBe(false);
       });
 
-      imageClasses.forEach(className => {
-        if (typeof className === 'string') {
-          expect(semanticTypes.includes(className)).toBe(false);
-        }
+      imageClasses.forEach(item => {
+        expect(semanticTypes.includes(item.className)).toBe(false);
       });
     });
 
@@ -154,22 +150,15 @@ describe('semanticTypes', () => {
         expect(iosClassNames.length).toBeGreaterThan(0);
 
         [...androidClassNames, ...iosClassNames].forEach(item => {
-          if (typeof item === 'string') {
-            expect(item.length).toBeGreaterThan(0);
-          } else if (typeof item === 'object' && item !== null) {
-            expect(item).toHaveProperty('className');
-            expect(item).toHaveProperty('excludes');
-            expect(typeof item.className).toBe('string');
-            expect(item.className.length).toBeGreaterThan(0);
-            expect(Array.isArray(item.excludes)).toBe(true);
-            expect(item.excludes.length).toBeGreaterThan(0);
-            item.excludes.forEach(excludeClass => {
-              expect(typeof excludeClass).toBe('string');
-              expect(excludeClass.length).toBeGreaterThan(0);
-            });
-          } else {
-            throw new Error(`Invalid class name type: ${typeof item}`);
-          }
+          expect(item).toHaveProperty('className');
+          expect(item).toHaveProperty('excludes');
+          expect(typeof item.className).toBe('string');
+          expect(item.className.length).toBeGreaterThan(0);
+          expect(Array.isArray(item.excludes)).toBe(true);
+          item.excludes.forEach(excludeClass => {
+            expect(typeof excludeClass).toBe('string');
+            expect(excludeClass.length).toBeGreaterThan(0);
+          });
         });
       });
     });

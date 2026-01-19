@@ -18,7 +18,10 @@ describe('Native Matchers', () => {
 
     it('should handle regular class names', () => {
       semanticTypes.includes.mockReturnValue(false);
-      
+      semanticTypes.getClasses.mockReturnValue([
+        { className: 'com.example.CustomView', excludes: [] }
+      ]);
+
       expect(() => {
         new TypeMatcher('com.example.CustomView');
       }).not.toThrow();
@@ -27,8 +30,8 @@ describe('Native Matchers', () => {
     it('should handle semantic types automatically', () => {
       semanticTypes.includes.mockReturnValue(true);
       semanticTypes.getClasses.mockReturnValue([
-        'android.widget.ImageView',
-        'com.facebook.react.views.image.ReactImageView'
+        { className: 'android.widget.ImageView', excludes: [] },
+        { className: 'com.facebook.react.views.image.ReactImageView', excludes: [] }
       ]);
 
       expect(() => {
@@ -74,6 +77,9 @@ describe('Native Matchers', () => {
 
     it('should handle regular class names when not semantic types', () => {
       semanticTypes.includes.mockReturnValue(false);
+      semanticTypes.getClasses.mockReturnValue([
+        { className: 'android.widget.ImageView', excludes: [] }
+      ]);
 
       expect(() => {
         new TypeMatcher('android.widget.ImageView');
