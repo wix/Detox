@@ -840,6 +840,40 @@ describe('expectTwo', () => {
 
       expect(testCall).toDeepEqual(jsonOutput);
     });
+
+    it(`should parse correct JSON for semantic type with exclusions using by.type()`, async () => {
+      const semanticTypes = require('../matchers/semanticTypes');
+      const originalGetClasses = semanticTypes.getClasses;
+
+      semanticTypes.getClasses = jest.fn().mockReturnValue([
+        { className: 'UIActivityIndicatorView', excludes: ['UIProgressView'] }
+      ]);
+
+      const testCall = await e.element(e.by.type('mock-type-with-exclusion')).tap();
+      const jsonOutput = {
+        invocation: {
+          type: 'action',
+          action: 'tap',
+          predicate: {
+            type: 'and',
+            predicates: [
+              { type: 'type', value: 'UIActivityIndicatorView' },
+              {
+                type: 'not',
+                predicate: {
+                  type: 'or',
+                  predicates: [{ type: 'type', value: 'UIProgressView' }]
+                }
+              }
+            ],
+            rawType: 'mock-type-with-exclusion'
+          }
+        }
+      };
+
+      expect(testCall).toDeepEqual(jsonOutput);
+      semanticTypes.getClasses = originalGetClasses;
+    });
   });
 
   describe('web views', () => {

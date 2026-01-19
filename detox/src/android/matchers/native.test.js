@@ -85,5 +85,14 @@ describe('Native Matchers', () => {
         new TypeMatcher('android.widget.ImageView');
       }).not.toThrow();
     });
+
+    it('should throw error when no class names are found', () => {
+      semanticTypes.includes.mockReturnValue(false);
+      semanticTypes.getClasses.mockReturnValue([]);
+
+      expect(() => {
+        new TypeMatcher('empty-type');
+      }).toThrow('No class names found for: empty-type');
+    });
   });
 });

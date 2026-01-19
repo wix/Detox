@@ -40,6 +40,10 @@ class TypeMatcher extends NativeMatcher {
     super();
 
     const descriptors = semanticTypes.getClasses(typeOrSemanticType, 'android');
+    if (!descriptors.length) {
+      throw new DetoxRuntimeError(`No class names found for: ${typeOrSemanticType}`);
+    }
+
     const matchers = descriptors.map(({ className, excludes }) => {
       const includeMatcher = createClassMatcher(className);
       return excludes.length
@@ -48,9 +52,6 @@ class TypeMatcher extends NativeMatcher {
     });
 
     const combinedMatcher = combineWithOr(matchers);
-    if (!combinedMatcher) {
-      throw new DetoxRuntimeError(`No class names found for: ${typeOrSemanticType}`);
-    }
     this._call = { ...combinedMatcher._call, rawType: typeOrSemanticType };
   }
 }
