@@ -107,9 +107,18 @@ const config = {
       type: 'android.emulator',
       headless: Boolean(process.env.CI),
       device: {
-        avdName: 'Pixel_3a_API_35'
+        avdName: 'Pixel_3a_API_36'
       },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"]
+      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
+      systemUI: {
+        extends: 'genymotion',
+        pointerLocationBar: 'show',
+        touches: 'show',
+        navigationMode: '3-button',
+        statusBar: {
+          clock: '1948',
+        },
+      },
     },
 
     'android.attached': {
