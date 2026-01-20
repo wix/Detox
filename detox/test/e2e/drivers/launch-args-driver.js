@@ -1,9 +1,6 @@
 const _ = require("lodash");
 const driver = {
-  navToLaunchArgsScreen: async () => {
-    await element(by.id('main-menu-scroll')).scrollTo('bottom');
-    await element(by.text('Launch Args')).tap();
-  },
+  navToLaunchArgsScreen: () => element(by.text('Launch Args')).tap(),
 
   assertPreconfiguredValues: (initArgs, expectedInitArgs) => {
     if (!_.isEqual(initArgs, expectedInitArgs)) {

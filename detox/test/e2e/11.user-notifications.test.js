@@ -78,7 +78,6 @@ describe(':android: User Notifications', () => {
 
   it('should launch app with data', async () => {
     await device.launchApp({ newInstance: true, userNotification });
-    await element(by.id('main-menu-scroll')).scrollTo('bottom');
     await element(by.text('Launch-Notification')).tap();
     await assertNotificationDataExtensively();
   });
@@ -89,7 +88,6 @@ describe(':android: User Notifications', () => {
     await device.sendToHome();
     console.log('Resuming app with user notification');
     await device.launchApp({ newInstance: false, userNotification });
-    await element(by.id('main-menu-scroll')).scrollTo('bottom');
     await element(by.text('Launch-Notification')).tap();
     await assertNotificationData();
   });
@@ -97,7 +95,6 @@ describe(':android: User Notifications', () => {
   it('should apply notification using sendUserNotification() when app is running', async () => {
     await device.launchApp({newInstance: true});
     await device.sendUserNotification(userNotification);
-    await element(by.id('main-menu-scroll')).scrollTo('bottom');
     await element(by.text('Launch-Notification')).tap();
     await assertNotificationData();
   });
