@@ -131,6 +131,7 @@ describe('collectCliConfig', () => {
     ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
     ...asString( ['start',                'DETOX_START',                  'start']),
+    ...asBoolean(['ignoreUnexpectedWsMessages', 'DETOX_IGNORE_UNEXPECTED_WS_MESSAGES', 'ignore-unexpected-ws-messages']),
     ...asBooleanEnum(['repl',             'DETOX_REPL',                   'repl'], ['auto']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {

@@ -37,8 +37,19 @@ async function composeSessionConfig(options) {
     }
   }
 
+  if (session.ignoreUnexpectedMessages != null) {
+    const value = session.ignoreUnexpectedMessages;
+    if (typeof value !== 'boolean') {
+      throw errorComposer.invalidIgnoreUnexpectedMessagesProperty();
+    }
+  }
+
   if (Number.parseInt(cliConfig.debugSynchronization, 10) >= 0) {
     session.debugSynchronization = +cliConfig.debugSynchronization;
+  }
+
+  if (cliConfig.ignoreUnexpectedWsMessages != null) {
+    session.ignoreUnexpectedMessages = cliConfig.ignoreUnexpectedWsMessages;
   }
 
   const result = {
