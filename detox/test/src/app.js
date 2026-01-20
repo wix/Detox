@@ -3,8 +3,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   Platform,
   NativeModules,
 } from 'react-native';
@@ -66,11 +64,7 @@ export default class example extends Component {
 
   renderMainMenu() {
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <ScrollView
-          testID="main-menu-scroll"
-          contentContainerStyle={{paddingTop: 10, paddingBottom: 30, alignItems: 'center'}}
-        >
+      <View style={{flex: 1, paddingTop: 30, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{fontSize: 18, marginBottom: 10}}>
           Choose a test
         </Text>
@@ -150,8 +144,7 @@ export default class example extends Component {
           {isAndroid && this.renderInlineSeparator()}
           {isAndroid && this.renderScreenButton('Launch-Notification', Screens.LaunchNotificationScreen)}
         </View>
-        </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
