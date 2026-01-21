@@ -18,12 +18,13 @@ describe('Flows', () => {
         await device.launchApp({
           newInstance: true,
           delete: true,
-          permissions: {notifications: 'YES', camera: 'YES', photos: 'YES'}
+          permissions: {notifications: 'YES', camera: 'YES', photos: 'YES'},
+          launchArgs: { skipDemoActiveNotification: true }
         });
       });
 
       it('should tap on "Sanity"', async () => {
-        await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
+        await waitFor(element(by.text('Sanity'))).toBeVisible();
         await element(by.text('Sanity')).tap();
       });
     });
