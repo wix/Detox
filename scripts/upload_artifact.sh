@@ -44,7 +44,7 @@ generate_allure_report() {
   local ROOT_DIR=$1
 
   cd $ROOT_DIR
-  if [ -d "artifacts" ]; then
+  if [ -d "allure-results" ]; then
     set -x
     allure generate artifacts && upload_to_surge allure-report "Detox Allure Report"
     set +x

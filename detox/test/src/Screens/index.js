@@ -34,6 +34,7 @@ import DragNDropScreen  from './DragNDropScreen';
 import ShapeMatchGameScreen from "./ShapeMatchGameScreen";
 import SystemDialogsScreen from "./SystemDialogsScreen";
 import AlertScreen from "./AlertScreen";
+import SemanticTypesScreen from "./SemanticTypesScreen";
 
 export {
   SanityScreen,
@@ -72,4 +73,5 @@ export {
   DragNDropScreen,
   SystemDialogsScreen,
   AlertScreen,
+  SemanticTypesScreen,
 };
