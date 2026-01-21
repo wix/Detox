@@ -18,8 +18,7 @@ describe('Flows', () => {
         await device.launchApp({
           newInstance: true,
           delete: true,
-          permissions: {notifications: 'YES', camera: 'YES', photos: 'YES'},
-          launchArgs: { skipDemoActiveNotification: true }
+          permissions: {notifications: 'YES', camera: 'YES', photos: 'YES'}
         });
       });
 

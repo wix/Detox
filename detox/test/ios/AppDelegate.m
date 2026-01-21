@@ -31,7 +31,7 @@
 #endif
 
 @interface AppDelegate () <UNUserNotificationCenterDelegate> {
-    BOOL skipActiveNotification;
+    BOOL demoShowActiveNotification;
 }
 @end
 
@@ -39,8 +39,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    skipActiveNotification = [[NSUserDefaults standardUserDefaults] boolForKey:@"skipDemoActiveNotification"];
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"skipDemoActiveNotification"];
+    demoShowActiveNotification = [[NSUserDefaults standardUserDefaults] boolForKey:@"demoShowActiveNotification"];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"demoShowActiveNotification"];
     
 #if REACT_NATIVE_VERSION_MAJOR == 0 && REACT_NATIVE_VERSION_MINOR >= 79
     self.reactNativeDelegate = [ReactNativeDelegate new];
@@ -126,11 +126,9 @@
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
-    if (!skipActiveNotification) {
+    if (demoShowActiveNotification) {
         [self showOverlayMessageWithMessage:@"Active"];
     }
-    
-    skipActiveNotification = NO;
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {

@@ -1,14 +1,14 @@
 describe('Device', () => {
   it('reloadReactNative - should tap successfully', async () => {
     await device.reloadReactNative();
-    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
+    await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await expect(element(by.text('Hello!!!'))).toBeVisible();
   });
 
   it('relaunchApp - should tap successfully', async () => {
-    await device.relaunchApp({ launchArgs: { skipDemoActiveNotification: true } });
+    await device.relaunchApp();
     await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
@@ -16,7 +16,7 @@ describe('Device', () => {
   });
 
   it('relaunchApp({delete: true}) - should tap successfully', async () => {
-    await device.relaunchApp({delete: true, launchArgs: { skipDemoActiveNotification: true }});
+    await device.relaunchApp({delete: true});
     await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
@@ -26,7 +26,7 @@ describe('Device', () => {
   it('uninstall() + install() + relaunch() - should tap successfully', async () => {
     await device.uninstallApp();
     await device.installApp();
-    await device.relaunchApp({ launchArgs: { skipDemoActiveNotification: true }});
+    await device.relaunchApp();
     await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
@@ -35,7 +35,7 @@ describe('Device', () => {
 
   it('resetAppState() + relaunch() - should tap successfully', async () => {
     await device.resetAppState();
-    await device.relaunchApp({ launchArgs: { skipDemoActiveNotification: true }});
+    await device.relaunchApp();
     await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
@@ -43,7 +43,7 @@ describe('Device', () => {
   });
 
   it('launch({ resetAppState: true }) - should keep permissions', async () => {
-    await device.launchApp({ resetAppState: true, permissions: { location: 'always' }, launchArgs: { skipDemoActiveNotification: true } });
+    await device.launchApp({ resetAppState: true, permissions: { location: 'always' } });
     await element(by.text('Location')).tap();
     await element(by.id('get_location_button')).tap();
     await waitFor(element(by.id(/location_(latitude|error)/))).toBeVisible().withTimeout(5000);
@@ -59,7 +59,7 @@ describe('Device', () => {
   });
 
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
-    await device.launchApp({newInstance: true, launchArgs: { skipDemoActiveNotification: true } });
+    await device.launchApp({newInstance: true });
     await waitFor(element(by.text('Sanity'))).toBeVisible();
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
@@ -76,10 +76,8 @@ describe('Device', () => {
       locale: "en_MX"
     };
 
-    await device.launchApp({newInstance: true, languageAndLocale, launchArgs: { skipDemoActiveNotification: true }});
-    // iOS toast is hiding the element
+    await device.launchApp({newInstance: true, languageAndLocale});
     await waitFor(element(by.text('Language'))).toBeVisible();
-
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
@@ -89,7 +87,7 @@ describe('Device', () => {
       locale: "en_US"
     };
 
-    await device.launchApp({newInstance: true, languageAndLocale, launchArgs: { skipDemoActiveNotification: true }});
+    await device.launchApp({newInstance: true, languageAndLocale});
     await waitFor(element(by.text('Language'))).toBeVisible();
 
     await element(by.text('Language')).tap();
