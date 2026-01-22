@@ -26,7 +26,7 @@ describe('Crash Handling', () => {
 
   it('Should recover from app crash', async () => {
     await device.launchApp({ newInstance: false });
-    await expect(element(by.text('Sanity'))).toBeVisible();
+    await waitFor(element(by.text('Sanity'))).toBeVisible();
   });
 
   /**
