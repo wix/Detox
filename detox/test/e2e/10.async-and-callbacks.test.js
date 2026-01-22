@@ -1,7 +1,6 @@
 describe('Async and Callbacks', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-    await waitFor(element(by.text('Sanity'))).toBeVisible().withTimeout(2000);
     await element(by.text('Sanity')).tap();
   });
 
