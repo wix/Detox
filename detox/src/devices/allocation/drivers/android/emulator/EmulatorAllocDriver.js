@@ -1,10 +1,14 @@
 /**
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
+ * @typedef {import('../../../../common/drivers/android/cookies').EmulatorDeviceCookie} EmulatorDeviceCookie
+ * @typedef {import('../../../../common/drivers/android/tools/DeviceHandle')} DeviceHandle
  */
 
 const _ = require('lodash');
 
 const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
+const { isPortTaken } = require('../../../../../utils/netUtils');
+const adbPortRegistry = require('../../../../common/drivers/android/AdbPortRegistry');
 const AndroidAllocDriver = require('../AndroidAllocDriver');
 
 const { patchAvdSkinConfig } = require('./patchAvdSkinConfig');
@@ -48,29 +52,47 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
 
   /**
    * @param deviceConfig
-   * @returns {Promise<AndroidDeviceCookie>}
+   * @returns {Promise<EmulatorDeviceCookie>}
    */
   async allocate(deviceConfig) {
     const avdName = deviceConfig.device.avdName;
+    const useSeparateAdbServers = deviceConfig.useSeparateAdbServers === true;
 
     await this._avdValidator.validate(avdName, deviceConfig.headless);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
-    const adbName = await this._deviceRegistry.registerDevice(async () => {
-      let adbName = await this._freeDeviceFinder.findFreeDevice(avdName);
-      if (!adbName) {
-        const port = await this._freePortFinder.findFreePort();
-        adbName = `emulator-${port}`;
+    let adbServerPort;
+    let adbName;
 
-        await this._emulatorLauncher.launch({
-          bootArgs: deviceConfig.bootArgs,
-          gpuMode: deviceConfig.gpuMode,
-          headless: deviceConfig.headless,
-          readonly: deviceConfig.readonly,
-          avdName,
-          adbName,
-          port,
-        });
+    await this._deviceRegistry.registerDevice(async () => {
+      const candidates = await this._getAllDevices(useSeparateAdbServers);
+      const device = await this._freeDeviceFinder.findFreeDevice(candidates, avdName);
+
+      if (device) {
+        adbName = device.adbName;
+        adbServerPort = device.adbServerPort;
+        adbPortRegistry.register(adbName, adbServerPort);
+      } else {
+        const port = await this._freePortFinder.findFreePort();
+
+        adbName = `emulator-${port}`;
+        adbServerPort = this._getFreeAdbServerPort(candidates, useSeparateAdbServers);
+        adbPortRegistry.register(adbName, adbServerPort);
+
+        try {
+          await this._emulatorLauncher.launch({
+            bootArgs: deviceConfig.bootArgs,
+            gpuMode: deviceConfig.gpuMode,
+            headless: deviceConfig.headless,
+            readonly: deviceConfig.readonly,
+            avdName,
+            adbName,
+            port,
+            adbServerPort,
+          });
+        } catch (e) {
+          adbPortRegistry.unregister(adbName);
+        }
       }
 
       return adbName;
@@ -80,6 +102,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
       id: adbName,
       adbName,
       name: `${adbName} (${avdName})`,
+      adbServerPort,
     };
   }
 
@@ -111,6 +134,8 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     if (options.shutdown) {
       await this._doShutdown(adbName);
       await this._deviceRegistry.unregisterDevice(adbName);
+
+      adbPortRegistry.unregister(adbName);
     } else {
       await this._deviceRegistry.releaseDevice(adbName);
     }
@@ -118,7 +143,7 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
 
   async cleanup() {
     if (this._shouldShutdown) {
-      const { devices } = await this._adb.devices();
+      const devices = await this._getAllDevices(true);
       const actualEmulators = devices.map((device) => device.adbName);
       const sessionDevices = await this._deviceRegistry.readSessionDevices();
       const emulatorsToShutdown = _.intersection(sessionDevices.getIds(), actualEmulators);
@@ -145,6 +170,41 @@ class EmulatorAllocDriver extends AndroidAllocDriver {
     const rawBinaryVersion = await this._emulatorVersionResolver.resolve(isHeadless);
     const binaryVersion = _.get(rawBinaryVersion, 'major');
     return await patchAvdSkinConfig(avdName, binaryVersion);
+  }
+
+  /**
+   * @param {boolean} useSeparateAdbServers
+   * @returns {Promise<DeviceHandle[]>}
+   * @private
+   */
+  async _getAllDevices(useSeparateAdbServers) {
+    const adbServers = await this._getRunningAdbServers(useSeparateAdbServers);
+    return (await this._adb.devices({}, adbServers)).devices;
+  }
+
+  /**
+   * @param {boolean} useSeparateAdbServers
+   * @returns {Promise<number[]>}
+   * @private
+   */
+  async _getRunningAdbServers(useSeparateAdbServers = true) {
+    const ports = [this._adb.defaultServerPort];
+
+    if (useSeparateAdbServers) {
+        for (let port = this._adb.defaultServerPort + 1; await isPortTaken(port); port++) {
+          ports.push(port);
+        }
+    }    
+    return ports;
+  }
+
+  _getFreeAdbServerPort(currentDevices, useSeparateAdbServers) {
+    if (!useSeparateAdbServers) {
+      return this._adb.defaultServerPort;
+    }
+    
+    const maxPortDevice = _.maxBy(currentDevices, 'adbServerPort');
+    return _.get(maxPortDevice, 'adbServerPort', this._adb.defaultServerPort) + 1;
   }
 }
 

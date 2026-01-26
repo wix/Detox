@@ -187,6 +187,8 @@ class DetoxWorker {
     }
 
     // @ts-ignore
+    yield this.device.init();
+    // @ts-ignore
     yield this.device.installUtilBinaries();
 
     if (behaviorConfig.init.reinstallApp) {

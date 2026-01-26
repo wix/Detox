@@ -27,7 +27,8 @@ class AttachedAndroidAllocDriver extends AndroidAllocDriver {
    */
   async allocate(deviceConfig) {
     const adbNamePattern = deviceConfig.device.adbName;
-    const adbName = await this._deviceRegistry.registerDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
+    const adbName = await this._deviceRegistry.registerDevice(async () =>
+      (await this._freeDeviceFinder.findFreeDevice(adbNamePattern)).adbName);
 
     return { id: adbName, adbName };
   }

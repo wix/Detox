@@ -6,6 +6,25 @@ const launchArgs = {
   micro: 'soft',
 };
 
+const emulatorConfig = {
+  type: 'android.emulator',
+  headless: Boolean(process.env.CI),
+  device: {
+    avdName: 'Pixel_3a_API_36'
+  },
+  utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
+  useSeparateAdbServers: true,
+  systemUI: {
+    extends: 'genymotion',
+    pointerLocationBar: 'show',
+    touches: 'show',
+    navigationMode: '3-button',
+    statusBar: {
+      clock: '1948',
+    },
+  },
+};
+
 /** @type {Detox.DetoxConfig} */
 const config = {
   extends: 'detox-allure2-adapter/preset-detox',
@@ -104,21 +123,12 @@ const config = {
     },
 
     'android.emulator': {
-      type: 'android.emulator',
-      headless: Boolean(process.env.CI),
-      device: {
-        avdName: 'Pixel_3a_API_36'
-      },
-      utilBinaryPaths: ["e2e/util-binary/detoxbutler-1.1.0-aosp-release.apk"],
-      systemUI: {
-        extends: 'genymotion',
-        pointerLocationBar: 'show',
-        touches: 'show',
-        navigationMode: '3-button',
-        statusBar: {
-          clock: '1948',
-        },
-      },
+      ...emulatorConfig,
+    },
+
+    'android.emulator.single-adb-server': {
+      ...emulatorConfig,
+      useSeparateAdbServers: false,
     },
 
     'android.attached': {
@@ -197,6 +207,10 @@ const config = {
     },
     'android.emu.release': {
       device: 'android.emulator',
+      apps: ['android.release', 'android.release.withArgs'],
+    },
+    'android.emu.release.single-adb-server': {
+      device: 'android.emulator.single-adb-server',
       apps: ['android.release', 'android.release.withArgs'],
     },
     'android.genycloud.debug': {
