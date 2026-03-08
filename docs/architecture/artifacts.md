@@ -4,7 +4,7 @@ The artifacts subsystem collects test artifacts like screenshots, videos, logs, 
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                     Artifacts Subsystem                     │
 │                                                             │
@@ -38,7 +38,7 @@ The artifacts subsystem collects test artifacts like screenshots, videos, logs, 
 
 ## Directory Structure
 
-```
+```text
 src/artifacts/
 ├── ArtifactsManager.js           # Main orchestrator
 ├── providers/
@@ -257,6 +257,7 @@ class ScreenshotArtifactPlugin extends TwoSnapshotsPerTestPlugin {
 ```
 
 Configuration:
+
 ```javascript
 {
   artifacts: {
@@ -352,6 +353,7 @@ Each artifact type has platform-specific implementations:
 | UI Hierarchy | `IosUIHierarchyPlugin` | Not available |
 
 The appropriate plugin is selected by the provider based on the device type:
+
 - `IosSimulatorArtifactPluginsProvider` for iOS simulators
 - `AndroidArtifactPluginsProvider` for Android devices
 
@@ -473,7 +475,7 @@ module.exports = {
 
 ## Lifecycle Flow
 
-```
+```text
 Test Suite Starts
         │
         ▼

@@ -4,7 +4,7 @@ The device subsystem handles allocation, lifecycle, and interaction with iOS sim
 
 ## Architecture Overview
 
-```
+```text
 ┌────────────────────────────────────────────────────────────┐
 │                      Device Subsystem                      │
 │                                                            │
@@ -25,7 +25,7 @@ The device subsystem handles allocation, lifecycle, and interaction with iOS sim
 
 ## Directory Structure
 
-```
+```text
 src/devices/
 ├── allocation/
 │   ├── DeviceAllocator.js      # Main allocation coordinator
@@ -137,16 +137,19 @@ class DeviceRegistry {
 Each device type has a specialized allocation driver:
 
 **SimulatorAllocDriver** (`src/devices/allocation/drivers/ios/SimulatorAllocDriver.js`):
+
 - Queries available simulators via `xcrun simctl`
 - Creates simulators if needed
 - Handles simulator lifecycle
 
 **EmulatorAllocDriver** (`src/devices/allocation/drivers/android/emulator/EmulatorAllocDriver.js`):
+
 - Validates AVD existence
 - Launches emulators with appropriate flags
 - Assigns unique ports
 
 **GenyAllocDriver** (`src/devices/allocation/drivers/android/genycloud/GenyAllocDriver.js`):
+
 - Communicates with Genymotion cloud API
 - Provisions cloud instances
 - Handles instance lifecycle
@@ -187,7 +190,7 @@ class RuntimeDevice {
 
 ### Driver Hierarchy
 
-```
+```text
 DeviceDriverBase
 ├── IosDriver
 │   └── SimulatorDriver
@@ -198,11 +201,13 @@ DeviceDriverBase
 ```
 
 **DeviceDriverBase** (`src/devices/runtime/drivers/DeviceDriverBase.js`):
+
 - Abstract base class
 - Defines common interface
 - Provides utility methods
 
 **Platform Drivers**:
+
 - Implement platform-specific operations
 - Handle app installation/launch
 - Manage device state
@@ -212,6 +217,7 @@ DeviceDriverBase
 ### iOS Tools
 
 **AppleSimUtils** (`src/devices/common/drivers/ios/tools/AppleSimUtils.js`):
+
 ```javascript
 class AppleSimUtils {
   async boot(deviceId) { /* xcrun simctl boot */ }
@@ -225,6 +231,7 @@ class AppleSimUtils {
 ### Android Tools
 
 **ADB** (`src/devices/common/drivers/android/exec/ADB.js`):
+
 ```javascript
 class ADB {
   async devices() { /* adb devices */ }
@@ -235,6 +242,7 @@ class ADB {
 ```
 
 **Instrumentation** (`src/devices/common/drivers/android/tools/Instrumentation.js`):
+
 ```javascript
 class Instrumentation {
   async launch(deviceId, bundleId, testRunner, args) {
@@ -247,7 +255,7 @@ class Instrumentation {
 
 ### Allocation Flow
 
-```
+```text
 1. Test starts
    │
    ▼
@@ -279,7 +287,7 @@ class Instrumentation {
 
 ### App Launch Flow
 
-```
+```text
 1. device.launchApp(params)
    │
    ├── Terminate if running

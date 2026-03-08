@@ -6,7 +6,7 @@ This document provides an overview of Detox's internal architecture for contribu
 
 Detox is a **gray-box end-to-end testing framework** for React Native mobile applications. Unlike black-box testing frameworks, Detox has visibility into the app's internal state, enabling automatic synchronization between tests and the app.
 
-```
+```text
 ┌───────────────────────────────────────────────────────────┐
 │                Test Environment (Node.js)                 │
 │                                                           │
@@ -62,6 +62,7 @@ Detox uses a "realm" pattern to manage different execution contexts:
 | **Secondary** | `DetoxSecondaryContext` | Lightweight config-snapshot context for worker processes |
 
 **Key files:**
+
 - `DetoxContext.js` - Base class exposing `device`, `element`, `expect`, `by`, `waitFor`, `web`, `system`
 - `DetoxPrimaryContext.js` - Handles initialization, device allocation, server lifecycle
 - `DetoxSecondaryContext.js` - Receives config snapshots, no device management
@@ -76,6 +77,7 @@ element = funpermaproxy.callable(() => this[symbols.worker].element);
 ### 2. Worker (`src/DetoxWorker.js`)
 
 Each test worker creates a `DetoxWorker` instance that:
+
 - Connects to the Detox server via `Client`
 - Creates the `InvocationManager` for command serialization
 - Instantiates the `RuntimeDevice` via environment factories
@@ -83,6 +85,7 @@ Each test worker creates a `DetoxWorker` instance that:
 - Manages the `ArtifactsManager`
 
 **Lifecycle hooks:**
+
 - `onRunDescribeStart` / `onRunDescribeFinish`
 - `onTestStart` / `onTestDone`
 - `onHookFailure` / `onTestFnFailure`
@@ -92,6 +95,7 @@ Each test worker creates a `DetoxWorker` instance that:
 See [docs/architecture/client-server.md](docs/architecture/client-server.md) for details.
 
 **Key components:**
+
 - `Client` - WebSocket client connecting to server, sends actions to app
 - `AsyncWebSocket` - Promise-based WebSocket wrapper
 - `DetoxServer` - WebSocket server mediating tester ↔ app communication
@@ -102,7 +106,8 @@ See [docs/architecture/client-server.md](docs/architecture/client-server.md) for
 See [docs/architecture/devices.md](docs/architecture/devices.md) for details.
 
 **Structure:**
-```
+
+```text
 devices/
 ├── allocation/         # Device allocation strategies
 │   ├── DeviceAllocator.js
@@ -124,6 +129,7 @@ devices/
 See [docs/architecture/artifacts.md](docs/architecture/artifacts.md) for details.
 
 **Plugins:**
+
 - `screenshot` - Captures screenshots on failure or on-demand
 - `video` - Records test execution video
 - `log` - Aggregates device and app logs
@@ -165,7 +171,7 @@ Note: Shared matcher factory logic is in `src/matchers/`. iOS-specific expectati
 
 ### 8. Test Runner Integration (`runners/`)
 
-```
+```text
 runners/
 ├── jest/
 │   ├── testEnvironment/   # Jest environment setup
@@ -180,7 +186,7 @@ runners/
 
 ### Test Execution Flow
 
-```
+```text
 1. Jest runs test file
          │
          ▼
@@ -220,7 +226,7 @@ runners/
 
 ### Synchronization Flow
 
-```
+```text
 Test sends action
        │
        ▼
@@ -286,7 +292,7 @@ deviceEmitter.on('launchApp', this.onLaunchApp.bind(this));
 
 Configuration flows through composition:
 
-```
+```text
 .detoxrc.js / detox.config.js
            │
            ▼
@@ -309,7 +315,7 @@ RuntimeConfig
 
 ## Directory Structure
 
-```
+```text
 detox/
 ├── src/
 │   ├── realms/          # Context management

@@ -4,7 +4,7 @@ Detox uses a WebSocket-based client-server architecture for communication betwee
 
 ## Architecture Overview
 
-```
+```text
 ┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
 │   Test Process   │        │   DetoxServer    │        │    Mobile App    │
 │    (Node.js)     │        │   (localhost)    │        │   (iOS/Android)  │
@@ -30,6 +30,7 @@ The server acts as a mediator rather than having direct client-to-app communicat
 ### Client (`src/client/Client.js`)
 
 The test-side WebSocket client that:
+
 - Connects to the Detox server
 - Sends actions to the mobile app
 - Handles responses and events
@@ -141,6 +142,7 @@ class DetoxSessionManager {
 All messages are JSON objects with a standard structure.
 
 **Note:** Invocation targets vary by operation type:
+
 - High-level operations use `com.wix.detox.Detox` as the entry point
 - Action-specific invocations may use `com.wix.detox.espresso.DetoxAction` (Android) or platform-specific targets
 
@@ -217,7 +219,7 @@ Predefined action classes for common operations:
 
 ## Connection Lifecycle
 
-```
+```text
 1. Test starts
    │
    ├── Client.connect()
