@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//Users/yedidyak/Dev/react-native-navigation/.claude/**)",
-      "Read(//Users/yedidyak/Dev/**)",
-      "Bash(git show:*)"
-    ]
-  }
-}
