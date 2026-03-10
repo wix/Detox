@@ -105,6 +105,12 @@ class DeviceAllocator {
     // Return a device cookie
   }
 
+  async postAllocate(deviceCookie, configs) {
+    // Platform-specific device setup after allocation
+    // e.g., boot simulator, disable animations, unlock screen
+    // Returns an enriched device cookie
+  }
+
   async free(deviceCookie) {
     // Release the device
     // Remove from registry
@@ -267,18 +273,24 @@ class Instrumentation {
    ├── Acquire lock
    │   └── DeviceRegistry.allocateDevice()
    │
-   ├── Initialize device (if needed)
-   │   └── Boot simulator / Launch emulator
-   │
    └── Return DeviceCookie
 
-3. RuntimeDevice created with cookie
+3. DeviceAllocator.postAllocate(cookie, configs)
+   │
+   ├── Platform-specific device setup
+   │   ├── iOS: Boot simulator, clean app cache
+   │   └── Android: Wait for boot, disable animations,
+   │       unlock screen, configure System UI
+   │
+   └── Return enriched DeviceCookie
+
+4. RuntimeDevice created with cookie
    │
    ▼
-4. Tests execute
+5. Tests execute
    │
    ▼
-5. DeviceAllocator.free(cookie)
+6. DeviceAllocator.free(cookie)
    │
    ├── Shutdown (if configured)
    │

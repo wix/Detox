@@ -141,6 +141,11 @@ class DetoxSessionManager {
 
 All messages are JSON objects with a standard structure.
 
+**Platform differences:** iOS and Android implement the protocol quite differently:
+
+- **Android** is reflection-centric — the `generation/` project maps Java classes to JS invocation objects (see `src/android/espressoapi/`), allowing the test side to call Android APIs via reflection-based dispatch
+- **iOS** has a more handcrafted and formalized protocol, with explicit message types handled on the native side
+
 **Note:** Invocation targets vary by operation type:
 
 - High-level operations use `com.wix.detox.Detox` as the entry point
@@ -180,9 +185,12 @@ All messages are JSON objects with a standard structure.
 
 ### Event (App → Test)
 
+Events typically use fixed negative `messageId` values (e.g., `-1000`, `-0xc1ea`) rather than the incrementing positive IDs used for request-response pairs.
+
 ```json
 {
-  "type": "ready"
+  "type": "ready",
+  "messageId": -1000
 }
 ```
 
@@ -212,7 +220,7 @@ Predefined action classes for common operations:
 | `SetSyncSettings` | Configure synchronization settings |
 | `DeliverPayload` | Send push notification, deep link |
 | `CaptureViewHierarchy` | Dump UI hierarchy |
-| `GenerateViewHierarchyXml` | Generate UI hierarchy as XML (Android) |
+| `GenerateViewHierarchyXml` | Generate UI hierarchy as XML (iOS and Android) |
 | `SetInstrumentsRecordingState` | Control iOS performance profiling |
 | `WaitForBackground` | Wait for app to background |
 | `WaitForActive` | Wait for app to foreground |
