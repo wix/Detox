@@ -90,30 +90,32 @@ src/devices/
 
 ### DeviceAllocator (`src/devices/allocation/DeviceAllocator.js`)
 
-Coordinates device allocation with concurrency control:
+Coordinates device allocation with concurrency control. Think of `allocate` as reserving a table at a restaurant, while `postAllocate` is when the food is actually served — platform-specific setup that prepares the device for use:
 
 ```javascript
 class DeviceAllocator {
-  constructor(allocationDriver, deviceRegistry) {
+  constructor(allocationDriver) {
     this._driver = allocationDriver;
-    this._registry = deviceRegistry;
   }
 
   async allocate(deviceConfig) {
     // Find or create a device matching the config
-    // Register ownership in the registry
     // Return a device cookie
   }
 
-  async postAllocate(deviceCookie, configs) {
-    // Platform-specific device setup after allocation
-    // e.g., boot simulator, disable animations, unlock screen
+  async postAllocate(cookie, configs) {
+    // Delegates to the driver's postAllocate if it exists.
+    // Each platform does different work here:
+    //   iOS Simulator: boot with headless/bootArgs, clean app cache
+    //   Android Emulator: wait for boot, get API level, disable animations, unlock screen
+    //   Genycloud: connect ADB, wait for readiness, disable animations, set WiFi
+    //   Attached Android: get API level, unlock screen
+    // All Android drivers also optionally configure System UI (keyboard, nav, status bar)
     // Returns an enriched device cookie
   }
 
-  async free(deviceCookie) {
-    // Release the device
-    // Remove from registry
+  async free(cookie, options) {
+    // Release the device via the driver
   }
 }
 ```

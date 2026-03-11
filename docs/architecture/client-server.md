@@ -139,19 +139,19 @@ class DetoxSessionManager {
 
 ## Message Protocol
 
-All messages are JSON objects with a standard structure.
+All messages are JSON objects wrapped in a standard envelope with `type` and `messageId`. However, the **invocation payload** inside `params` differs significantly between platforms.
 
-**Platform differences:** iOS and Android implement the protocol quite differently:
+### Platform Differences
 
-- **Android** is reflection-centric — the `generation/` project maps Java classes to JS invocation objects (see `src/android/espressoapi/`), allowing the test side to call Android APIs via reflection-based dispatch
-- **iOS** has a more handcrafted and formalized protocol, with explicit message types handled on the native side
+iOS and Android implement the invocation protocol quite differently:
 
-**Note:** Invocation targets vary by operation type:
+**Android — reflection-centric:** The `generation/` project parses Java source files (Espresso, UiAutomator, Detox helpers) and auto-generates JS adapter classes in `src/android/espressoapi/`. Each adapter method returns an invocation object describing a Java class, method name, and typed arguments. The native side uses reflection (`MethodInvocation`) to dispatch the call. To add new actions, you add a Java method and run `npm run build` in `generation/`.
 
-- High-level operations use `com.wix.detox.Detox` as the entry point
-- Action-specific invocations may use `com.wix.detox.espresso.DetoxAction` (Android) or platform-specific targets
+**iOS — handcrafted protocol:** Each action and expectation is explicitly implemented in Swift (see `detox/ios/Detox/Invocation/`). The native `InvocationManager` routes by `type` (`action`, `expectation`, `webAction`, `webExpectation`), and each action type (e.g., `TapAction`, `LongPressAction`) has its own `perform(on:)` method. There is no reflection — the mapping from action names to classes is a static registry in `Action.swift`.
 
-### Request (Test → App)
+### Android Invocation Format
+
+Android invocations describe a Java class + method to call via reflection:
 
 ```json
 {
@@ -162,11 +162,30 @@ All messages are JSON objects with a standard structure.
       "type": "Class",
       "value": "com.wix.detox.espresso.DetoxAction"
     },
-    "method": "perform",
+    "method": "multiClick",
     "args": [
-      { "matcher": "..." },
-      { "action": "..." }
+      { "type": "Integer", "value": 2 }
     ]
+  }
+}
+```
+
+### iOS Invocation Format
+
+iOS invocations use a structured format with explicit action/expectation types and Earl Grey predicates — no reflection involved:
+
+```json
+{
+  "type": "invoke",
+  "messageId": 1,
+  "params": {
+    "type": "action",
+    "action": "tap",
+    "params": [],
+    "predicate": {
+      "type": "id",
+      "value": "myButton"
+    }
   }
 }
 ```
@@ -185,7 +204,14 @@ All messages are JSON objects with a standard structure.
 
 ### Event (App → Test)
 
-Events typically use fixed negative `messageId` values (e.g., `-1000`, `-0xc1ea`) rather than the incrementing positive IDs used for request-response pairs.
+Certain messages use fixed negative `messageId` values instead of the auto-incrementing positive IDs used for request-response pairs. These are messages that don't participate in normal request-response pairing:
+
+| messageId | Message | Direction |
+|-----------|---------|-----------|
+| `-1` | `testerDisconnected` | Server → App |
+| `-1000` | `ready` / `reactNativeReload` | App → Test / Test → App |
+| `-10000` | `AppWillTerminateWithError` | App → Test (crash) |
+| `-0xc1ea` | `cleanup` | Test → App |
 
 ```json
 {
@@ -197,6 +223,7 @@ Events typically use fixed negative `messageId` values (e.g., `-1000`, `-0xc1ea`
 ```json
 {
   "type": "AppWillTerminateWithError",
+  "messageId": -10000,
   "params": {
     "errorDetails": "..."
   }
@@ -220,7 +247,7 @@ Predefined action classes for common operations:
 | `SetSyncSettings` | Configure synchronization settings |
 | `DeliverPayload` | Send push notification, deep link |
 | `CaptureViewHierarchy` | Dump UI hierarchy |
-| `GenerateViewHierarchyXml` | Generate UI hierarchy as XML (iOS and Android) |
+| `GenerateViewHierarchyXml` | Generate UI hierarchy as XML (iOS: direct WS action, Android: via invoke) |
 | `SetInstrumentsRecordingState` | Control iOS performance profiling |
 | `WaitForBackground` | Wait for app to background |
 | `WaitForActive` | Wait for app to foreground |
