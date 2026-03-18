@@ -2,6 +2,7 @@ package com.wix.detox.reactnative.reloader
 
 import android.app.Instrumentation
 import com.facebook.react.ReactApplication
+import com.wix.detox.reactnative.ReactNativeInfo
 import com.wix.detox.reactnative.isFabricEnabled
 
 class ReactNativeReloaderFactory(
@@ -11,7 +12,8 @@ class ReactNativeReloaderFactory(
 
     fun create(): ReactNativeReLoader {
         return when {
-            isFabricEnabled() -> NewArchitectureNativeReLoader(instrumentation, rnApplication)
+            isFabricEnabled() || ReactNativeInfo.isNewArchitectureOnlyVersion() ->
+                NewArchitectureNativeReLoader(instrumentation, rnApplication)
             else -> OldArchReactNativeReLoader(instrumentation, rnApplication)
         }
     }
