@@ -341,6 +341,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             launchArgs?: Record<string, any>;
+            arch?: 'x86_64' | 'arm64';
         }
 
         interface DetoxAndroidAppConfig {
