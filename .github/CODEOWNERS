@@ -1,29 +1,29 @@
-* @d4vidi
+* @noomorph
 
 # Scripts
 
-*.js @d4vidi @noomorph
-*.ts @d4vidi @noomorph
-*.sh @d4vidi @noomorph
+*.js @noomorph
+*.ts @noomorph
+*.sh @noomorph
 
 # Android
 
-detox/android/* @d4vidi @jonathanmos
-detox/test/android/* @d4vidi @jonathanmos
-*.java @d4vidi @jonathanmos
-*.kt @d4vidi @jonathanmos
-*.gradle @d4vidi @jonathanmos
+detox/android/* @noomorph
+detox/test/android/* @noomorph
+*.java @noomorph
+*.kt @noomorph
+*.gradle @noomorph
 
 # iOS
 
-detox/ios/* @asafkorem
-detox/test/ios/* @asafkorem
-*.h @asafkorem
-*.m @asafkorem
-*.mm @asafkorem
-*.cpp @asafkorem
-*.swift @asafkorem
-*.pch @asafkorem
-*.plist @asafkorem
-*.xcodeproj @asafkorem
-*.xcworkspace @asafkorem
+detox/ios/* @markdevocht
+detox/test/ios/* @markdevocht
+*.h @markdevocht
+*.m @markdevocht
+*.mm @markdevocht
+*.cpp @markdevocht
+*.swift @markdevocht
+*.pch @markdevocht
+*.plist @markdevocht
+*.xcodeproj @markdevocht
+*.xcworkspace @markdevocht
