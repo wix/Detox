@@ -25,6 +25,15 @@ static BOOL __currentlyDrawing = NO;
 static BOOL __subviewFound = NO;
 static UIView* __subview = nil;
 
+static BOOL _dtx_isLiquidGlassOverlay(UIView* view)
+{
+	if (!view) return NO;
+	NSString* className = NSStringFromClass([view class]);
+	return ([className containsString:@"PlatterGlass"] ||
+			[className containsString:@"PlatterAnimation"] ||
+			[className containsString:@"PlatterContent"]);
+}
+
 static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef ctx);
 + (void)_dtx_applyDrawingFixes
 {
@@ -125,6 +134,10 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 							
 							if(__subviewFound == YES)
 							{
+								if(_dtx_isLiquidGlassOverlay(delegate))
+								{
+									return;
+								}
 								__orig_CALayer_renderInContext(self, _cmd, ctx);
 								return;
 							}
@@ -154,6 +167,11 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 							}
 							
 							if([__subview isDescendantOfView:delegate] == YES)
+							{
+								return;
+							}
+							
+							if(_dtx_isLiquidGlassOverlay(delegate))
 							{
 								return;
 							}
