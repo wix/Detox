@@ -1,7 +1,7 @@
 {
   "name": "detox",
   "description": "E2E tests and automation for mobile",
-  "version": "20.48.1",
+  "version": "20.49.0",
   "bin": "local-cli/cli.js",
   "files": [
     "android",
