@@ -1,0 +1,12 @@
+---
+description: Always set RCT_NEW_ARCH_ENABLED=1 for React Native builds and test runs
+alwaysApply: true
+---
+
+# React Native New Architecture
+
+Always set `RCT_NEW_ARCH_ENABLED=1` when running iOS/Android builds or e2e tests. Never run without New Architecture enabled.
+
+- Build: `RCT_NEW_ARCH_ENABLED=1 detox build ...`
+- Test: `RCT_NEW_ARCH_ENABLED=1 detox test ...`
+- Pod install: `RCT_NEW_ARCH_ENABLED=1 pod install`
