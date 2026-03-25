@@ -106,9 +106,13 @@ describe('Device', () => {
   it(':android: device back button - should show popup back pressed when back button is pressed', async () => {
     await device.reloadReactNative();
     await element(by.text('Actions')).tap();
+    await expect(element(by.id('View7990'))).toBeVisible();
     await device.disableSynchronization();
-    await device.pressBack();
-    await waitFor(element(by.text('Back pressed !'))).toBeVisible().withTimeout(5000);
-    await device.enableSynchronization();
+    try {
+      await device.pressBack();
+      await waitFor(element(by.text('Back pressed !'))).toBeVisible().withTimeout(5000);
+    } finally {
+      await device.enableSynchronization();
+    }
   });
 });
