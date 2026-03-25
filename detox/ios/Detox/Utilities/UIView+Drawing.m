@@ -24,6 +24,22 @@
 static BOOL __currentlyDrawing = NO;
 static BOOL __subviewFound = NO;
 static UIView* __subview = nil;
+static __weak UIView* __targetBar = nil;
+
+static BOOL _dtx_shouldSkipForVisibility(UIView* view)
+{
+	if (!view) return NO;
+	
+	if (__targetBar && [view isDescendantOfView:__targetBar])
+	{
+		return YES;
+	}
+	
+	NSString* className = NSStringFromClass([view class]);
+	return ([className containsString:@"Platter"] ||
+			[className containsString:@"FloatingBar"] ||
+			[className containsString:@"LiquidLens"]);
+}
 
 static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef ctx);
 + (void)_dtx_applyDrawingFixes
@@ -53,6 +69,7 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 	}
 	
 	__currentlyDrawing = NO;
+	__targetBar = nil;
 }
 
 + (void)load
@@ -125,6 +142,10 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 							
 							if(__subviewFound == YES)
 							{
+								if(_dtx_shouldSkipForVisibility(delegate))
+								{
+									return;
+								}
 								__orig_CALayer_renderInContext(self, _cmd, ctx);
 								return;
 							}
@@ -154,6 +175,11 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 							}
 							
 							if([__subview isDescendantOfView:delegate] == YES)
+							{
+								return;
+							}
+							
+							if(_dtx_shouldSkipForVisibility(delegate))
 							{
 								return;
 							}
@@ -234,6 +260,18 @@ CALayer* _DTXLayerForView(UIView* view, BOOL afterUpdates)
 {
 	[CALayer _dtx_applyDrawingFixes];
 	__subview = subview;
+	__targetBar = nil;
+	UIView* bar = subview;
+	while (bar)
+	{
+		if ([bar isKindOfClass:[UINavigationBar class]] ||
+			[bar isKindOfClass:[UITabBar class]])
+		{
+			__targetBar = bar;
+			break;
+		}
+		bar = bar.superview;
+	}
 	
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSaveGState(ctx);
