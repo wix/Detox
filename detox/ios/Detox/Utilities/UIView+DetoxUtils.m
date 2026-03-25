@@ -224,6 +224,17 @@ DTX_DIRECT_MEMBERS
 	return [self _dtx_isRegionObscured:intersection fromTestedRegion:testedRegion percent:percent];
 }
 
+- (BOOL)_dtx_hasScrollViewAncestor {
+	UIView* superview = self.superview;
+	while (superview != nil) {
+		if ([superview isKindOfClass:UIScrollView.class]) {
+			return YES;
+		}
+		superview = superview.superview;
+	}
+	return NO;
+}
+
 - (BOOL)_dtx_testVisibilityInRect:(CGRect)rect percent:(NSUInteger)percent
 														error:(NSError* __strong __nullable * __nullable)error {
 	NSString* prefix = [NSString stringWithFormat:@"View “%@” is not visible:", self.dtx_shortDescription];
@@ -260,8 +271,16 @@ DTX_DIRECT_MEMBERS
 	CGRect testedRegionInWindowCoords = [windowToUse convertRect:rect fromView:self];
 
 	CGRect visibleBounds = self.dtx_visibleBounds;
-	if (CGRectIsEmpty(visibleBounds) ||
-			[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent]) {
+	BOOL failsClippingCheck;
+	if ([self _dtx_hasScrollViewAncestor]) {
+		CGRect rectVisiblePortion = CGRectIntersection(visibleBounds, rect);
+		failsClippingCheck = CGRectIsEmpty(rectVisiblePortion) ||
+			[self _dtx_isRegionObscured:rectVisiblePortion fromTestedRegion:rect percent:percent];
+	} else {
+		failsClippingCheck = CGRectIsEmpty(visibleBounds) ||
+			[self _dtx_isRegionObscured:visibleBounds fromTestedRegion:visibleBounds percent:percent];
+	}
+	if (failsClippingCheck) {
 		auto errorDescription = [NSString stringWithFormat:@"View is clipped by one or more of its "
 														 "superviews' bounds and does not pass visibility percent "
 														 "threshold (%lu)", (unsigned long)percent];
