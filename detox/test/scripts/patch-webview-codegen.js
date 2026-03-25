@@ -20,7 +20,7 @@ if (major !== 0 || minor < 84) {
 }
 
 let webViewSpec = fs.readFileSync(webViewSpecPath, 'utf8');
-const navigationTypeUnion = /navigationType:\s*'click'\s*\|\s*'formsubmit'\s*\|\s*'backforward'\s*\|\s*'reload'\s*\|\s*'formresubmit'\s*\|\s*'other';/g;
+const navigationTypeUnion = /navigationType:\s*\|?\s*'click'\s*\|\s*'formsubmit'\s*\|\s*'backforward'\s*\|\s*'reload'\s*\|\s*'formresubmit'\s*\|\s*'other';/g;
 
 if (!navigationTypeUnion.test(webViewSpec)) {
   log('Spec already patched or changed, skipping.');
