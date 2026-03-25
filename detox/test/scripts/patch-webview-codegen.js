@@ -20,13 +20,14 @@ if (major !== 0 || minor < 84) {
 }
 
 let webViewSpec = fs.readFileSync(webViewSpecPath, 'utf8');
-const navigationTypeUnion = /navigationType:\s*\n\s*\|\s*'click'\s*\n\s*\|\s*'formsubmit'\s*\n\s*\|\s*'backforward'\s*\n\s*\|\s*'reload'\s*\n\s*\|\s*'formresubmit'\s*\n\s*\|\s*'other';/;
+const navigationTypeUnion = /navigationType:\s*'click'\s*\|\s*'formsubmit'\s*\|\s*'backforward'\s*\|\s*'reload'\s*\|\s*'formresubmit'\s*\|\s*'other';/g;
 
 if (!navigationTypeUnion.test(webViewSpec)) {
   log('Spec already patched or changed, skipping.');
   process.exit(0);
 }
 
+navigationTypeUnion.lastIndex = 0;
 log('Patching react-native-webview navigationType union → string for Android codegen compatibility...');
 webViewSpec = webViewSpec.replace(navigationTypeUnion, 'navigationType: string;');
 fs.writeFileSync(webViewSpecPath, webViewSpec, 'utf8');
