@@ -75,6 +75,7 @@ const config = {
       build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       start: 'react-native start',
       bundleId: 'com.wix.detox-example',
+      arch: 'arm64',
     },
 
     'ios.release': {
@@ -82,6 +83,7 @@ const config = {
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
       build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      arch: 'arm64',
     },
 
     'android.debug': {
@@ -117,8 +119,8 @@ const config = {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
       device: {
-        type: 'iPhone 16 Pro Max',
-        os: '18.5'
+        type: 'iPhone 17 Pro',
+        os: '26.1'
       },
     },
 

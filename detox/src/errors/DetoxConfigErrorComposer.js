@@ -530,6 +530,22 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  malformedAppArch(appPath) {
+    return new DetoxConfigError({
+      message: `Invalid value of "arch" property in the app config.\nExpected 'x86_64' or 'arm64':`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
+  unsupportedAppArch(appPath) {
+    return new DetoxConfigError({
+      message: `"arch" property is only supported for ios.app configurations:`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
       message: `Missing "binaryPath" property in the app config.\nExpected a string:`,
@@ -669,6 +685,18 @@ Examine your Detox config${this._atPath()}`,
   invalidDebugSynchronizationProperty() {
     return new DetoxConfigError({
       message: `session.debugSynchronization should be a positive number`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
+  invalidIgnoreUnexpectedMessagesProperty() {
+    return new DetoxConfigError({
+      message: `session.ignoreUnexpectedMessages should be a boolean value`,
       hint: `Check that in your Detox config${this._atPath()}`,
       inspectOptions: { depth: 3 },
       debugInfo: _.omitBy({

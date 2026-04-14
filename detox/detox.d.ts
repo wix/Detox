@@ -133,6 +133,7 @@ declare global {
         interface DetoxSessionConfig {
             autoStart?: boolean;
             debugSynchronization?: number;
+            ignoreUnexpectedMessages?: boolean;
             server?: string;
             sessionId?: string;
         }
@@ -340,6 +341,7 @@ declare global {
             binaryPath: string;
             bundleId?: string;
             launchArgs?: Record<string, any>;
+            arch?: 'x86_64' | 'arm64';
         }
 
         interface DetoxAndroidAppConfig {
@@ -1162,6 +1164,8 @@ declare global {
         interface NativeElement extends NativeElementActions {
         }
 
+        type SemanticMatchingTypes = 'image' | 'input-field' | 'text' | 'button' | 'scrollview' | 'list' | 'switch' | 'slider' | 'picker' | 'activity-indicator' | 'progress';
+
         interface ByFacade {
             /**
              * by.id will match an id that is given to the view via testID prop.
@@ -1191,10 +1195,19 @@ declare global {
             label(label: string | RegExp): NativeMatcher;
 
             /**
-             * Find an element by native view type.
-             * @example await element(by.type('RCTImageView'));
+             * Find an element by native view type OR semantic type.
+             * Automatically detects if the input is a semantic type or regular class name.
+             * @example 
+             * // Semantic types (cross-platform):
+             * await element(by.type('image'));
+             * await element(by.type('button'));
+             * await element(by.type('input-field'));
+             * 
+             * // Native class names (platform-specific):
+             * await element(by.type('RCTImageView'));
+             * await element(by.type('android.widget.Button'));
              */
-            type(nativeViewType: string): NativeMatcher;
+            type(typeOrSemanticType: SemanticMatchingTypes | string): NativeMatcher;
 
             /**
              * Find an element with an accessibility trait. (iOS only)

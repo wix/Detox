@@ -233,6 +233,40 @@ HINT: You have a few options:
 }]
 `;
 
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppArch should work with aliased configurations 1`] = `
+[DetoxConfigError: Invalid value of "arch" property in the app config.
+Expected 'x86_64' or 'arm64':
+
+{
+  apps: {
+    someApp: {
+      type: 'ios.app',
+      binaryPath: 'path/to/app',
+      arch: 'i386'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppArch should work with inlined configurations 1`] = `
+[DetoxConfigError: Invalid value of "arch" property in the app config.
+Expected 'x86_64' or 'arm64':
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'ios.app',
+          binaryPath: 'path/to/app',
+          arch: 'i386'
+        }
+      ]
+    }
+  }
+}]
+`;
+
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .malformedAppLaunchArgs should work with aliased configurations 1`] = `
 [DetoxConfigError: Invalid type of "launchArgs" property in the app config.
 Expected an object:
@@ -484,6 +518,38 @@ HINT: You should create a dictionary of app configurations in Detox config, e.g.
   }
 }
 ]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedAppArch should work with aliased configurations 1`] = `
+[DetoxConfigError: "arch" property is only supported for ios.app configurations:
+
+{
+  apps: {
+    someApp: {
+      type: 'android.apk',
+      binaryPath: 'path/to/app',
+      arch: 'arm64'
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedAppArch should work with inlined configurations 1`] = `
+[DetoxConfigError: "arch" property is only supported for ios.app configurations:
+
+{
+  configurations: {
+    inlinedMulti: {
+      apps: [
+        {
+          type: 'android.apk',
+          binaryPath: 'path/to/app',
+          arch: 'arm64'
+        }
+      ]
+    }
+  }
+}]
 `;
 
 exports[`DetoxConfigErrorComposer (from composeAppsConfig) .unsupportedReversePorts should work with aliased configurations 1`] = `
@@ -1363,6 +1429,53 @@ HINT: Check that in your Detox config at path:
 {
   session: {
     server: 'ws://localhost:12837'
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should create a generic error, if the config location is not known 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        ignoreUnexpectedMessages: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should create an error with a hint, if the config location is known 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  configurations: {
+    'android.release': {
+      session: {
+        ignoreUnexpectedMessages: 'true'
+      }
+    }
+  }
+}]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidIgnoreUnexpectedMessagesProperty should point to global session if there is one 1`] = `
+[DetoxConfigError: session.ignoreUnexpectedMessages should be a boolean value
+
+HINT: Check that in your Detox config at path:
+/home/detox/myproject/.detoxrc.json
+
+{
+  session: {
+    ignoreUnexpectedMessages: 'not a boolean'
   }
 }]
 `;

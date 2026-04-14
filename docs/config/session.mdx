@@ -109,3 +109,25 @@ To disable this behavior (i.e. querying the app periodically), set the value to 
 Seeing logs like these usually indicates certain issues in your application, as explained in the [Troubleshooting Guide](../troubleshooting/synchronization.md).
 
 For extended, more detailed information on iOS, refer to the `DetoxSync` project's [Status Documentation](https://github.com/wix-incubator/DetoxSync/blob/master/StatusDocumentation.md).
+
+### `session.ignoreUnexpectedMessages` \[boolean]
+
+Default: `false`.
+
+Controls whether Detox should throw an error or log a warning when receiving unexpected WebSocket messages that don't match any registered handler or in-flight promise.
+
+When set to `true`, unexpected messages will be logged as warnings instead of throwing a `DetoxRuntimeError`. This is particularly useful for applications with complex view hierarchies, such as React Native apps with WebViews, where legitimate messages might be received in unexpected contexts (e.g., messages from WebViews after switching back to native context).
+
+```json
+{
+  "session": {
+    "ignoreUnexpectedMessages": true
+  }
+}
+```
+
+:::tip
+
+This option can also be controlled via the environment variable `DETOX_IGNORE_UNEXPECTED_WS_MESSAGES=true`.
+
+::: 

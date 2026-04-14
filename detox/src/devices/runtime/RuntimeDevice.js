@@ -168,7 +168,7 @@ class RuntimeDevice {
     if (this._behaviorConfig.launchApp === 'manual') {
       this._processes[bundleId] = await this.deviceDriver.waitForAppLaunch(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
     } else {
-      this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale);
+      this._processes[bundleId] = await this.deviceDriver.launchApp(bundleId, this._prepareLaunchArgs(baseLaunchArgs), params.languageAndLocale, this._currentApp?.arch);
       await this.deviceDriver.waitUntilReady();
       await this.deviceDriver.waitForActive();
     }

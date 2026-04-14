@@ -54,7 +54,7 @@ describe('Device', () => {
   });
 
   it('launchApp({newInstance: true}) + sendToHome() + launchApp() - should bring up previous instance', async () => {
-    await device.launchApp({newInstance: true});
+    await device.launchApp({newInstance: true });
     await element(by.text('Sanity')).tap();
     await element(by.text('Say Hello')).tap();
     await device.sendToHome();
@@ -71,9 +71,6 @@ describe('Device', () => {
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
-    // iOS toast is hiding the element
-    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
-
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();
@@ -84,8 +81,7 @@ describe('Device', () => {
     };
 
     await device.launchApp({newInstance: true, languageAndLocale});
-    await waitFor(element(by.text('Language'))).toBeVisible().withTimeout(1000);
-
+    
     await element(by.text('Language')).tap();
     await expect(element(by.text(`Current locale: ${languageAndLocale.locale}`))).toBeVisible();
     await expect(element(by.text(`Current language: ${languageAndLocale.language}`))).toBeVisible();

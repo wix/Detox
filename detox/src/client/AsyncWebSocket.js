@@ -15,7 +15,7 @@ const DEFAULT_SEND_OPTIONS = {
 };
 
 class AsyncWebSocket {
-  constructor(url) {
+  constructor({ url, ignoreUnexpectedMessages = false }) {
     this._url = url;
     this._ws = null;
     this._eventCallbacks = {};
@@ -23,6 +23,7 @@ class AsyncWebSocket {
     this._opening = null;
     this._closing = null;
     this._abortedMessageIds = new Set();
+    this._ignoreUnexpectedMessages = ignoreUnexpectedMessages;
 
     this.inFlightPromises = {};
   }
@@ -253,8 +254,13 @@ class AsyncWebSocket {
         if (this._abortedMessageIds.has(json.messageId)) {
           log.debug({ messageId: json.messageId }, `late response`);
         } else {
-          throw new DetoxRuntimeError('Unexpected message received over the web socket: ' + json.type);
-        }
+            const errorMessage = 'Unexpected message received over the web socket: ' + json.type;
+            if (this._ignoreUnexpectedMessages) {
+              log.warn({ messageId: json.messageId, type: json.type }, errorMessage + ' (ignored due to configuration)');
+            } else {
+              throw new DetoxRuntimeError(errorMessage);
+            }
+          }
       }
     } catch (error) {
       this.rejectAll(new DetoxRuntimeError({

@@ -431,6 +431,44 @@ describe('DetoxConfigErrorComposer', () => {
       });
     });
 
+    describe('.malformedAppArch', () => {
+      beforeEach(() => {
+        build = (appPath) => builder.malformedAppArch(appPath);
+      });
+
+      it('should work with inlined configurations', () => {
+        config.configurations.inlinedMulti.apps[0].arch = 'i386';
+        builder.setConfigurationName('inlinedMulti');
+        expect(build(['configurations', 'inlinedMulti', 'apps', 0])).toMatchSnapshot();
+      });
+
+      it('should work with aliased configurations', () => {
+        config.apps.someApp.arch = 'i386';
+        builder.setConfigurationName('aliased');
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
+      });
+    });
+
+    describe('.unsupportedAppArch', () => {
+      beforeEach(() => {
+        build = (appPath) => builder.unsupportedAppArch(appPath);
+      });
+
+      it('should work with inlined configurations', () => {
+        config.configurations.inlinedMulti.apps[0].arch = 'arm64';
+        config.configurations.inlinedMulti.apps[0].type = 'android.apk';
+        builder.setConfigurationName('inlinedMulti');
+        expect(build(['configurations', 'inlinedMulti', 'apps', 0])).toMatchSnapshot();
+      });
+
+      it('should work with aliased configurations', () => {
+        config.apps.someApp.arch = 'arm64';
+        config.apps.someApp.type = 'android.apk';
+        builder.setConfigurationName('aliased');
+        expect(build(['apps', 'someApp'])).toMatchSnapshot();
+      });
+    });
+
     describe('.missingAppBinaryPath', () => {
       beforeEach(() => {
         build = (appPath) => builder.missingAppBinaryPath(appPath);
@@ -736,6 +774,47 @@ describe('DetoxConfigErrorComposer', () => {
         builder.setDetoxConfig({
           session: {
             server: 'ws://localhost:12837',
+          },
+          configurations: {},
+        });
+
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+    });
+
+    describe('.invalidIgnoreUnexpectedMessagesProperty', () => {
+      beforeEach(() => {
+        build = () => builder.invalidIgnoreUnexpectedMessagesProperty();
+        builder.setConfigurationName('android.release');
+        builder.setDetoxConfig({
+          configurations: {
+            'android.release': {
+              type: 'android.emulator',
+              device: {
+                avdName: 'Pixel_2_API_29',
+              },
+              session: {
+                ignoreUnexpectedMessages: 'true',
+              },
+            }
+          }
+        });
+      });
+
+      it('should create a generic error, if the config location is not known', () => {
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should create an error with a hint, if the config location is known', () => {
+        builder.setDetoxConfigPath('/home/detox/myproject/.detoxrc.json');
+        expect(build()).toMatchSnapshot();
+      });
+
+      it('should point to global session if there is one', () => {
+        builder.setDetoxConfig({
+          session: {
+            ignoreUnexpectedMessages: 'not a boolean',
           },
           configurations: {},
         });

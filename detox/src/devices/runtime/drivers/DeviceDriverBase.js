@@ -42,6 +42,12 @@ class DeviceDriverBase {
   async init() {
   }
 
+  // TODO: Drivers have no access to app config — RuntimeDevice decomposes it
+  // into positional args (binaryPath, bundleId, launchArgs, ...) and threads
+  // each property individually. Every new app-level property (e.g. `arch`)
+  // forces another parameter onto the driver API, leaking platform-specific
+  // concerns into a universal interface. Consider giving drivers access to
+  // the app config directly so this class doesn't become a growing arg list.
   async launchApp() {
     return NaN;
   }

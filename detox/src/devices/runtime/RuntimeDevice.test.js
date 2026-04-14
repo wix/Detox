@@ -52,13 +52,14 @@ describe('Device', () => {
     }
 
     expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale) {
-      expect(this.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale);
+      expect(this.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, languageAndLocale, undefined);
     }
 
     expectLaunchCalledContainingArgs(expectedArgs) {
       expect(this.driver.launchApp).toHaveBeenCalledWith(
         this.driver.getBundleIdFromBinary(),
         expect.objectContaining(expectedArgs),
+        undefined,
         undefined);
     }
 
@@ -264,7 +265,7 @@ describe('Device', () => {
         expect(driverMock.driver.installApp).toHaveBeenCalledWith('/tmp/app', '/tmp/app-test');
 
         await device.launchApp({}, bundleId);
-        expect(driverMock.driver.launchApp).toHaveBeenCalledWith(bundleId, expect.anything(), undefined);
+        expect(driverMock.driver.launchApp).toHaveBeenCalledWith(bundleId, expect.anything(), undefined, undefined);
 
         await device.terminateApp(bundleId);
         expect(driverMock.driver.terminate).toHaveBeenCalledWith(bundleId);
@@ -437,6 +438,19 @@ describe('Device', () => {
       await device.launchApp({ languageAndLocale });
 
       driverMock.expectLaunchCalledWithArgs(bundleId, expectedArgs, languageAndLocale);
+    });
+
+    it(`should pass currentApp.arch to the driver`, async () => {
+      const expectedArgs = expectedDriverArgs;
+      const device = await aValidDevice({
+        appsConfig: {
+          default: { arch: 'x86_64' },
+        },
+      });
+
+      await device.launchApp();
+
+      expect(driverMock.driver.launchApp).toHaveBeenCalledWith(bundleId, expectedArgs, undefined, 'x86_64');
     });
 
     it(`with disableTouchIndicators should send a boolean switch as a param in launchParams`, async () => {

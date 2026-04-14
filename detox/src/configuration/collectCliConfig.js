@@ -76,6 +76,7 @@ function collectCliConfig({ argv, errorComposer }) {
     useCustomLogger: asBoolean(get('use-custom-logger')),
     retries: asNumber(get('retries')),
     start: get('start'),
+    ignoreUnexpectedWsMessages: asBoolean(get('ignore-unexpected-ws-messages')),
     repl,
     inspectBrk,
   }, _.isUndefined);
