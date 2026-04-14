@@ -1,46 +1,112 @@
+const fs = require('fs-extra');
+
+const tempfile = require('../../../../utils/tempfile');
+
 describe('AdbPortRegistry', () => {
+  let AdbPortRegistry;
+  let lockfilePath;
   let registry;
 
   beforeEach(() => {
-    registry = require('./AdbPortRegistry');
-    registry._registry.clear();
+    ({ AdbPortRegistry } = require('./AdbPortRegistry'));
+    lockfilePath = tempfile('.test');
+    registry = new AdbPortRegistry({ lockfilePath });
   });
 
-  it('should register a device with a port', () => {
-    registry.register('emulator-5554', 5038);
-    expect(registry.getPort('emulator-5554')).toEqual(5038);
+  afterEach(async () => {
+    await fs.remove(lockfilePath);
   });
 
-  it('should allow registering multiple devices', () => {
-    registry.register('emulator-5554', 5038);
-    registry.register('emulator-5556', 5039);
-    registry.register('localhost:5555', 5040);
+  it('should reserve a device with owner metadata', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
 
     expect(registry.getPort('emulator-5554')).toEqual(5038);
-    expect(registry.getPort('emulator-5556')).toEqual(5039);
-    expect(registry.getPort('localhost:5555')).toEqual(5040);
+    await expect(registry.entries()).resolves.toEqual([
+      expect.objectContaining({
+        adbName: 'emulator-5554',
+        pid: 101,
+        port: 5038,
+        sessionId: 'session-a',
+        state: 'reserved',
+      }),
+    ]);
   });
 
-  it('should overwrite existing registration when registering the same device again', () => {
-    registry.register('emulator-5554', 5038);
-    registry.register('emulator-5554', 5040);
-    expect(registry.getPort('emulator-5554')).toEqual(5040);
+  it('should mark an owned entry as ready', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+
+    await registry.markReady('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+
+    await expect(registry.entries()).resolves.toEqual([
+      expect.objectContaining({
+        adbName: 'emulator-5554',
+        pid: 101,
+        port: 5038,
+        sessionId: 'session-a',
+        state: 'ready',
+      }),
+    ]);
   });
 
-  describe('unregister', () => {
-    it('should remove a registered device', () => {
-      registry.register('emulator-5554', 5038);
-      registry.register('emulator-5556', 5039);
+  it('should transfer ownership when a different session marks an entry as ready', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
 
-      registry.unregister('emulator-5554');
-      expect(registry.getPort('emulator-5554')).toBeUndefined();
-      expect(registry.getPort('emulator-5556')).toEqual(5039);
-    });
+    await registry.markReady('emulator-5554', { pid: 202, port: 5038, sessionId: 'session-b' });
 
-    it('should not throw when unregistering a non-existent device', () => {
-      expect(() => {
-        registry.unregister('non-existent-device');
-      }).not.toThrow();
-    });
+    await expect(registry.entries()).resolves.toEqual([
+      expect.objectContaining({
+        adbName: 'emulator-5554',
+        pid: 202,
+        port: 5038,
+        sessionId: 'session-b',
+        state: 'ready',
+      }),
+    ]);
+  });
+
+  it('should persist entries across registry instances', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+
+    const anotherRegistry = new AdbPortRegistry({ lockfilePath });
+    await expect(anotherRegistry.entries()).resolves.toEqual([
+      expect.objectContaining({
+        adbName: 'emulator-5554',
+        port: 5038,
+        sessionId: 'session-a',
+      }),
+    ]);
+  });
+
+  it('should release only when ownership matches', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+
+    await registry.release('emulator-5554', { sessionId: 'session-b' });
+    expect(registry.getPort('emulator-5554')).toEqual(5038);
+
+    await registry.release('emulator-5554', { sessionId: 'session-a' });
+    expect(registry.getPort('emulator-5554')).toBeUndefined();
+  });
+
+  it('should release all devices for a session', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+    await registry.reserve('emulator-5556', { pid: 102, port: 5039, sessionId: 'session-b' });
+
+    await registry.releaseSession('session-a');
+
+    await expect(registry.entries()).resolves.toEqual([
+      expect.objectContaining({
+        adbName: 'emulator-5556',
+        sessionId: 'session-b',
+      }),
+    ]);
+  });
+
+  it('should reset the registry', async () => {
+    await registry.reserve('emulator-5554', { pid: 101, port: 5038, sessionId: 'session-a' });
+
+    await registry.reset();
+
+    expect(registry.getPort('emulator-5554')).toBeUndefined();
+    await expect(registry.entries()).resolves.toEqual([]);
   });
 });

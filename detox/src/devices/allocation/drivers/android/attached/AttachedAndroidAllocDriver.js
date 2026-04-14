@@ -2,6 +2,7 @@
  * @typedef {import('../../../../common/drivers/android/cookies').AndroidDeviceCookie} AndroidDeviceCookie
  */
 
+const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const AndroidAllocDriver = require('../AndroidAllocDriver');
 
 class AttachedAndroidAllocDriver extends AndroidAllocDriver {
@@ -27,8 +28,15 @@ class AttachedAndroidAllocDriver extends AndroidAllocDriver {
    */
   async allocate(deviceConfig) {
     const adbNamePattern = deviceConfig.device.adbName;
-    const adbName = await this._deviceRegistry.registerDevice(async () =>
-      (await this._freeDeviceFinder.findFreeDevice(adbNamePattern)).adbName);
+    const adbName = await this._deviceRegistry.registerDevice(async () => {
+      const { devices } = await this._adb.devices();
+      const device = await this._freeDeviceFinder.findFreeDevice(devices, adbNamePattern);
+      if (!device) {
+        throw new DetoxRuntimeError(`Failed to find device matching ${adbNamePattern}`);
+      }
+
+      return device.adbName;
+    });
 
     return { id: adbName, adbName };
   }

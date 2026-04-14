@@ -22,6 +22,7 @@ class EmulatorDriver extends AndroidDriver {
 
     this._deviceName = `${adbName} (${avdName})`;
     this._adbServerPort = adbServerPort;
+    this._originalAdbServerPort = undefined;
     this._forceAdbInstall = forceAdbInstall;
   }
 
@@ -34,8 +35,21 @@ class EmulatorDriver extends AndroidDriver {
     // process. It will not work in a multi-device-in-one-process environment (case in which the registry should
     // be reconsidered).
     if (this._adbServerPort) {
-      process.env.ANDROID_ADB_SERVER_PORT = this._adbServerPort;
+      this._originalAdbServerPort = process.env.ANDROID_ADB_SERVER_PORT;
+      process.env.ANDROID_ADB_SERVER_PORT = String(this._adbServerPort);
     }
+  }
+
+  async cleanup(bundleId) {
+    if (this._adbServerPort) {
+      if (this._originalAdbServerPort === undefined) {
+        delete process.env.ANDROID_ADB_SERVER_PORT;
+      } else {
+        process.env.ANDROID_ADB_SERVER_PORT = this._originalAdbServerPort;
+      }
+    }
+
+    await super.cleanup(bundleId);
   }
 
   getDeviceName() {

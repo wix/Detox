@@ -404,7 +404,16 @@ class ADB {
   }
 
   async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    try {
+      return await this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    } catch (err) {
+      const message = err.stderr || err.message || '';
+      if (message.includes('listener') && message.includes('not found')) {
+        return undefined;
+      }
+
+      throw err;
+    }
   }
 
   async emuKill(deviceId) {
@@ -412,7 +421,7 @@ class ADB {
   }
 
   async adbCmd(deviceId, params, options = {}) {
-    return this.adbCmdWithPort(deviceId, adbPortRegistry.getPort(deviceId), params, options);
+    return this.adbCmdWithPort(deviceId, this._getAdbServerPort(deviceId), params, options);
   }
 
   async adbCmdWithPort(deviceId, port, params, options = {}) {
@@ -429,7 +438,7 @@ class ADB {
   async adbCmdSpawned(deviceId, command, spawnOptions = {}) {
     const flags = command.split(/\s+/);
     const serial = deviceId ? ['-s', deviceId] : [];
-    const port = deviceId ? adbPortRegistry.getPort(deviceId) : undefined;
+    const port = deviceId ? this._getAdbServerPort(deviceId) : undefined;
     const portFlag = port ? ['-P', String(port)] : [];
     const _flags = [...portFlag, ...serial, ...flags];
     const _spawnOptions = {
@@ -446,9 +455,23 @@ class ADB {
    */
   spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
-    const port = deviceId ? adbPortRegistry.getPort(deviceId) : undefined;
+    const port = deviceId ? this._getAdbServerPort(deviceId) : undefined;
     const portFlag = port ? ['-P', String(port)] : [];
     return spawnAndLog(this.adbBin, [...portFlag, ...serial, ...params], spawnOptions);
+  }
+
+  _getAdbServerPort(deviceId) {
+    if (!deviceId) {
+      return undefined;
+    }
+
+    const port = adbPortRegistry.getPort(deviceId);
+    if (port !== undefined) {
+      return port;
+    }
+
+    const envPort = Number(process.env.ANDROID_ADB_SERVER_PORT);
+    return Number.isInteger(envPort) && envPort > 0 ? envPort : undefined;
   }
 }
 

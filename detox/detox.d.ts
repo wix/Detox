@@ -435,10 +435,10 @@ declare global {
              */
             readonly?: boolean;
             /**
-             * When `true`, each emulator uses its own separate ADB server on a separate port. This is the
-             * opposite of Android's default, which is to share a single ADB server on the default port (5037). The default
-             * has been found to be unstable and is therefore not recommended.
-             * @default true
+             * When `true`, Detox-managed emulators use dedicated ADB servers on separate ports instead of sharing
+             * the default Android ADB server on port 5037. This is an opt-in stabilization mode for parallel
+             * emulator workloads; the legacy single-server mode remains supported.
+             * @default false
              */
             useSeparateAdbServers?: boolean;
         }

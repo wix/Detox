@@ -17,6 +17,7 @@ describe('ADB', () => {
   let logger;
 
   beforeEach(() => {
+    delete process.env.ANDROID_ADB_SERVER_PORT;
     logger = require('../../../../../utils/logger');
 
     jest.mock('../../../../../utils/environment');
@@ -167,6 +168,31 @@ describe('ADB', () => {
         expect.arrayContaining(['-P', String(port), '-s', deviceId]),
         undefined
       );
+    });
+
+    it('should fall back to ANDROID_ADB_SERVER_PORT when registry is empty', async () => {
+      process.env.ANDROID_ADB_SERVER_PORT = '5044';
+
+      await adb.adbCmd(deviceId, 'devices');
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-P 5044 -s ${deviceId} devices`),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('reverseRemove', () => {
+    it('should ignore missing reverse mappings', async () => {
+      execWithRetriesAndLogs.mockRejectedValue({ stderr: "adb: error: listener 'tcp:12345' not found" });
+
+      await expect(adb.reverseRemove(deviceId, 12345)).resolves.toBeUndefined();
+    });
+
+    it('should rethrow unexpected failures', async () => {
+      execWithRetriesAndLogs.mockRejectedValue(new Error('boom'));
+
+      await expect(adb.reverseRemove(deviceId, 12345)).rejects.toThrow('boom');
     });
   });
 

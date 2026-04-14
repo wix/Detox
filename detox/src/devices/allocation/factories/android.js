@@ -33,6 +33,7 @@ class AndroidEmulator extends DeviceAllocatorFactory {
       avdValidator,
       detoxConfig,
       deviceRegistry,
+      detoxSession,
       emulatorVersionResolver,
       emulatorLauncher,
       freeDeviceFinder: freeEmulatorFinder,
