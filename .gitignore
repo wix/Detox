@@ -49,6 +49,7 @@ jspm_packages
 ################
 .idea
 .vscode
+.cursor
 
 ## File-based project format:
 *.iws
