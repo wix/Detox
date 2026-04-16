@@ -1,5 +1,6 @@
 package com.wix.detox.reactnative.idlingresources.uimodule.fabric
 
+import android.os.SystemClock
 import android.view.Choreographer
 import androidx.test.espresso.IdlingResource
 import com.facebook.react.bridge.ReactContext
@@ -15,14 +16,51 @@ class FabricUIManagerIdlingResources(
     private val reactContext: ReactContext
 ) : DetoxIdlingResource(), Choreographer.FrameCallback {
 
+    private var firstBusyTimestamp: Long = 0
+    private var isSteadyState: Boolean = false
+
     override fun checkIdle(): Boolean {
-        return if (getViewCommandMountItemsSize() == 0 && getMountItemsSize() == 0) {
+        val mountItemsCount = getMountItemsSize()
+        val viewCommandMountItemsCount = getViewCommandMountItemsSize()
+
+        if (mountItemsCount == 0 && viewCommandMountItemsCount == 0) {
+            firstBusyTimestamp = 0
+            isSteadyState = false
             notifyIdle()
-            true
-        } else {
-            Choreographer.getInstance().postFrameCallback(this)
-            false
+            return true
         }
+
+        // Once we've determined this is a steady-state (a stuck mount item that never
+        // resolves), keep reporting idle as long as the count stays low.
+        if (isSteadyState && mountItemsCount <= 1 && viewCommandMountItemsCount == 0) {
+            notifyIdle()
+            return true
+        }
+
+        // Count increased beyond steady-state threshold — reset and treat as genuinely busy.
+        if (isSteadyState) {
+            isSteadyState = false
+            firstBusyTimestamp = 0
+        }
+
+        val now = SystemClock.uptimeMillis()
+        if (firstBusyTimestamp == 0L) {
+            firstBusyTimestamp = now
+        }
+
+        // On API 36+, edge-to-edge enforcement can cause a single mount item to remain
+        // permanently in the queue on older RN versions. If the count stays at 1 for over
+        // 1.5s, treat it as a steady-state condition rather than a genuinely busy UI.
+        if (now - firstBusyTimestamp >= BUSY_TOLERANCE_MS
+            && mountItemsCount <= 1
+            && viewCommandMountItemsCount == 0) {
+            isSteadyState = true
+            notifyIdle()
+            return true
+        }
+
+        Choreographer.getInstance().postFrameCallback(this)
+        return false
     }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
@@ -78,4 +116,7 @@ class FabricUIManagerIdlingResources(
         return viewCommandMountItems.size
     }
 
+    companion object {
+        private const val BUSY_TOLERANCE_MS = 1500L
+    }
 }
