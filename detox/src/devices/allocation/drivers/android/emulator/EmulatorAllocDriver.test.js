@@ -129,10 +129,23 @@ describe('EmulatorAllocDriver', () => {
   });
 
   it('should allocate a new adb server port while skipping registered and taken ports', async () => {
-    jest.spyOn(uut, '_getLiveAdbServerEntries').mockResolvedValue([
+    adbPortRegistry.entries.mockResolvedValue([
       { adbName: 'emulator-5556', pid: 111, port: 5038, sessionId: 'session-a', state: 'ready' },
     ]);
+    adb.devices.mockImplementation(async (_options, ports = [5037]) => {
+      if (JSON.stringify(ports) === JSON.stringify([5038])) {
+        return { devices: [{ adbName: 'emulator-5556', adbServerPort: 5038 }] };
+      }
+
+      if (JSON.stringify(ports) === JSON.stringify([5037, 5038])) {
+        return { devices: [] };
+      }
+
+      return { devices: [] };
+    });
     isPortTaken
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(false);
 
@@ -246,17 +259,30 @@ describe('EmulatorAllocDriver', () => {
   });
 
   it('should cleanup only custom adb servers owned by the current session', async () => {
-    jest.spyOn(uut, '_getAllDevices').mockResolvedValue([
-      { adbName: 'emulator-5556', adbServerPort: 5038 },
+    adbPortRegistry.entries.mockResolvedValue([
+      { adbName: 'emulator-5556', pid: 111, port: 5038, sessionId: 'session-a', state: 'ready' },
+      { adbName: 'emulator-5558', pid: 111, port: 5039, sessionId: 'session-b', state: 'ready' },
     ]);
+    adb.devices.mockImplementation(async (_options, ports = [5037]) => {
+      if (JSON.stringify(ports) === JSON.stringify([5038])) {
+        return { devices: [{ adbName: 'emulator-5556', adbServerPort: 5038 }] };
+      }
+
+      if (JSON.stringify(ports) === JSON.stringify([5037, 5038])) {
+        return { devices: [{ adbName: 'emulator-5556', adbServerPort: 5038 }] };
+      }
+
+      return { devices: [] };
+    });
+    isPortTaken.mockImplementation(async (port) => port === 5038);
     deviceRegistry.readSessionDevices.mockResolvedValue({
       getIds: () => ['emulator-5556'],
     });
 
     await uut.cleanup();
 
-    expect(uut._getAllDevices).toHaveBeenCalledWith(true, { sessionId: 'session-a' });
     expect(emulatorLauncher.shutdown).toHaveBeenCalledWith('emulator-5556');
+    expect(adb.devices).not.toHaveBeenCalledWith({}, [5037, 5038, 5039]);
     expect(adbPortRegistry.release).toHaveBeenCalledWith('emulator-5556', { sessionId: 'session-a' });
     expect(adbPortRegistry.releaseSession).not.toHaveBeenCalled();
     expect(deviceRegistry.unregisterSessionDevices).toHaveBeenCalled();
