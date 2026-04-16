@@ -42,7 +42,9 @@ describe('ADB', () => {
     spawnAndLog = require('../../../../../utils/childProcess').spawnAndLog;
     spawnWithRetriesAndLogs = require('../../../../../utils/childProcess').spawnWithRetriesAndLogs;
 
-    jest.mock('../AdbPortRegistry');
+    jest.doMock('../AdbPortRegistry', () => ({
+      getPort: jest.fn(),
+    }));
     adbPortRegistry = require('../AdbPortRegistry');
 
     ADB = require('./ADB');

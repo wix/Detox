@@ -6,8 +6,8 @@
 
 const _ = require('lodash');
 
-const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
 const PIDService = require('../../../../../utils/PIDService');
+const log = require('../../../../../utils/logger').child({ cat: 'device,device-allocation' });
 const { isPortTaken } = require('../../../../../utils/netUtils');
 const adbPortRegistry = require('../../../../common/drivers/android/AdbPortRegistry');
 const AndroidAllocDriver = require('../AndroidAllocDriver');
