@@ -103,4 +103,10 @@ describe('Device', () => {
     await expect(element(by.text('Shaken, not stirred'))).toExist();
   });
 
+  it(':android: device back button - should show popup back pressed when back button is pressed', async () => {
+    await device.reloadReactNative();
+    await element(by.text('Actions')).tap();
+    await device.pressBack();
+    await expect(element(by.text('Back pressed !'))).toBeVisible();
+  });
 });
