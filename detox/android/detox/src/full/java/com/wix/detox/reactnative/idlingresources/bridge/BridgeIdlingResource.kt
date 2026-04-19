@@ -91,13 +91,15 @@ private class BridgeIdleListenerApi(private val reactContext: ReactContext) {
             val proxy = Proxy.newProxyInstance(
                 listenerClass.classLoader,
                 arrayOf(listenerClass),
-                InvocationHandler { _, method, _ ->
+                InvocationHandler { proxy, method, args ->
                     when (method.name) {
                         ON_BRIDGE_IDLE_METHOD -> onBridgeIdle()
                         ON_BRIDGE_BUSY_METHOD -> onBridgeBusy()
                         ON_BRIDGE_DESTROYED_METHOD -> onBridgeDestroyed()
+                        "equals" -> proxy === args?.firstOrNull()
+                        "hashCode" -> System.identityHashCode(proxy)
+                        "toString" -> "BridgeIdleListenerProxy"
                     }
-                    null
                 }
             )
 
