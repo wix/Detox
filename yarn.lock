@@ -6487,6 +6487,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"args-tokenizer@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "args-tokenizer@npm:0.3.0"
+  checksum: 10/b1335368758f9fc9b9bfc98ac4a5ea47b89be76fbc66c12bd2cb9e8460c9126e07ac3d251c1cf799df5bfde7b3d97559c55227c633ea82511bf969f69720bf39
+  languageName: node
+  linkType: hard
+
 "arr-diff@npm:^4.0.0":
   version: 4.0.0
   resolution: "arr-diff@npm:4.0.0"
@@ -10224,6 +10231,7 @@ __metadata:
     "@types/react": "npm:^19.2.0"
     "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
     "@typescript-eslint/parser": "npm:^6.16.0"
+    args-tokenizer: "npm:^0.3.0"
     axios: "npm:^1.7.7"
     cross-env: "npm:^7.0.3"
     detox: "workspace:*"
@@ -10231,7 +10239,6 @@ __metadata:
     eslint: "npm:^8.56.0"
     eslint-plugin-jest: "npm:^28.11.0"
     eslint-plugin-unicorn: "npm:^50.0.1"
-    execa: "npm:^5.1.1"
     express: "npm:^4.15.3"
     glob: "npm:^7.2.0"
     jest: "npm:^30.0.3"
@@ -10247,6 +10254,7 @@ __metadata:
     react-native-permissions: "npm:^5.2.1"
     react-native-webview: "npm:^13.13.1"
     ssim.js: "npm:^3.5.0"
+    tinyexec: "npm:^0.3.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -10275,6 +10283,7 @@ __metadata:
     "@wix-pilot/core": "npm:^3.4.2"
     "@wix-pilot/detox": "npm:^1.0.13"
     ajv: "npm:^8.6.3"
+    args-tokenizer: "npm:^0.3.0"
     bunyan: "npm:^1.8.12"
     bunyan-debug-stream: "npm:^3.1.0"
     caf: "npm:^15.0.1"
@@ -10286,7 +10295,6 @@ __metadata:
     eslint-plugin-no-only-tests: "npm:^3.1.0"
     eslint-plugin-node: "npm:^11.1.0"
     eslint-plugin-unicorn: "npm:^50.0.1"
-    execa: "npm:^5.1.1"
     find-up: "npm:^5.0.0"
     fs-extra: "npm:^11.0.0"
     funpermaproxy: "npm:^1.1.0"
@@ -10315,6 +10323,7 @@ __metadata:
     stream-json: "npm:^1.7.4"
     strip-ansi: "npm:^6.0.1"
     telnet-client: "npm:1.2.8"
+    tinyexec: "npm:^0.3.0"
     tmp: "npm:^0.2.1"
     trace-event-lib: "npm:^1.3.1"
     typescript: "npm:^5.8.3"
@@ -25862,6 +25871,13 @@ __metadata:
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: 10/da62c4acac565902f0624b123eed6dd3509bc9a8d30c06e017104bedcf5d35810da8ff72864400ad19c5c7806fc0a8323c68baf3e326af7cb7d969f846100d71
+  languageName: node
+  linkType: hard
+
+"tinyexec@npm:^0.3.0":
+  version: 0.3.2
+  resolution: "tinyexec@npm:0.3.2"
+  checksum: 10/b9d5fed3166fb1acd1e7f9a89afcd97ccbe18b9c1af0278e429455f6976d69271ba2d21797e7c36d57d6b05025e525d2882d88c2ab435b60d1ddf2fea361de57
   languageName: node
   linkType: hard
 
