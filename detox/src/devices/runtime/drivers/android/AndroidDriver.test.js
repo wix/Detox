@@ -625,6 +625,28 @@ describe('Android driver', () => {
     jest.mock('../../../allocation/DeviceRegistry');
   };
 
+  describe('biometrics', () => {
+    it('matchFace throws "only supported on Android emulators"', async () => {
+      await expect(uut.matchFace()).rejects.toThrow(/only supported on Android emulators/);
+    });
+
+    it('unmatchFace throws "only supported on Android emulators"', async () => {
+      await expect(uut.unmatchFace()).rejects.toThrow(/only supported on Android emulators/);
+    });
+
+    it('setBiometricEnrollment throws "only supported on Android emulators"', async () => {
+      await expect(uut.setBiometricEnrollment('YES')).rejects.toThrow(/only supported on Android emulators/);
+    });
+
+    it('matchFinger throws "only supported on Android emulators"', async () => {
+      await expect(uut.matchFinger()).rejects.toThrow(/only supported on Android emulators/);
+    });
+
+    it('unmatchFinger throws "only supported on Android emulators"', async () => {
+      await expect(uut.unmatchFinger()).rejects.toThrow(/only supported on Android emulators/);
+    });
+  });
+
   const mockGetAbsoluteBinaryPathImpl = (x) => `absolutePathOf(${x})`;
   const mockAPKPathGetTestApkPathImpl = (x) => `testApkPathOf(${x})`;
 

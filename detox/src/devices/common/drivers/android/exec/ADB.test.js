@@ -204,6 +204,196 @@ describe('ADB', () => {
       expect.anything());
   });
 
+  describe('root', () => {
+    it('issues adb -s <deviceId> root and waits for the daemon to reconnect', async () => {
+      await adb.root(deviceId);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator root`),
+        expect.anything());
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator wait-for-device`),
+        expect.anything());
+    });
+  });
+
+  describe('biometrics', () => {
+    it('matchFinger issues an emu finger touch with enrolled id, then finger remove', async () => {
+      await adb.matchFinger(deviceId);
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator emu "finger touch 1"`),
+        expect.anything());
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator emu "finger remove"`),
+        expect.anything());
+    });
+
+    it('unmatchFinger issues an emu finger touch with unenrolled id, then finger remove', async () => {
+      await adb.unmatchFinger(deviceId);
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator emu "finger touch 99"`),
+        expect.anything());
+
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        expect.stringContaining(`-s mockEmulator emu "finger remove"`),
+        expect.anything());
+    });
+
+    describe('setBiometricEnrollment', () => {
+      it('when enabled, sets PIN, sets virtual enrollment prop, and syncs the fingerprint service', async () => {
+        await adb.setBiometricEnrollment(deviceId, true);
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator root`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "locksettings clear --old 0000"`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "locksettings set-pin 0000"`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.fingerprint.virtual.enrollments 1"`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "cmd fingerprint sync"`),
+          expect.anything());
+      });
+
+      it('when disabled, syncs the fingerprint service, clears virtual enrollment prop, and removes PIN', async () => {
+        await adb.setBiometricEnrollment(deviceId, false);
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator root`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "cmd fingerprint sync"`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.fingerprint.virtual.enrollments 0"`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "locksettings clear --old 0000"`),
+          expect.anything());
+      });
+    });
+
+    describe('face (virtual HAL)', () => {
+      beforeEach(() => {
+        // Stub the reboot wait loop to avoid real sleeps.
+        jest.spyOn(adb, 'reboot').mockResolvedValue(undefined);
+      });
+
+      it('matchFace sets vendor.face.virtual.enrollment_hit to an enrolled id', async () => {
+        await adb.matchFace(deviceId);
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator root`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "setprop vendor.face.virtual.enrollment_hit 1"`),
+          expect.anything());
+      });
+
+      it('unmatchFace sets vendor.face.virtual.enrollment_hit to an unenrolled id', async () => {
+        await adb.unmatchFace(deviceId);
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator root`),
+          expect.anything());
+
+        expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+          expect.stringContaining(`-s mockEmulator shell "setprop vendor.face.virtual.enrollment_hit 2"`),
+          expect.anything());
+      });
+
+      describe('setFaceEnrollment', () => {
+        it('when enabled, flips the feature flag, enables virtual biometrics, sets sensor props, reboots, sets PIN, and syncs face', async () => {
+          await adb.setFaceEnrollment(deviceId, true);
+
+          expect(adb.reboot).toHaveBeenCalledWith(deviceId);
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "device_config put biometrics_framework com.android.server.biometrics.face_vhal_feature true"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "settings put secure biometric_virtual_enabled 1"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.face.virtual.strength strong"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.face.virtual.type RGB"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "locksettings set-pin 0000"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.face.virtual.enrollments 1"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "cmd face sync"`),
+            expect.anything());
+        });
+
+        it('when enabled and face HAL is already active, skips feature-flag setup and reboot', async () => {
+          // Simulate a device where the Virtual Face HAL is already configured.
+          jest.spyOn(adb, 'shell').mockImplementation(async (_deviceId, cmd) => {
+            if (cmd.includes('settings get secure biometric_virtual_enabled')) return '1';
+            if (cmd.includes('device_config get biometrics_framework com.android.server.biometrics.face_vhal_feature')) return 'true';
+            return '';
+          });
+
+          await adb.setFaceEnrollment(deviceId, true);
+
+          expect(adb.reboot).not.toHaveBeenCalled();
+          expect(adb.shell).not.toHaveBeenCalledWith(
+            deviceId,
+            expect.stringContaining('device_config put'));
+          // But still enrolls
+          expect(adb.shell).toHaveBeenCalledWith(
+            deviceId,
+            expect.stringContaining('setprop persist.vendor.face.virtual.enrollments 1'));
+          expect(adb.shell).toHaveBeenCalledWith(
+            deviceId,
+            expect.stringContaining('cmd face sync'));
+        });
+
+        it('when disabled, syncs face, clears face enrollment prop, and removes PIN', async () => {
+          await adb.setFaceEnrollment(deviceId, false);
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "cmd face sync"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "setprop persist.vendor.face.virtual.enrollments 0"`),
+            expect.anything());
+
+          expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+            expect.stringContaining(`-s mockEmulator shell "locksettings clear --old 0000"`),
+            expect.anything());
+        });
+      });
+    });
+  });
+
   it(`pidof (success)`, async () => {
     jest.spyOn(adb, 'shell').mockImplementation(async () =>
       `u0_a19        2199  1701 3554600  70264 0                   0 s com.google.android.ext.services `);

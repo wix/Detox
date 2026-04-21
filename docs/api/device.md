@@ -532,9 +532,12 @@ const viewHierarchyXml = await device.generateViewHierarchyXml();
 
 Simulate shake
 
-### `device.setBiometricEnrollment(bool)` **iOS Only**
+### `device.setBiometricEnrollment(bool, options?)`
 
-Toggles device enrollment in biometric authentication (Touch ID or Face ID).
+Toggles device enrollment in biometric authentication.
+
+- **iOS:** Touch ID or Face ID on any simulator. `options` are ignored (iOS enrolls both modalities together).
+- **Android:** Emulators (AVDs) only. Detox calls `adb root` internally, sets a PIN of `0000`, flips the Virtual Fingerprint HAL enrollment flag, and syncs the fingerprint service. Requires a userdebug emulator image (standard Android Studio AVDs are userdebug); this will fail on non-userdebug images. Not supported on physical devices or Genymotion Cloud.
 
 ```js
 await device.setBiometricEnrollment(true);
@@ -542,21 +545,54 @@ await device.setBiometricEnrollment(true);
 await device.setBiometricEnrollment(false);
 ```
 
-### `device.matchFace()` **iOS Only**
+#### `options.androidFace` — Android Virtual Face HAL opt-in
 
-Simulates the success of a face match via Face ID
+Android emulators can also run a Virtual Face HAL, disabled by default. To enroll a face instead of a fingerprint on Android, pass `{ androidFace: true }`:
 
-### `device.unmatchFace()` **iOS Only**
+```js
+await device.setBiometricEnrollment(true, { androidFace: true });
+await device.launchApp({ newInstance: true });  // required after the first enable — see below
+await device.matchFace();
+// ... later
+await device.setBiometricEnrollment(false, { androidFace: true });
+```
 
-Simulates the failure of face match via Face ID
+The first enable call on a given AVD is heavier than fingerprint: Detox enables the `com.android.server.biometrics.face_vhal_feature` device config flag, sets `biometric_virtual_enabled=1`, applies the `persist.vendor.face.virtual.type` / `strength` sensor props, and **reboots the emulator** so the Face HAL picks up the new configuration. Expect ~20 seconds for this first call. Subsequent calls on the same AVD session detect the active HAL and skip the reboot (~3 seconds).
 
-### `device.matchFinger()` **iOS Only**
+**Caveats:**
+- **Requires a userdebug AVD.** Standard Android Studio AVD images are userdebug.
+- **Requires `launchApp({ newInstance: true })` after the first enable call** — the reboot kills the app process. Subsequent enable calls (when the HAL is already active) do not reboot and do not require a relaunch.
+- **Leaves `device_config` in `set_sync_disabled_for_tests persistent` mode** on the AVD so the feature flag survives the reboot. This suppresses the system server's periodic `device_config` sync for all namespaces — safe on throwaway CI AVDs but worth noting if you reuse warm AVDs across test runs. The disable path does not revert this; call `adb shell device_config set_sync_disabled_for_tests none` manually if you need to restore it.
 
-Simulates the success of a finger match via Touch ID
+The `androidFace` option is ignored on iOS.
 
-### `device.unmatchFinger()` **iOS Only**
+### `device.matchFace()`
 
-Simulates the failure of a finger match via Touch ID
+Simulates the success of a face match.
+
+- **iOS:** Face ID on any simulator.
+- **Android:** Emulator (AVD) only. Requires a prior `device.setBiometricEnrollment(true, { androidFace: true })`.
+
+### `device.unmatchFace()`
+
+Simulates the failure of a face match.
+
+- **iOS:** Face ID on any simulator.
+- **Android:** Emulator (AVD) only. Requires a prior `device.setBiometricEnrollment(true, { androidFace: true })`.
+
+### `device.matchFinger()`
+
+Simulates the success of a finger match.
+
+- **iOS:** Touch ID on any simulator.
+- **Android:** Fingerprint on emulators (AVDs) only; not supported on physical devices or Genymotion Cloud.
+
+### `device.unmatchFinger()`
+
+Simulates the failure of a finger match.
+
+- **iOS:** Touch ID on any simulator.
+- **Android:** Fingerprint on emulators (AVDs) only; not supported on physical devices or Genymotion Cloud.
 
 ### `device.clearKeychain()` **iOS Only**
 
