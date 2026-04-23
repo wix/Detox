@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const { globSync } = require('tinyglobby');
 
 function getLatestArtifactsDir() {
   if (!fs.existsSync('artifacts')) {
@@ -25,7 +25,7 @@ function assertDirExists(dirPath) {
 
 function assertArtifactExists(pattern) {
   const artifactsRootDir = getLatestArtifactsDir();
-  const matchingArtifacts = glob.sync(pattern, { cwd: artifactsRootDir });
+  const matchingArtifacts = globSync(pattern, { cwd: artifactsRootDir });
   if (matchingArtifacts.length === 0) {
     throw new Error('Assertion failed.\nFailed to find artifacts matching: ' + path.join(artifactsRootDir, pattern));
   }
