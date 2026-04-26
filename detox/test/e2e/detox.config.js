@@ -6,9 +6,6 @@ const launchArgs = {
   micro: 'soft',
 };
 
-const isCIRN084 = Boolean(process.env.CI) && /^0\.84(\.|$)/.test(process.env.REACT_NATIVE_VERSION || '');
-const iosBuildSuffix = isCIRN084 ? ' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES' : '';
-
 /** @type {Detox.DetoxConfig} */
 const config = {
   extends: 'detox-allure2-adapter/preset-detox',
@@ -56,7 +53,7 @@ const config = {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/example.app',
-      build: `set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet${iosBuildSuffix}`,
+      build: 'set -o pipefail && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       start: 'react-native start',
       bundleId: 'com.wix.detox-example',
       arch: 'arm64',
@@ -66,7 +63,7 @@ const config = {
       type: 'ios.app',
       name: 'example',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/example.app',
-      build: `set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet${iosBuildSuffix}`,
+      build: 'set -o pipefail && export CODE_SIGNING_REQUIRED=NO && export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -scheme example-ci -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
       arch: 'arm64',
     },
 

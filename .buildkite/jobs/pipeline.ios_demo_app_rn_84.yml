@@ -6,6 +6,8 @@
       REACT_NATIVE_VERSION: 0.84.0
       RCT_NEW_ARCH_ENABLED: 1
       REACT_NATIVE_COMPAT_TEST: true
+      RCT_USE_PREBUILT_RNCORE: 0
+      RCT_USE_RN_DEP: 0
     artifact_paths:
       - "/Users/builder/uibuilder/work/coverage/**/*.lcov"
       - "/Users/builder/uibuilder/work/artifacts*.tar.gz"
