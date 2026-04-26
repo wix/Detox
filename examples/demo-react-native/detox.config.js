@@ -1,4 +1,9 @@
 /** @type {Detox.DetoxConfig} */
+const isCIRN085 = Boolean(process.env.CI) && /^0\.85(\.|$)/.test(process.env.REACT_NATIVE_VERSION || '');
+const iosCIBuildSettings = isCIRN085
+  ? ' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES IPHONEOS_DEPLOYMENT_TARGET=15.1'
+  : '';
+
 module.exports = {
   logger: {
     level: process.env.CI ? 'debug' : undefined,
@@ -20,12 +25,12 @@ module.exports = {
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/example.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+      "build": `export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet${iosCIBuildSettings}`,
     },
     "ios.debug": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/example.app",
-      "build": "xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+      "build": `xcodebuild -workspace ios/example.xcworkspace -UseNewBuildSystem=NO -scheme example -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build${iosCIBuildSettings}`,
       "start": "scripts/start-rn.sh ios",
     },
     "android.debug": {
