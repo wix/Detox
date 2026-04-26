@@ -1,7 +1,7 @@
 /** @type {Detox.DetoxConfig} */
 const isCIRN085 = Boolean(process.env.CI) && /^0\.85(\.|$)/.test(process.env.REACT_NATIVE_VERSION || '');
 const iosCIBuildSettings = isCIRN085
-  ? ' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES IPHONEOS_DEPLOYMENT_TARGET=15.1'
+  ? " ARCHS=arm64 ONLY_ACTIVE_ARCH=YES IPHONEOS_DEPLOYMENT_TARGET=15.1 OTHER_LDFLAGS='$(inherited) -lc++'"
   : '';
 
 module.exports = {
