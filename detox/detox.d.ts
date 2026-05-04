@@ -436,6 +436,13 @@ declare global {
              * @default true
              */
             readonly?: boolean;
+            /**
+             * When `true`, Detox-managed emulators use dedicated ADB servers on separate ports instead of sharing
+             * the default Android ADB server on port 5037. This is an opt-in stabilization mode for parallel
+             * emulator workloads; the legacy single-server mode remains supported.
+             * @default false
+             */
+            useSeparateAdbServers?: boolean;
         }
 
         interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {

@@ -38,7 +38,7 @@ describe('Emulator launcher', () => {
       expect(launchEmulatorProcess).toHaveBeenCalledWith(emulatorExec, adb, expect.objectContaining({
         avdName,
         adbName,
-      }));
+      }), undefined);
     });
 
     it('should launch using a specific emulator port, if provided', async () => {
@@ -47,6 +47,13 @@ describe('Emulator launcher', () => {
 
       const [[,,command]] = launchEmulatorProcess.mock.calls;
       expect(command.port).toEqual(port);
+    });
+
+    it('should pass adbServerPort to launchEmulatorProcess', async () => {
+      const adbServerPort = 5038;
+      await uut.launch({ avdName, adbName, adbServerPort });
+
+      expect(launchEmulatorProcess).toHaveBeenCalledWith(emulatorExec, adb, expect.anything(), adbServerPort);
     });
 
     it('should retry emulator process launching with custom args', async () => {

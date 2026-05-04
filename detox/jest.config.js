@@ -71,6 +71,7 @@ module.exports = {
     'src/utils/pressAnyKey.js',
     'src/utils/repl.js',
     'src/utils/shellUtils.js',
+    'src/utils/netUtils.js',
     'runners/jest/reporters',
     'runners/jest/testEnvironment',
     'src/DetoxWorker.js',

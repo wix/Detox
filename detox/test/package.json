@@ -15,6 +15,7 @@
     "detox-server": "detox run-server",
     "e2e:ios": "detox test -c ios.sim.release",
     "e2e:android": "detox test -c android.emu.release",
+    "e2e:android.single-adb-server": "detox test -c android.emu.release.single-adb-server",
     "e2e:android:genycloud": "detox test -c android.genycloud.release",
     "e2e:android:genycloud-arm64": "detox test -c android.genycloud.release-arm64",
     "e2e:android-debug": "detox test -c android.emu.debug",

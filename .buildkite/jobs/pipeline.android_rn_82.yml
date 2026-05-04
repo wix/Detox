@@ -5,7 +5,6 @@
     env:
       REACT_NATIVE_VERSION: 0.83.0
       RCT_NEW_ARCH_ENABLED: 1
-      TEST_GENYCLOUD_SANITY: true
       DETOX_DISABLE_POD_INSTALL: true
       DETOX_DISABLE_POSTINSTALL: true
     artifact_paths:

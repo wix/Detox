@@ -6,6 +6,7 @@ const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require
 const { getAdbPath } = require('../../../../../utils/environment');
 const logger = require('../../../../../utils/logger');
 const { escape } = require('../../../../../utils/pipeCommands');
+const adbPortRegistry = require('../AdbPortRegistry');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -19,6 +20,8 @@ const DEFAULT_INSTALL_OPTIONS = {
   retries: 3,
 };
 
+const ADB_SERVER_PORT = 5037;
+
 class ADB {
   constructor() {
     this._cachedApiLevels = new Map();
@@ -27,23 +30,44 @@ class ADB {
     this.adbBin = getAdbPath();
   }
 
+  get defaultServerPort() {
+    return ADB_SERVER_PORT;
+  }
+
   async startDaemon() {
     await this.adbCmd('', 'start-server', { retries: 0, verbosity: 'high' });
   }
 
-  async devices(options) {
-    const { stdout } = await this.adbCmd('', 'devices', { verbosity: 'high', ...options });
-    /** @type {DeviceHandle[]} */
-    const devices = _.chain(stdout)
-      .trim()
-      .split('\n')
-      .slice(1)
-      .map(s => _.trim(s))
-      .map(s => s.startsWith('emulator-')
-        ? new EmulatorHandle(s)
-        : new DeviceHandle(s))
-      .value();
-    return { devices, stdout };
+  /**
+   * @returns {Promise<{devices: DeviceHandle[], stdout: string}>}
+   */
+  async devices(options, ports = [ADB_SERVER_PORT]) {
+    const devicesByPort = {};
+    const stdouts = [];
+
+    for (let port of ports) {
+      const { stdout } = await this.adbCmdWithPort('', port, 'devices', { verbosity: 'high', ...options });
+      devicesByPort[port] = _.chain(stdout)
+        .trim()
+        .split('\n')
+        .slice(1)
+        .map(s => _.trim(s))
+        .value();
+      stdouts.push(stdout);
+    }
+
+    const devices =
+      _.flatMap(Object.keys(devicesByPort), port =>
+        _.map(devicesByPort[port],
+            s => s.startsWith('emulator-')
+              ? new EmulatorHandle(s, Number(port))
+              : new DeviceHandle(s, Number(port))
+        ));
+
+    return {
+      devices,
+      stdout: stdouts.join('\n'),
+    };
   }
 
   async getState(deviceId) {
@@ -380,7 +404,16 @@ class ADB {
   }
 
   async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    try {
+      return await this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    } catch (err) {
+      const message = err.stderr || err.message || '';
+      if (message.includes('listener') && message.includes('not found')) {
+        return undefined;
+      }
+
+      throw err;
+    }
   }
 
   async emuKill(deviceId) {
@@ -388,8 +421,13 @@ class ADB {
   }
 
   async adbCmd(deviceId, params, options = {}) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
-    const cmd = `"${this.adbBin}" ${serial} ${params}`;
+    return this.adbCmdWithPort(deviceId, this._getAdbServerPort(deviceId), params, options);
+  }
+
+  async adbCmdWithPort(deviceId, port, params, options = {}) {
+    const portFlag = port ? `-P ${port} ` : '';
+    const serial = deviceId ? `-s ${deviceId} ` : '';
+    const cmd = `"${this.adbBin}" ${portFlag}${serial}${params}`.replace(/\s+/g, ' ').trim();
     const _options = {
       ...this.defaultExecOptions,
       ...options,
@@ -400,7 +438,9 @@ class ADB {
   async adbCmdSpawned(deviceId, command, spawnOptions = {}) {
     const flags = command.split(/\s+/);
     const serial = deviceId ? ['-s', deviceId] : [];
-    const _flags = [...serial, ...flags];
+    const port = deviceId ? this._getAdbServerPort(deviceId) : undefined;
+    const portFlag = port ? ['-P', String(port)] : [];
+    const _flags = [...portFlag, ...serial, ...flags];
     const _spawnOptions = {
       ...this.defaultExecOptions,
       ...spawnOptions,
@@ -415,7 +455,23 @@ class ADB {
    */
   spawn(deviceId, params, spawnOptions) {
     const serial = deviceId ? ['-s', deviceId] : [];
-    return spawnAndLog(this.adbBin, [...serial, ...params], spawnOptions);
+    const port = deviceId ? this._getAdbServerPort(deviceId) : undefined;
+    const portFlag = port ? ['-P', String(port)] : [];
+    return spawnAndLog(this.adbBin, [...portFlag, ...serial, ...params], spawnOptions);
+  }
+
+  _getAdbServerPort(deviceId) {
+    if (!deviceId) {
+      return undefined;
+    }
+
+    const port = adbPortRegistry.getPort(deviceId);
+    if (port !== undefined) {
+      return port;
+    }
+
+    const envPort = Number(process.env.ANDROID_ADB_SERVER_PORT);
+    return Number.isInteger(envPort) && envPort > 0 ? envPort : undefined;
   }
 }
 

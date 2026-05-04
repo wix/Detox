@@ -17,6 +17,7 @@ class EmulatorLauncher {
    * @param {object} options
    * @param {string} options.avdName
    * @param {string} options.adbName
+   * @param {number} options.adbServerPort
    * @param {number} options.port
    * @param {string | undefined} options.bootArgs
    * @param {string | undefined} options.gpuMode
@@ -29,7 +30,7 @@ class EmulatorLauncher {
       retries: 2,
       interval: 100,
       conditionFn: isUnknownEmulatorError,
-    }, () => launchEmulatorProcess(this._emulatorExec, this._adb, launchCommand));
+    }, () => launchEmulatorProcess(this._emulatorExec, this._adb, launchCommand, options.adbServerPort));
   }
 
   /**

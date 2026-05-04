@@ -51,7 +51,12 @@ class Instrumentation {
   async _onTerminated() {
     if (this.instrumentationProcess) {
       await this._killProcess();
-      await this.userTerminationFn();
+
+      try {
+        await this.userTerminationFn();
+      } catch (err) {
+        this.logger.warn({ err }, 'Failed while handling Android instrumentation termination');
+      }
     }
   }
 

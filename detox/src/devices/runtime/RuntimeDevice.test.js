@@ -131,6 +131,7 @@ describe('Device', () => {
 
   async function aValidDevice(overrides) {
     const device = aValidUnpreparedDevice(overrides);
+    await device.init();
     await device.selectApp('default');
     return device;
   }

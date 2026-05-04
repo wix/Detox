@@ -1,9 +1,10 @@
 class DeviceHandle {
-  constructor(deviceString) {
+  constructor(deviceString, adbServerPort) {
     const [adbName, status] = deviceString.split('\t');
     this.type = this._inferDeviceType(adbName);
     this.adbName = adbName;
     this.status = status;
+    this.adbServerPort = adbServerPort;
   }
 
   _inferDeviceType(adbName) {
