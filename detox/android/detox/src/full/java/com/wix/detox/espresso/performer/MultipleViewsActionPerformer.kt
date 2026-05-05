@@ -6,7 +6,9 @@ import com.wix.detox.espresso.errors.DetoxNoMatchingViewException
 
 import android.view.View
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.matcher.RootMatchers
 import org.hamcrest.Matcher
 
 class MultipleViewsActionPerformer(
@@ -20,7 +22,12 @@ class MultipleViewsActionPerformer(
             val indexedMatcher = DetoxMatcher.matcherForAtIndex(index, matcher)
 
             try {
-                onView(indexedMatcher).perform(action)
+                try {
+                    onView(indexedMatcher).perform(action)
+                } catch (e: NoMatchingViewException) {
+                    // Fallback: try dialog root (e.g. React Native Modal)
+                    onView(indexedMatcher).inRoot(RootMatchers.isDialog()).perform(action)
+                }
 
                 (action as? ViewActionWithResult<*>)?.getResult()?.let { results.add(it) }
 
