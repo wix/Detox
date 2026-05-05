@@ -697,6 +697,23 @@ declare global {
         type Digit = 0 | DigitWithoutZero;
         type BatteryLevel = `${Digit}` | `${DigitWithoutZero}${Digit}` | "100";
 
+        /**
+         * Options for {@link Device.setBiometricEnrollment}.
+         *
+         * On iOS, these options have no effect: iOS simulators enroll both Face ID and Touch ID together.
+         * On Android, the default modality is fingerprint (Virtual Fingerprint HAL); pass `androidFace: true`
+         * to instead enroll the Virtual Face HAL — note this requires a userdebug AVD and incurs an emulator
+         * reboot (~30s) due to the Virtual Face HAL's feature-flag + sensor-props setup.
+         */
+        interface BiometricEnrollmentOptions {
+            /**
+             * Android emulator only. When `true`, `setBiometricEnrollment` sets up the Virtual Face HAL
+             * (enables the feature flag, sets sensor type/strength, reboots the emulator, then enrolls a
+             * virtual face). When `false` or omitted, the Virtual Fingerprint HAL path is used (no reboot).
+             */
+            androidFace?: boolean;
+        }
+
         interface Device {
             /**
              * Holds the environment-unique ID of the device, namely, the adb ID on Android (e.g. emulator-5554) and the Mac-global simulator UDID on iOS -
@@ -1064,29 +1081,40 @@ declare global {
             shake(): Promise<void>;
 
             /**
-             * Toggles device enrollment in biometric auth (TouchID or FaceID) (iOS Only)
+             * Toggles device enrollment in biometric auth (TouchID/FaceID on iOS; fingerprint by default on Android emulators).
+             *
+             * Android: supported on Android emulators (AVDs) only; requires a userdebug emulator image.
+             * Defaults to fingerprint enrollment via the Virtual Fingerprint HAL. Pass `{ androidFace: true }`
+             * to enroll via the Virtual Face HAL instead — note this requires enabling a feature flag and
+             * reboots the emulator, so expect ~30s extra latency per call.
+             *
              * @example await device.setBiometricEnrollment(true);
              * @example await device.setBiometricEnrollment(false);
+             * @example await device.setBiometricEnrollment(true, { androidFace: true });
              */
-            setBiometricEnrollment(enabled: boolean): Promise<void>;
+            setBiometricEnrollment(enabled: boolean, options?: BiometricEnrollmentOptions): Promise<void>;
 
             /**
-             * Simulates the success of a face match via FaceID (iOS Only)
+             * Simulates the success of a face match via FaceID (iOS) or the Virtual Face HAL (Android emulator).
+             * Android: emulator (AVD) only, and requires a prior call to `setBiometricEnrollment(true, { androidFace: true })`.
              */
             matchFace(): Promise<void>;
 
             /**
-             * Simulates the failure of a face match via FaceID (iOS Only)
+             * Simulates the failure of a face match via FaceID (iOS) or the Virtual Face HAL (Android emulator).
+             * Android: emulator (AVD) only, and requires a prior call to `setBiometricEnrollment(true, { androidFace: true })`.
              */
             unmatchFace(): Promise<void>;
 
             /**
-             * Simulates the success of a finger match via TouchID (iOS Only)
+             * Simulates the success of a finger match via TouchID (iOS) or the Virtual Fingerprint HAL (Android emulator).
+             * Android: emulator (AVD) only.
              */
             matchFinger(): Promise<void>;
 
             /**
-             * Simulates the failure of a finger match via TouchID (iOS Only)
+             * Simulates the failure of a finger match via TouchID (iOS) or the Virtual Fingerprint HAL (Android emulator).
+             * Android: emulator (AVD) only.
              */
             unmatchFinger(): Promise<void>;
 
