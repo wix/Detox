@@ -380,7 +380,14 @@ class ADB {
   }
 
   async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    try {
+      return await this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    } catch (e) {
+      if (e.message && e.message.includes('not found')) {
+        return; // Port mapping already removed — safe to ignore
+      }
+      throw e;
+    }
   }
 
   async emuKill(deviceId) {
