@@ -232,7 +232,7 @@ describe('Attributes', () => {
     });
 
     it(':ios: @new-arch should return attributes of a single element when using atIndex', async () => {
-      const result = await element(by.type('RCTViewComponentView')).atIndex(0).getAttributes();
+      const result = await element(by.type('RCTViewComponentView').withAncestor(by.id('attrScrollView'))).atIndex(0).getAttributes();
 
       expect(result).not.toHaveProperty('elements');
       expect(result).toMatchObject({
