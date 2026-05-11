@@ -316,7 +316,7 @@ class Element : NSObject {
 
 		if let index = index {
 			guard index < views.count else {
-				dtx_fatalError("Index \(index) beyond bounds \(views.count > 0 ? "[0 .. \(views.count - 1)] " : " ")for "\(self.description)"", viewDescription: failDebugAttributes)
+				dtx_fatalError("Index \(index) beyond bounds \(views.count > 0 ? "[0 .. \(views.count - 1)] " : " ")for “\(self.description)”", viewDescription: failDebugAttributes)
 			}
 			return views[index].dtx_attributes
 		} else if views.count == 1 {
