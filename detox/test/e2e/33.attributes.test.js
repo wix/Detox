@@ -220,6 +220,28 @@ describe('Attributes', () => {
     });
   });
 
+  describe('of multiple views with atIndex', () => {
+    it(':ios: @legacy should return attributes of a single element when using atIndex', async () => {
+      const result = await element(by.type('RCTView').withAncestor(by.id('attrScrollView'))).atIndex(0).getAttributes();
+
+      expect(result).not.toHaveProperty('elements');
+      expect(result).toMatchObject({
+        enabled: true,
+        visible: true,
+      });
+    });
+
+    it(':ios: @new-arch should return attributes of a single element when using atIndex', async () => {
+      const result = await element(by.type('RCTViewComponentView')).atIndex(0).getAttributes();
+
+      expect(result).not.toHaveProperty('elements');
+      expect(result).toMatchObject({
+        enabled: true,
+        visible: true,
+      });
+    });
+  });
+
   describe('of multiple views', () => {
     it(':ios: @legacy should return an object with .elements array', async () => {
       await useMatcher(by.type('RCTView').withAncestor(by.id('attrScrollView')));
