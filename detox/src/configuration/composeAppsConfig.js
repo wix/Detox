@@ -148,6 +148,15 @@ function validateAppConfig({ appConfig, appPath, deviceConfig, errorComposer }) 
   if (appConfig.type !== 'android.apk' && appConfig.reversePorts) {
     throw errorComposer.unsupportedReversePorts(appPath);
   }
+
+  if (appConfig.arch !== undefined) {
+    if (!_.isString(appConfig.arch) || !['x86_64', 'arm64'].includes(appConfig.arch)) {
+      throw errorComposer.malformedAppArch(appPath);
+    }
+    if (appConfig.type !== 'ios.app') {
+      throw errorComposer.unsupportedAppArch(appPath);
+    }
+  }
 }
 
 module.exports = composeAppsConfig;

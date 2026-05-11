@@ -275,6 +275,10 @@ class Element : NSObject {
 	
 	@objc
 	var value: String? {
+		if let slider = view.dtx_sliderView {
+			return slider.accessibilityValue
+		}
+
 		return view.accessibilityValue
 	}
 	

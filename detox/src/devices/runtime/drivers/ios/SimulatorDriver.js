@@ -3,7 +3,6 @@ const path = require('path');
 
 const _ = require('lodash');
 
-
 const temporaryPath = require('../../../../artifacts/utils/temporaryPath');
 const DetoxRuntimeError = require('../../../../errors/DetoxRuntimeError');
 const XCUITestRunner = require('../../../../ios/XCUITestRunner');
@@ -104,10 +103,10 @@ class SimulatorDriver extends IosDriver {
     await this._appStateResetFallback.resetAppState(udid, _bundleIds);
   }
 
-  async launchApp(bundleId, launchArgs, languageAndLocale) {
+  async launchApp(bundleId, launchArgs, languageAndLocale, arch) {
     const { udid } = this;
     await this.emitter.emit('beforeLaunchApp', { bundleId, deviceId: udid, launchArgs });
-    const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale);
+    const pid = await this._applesimutils.launch(udid, bundleId, launchArgs, languageAndLocale, arch);
     await this.emitter.emit('launchApp', { bundleId, deviceId: udid, launchArgs, pid });
 
     return pid;

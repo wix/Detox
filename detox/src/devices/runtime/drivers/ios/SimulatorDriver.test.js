@@ -183,7 +183,7 @@ describe('IOS simulator driver', () => {
 
     it('should be passed to AppleSimUtils', async () => {
       await uut.launchApp(bundleId, launchArgs, languageAndLocale);
-      expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, launchArgs, languageAndLocale);
+      expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, launchArgs, languageAndLocale, undefined);
     });
 
     it('should be passed to AppleSimUtils even if some of them were received from `beforeLaunchApp` phase', async () => {
@@ -195,7 +195,7 @@ describe('IOS simulator driver', () => {
       expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, {
         ...launchArgs,
         dog3: 'Chika, from plugin',
-      }, '');
+      }, '', undefined);
     });
   });
 
@@ -210,6 +210,22 @@ describe('IOS simulator driver', () => {
 
       expect(applesimutils.install).toHaveBeenCalledWith(udid, binaryPath);
       expect(appStateResetFallbackInstance.invalidate).toHaveBeenCalledWith(udid, resolvedBundleId);
+    });
+  });
+
+  describe('.launchApp with arch', () => {
+    const languageAndLocale = '';
+
+    it('should pass arch to applesimutils.launch()', async () => {
+      await uut.launchApp(bundleId, {}, languageAndLocale, 'x86_64');
+
+      expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, {}, languageAndLocale, 'x86_64');
+    });
+
+    it('should not pass arch when undefined', async () => {
+      await uut.launchApp(bundleId, {}, languageAndLocale);
+
+      expect(applesimutils.launch).toHaveBeenCalledWith(udid, bundleId, {}, languageAndLocale, undefined);
     });
   });
 

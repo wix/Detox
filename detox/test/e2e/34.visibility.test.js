@@ -51,4 +51,10 @@ describe('visibility expectation in ScrollView', () => {
     const item = scrollViewDriver.listItem(16);
     await waitFor(item).toBeVisible(100).whileElement(scrollViewDriver.byId()).scroll(10, 'down');
   });
+
+  it(`:ios: should not detect scroll view cell until default visibility threshold (75%) is met`, async () => {
+    const item = scrollViewDriver.listItem(16);
+    await waitFor(item).toBeVisible().whileElement(scrollViewDriver.byId()).scroll(10, 'down');
+    await expect(item).toBeVisible(75);
+  });
 });

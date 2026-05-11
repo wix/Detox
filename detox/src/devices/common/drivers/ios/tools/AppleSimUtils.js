@@ -25,6 +25,10 @@ const SIMCTL_SET_PERMISSION_ACTIONS ={
 };
 
 class AppleSimUtils {
+  constructor() {
+    this._getMajorIOSVersion = _.memoize(this._getMajorIOSVersion.bind(this));
+  }
+
   async setPermissions(udid, bundleId, permissionsObj) {
     for (const [service, value] of Object.entries(permissionsObj)) {
       switch (service) {
@@ -243,9 +247,10 @@ class AppleSimUtils {
     }
   }
 
-  async launch(udid, bundleId, launchArgs, languageAndLocale) {
+  async launch(udid, bundleId, launchArgs, languageAndLocale, arch) {
     const frameworkPath = await environment.getFrameworkPath();
-    const result = await this._launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale);
+    const effectiveArch = arch && (await this._isArchArgumentAccessible(udid)) ? arch : undefined;
+    const result = await this._launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale, effectiveArch);
     await this._printLoggingHint(udid, bundleId);
 
     return this._parseLaunchId(result);
@@ -274,9 +279,21 @@ class AppleSimUtils {
   }
 
   async _isSpringBoardInaccessible(udid) {
+    return (await this._getMajorIOSVersion(udid)) >= 16;
+  }
+
+  async _isArchArgumentAccessible(udid) {
+    const majorIOSVersion = await this._getMajorIOSVersion(udid);
+    if (majorIOSVersion < 26) {
+      log.warn({}, `--arch is not supported on iOS ${majorIOSVersion} (requires iOS 26+)`);
+      return false;
+    }
+    return true;
+  }
+
+  async _getMajorIOSVersion(udid) {
     const device = await this._findDeviceByUDID(udid);
-    const majorIOSVersion = parseInt(device.os.version.split('.')[0]);
-    return majorIOSVersion >= 16;
+    return parseInt(_.get(device, 'os.version', '').split('.')[0]);
   }
 
   async _launchAndTerminateSettings(udid) {
@@ -505,15 +522,16 @@ class AppleSimUtils {
     return _.map(args, (v, k) => [`-${k}`, `${v}`]);
   }
 
-  async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale) {
+  async _launchMagically(frameworkPath, udid, bundleId, launchArgs, languageAndLocale, arch) {
     let dylibs = `${frameworkPath}/Detox`;
     if (process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES) {
       dylibs = `${process.env.SIMCTL_CHILD_DYLD_INSERT_LIBRARIES}:${dylibs}`;
     }
 
+    const archArgs = arch ? `--arch=${arch} ` : '';
     const cmdArgs = quote(_.flatten(this._mergeLaunchArgs(launchArgs, languageAndLocale)));
     let launchBin = `SIMCTL_CHILD_GULGeneratedClassDisposeDisabled=YES SIMCTL_CHILD_DYLD_INSERT_LIBRARIES="${dylibs}" ` +
-      `/usr/bin/xcrun simctl launch ${udid} ${bundleId} --args ${cmdArgs}`;
+      `/usr/bin/xcrun simctl launch ${archArgs}${udid} ${bundleId} --args ${cmdArgs}`;
 
     const result = await childProcess.execWithRetriesAndLogs(launchBin, {
       retries: 1,

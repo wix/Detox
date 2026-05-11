@@ -289,6 +289,47 @@ describe('composeAppsConfig', () => {
       });
 
       test.each([
+        ['x86_64', 'ios.app', 'ios.simulator'],
+        ['arm64', 'ios.app', 'ios.simulator'],
+      ])('known app (arch = %s, device type = %s) has valid arch', (arch, appType, deviceType) => {
+        globalConfig.apps.example1.arch = arch;
+        globalConfig.apps.example1.type = appType;
+        deviceConfig.type = deviceType;
+        localConfig.app = 'example1';
+
+        expect(compose).not.toThrow();
+      });
+
+      test.each([
+        ['i386', 'ios.app', 'ios.simulator'],
+        [123, 'ios.app', 'ios.simulator'],
+      ])('known app (arch = %s, device type = %s) has malformed arch', (arch, appType, deviceType) => {
+        globalConfig.apps.example1.arch = arch;
+        globalConfig.apps.example1.type = appType;
+        deviceConfig.type = deviceType;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrow(errorComposer.malformedAppArch(
+          ['apps', 'example1']
+        ));
+      });
+
+      test.each([
+        ['android.apk', 'android.emulator'],
+        ['android.apk', 'android.attached'],
+        ['android.apk', 'android.genycloud'],
+      ])('known app (device type = %s) has unsupported arch', (appType, deviceType) => {
+        globalConfig.apps.example1.arch = 'arm64';
+        globalConfig.apps.example1.type = appType;
+        deviceConfig.type = deviceType;
+        localConfig.app = 'example1';
+
+        expect(compose).toThrow(errorComposer.unsupportedAppArch(
+          ['apps', 'example1']
+        ));
+      });
+
+      test.each([
         ['android.apk', 'ios.simulator'],
         ['ios.app', 'android.attached'],
         ['ios.app', 'android.emulator'],

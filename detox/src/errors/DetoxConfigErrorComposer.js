@@ -530,6 +530,22 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  malformedAppArch(appPath) {
+    return new DetoxConfigError({
+      message: `Invalid value of "arch" property in the app config.\nExpected 'x86_64' or 'arm64':`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
+  unsupportedAppArch(appPath) {
+    return new DetoxConfigError({
+      message: `"arch" property is only supported for ios.app configurations:`,
+      debugInfo: this._focusOnAppConfig(appPath),
+      inspectOptions: { depth: 4 },
+    });
+  }
+
   missingAppBinaryPath(appPath) {
     return new DetoxConfigError({
       message: `Missing "binaryPath" property in the app config.\nExpected a string:`,

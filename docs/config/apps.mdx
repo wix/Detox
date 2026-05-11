@@ -52,6 +52,7 @@ An app config can have the following params:
 | `testBinaryPath`     | (optional, Android only): relative path to the test app (apk)                                                                                                                                                                                                                               |
 | `launchArgs`         | **\[optional]** An object specifying arguments (key-values pairs) to pass through into the app, upon launching on the device. For more info, refer to the dedicated [launch-arguments guide](../guide/launch-args.md).                                                                      |
 | `reversePorts`       | **(optional, Android only)** An array of TCP ports to reverse, so that the network requests to `localhost:{port}` on Android device are going to be forwarded to the host machine.                                                                                                          |
+| `arch`               | **(optional, iOS only)** Launch architecture for the simulator: `x86_64` or `arm64`. Passes `--arch` to `xcrun simctl launch`, selecting which slice of a universal binary to run. Requires Xcode 26+ Universal simulator runtime for `x86_64` on Apple Silicon. |
 
 ## Multiple apps
 
