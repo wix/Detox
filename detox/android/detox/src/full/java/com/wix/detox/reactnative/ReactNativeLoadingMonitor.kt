@@ -83,8 +83,8 @@ open class ReactNativeLoadingMonitor(
         reactContext != null && reactContext !== previousReactContext && reactContext.hasActiveReactInstance()
 
     private fun subscribeAsyncRNContextHandler(onReactContextInitialized: () -> Any) {
-        val isFabric = isFabricEnabled()
-        if (isFabric) {
+        val useNewArchitectureListener = isFabricEnabled() || ReactNativeInfo.isNewArchitectureOnlyVersion()
+        if (useNewArchitectureListener) {
             // We do a casting for supporting RN 0.75 and above
             val host = rnApplication.reactHost as ReactHostImpl?
             host?.addReactInstanceEventListener(object : ReactInstanceEventListener {

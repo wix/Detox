@@ -19,6 +19,7 @@ import kotlin.coroutines.resume
 
 private const val GET_HTML_SCRIPT = """
 (function() {
+  try {
     const blacklistedTags = ['script', 'style', 'head', 'meta'];
     const blackListedTagsSelector = blacklistedTags.join(',');
 
@@ -38,7 +39,10 @@ private const val GET_HTML_SCRIPT = """
     var serializedHtml = serializer.serializeToString(clonedDoc);
 
     // Return the serialized HTML as a string
-    return serializedHtml;
+    return serializedHtml;       
+  } catch {
+    return '<html xmlns="http://www.w3.org/1999/xhtml"><body></body></html>';    
+  }
 })();
 """
 
