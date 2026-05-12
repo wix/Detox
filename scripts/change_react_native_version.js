@@ -28,26 +28,11 @@ async function run() {
     packageJson.dependencies['react-native'] = reactNativeVersion;
   }
 
-  updateReactNative73DevDependencies(reactNativeVersion, packageJson);
   updateReactNative77DevDependencies(reactNativeVersion, packageJson);
+  updateReactNative84DevDependencies(reactNativeVersion, packageJson);
+  updateReactNative85DevDependencies(reactNativeVersion, packageJson);
 
   fs.writeFileSync(filePath, JSON.stringify(packageJson, null, 2));
-}
-
-function updateReactNative73DevDependencies(reactNativeVersion, packageJson) {
-  const minorVersion = reactNativeVersion.split('.')[1];
-  if (minorVersion !== '73') {
-    return;
-  }
-
-  packageJson.devDependencies['@react-native/babel-preset'] = '0.73.21';
-  packageJson.devDependencies['@react-native/eslint-config'] = '0.73.2';
-  packageJson.devDependencies['@react-native/metro-config'] = '0.73.5';
-  packageJson.devDependencies['@react-native/typescript-config'] = '0.73.1';
-
-  delete packageJson.devDependencies['@react-native-community/cli'];
-  delete packageJson.devDependencies['@react-native-community/cli-platform-android'];
-  delete packageJson.devDependencies['@react-native-community/cli-platform-ios'];
 }
 
 function updateReactNative77DevDependencies(reactNativeVersion, packageJson) {
@@ -63,6 +48,36 @@ function updateReactNative77DevDependencies(reactNativeVersion, packageJson) {
   packageJson.devDependencies['@react-native-community/cli'] = '15.0.1';
   packageJson.devDependencies['@react-native-community/cli-platform-android'] = '15.0.1';
   packageJson.devDependencies['@react-native-community/cli-platform-ios'] = '15.0.1';
+}
+
+function updateReactNative84DevDependencies(reactNativeVersion, packageJson) {
+  const minorVersion = reactNativeVersion.split('.')[1];
+  if (minorVersion !== '84') {
+    return;
+  }
+
+  packageJson.devDependencies['@react-native/babel-preset'] = '0.84.0';
+  packageJson.devDependencies['@react-native/eslint-config'] = '0.84.0';
+  packageJson.devDependencies['@react-native/metro-config'] = '0.84.0';
+  packageJson.devDependencies['@react-native/typescript-config'] = '0.84.0';
+  packageJson.devDependencies['@react-native-community/cli'] = '20.1.0';
+  packageJson.devDependencies['@react-native-community/cli-platform-android'] = '20.1.0';
+  packageJson.devDependencies['@react-native-community/cli-platform-ios'] = '20.1.0';
+}
+
+function updateReactNative85DevDependencies(reactNativeVersion, packageJson) {
+  const minorVersion = reactNativeVersion.split('.')[1];
+  if (minorVersion !== '85') {
+    return;
+  }
+
+  packageJson.devDependencies['@react-native/babel-preset'] = reactNativeVersion;
+  packageJson.devDependencies['@react-native/eslint-config'] = reactNativeVersion;
+  packageJson.devDependencies['@react-native/metro-config'] = reactNativeVersion;
+  packageJson.devDependencies['@react-native/typescript-config'] = reactNativeVersion;
+  packageJson.devDependencies['@react-native-community/cli'] = '20.1.0';
+  packageJson.devDependencies['@react-native-community/cli-platform-android'] = '20.1.0';
+  packageJson.devDependencies['@react-native-community/cli-platform-ios'] = '20.1.0';
 }
 
 async function fetch(url) {
