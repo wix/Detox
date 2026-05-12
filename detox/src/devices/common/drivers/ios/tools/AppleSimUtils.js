@@ -311,14 +311,24 @@ class AppleSimUtils {
       return;
     }
 
-    const options = {
-      args: `--byId ${udid} --match${matchType}`,
-      retries: 1,
-      statusLogs: {
-        trying: `Trying to match ${matchType}...`,
-        successful: `Matched ${matchType}!`
-      },
-    };
+    const isIOS26Plus = (await this._getMajorIOSVersion(udid)) >= 26;
+    const options = isIOS26Plus
+      ? {
+          args: `--booted --biometricMatch`,
+          retries: 1,
+          statusLogs: {
+            trying: `Trying to match ${matchType}...`,
+            successful: `Matched ${matchType}!`
+          }
+        }
+      : {
+          args: `--byId ${udid} --match${matchType}`,
+          retries: 1,
+          statusLogs: {
+            trying: `Trying to match ${matchType}...`,
+            successful: `Matched ${matchType}!`
+          }
+        };
     await this._execAppleSimUtils(options);
   }
 
@@ -327,14 +337,24 @@ class AppleSimUtils {
       return;
     }
 
-    const options = {
-      args: `--byId ${udid} --unmatch${matchType}`,
-      retries: 1,
-      statusLogs: {
-        trying: `Trying to unmatch ${matchType}...`,
-        successful: `Unmatched ${matchType}!`
-      },
-    };
+    const isIOS26Plus = (await this._getMajorIOSVersion(udid)) >= 26;
+    const options = isIOS26Plus
+      ? {
+          args: `--booted --biometricNonmatch`,
+          retries: 1,
+          statusLogs: {
+            trying: `Trying to unmatch ${matchType}...`,
+            successful: `Unmatched ${matchType}!`
+          }
+        }
+      : {
+          args: `--byId ${udid} --unmatch${matchType}`,
+          retries: 1,
+          statusLogs: {
+            trying: `Trying to unmatch ${matchType}...`,
+            successful: `Unmatched ${matchType}!`
+          }
+        };
     await this._execAppleSimUtils(options);
   }
 
@@ -344,13 +364,15 @@ class AppleSimUtils {
     }
 
     const toggle = yesOrNo === 'YES';
+    const isIOS26Plus = (await this._getMajorIOSVersion(udid)) >= 26;
+    const byIdOrBooted = isIOS26Plus ? `--booted` : `--byId ${udid}`;
     const options = {
-      args: `--byId ${udid} --biometricEnrollment ${yesOrNo}`,
+      args: `${byIdOrBooted} --biometricEnrollment ${yesOrNo}`,
       retries: 1,
       statusLogs: {
         trying: `Turning ${toggle ? 'on' : 'off'} biometric enrollment...`,
         successful: toggle ? 'Activated!' : 'Deactivated!'
-      },
+      }
     };
     await this._execAppleSimUtils(options);
   }
