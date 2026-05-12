@@ -275,6 +275,10 @@ class Element : NSObject {
 	
 	@objc
 	var value: String? {
+		if let slider = view.dtx_sliderView {
+			return slider.accessibilityValue
+		}
+
 		return view.accessibilityValue
 	}
 	
@@ -309,14 +313,19 @@ class Element : NSObject {
 	@objc
 	var attributes: [String : Any] {
 		let views = self.views
-		
-		if views.count == 1 {
+
+		if let index = index {
+			guard index < views.count else {
+				dtx_fatalError("Index \(index) beyond bounds \(views.count > 0 ? "[0 .. \(views.count - 1)] " : " ")for “\(self.description)”", viewDescription: failDebugAttributes)
+			}
+			return views[index].dtx_attributes
+		} else if views.count == 1 {
 			return views.first!.dtx_attributes
 		} else {
 			let elements = views.map {
 				return $0.dtx_attributes
 			}
-			
+
 			return ["elements": elements]
 		}
 	}

@@ -1,7 +1,18 @@
 /* tslint:disable: no-console */
+const cp = require('child_process');
 const exec = require('shell-utils').exec;
 const fs = require('fs');
 const path = require('path');
+
+const MAX_PUBLISH_RETRIES = 5;
+
+/** Default; override with GITHUB_REPOSITORY (owner/repo) on CI if needed. */
+function getGithubRepoSlug() {
+  if (process.env.GITHUB_REPOSITORY && process.env.GITHUB_REPOSITORY.includes('/')) {
+    return process.env.GITHUB_REPOSITORY.trim();
+  }
+  return 'wix/Detox';
+}
 
 const {
   log,
@@ -49,6 +60,118 @@ function getPublishablePackages() {
     .map(line => JSON.parse(line).location);
 }
 
+function getRootVersion() {
+  const rootPkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+  return rootPkg.version;
+}
+
+function syncWorkspaceVersions(packages, version) {
+  for (const pkg of packages) {
+    const pkgPath = path.join(process.cwd(), pkg, 'package.json');
+    if (fs.existsSync(pkgPath)) {
+      const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      pkgJson.version = version;
+      fs.writeFileSync(pkgPath, JSON.stringify(pkgJson, null, 2) + '\n');
+    }
+  }
+}
+
+/** Primary npm package name used to detect "version already published" (matches RNN release.js pattern). */
+function getPrimaryNpmPackageName() {
+  const detoxPkgPath = path.join(process.cwd(), 'detox', 'package.json');
+  const pkgJson = JSON.parse(fs.readFileSync(detoxPkgPath, 'utf8'));
+  return pkgJson.name;
+}
+
+function tryPublishWorkspaces(packages, npmTag) {
+  const registryPackageName = getPrimaryNpmPackageName();
+
+  for (let i = 0; i < MAX_PUBLISH_RETRIES; i++) {
+    try {
+      for (const pkg of packages) {
+        const v = getRootVersion();
+        log(`Publishing ${pkg}@${v} with tag ${npmTag}`);
+        exec.execSync(`cd ${pkg} && npm publish --tag ${npmTag}`);
+      }
+      return;
+    } catch (err) {
+      const version = getRootVersion();
+      let alreadyPublished = false;
+      try {
+        cp.execSync(`npm view ${registryPackageName}@${version} version`, {stdio: 'pipe'});
+        alreadyPublished = true;
+      } catch (_) {
+        alreadyPublished = false;
+      }
+      if (!alreadyPublished) {
+        throw err;
+      }
+      log(
+        `Version ${version} is already on npm; bumping patch in package.json files and retrying publish...`
+      );
+      exec.execSync(`npm version patch --no-git-tag-version`);
+      const bumped = getRootVersion();
+      syncWorkspaceVersions(packages, bumped);
+    }
+  }
+
+  throw new Error(`npm publish failed after ${MAX_PUBLISH_RETRIES} attempts (including retries)`);
+}
+
+/**
+ * Same pattern as react-native-navigation scripts/release.js: push release tag, then open a PR
+ * with package.json bumps (no direct push of version commits to the base branch).
+ */
+function updatePackageJsonViaPR(version, packages) {
+  logSection('Open PR for package.json version bump');
+  const branch = process.env.BUILDKITE_BRANCH;
+  const prBranch = `ci/update-version-${version}`;
+
+  exec.execSync(`git checkout ${branch}`);
+  exec.execSync(`git checkout -b ${prBranch}`);
+
+  const npmrcPath = path.join(process.cwd(), '.npmrc');
+  if (fs.existsSync(npmrcPath)) {
+    fs.unlinkSync(npmrcPath);
+    log('Removed .npmrc before commit');
+  }
+
+  const pkgJsonPaths = [path.join(process.cwd(), 'package.json')];
+  for (const pkg of packages) {
+    const pkgJsonPath = path.join(process.cwd(), pkg, 'package.json');
+    if (fs.existsSync(pkgJsonPath)) {
+      pkgJsonPaths.push(pkgJsonPath);
+    }
+  }
+
+  for (const p of pkgJsonPaths) {
+    exec.execSync(`git add "${p}"`);
+  }
+
+  exec.execSync(`git commit -m "Update package.json version to ${version} [buildkite skip]"`);
+  exec.execSync(`git push origin ${prBranch}`);
+
+  const repo = getGithubRepoSlug();
+  const prPayload = {
+    title: `Update package.json version to ${version}`,
+    head: prBranch,
+    base: branch,
+    body: `Automated version bump to ${version} from CI release.`,
+  };
+  const prData = JSON.stringify(prPayload);
+
+  cp.execSync(
+    `curl -s -S -f -X POST ` +
+      `-H "Authorization: token ${process.env.GIT_TOKEN}" ` +
+      `-H "Content-Type: application/json" ` +
+      `-d '${prData}' ` +
+      `https://api.github.com/repos/${repo}/pulls`,
+    {stdio: 'inherit'}
+  );
+
+  log(`Opened PR: ${prBranch} -> ${branch} (${repo})`);
+}
+
 function projectSetup() {
   logSection('Project setup');
   exec.execSync(`git checkout ${process.env.BUILDKITE_BRANCH}`);
@@ -79,38 +202,24 @@ function publishToNpm(npmTag) {
   const preid = versionType.includes("pre") ? `--preid=${npmTag}` : '';
   exec.execSync(`npm version ${versionType} ${preid} --no-git-tag-version`);
 
-  const rootPkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  const newVersion = rootPkg.version;
-
-  // Update versions in workspace packages
   const packages = getPublishablePackages();
+  const newVersion = getRootVersion();
   log(`Publishing version ${newVersion} for packages: ${packages.join(', ')}`);
 
-  for (const pkg of packages) {
-    const pkgPath = path.join(process.cwd(), pkg, 'package.json');
-    if (fs.existsSync(pkgPath)) {
-      const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-      pkgJson.version = newVersion;
-      fs.writeFileSync(pkgPath, JSON.stringify(pkgJson, null, 2) + '\n');
-    }
-  }
+  syncWorkspaceVersions(packages, newVersion);
 
   if (!dryRun && !skipNpm) {
     createNpmRc();
-    // Publish each public package
-    for (const pkg of packages) {
-      log(`Publishing ${pkg}@${newVersion} with tag ${npmTag}`);
-      exec.execSync(`cd ${pkg} && npm publish --tag ${npmTag}`);
-    }
+    tryPublishWorkspaces(packages, npmTag);
   }
 
-  // Git operations
+  const publishedVersion = getRootVersion();
+
   if (!dryRun) {
-    exec.execSync(`git add -A`);
-    exec.execSync(`git commit -m "Publish ${newVersion} [ci skip]"`);
-    exec.execSync(`git tag ${newVersion}`);
-    exec.execSync(`git push`);
-    exec.execSync(`git push --tags`);
+    exec.execSync(`git tag -a ${publishedVersion} -m "${publishedVersion}"`);
+    exec.execSyncSilent(`git push origin ${publishedVersion}`);
+
+    updatePackageJsonViaPR(publishedVersion, packages);
   }
 }
 

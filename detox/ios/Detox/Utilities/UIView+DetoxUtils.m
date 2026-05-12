@@ -123,7 +123,21 @@ DTX_DIRECT_MEMBERS
 	CGFloat scale = window != nil ? window.screen.scale : 0.0;
 	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, scale);
 
-	[self.layer renderInContext:UIGraphicsGetCurrentContext()];
+	BOOL rendered = NO;
+	if (@available(iOS 26.0, *))
+	{
+		// iOS 26 liquid-glass bars (UINavigationBar/UITabBar) and other
+		// visual-effect views are not captured by CALayer.renderInContext:,
+		// which skips visual effects and returns blank output. Use
+		// drawViewHierarchyInRect:afterScreenUpdates:YES so those composite
+		// correctly. Falls back to renderInContext: if drawing fails (e.g.
+		// detached views or off-window windows).
+		rendered = [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
+	}
+	if (!rendered)
+	{
+		[self.layer renderInContext:UIGraphicsGetCurrentContext()];
+	}
 
 	UIImage *image= UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();

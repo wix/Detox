@@ -14,7 +14,7 @@ fun ReactApplication.getInstanceManagerSafe(): ReactInstanceManager {
 
 @SuppressLint("VisibleForTests")
 fun ReactApplication.getCurrentReactContext(): ReactContext? {
-    return if (isFabricEnabled()) {
+    return if (isFabricEnabled() || ReactNativeInfo.isNewArchitectureOnlyVersion()) {
         reactHost?.currentReactContext
     } else {
         getInstanceManagerSafe().currentReactContext
