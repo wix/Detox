@@ -1,19 +1,31 @@
+/**
+ * @typedef {import('../../../common/drivers/android/tools/DeviceHandle')} DeviceHandle
+ * @typedef {import('../../../common/drivers/android/tools/EmulatorHandle')} EmulatorHandle
+ */
+
 const log = require('../../../../utils/logger').child({ cat: 'device' });
 
 const DEVICE_LOOKUP = { event: 'DEVICE_LOOKUP' };
 
 class FreeDeviceFinder {
-  constructor(adb, deviceRegistry) {
-    this.adb = adb;
+  /**
+   * @param {import('../../DeviceRegistry')} deviceRegistry
+   */
+  constructor(deviceRegistry) {
     this.deviceRegistry = deviceRegistry;
   }
 
-  async findFreeDevice(deviceQuery) {
-    const { devices } = await this.adb.devices();
+  /**
+   * @param {DeviceHandle[]} candidates
+   * @param {string} deviceQuery
+   * @returns {Promise<import('../../../common/drivers/android/tools/EmulatorHandle') | null>}
+   */
+  async findFreeDevice(candidates, deviceQuery) {
     const takenDevices = this.deviceRegistry.getTakenDevicesSync();
-    for (const candidate of devices) {
+    for (const candidate of candidates) {
       if (await this._isDeviceFreeAndMatching(takenDevices, candidate, deviceQuery)) {
-        return candidate.adbName;
+        // @ts-ignore
+        return candidate;
       }
     }
     return null;

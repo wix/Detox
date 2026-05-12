@@ -1,21 +1,14 @@
-const net = require('net');
-
-const FreePortFinder = require('./FreePortFinder');
-
 describe('FreePortFinder', () => {
   let finder;
-  let server;
+  let isPortTaken;
 
   beforeEach(() => {
-    finder = new FreePortFinder();
-  });
+    jest.mock('../../../../../utils/netUtils');
+    isPortTaken = require('../../../../../utils/netUtils').isPortTaken;
+    isPortTaken.mockResolvedValue(false);
 
-  afterEach(done => {
-    if (server) {
-      server.close(done);
-    } else {
-      done();
-    }
+    const FreePortFinder = require('./FreePortFinder');
+    finder = new FreePortFinder();
   });
 
   test('should find a free port', async () => {
@@ -23,17 +16,6 @@ describe('FreePortFinder', () => {
     expect(port).toBeGreaterThanOrEqual(10000);
     expect(port).toBeLessThanOrEqual(20000);
     expect(port % 2).toBe(0);
-    await expect(finder.isPortTaken(port)).resolves.toBe(false);
-  });
-
-  test('should identify a taken port', async () => {
-    server = net.createServer();
-    const portTaken = await new Promise(resolve => {
-      server.listen(0, () => { // 0 means random available port
-        resolve(server.address().port);
-      });
-    });
-
-    await expect(finder.isPortTaken(portTaken)).resolves.toBe(true);
+    expect(isPortTaken).toHaveBeenCalled();
   });
 });

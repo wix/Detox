@@ -2,8 +2,8 @@ const DeviceHandle = require('./DeviceHandle');
 const EmulatorTelnet = require('./EmulatorTelnet');
 
 class EmulatorHandle extends DeviceHandle {
-  constructor(deviceString) {
-    super(deviceString);
+  constructor(deviceString, adbServerPort) {
+    super(deviceString, adbServerPort);
     this._telnet = new EmulatorTelnet();
 
     this.port = this.adbName.split('-')[1];

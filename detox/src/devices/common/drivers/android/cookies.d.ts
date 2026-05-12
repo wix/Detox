@@ -6,6 +6,10 @@ interface AndroidDeviceCookie extends DeviceCookie {
   adbName: string;
 }
 
+interface EmulatorDeviceCookie extends AndroidDeviceCookie {
+  adbServerPort: number;
+}
+
 interface GenycloudEmulatorCookie extends AndroidDeviceCookie {
   instance: GenyInstance;
 }

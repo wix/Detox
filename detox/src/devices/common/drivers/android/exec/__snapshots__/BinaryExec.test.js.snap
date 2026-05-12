@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`BinaryExec spawn should merge default options with user options 1`] = `
+[
+  [
+    "/binary/mock",
+    [],
+    {
+      "detached": true,
+      "encoding": "utf8",
+      "env": {
+        "TEST_VAR": "test",
+      },
+      "stdio": [
+        "ignore",
+        null,
+        null,
+      ],
+    },
+  ],
+]
+`;
+
+exports[`BinaryExec spawn should specify spawn options 1`] = `
+[
+  [
+    "/binary/mock",
+    [],
+    {
+      "detached": true,
+      "encoding": "utf8",
+      "stdio": [
+        "ignore",
+        null,
+        null,
+      ],
+    },
+  ],
+]
+`;

@@ -20,3 +20,17 @@ The lock file location is determined by the OS, and [defined here](https://githu
 - **MacOS**: `~/Library/Detox/device.registry.json`
 - **Linux**: `~/.local/share/Detox/device.registry.json`
 - **Windows**: `%LOCALAPPDATA%/data/Detox/device.registry.json` or `%USERPROFILE%/Application Data/Detox/device.registry.json`
+
+## Android Emulator ADB Servers
+
+When `android.emulator.useSeparateAdbServers` is enabled, Detox-managed Android emulators no longer share the default ADB server on port `5037`. Instead, each allocated emulator can run behind its own dedicated ADB server port.
+
+Detox coordinates those custom ADB server ports through a second lockfile-backed registry, alongside the regular device registry. That registry is used to:
+
+- reserve a custom ADB server port before an emulator is launched;
+- keep the reservation while the emulator is still booting and not yet visible in `adb devices`;
+- mark the reservation as reusable once the emulator is reachable;
+- preserve keep-alive emulators for later Detox sessions;
+- avoid reclaiming a port that still belongs to another live Detox session.
+
+This mode is opt-in and is primarily intended to improve stability for parallel Android emulator runs.

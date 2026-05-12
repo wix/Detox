@@ -23,6 +23,7 @@ Go to https://developer.android.com/studio/command-line/variables.html for more 
 const DETOX_APPS_CACHE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'apps-cache');
 const DETOX_LOCK_FILE_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'global-context.json');
 const DEVICE_REGISTRY_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'device.registry.json');
+const ADB_PORT_REGISTRY_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'adb.port.registry.json');
 const LAST_FAILED_TESTS_PATH = path.join(DETOX_LIBRARY_ROOT_PATH, 'last-failed.txt');
 
 function getAndroidSDKPath() {
@@ -236,6 +237,10 @@ function getDeviceRegistryPath() {
   return DEVICE_REGISTRY_PATH;
 }
 
+function getAdbPortRegistryPath() {
+  return ADB_PORT_REGISTRY_PATH;
+}
+
 function getLastFailedTestsPath() {
   return LAST_FAILED_TESTS_PATH;
 }
@@ -264,6 +269,7 @@ module.exports = {
   getDetoxLibraryRootPath,
   getDetoxLockFilePath,
   getDeviceRegistryPath,
+  getAdbPortRegistryPath,
   getLastFailedTestsPath,
   getHomeDir
 };

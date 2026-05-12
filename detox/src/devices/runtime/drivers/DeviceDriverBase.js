@@ -39,6 +39,9 @@ class DeviceDriverBase {
     return {};
   }
 
+  async init() {
+  }
+
   // TODO: Drivers have no access to app config — RuntimeDevice decomposes it
   // into positional args (binaryPath, bundleId, launchArgs, ...) and threads
   // each property individually. Every new app-level property (e.g. `arch`)

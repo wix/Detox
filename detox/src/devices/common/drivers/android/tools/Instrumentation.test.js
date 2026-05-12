@@ -204,12 +204,20 @@ describe('Instrumentation', () => {
     });
   });
 
-  it('should work with no user callbacks registration', async () => {
-    const Instrumentation = require('./Instrumentation');
-    uut = new Instrumentation(adb, logger, undefined, undefined);
-    await uut.launch(deviceId, bundleId, []);
-    await uut.terminate();
-  });
+    it('should work with no user callbacks registration', async () => {
+      const Instrumentation = require('./Instrumentation');
+      uut = new Instrumentation(adb, logger, undefined, undefined);
+      await uut.launch(deviceId, bundleId, []);
+      await uut.terminate();
+    });
+
+    it('should log and swallow custom termination callback failures', async () => {
+      userTerminationCallback.mockRejectedValue(new Error('boom'));
+
+      await uut.launch(deviceId, bundleId, []);
+      await expect(invokeTerminationCallback()).resolves.toBeUndefined();
+      expect(logger.warn).toHaveBeenCalledWith(expect.any(Object), 'Failed while handling Android instrumentation termination');
+    });
 
   const extractDataCallback = () => childProcess.stdout.on.mock.calls[0][1];
   const invokeDataCallbackWith = async (data) => {

@@ -30,7 +30,7 @@ class EmulatorVersionResolver {
     }
 
     const version = this._parseVersionString(matches[1]);
-    log.debug({ success: true }, 'Detected emulator binary version', version);
+    log.debug({ success: true }, `Detected emulator binary version ${version}`);
     return version;
   }
 

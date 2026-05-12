@@ -247,6 +247,12 @@ describe('Environment', () => {
       });
     });
 
+    describe('getAdbPortRegistryPath', () => {
+      it('should return path to the ADB port registry lockfile', () => {
+        expect(Environment.getAdbPortRegistryPath()).toContain(path.join('Detox', 'adb.port.registry.json'));
+      });
+    });
+
     function ifAndroidSdkRootAndHomeAreNotSet(fn) {
       describe('if $ANDROID_SDK_ROOT and $ANDROID_HOME are not set', () => {
         beforeEach(() => {
