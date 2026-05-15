@@ -1,4 +1,5 @@
-const execa = require('execa');
+const tinyexec = require('tinyexec');
+const { tokenizeArgs } = require('args-tokenizer');
 
 const detox = require('../../internals');
 const { DetoxRuntimeError } = require('../../src/errors');
@@ -36,12 +37,15 @@ class AppStartCommand {
       }
     };
 
-    this._cpHandle = execa.command(cmd, {
-      stdio: ['ignore', 'inherit', 'inherit'],
-      shell: true
+    const [command, ...args] = tokenizeArgs(cmd);
+    this._cpHandle = tinyexec.x(command, args, {
+      nodeOptions: {
+        stdio: ['ignore', 'inherit', 'inherit'],
+        shell: true
+      }
     });
-    this._cpHandle.on('error', onError);
-    this._cpHandle.on('exit', (code, signal) => {
+    this._cpHandle.process.on('error', onError);
+    this._cpHandle.process.on('exit', (code, signal) => {
       const reason = code == null ? `signal ${signal}` : `code ${code}`;
       const msg = `Command exited with ${reason}: ${cmd}`;
       if (signal || code === 0) {
