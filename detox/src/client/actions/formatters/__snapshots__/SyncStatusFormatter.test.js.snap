@@ -176,6 +176,11 @@ exports[`Sync Status Formatter busy status should format "one_time_events" corre
 • The event "foo" is taking place with object: "bar"."
 `;
 
+exports[`Sync Status Formatter busy status should format "one_time_events" correctly when object is null 1`] = `
+"The app is busy with the following tasks:
+• The event "foo" is taking place."
+`;
+
 exports[`Sync Status Formatter busy status should format "one_time_events" correctly when there is no object 1`] = `
 "The app is busy with the following tasks:
 • The event "foo" is taking place."
