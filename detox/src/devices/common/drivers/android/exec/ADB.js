@@ -388,7 +388,7 @@ class ADB {
   }
 
   async adbCmd(deviceId, params, options = {}) {
-    const serial = `${deviceId ? `-s ${deviceId}` : ''}`;
+    const serial = `${deviceId ? `-s "${escape.inQuotedString(deviceId)}"` : ''}`;
     const cmd = `"${this.adbBin}" ${serial} ${params}`;
     const _options = {
       ...this.defaultExecOptions,
