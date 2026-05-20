@@ -1516,9 +1516,10 @@ declare global {
             /**
              * In React Native apps, expect UI component of type <Text> to have text.
              * In native iOS apps, expect UI elements of type UIButton, UILabel, UITextField or UITextViewIn to have inputText with text.
-             * @example await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!);
+             * @example await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!');
+             * @example await expect(element(by.id('dynamicTitle'))).toHaveText(/^Welcome back/);
              */
-            toHaveText(text: string): R;
+            toHaveText(text: string | RegExp): R;
 
             /**
              * Expects a specific accessibilityLabel, as specified via the `accessibilityLabel` prop in React Native.

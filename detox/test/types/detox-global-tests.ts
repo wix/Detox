@@ -80,9 +80,11 @@ describe("Test", () => {
         await expectElement.toBeFocused();
         await expectElement.not.toBeFocused();
         await expectElement.toBeNotFocused();
+        await expectElement.toHaveText(/dynamic text/);
 
         const waitForElement = waitFor(element(by.id("element")));
         await waitForElement.toBeVisible().withTimeout(2000);
+        await waitForElement.toHaveText(/dynamic text/).withTimeout(2000);
 
         await device.pressBack();
         await device.reverseTcpPort(32167);
