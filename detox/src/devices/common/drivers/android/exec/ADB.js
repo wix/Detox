@@ -6,6 +6,7 @@ const { execWithRetriesAndLogs, spawnWithRetriesAndLogs, spawnAndLog } = require
 const { getAdbPath } = require('../../../../../utils/environment');
 const logger = require('../../../../../utils/logger');
 const { escape } = require('../../../../../utils/pipeCommands');
+const retry = require('../../../../../utils/retry');
 const DeviceHandle = require('../tools/DeviceHandle');
 const EmulatorHandle = require('../tools/EmulatorHandle');
 
@@ -18,6 +19,14 @@ const DEFAULT_INSTALL_OPTIONS = {
   timeout: 60000,
   retries: 3,
 };
+
+const ENROLLED_FINGER_ID = 1;
+const UNENROLLED_FINGER_ID = 99;
+const DEFAULT_BIOMETRIC_PIN = '0000';
+const ENROLLED_FACE_HIT = 1;
+const UNENROLLED_FACE_HIT = 2;
+const BOOT_WAIT_RETRIES = 240;
+const BOOT_WAIT_INTERVAL_MS = 2500;
 
 class ADB {
   constructor() {
@@ -44,6 +53,11 @@ class ADB {
         : new DeviceHandle(s))
       .value();
     return { devices, stdout };
+  }
+
+  async root(deviceId) {
+    await this.adbCmd(deviceId, 'root');
+    await this.adbCmd(deviceId, 'wait-for-device');
   }
 
   async getState(deviceId) {
@@ -373,6 +387,111 @@ class ADB {
 
   async emu(deviceId, cmd, options) {
     return (await this.adbCmd(deviceId, `emu "${escape.inQuotedString(cmd)}"`, options)).stdout.trim();
+  }
+
+  async matchFinger(deviceId) {
+    await this.emu(deviceId, `finger touch ${ENROLLED_FINGER_ID}`);
+    await this.emu(deviceId, `finger remove`);
+  }
+
+  async unmatchFinger(deviceId) {
+    await this.emu(deviceId, `finger touch ${UNENROLLED_FINGER_ID}`);
+    await this.emu(deviceId, `finger remove`);
+  }
+
+  async setBiometricEnrollment(deviceId, enabled) {
+    await this.root(deviceId);
+    if (enabled) {
+      await this.shell(deviceId, `locksettings clear --old ${DEFAULT_BIOMETRIC_PIN}`).catch(() => {});
+      await this.shell(deviceId, `locksettings set-pin ${DEFAULT_BIOMETRIC_PIN}`);
+      await this.shell(deviceId, `setprop persist.vendor.fingerprint.virtual.enrollments 1`);
+      await this.shell(deviceId, `cmd fingerprint sync`);
+    } else {
+      await this.shell(deviceId, `cmd fingerprint sync`);
+      await this.shell(deviceId, `setprop persist.vendor.fingerprint.virtual.enrollments 0`);
+      await this.shell(deviceId, `locksettings clear --old ${DEFAULT_BIOMETRIC_PIN}`).catch(() => {});
+    }
+  }
+
+  async setFaceEnrollment(deviceId, enabled) {
+    await this.root(deviceId);
+    if (enabled) {
+      const alreadyActive = await this._isFaceVirtualHalActive(deviceId);
+      if (!alreadyActive) {
+        await this.shell(deviceId, `device_config set_sync_disabled_for_tests persistent`).catch(() => {});
+        await this.shell(deviceId, `device_config put biometrics_framework com.android.server.biometrics.face_vhal_feature true`);
+        await this.shell(deviceId, `settings put secure biometric_virtual_enabled 1`);
+        await this.shell(deviceId, `setprop persist.vendor.face.virtual.strength strong`);
+        await this.shell(deviceId, `setprop persist.vendor.face.virtual.type RGB`);
+        const reverses = await this._listReverses(deviceId);
+        await this.reboot(deviceId);
+        await this.root(deviceId);
+        await this._restoreReverses(deviceId, reverses);
+      }
+      await this.shell(deviceId, `locksettings clear --old ${DEFAULT_BIOMETRIC_PIN}`).catch(() => {});
+      await this.shell(deviceId, `locksettings set-pin ${DEFAULT_BIOMETRIC_PIN}`);
+      await this.shell(deviceId, `setprop persist.vendor.face.virtual.enrollments 1`);
+      await this.shell(deviceId, `cmd face sync`);
+    } else {
+      await this.shell(deviceId, `cmd face sync`).catch(() => {});
+      await this.shell(deviceId, `setprop persist.vendor.face.virtual.enrollments 0`);
+      await this.shell(deviceId, `locksettings clear --old ${DEFAULT_BIOMETRIC_PIN}`).catch(() => {});
+    }
+  }
+
+  async _isFaceVirtualHalActive(deviceId) {
+    try {
+      const virtualEnabled = await this.shell(deviceId, `settings get secure biometric_virtual_enabled`, { silent: true, retries: 0 });
+      const featureFlag = await this.shell(deviceId, `device_config get biometrics_framework com.android.server.biometrics.face_vhal_feature`, { silent: true, retries: 0 });
+      return String(virtualEnabled).trim() === '1' && String(featureFlag).trim() === 'true';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  async _listReverses(deviceId) {
+    try {
+      const { stdout } = await this.adbCmd(deviceId, 'reverse --list');
+      return (stdout || '')
+        .split('\n')
+        .map(line => line.match(/(tcp:\d+)\s+(tcp:\d+)/))
+        .filter(Boolean)
+        .map(m => ({ local: m[1], remote: m[2] }));
+    } catch (_) {
+      return [];
+    }
+  }
+
+  async _restoreReverses(deviceId, reverses) {
+    for (const { local, remote } of reverses) {
+      await this.adbCmd(deviceId, `reverse ${local} ${remote}`).catch(() => {});
+    }
+  }
+
+  async matchFace(deviceId) {
+    await this.root(deviceId);
+    await this.shell(deviceId, `setprop vendor.face.virtual.enrollment_hit ${ENROLLED_FACE_HIT}`);
+  }
+
+  async unmatchFace(deviceId) {
+    await this.root(deviceId);
+    await this.shell(deviceId, `setprop vendor.face.virtual.enrollment_hit ${UNENROLLED_FACE_HIT}`);
+  }
+
+  async reboot(deviceId) {
+    await this.adbCmd(deviceId, 'reboot');
+    await this.adbCmd(deviceId, 'wait-for-device');
+    await this._waitForBootComplete(deviceId);
+  }
+
+  async _waitForBootComplete(deviceId) {
+    await retry({ retries: BOOT_WAIT_RETRIES, interval: BOOT_WAIT_INTERVAL_MS, shouldUnref: true }, async () => {
+      if (!await this.isBootComplete(deviceId)) {
+        throw new DetoxRuntimeError({
+          message: `Waited for ${deviceId} to complete booting for too long!`,
+        });
+      }
+    });
   }
 
   async reverse(deviceId, port) {

@@ -211,9 +211,9 @@ class RuntimeDevice {
     await this.deviceDriver.waitForBackground();
   }
 
-  async setBiometricEnrollment(toggle) {
+  async setBiometricEnrollment(toggle, options) {
     const yesOrNo = toggle ? 'YES' : 'NO';
-    await this.deviceDriver.setBiometricEnrollment(yesOrNo);
+    await this.deviceDriver.setBiometricEnrollment(yesOrNo, options);
   }
 
   async matchFace() {
