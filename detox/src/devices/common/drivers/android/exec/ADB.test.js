@@ -108,7 +108,17 @@ describe('ADB', () => {
     await adb.waitForDevice(deviceId);
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining(`"${adbBinPath}" -s ${deviceId} wait-for-device`),
+      expect.stringContaining(`"${adbBinPath}" -s "${deviceId}" wait-for-device`),
+      expect.any(Object));
+  });
+
+  it('should quote device serials used in shell commands', async () => {
+    const mdnsDeviceId = 'adb-5721009297-Rq3U4s (2)._adb-tls-connect._tcp';
+
+    await adb.waitForDevice(mdnsDeviceId);
+
+    expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+      expect.stringContaining(`"${adbBinPath}" -s "${mdnsDeviceId}" wait-for-device`),
       expect.any(Object));
   });
 
@@ -196,11 +206,11 @@ describe('ADB', () => {
     await adb.setLocation(deviceId, lat, lon);
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator emu "geo fix -70.5 30.5"`),
+      expect.stringContaining(`-s "mockEmulator" emu "geo fix -70.5 30.5"`),
       expect.anything());
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator emu "geo fix -70,5 30,5"`),
+      expect.stringContaining(`-s "mockEmulator" emu "geo fix -70,5 30,5"`),
       expect.anything());
   });
 
@@ -222,7 +232,7 @@ describe('ADB', () => {
     await adb.push(deviceId, sourceFile, destFile);
 
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator push "${sourceFile}" "${destFile}"`),
+      expect.stringContaining(`-s "mockEmulator" push "${sourceFile}" "${destFile}"`),
       expect.anything());
   });
 
@@ -266,7 +276,7 @@ describe('ADB', () => {
     const expectedText = 'some-text-with%sspaces';
     await adb.typeText(deviceId, text);
     expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-      expect.stringContaining(`-s mockEmulator shell "input text ${expectedText}"`),
+      expect.stringContaining(`-s "mockEmulator" shell "input text ${expectedText}"`),
       expect.anything());
   });
 
@@ -393,29 +403,29 @@ describe('ADB', () => {
   describe('animation disabling', () => {
     it('should disable animator (e.g. ObjectAnimator) animations', async () => {
       await adb.disableAndroidAnimations(deviceId);
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global animator_duration_scale 0"`, { retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s "${deviceId}" shell "settings put global animator_duration_scale 0"`, { retries: 1 });
     });
 
     it('should disable window animations', async () => {
       await adb.disableAndroidAnimations(deviceId);
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global window_animation_scale 0"`, { retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s "${deviceId}" shell "settings put global window_animation_scale 0"`, { retries: 1 });
     });
 
     it('should disable transition (e.g. activity launch) animations', async () => {
       await adb.disableAndroidAnimations(deviceId);
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "settings put global transition_animation_scale 0"`, { retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s "${deviceId}" shell "settings put global transition_animation_scale 0"`, { retries: 1 });
     });
   });
 
   describe('WiFi toggle', () => {
     it('should enable wifi', async () => {
       await adb.setWiFiToggle(deviceId, true);
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi enable"`, { retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s "${deviceId}" shell "svc wifi enable"`, { retries: 1 });
     });
 
     it('should disable wifi', async () => {
       await adb.setWiFiToggle(deviceId, false);
-      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s ${deviceId} shell "svc wifi disable"`, { retries: 1 });
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(`"${adbBinPath}" -s "${deviceId}" shell "svc wifi disable"`, { retries: 1 });
     });
   });
 
@@ -423,7 +433,7 @@ describe('ADB', () => {
     it('should invoke pm clear for given package', async () => {
       await adb.clearAppData(deviceId, 'com.example.app');
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm clear com.example.app"`),
+        expect.stringContaining(`"${adbBinPath}" -s "${deviceId}" shell "pm clear com.example.app"`),
         expect.any(Object)
       );
     });
@@ -438,7 +448,7 @@ describe('ADB', () => {
     it('should invoke pm grant --all-permissions for given package', async () => {
       await adb.grantAllPermissions(deviceId, 'com.example.app');
       expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
-        expect.stringContaining(`"${adbBinPath}" -s ${deviceId} shell "pm grant --all-permissions com.example.app"`),
+        expect.stringContaining(`"${adbBinPath}" -s "${deviceId}" shell "pm grant --all-permissions com.example.app"`),
         expect.any(Object)
       );
     });
