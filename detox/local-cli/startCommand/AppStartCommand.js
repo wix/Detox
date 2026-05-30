@@ -1,4 +1,4 @@
-const execa = require('execa');
+const { spawn } = require('child_process');
 
 const detox = require('../../internals');
 const { DetoxRuntimeError } = require('../../src/errors');
@@ -36,9 +36,9 @@ class AppStartCommand {
       }
     };
 
-    this._cpHandle = execa.command(cmd, {
+    this._cpHandle = spawn(cmd, [], {
       stdio: ['ignore', 'inherit', 'inherit'],
-      shell: true
+      shell: true,
     });
     this._cpHandle.on('error', onError);
     this._cpHandle.on('exit', (code, signal) => {
@@ -58,7 +58,14 @@ class AppStartCommand {
 
   async stop() {
     if (this._cpHandle) {
-      this._cpHandle.kill();
+      this._cpHandle.kill('SIGTERM');
+      const killTimer = setTimeout(() => {
+        if (this._cpHandle) {
+          this._cpHandle.kill('SIGKILL');
+        }
+      }, 5000);
+      killTimer.unref();
+      return this._cpDeferred.promise.finally(() => clearTimeout(killTimer));
     }
 
     return this._cpDeferred.promise;

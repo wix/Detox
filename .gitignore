@@ -48,7 +48,6 @@ jspm_packages
 # IDE
 ################
 .idea
-.vscode
 
 ## File-based project format:
 *.iws
@@ -246,10 +245,10 @@ Detox-ios.tbz
 
 
 # Ignore .env files across the project
-**/.env
 
 #ignore yalc
 .yalc/
 yalc.lock
 /scripts/publishing-e2e/
 .npmrc
+config.bat
