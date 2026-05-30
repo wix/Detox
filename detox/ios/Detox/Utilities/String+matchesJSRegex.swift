@@ -19,19 +19,12 @@ extension String {
 		let pattern = pattern(from: jsRegex, flagsChars: flagsChars)
 		let options = regexOptions(from: flagsChars)
 
-		let regex = try! NSRegularExpression(pattern: pattern, options: options)
-		let searchRange = NSRange(location: 0, length: self.utf16.count)
-		let match = regex.firstMatch(
-			in: self,
-			options: [],
-			range: searchRange
-		)
-
-		guard let match = match else {
+		guard let regex = try? NSRegularExpression(pattern: pattern, options: options) else {
 			return false
 		}
-
-		return searchRange == match.range
+		let searchRange = NSRange(location: 0, length: self.utf16.count)
+		let match = regex.firstMatch(in: self, options: [], range: searchRange)
+		return match.map { $0.range == searchRange } ?? false
 	}
 
 	private func flagsChars(from jsRegex: String) -> [Character] {

@@ -50,10 +50,15 @@ await expect(element(by.id('emailInput'))).toBeFocused();
 
 ### `toHaveText(text)`
 
-Expects the element to have the specified text.
+Expects the element to have the specified text. Accepts a string for exact matching or a regular expression for pattern matching (see [regex flags](matchers.md#regex-matching)).
+
+:::note
+When using a regular expression, it must match the **entire** text of the element on both iOS and Android — partial matches are not supported. Use `.*` to match surrounding content, e.g. `/.*Hello.*/` to check that the text contains "Hello".
+:::
 
 ```js
 await expect(element(by.id('mainTitle'))).toHaveText('Welcome back!');
+await expect(element(by.id('dynamicTitle'))).toHaveText(/^Welcome back.*/i);
 ```
 
 ### `toHaveLabel(label)`
