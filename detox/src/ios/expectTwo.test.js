@@ -483,6 +483,24 @@ describe('expectTwo', () => {
     expect(testCall).toDeepEqual(jsonOutput);
   });
 
+  it(`should parse correct JSON for toHaveText expectation with RegExp`, async () => {
+    const testCall = await e.expect(e.element(e.by.id('UniqueId204'))).toHaveText(/I contain .* text/i);
+    const jsonOutput = {
+      invocation: {
+        type: 'expectation',
+        predicate: {
+          type: 'id',
+          value: 'UniqueId204',
+          isRegex: false,
+        },
+        expectation: 'toHaveText',
+        params: ['/I contain .* text/i', true]
+      }
+    };
+
+    expect(testCall).toDeepEqual(jsonOutput);
+  });
+
   it(`should parse correct JSON for toHaveId expectation`, async () => {
     const testCall = await e.expect(e.element(e.by.text('Product')).atIndex(2)).toHaveId('ProductId002');
     const jsonOutput = {

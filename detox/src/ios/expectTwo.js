@@ -78,8 +78,9 @@ class Expect {
   }
 
   toHaveText(text) {
+    const isRegex = isRegExp(text);
     const traceDescription = expectDescription.toHaveText(text);
-    return this.expect('toHaveText', traceDescription, text);
+    return this.expect('toHaveText', traceDescription, isRegex ? text.toString() : text, isRegex || undefined);
   }
 
   toNotHaveText(text) {

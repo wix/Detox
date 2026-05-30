@@ -37,6 +37,14 @@ describe('Assertions', () => {
     await expect(driver.textElement).toHaveText('I contain some text');
   });
 
+  it('should assert an element has text matching a regex', async () => {
+    await expect(driver.textElement).toHaveText(/I contain .* text/);
+  });
+
+  it('should assert an element does not have text matching a regex', async () => {
+    await expect(driver.textElement).not.toHaveText(/I contain .* banana/);
+  });
+
   it('should assert an element has (accessibility) label', async () => {
     await expect(driver.textElement).toHaveLabel('I contain some text');
   });

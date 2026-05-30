@@ -114,7 +114,9 @@ class Expectation : CustomStringConvertible {
         } else if expectationClass == SliderPositionExpectation.self {
 			return SliderPositionExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, value: params!.first! as! Double, tolerance: params!.count > 1 ? (params![1] as! Double) : nil)
 		} else if expectationClass == ValueExpectation.self {
-			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!)
+			let rawParams = dictionaryRepresentation[Keys.params] as? [Any]
+			let isRegex = rawParams != nil && rawParams!.count > 1 ? (rawParams![1] as? Bool ?? false) : false
+			return ValueExpectation(kind: kind, modifiers: modifiers, element: element, timeout: timeout, key: keyMapping[kind]!, value: params!.first!, isRegex: isRegex)
 		} else if expectationClass == ToBeVisibleExpectation.self {
 			let percentDouble = params != nil && params!.count > 0 ? params!.first as? Double : nil
 			let percent = percentDouble != nil ? UInt(exactly: percentDouble!) : nil
@@ -250,25 +252,32 @@ class ToExistExpectation : Expectation {
 class ValueExpectation : Expectation {
 	let key : String
 	let value : CustomStringConvertible
-	
-	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: CustomStringConvertible) {
+	let isRegex : Bool
+
+	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval, key: String, value: CustomStringConvertible, isRegex: Bool = false) {
 		self.key = key
 		self.value = value
-		
+		self.isRegex = isRegex
+
 		super.init(kind: kind, modifiers: modifiers, element: element, timeout: timeout)
 	}
-	
+
 	required init(kind: String, modifiers: Set<String>, element: Element, timeout: TimeInterval) {
 		fatalError("Call the other initializer")
 	}
-	
+
 	override func evaluate(with element: Element) -> Bool {
+		if isRegex {
+			guard let elementValue = NSExpression(forKeyPath: key).expressionValue(with: element, context: nil) as? String,
+				  let regexString = value as? String else { return false }
+			return elementValue.matchesJSRegex(to: regexString)
+		}
 		return NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: key), rightExpression: NSExpression(forConstantValue: value), modifier: .direct, type: .equalTo, options: []).evaluate(with: element)
 	}
-	
+
 	override var additionalDescription: String {
 		get {
-			return "(\(key) == “\(value)”)"
+			return isRegex ? "(\(key) matches \(value))" : "(\(key) == “\(value)”)"
 		}
 	}
 }
