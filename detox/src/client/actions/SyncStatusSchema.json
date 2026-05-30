@@ -114,7 +114,10 @@
                         "type":"string"
                       },
                       "object":{
-                        "type":"string"
+                        "type":[
+                          "string",
+                          "null"
+                        ]
                       }
                     },
                     "required":[

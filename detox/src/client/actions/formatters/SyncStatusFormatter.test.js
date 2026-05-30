@@ -150,6 +150,23 @@ describe('Sync Status Formatter', () => {
       await expect(format(busyStatus)).toMatchSnapshot();
     });
 
+    it('should format "one_time_events" correctly when object is null', async () => {
+      let busyStatus = {
+        app_status: 'busy',
+        busy_resources: [
+          {
+            name: 'one_time_events',
+            description: {
+              event: 'foo',
+              object: null
+            }
+          }
+        ]
+      };
+
+      await expect(format(busyStatus)).toMatchSnapshot();
+    });
+
     it('should format "one_time_events" correctly', async () => {
       let busyStatus = {
         app_status: 'busy',
