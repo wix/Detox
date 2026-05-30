@@ -62,7 +62,14 @@ class AppStartCommand {
 
   async stop() {
     if (this._cpHandle) {
-      this._cpHandle.kill();
+      this._cpHandle.kill('SIGTERM');
+      const killTimer = setTimeout(() => {
+        if (this._cpHandle) {
+          this._cpHandle.kill('SIGKILL');
+        }
+      }, 5000);
+      killTimer.unref();
+      return this._cpDeferred.promise.finally(() => clearTimeout(killTimer));
     }
 
     return this._cpDeferred.promise;
