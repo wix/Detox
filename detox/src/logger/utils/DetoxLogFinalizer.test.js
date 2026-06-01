@@ -4,7 +4,7 @@ const path = require('path');
 const { PassThrough } = require('stream');
 
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('tinyglobby');
 
 const temporary = require('../../artifacts/utils/temporaryPath');
 const tempfile = require('../../utils/tempfile');
@@ -116,7 +116,7 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       await finalizer.finalize();
 
-      const outFiles = glob.sync('*', { cwd: artifactsDir() });
+      const outFiles = globSync('*', { cwd: artifactsDir() });
       expect(outFiles).toEqual([
         'detox.log',
         'detox.trace.json',
@@ -148,7 +148,7 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       finalizer.finalizeSync();
 
-      const outFiles = glob.sync('*', { cwd: artifactsDir() });
+      const outFiles = globSync('*', { cwd: artifactsDir() });
       expect(outFiles.map(f => path.extname(f))).toEqual([
         '.jsonl',
         '.jsonl',
@@ -171,7 +171,7 @@ describe('DetoxLogFinalizer', () => {
       await createLogFiles();
       finalizer.finalizeSync();
 
-      const outFiles = glob.sync('*', { cwd: artifactsDir() });
+      const outFiles = globSync('*', { cwd: artifactsDir() });
       expect(outFiles.map(f => path.extname(f))).toEqual([
         '.jsonl',
         '.jsonl',
