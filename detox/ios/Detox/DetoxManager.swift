@@ -201,7 +201,6 @@ public class DetoxManager : NSObject, WebSocketDelegate {
                     return
                 case "blacklistURLs":
                     DTXSyncManager.urlBlacklist = value as! [String]
-                    DTXSyncManager.urlBlacklist = value as! [String]
                     return
                 case "enabled":
                     DTXSyncManager.synchronizationDisabled = !((value as! NSNumber).boolValue)
