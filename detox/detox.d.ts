@@ -970,7 +970,7 @@ declare global {
              * flags are portable across iOS and Android; the `g`, `y`, `d`, `u` and `v` flags are rejected.
              *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
-             * @example await device.setURLBlacklist([/.*127\.0\.0\.1.*/, /.*my\.ignored\.endpoint.*/i]);
+             * @example await device.setURLBlacklist([/.*127\.0\.0\.1/, /my\.ignored\.endpoint/i]);
              */
             setURLBlacklist(urls: Array<string | RegExp>): Promise<void>;
 
