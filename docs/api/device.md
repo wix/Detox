@@ -257,7 +257,23 @@ await device.launchApp({
 Launches the app with a URL blacklist to disable network synchronization on certain endpoints.
 Useful if the app makes frequent network calls to blacklisted endpoints upon startup.
 
-> Note that due to the complexity of reg-exps and interoperability concerns, the implementation is fairly sensitive to the format of the string of urls.
+**Recommended — pass a `RegExp` or an array of `RegExp`/strings:**
+
+```js
+await device.launchApp({
+  newInstance: true,
+  launchArgs: { detoxURLBlacklistRegex: [/^http:\/\/192\.168\.1\.253:\d{4}\/.*/, /https:\/\/e\.crashlytics\.com\/spi\/v2\/events/] },
+});
+```
+
+Using the array form (including plain strings) fixes a long-standing bug where patterns containing commas (e.g. `\d{1,3}`) were silently corrupted by comma-splitting.
+
+> **Supported `RegExp` flags:** Only `i`, `m`, and `s` are portable across iOS and Android.
+> The flags `g`, `y`, `d`, `u`, and `v` are not supported and will throw a `TypeError` at launch time.
+
+**Legacy string form (still supported):**
+
+> Note that due to the complexity of reg-exps and interoperability concerns, the legacy string form is fairly sensitive to its format.
 > Please do your best to follow the example below:
 
 ```js
@@ -405,7 +421,13 @@ await device.enableSynchronization();
 
 Exclude synchronization with respect to network activity (i.e. don’t wait for network to go idle before moving forward in the test execution) according to **specific** endpoints, denoted as URL reg-exp’s. To disable endpoints at initialization, pass in the black-list as an [app-launch argument](../guide/launch-args.md) named `detoxURLBlacklistRegex` (as explained [here](#11-detoxurlblacklistregexinitialize-the-url-blacklist-at-app-launch)).
 
+Accepts an array of strings or `RegExp` objects (or a mix of both). Only the `i`, `m`, and `s` flags are supported for `RegExp`; using `g`, `y`, `d`, `u`, or `v` will throw a `TypeError`.
+
 ```js
+// Using RegExp objects (recommended):
+await device.setURLBlacklist([/.*127\.0\.0\.1.*/, /.*my\.ignored\.endpoint.*/i]);
+
+// Using plain strings:
 await device.setURLBlacklist(['.*127.0.0.1.*', '.*my.ignored.endpoint.*']);
 ```
 

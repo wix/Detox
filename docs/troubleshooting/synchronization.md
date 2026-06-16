@@ -147,6 +147,8 @@ Sometimes Detox synchronization gets block, waiting for networks call that are i
 
 _This can be solved by [black-listing the URL's in Detox](../api/device.md#deviceseturlblacklisturls), which would exclude it from Detox's synchronization over the network:_
 
+Both `setURLBlacklist` and `detoxURLBlacklistRegex` also accept `RegExp` objects (e.g. `/.*127\.0\.0\.1.*/`).
+
 ```js
 // Black-list (exclude) URL's in mid test-run:
 await device.setURLBlacklist(['.*127.0.0.1.*']);
