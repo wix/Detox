@@ -49,11 +49,24 @@ describe('URL blacklist launch-arg serialization', () => {
     expect(isSerializedURLBlacklistForAndroid('[a-z]+.*')).toBe(false);
     expect(isSerializedURLBlacklistForAndroid('[invalid json')).toBe(false);
     expect(isSerializedURLBlacklistForAndroid('["valid","json"]')).toBe(true);
+    expect(isSerializedURLBlacklistForAndroid('.*no-brackets.*')).toBe(false);
+    expect(isSerializedURLBlacklistForAndroid(42)).toBe(false);
+  });
+
+  it('accepts a bare RegExp (not wrapped in an array)', () => {
+    const pattern = /my\.api\.host/i;
+    expect(serializeURLBlacklistForIOS(pattern)).toBe(JSON.stringify(['(?i:my\\.api\\.host)']));
+    expect(serializeURLBlacklistForAndroid(pattern)).toBe(JSON.stringify(['(?i:my\\.api\\.host)']));
   });
 
   it('throws for RegExp flags that are not portable across iOS and Android', () => {
     expect(() => serializeURLBlacklistForAndroid([/pattern/u])).toThrow(/not portable/);
     expect(() => serializeURLBlacklistForIOS([/pattern/g])).toThrow(/not portable/);
+  });
+
+  it('throws when an array element is neither a string nor a RegExp', () => {
+    expect(() => serializeURLBlacklistForAndroid([42])).toThrow(/detoxURLBlacklistRegex must be a RegExp/);
+    expect(() => serializeURLBlacklistForIOS([null])).toThrow(/detoxURLBlacklistRegex must be a RegExp/);
   });
 
   describe('normalizeURLBlacklist (runtime setURLBlacklist)', () => {
