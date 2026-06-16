@@ -4,6 +4,7 @@ const log = require('../../utils/logger').child({ cat: 'device' });
 const mapDeviceLongPressArguments = require('../../utils/mapDeviceLongPressArguments');
 const traceMethods = require('../../utils/traceMethods');
 const wrapWithStackTraceCutter = require('../../utils/wrapWithStackTraceCutter');
+const { normalizeURLBlacklist } = require('../common/drivers/utils/urlBlacklist');
 
 const LaunchArgsEditor = require('./utils/LaunchArgsEditor');
 
@@ -331,7 +332,7 @@ class RuntimeDevice {
   }
 
   async setURLBlacklist(urlList) {
-    await this.deviceDriver.setURLBlacklist(urlList);
+    await this.deviceDriver.setURLBlacklist(normalizeURLBlacklist(urlList));
   }
 
   async enableSynchronization() {

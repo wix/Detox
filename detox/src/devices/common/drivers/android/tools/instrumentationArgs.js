@@ -2,6 +2,11 @@ const _ = require('lodash');
 
 const { encodeBase64 } = require('../../../../../utils/encoding');
 const { autoEscape } = require('../../../../../utils/shellUtils');
+const {
+  isSerializedURLBlacklistForAndroid,
+  serializeURLBlacklistForAndroid,
+  URL_BLACKLIST_LAUNCH_ARG,
+} = require('../../utils/urlBlacklist');
 
 const reservedInstrumentationArgs = new Set(['class', 'package', 'func', 'unit', 'size', 'perf', 'debug', 'log', 'emma', 'coverageFile']);
 const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.has(arg);
@@ -9,7 +14,8 @@ const isReservedInstrumentationArg = (arg) => reservedInstrumentationArgs.has(ar
 function prepareInstrumentationArgs(args) {
   const usedReservedArgs = [];
   const preparedLaunchArgs = _.reduce(args, (result, value, key) => {
-    const valueAsString = _.isString(value) ? value : JSON.stringify(value);
+    const serializedValue = key === URL_BLACKLIST_LAUNCH_ARG ? serializeURLBlacklistForAndroid(value) : value;
+    const valueAsString = _.isString(serializedValue) ? serializedValue : JSON.stringify(serializedValue);
 
     let valueEncoded = valueAsString;
     if (isReservedInstrumentationArg(key)) {
@@ -18,7 +24,7 @@ function prepareInstrumentationArgs(args) {
       valueEncoded = encodeBase64(valueAsString);
     }
 
-    const valueEscaped = hasLegacyIssues(key) ? valueEncoded : autoEscape.shell(valueEncoded);
+    const valueEscaped = hasLegacyIssues(key, valueEncoded) ? valueEncoded : autoEscape.shell(valueEncoded);
     result.push('-e', key, valueEscaped);
     return result;
   }, []);
@@ -29,8 +35,8 @@ function prepareInstrumentationArgs(args) {
   };
 }
 
-function hasLegacyIssues(key) {
-  return key === 'detoxURLBlacklistRegex';
+function hasLegacyIssues(key, value) {
+  return key === URL_BLACKLIST_LAUNCH_ARG && !isSerializedURLBlacklistForAndroid(value);
 }
 
 module.exports = {

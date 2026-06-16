@@ -67,14 +67,45 @@ static void detoxConditionalInit(void)
 		settings[@"enabled"] = @([syncEnabled boolValue]);
 	}
 	
-	NSString *blacklistRegex = [options stringForKey:@"detoxURLBlacklistRegex"];
+	id blacklistRegex = [options objectForKey:@"detoxURLBlacklistRegex"];
 	if (blacklistRegex)
 	{
-	    NSCharacterSet* separatorOrUselessChars = [NSCharacterSet characterSetWithCharactersInString:@"()\", "];
-        NSArray* _blacklistArray = [blacklistRegex componentsSeparatedByCharactersInSet:separatorOrUselessChars];
+		NSLog(@"[DetoxInit] Received detoxURLBlacklistRegex launch arg: %@", blacklistRegex);
+		NSPredicate* predicate = [NSPredicate predicateWithBlock:^BOOL(id value, NSDictionary* __unused bindings) {
+			return [value isKindOfClass:NSString.class] && [value length] > 1;
+		}];
+		NSArray* parsedBlacklist = nil;
 
-        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"length>1"];
-        settings[@"blacklistURLs"] = [_blacklistArray filteredArrayUsingPredicate:predicate];
+		if([blacklistRegex isKindOfClass:NSArray.class])
+		{
+			parsedBlacklist = [blacklistRegex filteredArrayUsingPredicate:predicate];
+		}
+		else if([blacklistRegex isKindOfClass:NSString.class])
+		{
+			NSData* jsonData = [blacklistRegex dataUsingEncoding:NSUTF8StringEncoding];
+			NSError* jsonError = nil;
+			id jsonParsed = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&jsonError];
+			if(!jsonError && [jsonParsed isKindOfClass:NSArray.class])
+			{
+				parsedBlacklist = [jsonParsed filteredArrayUsingPredicate:predicate];
+			}
+			else
+			{
+				NSCharacterSet* separatorOrUselessChars = [NSCharacterSet characterSetWithCharactersInString:@"()\", "];
+				NSArray* blacklistArray = [blacklistRegex componentsSeparatedByCharactersInSet:separatorOrUselessChars];
+				parsedBlacklist = [blacklistArray filteredArrayUsingPredicate:predicate];
+			}
+		}
+		else
+		{
+			NSLog(@"[DetoxInit] Ignoring unsupported detoxURLBlacklistRegex value type: %@", [blacklistRegex class]);
+		}
+
+		if(parsedBlacklist)
+		{
+			NSLog(@"[DetoxInit] Parsed blacklist URLs for DetoxSync: %@", parsedBlacklist);
+			settings[@"blacklistURLs"] = parsedBlacklist;
+		}
 	}
 	
 	NSString* maxTimerWait = [options objectForKey:@"detoxMaxSynchronizedDelay"];

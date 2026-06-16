@@ -1,5 +1,7 @@
 /* eslint-disable no-useless-escape */
 // @ts-nocheck
+const { autoEscape } = require('../../../../../utils/shellUtils');
+
 describe('Instrumentation arguments', () => {
   let uut;
   let encodeBase64;
@@ -97,6 +99,25 @@ describe('Instrumentation arguments', () => {
     };
     const result = uut.prepareInstrumentationArgs(args);
     expect(result.usedReservedArgs).toEqual(Object.keys(args));
+  });
+
+  it('should serialize URL blacklist RegExp arrays for Android instrumentation args', () => {
+    const blacklist = [
+      /https:\/\/x\.com\/a(?:b|c)\/{1,3}/,
+      /^https:\/\/x\.com\/foo bar$/i,
+    ];
+    const expectedValue = JSON.stringify([
+      'https:\\/\\/x\\.com\\/a(?:b|c)\\/{1,3}',
+      '(?i:^https:\\/\\/x\\.com\\/foo bar$)',
+    ]);
+
+    const result = uut.prepareInstrumentationArgs({
+      detoxURLBlacklistRegex: blacklist,
+    });
+
+    expect(result.args).toEqual([
+      ...expectedArgUnencoded('detoxURLBlacklistRegex', autoEscape.shell(expectedValue)),
+    ]);
   });
 
   it('should whitelist args with \'detox\' prefix with respect to base64 encoding', () => {

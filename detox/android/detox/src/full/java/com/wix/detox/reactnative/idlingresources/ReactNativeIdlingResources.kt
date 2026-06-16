@@ -15,6 +15,7 @@ import com.wix.detox.reactnative.idlingresources.looper.MQThreadsReflector
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import kotlinx.coroutines.runBlocking
 import org.joor.Reflect
+import org.json.JSONArray
 import java.util.concurrent.ConcurrentHashMap
 
 private const val LOG_TAG = "DetoxRNIdleRes"
@@ -62,7 +63,9 @@ class ReactNativeIdlingResources(
     }
 
     private fun setIdlingResourceBlacklist(urlList: String) {
+        Log.i(LOG_TAG, "Received blacklist launch arg/raw string: $urlList")
         val urlArray = toFormattedUrlArray(urlList)
+        Log.i(LOG_TAG, "Parsed blacklist URLs for network idling: $urlArray")
         NetworkIdlingResource.setURLBlacklist(urlArray)
     }
 
@@ -74,7 +77,10 @@ class ReactNativeIdlingResources(
     private fun setupUrlBlacklist() {
         if (launchArgs.hasURLBlacklist()) {
             val blacklistUrls = launchArgs.urlBlacklist
+            Log.i(LOG_TAG, "Applying URL blacklist from launch args: $blacklistUrls")
             setIdlingResourceBlacklist(blacklistUrls)
+        } else {
+            Log.i(LOG_TAG, "No URL blacklist launch arg was provided")
         }
     }
 
@@ -170,9 +176,31 @@ class ReactNativeIdlingResources(
     }
 
     private fun toFormattedUrlArray(urlList: String): List<String> {
+        parseUrlBlacklistJsonArray(urlList)?.let {
+            Log.i(LOG_TAG, "Formatted blacklist array: $it")
+            return it
+        }
+
         var formattedUrls = urlList
         formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "")
         formattedUrls = formattedUrls.trim()
-        return formattedUrls.split(',')
+        val parsed = formattedUrls.split(',')
+        Log.i(LOG_TAG, "Formatted blacklist array: $parsed")
+        return parsed
+    }
+
+    private fun parseUrlBlacklistJsonArray(urlList: String): List<String>? {
+        val trimmedUrlList = urlList.trim()
+        if (!trimmedUrlList.startsWith("[")) {
+            return null
+        }
+
+        return try {
+            val jsonArray = JSONArray(trimmedUrlList)
+            List(jsonArray.length()) { index -> jsonArray.getString(index) }
+        } catch (e: Exception) {
+            Log.w(LOG_TAG, "Failed to parse URL blacklist as JSON array, falling back to legacy parser", e)
+            null
+        }
     }
 }

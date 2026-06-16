@@ -2,6 +2,9 @@
 jest.mock('../../../../../utils/childProcess');
 jest.mock('../../../../../utils/environment');
 
+const { quote } = require('../../../../../utils/shellQuote');
+const { serializeURLBlacklistForIOS } = require('../../utils/urlBlacklist');
+
 describe('AppleSimUtils', () => {
   let AppleSimUtils;
   let uut;
@@ -54,6 +57,20 @@ describe('AppleSimUtils', () => {
       const launchCmd = childProcess.execWithRetriesAndLogs.mock.calls[0][0];
       expect(launchCmd).toContain(`simctl launch ${udid} ${bundleId}`);
       expect(launchCmd).not.toContain('--arch');
+    });
+
+    it('should serialize URL blacklist RegExp arrays for iOS launch args', async () => {
+      const blacklist = [
+        /https:\/\/x\.com\/a(?:b|c)\/{1,3}/,
+        /^https:\/\/x\.com\/foo bar$/i,
+      ];
+
+      await uut.launch(udid, bundleId, { detoxURLBlacklistRegex: blacklist }, '');
+
+      const launchCmd = childProcess.execWithRetriesAndLogs.mock.calls[0][0];
+      expect(launchCmd).toContain(
+        quote(['-detoxURLBlacklistRegex', serializeURLBlacklistForIOS(blacklist)])
+      );
     });
 
     it('should not query device version when arch is undefined', async () => {

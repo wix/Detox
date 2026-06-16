@@ -966,9 +966,13 @@ declare global {
             /**
              * Disable network synchronization mechanism on preferred endpoints. Useful if you want to on skip over synchronizing on certain URLs.
              *
+             * Accepts either string patterns or `RegExp` objects. With `RegExp`, only the `i`, `m` and `s`
+             * flags are portable across iOS and Android; the `g`, `y`, `d`, `u` and `v` flags are rejected.
+             *
              * @example await device.setURLBlacklist(['.*127.0.0.1.*']);
+             * @example await device.setURLBlacklist([/.*127\.0\.0\.1.*/, /.*my\.ignored\.endpoint.*/i]);
              */
-            setURLBlacklist(urls: string[]): Promise<void>;
+            setURLBlacklist(urls: Array<string | RegExp>): Promise<void>;
 
             /**
              * Temporarily disable synchronization (idle/busy monitoring) with the app - namely, stop waiting for the app to go idle before moving forward in the test execution.

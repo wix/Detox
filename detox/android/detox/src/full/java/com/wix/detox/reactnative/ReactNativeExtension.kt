@@ -80,6 +80,7 @@ object ReactNativeExtension {
 
     @JvmStatic
     fun setBlacklistUrls(blacklistUrls: String) {
+        Log.i(LOG_TAG, "ReactNativeExtension received blacklist URLs payload: $blacklistUrls")
         rnIdlingResources?.setBlacklistUrls(blacklistUrls)
     }
 

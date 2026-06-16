@@ -10,6 +10,7 @@ const childProcess = require('../../../../../utils/childProcess');
 const environment = require('../../../../../utils/environment');
 const log = require('../../../../../utils/logger').child({ cat: 'device' });
 const { quote } = require('../../../../../utils/shellQuote');
+const { serializeURLBlacklistForIOS, URL_BLACKLIST_LAUNCH_ARG } = require('../../utils/urlBlacklist');
 
 const PERMISSIONS_VALUES = {
   YES: 'YES',
@@ -530,6 +531,9 @@ class AppleSimUtils {
     const args = {
       ...launchArgs,
     };
+    if (URL_BLACKLIST_LAUNCH_ARG in args) {
+      args[URL_BLACKLIST_LAUNCH_ARG] = serializeURLBlacklistForIOS(args[URL_BLACKLIST_LAUNCH_ARG]);
+    }
 
     if (languageAndLocale) {
       if (languageAndLocale.language) {
