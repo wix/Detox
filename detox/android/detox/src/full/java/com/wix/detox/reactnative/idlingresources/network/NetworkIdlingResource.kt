@@ -55,11 +55,8 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
         val calls = dispatcher.runningCalls()
         for (call in calls) {
             val url = call.request().url.toString()
-            Log.v(LOG_TAG, "Inspecting running call URL for idling sync: $url")
 
-            val blacklisted = isUrlBlacklisted(url)
-            Log.v(LOG_TAG, "Blacklist decision for $url => ${if (blacklisted) "ignore" else "track"}")
-            if (!blacklisted) {
+            if (!isUrlBlacklisted(url)) {
                 busyResources.add(url)
             }
         }
@@ -76,13 +73,10 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
 
     private fun isUrlBlacklisted(url: String): Boolean {
         for (pattern in blacklist) {
-            val matches = pattern.matcher(url).matches()
-            Log.v(LOG_TAG, "Testing URL against blacklist regex: url=$url regex=${pattern.pattern()} matches=$matches")
-            if (matches) {
+            if (pattern.matcher(url).matches()) {
                 return true
             }
         }
-        Log.v(LOG_TAG, "URL did not match any blacklist regex: $url")
         return false
     }
 
@@ -98,13 +92,11 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
          */
         @JvmStatic
         fun setURLBlacklist(urls: List<String>?) {
-            Log.i(LOG_TAG, "Setting URL blacklist list: $urls")
             blacklist.clear()
             if (urls == null) return
 
             for (url in urls) {
                 try {
-                    Log.i(LOG_TAG, "Compiling blacklist regex: $url")
                     blacklist.add(Pattern.compile(url))
                 } catch (e: PatternSyntaxException) {
                     Log.e(

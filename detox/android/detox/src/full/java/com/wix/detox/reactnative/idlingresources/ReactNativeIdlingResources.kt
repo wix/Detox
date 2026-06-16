@@ -63,9 +63,7 @@ class ReactNativeIdlingResources(
     }
 
     private fun setIdlingResourceBlacklist(urlList: String) {
-        Log.i(LOG_TAG, "Received blacklist launch arg/raw string: $urlList")
         val urlArray = toFormattedUrlArray(urlList)
-        Log.i(LOG_TAG, "Parsed blacklist URLs for network idling: $urlArray")
         NetworkIdlingResource.setURLBlacklist(urlArray)
     }
 
@@ -77,10 +75,7 @@ class ReactNativeIdlingResources(
     private fun setupUrlBlacklist() {
         if (launchArgs.hasURLBlacklist()) {
             val blacklistUrls = launchArgs.urlBlacklist
-            Log.i(LOG_TAG, "Applying URL blacklist from launch args: $blacklistUrls")
             setIdlingResourceBlacklist(blacklistUrls)
-        } else {
-            Log.i(LOG_TAG, "No URL blacklist launch arg was provided")
         }
     }
 
@@ -177,16 +172,13 @@ class ReactNativeIdlingResources(
 
     private fun toFormattedUrlArray(urlList: String): List<String> {
         parseUrlBlacklistJsonArray(urlList)?.let {
-            Log.i(LOG_TAG, "Formatted blacklist array: $it")
             return it
         }
 
         var formattedUrls = urlList
         formattedUrls = formattedUrls.replace(Regex("""[()"]"""), "")
         formattedUrls = formattedUrls.trim()
-        val parsed = formattedUrls.split(',')
-        Log.i(LOG_TAG, "Formatted blacklist array: $parsed")
-        return parsed
+        return formattedUrls.split(',')
     }
 
     private fun parseUrlBlacklistJsonArray(urlList: String): List<String>? {

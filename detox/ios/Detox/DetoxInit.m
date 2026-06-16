@@ -70,7 +70,6 @@ static void detoxConditionalInit(void)
 	id blacklistRegex = [options objectForKey:@"detoxURLBlacklistRegex"];
 	if (blacklistRegex)
 	{
-		NSLog(@"[DetoxInit] Received detoxURLBlacklistRegex launch arg: %@", blacklistRegex);
 		NSPredicate* predicate = [NSPredicate predicateWithBlock:^BOOL(id value, NSDictionary* __unused bindings) {
 			return [value isKindOfClass:NSString.class] && [value length] > 1;
 		}];
@@ -103,7 +102,6 @@ static void detoxConditionalInit(void)
 
 		if(parsedBlacklist)
 		{
-			NSLog(@"[DetoxInit] Parsed blacklist URLs for DetoxSync: %@", parsedBlacklist);
 			settings[@"blacklistURLs"] = parsedBlacklist;
 		}
 	}
