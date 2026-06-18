@@ -72,7 +72,6 @@
     "eslint": "^8.56.0",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-unicorn": "^50.0.1",
-    "execa": "^5.1.1",
     "express": "^4.15.3",
     "glob": "^7.2.0",
     "jest": "^30.0.3",
@@ -81,6 +80,7 @@
     "nyc": "^15.1.0",
     "p-iteration": "^1.1.8",
     "pngjs": "^3.4.0",
+    "tinyexec": "^0.3.0",
     "typescript": "^5.8.3"
   },
   "jest-junit": {

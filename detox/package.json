@@ -85,6 +85,7 @@
     "react-native": "0.85.2",
     "react-native-codegen": "^0.0.8",
     "typescript": "^5.8.3",
+    "tinyexec": "^0.3.0",
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
@@ -95,7 +96,6 @@
     "bunyan-debug-stream": "^3.1.0",
     "caf": "^15.0.1",
     "chalk": "^4.0.0",
-    "execa": "^5.1.1",
     "find-up": "^5.0.0",
     "fs-extra": "^11.0.0",
     "funpermaproxy": "^1.1.0",
