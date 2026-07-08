@@ -225,6 +225,11 @@ describe('Client', () => {
       await expect(withoutTimeout.timeout).toEqual(1000);
     });
 
+    it('should return the configured value for login timeout', async () => {
+      const withTimeout = new actions.Login(123, 5000);
+      await expect(withTimeout.timeout).toEqual(5000);
+    });
+
     it('should schedule "currentStatus" query when it takes too long', async () => {
       const { action } = await simulateInFlightAction();
       expect(mockAws.send).toHaveBeenCalledWith(action, SEND_OPTIONS.DEFAULT);
