@@ -110,6 +110,20 @@ Seeing logs like these usually indicates certain issues in your application, as 
 
 For extended, more detailed information on iOS, refer to the `DetoxSync` project's [Status Documentation](https://github.com/wix-incubator/DetoxSync/blob/master/StatusDocumentation.md).
 
+### `session.loginTimeout` \[number]
+
+**Disabled by default**, in which case Detox waits `1000`ms for the initial `login` handshake.
+
+Tells Detox how long (in milliseconds) to wait for the server to acknowledge the tester's `login` message before timing out. Increase it when the server needs longer than a second to become ready — for example, remotely-managed devices whose allocation adds latency before the server responds.
+
+```json
+{
+  "session": {
+    "loginTimeout": 30000
+  }
+}
+```
+
 ### `session.ignoreUnexpectedMessages` \[boolean]
 
 Default: `false`.

@@ -138,6 +138,33 @@ describe('composeSessionConfig', () => {
     });
   });
 
+  describe('loginTimeout', function () {
+    it('should be undefined by default', async () => {
+      expect(await compose()).not.toHaveProperty('loginTimeout');
+    });
+
+    it('should pass validations', async () => {
+      globalConfig.session = { loginTimeout: -1 };
+      await expect(compose()).rejects.toThrow(errorComposer.invalidLoginTimeoutProperty());
+
+      globalConfig.session = { loginTimeout: '3000' };
+      await expect(compose()).rejects.toThrow(errorComposer.invalidLoginTimeoutProperty());
+    });
+
+    describe('when defined', () => {
+      it('should use the global value', async () => {
+        globalConfig.session = { loginTimeout: 9999 };
+        expect(await compose()).toMatchObject({ loginTimeout: 9999 });
+      });
+
+      it('should let local config override global', async () => {
+        globalConfig.session = { loginTimeout: 9999 };
+        localConfig.session = { loginTimeout: 20000 };
+        expect(await compose()).toMatchObject({ loginTimeout: 20000 });
+      });
+    });
+  });
+
   describe('debugSynchronization', function () {
     describe('by default', () => {
       it('should be 10000ms', async () => {

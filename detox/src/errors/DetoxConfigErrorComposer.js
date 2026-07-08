@@ -694,6 +694,18 @@ Examine your Detox config${this._atPath()}`,
     });
   }
 
+  invalidLoginTimeoutProperty() {
+    return new DetoxConfigError({
+      message: `session.loginTimeout should be a positive number`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      inspectOptions: { depth: 3 },
+      debugInfo: _.omitBy({
+        session: _.get(this.contents, ['session']),
+        ...this._focusOnConfiguration(c => _.pick(c, ['session'])),
+      }, _.isEmpty),
+    });
+  }
+
   invalidIgnoreUnexpectedMessagesProperty() {
     return new DetoxConfigError({
       message: `session.ignoreUnexpectedMessages should be a boolean value`,
