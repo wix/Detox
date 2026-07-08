@@ -37,6 +37,13 @@ async function composeSessionConfig(options) {
     }
   }
 
+  if (session.loginTimeout != null) {
+    const value = session.loginTimeout;
+    if (typeof value !== 'number' || value < 0) {
+      throw errorComposer.invalidLoginTimeoutProperty();
+    }
+  }
+
   if (session.ignoreUnexpectedMessages != null) {
     const value = session.ignoreUnexpectedMessages;
     if (typeof value !== 'boolean') {
