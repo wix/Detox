@@ -133,11 +133,6 @@ declare global {
         interface DetoxSessionConfig {
             autoStart?: boolean;
             debugSynchronization?: number;
-            /**
-             * Milliseconds the tester waits for the initial "login" handshake with the Detox server
-             * before timing out. Defaults to 1000. Increase it for cloud/remote devices where device
-             * allocation adds latency before the server responds.
-             */
             loginTimeout?: number;
             ignoreUnexpectedMessages?: boolean;
             server?: string;
