@@ -1,28 +1,34 @@
 const { androidBaseAppConfig } = require('./detox.config-android');
 
+// The Detox Server that owns the simulators. Unset, `detox test` starts a
+// local helper server on its own; `yarn parity` (scripts/parity.js) points
+// the suite at the run's dedicated server instead.
+const client = process.env.PARITY_SERVER_URL
+  ? { server: process.env.PARITY_SERVER_URL, token: process.env.PARITY_SERVER_TOKEN }
+  : {};
+
+// Unset DETOX_IOS_OS: the newest runtime the server can create the model on.
+const iosDevice = {
+  type: process.env.DETOX_IOS_MODEL || 'iPhone 17 Pro',
+  ...(process.env.DETOX_IOS_OS ? { os: process.env.DETOX_IOS_OS } : {}),
+};
+
 const launchArgs = {
   app: 'le',
   goo: 'gle?',
   micro: 'soft',
 };
 
-/** @type {Detox.DetoxConfig} */
 const config = {
-  extends: 'detox-allure2-adapter/preset-detox',
   testRunner: {
     args: {
-      $0: process.env.CI ? 'nyc jest' : 'jest',
+      $0: 'jest',
       config: 'e2e/jest.config.js',
       forceExit: process.env.CI ? true : undefined,
-      _: ['e2e/'],
-    },
-    detached: !!process.env.CI,
-    retries: process.env.CI ? 1 : undefined,
-    jest: {
-      setupTimeout: +`${process.env.DETOX_JEST_SETUP_TIMEOUT || 300000}`,
-      reportSpecs: process.env.CI ? true : undefined,
     },
   },
+
+  client,
 
   behavior: {
     init: {
@@ -31,11 +37,6 @@ const config = {
     cleanup: {
       shutdownDevice: false
     }
-  },
-
-  __session: {
-    server: 'ws://localhost:8099',
-    sessionId: 'test'
   },
 
   artifacts: {
@@ -99,10 +100,7 @@ const config = {
     'ios.simulator': {
       type: 'ios.simulator',
       headless: Boolean(process.env.CI),
-      device: {
-        type: 'iPhone 17 Pro',
-        os: '26.1'
-      },
+      device: iosDevice,
     },
 
     'android.emulator': {
@@ -163,35 +161,6 @@ const config = {
     'ios.sim.release': {
       device: 'ios.simulator',
       app: 'ios.release',
-      session: {
-        debugSynchronization: 3000,
-      },
-    },
-    'ios.manual': {
-      device: 'ios.simulator',
-      app: 'ios.debug',
-      artifacts: false,
-      behavior: {
-        launchApp: 'manual'
-      },
-      session: {
-        autoStart: true,
-        server: 'ws://localhost:8099',
-        sessionId: 'com.wix.detox-example'
-      }
-    },
-    'android.manual': {
-      device: 'android.emulator',
-      apps: ['android.debug', 'android.debug.withArgs'],
-      artifacts: false,
-      behavior: {
-        launchApp: 'manual'
-      },
-      session: {
-        autoStart: true,
-        server: 'ws://localhost:8099',
-        sessionId: 'test'
-      }
     },
     'android.emu.debug': {
       device: 'android.emulator',
@@ -217,15 +186,6 @@ const config = {
       device: 'android.genycloud.name-arm64',
       apps: ['android.release', 'android.release.withArgs'],
     },
-    'stub': {
-      device: {
-        type: './integration/stub',
-        integ: 'stub'
-      },
-      app: {
-        name: 'example'
-      }
-    }
   }
 };
 

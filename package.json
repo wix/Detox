@@ -1,17 +1,29 @@
 {
   "name": "root",
   "private": true,
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.16.0",
   "workspaces": [
     "detox",
     "detox-cli",
     "detox/test",
     "examples/*",
-    "generation",
-    "website"
+    "website",
+    "packages/*"
   ],
   "scripts": {
     "prepare": "husky",
+    "build": "node esbuild.config.js",
+    "build:types": "node scripts/build-types.js",
+    "dev": "node esbuild.config.js --watch",
+    "clean": "rm -rf detox/dist",
+    "accept": "node scripts/accept.js",
+    "parity": "node scripts/parity.js",
+    "lane": "node scripts/lane.js",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p specs/tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
     "docs:markdownlint": "markdownlint -p .remarkignore '**/*.md'",
     "docs:remark": "remark .",
     "docs:lint": "yarn docs:markdownlint && yarn docs:remark",
@@ -32,9 +44,23 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^25.2.0",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/utils": "^8.47.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "chalk": "^4.0.0",
+    "detox": "workspace:*",
     "dictionary-en": "^3.1.0",
+    "dts-bundle-generator": "^9.5.1",
+    "esbuild": "^0.27.2",
+    "eslint": "^9.19.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import-x": "^4.17.1",
+    "expect": "^30.2.0",
+    "globals": "^17.7.0",
     "husky": "^9.0.0",
+    "jest": "^30",
     "lodash": "4.17.x",
     "markdownlint-cli": "^0.29.0",
     "remark": "^14.0.1",
@@ -64,8 +90,19 @@
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
     "surge": "^0.24.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.3.0",
+    "typescript-eslint": "^8.47.0",
     "unified": "^10.1.0",
+    "vitest": "^4.0.18",
+    "ws": "^8.18.0",
     "zx": "^8.0.0"
   },
-  "version": "20.51.4"
+  "resolutions": {
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "version": "21.0.0-alpha.0"
 }

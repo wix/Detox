@@ -1,6 +1,5 @@
+const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
-const { resolveConfig } = require('detox/internals');
 
 const maxWorkersMap = {
   'android.emulator': 3,
@@ -10,38 +9,12 @@ const maxWorkersMap = {
 };
 
 module.exports = async () => {
-  const config = await resolveConfig();
-
-  /** @type {import('jest-allure2-reporter').ReporterOptions} */
-  const jestAllure2ReporterOptions = {
-    extends: require.resolve('detox-allure2-adapter/preset-allure'),
-    overwrite: !process.env.CI,
-    testCase: {
-      labels: {
-        package: ({ filePath }) => `${filePath.slice(1, -1).join('.')}.${_.kebabCase(filePath.at(-1))}`,
-        testMethod: ({ testCase }) => testCase.fullName,
-        tag: ['e2e', ...config.configurationName.split('.')],
-      },
-      links: {
-        issue: 'https://github.com/wix/Detox/issues/{{name}}',
-      },
-    },
-    environment: async ({ $ }) => ({
-      'version.node': process.version,
-      'version.jest': await $.manifest('jest', 'version'),
-      'version.jest-metadata': await $.manifest('jest-metadata', 'version'),
-      'version.allure-reporter': require('jest-allure2-reporter/package.json').version,
-      'version.detox-allure2-adapter': require('detox-allure2-adapter/package.json').version,
-      ..._(process.env)
-        .pickBy((_1, key) => key.match(/detox/i))
-        .mapKeys((_1, key) => 'env.' + key)
-        .value()
-    }),
-  };
+  // `detox test` writes the composed configuration to a file and names it
+  // to the runner through the environment.
+  const config = JSON.parse(fs.readFileSync(process.env.DETOX_CONFIG_SNAPSHOT_PATH, 'utf8'));
 
   const reporters = [
     '<rootDir>/runners/jest/reporter',
-    ['jest-allure2-reporter', jestAllure2ReporterOptions],
   ];
 
   if (process.env.DISABLE_JUNIT_REPORTER !== '1') {
@@ -56,24 +29,10 @@ module.exports = async () => {
   return {
     'rootDir': path.join(__dirname, '../..'),
     'testEnvironment': './test/e2e/testEnvironment.js',
-    'testEnvironmentOptions': {
-      'eventListeners': [
-        'jest-metadata/environment-listener',
-        'jest-allure2-reporter/environment-listener',
-        [require.resolve('detox-allure2-adapter'), {
-          deviceLogs: true,
-          deviceScreenshots: true,
-          deviceVideos: false,
-        }],
-        require.resolve('./utils/rnSkipper'),
-      ]
-    },
-    'testRunner': './test/node_modules/jest-circus/build/runner',
     'testMatch': [
       '<rootDir>/test/e2e/**/*.test.{js,ts}',
-      '<rootDir>/test/e2e-unhappy/**/*.test.{js,ts}',
     ],
-    'setupFilesAfterEnv': ['./test/e2e/setup.js'],
+    'setupFilesAfterEnv': ['./test/e2e/utils/rnSkipper.js', './test/e2e/setup.js'],
     'globalSetup': '<rootDir>/runners/jest/globalSetup',
     'globalTeardown': '<rootDir>/runners/jest/globalTeardown',
     'testTimeout': 120000,
@@ -81,12 +40,5 @@ module.exports = async () => {
     'verbose': true,
     'bail': false,
     'maxWorkers': process.env.CI ? maxWorkersMap[deviceType] || 1 : 1,
-    'collectCoverageFrom': [
-      'src/**/*.js',
-      '!**/__test/**',
-      '!**/__mocks__/**',
-      '!**/*.mock.js',
-      '!**/*.test.js'
-    ]
   };
 };

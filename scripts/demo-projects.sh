@@ -45,3 +45,9 @@ node scripts/change_react_native_version.js "examples/demo-react-native" ${REACT
 # Update lockfile for new RN version
 run_f "yarn install --mode update-lockfile"
 run_f "yarn install"
+
+# Since the v21 alpha both the `detox` bin and its typings are shims over
+# detox/dist, generated artifacts that are gitignored. Build them before any
+# `detox` command runs — the demo e2e suite is TypeScript and needs the types.
+run_f "yarn build"
+run_f "yarn build:types"

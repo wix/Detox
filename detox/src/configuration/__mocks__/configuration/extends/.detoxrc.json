@@ -1,8 +1,0 @@
-{
-  "extends": "./middle",
-  "artifacts": {
-    "plugins": {
-      "video": "all"
-    }
-  }
-}

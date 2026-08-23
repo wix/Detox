@@ -1,1 +1,1 @@
-module.exports = async () => require('../../internals').cleanup();
+module.exports = require('../../dist/runners/jest/globalTeardown.js');

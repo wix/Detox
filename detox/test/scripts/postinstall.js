@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const cp = require('child_process');
 const { patchGradleByRNVersion } = require('../../scripts/updateGradle');
 
@@ -39,5 +39,8 @@ function podInstallIfRequired() {
 
 console.log('[POST-INSTALL] Running Detox\'s test-app post-install script...');
 podInstallIfRequired();
-patchGradleByRNVersion()
+// Android is disabled on the v21 alpha branch; the gradle patch runs on demand.
+if (process.env.DETOX_ANDROID_POSTINSTALL === '1') {
+  patchGradleByRNVersion();
+}
 console.log('[POST-INSTALL] Completed!');

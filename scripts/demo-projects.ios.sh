@@ -13,8 +13,10 @@ pushd examples/demo-react-native
     run_f "pod install"
   popd
 
-  run_f "yarn build:ios-debug"
-  run_f "yarn test:ios-debug"
+  # Release: the debug build needs a running Metro, which the v21 alpha
+  # does not start for the app.
+  run_f "yarn build:ios-release"
+  run_f "yarn test:ios-release"
 
   # Run tests with bloated JS bundle:
   source $SCRIPTS_PATH/demo-rn-bloat-bundle-test.sh ios

@@ -1,0 +1,21 @@
+{
+  "name": "@detox-remote/server",
+  "version": "21.0.0-alpha.0",
+  "private": true,
+  "description": "Remote simulator farm server",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@detox-remote/core": "workspace:*",
+    "@detox-remote/protocol": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "license": "MIT"
+}

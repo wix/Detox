@@ -1,1 +1,1 @@
-module.exports = async () => require('../../internals').init({ workerId: null });
+module.exports = require('../../dist/runners/jest/globalSetup.js');

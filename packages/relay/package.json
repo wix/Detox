@@ -1,0 +1,15 @@
+{
+  "name": "detox-relay",
+  "version": "21.0.0-alpha.0",
+  "private": true,
+  "description": "Detox v21 relay: one address for a fleet of Detox Servers",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@detox-remote/core": "workspace:*",
+    "@detox-remote/protocol": "workspace:*",
+    "@detox-remote/server": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "license": "MIT"
+}

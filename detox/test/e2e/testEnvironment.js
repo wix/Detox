@@ -1,13 +1,11 @@
 const { DetoxCircusEnvironment } = require('detox/runners/jest');
-const { worker } = require('detox/internals')
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   async setup() {
     await super.setup();
 
-    this.global.__waitUntilArtifactsManagerIsIdle__ = () => {
-      return worker._artifactsManager._idlePromise;
-    };
+    // The artifacts manager is not part of the v21 alpha; nothing to wait for.
+    this.global.__waitUntilArtifactsManagerIsIdle__ = () => Promise.resolve();
   }
 }
 

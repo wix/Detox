@@ -22,9 +22,19 @@ function prepareAndBuildFramework () {
 }
 
 function extractFramework () {
+  local tbz="${detoxRootPath}/Detox-ios-framework.tbz"
+  # A tarball packed without `yarn package:ios` has no prebuilt framework. Say
+  # so and let the install finish: the framework is only needed at launch time,
+  # and DETOX_IOS_FRAMEWORK_PATH can point at one built elsewhere.
+  if [ ! -f "${tbz}" ]; then
+    echo "WARNING: ${tbz} is missing, so no Detox.framework was installed."
+    echo "         Point DETOX_IOS_FRAMEWORK_PATH at a Detox.framework/Detox binary before running tests."
+    exit 0
+  fi
+
   echo "Extracting Detox framework..."
   mkdir -p "${detoxFrameworkDirPath}"
-  tar -xjf "${detoxRootPath}"/Detox-ios-framework.tbz -C "${detoxFrameworkDirPath}"
+  tar -xjf "${tbz}" -C "${detoxFrameworkDirPath}"
 }
 
 function buildFramework () {

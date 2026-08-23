@@ -1,8 +1,0 @@
-{
-  "artifacts": {
-    "rootDir": "base",
-    "plugins": {
-      "log": "all"
-    }
-  }
-}
