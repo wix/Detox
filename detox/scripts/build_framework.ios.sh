@@ -5,6 +5,15 @@ FRAMEWORK_OUTPUT_DIR=$2
 CONFIGURATION=Release
 PROJECT_NAME=Detox
 
+IOS_DIR="$(dirname "${PROJECT}")"
+for submodule in COSTouchVisualizer DetoxSync LNViewHierarchyDumper; do
+  if [ -z "$(ls -A "${IOS_DIR}/${submodule}" 2>/dev/null)" ]; then
+    echo "error: ${IOS_DIR}/${submodule} is empty — git submodules are not checked out." >&2
+    echo "       run: git submodule update --init --recursive" >&2
+    exit 1
+  fi
+done
+
 # Make sure the output directory exists
 
 rm -fr "${FRAMEWORK_OUTPUT_DIR}"

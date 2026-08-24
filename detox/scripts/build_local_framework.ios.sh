@@ -41,7 +41,9 @@ function buildFramework () {
   detoxSourcePath="${1}"
   echo "Building Detox.framework from ${detoxSourcePath} into ${detoxFrameworkDirPath}"
   mkdir -p "${detoxFrameworkDirPath}"
-  logPath="${detoxFrameworkDirPath}"/detox_ios.log
+  # Outside the output dir on purpose: build_framework.ios.sh wipes that dir first,
+  # and the error handler below has to be able to read the log afterwards.
+  logPath="${detoxFrameworkDirPath}.log"
   echo "Build log: ${logPath}"
   echo -n "" > "${logPath}"
   "${detoxRootPath}"/scripts/build_framework.ios.sh "${detoxSourcePath}"/Detox.xcodeproj "${detoxFrameworkDirPath}" &> "${logPath}" || {
