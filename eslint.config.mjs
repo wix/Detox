@@ -56,6 +56,7 @@ export default tseslint.config(
             '*.mjs',
             '*.js',
             'scripts/*.js',
+            'scripts/*.mjs',
             'scripts/lib/*.js',
             // Spec-009's probe runner: a plain-node script the accept
             // fixtures configure as their test runner ($0), editable like
