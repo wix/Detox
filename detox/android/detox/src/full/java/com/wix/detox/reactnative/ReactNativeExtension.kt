@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.wix.detox.LaunchArgs
 import com.wix.detox.reactnative.idlingresources.ReactNativeIdlingResources
+import com.wix.detox.reactnative.idlingresources.network.DetoxOkHttpClientTracker
 import com.wix.detox.reactnative.reloader.ReactNativeReloaderFactory
 
 private const val LOG_TAG = "DetoxRNExt"
@@ -28,6 +29,8 @@ object ReactNativeExtension {
         }
 
         ReactMarkersLogger.attach()
+        // Before any JS runs, so lazily-created OkHttp clients are tracked from the start.
+        DetoxOkHttpClientTracker.ensureInstalled()
     }
 
     /**
