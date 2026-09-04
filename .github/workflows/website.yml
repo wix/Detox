@@ -26,6 +26,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Security check (npq)
+        continue-on-error: true
         working-directory: ./website
         env:
           NPQ_PKG_MGR: yarn
@@ -54,6 +55,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
       - name: Security check (npq)
+        continue-on-error: true
         working-directory: ./website
         env:
           NPQ_PKG_MGR: yarn

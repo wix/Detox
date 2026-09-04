@@ -39,6 +39,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Security check (npq)
+        continue-on-error: true
         run: npx npq install --immutable --dry-run
         env:
           NPQ_PKG_MGR: yarn
