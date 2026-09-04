@@ -42,6 +42,7 @@ jobs:
         run: yes | npx npq install --immutable
         env:
           NPQ_PKG_MGR: yarn
+          NPQ_ALLOW_NON_INTERACTIVE_INSTALL: true
           DETOX_DISABLE_POD_INSTALL: true
           DETOX_DISABLE_POSTINSTALL: true
       - name: Lint

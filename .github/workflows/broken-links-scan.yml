@@ -20,4 +20,5 @@ jobs:
         run: yes | npx npq install --immutable
         env:
           NPQ_PKG_MGR: yarn
+          NPQ_ALLOW_NON_INTERACTIVE_INSTALL: true
       - run: yarn remark -r .remarkrc.nightly.mjs .

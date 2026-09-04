@@ -22,6 +22,7 @@ jobs:
         run: yes | npx npq install --immutable
         env:
           NPQ_PKG_MGR: yarn
+          NPQ_ALLOW_NON_INTERACTIVE_INSTALL: true
       - name: Teardown old domains
         run: yarn zx scripts/purge_expired_domains.mjs --olderThan ${{ github.event.inputs.days || '10' }}
         env:
