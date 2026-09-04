@@ -48,6 +48,9 @@
     "prepack": "npm run build && node scripts/check_ios_framework.js",
     "postinstall": "node scripts/postinstall.js"
   },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
   "devDependencies": {
     "@detox-remote/core": "workspace:*",
     "@detox-remote/protocol": "workspace:*",

@@ -22,9 +22,7 @@
  *  - `detox/server` exposes the programmatic entry point — createServer;
  *  - the bin map serves `detox` and the file exists and is runnable;
  *  - the published `engines` equals the repo's own node pin;
- *  - the tarball declares no runtime dependencies — every one of them is
- *    bundled into dist/, so a declared dep would only make each install
- *    fetch a package the shipped code never loads;
+ *  - the tarball declares zod and nothing else;
  *  - the framework-cache verbs find the build scripts the tarball ships;
  *  - the doors a user runs inside their own process ship self-contained
  *    source maps, so a debugger steps into TypeScript rather than a bundle.
@@ -120,23 +118,23 @@ try {
     const helperServerBin = require('node:path').join(require('node:path').dirname(require.resolve('detox/package.json')), 'dist/server/cli.js');
     assert.equal(require('node:fs').existsSync(helperServerBin), true,
       'the detached local helper server bin must exist in the tarball');
-    // esbuild inlines ws (and zod, inside the CLI) into the bundles, so the
-    // published package needs nothing at install time. Anything declared here
-    // would be downloaded by every user and then never required.
-    assert.deepEqual(Object.keys(manifest.dependencies || {}), [],
-      'the tarball must declare no runtime dependencies — they are bundled');
+    // zod is declared because the published detox/server .d.ts names its
+    // types, and a .d.ts resolves against the consumer's node_modules.
+    // Everything else is bundled into dist/, so keep this list exact.
+    assert.deepEqual(Object.keys(manifest.dependencies || {}), ['zod'],
+      'the tarball must declare zod and nothing else');
     console.log('verify-pack probe: all assertions passed');
   `;
   const out = run('node', ['-e', probe], { cwd: project });
   process.stdout.write(out);
 
-  // The same claim from the outside: a dependency-free install puts nothing
-  // in node_modules but detox itself (npm's own bookkeeping dotfiles aside).
+  // The same claim from the outside (npm's bookkeeping dotfiles aside).
   const installedPackages = fs
     .readdirSync(path.join(project, 'node_modules'))
-    .filter((entry) => !entry.startsWith('.'));
-  if (installedPackages.join(',') !== 'detox') {
-    fail(`installing the tarball pulled in more than detox: ${installedPackages.join(', ')}`);
+    .filter((entry) => !entry.startsWith('.'))
+    .sort();
+  if (installedPackages.join(',') !== 'detox,zod') {
+    fail(`installing the tarball pulled in more than detox and zod: ${installedPackages.join(', ')}`);
   }
 
   // Debugging symbols: the bundles a user executes in

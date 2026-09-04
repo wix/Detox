@@ -11019,6 +11019,7 @@ __metadata:
     "@detox-remote/protocol": "workspace:*"
     react-native: "npm:0.85.2"
     ws: "npm:^8.18.0"
+    zod: "npm:^4.4.3"
   peerDependencies:
     jest: 30.x.x || 29.x.x || 28.x.x || ^27.2.5
   peerDependenciesMeta:
