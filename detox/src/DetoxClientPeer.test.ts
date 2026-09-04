@@ -37,7 +37,7 @@ describe('DetoxClientPeer', () => {
       },
     });
 
-    const result = await client.allocateDevice({ type: 'ios.simulator' } as never);
+    const result = await client.allocateDevice({ type: 'ios.simulator' });
 
     expect(receivedMethod).toBe('allocateDevice');
     expect(receivedParams).toEqual({ type: 'ios.simulator' });

@@ -1,4 +1,5 @@
-export { Peer } from './peer';
+export { Peer, connectionLostReason } from './peer';
+export type { PeerObserver, ObservedRequestBegin, ObservedProgress, ObservedRequestEnd, HandlerScope, PeerOptions } from './peer';
 export type { CancelOutcome, UndoFn } from './undo-stack';
 export type {
   RpcRequest,

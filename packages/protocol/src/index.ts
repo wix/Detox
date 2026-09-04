@@ -6,3 +6,5 @@ export * from './misc';
 export * from './contract';
 export * from './config-snapshot';
 export * from './handshake';
+export * from './log';
+export * from './run-rows';

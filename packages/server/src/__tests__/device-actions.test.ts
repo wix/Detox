@@ -1,12 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import type { DeviceInfo, LaunchAppParams, LaunchAppResult, SendToHomeParams } from '@detox-remote/protocol';
+import type { LaunchAppParams, LaunchAppResult, SendToHomeParams } from '@detox-remote/protocol';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 import { DetoxErrorCode } from '@detox-remote/core';
 
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { AppGateway } from '../AppGateway';
-import { DevicePool } from '../DevicePool';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
+import { iosHost, type IosHost } from './_ios-harness';
 
 type UndoFn = () => void | Promise<void>;
 
@@ -164,27 +164,21 @@ function fakeSimulatorOps(launchGate?: Promise<void>): FakeOps {
   return { simulatorOps, launches, homes };
 }
 
-const gateways: AppGateway[] = [];
+const daHosts: IosHost[] = [];
 
 afterEach(async () => {
-  for (const gateway of gateways.splice(0)) {
-    await gateway.close().catch(() => undefined);
+  for (const host of daHosts.splice(0)) {
+    await host.close().catch(() => undefined);
   }
 });
 
 async function makeServer(launchGate?: Promise<void>) {
-  const gateway = await AppGateway.listen();
-  gateways.push(gateway);
   const ops = fakeSimulatorOps(launchGate);
-  const devicePool = new DevicePool({ simulatorOps: ops.simulatorOps, maxPool: 4 });
+  const host = iosHost(ops.simulatorOps);
+  daHosts.push(host);
   const captured = capturingPeer();
-  new DetoxServerImpl({
-    serverPeer: captured.peer,
-    devicePool,
-    simulatorOps: ops.simulatorOps,
-    appGateway: gateway,
-  });
-  return { ...ops, ...captured, devicePool, gateway };
+  new DetoxServerImpl({ serverPeer: captured.peer, driverHost: host.host });
+  return { ...ops, ...captured, devicePool: host.pool, host };
 }
 
 /**
@@ -244,11 +238,12 @@ describe('device actions route by allocationId', () => {
    */
   it('refuses a live allocationId that belongs to another connection', async () => {
     const ops = fakeSimulatorOps();
-    const devicePool = new DevicePool({ simulatorOps: ops.simulatorOps, maxPool: 4 });
+    const host = iosHost(ops.simulatorOps);
+    daHosts.push(host);
     const alice = capturingPeer();
     const bob = capturingPeer();
-    new DetoxServerImpl({ serverPeer: alice.peer, devicePool, simulatorOps: ops.simulatorOps });
-    new DetoxServerImpl({ serverPeer: bob.peer, devicePool, simulatorOps: ops.simulatorOps });
+    new DetoxServerImpl({ serverPeer: alice.peer, driverHost: host.host });
+    new DetoxServerImpl({ serverPeer: bob.peer, driverHost: host.host });
 
     const held = await alice.allocate({ type: 'ios.simulator' }, {});
 

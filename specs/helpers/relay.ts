@@ -1,13 +1,13 @@
 /**
  * Test-side relay handle (spec 008) — editable scaffolding, not product API.
  *
- * Mirrors `./server`: spawns `dist/relay/cli.js`, waits for the same IPC
+ * Mirrors `./server`: spawns `detox/dist/relay/cli.js`, waits for the same IPC
  * `{type: 'listening', url}` announce, mints a fresh client-hop token per
  * run, and writes the hop-pairwise node config to a temp
  * file — node tokens are lifted from each node handle's own address, so no
  * test ever sees or repeats a token.
  *
- * Without a build, spawning fails on the missing `dist/relay/cli.js` —
+ * Without a build, spawning fails on the missing `detox/dist/relay/cli.js` —
  * expected before spec 008 is implemented.
  */
 import { spawn } from 'node:child_process';
@@ -16,7 +16,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import type { DetoxServerAddress } from 'detox/internals';
+import type { DetoxServerAddress } from 'detox/client';
 
 import { bearerHeaders, waitUntilListening, type DetoxServerHandle } from './server';
 
@@ -29,7 +29,7 @@ export interface RelayNodeRef {
 
 export interface StartRelayOptions {
   nodes: ReadonlyArray<RelayNodeRef>;
-  /** `--keepalive-window` (seconds) for the client hop; `0` is legal (#56). */
+  /** `--keepalive-window` (seconds) for the client hop; `0` is legal. */
   keepaliveWindowSec?: number;
   /** `--blob-budget` (bytes) for the relay's own store. */
   blobBudget?: number;
@@ -41,6 +41,11 @@ export interface StartRelayOptions {
    * machine's real blob cache (the trap `helpers/server.ts` documents).
    */
   blobRoot?: string;
+  /**
+   * A fresh temp `DETOX_RELAY_LOG_ROOT` for the relay's own connection log
+   * (spec 008) — the same isolation reasoning as `blobRoot`.
+   */
+  isolatedLogRoot?: boolean;
   /** Extra handshake headers; `Authorization` is supplied automatically. */
   headers?: Readonly<Record<string, string>>;
   readyTimeoutMs?: number;
@@ -96,7 +101,8 @@ export function nodeHolding(
   udid: string,
   nodes: ReadonlyArray<RelayNodeRef>,
 ): RelayNodeRef {
-  const holder = nodes.find((node) => node.server.logs().includes(`picked udid: ${udid}`));
+  // The node's own line at the end of its allocation: `allocateDevice — ready: <id> (booted|warm)` (spec 015).
+  const holder = nodes.find((node) => node.server.logs().includes(`allocateDevice — ready: ${udid}`));
   if (!holder) throw new Error(`no configured node's logs claim allocation of ${udid}`);
   return holder;
 }
@@ -124,22 +130,37 @@ export async function startRelay(options: StartRelayOptions): Promise<DetoxRelay
 
   const blobRoot =
     options.blobRoot ?? mkdtempSync(path.join(tmpdir(), 'detox-relay-blob-store-'));
+  const logRoot = options.isolatedLogRoot
+    ? mkdtempSync(path.join(tmpdir(), 'detox-relay-log-root-'))
+    : undefined;
   const child = spawn('node', [cli, ...flags], {
     // The token goes through the environment, not argv (argv is readable by
     // every process on the machine — the same reasoning as the nodes file).
-    env: { ...process.env, DETOX_RELAY_TOKEN: token, DETOX_BLOB_ROOT: blobRoot },
+    env: {
+      ...process.env,
+      DETOX_RELAY_TOKEN: token,
+      DETOX_RELAY_BLOB_ROOT: blobRoot,
+      ...(logRoot === undefined ? {} : { DETOX_RELAY_LOG_ROOT: logRoot }),
+    },
     stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
     signal: options.signal,
   });
+
+  // Forwarded live, tagged by pid, same convention as `helpers/server.ts`:
+  // a relay's own narration (fan-out attempts, node loss, the log crossing
+  // the hop) shows up on the accept run's own combined log.
+  const livePrefix = `[relay:${String(child.pid ?? '?')}]`;
 
   const stderrTail: string[] = [];
   child.stderr?.on('data', (chunk: Buffer) => {
     stderrTail.push(chunk.toString());
     if (stderrTail.length > STDERR_TAIL_CHUNKS) stderrTail.shift();
+    process.stderr.write(`${livePrefix} ${chunk.toString()}`);
   });
   const stdoutChunks: string[] = [];
   child.stdout?.on('data', (chunk: Buffer) => {
     stdoutChunks.push(chunk.toString());
+    process.stderr.write(`${livePrefix} ${chunk.toString()}`);
   });
   child.on('error', () => {
     /* reported through waitUntilListening, or expected on abort */

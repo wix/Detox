@@ -8,7 +8,7 @@
  * an initialized surface.
  */
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach, afterAll } from 'vitest';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode, type DetoxOperationRef } from 'detox/client';
 
 import {
   by,
@@ -17,6 +17,7 @@ import {
   element,
   expect as expectElement,
   init,
+  session,
   waitFor,
   type CompatConfig,
 } from '../index';
@@ -24,19 +25,19 @@ import {
   FakeWebSocket,
   connectFakeServer,
   type FakeServer,
-} from '../../../../detox/src/internals/__tests__/helpers/fake-transport';
+} from '../../../../detox/src/client/__tests__/helpers/fake-transport';
 import {
   startBlobLaneStub,
   type BlobLaneStub,
-} from '../../../../detox/src/internals/__tests__/helpers/blob-lane-stub';
+} from '../../../../detox/src/client/__tests__/helpers/blob-lane-stub';
 import {
   makeAppBundleFixture,
   type AppBundleFixture,
-} from '../../../../detox/src/internals/__tests__/helpers/app-bundle-fixture';
+} from '../../../../detox/src/client/__tests__/helpers/app-bundle-fixture';
 
 vi.mock('ws', async () => {
   const { FakeWebSocket: FakeWebSocketCtor } = await import(
-    '../../../../detox/src/internals/__tests__/helpers/fake-transport'
+    '../../../../detox/src/client/__tests__/helpers/fake-transport'
   );
   return { default: FakeWebSocketCtor };
 });
@@ -47,6 +48,7 @@ const allocation = {
   name: 'iPhone 17',
   os: 'iOS 26.5',
   state: 'booted',
+  apps: { serverUrl: 'ws://127.0.0.1:8099' },
 };
 
 interface Received {
@@ -248,7 +250,7 @@ describe('init and the device identity surface', () => {
   /**
    * @issue DTX-4002
    * v20's own example config gives two aliases one `name:` field; transcribed into this flat
-   * list the first would silently win, so `init` refuses the collision instead.
+   * list the first would silently win, so `connect` refuses the collision instead.
    */
   it('refuses duplicate app names in the config — the v20 example-config transcription hazard', async () => {
     await expect(
@@ -1121,5 +1123,46 @@ describe('the unported v20 surface', () => {
     // The launch-args accessor is a real, enumeration-safe object — spreading
     // `device` must not explode.
     expect(Object.keys({ ...device })).toContain('appLaunchArgs');
+  });
+});
+
+describe('the session door (spec 013)', () => {
+  it('refuses every member before init, and after init is the live v21 handle; disconnect is cleanup', async () => {
+    for (const read of [
+      (): unknown => session.runId,
+      (): unknown => session.log,
+      (): unknown => session.step('x'),
+      (): unknown => session.allocateDevice({ type: 'ios.simulator' }),
+      (): unknown => session.on('operation', () => undefined),
+      (): unknown => session.off('operation', () => undefined),
+    ]) {
+      expect(read).toThrow(expect.objectContaining({ code: DetoxErrorCode.DETOX_NOT_INITIALIZED }) as Error);
+    }
+
+    const { server } = await initCompat();
+    const steps: Record<string, unknown>[] = [];
+    server.peer.onNotify({ method: '$/log', handler: (params) => steps.push(params as Record<string, unknown>) });
+    expect(session.runId).toBe('fake-connection');
+    const operations: string[] = [];
+    const listener = (operation: DetoxOperationRef): void => {
+      operations.push(operation.name);
+    };
+    expect(session.on('operation', listener)).toBe(session);
+    await session.step('outer', async () => {
+      session.log('inside');
+      await session.allocateDevice({ type: 'ios.simulator' });
+    });
+    expect(session.off('operation', listener)).toBe(session);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(operations).toEqual(['allocateDevice']);
+    expect(steps[0]).toMatchObject({ phase: 'begin', kind: 'step', name: 'outer' });
+    expect(steps[1]).toMatchObject({ phase: 'log', msg: 'inside' });
+    expect(steps[2]).toMatchObject({ phase: 'end', status: 'passed' });
+
+    await session.disconnect();
+    expect(() => session.runId).toThrow(expect.objectContaining({ code: DetoxErrorCode.DETOX_NOT_INITIALIZED }) as Error);
+    await initCompat();
+    await session[Symbol.asyncDispose]();
+    expect(() => session.log).toThrow(expect.objectContaining({ code: DetoxErrorCode.DETOX_NOT_INITIALIZED }) as Error);
   });
 });

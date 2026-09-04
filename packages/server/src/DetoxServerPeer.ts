@@ -1,6 +1,6 @@
 import type { Peer } from '@detox-remote/core';
-import type { DetoxServerPeer as IDetoxServerPeer, ServerInfoNotification } from '@detox-remote/protocol';
-import { SERVER_INFO_METHOD } from '@detox-remote/protocol';
+import type { DetoxServerPeer as IDetoxServerPeer, ServerInfoNotification, LogNotification } from '@detox-remote/protocol';
+import { SERVER_INFO_METHOD, LOG_METHOD } from '@detox-remote/protocol';
 import type {
   AllocateDeviceRequest,
   AllocateDeviceResponse,
@@ -44,6 +44,11 @@ import type {
   CaptureViewHierarchyResult,
   GenerateViewHierarchyXmlParams,
   GenerateViewHierarchyXmlResult,
+  AttachAppParams,
+  ActivateAppParams,
+  AppHandleResult,
+  ConnectedAppsParams,
+  ConnectedAppsResult,
 } from '@detox-remote/protocol';
 import type {
   SetBiometricEnrollmentParams,
@@ -74,9 +79,13 @@ export class DetoxServerPeer extends DetoxServerPeerBase implements IDetoxServer
   onReleaseDevice = this._peer.createMethodHandler<ReleaseDeviceRequest, ReleaseDeviceResponse>('releaseDevice');
   notifyDeviceStateChanged = this._peer.createNotification<DeviceStateChangedNotification>('deviceStateChanged');
   notifyServerInfo = this._peer.createNotification<ServerInfoNotification>(SERVER_INFO_METHOD);
+  onLog = this._peer.createNotificationHandler<LogNotification>(LOG_METHOD);
   onInstallApp = this._peer.createMethodHandler<InstallAppParams, void>('installApp');
   onUninstallApp = this._peer.createMethodHandler<UninstallAppParams, void>('uninstallApp');
   onLaunchApp = this._peer.createMethodHandler<LaunchAppParams, LaunchAppResult>('launchApp');
+  onAttachApp = this._peer.createMethodHandler<AttachAppParams, AppHandleResult>('attachApp');
+  onActivateApp = this._peer.createMethodHandler<ActivateAppParams, AppHandleResult>('activateApp');
+  onConnectedApps = this._peer.createMethodHandler<ConnectedAppsParams, ConnectedAppsResult>('connectedApps');
   onTerminateApp = this._peer.createMethodHandler<TerminateAppParams, void>('terminateApp');
   onSetPermissions = this._peer.createMethodHandler<SetPermissionsParams, void>('setPermissions');
   onSendToHome = this._peer.createMethodHandler<SendToHomeParams, void>('sendToHome');

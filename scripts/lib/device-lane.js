@@ -2,7 +2,7 @@
 
 /**
  * The device lane: exclusivity for the two device-bound
- * suites (`yarn accept`, `yarn parity`), held by a bound socket.
+ * suites (acceptance, `yarn parity`), held by a bound socket.
  *
  * Why a socket and not a lockfile: a file survives its owner. It would then
  * need staleness detection, which needs either a pid probe (pids are reused)
@@ -14,7 +14,7 @@
  * Why refuse instead of wait: the same fail-fast shape the server uses for
  * a full pool. The caller knows what it wants to do with a busy machine; a
  * queue inside the runner is a queue behind a queue, and a run parked for
- * 20 minutes inside `yarn accept` is indistinguishable from a hang.
+ * 20 minutes inside the acceptance runner is indistinguishable from a hang.
  *
  * Why this matters beyond convenience: every clock in these runners is
  * calibrated on "this machine is mine" — the parity cap, the accept cap,
@@ -22,8 +22,9 @@
  * suite each one degrades from wedge detector into a patience limit against
  * a live-but-starved counterpart, which is exactly what these timeouts are
  * not meant to be. The lane is the precondition under which those timeouts
- * are valid, and it covers `dist/` too: `yarn accept` rebuilds the very
- * `dist/server/cli.js` that a parity run re-spawns per fixture file.
+ * are valid, and it covers `dist/` too: the acceptance runner rebuilds the
+ * very `detox/dist/server/cli.js` that a parity run re-spawns per fixture
+ * file.
  *
  * Machine-scoped: two clones of this repo contend for one Mac's simulator
  * fleet, so the lane must not be repo-relative.

@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
-import { DetoxErrorCode } from 'detox/internals';
+import { DetoxErrorCode } from 'detox/client';
 import type { ConfigSnapshot } from '@detox-remote/protocol';
 
 import { loadSnapshot, mapSnapshot } from '../snapshot';

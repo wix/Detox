@@ -3,6 +3,45 @@
 import type { DeviceActionParams } from './device';
 
 /**
+ * `device.apps.attach` (spec 015): resolves with a session connected and
+ * ready under `sessionId` — at once if one already is, otherwise when one
+ * arrives. Never spawns.
+ */
+export interface AttachAppParams extends DeviceActionParams {
+  /** The opaque session id to attach to — matched exactly, never parsed. */
+  sessionId: string;
+}
+
+/**
+ * A handle to an app the server did not necessarily spawn (attach), a resumed
+ * one (activate), or one listed by `connected()`. `pid` is present only where
+ * a spawn returned one — the frozen dialect carries no process identity.
+ */
+export interface AppHandleResult {
+  appHandleId: string;
+  /** The driver's decoding of the session id. */
+  bundleId: string;
+  pid?: number;
+}
+
+/**
+ * `device.apps.activate` (spec 015): foreground the connected+ready app under
+ * `appId`'s session, else launch it with no launch options — signal-only, as
+ * `XCUIApplication.activate()`; options that would apply on one path and be
+ * dropped on the other are not offered.
+ */
+export interface ActivateAppParams extends DeviceActionParams {
+  appId?: string;
+}
+
+/** `device.apps.connected` (spec 015): the device's ready sessions as handles. */
+export type ConnectedAppsParams = DeviceActionParams;
+
+export interface ConnectedAppsResult {
+  apps: AppHandleResult[];
+}
+
+/**
  * Every app action names the device's allocation and the server-minted
  * per-launch app handle (spec 003): a udid is never an address, and a bare
  * bundle id cannot distinguish a relaunch's fresh instance from its dead

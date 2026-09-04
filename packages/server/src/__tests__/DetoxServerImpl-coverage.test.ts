@@ -1,10 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
-import type { DeviceInfo } from '@detox-remote/protocol';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 import { DetoxErrorCode } from '@detox-remote/core';
 
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
+import type { DevicePool } from '@detox-remote/driver-ios';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
+import { iosHost, type IosHost } from './_ios-harness';
 import type {
   SimulatorOps,
   BootArgs,
@@ -16,7 +17,13 @@ import type {
   CreatableDeviceType,
   CreateDeviceArgs,
   RawDeviceListing,
-} from '../SimulatorOps';
+} from '@detox-remote/driver-ios';
+
+/** Every driver host a test builds (spec 015): closed after each so its per-device gateways release. */
+const covHosts: IosHost[] = [];
+afterEach(async () => {
+  for (const host of covHosts.splice(0)) await host.close().catch(() => undefined);
+});
 
 type UndoFn = () => void | Promise<void>;
 
@@ -148,19 +155,20 @@ interface ServerHandle {
 
 function makeServer(overrides: OpsOverrides = {}): ServerHandle {
   const simulatorOps = fakeSimulatorOps(overrides);
-  const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+  const host = iosHost(simulatorOps);
+  covHosts.push(host);
+  const devicePool = host.pool;
   const captured = capturingPeer();
   const impl = new DetoxServerImpl({
     serverPeer: captured.peer,
-    devicePool,
-    simulatorOps,
+    driverHost: host.host,
   });
   return { impl, devicePool, handlers: captured.handlers, stateNotifications: captured.stateNotifications };
 }
 
 interface AllocateParams {
   type: string;
-  device?: { type?: string };
+  device?: { model?: string };
 }
 
 interface AllocateResponse {
@@ -481,7 +489,8 @@ describe('a dead connection reclaims what it holds only once in-flight work sett
       {},
     );
 
-    server.impl.release();
+    // Fire-and-forget: the reclaim must wait on the gated terminateApp below.
+    void server.impl.release();
     // Give the (wrongly) instant reclaim every chance to have happened.
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(server.devicePool.busyCount).toBe(1);
@@ -543,7 +552,7 @@ describe('rolling back a device this allocation created', () => {
     });
     const allocate = call<AllocateParams, AllocateResponse>(server.handlers, 'allocateDevice');
 
-    await expect(allocate({ type: 'ios.simulator', device: { type: 'iPhone 17' } }, {})).rejects.toThrow(
+    await expect(allocate({ type: 'ios.simulator', device: { model: 'iPhone 17' } }, {})).rejects.toThrow(
       'boot exploded',
     );
 

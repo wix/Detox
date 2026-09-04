@@ -14,15 +14,22 @@ import * as path from 'node:path';
 import { Readable } from 'node:stream';
 import { promisify } from 'node:util';
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { DetoxErrorCode } from '@detox-remote/core';
-import type { DeviceInfo, InstallAppParams } from '@detox-remote/protocol';
+import type { InstallAppParams } from '@detox-remote/protocol';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
 import { BlobStore } from '../BlobStore';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
-import type { SimulatorOps, InstallAppArgs } from '../SimulatorOps';
+import { iosHost, type IosHost } from './_ios-harness';
+
+/** Every driver host a test builds (spec 015): closed after each so its per-device gateways release. */
+const blobHosts: IosHost[] = [];
+afterEach(async () => {
+  for (const host of blobHosts.splice(0)) await host.close().catch(() => undefined);
+});
+import type { SimulatorOps, InstallAppArgs } from '@detox-remote/driver-ios';
 
 const run = promisify(execFile);
 
@@ -81,10 +88,11 @@ function makeServer(options: MakeServerOptions): MadeServer {
     rawDevices: async () => [],
     deleteDevice: async () => undefined,
   } as unknown as SimulatorOps;
+  const host = iosHost(simulatorOps);
+  blobHosts.push(host);
   new DetoxServerImpl({
     serverPeer: peer,
-    devicePool: new DevicePool({ simulatorOps, maxPool: 4 }),
-    simulatorOps,
+    driverHost: host.host,
     blobStore: options.blobStore,
   });
   const call = <P, R>(key: string): Handler<P, R> => {

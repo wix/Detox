@@ -12,7 +12,7 @@
  * @issue DTX-4042: nothing is invented — the code, the details and the cause ride through
  * untouched, and the native's own crash report is folded back into the message.
  */
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 /** v20 `Client.js:349`, verbatim. */
 const CRASH_MESSAGE = 'The app has crashed, see the details below:';

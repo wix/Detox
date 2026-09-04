@@ -18,6 +18,7 @@ import type {
   CallOptions,
 } from './request-context';
 import { AbortError, DetoxConnectionError, DetoxErrorCode, errorFromWire, toWireError } from '../errors';
+import type { WireError } from '../errors';
 
 interface PendingCall {
   resolve: (value: unknown) => void;
@@ -36,6 +37,8 @@ interface PendingCall {
 interface RetainedRequest {
   undo: UndoStack;
   expiresAt: number;
+  /** The request as observed, so a late rollback runs inside the same scope its handler did. */
+  begin: ObservedRequestBegin;
 }
 
 /**
@@ -77,8 +80,87 @@ function outcomeOf(error: RpcResponse['error']): ReportedOutcome | undefined {
   return outcome === undefined ? undefined : { outcome };
 }
 
+/** The `-32800` answer, carrying what the rollback did. */
+function cancelledError(outcome: CancelOutcome): WireError {
+  return { code: JSONRPC_CANCELLED, message: 'Request cancelled', data: { outcome } };
+}
+
 /** @issue DTX-1012: the ceiling — retained records are dropped oldest-first once it is full. */
 const RETAIN_MAX = 4096;
+
+/** What {@link PeerObserver.onRequestBegin} sees: the request as it starts running. */
+export interface ObservedRequestBegin {
+  /** The wire id of the request — the only correlation key across begin/progress/end. */
+  readonly id: string;
+  readonly method: string;
+  readonly params: unknown;
+  /**
+   * The handler's own signal — the same object the handler receives as
+   * `ctx.signal`, so an observer can recognise the request again from
+   * inside anything the handler passes it to.
+   */
+  readonly signal: AbortSignal;
+  /** The frame's `step` member as it arrived (spec 013), unjudged — the observer decides what it names. */
+  readonly step?: unknown;
+}
+
+/**
+ * Runs one handled request inside a scope of the embedder's choosing (spec
+ * 013): the server wraps every handler in an `AsyncLocalStorage` context
+ * naming the request, so anything the handler reaches — a child process
+ * spawn three modules down — can find the request it serves without the
+ * request being threaded through every signature. The peer itself puts
+ * nothing in the scope; it only guarantees the handler runs inside `run`.
+ */
+export type HandlerScope = <T>(info: ObservedRequestBegin, run: () => Promise<T>) => Promise<T>;
+
+export interface PeerOptions {
+  handlerScope?: HandlerScope;
+}
+
+/** What {@link PeerObserver.onProgress} sees: one `$/progress` value, before any wire mute. */
+export interface ObservedProgress {
+  readonly id: string;
+  readonly value: unknown;
+}
+
+/** What {@link PeerObserver.onRequestEnd} sees: the request has settled, whatever the wire said. */
+export interface ObservedRequestEnd {
+  readonly id: string;
+  readonly method: string;
+  readonly ok: boolean;
+  /** The JSON-RPC `error` object the wire carries (or would have, on a closed channel). */
+  readonly error?: WireError;
+  /** The handler's result as sent (spec 012: the recorder summarizes the result a handler minted). Absent on failure or cancellation. */
+  readonly result?: unknown;
+  readonly durationMs: number;
+}
+
+/**
+ * The logging seam (spec 012): begin / progress / end of every request this
+ * peer *handles* (never the ones it makes). Invoked where the peer creates
+ * the request's controller, forwards a progress value, and settles the
+ * handler — the only place "settled" is knowable after a close, since a
+ * closed channel sends no frames. Progress is observed before the wire mute
+ * that follows an abort, so narration after an abort still reaches the log.
+ */
+export interface PeerObserver {
+  onRequestBegin?(info: ObservedRequestBegin): void;
+  onProgress?(info: ObservedProgress): void;
+  onRequestEnd?(info: ObservedRequestEnd): void;
+}
+
+/**
+ * Why a running handler is aborted when the channel dies underneath it
+ * (spec 012's named core change): a typed reason instead of `undefined`, so
+ * a handler's own reporting — and the log observing it — can tell "the
+ * caller cancelled" from "the caller vanished".
+ */
+export function connectionLostReason(): DetoxConnectionError {
+  return new DetoxConnectionError('connection closed while the request was running', {
+    code: DetoxErrorCode.DETOX_CONNECTION_LOST,
+  });
+}
 
 /**
  * @issue DTX-1011: sweep cadence — one shared timer for the whole map, not a timer per record.
@@ -96,17 +178,20 @@ export class Peer {
   private _requestHandlers = new Map<string, RequestHandler>();
   private _notifyHandlers = new Map<string, NotifyHandler>();
   private _errorHandlers: ErrorHandler[] = [];
+  private _observers: PeerObserver[] = [];
+  private _handlerScope: HandlerScope;
   private _closed = false;
   private _closeInfo?: CloseInfo;
 
-  private constructor(private _channel: Channel) {
+  private constructor(private _channel: Channel, options: PeerOptions) {
+    this._handlerScope = options.handlerScope ?? ((_info, run) => run());
     _channel.onMessage((msg) => this._onMessage(msg as RpcMessage));
     _channel.onClose((info) => this._onClose(info));
     _channel.onError((err) => this._onError(err));
   }
 
-  static create(channel: Channel): Peer {
-    return new Peer(channel);
+  static create(channel: Channel, options: PeerOptions = {}): Peer {
+    return new Peer(channel, options);
   }
 
   /**
@@ -124,13 +209,33 @@ export class Peer {
     for (const handler of this._errorHandlers) handler(err);
   }
 
-  request<T>({ method, params, signal, onProgress }: RequestCallOpts): Promise<T> {
+  /**
+   * Registers a {@link PeerObserver} over the requests this peer handles.
+   * Additive; an observer that throws is reported through {@link onError}
+   * and never disturbs the request it was watching.
+   */
+  observe(observer: PeerObserver): this {
+    this._observers.push(observer);
+    return this;
+  }
+
+  private _observe(call: (observer: PeerObserver) => void): void {
+    for (const observer of this._observers) {
+      try {
+        call(observer);
+      } catch (err) {
+        this._onError(err instanceof Error ? err : new Error(String(err)));
+      }
+    }
+  }
+
+  request<T>({ method, params, signal, onProgress, step }: RequestCallOpts): Promise<T> {
     // @issue DTX-1010: an already-aborted signal beats a closed peer — the abort explains the close.
     if (signal?.aborted) return Promise.reject(new AbortError(signal.reason));
     if (this._closed) return Promise.reject(this._closeError('Peer is closed'));
 
     const id = String(this._nextId++);
-    const req: RpcRequest = { jsonrpc: '2.0', id, method, params };
+    const req: RpcRequest = { jsonrpc: '2.0', id, method, params, ...(step !== undefined ? { step } : {}) };
 
     return new Promise<T>((resolve, reject) => {
       const pending: PendingCall = {
@@ -248,39 +353,85 @@ export class Peer {
 
     const ac = new AbortController();
     this._running.set(req.id, ac);
+    const startedAt = Date.now();
+    const begin: ObservedRequestBegin = {
+      id: req.id,
+      method: req.method,
+      params: req.params,
+      signal: ac.signal,
+      ...(req.step !== undefined ? { step: req.step } : {}),
+    };
+    this._observe((o) => o.onRequestBegin?.(begin));
 
     const progress = (value: unknown) => {
+      // Observed before the mute: the log hears what the wire no longer can.
+      this._observe((o) => o.onProgress?.({ id: req.id, value }));
       if (ac.signal.aborted) return;
       this.notify({ method: '$/progress', params: { token: req.id, value } });
     };
 
     const undo = new UndoStack((error) => this._onError(error));
+    let ok = true;
+    let error: WireError | undefined;
+    let observedResult: unknown;
 
     try {
-      const result = await handler(req.params, {
-        signal: ac.signal,
-        progress,
-        onUndo: (fn) => undo.push(fn),
-      });
+      const result = await this._handlerScope(begin, () =>
+        handler(req.params, {
+          signal: ac.signal,
+          progress,
+          onUndo: (fn) => undo.push(fn),
+        }),
+      );
       if (ac.signal.aborted) {
-        this._sendCancelled(req.id, await undo.run());
+        ok = false;
+        // The rollback runs inside the request's scope too: what it spawns is the request's.
+        error = cancelledError(await this._unwind(begin, undo));
+        this._sendCancelled(req.id, error);
       } else {
         // Retained *before* the response goes out, so the answer and the
         // ability to take it back are never observable in the wrong order.
-        this._retain(req.id, undo);
+        this._retain(req.id, undo, begin);
+        observedResult = result;
         this._channel.send({ jsonrpc: '2.0', id: req.id, result });
       }
     } catch (err) {
       // @issue DTX-1004: any unsuccessful ending unwinds the stack, not cancellation alone.
-      const outcome = await undo.run();
+      const outcome = await this._unwind(begin, undo);
+      ok = false;
       if (ac.signal.aborted) {
-        this._sendCancelled(req.id, outcome);
+        error = cancelledError(outcome);
+        this._sendCancelled(req.id, error);
       } else {
-        this._channel.send({ jsonrpc: '2.0', id: req.id, error: toWireError(err) });
+        error = toWireError(err);
+        this._channel.send({ jsonrpc: '2.0', id: req.id, error });
       }
     } finally {
       this._running.delete(req.id);
+      this._observe((o) =>
+        o.onRequestEnd?.({
+          id: req.id,
+          method: req.method,
+          ok,
+          error,
+          ...(ok && observedResult !== undefined ? { result: observedResult } : {}),
+          durationMs: Date.now() - startedAt,
+        }),
+      );
     }
+  }
+
+  /**
+   * Runs a rollback inside the request's scope (spec 013: what it spawns
+   * is the request's). The scope is the embedder's and must never be able
+   * to wedge a request: a scope that rejects here reads as `undo-failed`,
+   * which is the truth about the rollback as far as the caller can know it.
+   */
+  private _unwind(begin: ObservedRequestBegin, undo: UndoStack): Promise<CancelOutcome> {
+    return this._handlerScope(begin, () => undo.run()).catch((err: unknown) => {
+      this._onError(err instanceof Error ? err : new Error(String(err)));
+      return 'undo-failed' as const;
+    });
   }
 
   /**
@@ -288,8 +439,8 @@ export class Peer {
    * answers are retained: an error response — `-32800` included — has
    * already settled the caller and already unwound.
    */
-  private _retain(id: string, undo: UndoStack): void {
-    this._retained.set(id, { undo, expiresAt: Date.now() + RETAIN_MS });
+  private _retain(id: string, undo: UndoStack, begin: ObservedRequestBegin): void {
+    this._retained.set(id, { undo, expiresAt: Date.now() + RETAIN_MS, begin });
 
     while (this._retained.size > RETAIN_MAX) {
       const oldest = this._retained.keys().next();
@@ -326,18 +477,14 @@ export class Peer {
     const retained = this._retained.get(id);
     // @issue DTX-1000: deleted only after the rollback settles — a duplicate
     // cancel arriving mid-unwind joins that run rather than being told `unknown`.
-    const outcome: CancelOutcome = retained ? await retained.undo.run() : 'unknown';
+    const outcome: CancelOutcome = retained ? await this._unwind(retained.begin, retained.undo) : 'unknown';
     this._retained.delete(id);
     this.notify({ method: '$/cancelAck', params: { id, outcome } });
   }
 
   /** @issue DTX-1005: the outcome rides this frame; no separate `$/cancelAck` follows it. */
-  private _sendCancelled(id: string, outcome: CancelOutcome): void {
-    this._channel.send({
-      jsonrpc: '2.0',
-      id,
-      error: { code: -32800, message: 'Request cancelled', data: { outcome } },
-    });
+  private _sendCancelled(id: string, error: WireError): void {
+    this._channel.send({ jsonrpc: '2.0', id, error });
   }
 
   private _handleNotification(notif: RpcNotification): void {
@@ -383,7 +530,8 @@ export class Peer {
   private _onClose(info?: CloseInfo): void {
     this._closed = true;
     this._closeInfo = info;
-    for (const ac of this._running.values()) ac.abort();
+    // A typed reason (spec 012): the handler was not cancelled, its caller is gone.
+    for (const ac of this._running.values()) ac.abort(connectionLostReason());
     this._running.clear();
     // @issue DTX-1007: retention is dropped without unwinding — a dead socket
     // is compensated at connection level instead.

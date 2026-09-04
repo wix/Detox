@@ -1,6 +1,6 @@
 /** The code-name stamp: message and stack, in place, once. */
 import { describe, expect, it } from 'vitest';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 import { detoxCodeName, stampDetoxCodeName } from '../taxonomy';
 

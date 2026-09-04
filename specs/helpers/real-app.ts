@@ -63,6 +63,14 @@ const HELLO_MAIN_M = `#import <UIKit/UIKit.h>
   self.label.hidden = YES;
   self.label.text = @"Hello!!!";
   [self.view addSubview:self.label];
+  // Spec 015: the app says which simulator it is on (CoreSimulator hands
+  // every app its SIMULATOR_UDID), so a test holding two handles for the
+  // same bundle id on two devices can ask each one where it lives.
+  UILabel *udid = [[UILabel alloc] initWithFrame:CGRectMake(20, 380, 340, 30)];
+  udid.font = [UIFont systemFontOfSize:11];
+  udid.adjustsFontSizeToFitWidth = YES;
+  udid.text = NSProcessInfo.processInfo.environment[@"SIMULATOR_UDID"] ?: @"no SIMULATOR_UDID";
+  [self.view addSubview:udid];
 }
 - (void)sayHello { self.label.hidden = NO; }
 @end
@@ -75,6 +83,13 @@ const HELLO_MAIN_M = `#import <UIKit/UIKit.h>
   self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
   self.window.rootViewController = [HelloViewController new];
   [self.window makeKeyAndVisible];
+  // Spec 013: one known line on each stream once the window is up, so the
+  // app-output capture has something deterministic to prove (flushed: a
+  // sandboxed app's stdout is a file, block-buffered, and the test reads
+  // the log while the app is still alive).
+  printf("DetoxHello: launched\\n");
+  fflush(stdout);
+  fprintf(stderr, "DetoxHello: stderr is live\\n");
   return YES;
 }
 @end
@@ -96,7 +111,13 @@ export async function buildHelloAppExternally(
   signal?: AbortSignal,
 ): Promise<string> {
   const dir = await mkdtemp(path.join(tmpdir(), 'detox-hello-app-'));
-  const appPath = path.join(dir, 'DetoxHello.app');
+  // The .app bundle directory is named after the bundle id (spec 015): simctl
+  // preserves the source bundle's directory name on install, so the running
+  // process's argv[0] path carries the bundle id. That is what lets a test
+  // pick an instance out of `ps` by bundle id even when it was launched
+  // OUTSIDE Detox — with no `-detoxSessionId` on argv to match on (spec 015
+  // test 1). A server launch gets the same for free via `-detoxSessionId`.
+  const appPath = path.join(dir, `${bundleId}.app`);
   await mkdir(appPath);
   await writeFile(path.join(appPath, 'Info.plist'), infoPlist(bundleId));
   const mainM = path.join(dir, 'main.m');
@@ -127,6 +148,48 @@ export async function buildHelloAppExternally(
   // flaking `simctl install` with "missing its bundle executable".
   await run('codesign', ['--force', '--sign', '-', appPath], { signal });
   return appPath;
+}
+
+export interface InstrumentedLaunchOptions {
+  /** What the app dials: the device's `apps.serverUrl`, passed as `-detoxServer`. */
+  readonly serverUrl: string;
+  /** The injectable Detox framework binary (`resolveDetoxFrameworkExternally`). */
+  readonly frameworkPath: string;
+  readonly signal?: AbortSignal;
+}
+
+/**
+ * Launches the real app "outside Detox" (spec 015): `simctl launch` by the
+ * test itself, the framework injected the way Xcode would link it, and only
+ * `-detoxServer` on argv — deliberately NO `-detoxSessionId`, so what logs
+ * in is the frozen native's own default, the bundle id
+ * (`DetoxManager.swift:127`). Returns the pid `simctl` printed, the ground
+ * truth an attached handle must name.
+ */
+export async function launchInstrumentedAppExternally(
+  udid: string,
+  bundleId: string,
+  { serverUrl, frameworkPath, signal }: InstrumentedLaunchOptions,
+): Promise<number> {
+  const { stdout } = await run(
+    'xcrun',
+    ['simctl', 'launch', udid, bundleId, '-detoxServer', serverUrl],
+    {
+      signal,
+      env: {
+        ...process.env,
+        SIMCTL_CHILD_DYLD_INSERT_LIBRARIES: frameworkPath,
+        // v20 parity: without it, Firebase's class-disposal hack crashes injected apps at launch.
+        SIMCTL_CHILD_GULGeneratedClassDisposeDisabled: 'YES',
+      },
+    },
+  );
+  // `simctl launch` prints `<bundle id>: <pid>`.
+  const pid = Number.parseInt(stdout.trim().split(':').pop() ?? '', 10);
+  if (!Number.isFinite(pid) || pid <= 0) {
+    throw new Error(`simctl launch printed no pid: ${stdout.trim()}`);
+  }
+  return pid;
 }
 
 const FRAMEWORK_CACHE_DIR = path.join(homedir(), 'Library', 'Detox', 'ios', 'framework');

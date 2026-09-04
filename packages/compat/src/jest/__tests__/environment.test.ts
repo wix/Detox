@@ -6,7 +6,7 @@
  * surface is mocked at its module seam — the wire half of the same story
  * lives in `jest-hygiene.test.ts` over the fake transport.
  */
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -48,7 +48,7 @@ function makeEnvironment(): DetoxCircusEnvironment {
   return new DetoxCircusEnvironment(
     {
       globalConfig: {} as never,
-      projectConfig: { testEnvironmentOptions: {} } as never,
+      projectConfig: { rootDir: '/tmp', testEnvironmentOptions: {} } as never,
     },
     { console, docblockPragmas: {}, testPath: '/tmp/fixture.test.js' },
   );
@@ -63,6 +63,7 @@ beforeEach(() => {
   box.pendingInit = undefined;
   box.ambient = undefined;
   box.unrefSocket = false;
+  box.onSession = undefined;
   process.env.DETOX_CONFIG_SNAPSHOT_PATH = writeSnapshotFixture();
 });
 
@@ -95,6 +96,8 @@ describe('setup', () => {
         server: { url: 'ws://127.0.0.1:1', headers: { Authorization: 'Bearer tkn' } },
         apps: [{ name: 'app', bundleId: 'com.example.a' }],
         device: {},
+        // Spec 015: compat allocates by the snapshot's own device type.
+        deviceType: 'ios.simulator',
       });
       // NO session-scoped signal: the session must outlive this file.
       expect(init.mock.calls[0]).toHaveLength(1);
@@ -359,5 +362,169 @@ describe('circus wiring', () => {
     } finally {
       await env.teardown();
     }
+  });
+});
+
+describe('the test tree and the run row (spec 013)', () => {
+  interface FakeHandle {
+    id: string;
+    end: (outcome: unknown) => void;
+    ended: boolean;
+    run: <T>(fn: () => T) => T;
+  }
+  const begins: Array<Record<string, unknown>> = [];
+  const ends: Array<Record<string, unknown>> = [];
+  let next = 1;
+  const fakeSession = {
+    runId: 'run-abc',
+    log: {
+      begin: (options: Record<string, unknown>): FakeHandle => {
+        const id = `s${String(next++)}`;
+        begins.push({ ...options, id });
+        const handle: FakeHandle = {
+          id,
+          ended: false,
+          end: (outcome) => {
+            handle.ended = true;
+            ends.push({ id, ...(outcome as Record<string, unknown>) });
+          },
+          run: (fn) => fn(),
+        };
+        return handle;
+      },
+    },
+  };
+
+  beforeEach(() => {
+    begins.length = 0;
+    ends.length = 0;
+    next = 1;
+  });
+
+  it('handleTestEvent is a prototype method, so a wrapping subclass can override it', () => {
+    const env = makeEnvironment();
+    expect(Object.hasOwn(env, 'handleTestEvent')).toBe(false);
+    expect(typeof DetoxCircusEnvironment.prototype.handleTestEvent).toBe('function');
+  });
+
+  it('opens the file step on the session-opened door — before init allocates — and names the run', async () => {
+    const order: string[] = [];
+    init.mockImplementationOnce(async () => {
+      order.push('connected');
+      box.onSession?.(fakeSession as never);
+      order.push('allocating');
+      box.state = { session: fakeSession } as unknown as CompatState;
+    });
+    const env = makeEnvironment();
+    await env.setup();
+    try {
+      expect(order).toEqual(['connected', 'allocating']);
+      expect(begins).toEqual([{ id: 's1', kind: 'file', name: 'fixture.test.js', attrs: { filePath: 'fixture.test.js' } }]);
+      expect(box.onSession).toBeUndefined();
+      const snapshotPath = process.env.DETOX_CONFIG_SNAPSHOT_PATH as string;
+      const rows = readFileSync(path.join(path.dirname(snapshotPath), 'runs', `${String(process.pid)}.jsonl`), 'utf8');
+      expect(JSON.parse(rows.trim())).toEqual({
+        runId: 'run-abc',
+        serverUrl: 'ws://127.0.0.1:1',
+        viewerUrl: 'http://127.0.0.1:1/v1/runs/run-abc/perfetto',
+        gated: true,
+      });
+    } finally {
+      await env.teardown();
+    }
+    expect(ends).toEqual([{ id: 's1', status: 'passed' }]);
+  });
+
+  it('an adopting file opens its own file step from the live session', async () => {
+    box.state = { session: fakeSession } as unknown as CompatState;
+    const env = makeEnvironment();
+    await env.setup();
+    try {
+      expect(init).not.toHaveBeenCalled();
+      expect(begins[0]).toMatchObject({ kind: 'file', name: 'fixture.test.js' });
+    } finally {
+      await env.teardown();
+    }
+  });
+
+  it('declares describe, test and hook steps with explicit parents, ends them by outcome, and the file ends failed', async () => {
+    box.state = { session: fakeSession } as unknown as CompatState;
+    const env = makeEnvironment();
+    await env.setup();
+    try {
+      const root = { name: 'ROOT_DESCRIBE_BLOCK' };
+      const suite = { name: 'Sanity', parent: root };
+      const beforeAll = { type: 'beforeAll', parent: suite, fn: () => undefined };
+      const passes = { name: 'passes', parent: suite, fn: () => undefined, invocations: 1, errors: [] as unknown[] };
+      const fails = { name: 'fails', parent: suite, fn: () => undefined, invocations: 1, errors: [new Error('nope')] };
+      dispatch(env, 'run_describe_start', { describeBlock: root });
+      dispatch(env, 'run_describe_start', { describeBlock: suite });
+      dispatch(env, 'hook_start', { hook: beforeAll });
+      dispatch(env, 'hook_success', { hook: beforeAll });
+      dispatch(env, 'test_start', { test: passes });
+      dispatch(env, 'test_fn_start', { test: passes });
+      dispatch(env, 'test_done', { test: passes });
+      dispatch(env, 'test_start', { test: fails });
+      dispatch(env, 'test_fn_start', { test: fails });
+      dispatch(env, 'test_fn_failure', { test: fails, error: fails.errors[0] });
+      dispatch(env, 'test_done', { test: fails });
+      const skipped = { name: 'skipped', parent: suite, mode: 'skip', invocations: 0, errors: [] as unknown[] };
+      dispatch(env, 'test_start', { test: skipped });
+      dispatch(env, 'test_skip', { test: skipped });
+      const todo = { name: 'todo', parent: suite, mode: 'todo', invocations: 0, errors: [] as unknown[] };
+      dispatch(env, 'test_start', { test: todo });
+      dispatch(env, 'test_todo', { test: todo });
+      dispatch(env, 'run_describe_finish', { describeBlock: suite });
+      dispatch(env, 'run_describe_finish', { describeBlock: root });
+      expect(begins.map((b) => [b.kind, b.name, b.parent])).toEqual([
+        ['file', 'fixture.test.js', undefined],
+        ['describe', 'Sanity', 's1'],
+        ['hook', 'beforeAll', 's2'],
+        ['test', 'passes', 's2'],
+        ['test', 'fails', 's2'],
+        ['test', 'skipped', 's2'],
+        ['test', 'todo', 's2'],
+      ]);
+      expect(env.stepOf(suite)?.id).toBe('s2');
+      expect(env.stepOf(passes)?.id).toBe('s4');
+      expect(ends).toEqual([
+        { id: 's3', status: 'passed' },
+        { id: 's4', status: 'passed' },
+        { id: 's5', status: 'failed', error: { name: 'Error', message: 'nope' } },
+        { id: 's6', status: 'skipped' },
+        { id: 's7', status: 'skipped' },
+        { id: 's2', status: 'failed' },
+      ]);
+    } finally {
+      await env.teardown();
+    }
+    expect(ends.at(-1)).toEqual({ id: 's1', status: 'failed' });
+  });
+
+  it('a failing hook ends its step failed with the error', async () => {
+    box.state = { session: fakeSession } as unknown as CompatState;
+    const env = makeEnvironment();
+    await env.setup();
+    try {
+      const root = { name: 'ROOT_DESCRIBE_BLOCK' };
+      const hook = { type: 'beforeEach', parent: root, fn: () => undefined };
+      dispatch(env, 'hook_start', { hook });
+      dispatch(env, 'hook_failure', { hook, error: new Error('hook died') });
+      expect(ends).toEqual([{ id: 's2', status: 'failed', error: { name: 'Error', message: 'hook died' } }]);
+    } finally {
+      await env.teardown();
+    }
+  });
+
+  it('a file whose init failed ends its step failed at teardown, when the step got opened at all', async () => {
+    init.mockImplementationOnce(async () => {
+      box.onSession?.(fakeSession as never);
+      throw new Error('allocation refused');
+    });
+    const env = makeEnvironment();
+    await expect(env.setup()).rejects.toThrow('allocation refused');
+    expect(box.onSession).toBeUndefined();
+    await env.teardown();
+    expect(ends).toEqual([{ id: 's1', status: 'failed' }]);
   });
 });

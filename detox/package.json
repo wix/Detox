@@ -21,7 +21,10 @@
     "!**/*.test.js",
     "!**/*.test.ts",
     "!**/*.snap",
-    "!**/*.map"
+    "!**/*.map",
+    "dist/index.js.map",
+    "dist/client.js.map",
+    "dist/runners/jest/*.map"
   ],
   "repository": {
     "type": "git",
@@ -48,9 +51,7 @@
   "devDependencies": {
     "@detox-remote/core": "workspace:*",
     "@detox-remote/protocol": "workspace:*",
-    "react-native": "0.85.2"
-  },
-  "dependencies": {
+    "react-native": "0.85.2",
     "ws": "^8.18.0"
   },
   "peerDependencies": {

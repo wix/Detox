@@ -3,14 +3,14 @@
  *
  * Acceptance specs must not each re-derive `process.env.DETOX_SERVER_URL`.
  * They call `startServer()` and get back an address object they hand straight
- * to `init({ server })`.
+ * to `connect({ server })`.
  *
  * Two modes, chosen automatically:
  *  - **attach** — `DETOX_SERVER_URL` is set (this is what `yarn accept` does:
  *    the runner spawns the server, so the spec attaches to it). `stop()` is a
  *    no-op; the runner owns the process. The runner's token arrives as
  *    `DETOX_SERVER_TOKEN`.
- *  - **spawn** — no env var: the helper starts `dist/server/cli.js` itself, so
+ *  - **spawn** — no env var: the helper starts `detox/dist/server/cli.js` itself, so
  *    a spec can also be run directly (`node --import tsx --test specs/…`). The
  *    helper mints a fresh token per run and hands it to the server.
  *
@@ -23,7 +23,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import type { DetoxServerAddress } from 'detox/internals';
+import type { DetoxServerAddress } from 'detox/client';
 
 export interface StartServerOptions {
   /**
@@ -37,7 +37,7 @@ export interface StartServerOptions {
   /** Port to listen on when spawning; `0` (the default) picks a free one. */
   port?: number;
   /**
-   * Extra handshake headers forwarded to `init({ server })`. `Authorization` is
+   * Extra handshake headers forwarded to `connect({ server })`. `Authorization` is
    * supplied automatically; pass it here only to override it (a test that
    * wants to be turned away).
    */
@@ -55,7 +55,7 @@ export interface StartServerOptions {
   iosDetoxFrameworkPath?: string;
   /**
    * Blob-store isolation (spec 007). `isolatedBlobStore` mints a fresh temp
-   * directory and hands it to the spawned server as `DETOX_BLOB_ROOT` (an
+   * directory and hands it to the spawned server as `DETOX_SERVER_BLOB_ROOT` (an
    * internal test seam — the operator surface has no location knob), so
    * accept runs never share a store with the machine's real server or with
    * each other. `blobRoot` points a server at
@@ -75,6 +75,33 @@ export interface StartServerOptions {
   blobRoot?: string;
   /** `--blob-budget` (bytes) for the spawned server. */
   blobBudget?: number;
+  /**
+   * Connection-log isolation (spec 012), the blob-store shape above applied
+   * to `DETOX_SERVER_LOG_ROOT`: `isolatedLogRoot` mints a fresh temp root, `logRoot`
+   * points a server at an existing one (the restart tests). Either implies a
+   * dedicated server. The root is not deleted on stop.
+   */
+  isolatedLogRoot?: boolean;
+  logRoot?: string;
+  /** `--log-level` for the spawned server (stdout threshold; the file always keeps debug). */
+  logLevel?: 'error' | 'warn' | 'info' | 'debug';
+  /** `--app-output-budget` (bytes per launch) for the spawned server (spec 013). Implies a dedicated server. */
+  appOutputBudget?: number;
+}
+
+/**
+ * A spawned server that refused to start with a typed reason (spec 012's
+ * one-server-per-log-root): `refusalCode` is the refusal's Detox code name,
+ * so a test can tell "held" from "any failure".
+ */
+export class ServerStartupRefusal extends Error {
+  constructor(
+    readonly refusalCode: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ServerStartupRefusal';
+  }
 }
 
 /** What a spec gets back: an address to connect to, plus its teardown. */
@@ -89,6 +116,8 @@ export interface DetoxServerHandle extends AsyncDisposable {
    * another `startServer` call to prove the store outlives the process.
    */
   readonly blobRoot?: string;
+  /** The log root this server was pointed at (`isolatedLogRoot` / `logRoot`) — undefined otherwise. */
+  readonly logRoot?: string;
   /**
    * Everything the server has written so far (stdout + stderr, in arrival
    * order per stream). Empty in attach mode — the runner owns that process,
@@ -100,6 +129,12 @@ export interface DetoxServerHandle extends AsyncDisposable {
    * SIGKILL, right now — a Mac dying, not a server shutting down (spec 008's
    * node-death test). Only a spawned (dedicated) server can die on cue;
    * calling this on an attached handle is a test bug and throws.
+   *
+   * Returns void, not a promise: SIGKILL is sent synchronously. Both spec
+   * 012 and spec 008 fire it and forget — a `void` return is what makes that
+   * lint-clean for each — and the kernel releases a killed server's
+   * log-root lock as it dies, so the next server on that root probes a dead
+   * socket and reclaims it.
    */
   kill(): void;
 }
@@ -154,12 +189,28 @@ interface ListeningMessage {
   url: string;
 }
 
+/** The server's own account of a typed startup refusal, over IPC (spec 012). */
+interface RefusedMessage {
+  type: 'refused';
+  code: string;
+  message: string;
+}
+
 function isListeningMessage(message: unknown): message is ListeningMessage {
   return (
     typeof message === 'object' &&
     message !== null &&
     (message as Partial<ListeningMessage>).type === 'listening' &&
     typeof (message as Partial<ListeningMessage>).url === 'string'
+  );
+}
+
+function isRefusedMessage(message: unknown): message is RefusedMessage {
+  return (
+    typeof message === 'object' &&
+    message !== null &&
+    (message as Partial<RefusedMessage>).type === 'refused' &&
+    typeof (message as Partial<RefusedMessage>).code === 'string'
   );
 }
 
@@ -180,6 +231,9 @@ export function waitUntilListening(child: ChildProcess, timeoutMs: number): Prom
     if (isListeningMessage(message)) {
       clearTimeout(timer);
       resolve(message.url);
+    } else if (isRefusedMessage(message)) {
+      clearTimeout(timer);
+      reject(new ServerStartupRefusal(message.code, message.message));
     }
   });
   child.once('exit', (code) => {
@@ -202,7 +256,11 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
   const wantsOwnStore =
     options.isolatedBlobStore === true ||
     options.blobRoot !== undefined ||
-    options.blobBudget !== undefined;
+    options.blobBudget !== undefined ||
+    options.isolatedLogRoot === true ||
+    options.logRoot !== undefined ||
+    options.logLevel !== undefined ||
+    options.appOutputBudget !== undefined;
   if (fromEnv && !options.dedicated && !wantsOwnStore) {
     return attach(fromEnv, bearerHeaders(process.env.DETOX_SERVER_TOKEN ?? '', options.headers));
   }
@@ -213,29 +271,49 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
   // A token per run, never a fixed one: a spec that leaks its token into a log
   // leaks nothing that outlives the process.
   const token = randomBytes(16).toString('hex');
-  const cli = path.resolve(process.cwd(), 'detox', 'dist', 'server', 'cli.js');
+  // Anchored to this file, never the caller's cwd: a spec run by hand from
+  // `specs/` must find the same build `yarn accept` does (the sibling helpers'
+  // convention, e.g. `cli.ts`).
+  const cli = path.resolve(__dirname, '../../detox/dist/server/cli.js');
   const flags = ['--port', String(port), '--host', LOOPBACK];
   if (options.maxPool !== undefined) flags.push('--max-pool', String(options.maxPool));
   if (options.blobBudget !== undefined) flags.push('--blob-budget', String(options.blobBudget));
+  if (options.logLevel !== undefined) flags.push('--log-level', options.logLevel);
+  if (options.appOutputBudget !== undefined) flags.push('--app-output-budget', String(options.appOutputBudget));
   const blobRoot =
     options.blobRoot ??
     (options.isolatedBlobStore ? mkdtempSync(path.join(tmpdir(), 'detox-blob-store-')) : undefined);
+  // Every spawned server gets its own log root unless told otherwise: the
+  // root is one live server's (its lock socket refuses a second), so two
+  // spawned servers sharing the machine's real root would refuse each other.
+  const logRoot =
+    options.logRoot ??
+    (options.isolatedLogRoot || options.dedicated || wantsOwnStore
+      ? mkdtempSync(path.join(tmpdir(), 'detox-log-root-'))
+      : undefined);
   const child = spawn('node', [cli, ...flags], {
     // The token goes through the environment, not argv: a command line is
     // readable by every process on the machine. `--host` is passed explicitly
     // so an ambient DETOX_SERVER_HOST cannot widen a test server's bind.
     env: {
       ...process.env,
-      PORT: String(port),
+      DETOX_SERVER_PORT: String(port),
       DETOX_SERVER_TOKEN: token,
       ...(options.iosDetoxFrameworkPath
         ? { DETOX_IOS_FRAMEWORK_PATH: options.iosDetoxFrameworkPath }
         : {}),
-      ...(blobRoot ? { DETOX_BLOB_ROOT: blobRoot } : {}),
+      ...(blobRoot ? { DETOX_SERVER_BLOB_ROOT: blobRoot } : {}),
+      ...(logRoot ? { DETOX_SERVER_LOG_ROOT: logRoot } : {}),
     },
     stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
     signal: options.signal,
   });
+
+  // Forwarded live, tagged by pid (a two-node test spawns more than one of
+  // these concurrently), so a dedicated server's own narration (boot
+  // heartbeats, allocation attempts, reclaim) shows up on the accept run's
+  // own combined log — not just buffered in memory until the test throws.
+  const livePrefix = `[server:${String(child.pid ?? '?')}]`;
 
   // stderr is piped; without a consumer a chatty server fills the 64KB pipe
   // buffer and wedges mid-write. Keep the tail for error messages.
@@ -243,6 +321,7 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
   child.stderr?.on('data', (chunk: Buffer) => {
     stderrTail.push(chunk.toString());
     if (stderrTail.length > STDERR_TAIL_CHUNKS) stderrTail.shift();
+    process.stderr.write(`${livePrefix} ${chunk.toString()}`);
   });
   // stdout likewise needs a consumer — and specs read it (`logs()`): the
   // startup inventory line is a spec-002 instrument. Kept whole, not a tail:
@@ -250,6 +329,7 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
   const stdoutChunks: string[] = [];
   child.stdout?.on('data', (chunk: Buffer) => {
     stdoutChunks.push(chunk.toString());
+    process.stderr.write(`${livePrefix} ${chunk.toString()}`);
   });
   // Past readiness, an abort or a crash must not become an uncaught exception:
   // the failure surfaces through the test's own assertions instead.
@@ -287,6 +367,9 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
     url = await waitUntilListening(child, options.readyTimeoutMs ?? DEFAULT_READY_TIMEOUT_MS);
   } catch (error) {
     await stop();
+    // A typed refusal is the whole story: it surfaces as itself, so a test
+    // can match its code instead of parsing stderr.
+    if (error instanceof ServerStartupRefusal) throw error;
     const stderr = stderrTail.join('').trim();
     throw stderr ? new Error(`${String(error)}\n[server stderr] ${stderr}`, { cause: error }) : error;
   }
@@ -300,5 +383,5 @@ export async function startServer(options: StartServerOptions = {}): Promise<Det
     child.kill('SIGKILL');
   };
 
-  return { address, url, spawned: true, blobRoot, logs, stop, kill, [Symbol.asyncDispose]: stop };
+  return { address, url, spawned: true, blobRoot, logRoot, logs, stop, kill, [Symbol.asyncDispose]: stop };
 }

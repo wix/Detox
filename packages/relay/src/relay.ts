@@ -13,6 +13,7 @@
  * `{type, messageId, params}` dialect: apps dial their own node. Only
  * the client dialect is relayed.
  */
+import { randomUUID } from 'node:crypto';
 import { createServer as createHttpServer, type Server as HttpServer } from 'node:http';
 import { homedir } from 'node:os';
 import * as path from 'node:path';
@@ -24,20 +25,29 @@ import relayPackage from '../package.json';
 import {
   BlobStore,
   DEFAULT_KEEPALIVE,
+  LogStore,
+  RELAY_LOCAL_NAME,
   assertUsableToken,
+  createServerLogSink,
   handleBlobLaneRequest,
+  handleConnectionLogRequest,
   isAuthorized,
   isBlobLaneRequest,
+  isConnectionLogRequest,
   refuse,
   startKeepalive,
   type AuthConfig,
   type BlobStoreOptions,
   type KeepaliveConfig,
+  type LogLevel,
+  type LogStoreOptions,
 } from '@detox-remote/server';
 
 import { ensureBlobOnNode } from './blob-bridge';
-import { RELAY_LOG_PREFIX, relayError } from './log';
+import { createNodeLogDialer } from './log-bridge';
+import { RELAY_LOG_PREFIX, relayError, relayLog } from './log';
 import type { RelayNodeConfig } from './nodes';
+import { RelayConnectionLog } from './relay-log';
 import { RelaySession, type SessionNode } from './session';
 import { dialNodeChannel } from './upstream';
 
@@ -49,8 +59,19 @@ export interface RelayDeps {
   auth?: AuthConfig;
   keepalive?: KeepaliveConfig;
   nodes: readonly RelayNodeConfig[];
-  /** The relay's own store (`--blob-budget`; `DETOX_BLOB_ROOT` test seam). */
+  /** The relay's own store (`--blob-budget`; `DETOX_RELAY_BLOB_ROOT` test seam). */
   blobs?: BlobStoreOptions;
+  /**
+   * The relay's own connection log (spec 008): one JSONL per
+   * client session, every node's own log crossing the hop live. `root` is
+   * the `DETOX_RELAY_LOG_ROOT` @internal test seam — production uses
+   * {@link DEFAULT_RELAY_LOG_ROOT}; `retentionMs` is `--log-retention`
+   * (default {@link DEFAULT_RELAY_LOG_RETENTION_MS}), `budgetBytes` is
+   * `--log-budget`.
+   */
+  logs?: LogStoreOptions;
+  /** `--log-level`: the stdout threshold for the relay's own rare server-rank log lines. */
+  logLevel?: LogLevel;
 }
 
 export interface DetoxRelay {
@@ -65,10 +86,21 @@ export const DEFAULT_HOST = '127.0.0.1';
  * The relay's own fixed store location, not the server's `detox-server/blobs`:
  * a relay and a node on one Mac each keep an in-memory index, budget, and
  * pin count, and two processes sharing one directory would cross-evict each
- * other's entries. `DETOX_BLOB_ROOT` stays the test seam, same convention as
+ * other's entries. `DETOX_RELAY_BLOB_ROOT` stays the test seam, same convention as
  * the server's.
  */
 const RELAY_BLOB_ROOT = path.join(homedir(), 'Library', 'Caches', 'detox-relay', 'blobs');
+
+/**
+ * The relay's own fixed log root (spec 008) — separate from the
+ * server's `detox-server` root for the same reason as the blob store above:
+ * a relay and a node sharing one machine must not collide on retention or
+ * the root lock.
+ */
+const DEFAULT_RELAY_LOG_ROOT = path.join(homedir(), 'Library', 'Logs', 'detox-relay');
+
+/** A node forgets in minutes (CI collects right after the run); nobody collects for the relay's operator but them. */
+const DEFAULT_RELAY_LOG_RETENTION_MS = 60 * 60 * 1000;
 
 /** Ask clients to leave, then insist — `wss.close()` alone waits forever. */
 const CLOSE_GRACE_MS = 1_000;
@@ -80,6 +112,8 @@ export async function createDetoxRelay({
   keepalive = DEFAULT_KEEPALIVE,
   nodes,
   blobs,
+  logs,
+  logLevel,
 }: RelayDeps): Promise<DetoxRelay> {
   // A relay that cannot turn anyone away must not reach the point of
   // listening — a relay over nothing is a misconfiguration, not a fleet.
@@ -96,6 +130,22 @@ export async function createDetoxRelay({
     logPrefix: RELAY_LOG_PREFIX,
   });
 
+  // The log root likewise (spec 008): the lock is taken (or refused typed —
+  // one relay per root), the previous life's files are trimmed and closed,
+  // the first sweep runs — all before the first connection. The rare line
+  // this sink carries (a budget eviction) is voiced `[relay]`, same as
+  // everything else this process prints.
+  const logSink = createServerLogSink((chunk) => {
+    relayLog(chunk.replace(/\n$/, ''));
+  });
+  if (logLevel !== undefined) logSink.setLevel(logLevel);
+  const logStore = await LogStore.open({
+    root: logs?.root ?? DEFAULT_RELAY_LOG_ROOT,
+    retentionMs: logs?.retentionMs ?? DEFAULT_RELAY_LOG_RETENTION_MS,
+    budgetBytes: logs?.budgetBytes,
+    sink: logSink,
+  });
+
   // @issue DTX-7033: each node dials with its own token — the client's header is never read here.
   const sessionNodes: SessionNode[] = nodes.map((node) => {
     const lane = new BlobLaneClient({
@@ -108,6 +158,10 @@ export async function createDetoxRelay({
       name: node.name,
       connect: () => dialNodeChannel(node),
       ensureBlob: (hex) => ensureBlobOnNode({ lane, store: blobStore }, hex),
+      // Spec 008: the node's own token follows the log too — a fresh dialer
+      // per node connection, since the id it follows is minted per node
+      // connection.
+      createLogDialer: (nodeRunId) => createNodeLogDialer(node.url, node.token, nodeRunId),
     };
   });
 
@@ -119,6 +173,11 @@ export async function createDetoxRelay({
   const httpServer = createHttpServer({ requestTimeout: 0 }, (req, res) => {
     if (isBlobLaneRequest(req)) {
       void handleBlobLaneRequest(req, res, { store: blobStore, auth });
+      return;
+    }
+    if (isConnectionLogRequest(req)) {
+      // Spec 012a: the same handler as the server's, one word apart — the relay is the local hop of its own trace.
+      void handleConnectionLogRequest(req, res, { store: logStore, auth, localName: RELAY_LOCAL_NAME });
       return;
     }
     refuse(req, res, 404);
@@ -144,16 +203,36 @@ export async function createDetoxRelay({
   }
 
   const sessions = new Set<RelaySession>();
-  wss.on('connection', (ws) => {
+  // Every connection whose `conn` end is not yet on disk — graceful
+  // shutdown awaits them all (spec 008, the server's own
+  // `recorders` precedent).
+  const relayLogs = new Set<RelayConnectionLog>();
+  wss.on('connection', (ws, req) => {
     const channel = createWebSocketChannel(ws);
+    // The connection's id is the relay's own log's id — relay-minted here,
+    // announced on `$/serverInfo`, never a node's id (spec 008: a node's own
+    // `log.runId` is consumed, never forwarded — see `session.ts`'s
+    // `$/serverInfo` handling).
+    const runId = randomUUID();
+    // Named apart from the imported `relayLog` stdout voice above — a
+    // per-connection recorder, not the process-wide log function. The
+    // tester's address rides the conn begin so that "which client held that
+    // device?" is answerable from the relay's own file alone.
+    const connectionLog = new RelayConnectionLog(logStore.openConnection(runId, () => 0), { runId, remoteAddress: req.socket.remoteAddress });
+    relayLogs.add(connectionLog);
+    void connectionLog.ended.then(() => {
+      logStore.endConnection(runId);
+      relayLogs.delete(connectionLog);
+    });
     // The relay's own $/serverInfo is the first frame to a client —
-    // versions are hop-pairwise like auth.
+    // versions are hop-pairwise like auth. `log` says this endpoint
+    // records too, exactly like a node's own announce (spec 012).
     channel.send({
       jsonrpc: '2.0',
       method: SERVER_INFO_METHOD,
-      params: { protocol: PROTOCOL_VERSION, server: relayPackage.version },
+      params: { protocol: PROTOCOL_VERSION, server: relayPackage.version, log: { runId } },
     });
-    const session = new RelaySession({ client: channel, nodes: sessionNodes });
+    const session = new RelaySession({ client: channel, nodes: sessionNodes, relayLog: connectionLog });
     sessions.add(session);
     // @issue DTX-7037: any client close ends the session, closing every upstream socket of it at once.
     channel.onClose(() => {
@@ -188,12 +267,22 @@ export async function createDetoxRelay({
     },
     close() {
       if (!closing) {
+        // Snapshotted before teardown starts (the server's own precedent):
+        // these are the connections open at shutdown, whose `conn` end must
+        // be on disk before the log root is released. Closing every
+        // upstream socket below (via session.close()) is what lets each
+        // node finish its own log gracefully and each follow end naturally
+        // — a wedged node keeps this waiting, accepted, the spawner's
+        // SIGKILL is the backstop, same as the server.
+        const openAtShutdown = [...relayLogs];
         stopKeepalive();
         // Sessions close first so every upstream socket dies with the relay
         // and the nodes reclaim now, not at their own keepalive verdicts.
         for (const session of [...sessions]) session.close();
         sessions.clear();
-        closing = closeListener(wss, httpServer);
+        closing = closeListener(wss, httpServer)
+          .then(() => Promise.all(openAtShutdown.map((log) => log.ended)))
+          .then(() => logStore.close());
       }
       return closing;
     },

@@ -50,12 +50,13 @@ import { homedir } from 'node:os';
 import * as path from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
+import { serverLog } from './log-sink';
 
 /**
  * The fixed per-user store location (not configurable — the operator
- * surface is exactly one knob, the byte budget). `DETOX_BLOB_ROOT`
- * exists as an @internal test seam only, resolved by the CLI, so accept runs
- * never share a store with the machine's real server.
+ * surface is exactly one knob, the byte budget). The blob-root @internal
+ * seam overrides it for accept runs, so they never share a store with the
+ * machine's real server.
  */
 export const DEFAULT_BLOB_ROOT = path.join(homedir(), 'Library', 'Caches', 'detox-server', 'blobs');
 
@@ -301,7 +302,7 @@ export class BlobStore {
     // The freshly-stored line is an accept-suite instrument (spec 007 pins
     // its count through the editable `countBlobStores`); rephrase only
     // together with that helper.
-    console.log(`${this.#logPrefix} blob stored — sha256/${hex} (${String(received)} bytes)`);
+    serverLog.info(`${this.#logPrefix} blob stored — sha256/${hex} (${String(received)} bytes)`, { hex, bytes: received });
     return 'stored';
   }
 
@@ -325,7 +326,7 @@ export class BlobStore {
         );
       }
       this.#forget(victim.hex);
-      console.log(
+      serverLog.info(
         `${this.#logPrefix} blob evicted — sha256/${victim.hex} (${String(victim.entry.bytes)} bytes, making room for sha256/${hex})`,
       );
       await deleteQuietly(this.pathOf(victim.hex));

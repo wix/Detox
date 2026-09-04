@@ -32,15 +32,23 @@ import {
   by as statelessBy,
   DetoxError,
   DetoxErrorCode,
-  init as initClient,
+  connect as connectClient,
+  type AllocateDeviceOptions,
   type AppElement,
   type AppExpectation,
   type AppMatcher,
   type AppWaitFor,
+  type Detox,
   type DetoxApp,
+  type DetoxDevice,
+  type DetoxLogHandle,
+  type DetoxOperation,
+  type DetoxOperationRef,
+  type DeviceInfoOf,
   type DeviceQuery,
+  type DeviceType,
   type StatusBarOverrides,
-} from 'detox/internals';
+} from 'detox/client';
 import { getBundleIdFromBinary } from './bundle-id';
 import { type LaunchArgs } from './launch-args';
 import { compatStateBox, type CompatState, type ResolvedCompatApp } from './state';
@@ -64,7 +72,7 @@ export interface CompatAppConfig {
   name: string;
   /**
    * Optional since spec 009: when absent it is derived from
-   * `binaryPath`'s Info.plist at `init` — the PlistBuddy port in
+   * `binaryPath`'s Info.plist at `connect` — the PlistBuddy port in
    * `./bundle-id`. An app with neither `bundleId` nor `binaryPath` is an
    * init-time refusal naming both, never a deferred failure.
    */
@@ -91,6 +99,14 @@ export interface CompatConfig {
   apps: readonly CompatAppConfig[];
   /** Allocation query, v21's own contract. Default: any iOS simulator. */
   device?: DeviceQuery;
+  /**
+   * The driver `device.type` (spec 015): a legacy name or a driver package
+   * that augmented `AllocationMap`. Absent → `ios.simulator`. Compose already
+   * refuses a driverless legacy name for the selected configuration, so a
+   * value reaching here is either `ios.simulator` or a driver package the
+   * server can import.
+   */
+  deviceType?: DeviceType;
 }
 
 /**
@@ -273,10 +289,13 @@ async function doInit(config: CompatConfig, signal?: AbortSignal): Promise<void>
     ambient: () => box.ambient,
     unrefSocket: box.unrefSocket,
   };
-  const session = await initClient(initOptions);
+  const session = await connectClient(initOptions);
   try {
+    // The runner's third door (spec 013): the session exists and is
+    // announced, nothing has been asked of it yet.
+    box.onSession?.(session);
     const allocated = await session.allocateDevice({
-      type: 'ios.simulator',
+      type: config.deviceType ?? 'ios.simulator',
       device: config.device,
       signal,
     });
@@ -303,6 +322,47 @@ async function doInit(config: CompatConfig, signal?: AbortSignal): Promise<void>
     throw err;
   }
 }
+
+function sessionStep(name: string): DetoxLogHandle;
+function sessionStep<T>(name: string, fn: () => T | Promise<T>): Promise<T>;
+function sessionStep<T>(name: string, fn?: () => T | Promise<T>): DetoxLogHandle | Promise<T> {
+  const live = requireState('session.step').session;
+  return fn === undefined ? live.step(name) : live.step(name, fn);
+}
+
+/**
+ * The worker's live v21 session (spec 013's compat door): the `Detox` handle
+ * behind this surface, late-bound like `element` — `runId`, `log`, `step`,
+ * `allocateDevice`, `on`/`off` read the session that exists when they are
+ * called, and before `init()` (or after `cleanup()`) each is the same typed
+ * not-initialized refusal every other member of this surface gives.
+ * `disconnect()` (and async disposal) is `cleanup()`: v20's name for the
+ * same act, and the only way this surface lets its session go.
+ */
+export const session: Detox = {
+  get runId(): string | undefined {
+    return requireState('session.runId').session.runId;
+  },
+  get log(): Detox['log'] {
+    return requireState('session.log').session.log;
+  },
+  step: sessionStep,
+  allocateDevice<T extends DeviceType>(
+    options: AllocateDeviceOptions<T>,
+  ): DetoxOperation<DetoxDevice<DeviceInfoOf<T>>, 'allocateDevice'> {
+    return requireState('session.allocateDevice').session.allocateDevice(options);
+  },
+  on(event: 'operation', listener: (operation: DetoxOperationRef) => void): Detox {
+    requireState('session.on').session.on(event, listener);
+    return session;
+  },
+  off(event: 'operation', listener: (operation: DetoxOperationRef) => void): Detox {
+    requireState('session.off').session.off(event, listener);
+    return session;
+  },
+  disconnect: (): Promise<void> => cleanup(),
+  [Symbol.asyncDispose]: (): Promise<void> => cleanup(),
+};
 
 /** Releases the device and closes the session; the surface goes back to uninitialized. */
 export async function cleanup(signal?: AbortSignal): Promise<void> {
@@ -504,10 +564,22 @@ export const device = {
   /** v20 exposes the platform synchronously; this server is iOS-only today. */
   getPlatform: (): 'ios' => 'ios',
 
-  /** The platform id of the allocated device (v20 `device.id`). */
+  /**
+   * The platform id of the allocated device (v20 `device.id`): the udid on
+   * iOS, the adb name on Android. A driver package describes its device its
+   * own way (spec 015) and v20 never had a word for it — refused typed, never
+   * a made-up id a suite would hand to `simctl`/`adb`.
+   */
   get id(): string {
-    const info = requireState('device.id').device.info;
-    return 'udid' in info ? info.udid : info.adbName;
+    const info = requireState('device.id').device.info as unknown as Record<string, unknown>;
+    const id = info.udid ?? info.adbName;
+    if (typeof id !== 'string') {
+      throw new DetoxError(
+        `device.id: the "${String(info.type)}" driver's device carries neither a udid nor an adbName — read device.info from 'detox/client' instead`,
+        { code: DetoxErrorCode.DETOX_NOT_IMPLEMENTED, details: { method: 'device.id', type: info.type } },
+      );
+    }
+    return id;
   },
 
   /** The device's display name (v20 `device.name`). */

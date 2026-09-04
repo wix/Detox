@@ -19,7 +19,7 @@
  * This module is @internal — the runner integration's door into compat.
  * It is not exported by the package surface and `specs/**` never names it.
  */
-import type { Detox, DetoxApp, DetoxDevice } from 'detox/internals';
+import type { Detox, DetoxApp, DetoxDevice } from 'detox/client';
 
 import { LaunchArgsEditor } from './launch-args';
 import type { CompatAppConfig } from './index';
@@ -62,8 +62,16 @@ export interface CompatStateBox {
    * Undefined everywhere outside the runner integration.
    */
   ambient: AbortSignal | undefined;
-  /** Set by the jest environment before `init` — an idle session must not hold a worker open. */
+  /** Set by the jest environment before `connect` — an idle session must not hold a worker open. */
   unrefSocket: boolean;
+  /**
+   * The third runner door (spec 013): called by `init` the moment its
+   * session is connected and announced, before the allocation and the
+   * installs — so the jest environment can open the file's step first (the
+   * session's own allocation then lands under the first file) and name the
+   * run to `detox test`. Undefined everywhere outside the runner integration.
+   */
+  onSession: ((session: Detox) => void) | undefined;
 }
 
 export const COMPAT_STATE_KEY = Symbol.for('detox-compat.state.v21');
@@ -85,6 +93,7 @@ export function compatStateBox(): CompatStateBox {
       launchArgsEditor: new LaunchArgsEditor(),
       ambient: undefined,
       unrefSocket: false,
+      onSession: undefined,
     };
     carrier[COMPAT_STATE_KEY] = box;
   }

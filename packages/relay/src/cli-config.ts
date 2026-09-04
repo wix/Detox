@@ -11,7 +11,15 @@
  */
 import { networkInterfaces } from 'node:os';
 
-import { KEEPALIVE_OFF, type AuthConfig, type KeepaliveConfig } from '@detox-remote/server';
+import {
+  KEEPALIVE_OFF,
+  parseDuration,
+  type AuthConfig,
+  type KeepaliveConfig,
+  type LogLevel,
+} from '@detox-remote/server';
+import { resolveSection, SettingsError } from '@detox-remote/core';
+import { RELAY_SETTINGS } from './settings';
 
 export class RelayCliError extends Error {}
 
@@ -37,6 +45,11 @@ export interface ResolvedRelayCli {
   nodesFile?: string;
   blobBudget?: number;
   blobRoot?: string;
+  /** The relay's own connection log (spec 008) — knobs mirror the server's. */
+  logLevel?: LogLevel;
+  logRetentionMs?: number;
+  logBudget?: number;
+  logRoot?: string;
 }
 
 /**
@@ -55,22 +68,23 @@ function getArg(argv: readonly string[], name: string): string | undefined {
   return value;
 }
 
-// The window is the contract number a paused client experiences; the ping
-// cadence is derived. Operator-only: a client-chosen window would be the
-// client dictating the relay's pool policy.
 const KEEPALIVE_MISSES = 3;
-const KEEPALIVE_WINDOW_MAX_SEC = 604_800;
 const DEFAULT_KEEPALIVE_WINDOW_SEC = 120;
 const DEFAULT_PORT = 0;
 
 export function resolveRelayCli({ argv, env, hasInlineNodes = false }: RelayCliArgs): ResolvedRelayCli {
-  // `--port 0` (the default) = OS-picked; the IPC announce carries the truth.
-  const port = Number(getArg(argv, '--port') ?? env.PORT ?? DEFAULT_PORT);
-  if (!Number.isInteger(port) || port < 0 || port > 65_535) {
-    throw new RelayCliError(`Invalid --port: expected 0-65535, got ${String(port)}`);
+  let resolved;
+  try {
+    resolved = resolveSection(RELAY_SETTINGS, { argv, env });
+  } catch (err) {
+    if (err instanceof SettingsError) throw new RelayCliError(err.message);
+    throw err;
   }
-  const host = getArg(argv, '--host') || env.DETOX_RELAY_HOST || '127.0.0.1';
 
+  const port = resolved.port ?? DEFAULT_PORT;
+  const host = resolved.host ?? '127.0.0.1';
+
+  // Not a resolvable setting: names a FILE, and required-ness depends on `hasInlineNodes`.
   const nodesFile = getArg(argv, '--nodes') || env.DETOX_RELAY_NODES;
   if (!nodesFile && !hasInlineNodes) {
     throw new RelayCliError(
@@ -81,19 +95,11 @@ export function resolveRelayCli({ argv, env, hasInlineNodes = false }: RelayCliA
     );
   }
 
-  const windowRaw = getArg(argv, '--keepalive-window') || env.DETOX_RELAY_KEEPALIVE_WINDOW;
-  const keepaliveWindowSec = Number(windowRaw || DEFAULT_KEEPALIVE_WINDOW_SEC);
-  if (
-    !Number.isFinite(keepaliveWindowSec) ||
-    keepaliveWindowSec < 0 ||
-    keepaliveWindowSec > KEEPALIVE_WINDOW_MAX_SEC
-  ) {
-    throw new RelayCliError(
-      `Invalid --keepalive-window: ${String(windowRaw)} — expected seconds between 0 and ` +
-        `${String(KEEPALIVE_WINDOW_MAX_SEC)} (7 days); 0 = no liveness polls`,
-    );
-  }
-  // `0` is legal and means off — the same rule as the server's.
+  // The window is the contract number a paused client experiences; the ping
+  // cadence is derived. Operator-only: a client-chosen window would be the
+  // client dictating the relay's pool policy. `0` is legal and means off —
+  // the same rule as the server's.
+  const keepaliveWindowSec = resolved.keepaliveWindow ?? DEFAULT_KEEPALIVE_WINDOW_SEC;
   const keepalive: KeepaliveConfig =
     keepaliveWindowSec === 0
       ? KEEPALIVE_OFF
@@ -102,33 +108,24 @@ export function resolveRelayCli({ argv, env, hasInlineNodes = false }: RelayCliA
           maxMissedPongs: KEEPALIVE_MISSES,
         };
 
-  const blobBudgetArg = getArg(argv, '--blob-budget');
-  const blobBudget = blobBudgetArg === undefined ? undefined : Number(blobBudgetArg);
-  if (blobBudget !== undefined && (!Number.isFinite(blobBudget) || blobBudget <= 0)) {
-    throw new RelayCliError(
-      `Invalid --blob-budget: ${String(blobBudgetArg)} — expected a positive number of bytes`,
-    );
-  }
-
-  // Auth is opt-in and off by default.
-  // @issue DTX-7041: a declared-but-empty token is refused loudly — an unset CI secret, not a real value.
-  const flagToken = getArg(argv, '--token');
-  const envToken = env.DETOX_RELAY_TOKEN;
-  const givenToken = flagToken ?? envToken;
-  if (givenToken === '') {
-    throw new RelayCliError(
-      'DETOX_RELAY_TOKEN (or --token) is declared but empty — set a real token to ' +
-        'turn auth on, or remove it entirely to run with auth off.',
-    );
-  }
   return {
     port,
     host,
-    auth: givenToken === undefined ? undefined : { type: 'static-token', token: givenToken },
+    // Auth is opt-in and off by default. A declared-but-empty token already
+    // refused, loudly, inside `resolveSection` (the settings schema's
+    // `.min(1)`) — an unset CI secret, not a real value.
+    auth: resolved.token === undefined ? undefined : { type: 'static-token', token: resolved.token },
     keepalive,
     nodesFile,
-    blobBudget,
-    blobRoot: env.DETOX_BLOB_ROOT || undefined,
+    blobBudget: resolved.blobBudget,
+    blobRoot: resolved.blobRoot,
+    // The relay's own connection log (spec 008) — the same knobs as the server's.
+    logLevel: resolved.logLevel,
+    // `resolved.logRetention` is a duration string (`10m`), validated
+    // already by the settings schema — converted to ms here, once.
+    logRetentionMs: resolved.logRetention === undefined ? undefined : parseDuration(resolved.logRetention),
+    logBudget: resolved.logBudget,
+    logRoot: resolved.logRoot,
   };
 }
 

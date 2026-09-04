@@ -6,7 +6,7 @@
  * One .d.ts per public door, emitted next to the door's .js so the staged
  * exports map can pair them:
  *   dist/index.d.ts     ← packages/compat/src/index.ts   (require('detox'))
- *   dist/internals.d.ts ← detox/src/internals.ts          (detox/client + /internals)
+ *   dist/client.d.ts    ← detox/src/client.ts            (detox/client)
  *   dist/server.d.ts    ← packages/server/src/index.ts   (detox/server)
  *
  * dts-bundle-generator follows the root tsconfig's `paths`, so every
@@ -26,7 +26,7 @@ const generator = path.join(repoRoot, 'node_modules', '.bin', 'dts-bundle-genera
 
 const ENTRIES = [
   { entry: 'packages/compat/src/index.ts', out: 'index.d.ts', door: "require('detox') — the compat surface" },
-  { entry: 'detox/src/internals.ts', out: 'internals.d.ts', door: 'detox/client + detox/internals' },
+  { entry: 'detox/src/client.ts', out: 'client.d.ts', door: 'detox/client' },
   { entry: 'packages/server/src/index.ts', out: 'server.d.ts', door: 'detox/server' },
 ];
 

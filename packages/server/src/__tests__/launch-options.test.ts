@@ -13,20 +13,20 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import type { DeviceInfo, InvokeResult } from '@detox-remote/protocol';
+import type { InvokeResult } from '@detox-remote/protocol';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 import { DetoxError, DetoxErrorCode } from '@detox-remote/core';
 
-import { AppGateway } from '../AppGateway';
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
+import { iosHost, type IosHost } from './_ios-harness';
 import type {
   LaunchAppArgs,
   ResumeAppArgs,
   SetAppPermissionsArgs,
   SimulatorOps,
   TerminateAppArgs,
-} from '../SimulatorOps';
+} from '@detox-remote/driver-ios';
 
 type UndoFn = () => void | Promise<void>;
 
@@ -153,10 +153,10 @@ interface LaunchResponse {
   appHandleId: string;
 }
 
-const gateways: AppGateway[] = [];
+const loHosts: IosHost[] = [];
 afterEach(async () => {
-  for (const gateway of gateways.splice(0)) {
-    await gateway.close().catch(() => undefined);
+  for (const host of loHosts.splice(0)) {
+    await host.close().catch(() => undefined);
   }
   vi.restoreAllMocks();
 });
@@ -174,8 +174,6 @@ interface ServerOptions {
 }
 
 async function makeServer(options: ServerOptions = {}) {
-  const gateway = await AppGateway.listen();
-  gateways.push(gateway);
   const devices: DeviceInfo[] = [
     { name: 'iPhone 17', udid: 'udid-1', state: 'Shutdown', os: { platform: 'iOS' } },
   ] as DeviceInfo[];
@@ -196,7 +194,7 @@ async function makeServer(options: ServerOptions = {}) {
     launch: async (args: LaunchAppArgs) => {
       trace.push(`launch:${args.bundleId}`);
       launches.push(args);
-      options.onLaunch?.(args.detox?.serverUrl ?? gateway.url, args.bundleId);
+      options.onLaunch?.(args.detox?.serverUrl ?? '', args.bundleId);
       return 4242;
     },
     resume: async (args: ResumeAppArgs) => {
@@ -214,18 +212,16 @@ async function makeServer(options: ServerOptions = {}) {
       permissionWrites.push(args);
     },
   } as unknown as SimulatorOps;
-  const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+  const host = iosHost(simulatorOps);
+  loHosts.push(host);
   const captured = capturingPeer();
   const impl = new DetoxServerImpl({
     serverPeer: captured.peer,
-    devicePool,
-    simulatorOps,
-    appGateway: gateway,
+    driverHost: host.host,
     config: { launchReadyTimeoutMs: options.launchReadyTimeoutMs },
   });
   void impl;
   return {
-    gateway,
     trace,
     launches,
     resumes,
@@ -246,7 +242,17 @@ async function makeServer(options: ServerOptions = {}) {
     deliverPayload: call<Record<string, unknown>, void>(captured.handlers, 'deliverPayload'),
     setSyncSettings: call<Record<string, unknown>, void>(captured.handlers, 'setSyncSettings'),
     invoke: call<Record<string, unknown>, InvokeResult>(captured.handlers, 'invoke'),
+    setLocation: call<Record<string, unknown>, void>(captured.handlers, 'setLocation'),
+    attachApp: call<{ allocationId: string; sessionId: string }, AppHandle>(captured.handlers, 'attachApp'),
+    activateApp: call<{ allocationId: string; appId: string }, AppHandle>(captured.handlers, 'activateApp'),
+    connectedApps: call<{ allocationId: string }, { apps: AppHandle[] }>(captured.handlers, 'connectedApps'),
   };
+}
+
+interface AppHandle {
+  appHandleId: string;
+  bundleId: string;
+  pid?: number;
 }
 
 /** Allocates and launches one ready app, returning its address and fake side. */
@@ -266,6 +272,56 @@ async function withLaunchedApp(options: ServerOptions = {}) {
   );
   return { ...server, allocation, launched, app };
 }
+
+describe('the app collection verbs (spec 015): attach, activate, connected', () => {
+  it('connected lists the ready app; attach and activate hand back the same handle (one per allocation+session)', async () => {
+    const server = await withLaunchedApp();
+    const allocationId = server.allocation.allocationId;
+
+    const connected = await server.connectedApps({ allocationId }, {});
+    expect(connected.apps).toHaveLength(1);
+    expect(connected.apps[0].bundleId).toBe('com.example.app');
+    expect(connected.apps[0].appHandleId).toBe(server.launched.appHandleId);
+
+    const attached = await server.attachApp({ allocationId, sessionId: 'com.example.app' }, {});
+    expect(attached.appHandleId).toBe(server.launched.appHandleId);
+    expect(attached.bundleId).toBe('com.example.app');
+
+    // A connected, ready app is resumed (foregrounded), not relaunched. The
+    // resume settles on the app's own waitForActiveDone, which the app answers.
+    const activating = server.activateApp({ allocationId, appId: 'com.example.app' }, {});
+    const waitFrame = await server.app.waitFor((frame) => frame.type === 'waitForActive');
+    server.app.send({ type: 'waitForActiveDone', messageId: waitFrame.messageId });
+    const activated = await activating;
+    expect(activated.appHandleId).toBe(server.launched.appHandleId);
+    expect(server.resumes.map((r) => r.bundleId)).toEqual(['com.example.app']);
+  });
+
+  it('activate launches when nothing is connected under the id', async () => {
+    let app!: FakeApp;
+    const server = await makeServer({ onLaunch: (url, bundleId) => (app = dialApp(url, bundleId)) });
+    const allocation = await server.allocate({ type: 'ios.simulator' }, {});
+    const activated = await server.activateApp(
+      { allocationId: allocation.allocationId, appId: 'com.example.app' },
+      {},
+    );
+    expect(activated.pid).toBe(4242);
+    // It launched, it did not resume.
+    expect(server.resumes).toEqual([]);
+    void app;
+  });
+
+  it('a release rejects a pending attach as DETOX_STALE_HANDLE (spec 015)', async () => {
+    const server = await makeServer();
+    const allocation = await server.allocate({ type: 'ios.simulator' }, {});
+    const attaching = server.attachApp(
+      { allocationId: allocation.allocationId, sessionId: 'com.nobody.connected' },
+      {},
+    );
+    await server.release({ allocationId: allocation.allocationId }, {});
+    await expect(attaching).rejects.toMatchObject({ code: DetoxErrorCode.DETOX_STALE_HANDLE });
+  });
+});
 
 describe('launch validation precedes every side effect', () => {
   /**
@@ -373,28 +429,28 @@ describe('launch validation precedes every side effect', () => {
       code: DetoxErrorCode.DETOX_INVALID_ARGUMENT,
       details: { parameter: 'sourceApp' },
     });
-    await expect(server.launchApp({ ...address, deadlineMs: -5 }, {})).rejects.toMatchObject({
+    await expect(server.launchApp({ ...address, readyTimeoutMs: -5 }, {})).rejects.toMatchObject({
       code: DetoxErrorCode.DETOX_INVALID_ARGUMENT,
-      details: { parameter: 'deadlineMs' },
+      details: { parameter: 'readyTimeoutMs' },
     });
     expect(server.trace).toEqual([]);
   });
 
   /**
    * @issue DTX-6025
-   * `deadlineMs` must be an integer <= 2^31-1, matching what the clock can
+   * `readyTimeoutMs` must be an integer <= 2^31-1, matching what the clock can
    * actually honour: `AbortSignal.timeout(0.5)` throws a raw RangeError, and
    * node silently clamps 2^31..2^32-1 to ~1 ms — 25 days of declared
    * patience would fail the launch instantly with the app blamed.
    */
-  it('deadlineMs is refused outside what the clock can honour — fractions and past 2^31-1', async () => {
+  it('readyTimeoutMs is refused outside what the clock can honour — fractions and past 2^31-1', async () => {
     const server = await makeServer({ alreadyBooted: true });
     const allocation = await server.allocate({ type: 'ios.simulator' }, {});
     const address = { allocationId: allocation.allocationId, appId: 'com.example.app' };
-    for (const deadlineMs of [0.5, 2 ** 31, Number.MAX_SAFE_INTEGER]) {
-      await expect(server.launchApp({ ...address, deadlineMs }, {})).rejects.toMatchObject({
+    for (const readyTimeoutMs of [0.5, 2 ** 31, Number.MAX_SAFE_INTEGER]) {
+      await expect(server.launchApp({ ...address, readyTimeoutMs }, {})).rejects.toMatchObject({
         code: DetoxErrorCode.DETOX_INVALID_ARGUMENT,
-        details: { parameter: 'deadlineMs' },
+        details: { parameter: 'readyTimeoutMs' },
       });
     }
     expect(server.trace).toEqual([]);
@@ -452,7 +508,7 @@ describe('the launch deadline is the caller’s (spec 006)', () => {
     const startedAt = Date.now();
     await expect(
       server.launchApp(
-        { allocationId: allocation.allocationId, appId: 'com.example.app', deadlineMs: 200 },
+        { allocationId: allocation.allocationId, appId: 'com.example.app', readyTimeoutMs: 200 },
         {},
       ),
     ).rejects.toMatchObject({ code: DetoxErrorCode.DETOX_APP_DIED });
@@ -465,7 +521,7 @@ describe('the launch deadline is the caller’s (spec 006)', () => {
    * immediately, and 0 means no server deadline — the caller's signal is
    * the only exit.
    */
-  it('deadlineMs: 0 arms NO server clock — AbortSignal.timeout is never constructed', async () => {
+  it('readyTimeoutMs: 0 arms NO server clock — AbortSignal.timeout is never constructed', async () => {
     const server = await makeServer();
     const allocation = await server.allocate({ type: 'ios.simulator' }, {});
     const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
@@ -474,7 +530,7 @@ describe('the launch deadline is the caller’s (spec 006)', () => {
     // the only exit, and it is honoured as the abort it is — not a verdict.
     const controller = new AbortController();
     const pending = server.launchApp(
-      { allocationId: allocation.allocationId, appId: 'com.example.app', deadlineMs: 0 },
+      { allocationId: allocation.allocationId, appId: 'com.example.app', readyTimeoutMs: 0 },
       { signal: controller.signal },
     );
     setTimeout(() => controller.abort(new Error('walked away')), 100);
@@ -579,10 +635,24 @@ describe('at-launch payloads materialize server-side and die with the handle', (
     await expect.poll(() => existsSync(fixture.payloadPath)).toBe(false);
   });
 
-  it('release removes the payload file', async () => {
+  it('release keeps the payload file — the app lives on past release (spec 015)', async () => {
     const fixture = await launchedWithPayload();
     await fixture.release({ allocationId: fixture.allocation.allocationId }, {});
-    await expect.poll(() => existsSync(fixture.payloadPath)).toBe(false);
+    // Release closes no session, so the payload file's owner (the handle) is
+    // still alive; the file dies with the app, not with the allocation.
+    const outcome = await Promise.race([
+      new Promise<'gone'>((resolve) => {
+        const timer = setInterval(() => {
+          if (!existsSync(fixture.payloadPath)) {
+            clearInterval(timer);
+            resolve('gone');
+          }
+        }, 20);
+        timer.unref();
+      }),
+      new Promise<'kept'>((resolve) => setTimeout(() => resolve('kept'), 200)),
+    ]);
+    expect(outcome).toBe('kept');
   });
 
   it('a failed launch (rollback) removes the payload file', async () => {
@@ -594,7 +664,7 @@ describe('at-launch payloads materialize server-side and die with the handle', (
           allocationId: allocation.allocationId,
           appId: 'com.example.app',
           userNotification: VALUE,
-          deadlineMs: 200,
+          readyTimeoutMs: 200,
         },
         {},
       ),

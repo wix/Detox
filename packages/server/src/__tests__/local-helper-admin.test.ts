@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import WebSocket from 'ws';
 
 import { createDetoxRemoteServer, DEFAULT_HOST } from '../server';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
 
 const simulatorOps = { list: async () => [] } as unknown as SimulatorOps;
 const TOKEN = '0123456789abcdef';
@@ -57,6 +57,7 @@ async function startHelperServer() {
     maxPool: 4,
     simulatorOps,
     blobs: { root: mkdtempSync(path.join(tmpdir(), 'detox-helper-admin-blob-')) },
+    logs: { root: mkdtempSync(path.join(tmpdir(), 'detox-helper-admin-log-')) },
     localHelper: { token: TOKEN },
   });
 }

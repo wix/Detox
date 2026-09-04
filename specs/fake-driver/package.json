@@ -1,0 +1,9 @@
+{
+  "name": "spec015-fake-driver",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Spec 015 fixture: a fake device driver, the seam's executable definition. Plain CommonJS, imported by the server by name like any driver.",
+  "main": "index.js",
+  "license": "MIT",
+  "types": "index.d.ts"
+}

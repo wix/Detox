@@ -121,6 +121,7 @@ describe('the error taxonomy (spec 004)', () => {
         [DetoxErrorCode.DETOX_CONNECTION_LOST, 'DetoxConnectionError'],
         [DetoxErrorCode.DETOX_SESSION_EXPIRED, 'DetoxConnectionError'],
         [DetoxErrorCode.DETOX_VERSION_SKEW, 'DetoxConnectionError'],
+        [DetoxErrorCode.DETOX_SERVER_DID_NOT_ANNOUNCE, 'DetoxConnectionError'],
         [DetoxErrorCode.DETOX_DEVICE_UNKNOWN_STATE, 'DeviceUnknownStateError'],
       ];
       for (const [code, name] of cases) {

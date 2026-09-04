@@ -8,7 +8,7 @@ import type { CancelOutcome } from './peer/undo-stack';
  * payload as `error.data`; `message` is human prose and is never parsed.
  *
  * It lives in core, not in `detox`, because the *server* stamps these numbers
- * and cannot import the client package. `detox/internals` re-exports it, which
+ * and cannot import the client package. `detox/client` re-exports it, which
  * is the public surface.
  *
  * Range: 2000–2099. Negative codes belong to JSON-RPC (-32768…-32000, plus
@@ -79,7 +79,7 @@ export const DetoxErrorCode = {
   DETOX_EXPECTATION_FAILED: 2014,
   /**
    * A call arrived before the surface it belongs to was initialized — e.g. a
-   * `detox-compat` global (`device`, `element`) used before `init()`, or
+   * `detox-compat` global (`device`, `element`) used before `connect()`, or
    * after `cleanup()`. Caller-order misuse, not a server condition: the
    * server never stamps this code.
    */
@@ -102,6 +102,23 @@ export const DetoxErrorCode = {
    * 'DetoxConnectionError'`) because the session is over either way.
    */
   DETOX_VERSION_SKEW: 2017,
+  /**
+   * A server refused to start because another live server holds the log
+   * root (spec 012: one server per root, kernel-enforced by a UNIX socket
+   * under it). The message names the root; stop the other server or point
+   * this one at a different log root.
+   */
+  DETOX_LOG_ROOT_HELD: 2018,
+  /**
+   * The endpoint completed the WebSocket handshake and then never sent
+   * `$/serverInfo`, the first frame every Detox 21 server (and relay) sends
+   * the instant it accepts a connection. Either the address points at
+   * something that is not a Detox 21 server, or the announce was lost on the
+   * way; the message names the address and the ceiling that expired.
+   * Connection-family: the socket is closed before this is thrown. Never
+   * stamped by a server — the client is the only side that can see silence.
+   */
+  DETOX_SERVER_DID_NOT_ANNOUNCE: 2019,
   /**
    * A failure that reached the caller without a Detox code of its own: a
    * server throw that nobody has classified yet (`-32000` with no `data`).
@@ -275,6 +292,7 @@ const ERROR_CLASSES: Partial<Record<DetoxErrorCode, ErrorFactory>> = {
   [DetoxErrorCode.DETOX_CONNECTION_LOST]: connectionErrorFactory(DetoxErrorCode.DETOX_CONNECTION_LOST),
   [DetoxErrorCode.DETOX_SESSION_EXPIRED]: connectionErrorFactory(DetoxErrorCode.DETOX_SESSION_EXPIRED),
   [DetoxErrorCode.DETOX_VERSION_SKEW]: connectionErrorFactory(DetoxErrorCode.DETOX_VERSION_SKEW),
+  [DetoxErrorCode.DETOX_SERVER_DID_NOT_ANNOUNCE]: connectionErrorFactory(DetoxErrorCode.DETOX_SERVER_DID_NOT_ANNOUNCE),
   [DetoxErrorCode.DETOX_DEVICE_UNKNOWN_STATE]: (message, options) => new DeviceUnknownStateError(message, options),
 };
 

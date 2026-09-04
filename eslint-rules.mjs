@@ -1,7 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils';
 
 const createRule = ESLintUtils.RuleCreator(
-  (name) => `https://github.com/noomorph/ios.detox.remote/blob/main/eslint-rules.mjs#${name}`,
+  (name) => `https://github.com/wix/Detox/blob/master/eslint-rules.mjs#${name}`,
 );
 
 const FUNCTION_LIKE = new Set([

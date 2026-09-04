@@ -1,1 +1,1 @@
-module.exports = require('./dist/internals.js');
+module.exports = require('./dist/client.js');

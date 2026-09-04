@@ -33,10 +33,41 @@ function dispatchMessage(handlers: readonly MessageHandler[], msg: unknown): voi
   }
 }
 
+/**
+ * A caller that dials asynchronously (`new Promise((resolve) => ws.once('open', () =>
+ * resolve(createWebSocketChannel(ws))))`) cannot call `onMessage` until its dial promise
+ * settles — at least one microtask after this channel exists. A peer that answers the instant
+ * it accepts the connection can have its first frame arrive in the very same synchronous turn
+ * as `open` (one TCP segment carrying both the handshake response and the first WS frame), which
+ * is strictly before that microtask runs. Bounded so a channel nobody ever listens on cannot
+ * grow this without limit; the window it actually covers is one peer's opening frames, not a
+ * standing backlog.
+ *
+ * This buffer covers the gap from `createWebSocketChannel` to the first
+ * `onMessage`, and nothing earlier. A dialer must therefore build the channel
+ * BEFORE (or synchronously inside) `open` — never in the continuation of a
+ * dial promise: `ws` unshifts a same-segment first frame and delivers it on
+ * the nextTick queue, which drains ahead of promise microtasks, so a channel
+ * built after the await never sees that frame and has nothing to buffer it
+ * into. It is silently lost, and a peer waiting on an opening announce then
+ * waits forever.
+ *
+ * The drain itself runs one microtask after that first `onMessage`, not
+ * inside it. The first listener is normally a `Peer`, whose own consumer
+ * registers its method handlers right after `Peer.create` returns, in the
+ * same synchronous turn; a backlog handed over inside `onMessage` would
+ * reach a peer with no handler for it yet, and a notification nobody
+ * handles is dropped. Arrivals during that one microtask queue behind the
+ * backlog, so delivery order is preserved.
+ */
+const PENDING_CAP = 16;
+
 export function createWebSocketChannel(ws: WebSocket): WebSocketChannel {
   const messageHandlers: MessageHandler[] = [];
   const closeHandlers: CloseHandler[] = [];
   const errorHandlers: ErrorHandler[] = [];
+  const pending: unknown[] = [];
+  let draining = false;
   let closed = false;
 
   function fireClose(info?: CloseInfo): void {
@@ -54,6 +85,11 @@ export function createWebSocketChannel(ws: WebSocket): WebSocketChannel {
       msg = JSON.parse(raw);
     } catch {
       // Malformed JSON — drop silently
+      return;
+    }
+    if (messageHandlers.length === 0 || draining) {
+      pending.push(msg);
+      if (pending.length > PENDING_CAP) pending.shift();
       return;
     }
     dispatchMessage(messageHandlers, msg);
@@ -80,7 +116,18 @@ export function createWebSocketChannel(ws: WebSocket): WebSocketChannel {
       }
     },
     onMessage(handler: MessageHandler) {
+      const flush = messageHandlers.length === 0 && pending.length > 0;
       messageHandlers.push(handler);
+      if (!flush) return;
+      // The first handler ever attached gets whatever arrived before it
+      // existed, in arrival order, ahead of any message that arrives from
+      // here on — one microtask later, so the caller can finish registering
+      // what it dispatches to (see `PENDING_CAP`).
+      draining = true;
+      queueMicrotask(() => {
+        draining = false;
+        for (const msg of pending.splice(0)) dispatchMessage(messageHandlers, msg);
+      });
     },
     onClose(handler: CloseHandler) {
       closeHandlers.push(handler);

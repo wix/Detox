@@ -16,9 +16,9 @@ const rebuildPlugin = {
 
 // The `detox` package has no `exports` map (deep imports such as
 // `detox/runners/jest/reporter` are part of its public surface), so a bare
-// `require('detox/internals')` inside detox/dist would only resolve through
+// `require('detox/client')` inside detox/dist would only resolve through
 // a node_modules/detox entry above it. Rewrite those imports to paths relative
-// to the bundle instead: every bundle then shares the one dist/internals.js
+// to the bundle instead: every bundle then shares the one dist/client.js
 // regardless of where the package is installed.
 const DETOX_DIST = path.resolve(__dirname, 'detox', 'dist');
 const relativeDetoxPlugin = {
@@ -45,10 +45,10 @@ const commonOptions = {
 
 async function build() {
   // The `detox` package bundles into detox/dist; the thin shims at the
-  // package root (index.js, internals.js, runners/jest/*.js) point there. Spec 009 is settled here, at the build
+  // package root (index.js, client.js, runners/jest/*.js) point there. Spec 009 is settled here, at the build
   // boundary: the `.` entry is the compat surface (`require('detox')`
   // changes no import line in a migrating project), while source dependencies
-  // stay one-way — compat imports `detox/internals`, which stays external and
+  // stay one-way — compat imports `detox/client`, which stays external and
   // resolves relative to the bundle (see relativeDetoxPlugin).
   const detoxCtx = await esbuild.context({
     ...commonOptions,
@@ -56,10 +56,10 @@ async function build() {
     outfile: 'detox/dist/index.js',
   });
 
-  const internalsCtx = await esbuild.context({
+  const clientCtx = await esbuild.context({
     ...commonOptions,
-    entryPoints: ['detox/src/internals.ts'],
-    outfile: 'detox/dist/internals.js',
+    entryPoints: ['detox/src/client.ts'],
+    outfile: 'detox/dist/client.js',
   });
 
   // `detox/server` — the server's programmatic API (spec 009). One
@@ -71,8 +71,8 @@ async function build() {
   });
 
   // `detox/runners/jest/*` — the jest integration (spec 010). Five thin
-  // entries over packages/compat/src/jest; `detox/internals` stays external
-  // in each, so every bundle shares one dist/internals.js at runtime (and
+  // entries over packages/compat/src/jest; `detox/client` stays external
+  // in each, so every bundle shares one dist/client.js at runtime (and
   // the compat state box makes the compat copies share one session).
   // jest-environment-node and @jest/reporters are resolved from the project
   // at runtime (createRequire on cwd) — the tarball bundles no jest.
@@ -117,7 +117,7 @@ async function build() {
     },
   });
 
-  const contexts = [detoxCtx, internalsCtx, serverApiCtx, ...jestRunnerCtxs, serverCtx, relayCtx, cliCtx];
+  const contexts = [detoxCtx, clientCtx, serverApiCtx, ...jestRunnerCtxs, serverCtx, relayCtx, cliCtx];
 
   if (watch) {
     await Promise.all(contexts.map((ctx) => ctx.watch()));

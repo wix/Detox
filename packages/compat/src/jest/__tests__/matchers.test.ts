@@ -6,7 +6,7 @@
  * message carries the typed code name.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 import { detoxMatchers } from '../matchers';
 

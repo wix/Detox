@@ -90,33 +90,49 @@ describe('composeRun — client', () => {
    * entirely) is the only truthful value — and it is the spelling the
    * post-alpha helper keeps forever as its CI opt-out. `true` belongs to
    * the helper era's vocabulary and refuses instead of a silent no-op.
+   * The key decides whether a SERVER is started, so it lives in `server`.
    */
-  it('client.autostart: false is accepted (the permanent never-spawn spelling) and stays out of the snapshot', () => {
-    const composed = compose({ ...baseConfig(), client: { autostart: false } });
+  it('server.autostart: false is the spelling, and it never reaches the snapshot', () => {
+    const composed = compose({ ...baseConfig(), server: { autostart: false } });
+    expect(composed.autostart).toBe(false);
     expect(composed.snapshot.client).toEqual({});
+    expect(composed.warnings).toEqual([]);
   });
 
-  it('client.autostart: true refuses; absence is the helper path and false is the opt-out (spec 011)', () => {
-    expect(() => compose({ ...baseConfig(), client: { autostart: true } })).toThrow(ConfigError);
-    expect(() => compose({ ...baseConfig(), client: { autostart: true } })).toThrow(
-      /client\.autostart.*omit.*helper.*false/s,
+  it('server.autostart: true refuses', () => {
+    expect(() => compose({ ...baseConfig(), server: { autostart: true } })).toThrow(ConfigError);
+    expect(() => compose({ ...baseConfig(), server: { autostart: true } })).toThrow(
+      /server\.autostart.*not a supported spelling/s,
     );
+  });
+
+  it('client.autostart is not a key — an alpha breaks the spelling instead of adapting it', () => {
+    expect(() => compose({ ...baseConfig(), client: { autostart: false } })).toThrow(ConfigError);
+    expect(() => compose({ ...baseConfig(), client: { autostart: false } })).toThrow(
+      /client.*Unrecognized key.*autostart/s,
+    );
+  });
+
+  it('absence is the helper path', () => {
+    const composed = compose(baseConfig());
+    expect(composed.autostart).toBeUndefined();
+    expect(composed.warnings).toEqual([]);
   });
 
   /**
    * @issue DTX-5023
-   * `DETOX_SESSION_TOKEN` beats `client.token` when set — a CI secret beats
+   * `DETOX_CLIENT_TOKEN` beats `client.token` when set — a CI secret beats
    * a committed file. An empty env string counts as unset, not a token,
    * so the file's token survives.
    */
-  it('DETOX_SESSION_TOKEN overrides client.token; an EMPTY env string does not', () => {
+  it('DETOX_CLIENT_TOKEN overrides client.token; an EMPTY env string does not', () => {
     const config = { ...baseConfig(), client: { token: 'file-token' } };
-    expect(compose(config, { DETOX_SESSION_TOKEN: 'ci-secret' }).snapshot.client.token).toBe(
+    expect(compose(config, { DETOX_CLIENT_TOKEN: 'ci-secret' }).snapshot.client.token).toBe(
       'ci-secret',
     );
-    expect(compose(config, { DETOX_SESSION_TOKEN: '' }).snapshot.client.token).toBe('file-token');
+    expect(compose(config, { DETOX_CLIENT_TOKEN: '' }).snapshot.client.token).toBe('file-token');
     // Env alone is enough — no client block needed.
-    expect(compose(baseConfig(), { DETOX_SESSION_TOKEN: 'ci-only' }).snapshot.client.token).toBe(
+    expect(compose(baseConfig(), { DETOX_CLIENT_TOKEN: 'ci-only' }).snapshot.client.token).toBe(
       'ci-only',
     );
   });
@@ -145,6 +161,26 @@ describe('composeRun — device', () => {
     expect(message).toContain('android.emulator');
     expect(message).not.toContain('android.apk');
     expect(message).toContain('configurations.main.device.type');
+  });
+
+  /**
+   * Spec 015: `device.type` is a Detox 20 name or a driver
+   * package the server imports. Compose refuses only the legacy names with
+   * no driver in this release, by name, and passes any other type through.
+   */
+  it('device.type is a driver name: a package specifier composes through, a driverless legacy name is refused', () => {
+    const config = baseConfig();
+    config.devices = { cloud: { type: '@acme/detox-driver-foo', device: { type: 'iPhone 14 Pro' } } };
+    config.configurations = { main: { device: 'cloud', app: 'example' } };
+    expect(compose(config).snapshot.device).toEqual({
+      type: '@acme/detox-driver-foo',
+      query: { model: 'iPhone 14 Pro' },
+    });
+
+    const refused = baseConfig();
+    refused.devices = { attached: { type: 'android.attached', device: { type: 'Pixel 7' } } };
+    refused.configurations = { main: { device: 'attached', app: 'example' } };
+    expect(() => compose(refused)).toThrow(/android\.attached/);
   });
 
   it('matcher keys map {type→model, os→os, id→deviceId}; a number os coerces to string', () => {
@@ -313,7 +349,7 @@ describe('composeRun — apps', () => {
   /**
    * @issue DTX-5019
    * `bundleId` is optional — derived client-side from
-   * `binaryPath`'s `Info.plist` at `init`, never here. With neither
+   * `binaryPath`'s `Info.plist` at `connect`, never here. With neither
    * `bundleId` nor `binaryPath` present, `composeApps` refuses naming both.
    */
   it('NEITHER bundleId NOR binaryPath → refusal naming both', () => {

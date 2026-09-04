@@ -12,8 +12,8 @@ export default defineConfig({
     // under vitest. Mirrors the root tsconfig `paths`.
     alias: [
       {
-        find: /^detox\/internals$/,
-        replacement: path.resolve(import.meta.dirname, 'detox/src/internals.ts'),
+        find: /^detox\/client$/,
+        replacement: path.resolve(import.meta.dirname, 'detox/src/client.ts'),
       },
       {
         // `.` is the compat surface since spec 009 — runtime, types,
@@ -43,8 +43,8 @@ export default defineConfig({
         // The extracted CLI mains (spec 009: `detox server`/`detox relay`
         // delegate to them, the legacy bins shell over them). Process shells
         // still: process.exit, signal handlers, console — spawn-exercised by
-        // the accept suite. Known debt (STATUS): the server main's flag
-        // parsing is not unit-gated the way the relay's resolveRelayCli is.
+        // the accept suite. Known debt: the server main's flag parsing is
+        // not unit-gated the way the relay's resolveRelayCli is.
         'packages/server/src/cli-main.ts',
         'packages/relay/src/cli-main.ts',
         // The `detox` bin's process shell (spec 009): dispatch, spawn,
@@ -58,7 +58,7 @@ export default defineConfig({
         // cover the contested no-overlap refusals, but function coverage would
         // otherwise force brittle tests of private process wiring.
         'packages/cli/src/local-helper.ts',
-        'packages/server/src/SimulatorOps.ts',
+        'packages/driver-ios/src/SimulatorOps.ts',
       ],
       // Function-call coverage is a tripwire against entirely untested
       // files, not a quality metric — branch/line thresholds are absent

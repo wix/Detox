@@ -1,10 +1,16 @@
-import { describe, it, expect } from 'vitest';
-import type { DeviceInfo } from '@detox-remote/protocol';
+import { describe, it, expect, afterEach } from 'vitest';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
+import { iosHost, type IosHost } from './_ios-harness';
+
+/** Every driver host a test builds (spec 015): closed after each so its per-device gateways release. */
+const cancelHosts: IosHost[] = [];
+afterEach(async () => {
+  for (const host of cancelHosts.splice(0)) await host.close().catch(() => undefined);
+});
 
 interface AllocateParams {
   type: string;
@@ -199,9 +205,11 @@ describe('allocateDevice cancelled after it succeeded', () => {
   it('shuts the simulator down and frees the slot instead of stranding it', async () => {
     const controller = new AbortController();
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => controller.abort());
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     await expect(
       throughPeer(allocate(), { type: 'ios.simulator' }, { signal: controller.signal }).result,
@@ -216,10 +224,12 @@ describe('allocateDevice cancelled after it succeeded', () => {
     // fake has to know about it before the server exists — hence the holder.
     const server: ServerHolder = {};
     // release() is what the channel's close listener calls.
-    const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => server.impl?.release());
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => void server.impl?.release());
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    server.impl = new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    server.impl = new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     await expect(
       throughPeer(allocate(), { type: 'ios.simulator' }).result,
@@ -242,9 +252,11 @@ describe('allocateDevice cancelled after it succeeded', () => {
   it('frees a warm device without shutting it down', async () => {
     const controller = new AbortController();
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => controller.abort(), true);
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     await expect(
       throughPeer(allocate(), { type: 'ios.simulator' }, { signal: controller.signal }).result,
@@ -256,9 +268,11 @@ describe('allocateDevice cancelled after it succeeded', () => {
 
   it('hands the device over normally when nothing was cancelled', async () => {
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    const impl = new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    const impl = new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const response = await throughPeer(allocate(), { type: 'ios.simulator' }).result;
 
@@ -266,7 +280,7 @@ describe('allocateDevice cancelled after it succeeded', () => {
     expect(shutdownCalls).toEqual([]);
     expect(devicePool.busyCount).toBe(1);
 
-    impl.release();
+    await impl.release();
   });
 });
 
@@ -285,9 +299,11 @@ describe('allocateDevice cancelled after it succeeded', () => {
 describe('allocateDevice cancelled after the answer was already sent', () => {
   it('returns the device to the pool and reports what it rolled back', async () => {
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const call = throughPeer(allocate(), { type: 'ios.simulator' });
     await call.result;
@@ -304,9 +320,11 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
 
   it('leaves a warm device booted, exactly as releasing it would', async () => {
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => {}, true);
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const call = throughPeer(allocate(), { type: 'ios.simulator' });
     await call.result;
@@ -327,9 +345,10 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
    */
   it('makes the allocation id stale, so nothing can still drive that device', async () => {
     const { simulatorOps } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
     const { peer, allocate, handler } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const call = throughPeer(allocate(), { type: 'ios.simulator' });
     const { allocationId } = await call.result;
@@ -363,9 +382,11 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
       return allocationBoot();
     };
 
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate, handler } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const call = throughPeer(allocate(), { type: 'ios.simulator' });
     const { allocationId } = await call.result;
@@ -402,9 +423,11 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
    */
   it('never touches a device the pool has since handed to someone else', async () => {
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate, handler } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     // The first holder allocates, is answered, and releases normally — the
     // device goes back warm, still booted.
@@ -428,9 +451,11 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
 
   it('is idempotent: a duplicate late cancellation frees nothing twice', async () => {
     const { simulatorOps, shutdownCalls } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const first = throughPeer(allocate(), { type: 'ios.simulator' });
     await first.result;
@@ -458,9 +483,11 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
       throw new Error('simctl shutdown refused');
     };
 
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     const call = throughPeer(allocate(), { type: 'ios.simulator' });
     await call.result;
@@ -480,28 +507,32 @@ describe('allocateDevice cancelled after the answer was already sent', () => {
 describe('releasing every device without closing the connection', () => {
   it('leaves the connection able to allocate again', async () => {
     const { simulatorOps } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    const impl = new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    const impl = new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
     await throughPeer(allocate(), { type: 'ios.simulator' }).result;
-    impl.releaseAll();
+    await impl.releaseAll();
     expect(devicePool.busyCount).toBe(0);
 
     const second = await throughPeer(allocate(), { type: 'ios.simulator' }).result;
     expect(second.device.udid).toBe('udid-1');
     expect(devicePool.busyCount).toBe(1);
 
-    impl.release();
+    await impl.release();
   });
 
   it('but a dead socket is terminal', async () => {
     const { simulatorOps } = fakeSimulatorOps(() => {});
-    const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+    const cancelHost = iosHost(simulatorOps);
+    cancelHosts.push(cancelHost);
+    const devicePool = cancelHost.pool;
     const { peer, allocate } = capturingPeer();
-    const impl = new DetoxServerImpl({ serverPeer: peer, devicePool, simulatorOps });
+    const impl = new DetoxServerImpl({ serverPeer: peer, driverHost: cancelHost.host });
 
-    impl.release();
+    await impl.release();
 
     await expect(
       throughPeer(allocate(), { type: 'ios.simulator' }).result,

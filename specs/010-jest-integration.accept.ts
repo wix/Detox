@@ -4,8 +4,7 @@
  * 30, a lightweight environment, invisible AbortSignal hygiene, jest's own
  * `expect` extended).
  *
- * This file is frozen. If a test here seems wrong or impossible, stop and
- * report it rather than weakening it or working around it.
+ * This file is frozen and append-only.
  *
  * Style is part of the contract: tests are STRAIGHT-LINE — a fence of awaits
  * against the public dialect plus the editable helpers, no function
@@ -32,7 +31,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 
-import { init } from 'detox/internals';
+import { connect } from 'detox/client';
 
 import { startServer } from './helpers/server';
 import { resolveDetoxFrameworkExternally } from './helpers/real-app';
@@ -371,7 +370,7 @@ it('parks forever holding the only device', async () => {
   });
   assert.ok(!existsSync(parked.snapshotPath), 'the snapshot is deleted on the interrupt path');
 
-  const session = await init({ server: server.address, signal: t.signal });
+  const session = await connect({ server: server.address, signal: t.signal });
   const device = await session.allocateDevice({
     type: 'ios.simulator',
     device: { model: exampleDevice() },

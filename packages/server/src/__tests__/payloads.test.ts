@@ -12,6 +12,7 @@ import {
   materializePayload,
   serializePayloadValue,
 } from '../payloads';
+import { serverLog } from '../log-sink';
 
 /**
  * @issue DTX-6034
@@ -94,13 +95,12 @@ describe('materializePayload', () => {
    * file the OS would not give back is worth a log line, not silence.
    */
   it('disposeQuietly logs a refusing filesystem instead of throwing (death hooks must not crash)', async () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const consoleError = vi.spyOn(serverLog, 'error').mockImplementation(() => undefined);
     try {
       disposeQuietly({ path: '/nowhere', dispose: () => Promise.reject(new Error('EPERM')) });
       await vi.waitFor(() => {
         expect(consoleError).toHaveBeenCalledWith(
-          '[server] payload file cleanup failed:',
-          expect.any(Error),
+          expect.stringContaining('payload file cleanup failed:'),
         );
       });
     } finally {

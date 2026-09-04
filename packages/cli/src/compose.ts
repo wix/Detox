@@ -17,19 +17,17 @@ import path from 'node:path';
 
 import { z, ZodError } from 'zod';
 import type { ConfigSnapshot, ConfigSnapshotApp, ConfigSnapshotQuery } from '@detox-remote/protocol';
+import { configShape, resolveSection, SettingsError, type InferSection } from '@detox-remote/core';
+import { SERVER_SETTINGS } from '@detox-remote/server';
 
 import { configError } from './errors';
+import { CLIENT_SETTINGS } from './settings';
 
 const WS_URL = z
   .string()
   .regex(/^wss?:\/\//i, 'must be a ws:// or wss:// URL');
 
-const clientSchema = z.strictObject({
-  server: WS_URL.optional(),
-  token: z.string().min(1).optional(),
-  // @issue DTX-5014: `false`/absence is the only truthful autostart value; `true` refuses.
-  autostart: z.boolean().optional(),
-});
+type ClientSection = Partial<InferSection<typeof CLIENT_SETTINGS>>;
 
 const authSchema = z.strictObject({
   type: z.literal('static-token'),
@@ -43,13 +41,18 @@ const nodeSchema = z.strictObject({
   token: z.string().min(1).optional(),
 });
 
+// `autostart`, `auth` and `nodes` have no mechanical flag/env shape (a
+// roster, a nested type, a config-only switch), so they're hand-added here
+// rather than declared in SERVER_SETTINGS.
 const serverSectionSchema = z.strictObject({
-  host: z.string().min(1).optional(),
-  port: z.number().int().min(0).max(65_535).optional(),
+  ...configShape(SERVER_SETTINGS),
+  /**
+   * Whether `detox test` brings up the detached local helper when no address
+   * is configured. `false` is the permanent opt-out; absence is the default.
+   * @issue DTX-5014: `false`/absence is the only truthful value; `true` refuses.
+   */
+  autostart: z.boolean().optional(),
   auth: authSchema.optional(),
-  maxPool: z.number().int().min(0).optional(),
-  blobBudget: z.number().positive().optional(),
-  keepaliveWindow: z.number().min(0).optional(),
   nodes: z.array(nodeSchema).optional(),
 });
 
@@ -175,7 +178,7 @@ export interface ComposedRun {
   /** The effective `server` section (configuration's replaces top-level wholesale). */
   serverSection?: ServerSection;
   /** Internal-only: `false` is the permanent local-helper opt-out. */
-  clientAutostart?: boolean;
+  autostart?: boolean;
   /** `testRunner.args` with `$0` defaulted — the spawn contract's input. */
   runnerArgs: Record<string, unknown>;
   /** One line per key v20 consumed and alpha does not — printed once each. */
@@ -215,7 +218,7 @@ function queryFromShorthand(
   keyPath: string,
 ): ConfigSnapshotQuery {
   const parts = shorthand.split(',').map((part) => part.trim());
-  // @issue DTX-5017: >2 comma-separated parts refuses — dropping the tail would widen the match (#1).
+  // @issue DTX-5017: >2 comma-separated parts refuses — dropping the tail would widen the match.
   if (parts.length > 2) {
     throw configError(
       configPath,
@@ -226,6 +229,9 @@ function queryFromShorthand(
   const [model, os] = parts;
   return os ? { model, os } : { model };
 }
+
+/** Detox 20's device types with no driver in this repository (spec 015): reserved, refused by name. */
+const DRIVERLESS_LEGACY_TYPES = ['android.emulator', 'android.attached', 'android.genycloud'] as const;
 
 interface DeviceComposition {
   device: ConfigSnapshot['device'];
@@ -241,11 +247,16 @@ function composeDevice(
   if (typeof type !== 'string' || type.length === 0) {
     throw configError(configPath, `${keyPath}.type`, 'the device needs a type');
   }
-  if (type !== 'ios.simulator') {
+  // Spec 015: a Detox 20 legacy name with no driver in this
+  // release is refused by name, for the selected configuration only (frozen
+  // 009 pins the message naming the type). Anything else names a driver the
+  // server resolves at allocation — `ios.simulator` built in, or an npm
+  // package it imports — and composes through untouched.
+  if ((DRIVERLESS_LEGACY_TYPES as readonly string[]).includes(type)) {
     throw configError(
       configPath,
       `${keyPath}.type`,
-      `"${type}" is not runnable on Detox 21 alpha 1 — this release is iOS-only (ios.simulator). The configuration may stay in the file; selecting it is what refuses`,
+      `"${type}" is not runnable on Detox 21 alpha 1 — this release ships no driver for it (ios.simulator is built in; other types name a driver package). The configuration may stay in the file; selecting it is what refuses`,
     );
   }
   const matcher = deviceConfig.device;
@@ -421,28 +432,49 @@ export function resolveServerSection(
   return section;
 }
 
+/**
+ * `server.autostart` decides whether `detox test` brings up the detached
+ * local helper. Only `false` and absence mean anything — `true` refuses.
+ * `client.autostart`, the key this replaced, is gone: an alpha breaks a
+ * spelling rather than carrying it as a silent adapter.
+ */
+function resolveAutostart(fromServer: boolean | undefined, configPath: string): boolean | undefined {
+  if (fromServer === true) {
+    throw configError(
+      configPath,
+      'server.autostart',
+      '`true` is not a supported spelling — omit `server.autostart` to use the detached ' +
+        'local helper, set `server.autostart: false` to opt out and require an explicit server',
+    );
+  }
+  return fromServer;
+}
+
 export function composeRun({ config, configPath, configurationName, cwd, env }: ComposeInput): ComposedRun {
   refuseLegacyKeys(config, configPath);
 
   const warnings: string[] = [];
 
-  const client =
-    config.client === undefined
-      ? {}
-      : parseStrict(clientSchema, config.client, configPath, 'client');
-  if (client.autostart === true) {
-    throw configError(
-      configPath,
-      'client.autostart',
-      '`true` is not a supported spelling — omit `client.autostart` to use the detached ' +
-        'local helper, set `client.autostart: false` to opt out and require an explicit server',
-    );
+  if (config.client !== undefined && !isRecord(config.client)) {
+    throw configError(configPath, 'client', 'expected an object');
   }
-  // @issue DTX-5023: DETOX_SESSION_TOKEN overrides client.token when set; an empty env string counts as unset.
-  const envToken = env.DETOX_SESSION_TOKEN || undefined;
-  const token = envToken ?? client.token;
+  // Validates `client` and applies its env mirrors in one pass.
+  let client: ClientSection;
+  try {
+    client = resolveSection(CLIENT_SETTINGS, { argv: [], env, config: config.client });
+  } catch (err) {
+    if (err instanceof SettingsError) {
+      throw configError(configPath, err.key === undefined ? 'client' : `client.${err.key}`, err.reason);
+    }
+    throw err;
+  }
+  const token = client.token;
 
   const serverSection = resolveServerSection(config, configPath, configurationName);
+
+  // `autostart` governs whether the CLI brings up a *server*, so it lives in
+  // `server`, not `client`.
+  const autostart = resolveAutostart(serverSection?.autostart, configPath);
 
   const entryRaw = isRecord(config.configurations)
     ? config.configurations[configurationName]
@@ -522,7 +554,7 @@ export function composeRun({ config, configPath, configurationName, cwd, env }: 
   // read the snapshot, not the file, so a new consumer never changes the
   // format. Keys v20 consumed and alpha does not (`logger`) additionally
   // warn, once.
-  // @issue DTX-5025: a forwarded key that would clobber a composed snapshot field refuses, never silently (#1).
+  // @issue DTX-5025: a forwarded key that would clobber a composed snapshot field refuses, never silently.
   for (const [key, value] of Object.entries(config)) {
     if (CONSUMED_TOP_LEVEL.has(key)) continue;
     if (key === 'device' || key === 'app' || key === 'configurationName') {
@@ -546,5 +578,5 @@ export function composeRun({ config, configPath, configurationName, cwd, env }: 
   if (entry.artifacts !== undefined) snapshot.artifacts = entry.artifacts;
   if (entry.behavior !== undefined) snapshot.behavior = entry.behavior;
 
-  return { snapshot, serverSection, clientAutostart: client.autostart, runnerArgs, warnings };
+  return { snapshot, serverSection, autostart, runnerArgs, warnings };
 }

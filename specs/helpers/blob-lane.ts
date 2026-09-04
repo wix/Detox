@@ -16,7 +16,7 @@
 import { createHash } from 'node:crypto';
 import { request } from 'node:http';
 
-import type { DetoxServerAddress } from 'detox/internals';
+import type { DetoxServerAddress } from 'detox/client';
 
 /** The one path shape of the lane. */
 function blobPath(hex: string): string {

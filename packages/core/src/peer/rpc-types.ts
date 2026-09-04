@@ -3,6 +3,14 @@ export interface RpcRequest {
   id: string;
   method: string;
   params?: unknown;
+  /**
+   * The one extension member this dialect adds to a JSON-RPC request (spec
+   * 013): the client-minted id of the step the request was made under, so
+   * the responder's log can parent the request explicitly rather than by
+   * "the most recently begun open step" — the rule `test.concurrent` breaks.
+   * Optional, ignored by a responder that predates it.
+   */
+  step?: string;
 }
 
 export interface RpcResponse {

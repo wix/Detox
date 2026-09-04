@@ -18,8 +18,14 @@ export type { WireError } from './errors';
 export { BlobLaneClient, blobLanePath } from './blob-lane';
 export type { BlobLaneAddress, BlobPutOptions } from './blob-lane';
 
-export { Peer } from './peer';
+export { Peer, connectionLostReason } from './peer';
 export type {
+  PeerObserver,
+  ObservedRequestBegin,
+  ObservedProgress,
+  ObservedRequestEnd,
+  HandlerScope,
+  PeerOptions,
   RpcRequest,
   RpcResponse,
   RpcNotification,
@@ -35,3 +41,12 @@ export type {
   CancelOutcome,
   UndoFn,
 } from './peer';
+
+export {
+  resolveSection,
+  configShape,
+  toChildArgs,
+  helpLines,
+  SettingsError,
+} from './settings';
+export type { SettingDescriptor, ResolveInput, InferSection } from './settings';

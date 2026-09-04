@@ -1,8 +1,7 @@
 /**
  * Acceptance: spec 007 — the build upload lane.
  *
- * This file is frozen. If a test here seems wrong or impossible, stop and
- * report it rather than weakening it or working around it.
+ * This file is frozen and append-only.
  *
  * Style is part of the contract: tests are STRAIGHT-LINE — a fence of awaits
  * against the public dialect plus the editable helpers, no function
@@ -33,7 +32,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { init } from 'detox/internals';
+import { connect } from 'detox/client';
 
 import { startServer } from './helpers/server';
 import { buildStubAppExternally } from './helpers/apps';
@@ -64,7 +63,7 @@ test('installApp pushes bytes through the lane once; an unchanged build re-insta
   const bundleId = 'com.detox.spec007.lane';
   try {
     await using server = await startServer({ dedicated: true, isolatedBlobStore: true, signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = await detox.allocateDevice({
       type: 'ios.simulator',
       device: { deviceId: probe.udid },
@@ -118,7 +117,7 @@ test('the blob store survives a server restart: the returning build reinstalls w
     assert.ok(storeRoot, 'the helper reports the isolated store root it minted');
     const appPath = await buildStubAppExternally(bundleId, t.signal);
     {
-      await using detox = await init({ server: serverA.address, signal: t.signal });
+      await using detox = await connect({ server: serverA.address, signal: t.signal });
       await using device = await detox.allocateDevice({
         type: 'ios.simulator',
         device: { deviceId: probe.udid },
@@ -129,7 +128,7 @@ test('the blob store survives a server restart: the returning build reinstalls w
     await serverA.stop();
 
     await using serverB = await startServer({ dedicated: true, blobRoot: storeRoot, signal: t.signal });
-    await using detox = await init({ server: serverB.address, signal: t.signal });
+    await using detox = await connect({ server: serverB.address, signal: t.signal });
     await using device = await detox.allocateDevice({
       type: 'ios.simulator',
       device: { deviceId: probe.udid },

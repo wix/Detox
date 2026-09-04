@@ -351,8 +351,14 @@ export async function discoverDetoxApps(
     const match = /^\s*(\d+)\s+(.*)$/.exec(line);
     if (!match) continue;
     const [, pid, command] = match;
-    if (!command.includes(`/Devices/${udid}/`) || !command.includes('-detoxServer')) continue;
     const argv = command.split(/\s+/);
+    // The EXECUTABLE must live in this simulator's data container — not merely
+    // some argument. `simctl launch` carries `--stdout=<devices root>/<udid>/
+    // data/tmp/...` and the app's `-detoxServer` pair on its own command line
+    // (spec 013's capture), so a whole-command match also matches simctl
+    // itself, whose pid sits just below the app's and dies as soon as the
+    // launch returns.
+    if (!(argv[0] ?? '').includes(`/Devices/${udid}/`) || !command.includes('-detoxServer')) continue;
     const argAfter = (flag: string): string | undefined => {
       const at = argv.indexOf(flag);
       return at >= 0 ? argv[at + 1] : undefined;

@@ -12,7 +12,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 
-import { DetoxErrorCode } from 'detox/internals';
+import { DetoxErrorCode } from 'detox/client';
 
 import { runDetoxCli, spawnDetoxCli, startDetoxServerVerb } from './helpers/cli';
 import {
@@ -35,7 +35,7 @@ import { waitUntil } from './helpers/simctl';
 
 /**
  * Test 1 - the post-alpha migration headline. With no `client.server`
- * and no `client.autostart: false`, `detox test` attaches to a detached
+ * and no `server.autostart: false`, `detox test` attaches to a detached
  * per-user local helper or spawns it. The runner snapshot names the helper's
  * actual ephemeral URL, not the alpha default port; no helper token leaks into
  * the snapshot; the helper cookie is 0600; and a second run reuses the same
@@ -100,15 +100,15 @@ void test('a serverless migrated project gets a detached local helper and reuses
 });
 
 /**
- * Test 2 - the forever opt-out. `client.autostart: false` preserves
+ * Test 2 - the forever opt-out. `server.autostart: false` preserves
  * the alpha behavior: no helper probe, no helper spawn, the snapshot names
  * the default explicit `detox server` address, and no helper cookie appears.
  */
-void test('client.autostart false keeps the explicit-server path and creates no helper', async (t) => {
+void test('server.autostart false keeps the explicit-server path and creates no helper', async (t) => {
   await using helper = await createLocalHelperSandbox();
   const project = await writeProject({
     '.detoxrc.js': {
-      client: { autostart: false },
+      server: { autostart: false },
       testRunner: { args: { $0: probeCommand(), receipt: 'receipt.json' } },
       apps: { app: { type: 'ios.app', name: 'example', bundleId: 'com.example.app' } },
       devices: { sim: { type: 'ios.simulator', device: { type: 'iPhone 17 Pro' } } },
@@ -398,9 +398,9 @@ void test('detox server --restart stays helper mode around serving flags and def
     cwd: defaultsProject.dir,
     env: {
       ...helper.env(),
-      PORT: '9',
+      DETOX_SERVER_PORT: '9',
       DETOX_SERVER_HOST: '0.0.0.0',
-      DETOX_REMOTE_MAX_POOL: '1',
+      DETOX_SERVER_MAX_POOL: '1',
     },
     signal: t.signal,
   });

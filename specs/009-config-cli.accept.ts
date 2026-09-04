@@ -2,18 +2,16 @@
  * Acceptance: spec 009 — configuration and the `detox` command line (the
  * alpha-1 target and the three-Mini farm).
  *
- * This file is frozen. If a test here seems wrong or impossible, stop and
- * report it rather than weakening it or working around it. There is no
- * run-scoped autostart; tests 3 and 6 pin only observables that survive
- * the post-alpha attach-or-spawn helper, keyed on the explicit
- * `client.autostart: false` spelling.
+ * This file is frozen and append-only. There is no run-scoped autostart; tests
+ * 3 and 6 pin only observables that survive the post-alpha attach-or-spawn
+ * helper, keyed on the explicit `server.autostart: false` spelling.
  *
  * Style is part of the contract: tests are STRAIGHT-LINE — a fence of awaits
  * against the public dialect plus the editable helpers, no function
  * definitions in this file. The public dialect of a COMMAND is its
  * argv, environment, exit code and observable side effects, so these tests
  * spawn the REAL built CLI in freshly written temp projects and read what
- * comes back; `init` from `detox/internals` is used only as an instrument to
+ * comes back; `connect` from `detox/client` is used only as an instrument to
  * prove reachability (frozen 004 behavior: it dials eagerly and rejects
  * typed). No typed door is needed — this spec adds no client-API surface.
  *
@@ -36,7 +34,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
-import { init, DetoxErrorCode } from 'detox/internals';
+import { connect, DetoxErrorCode } from 'detox/client';
 
 import { startServer } from './helpers/server';
 import { assertDetoxError, rejectionOf } from './helpers/errors';
@@ -239,21 +237,24 @@ test('discovery finds the config; selection refuses ambiguity by name and defaul
 });
 
 /**
- * Test 3 — `detox test` never starts a server (there is no run-scoped
- * autostart). With no `client` block at all, the snapshot points the runner at the
- * DEFAULT local address (the `detox server` verb's own bind) and the CLI
+ * Test 3 — with autostart OFF, `detox test` starts no server. Both halves
+ * carry the EXPLICIT never-spawn spelling `server: { autostart: false }`.
+ * Spec 011 gave a config-LESS run a user-scoped local helper (attach-first,
+ * ephemeral port), so "no `client` block at all" stopped meaning "nothing is
+ * spawned"; that path is 011's to pin, and this suite keeps the CLI/config
+ * half. With autostart off and no address, the snapshot points the runner at
+ * the DEFAULT local address (the `detox server` verb's own bind) and the CLI
  * says in one line what it expects there; the probe's `--exit 5` makes the
  * run's outcome independent of whatever may or may not listen on that
- * well-known port on this machine. With the EXPLICIT never-spawn spelling —
- * `client: { autostart: false }`, the spelling the post-alpha attach-or-
- * spawn helper keeps forever as its opt-out — a dead explicit address fails
+ * well-known port on this machine. With a dead explicit address it fails
  * typed and fast: nothing is spawned to save the run (v20's autoStart would
  * have). No `server.auth` anywhere → the snapshot carries NO token — auth
  * stays opt-in and OFF.
  */
-test('detox test never starts a server: the default address is named, a dead address fails typed', async (t) => {
+test('detox test with autostart off never starts a server: the default address is named, a dead address fails typed', async (t) => {
   const serverless = await writeProject({
     '.detoxrc.js': {
+      server: { autostart: false },
       testRunner: { args: { $0: probeCommand(), receipt: 'receipt.json' } },
       apps: { app: { type: 'ios.app', name: 'example', bundleId: 'com.example.app' } },
       devices: { sim: { type: 'ios.simulator', device: { type: 'iPhone 17 Pro' } } },
@@ -287,7 +288,8 @@ test('detox test never starts a server: the default address is named, a dead add
 
   const deadAddress = await writeProject({
     '.detoxrc.js': {
-      client: { server: 'ws://127.0.0.1:9', autostart: false },
+      client: { server: 'ws://127.0.0.1:9' },
+      server: { autostart: false },
       testRunner: { args: { $0: probeCommand(), receipt: 'receipt.json' } },
       apps: { app: { type: 'ios.app', name: 'example', bundleId: 'com.example.app' } },
       devices: { sim: { type: 'ios.simulator', device: { type: 'iPhone 17 Pro' } } },
@@ -418,7 +420,8 @@ test('Ctrl+C kills the runner and deletes the snapshot — the explicit server s
   await using serverVerb = await startDetoxServerVerb({ signal: t.signal });
   const project = await writeProject({
     '.detoxrc.js': {
-      client: { server: serverVerb.url, autostart: false },
+      client: { server: serverVerb.url },
+      server: { autostart: false },
       testRunner: { args: { $0: probeCommand(), receipt: 'receipt.json', park: true } },
       apps: { app: { type: 'ios.app', name: 'example', bundleId: 'com.example.app' } },
       devices: { sim: { type: 'ios.simulator', device: { type: 'iPhone 17 Pro' } } },
@@ -443,7 +446,7 @@ test('Ctrl+C kills the runner and deletes the snapshot — the explicit server s
     'the snapshot is deleted on the interrupt path too',
   );
 
-  const survivor = await init({ server: { url: serverVerb.url }, signal: t.signal });
+  const survivor = await connect({ server: { url: serverVerb.url }, signal: t.signal });
   await survivor.disconnect();
   // The interrupt killed the RUN; the operator's server kept serving —
   // that a fresh dial succeeded above IS the assertion (the server is never
@@ -508,17 +511,17 @@ test('detox build runs the configured build command in the project directory', a
  */
 test('detox server: an open door with no token configured, a guarded one with a token', async (t) => {
   await using openMac = await startDetoxServerVerb({ signal: t.signal });
-  const openSession = await init({ server: { url: openMac.url }, signal: t.signal });
+  const openSession = await connect({ server: { url: openMac.url }, signal: t.signal });
   await openSession.disconnect();
 
   const token = 'spec009-home-mac-4f2a9c81d6e37b05';
   await using guardedMac = await startDetoxServerVerb({ token, signal: t.signal });
-  const session = await init({ server: bearerAddress(guardedMac.url, token), signal: t.signal });
+  const session = await connect({ server: bearerAddress(guardedMac.url, token), signal: t.signal });
   await session.disconnect();
 
   const stranger = assertDetoxError(
     await rejectionOf(
-      init({ server: bearerAddress(guardedMac.url, 'definitely-not-that-token'), signal: t.signal }),
+      connect({ server: bearerAddress(guardedMac.url, 'definitely-not-that-token'), signal: t.signal }),
       'dialing detox server with a wrong token',
     ),
     'wrong token',
@@ -575,7 +578,7 @@ test('a tokenless relay over a tokenless node serves a run that cannot tell the 
  * Test 10 — `bundleId` is OPTIONAL: a config whose app names only a
  * `binaryPath` runs
  * — no refusal, and the snapshot carries NO invented id (derivation happens
- * client-side at `init`, never at config resolution, so `detox build` on an
+ * client-side at `connect`, never at config resolution, so `detox build` on an
  * unbuilt app stays possible). A config with NEITHER `bundleId` nor
  * `binaryPath` is a typed refusal naming BOTH keys — never a deferred
  * failure.

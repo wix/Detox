@@ -175,13 +175,17 @@ describe('serverSectionToArgs', () => {
   };
 
   it('appends a flag per present value, after the user argv', () => {
+    // Order follows SERVER_SETTINGS's own declaration order — host, port,
+    // maxPool, keepaliveWindow, blobBudget — with --token appended last
+    // (it is forwarded by hand: its config shape is the nested `auth.token`,
+    // not a `section.token` the generic forwarder could find on its own).
     expect(serverSectionToArgs(SECTION, [], 'server')).toEqual([
-      '--port', '8099',
       '--host', '0.0.0.0',
-      '--token', 'shh',
+      '--port', '8099',
       '--max-pool', '4',
-      '--blob-budget', '1024',
       '--keepalive-window', '120',
+      '--blob-budget', '1024',
+      '--token', 'shh',
     ]);
   });
 
@@ -222,7 +226,7 @@ describe('serverSectionToArgs', () => {
   it('an env mirror suppresses the config value — flag > env > config', () => {
     const merged = serverSectionToArgs(SECTION, [], 'server', {
       DETOX_SERVER_TOKEN: 'ci-secret',
-      PORT: '9999',
+      DETOX_SERVER_PORT: '9999',
     });
     // The delegated main will read the env vars itself — the config's values
     // must not arrive as flags and shadow them.

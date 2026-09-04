@@ -1,6 +1,6 @@
 jest.retryTimes(3);
 
-const { session } = require('detox/internals');
+const { session } = require('detox');
 const jestExpect = require('expect').default;
 
 const {
@@ -14,7 +14,9 @@ describe('jest.retryTimes() support', () => {
   beforeAll(async () => {
     // This test won't work if you retry it via -R, --retries.
     // Here we also assert that the session object is accessible from the sandbox.
-    jestExpect(session.testSessionIndex).toBe(0);
+    // v21 has no testSessionIndex; the run's own id is what proves the
+    // session is reachable in here.
+    jestExpect(typeof session.runId).toBe('string');
 
     await device.launchApp({ newInstance: true });
   });

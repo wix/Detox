@@ -59,7 +59,7 @@ describe('createDetoxClient', () => {
     const detox = await createDetoxClient({ url });
     expect(detox.client).toBeInstanceOf(DetoxClientPeer);
 
-    const response = await detox.client.allocateDevice({ type: 'ios.simulator' } as never);
+    const response = await detox.client.allocateDevice({ type: 'ios.simulator' });
     expect(response).toEqual(expect.objectContaining({ allocationId: 'a1' }));
 
     detox.close();

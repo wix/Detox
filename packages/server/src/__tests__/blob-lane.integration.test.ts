@@ -25,7 +25,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
 import { createDetoxRemoteServer, type DetoxRemoteServer } from '../server';
 import { generateToken, type AuthConfig } from '../auth';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
 
 const auth: AuthConfig = { type: 'static-token', token: generateToken() };
 
@@ -106,6 +106,7 @@ async function startLaneServer(budgetBytes?: number): Promise<DetoxRemoteServer>
       root: mkdtempSync(path.join(tmpdir(), 'detox-blob-int-')),
       ...(budgetBytes === undefined ? {} : { budgetBytes }),
     },
+    logs: { root: mkdtempSync(path.join(tmpdir(), 'detox-log-int-')) },
   });
 }
 

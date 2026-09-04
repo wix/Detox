@@ -1,18 +1,26 @@
 /**
- * The `detox` bin (spec 009): one binary, four verbs —
- * `test`, `build`, `server`, `relay` — plus the framework-cache verbs
+ * The `detox` bin (spec 009): one binary, five verbs — `test`, `build`,
+ * `server`, `relay`, and `logs` (spec 013) — plus the framework-cache verbs
  * kept from v20 (`build-framework-cache`, `clean-framework-cache`,
- * `rebuild-framework-cache`). A process shell over the unit-gated
+ * `rebuild-framework-cache`, spec 016). A process shell over the unit-gated
  * modules of this package: dispatch, spawn, signals, exit codes — no
  * composition logic lives here.
  *
  * Signals: SIGINT/SIGTERM forward to the runner
  * child once — its own teardown is the graceful path — and a second signal
- * is SIGKILL. No timer of any kind exists in this file: the child's death
- * is observable, and the grace an unattended supervisor needs lives one
- * layer up (systemd/docker/k8s own that clock and kill the process group).
+ * is SIGKILL. A framework build script gets the same forward-once contract,
+ * aimed at its own process group (it is spawned detached): `xcodebuild` is
+ * the script's child, and a signal delivered to bash alone is deferred
+ * until the build it is waiting on finishes. The price of that group: a
+ * SIGKILL of this process itself, which cannot be forwarded, leaves the
+ * build running to completion — a supervisor should send a catchable
+ * signal first. No timer of any kind exists in this file: the child's
+ * death is observable, and the grace an unattended supervisor needs lives
+ * one layer up (systemd/docker/k8s own that clock and kill the process
+ * group).
  */
 import { spawn, spawnSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 
 import { runServerCli } from '@detox-remote/server';
@@ -21,9 +29,12 @@ import { runRelayCli, reportRelayCliError, RelayCliError } from 'detox-relay';
 import { ConfigError, UsageError } from './errors';
 import { resolveRun, resolveServing } from './resolve';
 import { writeSnapshotFile, deleteSnapshotFile } from './io';
-import { ensureLocalHelper, restartLocalHelper } from './local-helper';
+import { ensureLocalHelper, readLocalHelperAddress, restartLocalHelper } from './local-helper';
+import { runLogs } from './logs';
+import { formatRunLines, readRunRows } from './run-lines';
 import {
   frameworkCacheDirs,
+  frameworkCacheUsage,
   isFrameworkCacheVerb,
   locateBuildScripts,
   parseFrameworkCacheArgs,
@@ -47,9 +58,11 @@ Usage:
   detox build [-c <configuration>] [-C <config path>]
   detox server [options]         start a device-owning Detox Server here
   detox relay  --nodes <file>    front a fleet of Detox Servers at one address
+  detox logs  [<runId>] [--all | --failures | --json] [--under <name>]
+                                 read a run's log from the project's server
   detox build-framework-cache   [--detox] [--xcuitest]   build ~/Library/Detox/ios (macOS)
   detox clean-framework-cache   [--detox] [--xcuitest]   remove it
-  detox rebuild-framework-cache [--detox] [--xcuitest]   both
+  detox rebuild-framework-cache [--detox] [--xcuitest]   remove it, then build it again
 
 \`detox test\` consumes ONLY -c/--configuration and -C/--config-path (env
 mirrors: DETOX_CONFIGURATION, DETOX_CONFIG_PATH). EVERY other flag and
@@ -59,8 +72,11 @@ reachable without detox having to learn it, so \`detox test --headless x.js\`
 hands --headless to the runner and the runner's own answer is the honest one.
 
 \`detox test\` starts or attaches to a detached local helper when
-\`client.server\` is absent. Set \`client.autostart: false\` to keep the
+\`client.server\` is absent. Set \`server.autostart: false\` to keep the
 explicit-server path at ws://127.0.0.1:8080.
+
+\`detox test\` ends by naming every run it made — \`detox run <id> → <viewer URL>\` —
+and \`detox logs <id>\` reads it back as text (\`detox logs --help\`).
 
 \`detox server --help\` and \`detox relay --help\` describe the serving verbs.
 `;
@@ -86,15 +102,15 @@ async function runTest(rest: readonly string[]): Promise<void> {
   for (const warning of resolved.warnings) console.warn(`detox: ${warning}`);
 
   // No `client.server` now means the post-alpha helper path (spec 011).
-  // `client.autostart: false` keeps the alpha explicit-server behavior
+  // `server.autostart: false` keeps the alpha explicit-server behavior
   // forever, including the no-preflight dial and the runner's own typed
   // `DETOX_SERVER_UNREACHABLE` answer when nothing is listening.
   const clientDraft = resolved.snapshot.client as Record<string, unknown>;
   if (clientDraft.server === undefined) {
-    if (resolved.clientAutostart === false) {
+    if (resolved.autostart === false) {
       clientDraft.server = DEFAULT_LOCAL_SERVER_URL;
       console.log(
-        `detox test: client.autostart is false — expecting a Detox Server at ${DEFAULT_LOCAL_SERVER_URL}. ` +
+        `detox test: server.autostart is false — expecting a Detox Server at ${DEFAULT_LOCAL_SERVER_URL}. ` +
           'Start one with `detox server`, or point client.server at a remote one.',
       );
     } else {
@@ -144,15 +160,29 @@ async function runTest(rest: readonly string[]): Promise<void> {
   // A closed terminal is a real exit path too — same forward-once contract.
   process.on('SIGHUP', onSignal);
 
+  // The last thing printed, whatever the exit code (spec 013): every run a
+  // worker opened, by id and viewer URL — read before the snapshot dir goes,
+  // and written with a callback: stdout to a pipe is asynchronous on macOS,
+  // and `process.exit` right behind a bare `console.log` can drop the line.
+  const nameRuns = (then: () => void): void => {
+    const lines = formatRunLines(readRunRows(snapshotPath));
+    if (lines.length === 0) return then();
+    process.stdout.write(`${lines.join('\n')}\n`, () => then());
+  };
+
   child.on('error', (err) => {
-    cleanup();
-    fail(`detox test: could not spawn the test runner \`${invocation.command}\`: ${err.message}`);
+    nameRuns(() => {
+      cleanup();
+      fail(`detox test: could not spawn the test runner \`${invocation.command}\`: ${err.message}`);
+    });
   });
   child.on('close', (code, signalCode) => {
-    cleanup();
-    // The runner's exit code propagates verbatim (CI matrices key on it);
-    // a signal-killed runner exits non-zero (exact code unpinned).
-    process.exit(code ?? (signalCode !== null ? 130 : 1));
+    nameRuns(() => {
+      cleanup();
+      // The runner's exit code propagates verbatim (CI matrices key on it);
+      // a signal-killed runner exits non-zero (exact code unpinned).
+      process.exit(code ?? (signalCode !== null ? 130 : 1));
+    });
   });
 }
 
@@ -251,18 +281,63 @@ async function runServe(verb: 'server' | 'relay', rest: readonly string[]): Prom
 }
 
 async function runFrameworkCache(verb: FrameworkCacheVerb, rest: readonly string[]): Promise<void> {
-  const selection = parseFrameworkCacheArgs(verb, rest);
-  const paths = { ...frameworkCacheDirs(), ...locateBuildScripts(__dirname) };
-  const code = await runFrameworkCacheVerb(verb, selection, paths, {
+  const args = parseFrameworkCacheArgs(verb, rest);
+  if (args.help) {
+    console.log(frameworkCacheUsage(verb));
+    return;
+  }
+  const code = await runFrameworkCacheVerb(verb, args.selection, frameworkCacheDirs(), () => locateBuildScripts(__dirname), {
     platform: process.platform,
     runScript: (script) =>
       new Promise((resolve, reject) => {
-        const child = spawn(script, [], { stdio: 'inherit' });
-        child.on('error', reject);
-        child.on('close', (exitCode) => resolve(exitCode ?? 1));
+        // Its own process group, so a forwarded signal reaches `xcodebuild`
+        // and everything under it, not only the bash script waiting on it.
+        // Executed directly, never via `bash <script>`: the scripts' `-e`
+        // rides their shebang, which a wrapper interpreter would drop.
+        const child = spawn(script, [], { stdio: 'inherit', detached: true });
+        let forwarded = false;
+        const onSignal = (signal: NodeJS.Signals): void => {
+          if (child.pid === undefined) return;
+          try {
+            process.kill(-child.pid, forwarded ? 'SIGKILL' : signal);
+          } catch {
+            // The group is already gone; `close` is about to fire.
+          }
+          forwarded = true;
+        };
+        process.on('SIGINT', onSignal);
+        process.on('SIGTERM', onSignal);
+        process.on('SIGHUP', onSignal);
+        const done = (): void => {
+          process.off('SIGINT', onSignal);
+          process.off('SIGTERM', onSignal);
+          process.off('SIGHUP', onSignal);
+        };
+        child.on('error', (err) => {
+          done();
+          reject(new UsageError(`detox: could not run ${script}: ${err.message}`));
+        });
+        child.on('close', (exitCode, signalCode) => {
+          done();
+          resolve(exitCode ?? (signalCode !== null ? 130 : 1));
+        });
       }),
-    removeDir: (dir) => rm(dir, { recursive: true, force: true }),
-    log: (line) => console.log(line),
+    // `force` swallows only absence; a permission or busy-tree failure is
+    // still a one-line refusal, not a stack.
+    removeDir: async (dir) => {
+      try {
+        await rm(dir, { recursive: true, force: true });
+      } catch (err) {
+        throw new UsageError(`detox: could not remove ${dir}: ${(err as Error).message}`);
+      }
+    },
+    // Written with a callback: stdout to a pipe is asynchronous on macOS, and
+    // the script spawned right behind a bare `console.log` shares the fd —
+    // its first line could land before ours.
+    log: (line) =>
+      new Promise<void>((resolve) => {
+        process.stdout.write(`${line}\n`, () => resolve());
+      }),
   });
   if (code !== 0) process.exit(code);
 }
@@ -287,9 +362,27 @@ async function main(): Promise<void> {
     case 'server':
     case 'relay':
       return runServe(verb, rest);
+    case 'logs': {
+      // Argv in, exit code out; refusals are the verb's own (exit 2, one line).
+      const code = await runLogs(rest, {
+        cwd: process.cwd(),
+        env: process.env,
+        io: {
+          stdout: (text) => void process.stdout.write(text),
+          stderr: (text) => void process.stderr.write(text),
+          writeFile: (file, text) => writeFileSync(file, text),
+        },
+        helperAddress: readLocalHelperAddress,
+      });
+      process.exitCode = code;
+      return;
+    }
     default:
       if (isFrameworkCacheVerb(verb)) return runFrameworkCache(verb, rest);
-      throw new UsageError(`Unknown command \`detox ${verb}\` — the verbs are test, build, server, relay${USAGE}`);
+      throw new UsageError(
+        `Unknown command \`detox ${verb}\` — the verbs are test, build, server, relay, logs, ` +
+          `build-framework-cache, clean-framework-cache, rebuild-framework-cache${USAGE}`,
+      );
   }
 }
 

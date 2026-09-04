@@ -8,9 +8,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
 import { memoryChannel, type MemoryChannel } from '@detox-remote/core';
+import { LOG_METHOD } from '@detox-remote/protocol';
 
 import { RelaySession, ALLOCATION_STALL_MS, type SessionNode } from '../session';
 import type { EnsureBlobOutcome } from '../blob-bridge';
+import type { NodeLogDialer } from '../log-bridge';
+import type { RelayLogPort } from '../relay-log';
 
 const HEX = 'a'.repeat(64);
 
@@ -32,6 +35,40 @@ interface FakeNodeOptions {
   /** Auto-responder run for every frame the node receives. */
   onFrame?: (frame: Frame, api: FakeNodeApi) => void;
   ensureBlob?: (hex: string) => Promise<EnsureBlobOutcome>;
+  /** Spec 008: absent by default, same as a unit test that never exercises the log crossing the hop. */
+  createLogDialer?: (nodeRunId: string) => NodeLogDialer;
+}
+
+/** A `RelayLogPort` a test can script and spy on, standing in for `RelayConnectionLog`. */
+function fakeRelayLog(overrides: Partial<RelayLogPort> = {}): RelayLogPort & {
+  followersStarted: number;
+  followersFinished: number;
+  clientClosed: boolean;
+  nodesGone: string[];
+} {
+  const self = {
+    followersStarted: 0,
+    followersFinished: 0,
+    clientClosed: false,
+    nodesGone: [] as string[],
+    onClientLog: () => false,
+    mergeForeignLine: () => undefined,
+    replayFrames: () => [],
+    noteFollowerStarted: () => {
+      self.followersStarted += 1;
+    },
+    noteFollowerFinished: () => {
+      self.followersFinished += 1;
+    },
+    noteClientClosed: () => {
+      self.clientClosed = true;
+    },
+    noteNodeGone: (name: string) => {
+      self.nodesGone.push(name);
+    },
+    ...overrides,
+  };
+  return self;
 }
 
 /** A device query as these tests spell it. */
@@ -170,6 +207,7 @@ function fakeNode(name: string, options: FakeNodeOptions = {}): FakeNode {
         ensureBlobCalls.push(hex);
         return options.ensureBlob ? options.ensureBlob(hex) : Promise.resolve({ ok: true });
       },
+      ...(options.createLogDialer ? { createLogDialer: options.createLogDialer } : {}),
     },
   };
   return self;
@@ -183,7 +221,7 @@ interface Harness {
   closeClient(): void;
 }
 
-function harness(nodes: FakeNode[], logError?: (message: string) => void): Harness {
+function harness(nodes: FakeNode[], logError?: (message: string) => void, relayLog?: RelayLogPort): Harness {
   const [relayEnd, clientEnd] = memoryChannel();
   const received: Frame[] = [];
   const logs: string[] = [];
@@ -196,6 +234,7 @@ function harness(nodes: FakeNode[], logError?: (message: string) => void): Harne
       ((message) => {
         logs.push(message);
       }),
+    ...(relayLog ? { relayLog } : {}),
   });
   return { session, client: clientEnd, received, logs, closeClient: () => clientEnd.close() };
 }
@@ -1284,5 +1323,184 @@ describe('installApp {blob} bridge', () => {
     expect(a.frames.find((f) => f.method === 'installApp')?.params?.appPath).toBe(
       'https://builds.example/app.zip',
     );
+  });
+});
+
+// ── The connection log crosses the relay, live (spec 008) ──────
+
+describe('connection log crossing the relay (spec 008)', () => {
+  const logFrame = (id: string): Frame => ({
+    jsonrpc: '2.0',
+    method: LOG_METHOD,
+    params: { id, phase: 'begin', kind: 'test', name: 'a test' },
+  });
+
+  const serverInfoWithLog = (nodeRunId?: string): Frame => ({
+    jsonrpc: '2.0',
+    method: '$/serverInfo',
+    params: { protocol: 1, server: '1.0.0', ...(nodeRunId !== undefined ? { log: { runId: nodeRunId } } : {}) },
+  });
+
+  const succeedAlloc = (f: Frame, api: FakeNodeApi): void => {
+    if (f.method === 'allocateDevice') api.succeed(f.id ?? '', 'alloc-1');
+  };
+
+  it('a step the relay log accepts is forwarded verbatim only to a node already dialed — a node never touched sees nothing', async () => {
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc });
+    const b = fakeNode('mac-b');
+    const relayLog = fakeRelayLog({ onClientLog: () => true });
+    const h = harness([a, b], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+
+    h.client.send(logFrame('step-1'));
+    await flush();
+
+    expect(a.frames.some((f) => f.method === LOG_METHOD)).toBe(true);
+    expect(b.connects).toBe(0);
+  });
+
+  it('a step the relay log refuses reaches no node', async () => {
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc });
+    const relayLog = fakeRelayLog({ onClientLog: () => false });
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+    h.client.send(logFrame('step-1'));
+    await flush();
+    expect(a.frames.some((f) => f.method === LOG_METHOD)).toBe(false);
+  });
+
+  it('every currently open step replays, in begin order, before a freshly dialed node sees its first request', async () => {
+    const replay = [logFrame('outer'), logFrame('inner')];
+    const relayLog = fakeRelayLog({ replayFrames: () => replay });
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc });
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+
+    expect(a.frames.slice(0, 2)).toEqual(replay);
+    expect(a.frames[2]?.method).toBe('allocateDevice');
+  });
+
+  it("a node's own $/serverInfo naming a log starts one follower whose lines merge into the relay's own log", async () => {
+    let resolveDial: (() => void) | undefined;
+    const dialer = {
+      dial: (_after: number | undefined, _signal: AbortSignal | undefined, onRawLine: (t: string) => void) =>
+        new Promise<void>((resolve) => {
+          onRawLine(JSON.stringify({ seq: 1, ts: 1, level: 'info', kind: 'begin', node: { id: 'rpc:1', type: 'rpc', name: 'x' } }));
+          resolveDial = resolve;
+        }),
+    };
+    const merged: unknown[] = [];
+    const relayLog = fakeRelayLog({ mergeForeignLine: (name, line) => merged.push([name, line]) });
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc, createLogDialer: () => dialer });
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+
+    a.api.send(serverInfoWithLog('node-run-1'));
+    await flush();
+
+    expect(relayLog.followersStarted).toBe(1);
+    expect(merged).toEqual([['mac-a', { seq: 1, ts: 1, level: 'info', kind: 'begin', node: { id: 'rpc:1', type: 'rpc', name: 'x' } }]]);
+    expect(relayLog.followersFinished).toBe(0); // the dial has not resolved yet
+
+    resolveDial?.();
+    await flush();
+    expect(relayLog.followersFinished).toBe(1);
+  });
+
+  it("a follow whose dial fails once the node is already gone finishes with one warn line naming the node", async () => {
+    let rejectDial: ((err: Error) => void) | undefined;
+    const dialer = { dial: () => new Promise<void>((_resolve, reject) => { rejectDial = reject; }) };
+    const relayLog = fakeRelayLog();
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc, createLogDialer: () => dialer });
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+
+    a.api.send(serverInfoWithLog('node-run-1')); // starts the follow — its dial is now pending
+    await flush();
+    expect(relayLog.followersStarted).toBe(1);
+
+    a.die(); // the node is gone — up.alive flips false before the dial ever settles
+    await flush();
+    expect(relayLog.followersFinished).toBe(0); // the dial itself has not settled yet
+
+    rejectDial?.(new Error('connection reset')); // isAlive() now reads false — one warn, no retry
+    await flush();
+
+    expect(relayLog.followersFinished).toBe(1);
+    expect(relayLog.nodesGone).toEqual(['mac-a']); // the relay's own connection log, not just stdout
+    expect(h.logs.some((l) => l.includes('mac-a'))).toBe(true); // the operator's stdout too
+  });
+
+  it('a $/serverInfo with no log field starts no follower', async () => {
+    const relayLog = fakeRelayLog();
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc, createLogDialer: () => ({ dial: () => new Promise(() => undefined) }) });
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+    a.api.send(serverInfoWithLog(undefined));
+    await flush();
+    expect(relayLog.followersStarted).toBe(0);
+  });
+
+  it('a fake node with no createLogDialer (a unit test that never exercises the log) starts no follower', async () => {
+    const relayLog = fakeRelayLog();
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc }); // no createLogDialer
+    const h = harness([a], undefined, relayLog);
+    h.client.send(allocFrame('1'));
+    await flush();
+    a.api.send(serverInfoWithLog('node-run-1'));
+    await flush();
+    expect(relayLog.followersStarted).toBe(0);
+  });
+
+  it('a session given no relay log at all judges and forwards nothing, and starts no follower', async () => {
+    let resolveDial: (() => void) | undefined;
+    let rejectDial: ((err: Error) => void) | undefined;
+    const dialer = {
+      dial: (_after: number | undefined, _signal: AbortSignal | undefined, onRawLine: (t: string) => void) =>
+        new Promise<void>((resolve, reject) => {
+          onRawLine(JSON.stringify({ seq: 1, ts: 1, level: 'info', kind: 'begin', node: { id: 'rpc:1', type: 'rpc', name: 'x' } }));
+          resolveDial = resolve;
+          rejectDial = reject;
+        }),
+    };
+    const a = fakeNode('mac-a', { onFrame: succeedAlloc, createLogDialer: () => dialer });
+    const h = harness([a]); // no relayLog — the NULL_RELAY_LOG default
+    h.client.send(allocFrame('1'));
+    await flush();
+
+    h.client.send(logFrame('step-1'));
+    await flush();
+    expect(a.frames.some((f) => f.method === LOG_METHOD)).toBe(false); // NULL_RELAY_LOG.onClientLog() → false
+
+    a.api.send(serverInfoWithLog('node-run-1')); // NULL_RELAY_LOG.noteFollowerStarted()/mergeForeignLine()
+    await flush();
+    resolveDial?.(); // NULL_RELAY_LOG.noteFollowerFinished()
+    await flush();
+
+    // A second node, dying mid-follow, exercises NULL_RELAY_LOG.noteNodeGone() too.
+    const b = fakeNode('mac-b', { onFrame: succeedAlloc, createLogDialer: () => dialer });
+    const h2 = harness([b]);
+    h2.client.send(allocFrame('1'));
+    await flush();
+    b.api.send(serverInfoWithLog('node-run-2'));
+    await flush();
+    b.die();
+    await flush();
+    rejectDial?.(new Error('connection reset'));
+    await flush();
+  });
+
+  it('the client hanging up notes the relay log closed, regardless of any node ever being dialed', async () => {
+    const relayLog = fakeRelayLog();
+    const h = harness([], undefined, relayLog);
+    h.closeClient();
+    await flush();
+    expect(relayLog.clientClosed).toBe(true);
   });
 });

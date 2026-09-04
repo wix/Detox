@@ -1,7 +1,7 @@
 /**
  * `bundleId` derivation from a built `.app` (spec 009):
  * `bundleId` is optional in the config and derived client-side from
- * `binaryPath`'s Info.plist at `init` — one call before the v20-ordered
+ * `binaryPath`'s Info.plist at `connect` — one call before the v20-ordered
  * uninstall-then-install, never at config-resolution time (that would break
  * `detox build` on an app not yet built) and never baked into the snapshot.
  *
@@ -18,7 +18,7 @@
 import { execFile } from 'node:child_process';
 import path from 'node:path';
 
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 const cache = new Map<string, Promise<string>>();
 

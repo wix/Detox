@@ -2123,6 +2123,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@detox-remote/cli@workspace:packages/cli"
   dependencies:
+    "@detox-remote/core": "workspace:*"
+    "@detox-remote/perfetto": "workspace:*"
     "@detox-remote/protocol": "workspace:*"
     "@detox-remote/server": "workspace:*"
     detox-relay: "workspace:*"
@@ -2137,6 +2139,26 @@ __metadata:
   dependencies:
     typescript: "npm:^5.3.0"
     ws: "npm:^8.18.0"
+    zod: "npm:^4.4.3"
+  languageName: unknown
+  linkType: soft
+
+"@detox-remote/driver-ios@workspace:*, @detox-remote/driver-ios@workspace:packages/driver-ios":
+  version: 0.0.0-use.local
+  resolution: "@detox-remote/driver-ios@workspace:packages/driver-ios"
+  dependencies:
+    "@detox-remote/core": "workspace:*"
+    "@detox-remote/protocol": "workspace:*"
+    "@detox-remote/server": "workspace:*"
+    typescript: "npm:^5.3.0"
+  languageName: unknown
+  linkType: soft
+
+"@detox-remote/perfetto@workspace:*, @detox-remote/perfetto@workspace:packages/perfetto":
+  version: 0.0.0-use.local
+  resolution: "@detox-remote/perfetto@workspace:packages/perfetto"
+  dependencies:
+    typescript: "npm:^5.3.0"
   languageName: unknown
   linkType: soft
 
@@ -2153,9 +2175,12 @@ __metadata:
   resolution: "@detox-remote/server@workspace:packages/server"
   dependencies:
     "@detox-remote/core": "workspace:*"
+    "@detox-remote/driver-ios": "workspace:*"
+    "@detox-remote/perfetto": "workspace:*"
     "@detox-remote/protocol": "workspace:*"
     typescript: "npm:^5.3.0"
     ws: "npm:^8.18.0"
+    zod: "npm:^4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -10929,6 +10954,7 @@ __metadata:
     "@detox-remote/protocol": "workspace:*"
     "@detox-remote/server": "workspace:*"
     ws: "npm:^8.18.0"
+    zod: "npm:^4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -24120,6 +24146,7 @@ __metadata:
     retext-syntax-urls: "npm:^3.1.1"
     semver: "npm:5.x.x"
     shell-utils: "npm:1.x.x"
+    spec015-fake-driver: "workspace:*"
     surge: "npm:^0.24.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.3.0"
@@ -25226,6 +25253,12 @@ __metadata:
   checksum: 10/d29b89e48e7d762e505a2f83b1bc2c92268bd518f1b411864ab42a9e032e387d10467bbce0d8dbf8647bf4914a063aa1d303dff85e248f7a57f81a7b18ac34ef
   languageName: node
   linkType: hard
+
+"spec015-fake-driver@workspace:*, spec015-fake-driver@workspace:specs/fake-driver":
+  version: 0.0.0-use.local
+  resolution: "spec015-fake-driver@workspace:specs/fake-driver"
+  languageName: unknown
+  linkType: soft
 
 "split-string@npm:^3.0.1, split-string@npm:^3.0.2":
   version: 3.1.0

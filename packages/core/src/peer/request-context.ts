@@ -20,6 +20,8 @@ export interface RequestContext<TProgress = unknown> {
 export interface CallOptions<TProgress = unknown> {
   signal?: AbortSignal;
   onProgress?: (value: TProgress) => void;
+  /** The step id the request frame carries (spec 013's `step` member); absent, none is sent. */
+  step?: string;
 }
 
 export type RequestHandler<TParams = unknown, TResult = unknown> = (
@@ -34,6 +36,8 @@ export interface RequestCallOpts<TParams = unknown, TProgress = unknown> {
   params?: TParams;
   signal?: AbortSignal;
   onProgress?: (value: TProgress) => void;
+  /** The step id the request frame carries (spec 013's `step` member); absent, none is sent. */
+  step?: string;
 }
 
 export interface NotifyOpts<TParams = unknown> {

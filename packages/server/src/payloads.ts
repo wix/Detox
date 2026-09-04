@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { DetoxError, DetoxErrorCode } from '@detox-remote/core';
+import { describeError, serverLog } from './log-sink';
 
 /** @issue DTX-6034: boundary-exact — exactly this many UTF-8 bytes passes, one more is a typed refusal. */
 export const PAYLOAD_VALUE_MAX_BYTES = 1_048_576;
@@ -81,6 +82,6 @@ export async function materializePayload(kind: PayloadKind, json: string): Promi
 /** @issue DTX-6036: disposal for death hooks — fire-and-forget, logged-never-thrown. */
 export function disposeQuietly(payload: MaterializedPayload): void {
   payload.dispose().catch((err: unknown) => {
-    console.error('[server] payload file cleanup failed:', err);
+    serverLog.error(`payload file cleanup failed: ${describeError(err)}`);
   });
 }

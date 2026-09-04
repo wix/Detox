@@ -6,6 +6,6 @@
 import { runServerCli } from './cli-main';
 
 runServerCli({ argv: process.argv.slice(2), env: process.env }).catch((err: unknown) => {
-  console.error(err);
+  process.stderr.write(`${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`);
   process.exit(1);
 });

@@ -10,7 +10,7 @@
  *  2. dials `snapshot.client.server` — with a bearer header only when
  *     `snapshot.client.token` exists (auth is opt-in and off by default) —
  *     through the built client bundle
- *     (`detox/dist/internals.js`, the real artifact a runner
+ *     (`detox/dist/client.js`, the real artifact a runner
  *     loads), then disconnects;
  *  3. writes a receipt (atomically: temp + rename) with its argv, cwd, pid,
  *     the snapshot verbatim, the snapshot's path (so the accept can assert
@@ -60,8 +60,8 @@ async function main() {
   let initErrorMessage;
   let detox;
   try {
-    const { init } = require(path.resolve(__dirname, '../../detox/dist/internals.js'));
-    detox = await init({
+    const { connect } = require(path.resolve(__dirname, '../../detox/dist/client.js'));
+    detox = await connect({
       server: {
         url: snapshot.client.server,
         ...(snapshot.client.token !== undefined

@@ -8,13 +8,19 @@
  * wedged-erase outcome (nothing can wedge CoreSimulator on demand). Both are
  * contract, and both are invisible to `yarn accept 005`.
  */
-import { describe, it, expect } from 'vitest';
-import type { DeviceInfo } from '@detox-remote/protocol';
+import { describe, it, expect, afterEach } from 'vitest';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 import { DetoxErrorCode, DeviceUnknownStateError } from '@detox-remote/core';
 
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
+import { iosHost, iosPool, type IosHost } from './_ios-harness';
+
+/** Every driver host a test builds (spec 015): closed after each so its per-device gateways release. */
+const duHosts: IosHost[] = [];
+afterEach(async () => {
+  for (const host of duHosts.splice(0)) await host.close().catch(() => undefined);
+});
 import type {
   BiometricMatchArgs,
   DeviceTargetArgs,
@@ -25,7 +31,7 @@ import type {
   SetStatusBarArgs,
   SimulatorOps,
   UninstallAppArgs,
-} from '../SimulatorOps';
+} from '@detox-remote/driver-ios';
 
 type UndoFn = () => void | Promise<void>;
 
@@ -233,9 +239,11 @@ interface AllocateResponse {
 
 function makeServer(overrides: OpsOverrides = {}) {
   const ops = fakeSimulatorOps(overrides);
-  const devicePool = new DevicePool({ simulatorOps: ops.simulatorOps, maxPool: 4 });
+  const host = iosHost(ops.simulatorOps);
+  duHosts.push(host);
+  const devicePool = host.pool;
   const captured = capturingPeer();
-  new DetoxServerImpl({ serverPeer: captured.peer, devicePool, simulatorOps: ops.simulatorOps });
+  new DetoxServerImpl({ serverPeer: captured.peer, driverHost: host.host });
   return {
     ...ops,
     devicePool,
@@ -819,10 +827,10 @@ describe('a wedged erase leaves the device in an UNKNOWN state', () => {
 
   it('keeps nothing across pools — the exclusion is in-memory only', async () => {
     const shared = fakeSimulatorOps();
-    const pool = new DevicePool({ simulatorOps: shared.simulatorOps, maxPool: 4 });
+    const pool = iosPool(shared.simulatorOps).pool;
     pool.markUnknown('udid-1', 'alloc-nobody', 'test');
     // A fresh pool (the shape a restart produces) knows nothing about it.
-    const reborn = new DevicePool({ simulatorOps: shared.simulatorOps, maxPool: 4 });
-    await expect(reborn.allocate({ query: {} })).resolves.toMatchObject({ udid: 'udid-1' });
+    const reborn = iosPool(shared.simulatorOps).pool;
+    await expect(reborn.allocate({ allocationId: 'alloc-test', query: {} })).resolves.toMatchObject({ udid: 'udid-1' });
   });
 });

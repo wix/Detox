@@ -13,7 +13,7 @@
       "@detox-remote/protocol": ["packages/protocol/src/index.ts"],
       "@detox-remote/core": ["packages/core/src/index.ts"],
       "detox": ["detox/src/index.ts"],
-      "detox/internals": ["detox/src/internals.ts"]
+      "detox/client": ["detox/src/client.ts"]
     }
   }
 }

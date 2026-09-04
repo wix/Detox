@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 import { cleanup, device, init, type CompatConfig } from '../index';
 import { compatStateBox } from '../state';
@@ -22,11 +22,11 @@ import {
   FakeWebSocket,
   connectFakeServer,
   type FakeServer,
-} from '../../../../detox/src/internals/__tests__/helpers/fake-transport';
+} from '../../../../detox/src/client/__tests__/helpers/fake-transport';
 
 vi.mock('ws', async () => {
   const { FakeWebSocket: FakeWebSocketCtor } = await import(
-    '../../../../detox/src/internals/__tests__/helpers/fake-transport'
+    '../../../../detox/src/client/__tests__/helpers/fake-transport'
   );
   return { default: FakeWebSocketCtor };
 });
@@ -37,6 +37,7 @@ const allocation = {
   name: 'iPhone 17',
   os: 'iOS 26.5',
   state: 'booted',
+  apps: { serverUrl: 'ws://127.0.0.1:8099' },
 };
 
 const box = compatStateBox();

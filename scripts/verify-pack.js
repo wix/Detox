@@ -2,9 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 /**
  * The pack-and-install proof (spec 009's integration gate for the packaging):
- * an exports map alone is not the proof — this script runs the real pack
- * script, installs the produced tarball into an empty temp project, and
+ * a manifest alone is not the proof — this script packs the real `detox`
+ * package, installs the produced tarball into an empty temp project, and
  * requires it the way a migrating project would.
+ *
+ * It packs what `publish-local.mjs` publishes: `npm pack` in `detox/`, the
+ * manifest as written, its `prepack` build and all. That is the point — the
+ * published package resolves every entry point through one-line CommonJS
+ * shims at its root (`client.js` -> `dist/client.js`), and a proof that runs
+ * against any other manifest proves nothing about what users install.
  *
  *   yarn build && node scripts/verify-pack.js
  *
@@ -12,12 +18,18 @@
  *  - `require('detox')` is the compat surface (init/cleanup/device/element/
  *    by/expect/waitFor) — a migrating project changes no import line;
  *  - the earlier draft's driver-class exports are gone;
- *  - `detox/client` and `detox/internals` are the same module instance;
+ *  - `detox/internals` is gone — `detox/client` is the only client door;
  *  - `detox/server` exposes the programmatic entry point — createServer;
  *  - the bin map serves `detox` and the file exists and is runnable;
- *  - the staged `engines` equals the repo's own node pin.
+ *  - the published `engines` equals the repo's own node pin;
+ *  - the tarball declares no runtime dependencies — every one of them is
+ *    bundled into dist/, so a declared dep would only make each install
+ *    fetch a package the shipped code never loads;
+ *  - the framework-cache verbs find the build scripts the tarball ships;
+ *  - the doors a user runs inside their own process ship self-contained
+ *    source maps, so a debugger steps into TypeScript rather than a bundle.
  */
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -51,18 +63,32 @@ function fail(message) {
 const packDest = fs.mkdtempSync(path.join(os.tmpdir(), 'detox-verify-pack-dest-'));
 const project = fs.mkdtempSync(path.join(os.tmpdir(), 'detox-verify-pack-project-'));
 try {
-  const tarball = run('node', [path.join(repoRoot, 'scripts', 'pack-client.js'), packDest])
+  // `npm pack` runs the package's own `prepack` (the build + the iOS
+  // framework check), so this is the publish path end to end, not a shortcut.
+  const packed = run('npm', ['pack', '--pack-destination', packDest], {
+    cwd: path.join(repoRoot, 'detox'),
+  })
     .trim()
     .split('\n')
     .pop();
-  if (!tarball || !fs.existsSync(tarball)) fail(`pack-client produced no tarball (${tarball})`);
+  const tarball = path.join(packDest, packed);
+  if (!packed || !fs.existsSync(tarball)) fail(`npm pack produced no tarball (${packed})`);
 
   fs.writeFileSync(
     path.join(project, 'package.json'),
     JSON.stringify({ name: 'verify-pack-consumer', version: '1.0.0', private: true }, null, 2),
   );
-  // The tarball has zero dependencies, so this install needs no registry.
-  run('npm', ['install', tarball, '--no-audit', '--no-fund'], { cwd: project });
+  // The real package has a postinstall that builds the iOS framework into
+  // $HOME, which a verification run must not do — hence the documented
+  // opt-out. HOME itself is left alone here on purpose: npm reads its config,
+  // credentials and cache from it, and the package declares a dependency, so
+  // this install resolves through the registry the way a user's does. The
+  // scratch HOME below fences the one command that reads the cache path.
+  run('npm', ['install', tarball, '--no-audit', '--no-fund'], {
+    cwd: project,
+    env: { ...process.env, DETOX_DISABLE_POSTINSTALL: '1' },
+  });
+  const scratchHome = fs.mkdtempSync(path.join(os.tmpdir(), 'detox-verify-pack-home-'));
 
   const probe = `
     const assert = require('node:assert/strict');
@@ -76,32 +102,108 @@ try {
       assert.equal(dead in detox, false, 'legacy driver-class export survived: ' + dead);
     }
     const client = require('detox/client');
-    const internals = require('detox/internals');
-    assert.equal(client, internals, 'detox/client and detox/internals must be the SAME module');
-    assert.equal(typeof internals.init, 'function', 'the client surface must expose init');
+    assert.equal(typeof client.connect, 'function', 'the client surface must expose connect');
+    assert.equal('init' in client, false, 'the client surface must not carry the compat init');
+    let internalsDoor;
+    try { internalsDoor = require('detox/internals'); } catch { internalsDoor = undefined; }
+    assert.equal(internalsDoor, undefined, 'detox/internals must be gone; detox/client is the only client door');
     const server = require('detox/server');
     assert.equal(typeof server.createServer, 'function', 'detox/server must expose createServer');
     const manifest = require('detox/package.json');
     const repoPin = ${JSON.stringify(JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')).engines.node)};
     assert.equal(manifest.engines.node, repoPin, 'the tarball engines must match the repo node pin');
-    assert.equal(typeof manifest.bin.detox, 'string', 'the bin map must serve detox');
-    const bin = require('node:path').join(require('node:path').dirname(require.resolve('detox/package.json')), manifest.bin.detox);
+    // npm allows either spelling; the published manifest uses the string form.
+    const binPath = typeof manifest.bin === 'string' ? manifest.bin : manifest.bin.detox;
+    assert.equal(typeof binPath, 'string', 'the manifest must serve a detox bin');
+    const bin = require('node:path').join(require('node:path').dirname(require.resolve('detox/package.json')), binPath);
     assert.equal(require('node:fs').existsSync(bin), true, 'the detox bin file must exist in the tarball');
     const helperServerBin = require('node:path').join(require('node:path').dirname(require.resolve('detox/package.json')), 'dist/server/cli.js');
     assert.equal(require('node:fs').existsSync(helperServerBin), true,
       'the detached local helper server bin must exist in the tarball');
+    // esbuild inlines ws (and zod, inside the CLI) into the bundles, so the
+    // published package needs nothing at install time. Anything declared here
+    // would be downloaded by every user and then never required.
+    assert.deepEqual(Object.keys(manifest.dependencies || {}), [],
+      'the tarball must declare no runtime dependencies — they are bundled');
     console.log('verify-pack probe: all assertions passed');
   `;
   const out = run('node', ['-e', probe], { cwd: project });
   process.stdout.write(out);
+
+  // The same claim from the outside: a dependency-free install puts nothing
+  // in node_modules but detox itself (npm's own bookkeeping dotfiles aside).
+  const installedPackages = fs
+    .readdirSync(path.join(project, 'node_modules'))
+    .filter((entry) => !entry.startsWith('.'));
+  if (installedPackages.join(',') !== 'detox') {
+    fail(`installing the tarball pulled in more than detox: ${installedPackages.join(', ')}`);
+  }
+
+  // Debugging symbols: the bundles a user executes in
+  // their own test process — the compat surface, the client, and the jest
+  // runners — ship maps that carry their TypeScript inline, so no source
+  // resolution and no second download is needed. The server/relay/CLI
+  // bundles run as separate processes and deliberately ship none: their maps
+  // are 4.4 MB of the 6.3 MB total.
+  const installedPkg = path.join(project, 'node_modules', 'detox');
+  for (const bundle of ['dist/index.js', 'dist/client.js', 'dist/runners/jest/testEnvironment.js']) {
+    const js = path.join(installedPkg, bundle);
+    const map = `${js}.map`;
+    if (!fs.existsSync(map)) fail(`${bundle}.map is missing — a debugger cannot step into the sources`);
+    if (!/# sourceMappingURL=/.test(fs.readFileSync(js, 'utf8'))) {
+      fail(`${bundle} carries no sourceMappingURL, so its map will never be loaded`);
+    }
+    const parsed = readJson(map);
+    if (!Array.isArray(parsed.sourcesContent) || parsed.sourcesContent.length !== parsed.sources.length) {
+      fail(`${bundle}.map does not embed its sources, so the sources must be found some other way`);
+    }
+    if (!parsed.sources.some((src) => src.endsWith('.ts'))) {
+      fail(`${bundle}.map names no TypeScript source`);
+    }
+  }
+  console.log('verify-pack sourcemap probe: the in-process doors ship self-contained TypeScript maps');
 
   const installedBin = path.join(project, 'node_modules', '.bin', 'detox');
   const help = run('node', [installedBin, '--help'], {
     cwd: project,
   });
   if (!/detox test/.test(help) || !/detox relay/.test(help)) {
-    fail('the installed bin answered --help without the four verbs');
+    fail('the installed bin answered --help without its verbs');
   }
+
+  // The framework-cache verbs (spec 016). The published package ships the
+  // build scripts under `scripts/`, so here the verbs must actually work —
+  // this is the one place that proves the CLI finds those scripts from the
+  // installed layout (`dist/cli/../../scripts`), which no source-tree run can.
+  const cacheHelp = run('node', [installedBin, 'clean-framework-cache', '--help'], { cwd: project });
+  if (!/--detox/.test(cacheHelp) || !/--xcuitest/.test(cacheHelp)) {
+    fail('the installed bin answered clean-framework-cache --help without its flags');
+  }
+  const installedPkgRoot = path.join(project, 'node_modules', 'detox');
+  for (const script of ['build_local_framework.ios.sh', 'build_local_xcuitest.ios.sh']) {
+    // Where the CLI bundle looks: dist/cli/../../scripts, i.e. the package root.
+    const scriptPath = path.join(installedPkgRoot, 'scripts', script);
+    if (!fs.existsSync(scriptPath)) fail(`the tarball does not ship ${script} where the bin looks (${scriptPath})`);
+    try {
+      fs.accessSync(scriptPath, fs.constants.X_OK);
+    } catch {
+      fail(`${script} is not executable in the installed tarball`);
+    }
+  }
+  // A real run of the one verb that builds nothing: it must find its scripts,
+  // report the cache it cleaned, and touch only the scratch home.
+  const cleaned = spawnSync('node', [installedBin, 'clean-framework-cache'], {
+    cwd: project,
+    env: { ...process.env, HOME: scratchHome },
+    encoding: 'utf8',
+  });
+  if (cleaned.status !== 0) {
+    fail(`clean-framework-cache failed from the installed tarball:\n${cleaned.stdout}${cleaned.stderr}`);
+  }
+  if (!cleaned.stdout.includes(path.join(scratchHome, 'Library', 'Detox', 'ios', 'framework'))) {
+    fail(`clean-framework-cache did not name the cache under HOME:\n${cleaned.stdout}`);
+  }
+  console.log('verify-pack framework-cache probe: the verbs find their build scripts in the installed layout');
 
   const helperRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'detox-verify-pack-helper-'));
   const runner = path.join(project, 'probe-runner.cjs');
@@ -109,11 +211,11 @@ try {
     runner,
     [
       "const fs = require('node:fs');",
-      "const { init } = require('detox/internals');",
+      "const { connect } = require('detox/client');",
       '(async () => {',
       "  const snapshotPath = process.env.DETOX_CONFIG_SNAPSHOT_PATH;",
       "  const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf8'));",
-      '  const detox = await init({ server: snapshot.client.server });',
+      '  const detox = await connect({ server: snapshot.client.server });',
       '  await detox.disconnect();',
       "  fs.writeFileSync('serverless-receipt.json', JSON.stringify({",
       '    server: snapshot.client.server,',
@@ -206,15 +308,15 @@ try {
     path.join(project, 'consumer.ts'),
     [
       "import * as detox from 'detox';",
-      "import { init } from 'detox/internals';",
-      "import { init as clientInit } from 'detox/client';",
+      "import { connect } from 'detox/client';",
       "import { createServer } from 'detox/server';",
       "import { expect } from '@jest/globals';",
       '// Compile-time assertions — a missing or empty .d.ts fails each line.',
       'const compatDevice: typeof detox.device = detox.device;',
-      'const sameDoor: typeof init = clientInit;',
+      'const compatInit: typeof detox.init = detox.init;',
+      'const clientDoor: ReturnType<typeof connect> = connect({ server: "ws://127.0.0.1:1" });',
       'const serverDoor: ReturnType<typeof createServer> = createServer({ port: 0, maxPool: 1 });',
-      'void compatDevice; void sameDoor; void serverDoor; void detox.by;',
+      'void compatDevice; void compatInit; void clientDoor; void serverDoor; void detox.by;',
       '// Spec 010: jest\'s own `expect` speaks the Detox matcher vocabulary',
       '// through the bundled augmentation — never executed, only typechecked.',
       'async function jestMatcherProbe(): Promise<void> {',

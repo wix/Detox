@@ -6,7 +6,7 @@
  * touches message and stack, in place: the environment neither wraps nor
  * swallows — same object, same type, same code, one prefix.
  */
-import { DetoxErrorCode } from 'detox/internals';
+import { DetoxErrorCode } from 'detox/client';
 
 /** The code's name (`DETOX_POOL_EXHAUSTED`), or undefined for a foreign code. */
 export function detoxCodeName(code: unknown): string | undefined {

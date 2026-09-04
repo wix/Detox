@@ -1,6 +1,8 @@
 /**
- * The app gateway (spec 003): the server's second, app-facing websocket
- * listener, speaking the frozen native dialect `{type, messageId, params}`.
+ * The app gateway (spec 003, per device since spec 015): the app-facing
+ * websocket listener speaking the frozen native dialect `{type, messageId,
+ * params}`. A library now — a driver instantiates one per booted device and
+ * closes it with the device; the server itself opens none.
  *
  * v20's standalone DetoxServer relay disappears in v21 — its "tester" half is
  * the Detox Server now, and only the testee-facing half is ported here (source:
@@ -13,34 +15,30 @@
  *    force-unwraps it — `WebSocket.swift:112`);
  *  - every app-bound `type` is one the native switch knows (unknown types
  *    `fatalError` — `DetoxManager.swift:419-421`), so this gateway only ever
- *    emits `loginSuccess`, `isReady` and `invoke`;
+ *    emits `loginSuccess`, `isReady`, `invoke` and the frozen verbs;
  *  - binary frames are accepted inbound; text is emitted.
  *  - inbound parsing tolerates v20's trailing `'\n '` framing quirk (see
  *    `parseFrame` below).
  *
- * No tokens on this port: a launched app can send no headers, so identity
- * is (device, session id), and the
- * loopback bind is the security boundary, exactly as for the simulators.
- * The device half of that identity cannot ride the login frame (the frozen
- * native sends only its session id, which is the bundle id — guessable, and
- * identical across devices running the same app), so it rides the one other
- * thing the server fully controls: the `-detoxServer` URL each launch is
- * handed carries a per-launch nonce in its path, and a connection is matched
- * to a launch by that nonce alone. A stale process redialing after its device
- * was released (the frozen native reconnects one second after any close,
- * forever — `DetoxManager.swift:424-433`), or a local squatter guessing
- * bundle ids, can never claim someone else's launch. The nonce is visible in
- * `ps` to local users, inside the loopback boundary.
+ * Identity: no tokens on this port — a launched app can send no headers.
+ * The listener IS the device: whoever dials it is on that device, and the
+ * login's session id says which app. Any well-formed login is accepted with
+ * the launched app's choreography (`loginSuccess` echoing its id, then the
+ * `isReady` probe), so an app launched outside Detox — Xcode, a finger, zero
+ * launch arguments — is attachable. A raw login under an id whose session is
+ * alive is turned away — the live session keeps the id until its own socket
+ * closes; superseding it is `launch`'s explicit act (`supersede`), at the
+ * moment of its spawn.
  *
  * No queueing, v20 parity: an invoke for a dead session is an error surfaced
  * to the caller, never a buffer (`TesterConnectionHandler.js:16-33`).
  */
-import { randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 
 import { WebSocketServer, type WebSocket, type RawData } from 'ws';
 import { AbortError, DetoxError, DetoxErrorCode } from '@detox-remote/core';
 import type { InvokeResult } from '@detox-remote/protocol';
+import { describeError, serverLog } from './log-sink';
 
 /** One frame of the frozen native dialect. */
 interface FrozenFrame {
@@ -85,27 +83,26 @@ export interface AppGatewayOptions {
    * with no tokens on this port the bind is the whole boundary.
    */
   host?: string;
+  /**
+   * The port to try first (the iOS driver asks for the native default,
+   * 8099, so the zero-argument Xcode flow works). Taken when free, else an
+   * ephemeral port — first come first served across every server on the
+   * machine. Absent → ephemeral.
+   */
+  preferredPort?: number;
+  /** The device this listener belongs to (the driver's own id) — carried on every session's error payload. */
+  deviceId?: string;
+  /** The driver's decoding of a session id into a bundle id. The identity by default. */
+  decodeBundleId?: (sessionId: string) => string;
   /** Test seam for {@link LOGIN_DEADLINE_MS}; production uses the default. */
   loginDeadlineMs?: number;
   /** Test seam for {@link CLOSE_GRACE_MS}; production uses the default. */
   closeGraceMs?: number;
 }
 
-export interface ExpectAppArgs {
-  udid: string;
-  /** The `-detoxSessionId` the launched app will log in with (= bundle id). */
-  sessionId: string;
-}
-
-/** A launch's claim on the login of exactly the process it spawns. */
+/** A launch's claim on the next login under its session id. */
 export interface PendingApp {
-  /**
-   * The `-detoxServer` URL for this launch: the gateway's address plus the
-   * claim's own nonce in the path. Dialable verbatim — the frozen native
-   * amends nothing about it — and the whole device half of the identity.
-   */
-  readonly url: string;
-  /** Resolves once the app logged in (login answered, `isReady` probed). */
+  /** Resolves once an app logged in under the id (login answered, `isReady` probed). */
   readonly session: Promise<AppSession>;
   /** Withdraws the claim; the promise rejects if still pending. */
   cancel(reason?: unknown): void;
@@ -132,21 +129,34 @@ interface SessionCallOptions {
 const appDied = (message: string, details?: Record<string, unknown>): DetoxError =>
   new DetoxError(message, { code: DetoxErrorCode.DETOX_APP_DIED, details });
 
+export interface AppSessionInit {
+  deviceId: string;
+  sessionId: string;
+  bundleId: string;
+}
+
 /**
  * One live (or dead — the object survives as its own tombstone) app-side
- * session. Owned by the allocation that launched it; the server-minted
+ * session. Owned by the device's gateway; an allocation's server-minted
  * `appHandleId` maps to exactly one of these, so a relaunch's fresh session
  * never answers for its dead predecessor.
  */
 export class AppSession {
-  readonly udid: string;
+  readonly deviceId: string;
+  /** The opaque string the app logged in with — matched, never parsed, by the core. */
   readonly sessionId: string;
-  /** Real OS pid — assigned by the launch choreography once simctl reports it. */
-  pid = 0;
+  /** The driver's decoding of {@link sessionId} — what `terminate` and a resume act on. */
+  readonly bundleId: string;
+  /**
+   * Real OS pid — assigned by the launch choreography once the spawn reported
+   * it. An unsolicited login (an app launched outside Detox) has none: the
+   * frozen dialect carries no process identity.
+   */
+  pid: number | undefined = undefined;
 
   /**
    * Resolves when the app itself says `ready` (the frozen sentinel), which is
-   * what gates `launchApp`'s resolution; rejects if the session dies first.
+   * what gates `launchApp`'s and `attach`'s resolution; rejects if the session dies first.
    */
   readonly ready: Promise<void>;
 
@@ -154,6 +164,7 @@ export class AppSession {
   private _readyResolve!: () => void;
   private _readyReject!: (error: Error) => void;
   private _readySettled = false;
+  private _isReady = false;
   private _dead: Error | undefined;
   private _nextMessageId = FIRST_INVOKE_MESSAGE_ID;
   private readonly _inflight = new Map<number, InvokeWaiter>();
@@ -201,13 +212,15 @@ export class AppSession {
   /** Whether any crash report has arrived — the first-wins guard's own fact. */
   private _sawTerminationReport = false;
 
-  constructor(socket: WebSocket, { udid, sessionId }: ExpectAppArgs) {
+  constructor(socket: WebSocket, { deviceId, sessionId, bundleId }: AppSessionInit) {
     this._socket = socket;
-    this.udid = udid;
+    this.deviceId = deviceId;
     this.sessionId = sessionId;
+    this.bundleId = bundleId;
     this.ready = new Promise<void>((resolve, reject) => {
       this._readyResolve = () => {
         this._readySettled = true;
+        this._isReady = true;
         resolve();
       };
       this._readyReject = (error) => {
@@ -223,6 +236,11 @@ export class AppSession {
   /** Dead sessions answer every action with `DETOX_APP_DIED` — permanently. */
   get dead(): boolean {
     return this._dead !== undefined;
+  }
+
+  /** Alive and the app said `ready`: attachable, and listed by `connected()`. */
+  get isReady(): boolean {
+    return this._isReady && this._dead === undefined;
   }
 
   /**
@@ -383,8 +401,8 @@ export class AppSession {
    * socket death may race this close — "closed" is the pin, never who closed
    * first; both paths converge on the same `_die`, which is idempotent.
    */
-  terminateSession(): void {
-    this._die('terminated');
+  terminateSession(reason = 'terminated'): void {
+    this._die(reason);
     this._socket.close(1000);
   }
 
@@ -392,7 +410,10 @@ export class AppSession {
   _handleFrame(frame: FrozenFrame): void {
     switch (frame.type) {
       case 'ready':
-        if (!this._readySettled) this._readyResolve();
+        if (!this._readySettled) {
+          serverLog.info(`[gateway] app said ready under "${this.sessionId}"`);
+          this._readyResolve();
+        }
         // Settles the oldest reload entry — live waiter resolved, tombstone swallowed; an empty queue means a spontaneous ready.
         this._readyQueue.shift()?.waiter?.resolve();
         return;
@@ -429,7 +450,7 @@ export class AppSession {
         if (!waiter || waiter.doneType !== frame.type) {
           if (!this._loggedDroppedDones.has(frame.type)) {
             this._loggedDroppedDones.add(frame.type);
-            console.log(
+            serverLog.info(
               `[gateway] dropping unsolicited "${frame.type}" (messageId ${String(frame.messageId)}) from ${this.sessionId} — logged once per type`,
             );
           }
@@ -470,7 +491,7 @@ export class AppSession {
     if (this._dead) return;
     this._dead = appDied(
       `The app behind this handle is gone (${reason})`,
-      { sessionId: this.sessionId, udid: this.udid, pid: this.pid },
+      { sessionId: this.sessionId, bundleId: this.bundleId, deviceId: this.deviceId, pid: this.pid },
     );
     if (!this._readySettled) this._readyReject(this._deathError());
     for (const waiter of this._inflight.values()) {
@@ -495,7 +516,8 @@ export class AppSession {
     const dead = this._dead;
     return appDied(dead?.message ?? 'The app behind this handle is gone', {
       sessionId: this.sessionId,
-      udid: this.udid,
+      bundleId: this.bundleId,
+      deviceId: this.deviceId,
       pid: this.pid,
       ...(this._terminationReport ? { appReport: this._terminationReport } : {}),
     });
@@ -512,59 +534,87 @@ function runDeathHook(hook: () => void): void {
   try {
     hook();
   } catch (err) {
-    console.error('[gateway] a session death cleanup threw; ignoring it:', err);
+    serverLog.error(`[gateway] a session death cleanup threw; ignoring it: ${describeError(err)}`);
   }
 }
 
-interface Expectation {
-  /** The per-launch nonce riding the `-detoxServer` URL — the claim's key. */
-  token: string;
-  udid: string;
-  sessionId: string;
+interface LoginExpectation {
   resolve: (session: AppSession) => void;
   reject: (error: Error) => void;
   settled: boolean;
 }
 
+interface ReadyWaiter {
+  resolve: (session: AppSession) => void;
+  reject: (error: Error) => void;
+  /** Detaches the abort listener; called on every settlement. */
+  cleanup: () => void;
+}
+
 /**
- * The listener. One per server process; sessions of every device share it —
- * routing is by the per-launch URL nonce at connect, then by socket forever
- * after.
- * @issue DTX-6153: the nonce makes the claim exact — session ids are bundle ids, guessable and identical across devices running the same app.
+ * The per-device listener. Sessions are keyed by the session-id string the
+ * app logged in with (the bundle id by default — the frozen natives' own
+ * fallback, `DetoxManager.swift:127`, `DetoxServerInfo.kt:11`); routing is
+ * by socket forever after the login.
  */
 export class AppGateway {
   private readonly _wss: WebSocketServer;
   private readonly _host: string;
+  private readonly _deviceId: string;
+  private readonly _decodeBundleId: (sessionId: string) => string;
   private readonly _loginDeadlineMs: number;
   private readonly _closeGraceMs: number;
-  private readonly _expected = new Map<string, Expectation>();
+  /** The live session per session id — a new login under a live id supersedes (the one rule). */
+  private readonly _live = new Map<string, AppSession>();
+  /** Every session that ever logged in and has not been closed yet — the close sweep's view. */
   private readonly _sessions = new Set<AppSession>();
+  /** Launch claims: the next login under an id (registered before the spawn, so the app never connects into a void). */
+  private readonly _expected = new Map<string, Set<LoginExpectation>>();
+  /** Attach waiters: the next session to become ready under an id. */
+  private readonly _readyWaiters = new Map<string, Set<ReadyWaiter>>();
+  /** Hooks run on every accepted login (the iOS driver clears its `cleanBoot` here). */
+  private readonly _loginHooks: Array<(session: AppSession) => void> = [];
   /** One log line per distinct refusal, not one per redial: the frozen native reconnects every second, forever. */
   private readonly _loggedRefusals = new Set<string>();
+  private _closed = false;
 
-  private constructor(wss: WebSocketServer, options: Required<AppGatewayOptions>) {
+  private constructor(wss: WebSocketServer, options: Required<Omit<AppGatewayOptions, 'preferredPort'>>) {
     this._wss = wss;
     this._host = options.host;
+    this._deviceId = options.deviceId;
+    this._decodeBundleId = options.decodeBundleId;
     this._loginDeadlineMs = options.loginDeadlineMs;
     this._closeGraceMs = options.closeGraceMs;
     wss.on('connection', (socket, request) => this._accept(socket, request));
   }
 
-  /** Binds (loopback, ephemeral port) and resolves once listening. */
+  /**
+   * Binds and resolves once listening. The preferred port is tried first and
+   * yielded to whoever holds it (any listen error on it falls back to an
+   * ephemeral port); without one the port is ephemeral from the start.
+   */
   static async listen({
     host = '127.0.0.1',
+    preferredPort,
+    deviceId = '',
+    decodeBundleId = (sessionId: string): string => sessionId,
     loginDeadlineMs = LOGIN_DEADLINE_MS,
     closeGraceMs = CLOSE_GRACE_MS,
   }: AppGatewayOptions = {}): Promise<AppGateway> {
-    const wss = new WebSocketServer({ host, port: 0, maxPayload: MAX_FRAME_BYTES });
-    await new Promise<void>((resolve, reject) => {
-      wss.once('listening', resolve);
-      wss.once('error', reject);
-    });
-    return new AppGateway(wss, { host, loginDeadlineMs, closeGraceMs });
+    let wss: WebSocketServer;
+    if (preferredPort !== undefined) {
+      try {
+        wss = await bind(host, preferredPort);
+      } catch {
+        wss = await bind(host, 0);
+      }
+    } else {
+      wss = await bind(host, 0);
+    }
+    return new AppGateway(wss, { host, deviceId, decodeBundleId, loginDeadlineMs, closeGraceMs });
   }
 
-  /** The bare listener address; each claim's dialable URL rides {@link PendingApp.url}. */
+  /** The listener address, dialable verbatim — what a manual launch must be handed (`apps.serverUrl`). */
   get url(): string {
     const address = this._wss.address();
     const port = typeof address === 'object' && address ? address.port : 0;
@@ -572,52 +622,129 @@ export class AppGateway {
     return `ws://${authority}:${String(port)}`;
   }
 
+  /** The live session under `sessionId`, ready or not; `undefined` when none is connected. */
+  live(sessionId: string): AppSession | undefined {
+    return this._live.get(sessionId);
+  }
+
+  /** The device's ready sessions — what `connected()` lists and `attach` resolves to at once. */
+  connected(): AppSession[] {
+    return [...this._live.values()].filter((session) => session.isReady);
+  }
+
+  /** Every live session, ready or not — the legacy terminate-by-bundle-id sweep's view. */
+  allLive(): AppSession[] {
+    return [...this._live.values()];
+  }
+
   /**
-   * Registers a launch's claim. Registered before `simctl launch` spawns
-   * anything, so the app can never connect into a void — whichever of
-   * "launch returned" and "app dialed in" happens first, the claim is
-   * already waiting, addressed by its own nonce.
+   * Registers a launch's claim on the NEXT login under `sessionId`.
+   * Registered before the spawn, so the app can never connect into a void —
+   * whichever of "launch returned" and "app dialed in" happens first, the
+   * claim is already waiting.
    */
-  expectApp(args: ExpectAppArgs): PendingApp {
+  expectLogin(sessionId: string): PendingApp {
     let resolve!: (session: AppSession) => void;
     let reject!: (error: Error) => void;
     const promise = new Promise<AppSession>((res, rej) => {
       resolve = res;
       reject = rej;
     });
-    const token = randomUUID();
-    const expectation: Expectation = { ...args, token, resolve, reject, settled: false };
-    this._expected.set(token, expectation);
+    const expectation: LoginExpectation = { resolve, reject, settled: false };
+    const set = this._expected.get(sessionId) ?? new Set<LoginExpectation>();
+    set.add(expectation);
+    this._expected.set(sessionId, set);
     // Same guard as AppSession.ready: a cancelled claim must not crash the
     // process just because its launch already stopped listening.
     promise.catch(() => undefined);
     return {
-      url: `${this.url}/${token}`,
       session: promise,
       cancel: (reason?: unknown): void => {
-        this._expected.delete(token);
+        set.delete(expectation);
+        if (set.size === 0) this._expected.delete(sessionId);
         if (!expectation.settled) {
           expectation.settled = true;
           reject(
             reason instanceof Error
               ? reason
-              : appDied('launch abandoned before the app connected', { sessionId: args.sessionId }),
+              : appDied('launch abandoned before the app connected', { sessionId }),
           );
         }
       },
     };
   }
 
+  /**
+   * `attach`'s wait: resolves with a session connected AND ready under
+   * `sessionId` — at once if one already is, otherwise with the next one to
+   * get there. A login that dies before `ready` leaves the waiter waiting.
+   * Never spawns. Abort rejects `DETOX_ABORTED`.
+   */
+  waitForReady(sessionId: string, { signal }: SessionCallOptions = {}): Promise<AppSession> {
+    const now = this._live.get(sessionId);
+    if (now?.isReady) return Promise.resolve(now);
+    if (signal?.aborted) return Promise.reject(new AbortError(signal.reason));
+    if (this._closed) return Promise.reject(appDied('the app gateway is closed', { sessionId }));
+    return new Promise<AppSession>((resolve, reject) => {
+      const set = this._readyWaiters.get(sessionId) ?? new Set<ReadyWaiter>();
+      const waiter: ReadyWaiter = {
+        resolve,
+        reject,
+        cleanup: () => {
+          signal?.removeEventListener('abort', onAbort);
+          set.delete(waiter);
+          if (set.size === 0 && this._readyWaiters.get(sessionId) === set) this._readyWaiters.delete(sessionId);
+        },
+      };
+      const onAbort = (): void => {
+        waiter.cleanup();
+        reject(new AbortError(signal?.reason));
+      };
+      signal?.addEventListener('abort', onAbort, { once: true });
+      set.add(waiter);
+      this._readyWaiters.set(sessionId, set);
+    });
+  }
+
+  /**
+   * `launch`'s first step: the live session under the id is tombstoned
+   * (`DETOX_APP_DIED`, superseded) and its socket closed, before the process
+   * is killed and the fresh one spawned. Returns what it tombstoned, if anything.
+   */
+  supersede(sessionId: string, reason = 'superseded by a relaunch'): AppSession | undefined {
+    const old = this._live.get(sessionId);
+    if (!old) return undefined;
+    this._live.delete(sessionId);
+    old.terminateSession(reason);
+    return old;
+  }
+
+  /** Runs `hook` on every accepted login — the driver's seam for "something is running now". */
+  onLogin(hook: (session: AppSession) => void): void {
+    this._loginHooks.push(hook);
+  }
+
   /** Closes every session and socket (politely, then not) and stops listening. */
   async close(): Promise<void> {
-    for (const session of this._sessions) session.terminateSession();
-    for (const expectation of this._expected.values()) {
-      if (!expectation.settled) {
-        expectation.settled = true;
-        expectation.reject(appDied('the app gateway is shutting down'));
+    this._closed = true;
+    for (const session of this._sessions) session.terminateSession('the app gateway is closing');
+    this._live.clear();
+    for (const [sessionId, set] of this._expected) {
+      for (const expectation of set) {
+        if (!expectation.settled) {
+          expectation.settled = true;
+          expectation.reject(appDied('the app gateway is shutting down', { sessionId }));
+        }
       }
     }
     this._expected.clear();
+    for (const [sessionId, set] of [...this._readyWaiters]) {
+      for (const waiter of [...set]) {
+        waiter.cleanup();
+        waiter.reject(appDied('the app gateway is shutting down', { sessionId }));
+      }
+    }
+    this._readyWaiters.clear();
     const closed = new Promise<void>((resolve, reject) => {
       this._wss.close((err) => (err ? reject(err) : resolve()));
     });
@@ -632,9 +759,7 @@ export class AppGateway {
     await closed.finally(() => clearTimeout(hardKill));
   }
 
-  private _accept(socket: WebSocket, request: IncomingMessage): void {
-    // The nonce is the URL path the launched process was handed.
-    const token = (request.url ?? '/').replace(/^\//, '');
+  private _accept(socket: WebSocket, _request: IncomingMessage): void {
     let session: AppSession | undefined;
 
     // Anything real logs in from its socket-open callback; an unreaped
@@ -652,7 +777,7 @@ export class AppGateway {
         // A peer that cannot speak the dialect is not an app; hang up. An
         // existing session dies through this same close path, like any
         // other loss.
-        console.error('[gateway] dropping connection on malformed frame:', err);
+        serverLog.error(`[gateway] dropping connection on malformed frame: ${describeError(err)}`);
         socket.close(1008);
         return;
       }
@@ -660,7 +785,7 @@ export class AppGateway {
         session._handleFrame(frame);
         return;
       }
-      session = this._login(socket, token, frame);
+      session = this._login(socket, frame);
       if (session) clearTimeout(loginDeadline);
       else socket.close(1008);
     });
@@ -670,6 +795,9 @@ export class AppGateway {
       if (session) {
         session._die('socket closed');
         this._sessions.delete(session);
+        // A crash frees the id the moment the socket closes — unless a newer
+        // login already took it over.
+        if (this._live.get(session.sessionId) === session) this._live.delete(session.sessionId);
       }
     });
     socket.on('error', ignoreSocketError);
@@ -679,15 +807,18 @@ export class AppGateway {
   private _refuse(key: string, message: string): undefined {
     if (!this._loggedRefusals.has(key)) {
       this._loggedRefusals.add(key);
-      console.error(message);
+      serverLog.error(message);
     }
     return undefined;
   }
 
   /**
-   * @issue DTX-6156: the first frame must be a matching `login` — role, nonce, and session id all checked — or the connection is turned away.
+   * The first frame must be a well-formed `login` (role `app`, a string
+   * session id — the dialect checks stay) or the connection is turned away.
+   * Any well-formed one is accepted: whoever dials this listener is on this
+   * device, and the id says which app.
    */
-  private _login(socket: WebSocket, token: string, frame: FrozenFrame): AppSession | undefined {
+  private _login(socket: WebSocket, frame: FrozenFrame): AppSession | undefined {
     if (frame.type !== 'login') {
       return this._refuse(
         `frame:${frame.type}`,
@@ -700,38 +831,97 @@ export class AppGateway {
     if (!sessionId || role !== 'app') {
       return this._refuse('login:no-role', '[gateway] login without app role/session id — closing');
     }
-    const expectation = this._expected.get(token);
-    if (!expectation) {
-      // @issue DTX-6156: no launch of ours is waiting behind this URL — a stale redial or something probing the port. No queueing, no guessing.
+    if (this._closed) {
+      return this._refuse('closed', '[gateway] login after close — closing');
+    }
+    // A raw login under an id whose session is still alive is turned away: the
+    // live session keeps the id until its own socket closes (a crash frees it).
+    // Superseding a live app is `launch`'s job — it tombstones the old session
+    // explicitly (`supersede`) before spawning, so the spawn's login is never a
+    // duplicate. Refusing here (rather than superseding) also keeps a second,
+    // incidental connection to the same app — an injected framework alongside a
+    // test's own testee — from killing the first, whichever raced ahead.
+    const live = this._live.get(sessionId);
+    if (live && !live.dead) {
       return this._refuse(
-        `token:${token}:${sessionId}`,
-        `[gateway] no launch is expecting session "${sessionId}" at this address — closing`,
+        `dup:${sessionId}`,
+        `[gateway] a session is already live under "${sessionId}" — turning away the duplicate login`,
       );
     }
-    if (expectation.sessionId !== sessionId) {
-      return this._refuse(
-        `mismatch:${token}:${sessionId}`,
-        `[gateway] login session "${sessionId}" does not match the launch behind this address — closing`,
-      );
-    }
-    this._expected.delete(token);
     const session = new AppSession(socket, {
-      udid: expectation.udid,
-      sessionId: expectation.sessionId,
+      deviceId: this._deviceId,
+      sessionId,
+      bundleId: this._decodeBundleId(sessionId),
     });
     this._sessions.add(session);
-    // @issue DTX-6158: native parity, in order — login answered echoing its own messageId, then readiness probed once with the frozen sentinel.
+    this._live.set(sessionId, session);
+    // Native parity, in order — login answered echoing its own messageId, then readiness probed once with the frozen sentinel.
     // The app answers `ready` iff ready and also pushes it spontaneously
     // when it gets there (`DetoxManager.swift:111-113,285-289`) — either
-    // arrival resolves the launch.
+    // arrival resolves the launch. The probe is load-bearing for an app that
+    // dialed before the listener existed: its `ready` went out on the socket
+    // task that failed, and the redial (`DetoxManager.swift:228-232`)
+    // carries none of its own.
+    serverLog.info(
+      `[gateway] login accepted for "${sessionId}" — answering loginSuccess and probing isReady`,
+    );
     socket.send(JSON.stringify({ type: 'loginSuccess', messageId: frame.messageId, params: {} }));
     socket.send(
       JSON.stringify({ type: 'isReady', messageId: READY_SENTINEL_MESSAGE_ID, params: {} }),
     );
-    expectation.settled = true;
-    expectation.resolve(session);
+    const expectations = this._expected.get(sessionId);
+    if (expectations) {
+      this._expected.delete(sessionId);
+      for (const expectation of expectations) {
+        if (!expectation.settled) {
+          expectation.settled = true;
+          expectation.resolve(session);
+        }
+      }
+    }
+    // Attachable on the app's own `ready` — and only if it is still the live
+    // session under the id by then.
+    void session.ready.then(
+      () => {
+        if (this._live.get(sessionId) !== session) return;
+        const waiters = this._readyWaiters.get(sessionId);
+        if (!waiters) return;
+        for (const waiter of [...waiters]) {
+          waiter.cleanup();
+          waiter.resolve(session);
+        }
+      },
+      () => undefined,
+    );
+    for (const hook of this._loginHooks) {
+      try {
+        hook(session);
+      } catch (err) {
+        serverLog.error(`[gateway] a login hook threw; ignoring it: ${describeError(err)}`);
+      }
+    }
     return session;
   }
+}
+
+/** Binds one listener and resolves once listening, or rejects with the bind error. */
+function bind(host: string, port: number): Promise<WebSocketServer> {
+  return new Promise<WebSocketServer>((resolve, reject) => {
+    const wss = new WebSocketServer({ host, port, maxPayload: MAX_FRAME_BYTES });
+    const onError = (err: Error): void => {
+      wss.removeListener('listening', onListening);
+      // A server that never listened has nothing to release, but `close` with
+      // a callback keeps the "was never listening" complaint out of the event stream.
+      wss.close(() => undefined);
+      reject(err);
+    };
+    const onListening = (): void => {
+      wss.removeListener('error', onError);
+      resolve(wss);
+    };
+    wss.once('listening', onListening);
+    wss.once('error', onError);
+  });
 }
 
 /**

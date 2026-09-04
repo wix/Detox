@@ -15,3 +15,8 @@ export {
   serverSectionToArgs,
   collectBuildCommands,
 } from './argv';
+export { parseLogsArgv, LOGS_HELP, type LogsArgv } from './logs-argv';
+export { resolveLogsServer, httpOriginOf, type LogsServer } from './logs-server';
+export { createLogsHttp, type LogsHttp, type RunIndexRow } from './logs-http';
+export { runLogs, formatIndexRow, LOGS_REFUSAL_EXIT, type LogsDeps, type LogsIo } from './logs';
+export { readRunRows, formatRunLines, GATED_HINT, type RunRow } from './run-lines';

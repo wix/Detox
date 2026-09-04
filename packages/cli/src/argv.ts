@@ -13,6 +13,10 @@
  */
 import path from 'node:path';
 
+import { toChildArgs } from '@detox-remote/core';
+import { SERVER_SETTINGS } from '@detox-remote/server';
+import { RELAY_SETTINGS } from 'detox-relay';
+
 import { UsageError } from './errors';
 import type { ServerSection } from './compose';
 
@@ -121,27 +125,13 @@ export function buildRunnerEnv({ base, snapshotPath, configurationName, cwd }: R
   };
 }
 
-/** Each serving verb's flag → its env mirror, as the delegated main reads it. */
-const SERVING_ENV_MIRRORS: Readonly<Record<'server' | 'relay', Readonly<Record<string, string>>>> = {
-  server: {
-    '--port': 'PORT',
-    '--host': 'DETOX_SERVER_HOST',
-    '--token': 'DETOX_SERVER_TOKEN',
-    '--max-pool': 'DETOX_REMOTE_MAX_POOL',
-    '--keepalive-window': 'DETOX_REMOTE_KEEPALIVE_WINDOW',
-  },
-  relay: {
-    '--port': 'PORT',
-    '--host': 'DETOX_RELAY_HOST',
-    '--token': 'DETOX_RELAY_TOKEN',
-    '--keepalive-window': 'DETOX_RELAY_KEEPALIVE_WINDOW',
-  },
-};
-
 /**
  * @issue DTX-5012: appends after the user's argv, suppressed by a set env mirror (flag > env > config).
  * In-process argv, not `ps`-visible. `detox relay` hands `server.nodes` to
  * its main in process, so node tokens touch no file or argv either.
+ *
+ * `--token` is forwarded by hand below, not by `toChildArgs`: the config's
+ * shape for it is the nested `server.auth.token`, not a flat `section.token`.
  */
 export function serverSectionToArgs(
   section: ServerSection | undefined,
@@ -149,23 +139,12 @@ export function serverSectionToArgs(
   verb: 'server' | 'relay',
   env: Readonly<Record<string, string | undefined>> = {},
 ): string[] {
-  const merged = [...userArgv];
-  if (section === undefined) return merged;
-  const mirrors = SERVING_ENV_MIRRORS[verb];
-  const has = (flag: string): boolean => merged.includes(flag);
-  const push = (flag: string, value: string | number | undefined): void => {
-    if (value === undefined || has(flag)) return;
-    const mirror = mirrors[flag];
-    if (mirror !== undefined && env[mirror] !== undefined) return;
-    merged.push(flag, String(value));
-  };
-  push('--port', section.port);
-  push('--host', section.host);
-  push('--token', section.auth?.token);
-  // @issue DTX-5013: a relay gets no --max-pool — it has no device-pool concept (#62).
-  if (verb === 'server') push('--max-pool', section.maxPool);
-  push('--blob-budget', section.blobBudget);
-  push('--keepalive-window', section.keepaliveWindow);
+  const descriptors = verb === 'server' ? SERVER_SETTINGS : RELAY_SETTINGS;
+  const merged = toChildArgs(descriptors, section, userArgv, env);
+  const tokenMirror = verb === 'server' ? 'DETOX_SERVER_TOKEN' : 'DETOX_RELAY_TOKEN';
+  if (section?.auth?.token !== undefined && !merged.includes('--token') && env[tokenMirror] === undefined) {
+    merged.push('--token', section.auth.token);
+  }
   return merged;
 }
 

@@ -6,12 +6,12 @@ import { describe, it, expect } from 'vitest';
 import WebSocket from 'ws';
 import type { Socket } from 'node:net';
 import { Peer, createWebSocketChannel } from '@detox-remote/core';
-import type { DeviceInfo } from '@detox-remote/protocol';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 
 import { createDetoxRemoteServer, DEFAULT_HOST } from '../server';
 import { generateToken, type AuthConfig } from '../auth';
 import type { KeepaliveOptions } from '../keepalive';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
 
 const auth: AuthConfig = { type: 'static-token', token: generateToken() };
 
@@ -25,6 +25,7 @@ async function startServer(keepalive: KeepaliveOptions, simulatorOps?: Simulator
     // Isolated: opening the store sweeps its tmp/, which must never point at
     // the machine's real per-user store from a unit test.
     blobs: { root: mkdtempSync(path.join(tmpdir(), 'detox-blob-test-')) },
+    logs: { root: mkdtempSync(path.join(tmpdir(), 'detox-log-test-')) },
   });
 }
 

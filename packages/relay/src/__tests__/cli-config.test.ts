@@ -69,7 +69,7 @@ describe('resolveRelayCli', () => {
   });
 
   it('passes the blob seam and budget through', () => {
-    const config = resolve([...NODES, '--blob-budget', '1024'], { DETOX_BLOB_ROOT: '/tmp/blobs' });
+    const config = resolve([...NODES, '--blob-budget', '1024'], { DETOX_RELAY_BLOB_ROOT: '/tmp/blobs' });
     expect(config.blobBudget).toBe(1024);
     expect(config.blobRoot).toBe('/tmp/blobs');
   });

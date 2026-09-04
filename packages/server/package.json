@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@detox-remote/core": "workspace:*",
+    "@detox-remote/driver-ios": "workspace:*",
+    "@detox-remote/perfetto": "workspace:*",
     "@detox-remote/protocol": "workspace:*",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "typescript": "^5.3.0"

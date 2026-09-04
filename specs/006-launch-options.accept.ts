@@ -2,8 +2,7 @@
  * Acceptance: spec 006 — launch options: argv, payloads, permissions,
  * foreground.
  *
- * This file is frozen. If a test here seems wrong or impossible, stop and
- * report it rather than weakening it or working around it.
+ * This file is frozen and append-only.
  *
  * Style is part of the contract: tests are STRAIGHT-LINE — a fence of awaits
  * against the public dialect, no function definitions in this file. The one
@@ -18,8 +17,8 @@
  *    are refused BEFORE any side effect;
  *  - at-launch payloads cross as VALUES the server materializes to its own
  *    file (never a client path; relay-safe by shape);
- *  - the launch deadline belongs to the caller, and `0` legally means "no
- *    deadline — my signal is the only exit";
+ *  - the launch ready timeout belongs to the caller, and `0` legally means
+ *    "no server-side timeout — my signal is the only exit";
  *  - `setPermissions` is its own device verb with externally observable
  *    effect, and v20's silent holes (unknown key, unknown value) are typed
  *    refusals here;
@@ -37,7 +36,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { init, DetoxErrorCode } from 'detox/internals';
+import { connect, DetoxErrorCode } from 'detox/client';
 
 import { startServer } from './helpers/server';
 import { assertDetoxError, rejectionOf } from './helpers/errors';
@@ -98,7 +97,7 @@ test('launch args become argv; reserved keys refuse without side effects', async
   const bundleId = 'com.detox.spec006.argv';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -189,7 +188,7 @@ test('at-launch payloads cross as values, never as client paths', async (t) => {
   const bundleId = 'com.detox.spec006.payload';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -266,21 +265,21 @@ test('at-launch payloads cross as values, never as client paths', async (t) => {
 });
 
 /**
- * Test 3 — the launch deadline belongs to the caller.
+ * Test 3 — the launch ready timeout belongs to the caller.
  *
  * The stub speaks no Detox and nobody impersonates it, so the handshake can
- * never complete: with `deadlineMs: 3000` the verb must fail TYPED
+ * never complete: with `readyTimeoutMs: 3000` the verb must fail TYPED
  * (`DETOX_APP_DIED`) in seconds — far under the 120 s default, proving the
- * parameter governed. With `deadlineMs: 0` there is NO server deadline: the
- * caller's own signal is the only exit, and the outcome is the abort, not a
- * deadline verdict (`0` must not mean "instantly").
+ * parameter governed. With `readyTimeoutMs: 0` there is NO server-side
+ * timeout: the caller's own signal is the only exit, and the outcome is the
+ * abort, not a timeout verdict (`0` must not mean "instantly").
  */
-test('deadlineMs is the caller parameter; 0 legally disables the deadline', async (t) => {
+test('readyTimeoutMs is the caller parameter; 0 legally disables the timeout', async (t) => {
   const probe = await createSimulatorExternally('detox-spec006-deadline', t.signal);
   const bundleId = 'com.detox.spec006.deadline';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -288,30 +287,30 @@ test('deadlineMs is the caller parameter; 0 legally disables the deadline', asyn
     await device.installApp(appPath);
 
     const startedAt = Date.now();
-    const expired = device.launchApp(bundleId, { deadlineMs: 3000, signal: t.signal });
-    const err = assertDetoxError(await rejectionOf(expired, 'deadline expiry'), 'deadline expiry');
+    const expired = device.launchApp(bundleId, { readyTimeoutMs: 3000, signal: t.signal });
+    const err = assertDetoxError(await rejectionOf(expired, 'ready-timeout expiry'), 'ready-timeout expiry');
     const elapsedMs = Date.now() - startedAt;
     assert.equal(
       err.code,
       DetoxErrorCode.DETOX_APP_DIED,
-      'deadline expiry is the typed handshake verdict',
+      'ready-timeout expiry is the typed handshake verdict',
     );
     assert.ok(
       elapsedMs >= 2500,
-      `the caller's deadline was honored, not shortcut (${elapsedMs}ms elapsed)`,
+      `the caller's ready timeout was honored, not shortcut (${elapsedMs}ms elapsed)`,
     );
     assert.ok(
       elapsedMs < 90_000,
-      `the caller's deadline governed — not the 120 s default (${elapsedMs}ms elapsed)`,
+      `the caller's ready timeout governed — not the 120 s default (${elapsedMs}ms elapsed)`,
     );
 
     const walkAway = AbortSignal.any([t.signal, AbortSignal.timeout(4000)]);
-    const unbounded = device.launchApp(bundleId, { deadlineMs: 0, signal: walkAway });
-    const abortErr = assertDetoxError(await rejectionOf(unbounded, 'deadline 0'), 'deadline 0');
+    const unbounded = device.launchApp(bundleId, { readyTimeoutMs: 0, signal: walkAway });
+    const abortErr = assertDetoxError(await rejectionOf(unbounded, 'readyTimeoutMs 0'), 'readyTimeoutMs 0');
     assert.equal(
       abortErr.code,
       DetoxErrorCode.DETOX_ABORTED,
-      'deadlineMs: 0 = no server deadline; the signal is the only exit — and 0 is not "instantly"',
+      'readyTimeoutMs: 0 = no server-side timeout; the signal is the only exit — and 0 is not "instantly"',
     );
   } finally {
     await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
@@ -335,7 +334,7 @@ test('setPermissions grants, revokes and resets for real; unknowns are typed ref
   const bundleId = 'com.detox.spec006.perms';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -414,7 +413,7 @@ test('foreground resumes the same process and settles on the app\'s own word', a
   const bundleId = 'com.detox.spec006.resume';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -485,7 +484,7 @@ test('state waits and live payloads ride the frozen dialect, settled by the app'
   const bundleId = 'com.detox.spec006.live';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -557,7 +556,7 @@ test('the real app survives home-and-back: same process, same live session', asy
       iosDetoxFrameworkPath: frameworkPath,
       signal: t.signal,
     });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );
@@ -586,15 +585,9 @@ test('the real app survives home-and-back: same process, same live session', asy
 
 /**
  * Test 8 (added after the first seven) — a deep link reaches a RUNNING app
- * over the frozen dialect.
- *
- * Why it was not here at authoring time: the spec covered the at-launch URL
- * payload (test 2's `-detoxURLOverride`) and treated live delivery as
- * covered by test 6's notification. The compat port proved otherwise — the
- * server has served `deliverPayload {url}` since this spec landed, and NO
- * client method reached it, so v20's `device.openURL` on a live app had no
- * v21 door at all. `app.openURL` is that door, and a public contract method
- * needs an acceptance test.
+ * over the frozen dialect. `app.openURL` is the only client door onto the
+ * server's `deliverPayload {url}`, and a public contract method needs an
+ * acceptance test.
  *
  * What is proven: the URL crosses as a VALUE on the frozen frame (a URL is
  * already one — nothing is materialized, unlike a notification), `sourceApp`
@@ -609,7 +602,7 @@ test('openURL hands a deep link to the live app, settled by the app', async (t) 
   const bundleId = 'com.detox.spec006.openurl';
   try {
     await using server = await startServer({ signal: t.signal });
-    await using detox = await init({ server: server.address, signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
     await using device = launchingOf(
       await detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } }),
     );

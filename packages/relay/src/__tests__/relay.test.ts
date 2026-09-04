@@ -8,15 +8,16 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync } from 'node:fs';
-import { request } from 'node:http';
+import { createServer as createHttpServer, request } from 'node:http';
 import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 import type { Socket } from 'node:net';
-import type { IncomingMessage } from 'node:http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import WebSocket, { WebSocketServer } from 'ws';
 
+import { LOG_METHOD } from '@detox-remote/protocol';
 import { generateToken, type AuthConfig } from '@detox-remote/server';
 
 import { createDetoxRelay, type DetoxRelay } from '../relay';
@@ -39,16 +40,47 @@ interface FakeNode {
   close(): Promise<void>;
 }
 
+interface FakeNodeOptions {
+  /**
+   * Announce `log: { runId }` on `$/serverInfo` and serve a one-line
+   * `/v1/runs/<id>/log` on the same host:port as the command channel —
+   * enough for the relay's real `createLogDialer` wiring (spec 008) to dial
+   * it for real, not a `session.ts`-level fake.
+   */
+  announceLog?: { nodeRunId: string; line: Record<string, unknown> };
+}
+
 /** A scripted node: refuses every allocation with 2001, records everything. */
-function fakeNode(name: string): Promise<FakeNode> {
+function fakeNode(name: string, options: FakeNodeOptions = {}): Promise<FakeNode> {
   const authHeaders: (string | undefined)[] = [];
   const frames: Record<string, unknown>[] = [];
   let connections = 0;
   let closes = 0;
-  const wss = new WebSocketServer({ host: '127.0.0.1', port: 0 });
+  // One real HTTP server carries both the ws upgrade and the log route —
+  // `createNodeLogDialer` derives host:port from the node's own ws(s) URL,
+  // exactly as a real Detox Server's blob/log lanes ride its command port.
+  const httpServer = createHttpServer((req: IncomingMessage, res: ServerResponse) => {
+    if (options.announceLog && req.url === `/v1/runs/${options.announceLog.nodeRunId}/log?follow=1`) {
+      res.writeHead(200, { 'content-type': 'application/x-ndjson' });
+      res.end(`${JSON.stringify(options.announceLog.line)}\n`);
+      return;
+    }
+    res.writeHead(404);
+    res.end();
+  });
+  const wss = new WebSocketServer({ server: httpServer });
   wss.on('connection', (ws, req: IncomingMessage) => {
     connections += 1;
     authHeaders.push(req.headers.authorization);
+    if (options.announceLog) {
+      ws.send(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          method: '$/serverInfo',
+          params: { protocol: 1, server: '1.0.0', log: { runId: options.announceLog.nodeRunId } },
+        }),
+      );
+    }
     ws.on('close', () => {
       closes += 1;
     });
@@ -67,8 +99,8 @@ function fakeNode(name: string): Promise<FakeNode> {
     });
   });
   return new Promise((resolve) => {
-    wss.once('listening', () => {
-      const addr = wss.address();
+    httpServer.once('listening', () => {
+      const addr = httpServer.address();
       const port = typeof addr === 'object' && addr ? addr.port : 0;
       resolve({
         config: { name, url: `ws://127.0.0.1:${String(port)}`, token: NODE_TOKEN },
@@ -79,10 +111,11 @@ function fakeNode(name: string): Promise<FakeNode> {
         close: () =>
           new Promise((done) => {
             for (const ws of wss.clients) ws.terminate();
-            wss.close(() => done());
+            wss.close(() => httpServer.close(() => done()));
           }),
       });
     });
+    httpServer.listen(0, '127.0.0.1');
   });
 }
 
@@ -100,12 +133,22 @@ interface ErrorResponseSlice {
   error?: WireErrorSlice;
 }
 
+/** Just enough of a wire frame to tell a response (has an `id`) from the relay's id-less `$/serverInfo` announce. */
+interface ResponseIdSlice {
+  id?: string;
+}
+
 interface AllocResultSlice {
   allocationId?: string;
 }
 
 interface AllocResponseSlice {
   result?: AllocResultSlice;
+}
+
+/** Just enough of `$/serverInfo` to read the connection-log announce (spec 008). */
+interface ServerInfoLogSlice {
+  params?: { log?: { runId?: string } };
 }
 
 /** The raw TCP socket `ws` hides — private but stable across `ws` majors. */
@@ -125,6 +168,11 @@ function startRelay(nodes: RelayNodeConfig[], keepalive?: KeepaliveTuning): Prom
     nodes,
     keepalive,
     blobs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-blobs-')) },
+    // Isolated for the same reason as the blob store above: the machine's
+    // real ~/Library/Logs/detox-relay root is one-server-at-a-time
+    // (spec 008's `.lock.sock`), and every test in this file would
+    // otherwise fight over it.
+    logs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-logs-')) },
   });
 }
 
@@ -139,6 +187,28 @@ function connectClient(port: number, token = CLIENT_TOKEN): Promise<WebSocket> {
       reject(new Error(`handshake refused: HTTP ${String(res.statusCode)}`)),
     );
   });
+}
+
+interface CapturedConnection {
+  ws: WebSocket;
+  first: Promise<ServerInfoLogSlice>;
+}
+
+/**
+ * Connects and captures the very first frame (the relay's own
+ * `$/serverInfo`) — the `message` listener is registered in the SAME tick
+ * as the socket, before any `await`, so it cannot lose a race against a
+ * server that answers before a caller gets around to listening.
+ */
+function connectCapturingFirst(port: number, token = CLIENT_TOKEN): CapturedConnection {
+  const ws = new WebSocket(`ws://127.0.0.1:${String(port)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const first = new Promise<ServerInfoLogSlice>((resolve, reject) => {
+    ws.once('message', (data: Buffer) => resolve(JSON.parse(data.toString('utf8')) as ServerInfoLogSlice));
+    ws.once('error', reject);
+  });
+  return { ws, first };
 }
 
 function httpStatus(
@@ -159,6 +229,51 @@ function httpStatus(
     if (options.body) req.write(options.body);
     req.end();
   });
+}
+
+function getBody(port: number, urlPath: string, token = CLIENT_TOKEN): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const req = request(
+      { host: '127.0.0.1', port, method: 'GET', path: urlPath, headers: { Authorization: `Bearer ${token}` } },
+      (res) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.once('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      },
+    );
+    req.once('error', reject);
+    req.end();
+  });
+}
+
+/** Spec 012a's trace, the slice this suite reads. */
+interface ChromeTraceEventShape {
+  ph: string;
+  name: string;
+  pid: number;
+  args?: { name?: string };
+}
+
+interface ChromeTraceShape {
+  traceEvents: ChromeTraceEventShape[];
+}
+
+interface RunsIndexRow {
+  runId: string;
+  endedAt?: string;
+}
+
+async function runsIndex(port: number): Promise<RunsIndexRow[]> {
+  return JSON.parse(await getBody(port, '/v1/runs')) as RunsIndexRow[];
+}
+
+async function waitFor(predicate: () => Promise<boolean>): Promise<void> {
+  const deadline = Date.now() + 5_000;
+  for (;;) {
+    if (await predicate()) return;
+    if (Date.now() > deadline) throw new Error('waitFor timed out');
+    await sleep(20);
+  }
 }
 
 describe('createDetoxRelay', () => {
@@ -192,7 +307,14 @@ describe('createDetoxRelay', () => {
     const client = await connectClient(relay.port);
     try {
       const answered = new Promise<Record<string, unknown>>((resolve) => {
-        client.once('message', (data: Buffer) => resolve(JSON.parse(data.toString()) as Record<string, unknown>));
+        // Wait for the response to our request (id '1'), not the relay's
+        // `$/serverInfo` first frame (a notification, no id) — otherwise this
+        // races the announce under load. `connectClient` resolves on `open`
+        // and does not drain that frame, so it is still in flight here.
+        client.on('message', (data: Buffer) => {
+          const frame = JSON.parse(data.toString()) as Record<string, unknown>;
+          if (frame.id === '1') resolve(frame);
+        });
       });
       client.send(JSON.stringify({ jsonrpc: '2.0', id: '1', method: 'allocateDevice', params: {} }));
       const response = (await answered) as ErrorResponseSlice;
@@ -220,10 +342,16 @@ describe('createDetoxRelay', () => {
     const client = await connectClient(relay.port);
     try {
       const answered = new Promise<void>((resolve) => {
-        client.once('message', () => resolve());
+        // Resolve on the response to our request (id '1'), never the relay's
+        // `$/serverInfo` first frame (a notification, no id): resolving on the
+        // announce would check `connectionCount()` before the upstream opened
+        // — the load-exposed race this assertion was silently subject to.
+        client.on('message', (data: Buffer) => {
+          if ((JSON.parse(data.toString()) as ResponseIdSlice).id === '1') resolve();
+        });
       });
       client.send(JSON.stringify({ jsonrpc: '2.0', id: '1', method: 'allocateDevice', params: {} }));
-      await answered; // the upstream socket exists now
+      await answered; // the response arrived, so the upstream socket exists now
       expect(node.connectionCount()).toBe(1);
       expect(node.closedCount()).toBe(0);
 
@@ -267,6 +395,7 @@ describe('createDetoxRelay', () => {
           auth,
           nodes: [node.config],
           blobs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-blobs-')) },
+          logs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-logs-')) },
         }),
       ).rejects.toMatchObject({ code: 'EADDRINUSE' });
     } finally {
@@ -458,7 +587,11 @@ describe('detox-relay CLI (spawned)', () => {
     );
     const run = await runCli(
       ['--nodes', nodesFile, '--port', '0'],
-      { DETOX_RELAY_TOKEN: CLIENT_TOKEN, DETOX_BLOB_ROOT: mkdtempSync(path.join(tmpdir(), 'relay-cli-blobs-')) },
+      {
+        DETOX_RELAY_TOKEN: CLIENT_TOKEN,
+        DETOX_RELAY_BLOB_ROOT: mkdtempSync(path.join(tmpdir(), 'relay-cli-blobs-')),
+        DETOX_RELAY_LOG_ROOT: mkdtempSync(path.join(tmpdir(), 'relay-cli-logs-')),
+      },
       true,
     );
     expect(run.listening?.type).toBe('listening');
@@ -490,6 +623,126 @@ describe('the version announce', () => {
       ws.close();
     } finally {
       await relay.close();
+    }
+  });
+});
+
+describe('the connection log crosses the relay, live (spec 008)', () => {
+  it("announces its own connection log on $/serverInfo, serves it over /v1/runs, and ends it when the client hangs up", async () => {
+    const node = await fakeNode('mac-a');
+    const relay = await startRelay([node.config]);
+    try {
+      const { ws, first } = connectCapturingFirst(relay.port);
+      const info = await first;
+      const runId = info.params?.log?.runId;
+      expect(typeof runId).toBe('string');
+
+      const index = await runsIndex(relay.port);
+      expect(index.some((row) => row.runId === runId)).toBe(true);
+      const text = await getBody(relay.port, `/v1/runs/${String(runId)}/log`);
+      expect(text.split('\n').filter(Boolean)[0]).toContain('"kind":"begin"');
+
+      // Spec 012a: the relay mounts the same handler as the server — its
+      // route table is the server's — and it is the local hop, named `relay`.
+      expect(await httpStatus(relay.port, 'GET', `/v1/runs/${String(runId)}/perfetto`)).toBe(200);
+      expect(await httpStatus(relay.port, 'GET', `/v1/runs/${String(runId)}/trace`)).toBe(401);
+      const trace = JSON.parse(await getBody(relay.port, `/v1/runs/${String(runId)}/trace`)) as ChromeTraceShape;
+      expect(trace.traceEvents.find((e) => e.ph === 'M' && e.name === 'process_name' && e.pid === 1)?.args?.name).toBe('relay');
+
+      ws.close();
+      await waitFor(async () => (await runsIndex(relay.port)).some((row) => row.runId === runId && row.endedAt !== undefined));
+    } finally {
+      await relay.close();
+      await node.close();
+    }
+  });
+
+  it('replays a step opened before any node was dialed as a well-formed $/log frame, ahead of the request that crosses it', async () => {
+    const node = await fakeNode('mac-a');
+    const relay = await startRelay([node.config]);
+    try {
+      const { ws, first } = connectCapturingFirst(relay.port);
+      await first;
+      ws.send(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          method: LOG_METHOD,
+          params: { id: 'step-1', phase: 'begin', kind: 'test', name: 'boots through the relay' },
+        }),
+      );
+      ws.send(JSON.stringify({ jsonrpc: '2.0', id: '1', method: 'allocateDevice', params: { type: 'ios.simulator' } }));
+
+      await waitFor(() => Promise.resolve(node.frames.length >= 2));
+      // The replay must be a complete, parseable wire notification — not a
+      // bare params object, which is not a frame any peer can route.
+      expect(node.frames[0]).toEqual({
+        jsonrpc: '2.0',
+        method: LOG_METHOD,
+        params: { id: 'step-1', phase: 'begin', kind: 'test', name: 'boots through the relay' },
+      });
+      expect(node.frames[1]?.method).toBe('allocateDevice');
+      ws.close();
+    } finally {
+      await relay.close();
+      await node.close();
+    }
+  });
+
+  it("follows a node's own log the moment its $/serverInfo names one, merging its lines under the node's name", async () => {
+    const nodeRunId = 'node-run-1';
+    const node = await fakeNode('mac-a', {
+      announceLog: {
+        nodeRunId,
+        line: { seq: 1, ts: 1, level: 'info', kind: 'begin', node: { id: 'conn', type: 'server', name: 'connection' }, msg: 'x' },
+      },
+    });
+    const relay = await startRelay([node.config]);
+    try {
+      const { ws, first } = connectCapturingFirst(relay.port);
+      const info = await first; // receiving a message proves the socket is already open
+      const runId = info.params?.log?.runId;
+      ws.send(JSON.stringify({ jsonrpc: '2.0', id: '1', method: 'allocateDevice', params: { type: 'ios.simulator' } }));
+
+      await waitFor(async () => {
+        const text = await getBody(relay.port, `/v1/runs/${String(runId)}/log`);
+        return text.includes('"mac-a/conn"');
+      });
+      ws.close();
+    } finally {
+      await relay.close();
+      await node.close();
+    }
+  });
+
+  it('evicts the oldest ended connection log once the byte budget is exceeded, voiced [relay]', async () => {
+    const node = await fakeNode('mac-a');
+    const relay = await createDetoxRelay({
+      port: 0,
+      auth,
+      nodes: [node.config],
+      blobs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-blobs-')) },
+      logs: { root: mkdtempSync(path.join(tmpdir(), 'relay-test-logs-')), budgetBytes: 1 },
+    });
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      const { ws: first, first: firstMessage } = connectCapturingFirst(relay.port);
+      const firstInfo = await firstMessage;
+      const firstRunId = firstInfo.params?.log?.runId;
+      first.close();
+
+      // `index()` sweeps on every call (spec 012's lazy sweep): with a
+      // 1-byte budget, the very poll that first observes this connection as
+      // ended is also the one that evicts it — so the row simply vanishes,
+      // never observably carrying `endedAt`.
+      await waitFor(async () => !(await runsIndex(relay.port)).some((row) => row.runId === firstRunId));
+
+      expect(logSpy.mock.calls.some((call) => String(call[0]).includes('[relay]') && String(call[0]).includes('budget'))).toBe(
+        true,
+      );
+    } finally {
+      logSpy.mockRestore();
+      await relay.close();
+      await node.close();
     }
   });
 });

@@ -48,6 +48,11 @@ import type {
   CaptureViewHierarchyResult,
   GenerateViewHierarchyXmlParams,
   GenerateViewHierarchyXmlResult,
+  AttachAppParams,
+  AppHandleResult,
+  ActivateAppParams,
+  ConnectedAppsParams,
+  ConnectedAppsResult,
 } from './app';
 import type {
   SetBiometricEnrollmentParams,
@@ -59,6 +64,7 @@ import type {
   ResetStatusBarParams,
 } from './misc';
 import type { ServerInfoNotification } from './handshake';
+import type { LogNotification } from './log';
 
 export interface DetoxClientPeer {
   // Allocation & lifecycle
@@ -70,11 +76,19 @@ export interface DetoxClientPeer {
   onDeviceStateChanged(handler: (params: DeviceStateChangedNotification) => void): void;
   /** Server→client, first frame of every connection: the version announce. */
   onServerInfo(handler: (params: ServerInfoNotification) => void): void;
+  /** Client→server: a typed step begins or ends (spec 012's `$/log`). */
+  notifyLog(params: LogNotification): void;
 
   // Device actions (simctl/adb)
   installApp(params: InstallAppParams, opts?: CallOptions): Promise<void>;
   uninstallApp(params: UninstallAppParams, opts?: CallOptions): Promise<void>;
   launchApp(params: LaunchAppParams, opts?: CallOptions): Promise<LaunchAppResult>;
+  /** `device.apps.attach` (spec 015): waits for a ready session; never spawns. */
+  attachApp(params: AttachAppParams, opts?: CallOptions): Promise<AppHandleResult>;
+  /** `device.apps.activate` (spec 015): foreground if connected, else launch. */
+  activateApp(params: ActivateAppParams, opts?: CallOptions): Promise<AppHandleResult>;
+  /** `device.apps.connected` (spec 015): the device's ready sessions as handles. */
+  connectedApps(params: ConnectedAppsParams, opts?: CallOptions): Promise<ConnectedAppsResult>;
   terminateApp(params: TerminateAppParams, opts?: CallOptions): Promise<void>;
   setPermissions(params: SetPermissionsParams, opts?: CallOptions): Promise<void>;
   sendToHome(params: SendToHomeParams, opts?: CallOptions): Promise<void>;
@@ -120,11 +134,16 @@ export interface DetoxServerPeer {
   notifyDeviceStateChanged(params: DeviceStateChangedNotification): void;
   /** Server→client, first frame of every connection: the version announce. */
   notifyServerInfo(params: ServerInfoNotification): void;
+  /** Client→server: a typed step begins or ends (spec 012's `$/log`). */
+  onLog(handler: (params: LogNotification) => void): void;
 
   // Device actions (simctl/adb)
   onInstallApp(handler: RequestHandler<InstallAppParams, void>): void;
   onUninstallApp(handler: RequestHandler<UninstallAppParams, void>): void;
   onLaunchApp(handler: RequestHandler<LaunchAppParams, LaunchAppResult>): void;
+  onAttachApp(handler: RequestHandler<AttachAppParams, AppHandleResult>): void;
+  onActivateApp(handler: RequestHandler<ActivateAppParams, AppHandleResult>): void;
+  onConnectedApps(handler: RequestHandler<ConnectedAppsParams, ConnectedAppsResult>): void;
   onTerminateApp(handler: RequestHandler<TerminateAppParams, void>): void;
   onSetPermissions(handler: RequestHandler<SetPermissionsParams, void>): void;
   onSendToHome(handler: RequestHandler<SendToHomeParams, void>): void;

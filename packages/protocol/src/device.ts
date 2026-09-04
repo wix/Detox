@@ -10,24 +10,6 @@ export interface DeviceActionParams {
   allocationId: string;
 }
 
-export interface DeviceOsInfo {
-  identifier: string;
-  version: string;
-  /** Human-readable, version included — e.g. `iOS 26.5`. */
-  name: string;
-  /** The OS family: `iOS`, `watchOS`, `tvOS`, … */
-  platform?: string;
-}
-
-export interface DeviceInfo {
-  udid: string;
-  name: string;
-  /** CoreSimulator state, e.g. `Booted` / `Shutdown` / `Booting` / `Shutting Down`. */
-  state: string;
-  type?: string;
-  os?: DeviceOsInfo;
-}
-
 // App management (device tells OS to install/launch/terminate apps)
 
 /**
@@ -107,11 +89,12 @@ export interface LaunchAppParams extends DeviceActionParams {
   userNotification?: unknown;
   userActivity?: unknown;
   /**
-   * Caller-owned deadline over the whole verb (accepting the request → the
-   * app's own `ready`), in ms. Absent → the server default; `0` is legal and
-   * means no server deadline — the caller's signal is the only exit.
+   * Caller-owned ready timeout over the whole verb (accepting the request →
+   * the app's own `ready`), in ms. Absent → the server default; `0` is
+   * legal and means no server-side timeout — the caller's signal is the
+   * only exit.
    */
-  deadlineMs?: number;
+  readyTimeoutMs?: number;
 }
 
 /**

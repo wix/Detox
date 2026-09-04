@@ -3,14 +3,14 @@
  * read the snapshot file `detox test` wrote, map it exactly as spec 009's
  * binding section records — `client.server` + `client.token` → `server.url` +
  * bearer header (no header when no token); `apps` verbatim;
- * `device.query` → `device` — and hand compat's `init` its config. This
+ * `device.query` → `device` — and hand compat's `connect` its config. This
  * module re-resolves nothing: the CLI resolved once, `JSON.parse` is the
  * whole config job here.
  */
 import { readFileSync } from 'node:fs';
 
 import type { ConfigSnapshot } from '@detox-remote/protocol';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode, type DeviceType } from 'detox/client';
 
 import type { CompatConfig } from '../index';
 
@@ -23,6 +23,8 @@ export interface LoadedSnapshot {
   snapshot: ConfigSnapshot;
   compatConfig: CompatConfig;
   behavior: RunnerBehavior;
+  /** Where the snapshot was read from — the run rows (spec 013) live beside it. */
+  snapshotPath: string;
 }
 
 const refusal = (message: string): DetoxError =>
@@ -77,6 +79,7 @@ export function loadSnapshot(env: Readonly<Record<string, string | undefined>>):
     snapshot,
     compatConfig: mapSnapshot(snapshot),
     behavior: behaviorOf(snapshot),
+    snapshotPath,
   };
 }
 
@@ -101,6 +104,11 @@ export function mapSnapshot(snapshot: ConfigSnapshot): CompatConfig {
     // bundleId?, binaryPath?, launchArgs? all ride through).
     apps: (snapshot.apps ?? []),
     ...(snapshot.device?.query !== undefined ? { device: snapshot.device.query } : {}),
+    // The driver type (spec 015): compat allocates by the snapshot's own type,
+    // not the literal `ios.simulator`, so a driver package composes through.
+    // A config's type is a bare string; the map's keys are what the server
+    // resolves at allocation, so the cast defers the question to it.
+    ...(snapshot.device?.type !== undefined ? { deviceType: snapshot.device.type as DeviceType } : {}),
   };
 }
 

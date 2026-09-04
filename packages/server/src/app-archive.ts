@@ -21,18 +21,18 @@
  * unspecified here: the transfer-lane spec owns them.
  * @issue DTX-6100: every download is a fresh temp dir, deleted on every ending, including abort.
  */
-import { execFile } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
 import { mkdir, mkdtemp, readdir, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import * as path from 'node:path';
-import { promisify } from 'node:util';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
 import { AbortError, DetoxError, DetoxErrorCode } from '@detox-remote/core';
 
-const run = promisify(execFile);
+import { execWithRetries } from './exec';
+import { redactUrl } from './redact';
+
 // The path-vs-URL predicate lives in @detox-remote/protocol next to
 // `InstallAppParams` — client and server must split on the same test.
 
@@ -85,27 +85,8 @@ const UNPACKERS: readonly Unpacker[] = [
   },
 ];
 
-/**
- * The URL with credentials and query stripped — origin + path only. Callers
- * paste presigned links (signature in the query) and `user:pass@` links; the
- * raw string must never reach a log line or a wire error payload.
- */
-function redact(u: URL): string {
-  return `${u.protocol}//${u.host}${u.pathname}`;
-}
-
-/**
- * Log/echo-safe form of a raw install string: origin + path, credentials and
- * query dropped. Tolerant of a string `URL` cannot parse (returns a fixed
- * placeholder) so a caller can log it before validation without leaking it.
- */
-export function redactUrlForLog(raw: string): string {
-  try {
-    return redact(new URL(raw));
-  } catch {
-    return '<malformed-url>';
-  }
-}
+/** The one redaction rule lives in `redact.ts`; re-exported for the callers that learned it here. */
+export { redactUrlForLog } from './redact';
 
 function invalidArgument(shown: string, reason: string): DetoxError {
   return new DetoxError(`installApp cannot use ${shown} — ${reason}`, {
@@ -133,7 +114,7 @@ function parseInstallUrl(raw: string): URL {
   }
   if (isForbiddenHost(parsed.hostname)) {
     throw invalidArgument(
-      redact(parsed),
+      redactUrl(parsed),
       'link-local / metadata hosts are refused (server-side request forgery)',
     );
   }
@@ -250,7 +231,7 @@ export async function unpackAppArchive(
     const dest = path.join(dir, 'unpacked');
     await mkdir(dest);
     try {
-      await run('ditto', ['-x', '-k', archivePath, dest], { signal, timeout: UNPACK_TIMEOUT_MS });
+      await execWithRetries({ file: 'ditto', args: ['-x', '-k', archivePath, dest], signal, timeout: UNPACK_TIMEOUT_MS });
     } catch (err) {
       if (signal?.aborted) throw new AbortError(signal.reason);
       // `killed` = the wedge-detector timeout above fired — that is our
@@ -286,7 +267,7 @@ export async function fetchAndUnpackApp(
 ): Promise<FetchedApp> {
   const { signal, maxBytes = MAX_ARCHIVE_BYTES, stallMs = STALL_TIMEOUT_MS } = options;
   const parsed = parseInstallUrl(url);
-  const shown = redact(parsed);
+  const shown = redactUrl(parsed);
   const unpacker = matchUnpacker(parsed.pathname);
   if (unpacker === undefined) {
     throw invalidArgument(
@@ -367,7 +348,7 @@ export async function fetchAndUnpackApp(
     await mkdir(dest); // `tar -C` requires an existing directory; `ditto` tolerates one
     const { file, args } = unpacker.command(archivePath, dest);
     try {
-      await run(file, [...args], { signal, timeout: UNPACK_TIMEOUT_MS });
+      await execWithRetries({ file, args, signal, timeout: UNPACK_TIMEOUT_MS });
     } catch (err) {
       if (signal?.aborted) throw new AbortError(signal.reason);
       throw transferFailed(shown, `the archive would not unpack (${file})`, err);

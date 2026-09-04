@@ -62,6 +62,9 @@ export default tseslint.config(
             // fixtures configure as their test runner ($0), editable like
             // every specs/helpers file.
             'specs/helpers/*.cjs',
+            // Spec-015's fake driver: a plain CommonJS workspace package the
+            // server imports by name, the seam's executable definition.
+            'specs/fake-driver/*.js',
             'vitest.config.ts',
           ],
           // Small repo: the tooling/config scripts legitimately use the
@@ -161,6 +164,24 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-call': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'warn',
       '@typescript-eslint/no-unsafe-return': 'warn',
+    },
+  },
+  {
+    // Spec-015's fake driver: an untyped plain-CommonJS fixture (the seam's
+    // executable definition), imported by the server by package name. The
+    // type-aware `no-unsafe-*` family adds no safety to untyped `.js`, and its
+    // async verbs satisfy a Promise-returning contract with nothing to await
+    // (same rationale as the test-double `require-await` override). Last block
+    // so it wins over the repo-wide `no-unsafe-* → warn` downgrade above.
+    files: ['specs/fake-driver/**/*.js'],
+    rules: {
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 );

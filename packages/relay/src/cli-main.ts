@@ -12,6 +12,8 @@ import { createDetoxRelay, DEFAULT_HOST } from './relay';
 import { dialableUrl, resolveRelayCli, RelayCliError } from './cli-config';
 import { findSelfDialNode, parseNodesConfig, type RelayNodeConfig } from './nodes';
 import { relayError, relayLog } from './log';
+import { RELAY_SETTINGS } from './settings';
+import { helpLines } from '@detox-remote/core';
 
 const HELP = `
 detox relay — one address for a fleet of Detox Servers
@@ -28,27 +30,21 @@ Options:
                       each node's; nothing is forwarded through). Omit it
                       for a node with auth off. A file, never argv: any
                       tokens in it are secrets — guard the file accordingly.
-  --port <number>     Port to listen on (default: 0 = pick a free one, or env PORT)
-  --host <address>    Interface to bind (default: ${DEFAULT_HOST}, or env
-                      DETOX_RELAY_HOST). Use 0.0.0.0 to accept the LAN.
-  --blob-budget <bytes>
-                      Byte budget of the relay's own build cache (uploads are
-                      staged here, then pushed node-ward on install). Default: 8 GiB.
-  --keepalive-window <seconds>
-                      How long a client may stay unresponsive before its
-                      session ends and every node it touched reclaims
-                      (default: 120, max: 604800 = 7 days, or env
-                      DETOX_RELAY_KEEPALIVE_WINDOW). 0 turns liveness polls
-                      OFF entirely — your own risk.
+${helpLines(RELAY_SETTINGS)}
   --help, -h          Show this help
+
+Notes:
+  --host: default ${DEFAULT_HOST}.
+  --log-retention: default 60m. The relay's own connection log — every
+    client run, with every node's own log crossing the hop live (spec 008) —
+    always records everything; served from GET /v1/runs on this port.
+  --blob-budget: uploads are staged here, then pushed node-ward on install.
 
 Authentication (opt-in, OFF by default):
   With no token configured the relay's own door is open. Configure a token
-  and clients must send "Authorization: Bearer <token>".
-
-  DETOX_RELAY_TOKEN   Preferred way to supply a token.
-  --token <string>    Same, but a command line is visible to every process on
-                      the machine (\`ps\`), so prefer the environment variable.
+  and clients must send "Authorization: Bearer <token>". Prefer
+  DETOX_RELAY_TOKEN over --token — a command line is visible to every
+  process on the machine (\`ps\`).
 
 A relay owns no devices, so it has no pool options of any kind — it serves
 what its nodes can (spec 009).
@@ -111,6 +107,8 @@ export async function runRelayCli({ argv, env, nodes: inlineNodes }: RelayCliInp
     keepalive: config.keepalive,
     nodes,
     blobs: { root: config.blobRoot, budgetBytes: config.blobBudget },
+    logs: { root: config.logRoot, retentionMs: config.logRetentionMs, budgetBytes: config.logBudget },
+    logLevel: config.logLevel,
   });
 
   // The self-dial guard, checked against the bound port (`--port 0` is only

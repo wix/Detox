@@ -13,7 +13,8 @@
       "@detox-remote/server": ["packages/server/src/index.ts"],
       "detox-relay": ["packages/relay/src/index.ts"],
       "detox": ["detox/src/index.ts"],
-      "detox/internals": ["detox/src/internals.ts"],
+      "detox/client": ["detox/src/client.ts"],
+      "detox/server": ["packages/server/src/index.ts"],
       "detox-compat": ["packages/compat/src/index.ts"]
     }
   },

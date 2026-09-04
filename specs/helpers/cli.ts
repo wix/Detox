@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { waitUntilListening } from './server';
+import { waitUntil } from './simctl';
 
 /** Built by `yarn build` (the accept runner builds first), like the server's. */
 const DETOX_CLI = path.resolve(__dirname, '../../detox/dist/cli/detox.js');
@@ -24,31 +25,56 @@ const DETOX_CLI = path.resolve(__dirname, '../../detox/dist/cli/detox.js');
 const AMBIENT_KEYS = [
   'DETOX_CONFIGURATION',
   'DETOX_CONFIG_PATH',
-  'DETOX_SESSION_TOKEN',
+  'DETOX_CLIENT_SERVER',
+  'DETOX_CLIENT_TOKEN',
   'DETOX_CONFIG_SNAPSHOT_PATH',
   'DETOX_SERVER_URL',
-  'DETOX_SERVER_TOKEN',
   'DETOX_LOCAL_HELPER_ROOT',
-  // The serving verbs' own env mirrors (env beats config, so a stray one
-  // would override the very config file these helpers write).
+  // Hand-kept, not imported from `@detox-remote/*` — helpers stay on the
+  // public dialect the way accept files do.
+  'DETOX_SERVER_HOST',
+  'DETOX_SERVER_PORT',
+  'DETOX_SERVER_TOKEN',
+  'DETOX_SERVER_MAX_POOL',
+  'DETOX_SERVER_KEEPALIVE_WINDOW',
+  'DETOX_SERVER_BLOB_BUDGET',
+  'DETOX_SERVER_LOG_LEVEL',
+  'DETOX_SERVER_LOG_RETENTION',
+  'DETOX_SERVER_LOG_BUDGET',
+  'DETOX_SERVER_CHILD_OUTPUT_BUDGET',
+  'DETOX_SERVER_APP_OUTPUT_BUDGET',
+  'DETOX_RELAY_HOST',
+  'DETOX_RELAY_PORT',
   'DETOX_RELAY_TOKEN',
   'DETOX_RELAY_NODES',
-  'DETOX_SERVER_HOST',
-  'DETOX_RELAY_HOST',
-  'DETOX_REMOTE_MAX_POOL',
-  'DETOX_REMOTE_KEEPALIVE_WINDOW',
   'DETOX_RELAY_KEEPALIVE_WINDOW',
-  'PORT',
+  'DETOX_RELAY_BLOB_BUDGET',
+  'DETOX_RELAY_LOG_LEVEL',
+  'DETOX_RELAY_LOG_RETENTION',
+  'DETOX_RELAY_LOG_BUDGET',
 ] as const;
 
-function cliEnv(overrides?: Readonly<Record<string, string>>): NodeJS.ProcessEnv {
+/**
+ * One connection-log root for every CLI this accept process spawns. Not the
+ * machine's real one (an accept run must not write there), and not a fresh
+ * one per spawn: a `detox logs` must read what a `detox test` — or the local
+ * helper it started — wrote, and they find each other by this root. A server
+ * that wants a root of its own says so (see `startServingVerb`), because the
+ * root is a one-live-server lock (spec 012).
+ */
+const SUITE_LOG_ROOT = mkdtempSync(path.join(tmpdir(), 'detox-cli-logs-'));
+
+function cliEnv(overrides?: Readonly<Record<string, string>>, verb: 'server' | 'relay' = 'server'): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...process.env };
   for (const key of AMBIENT_KEYS) delete env[key];
   // A spawned CLI can open a blob store (the run-scoped server inside
   // `detox test`, the `detox server` verb) — without this seam every accept
   // run would write into, and LRU-evict, the machine's real build cache
   // (see helpers/server.ts).
-  env.DETOX_BLOB_ROOT = mkdtempSync(path.join(tmpdir(), 'detox-cli-blob-store-'));
+  const blobRootVar = verb === 'server' ? 'DETOX_SERVER_BLOB_ROOT' : 'DETOX_RELAY_BLOB_ROOT';
+  const logRootVar = verb === 'server' ? 'DETOX_SERVER_LOG_ROOT' : 'DETOX_RELAY_LOG_ROOT';
+  env[blobRootVar] = mkdtempSync(path.join(tmpdir(), 'detox-cli-blob-store-'));
+  env[logRootVar] = SUITE_LOG_ROOT;
   return { ...env, ...overrides };
 }
 
@@ -73,7 +99,18 @@ export interface DetoxCliHandle {
   readonly pid: number | undefined;
   /** Sends SIGINT — the Ctrl+C the accept's teardown test performs. */
   interrupt(): void;
+  /**
+   * Resolves once the combined output so far matches `pattern` (spec 016:
+   * a test that interrupts a build has to know the build is under way).
+   * Rejects if the process exits first without matching.
+   */
+  waitForOutput(pattern: RegExp, options?: WaitForOutputOptions): Promise<void>;
   wait(): Promise<DetoxCliResult>;
+}
+
+export interface WaitForOutputOptions {
+  timeoutMs?: number;
+  signal?: AbortSignal;
 }
 
 export function spawnDetoxCli(args: readonly string[], options: DetoxCliOptions): DetoxCliHandle {
@@ -89,8 +126,12 @@ export function spawnDetoxCli(args: readonly string[], options: DetoxCliOptions)
   child.stderr?.on('data', (chunk: Buffer) => stderr.push(chunk.toString()));
 
   const { promise, resolve, reject } = Promise.withResolvers<DetoxCliResult>();
+  // `close`, not `exit`: the pipes are drained by then, so a waiter that
+  // gives up on a closed process has seen the last chunk.
+  let closed = false;
   child.on('error', (error: Error) => reject(error));
   child.on('close', (exitCode, signalCode) => {
+    closed = true;
     const out = stdout.join('');
     const err = stderr.join('');
     resolve({ exitCode, signalCode, stdout: out, stderr: err, output: out + err });
@@ -109,6 +150,17 @@ export function spawnDetoxCli(args: readonly string[], options: DetoxCliOptions)
     interrupt: (): void => {
       child.kill('SIGINT');
     },
+    waitForOutput: (pattern, options = {}): Promise<void> =>
+      waitUntil(
+        () => {
+          if (pattern.test(stdout.join('') + stderr.join(''))) return true;
+          if (closed) {
+            throw new Error(`the CLI exited before its output matched ${String(pattern)}:\n${stdout.join('')}${stderr.join('')}`);
+          }
+          return false;
+        },
+        { ...options, description: `CLI output matching ${String(pattern)}` },
+      ),
     wait: (): Promise<DetoxCliResult> => promise,
   };
 }
@@ -210,9 +262,14 @@ async function startServingVerb(
   // the one the verb must find and obey.
   const cwd = mkdtempSync(path.join(tmpdir(), 'detox-serving-verb-cwd-'));
   writeFileSync(path.join(cwd, '.detoxrc.json'), JSON.stringify({ server: serverSection }));
+  const logRootVar = verb === 'server' ? 'DETOX_SERVER_LOG_ROOT' : 'DETOX_RELAY_LOG_ROOT';
   const child: ChildProcess = spawn('node', [DETOX_CLI, verb], {
     cwd,
-    env: cliEnv(),
+    // Its own log root: the root is a one-live-server lock (spec 012), and a
+    // test may stand two serving verbs up at once (an open door and a guarded
+    // one). Sharing the suite's root would refuse the second with
+    // `DETOX_LOG_ROOT_HELD`.
+    env: cliEnv({ [logRootVar]: mkdtempSync(path.join(tmpdir(), `detox-${verb}-logs-`)) }, verb),
     stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
     signal,
   });

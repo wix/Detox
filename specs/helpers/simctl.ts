@@ -8,7 +8,25 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
-const run = promisify(execFile);
+const execFileAsync = promisify(execFile);
+
+/**
+ * A wedged `simctl` (a known CoreSimulator pathology under load) must fail
+ * typed and fast, not silently consume an entire accept test's 600s wedge
+ * budget — every call site here previously relied on the caller's `signal`
+ * alone, which for a plain `t.signal` is that whole-test ceiling, not a
+ * bound on one query. 30s matches `waitUntil`'s own convention elsewhere in
+ * these helpers.
+ */
+const SIMCTL_TIMEOUT_MS = 30_000;
+
+interface RunOptions {
+  signal?: AbortSignal;
+}
+
+function run(file: string, args: readonly string[], options: RunOptions): Promise<{ stdout: string; stderr: string }> {
+  return execFileAsync(file, args, { ...options, timeout: SIMCTL_TIMEOUT_MS, encoding: 'utf8' });
+}
 
 /** Shuts a simulator down behind the client's back. */
 export async function shutdownSimulatorExternally(

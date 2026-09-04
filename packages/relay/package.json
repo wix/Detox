@@ -9,7 +9,8 @@
     "@detox-remote/core": "workspace:*",
     "@detox-remote/protocol": "workspace:*",
     "@detox-remote/server": "workspace:*",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^4.4.3"
   },
   "license": "MIT"
 }

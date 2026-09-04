@@ -6,6 +6,13 @@ describe('System Dialogs', () => {
       await device.reloadReactNative();
     });
 
+    afterAll(async () => {
+      // The tests below raise a real system permission alert that the
+      // `system` matcher can't dismiss yet, so it would otherwise strand on
+      // screen for whichever test runs next on this simulator.
+      await device.resetContentAndSettings();
+    });
+
     describe('request permission dialog', () => {
       beforeEach(async () => {
         await device.launchApp({

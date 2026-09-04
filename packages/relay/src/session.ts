@@ -29,9 +29,23 @@ import {
   toWireError,
   type Channel,
 } from '@detox-remote/core';
+import { LOG_METHOD } from '@detox-remote/protocol';
 
 import type { EnsureBlobOutcome } from './blob-bridge';
 import { relayError } from './log';
+import { followNodeLog, type NodeLogDialer } from './log-bridge';
+import type { RawLogFrame, RelayLogPort } from './relay-log';
+
+/** The default when a caller (a unit test) supplies no relay log — `$/log` is then judged nowhere and never forwarded, which is the behavior of a relay with no log of its own. */
+const NULL_RELAY_LOG: RelayLogPort = {
+  onClientLog: () => false,
+  mergeForeignLine: () => undefined,
+  replayFrames: () => [],
+  noteFollowerStarted: () => undefined,
+  noteFollowerFinished: () => undefined,
+  noteClientClosed: () => undefined,
+  noteNodeGone: () => undefined,
+};
 
 /** @issue DTX-7001: no frame from a node for this long abandons the attempt (tries next); any frame resets the timer. */
 export const ALLOCATION_STALL_MS = 30_000;
@@ -72,6 +86,12 @@ export interface SessionNode {
   connect(): Promise<CloseableChannel>;
   /** Stages blob `hex` on the node before an `installApp {blob}` forward. */
   ensureBlob(hex: string): Promise<EnsureBlobOutcome>;
+  /**
+   * Dials the node's own connection-log follow (spec 008), with the node's
+   * own credentials — absent in a unit test that never exercises the log
+   * crossing the hop.
+   */
+  createLogDialer?(nodeRunId: string): NodeLogDialer;
 }
 
 export interface RelaySessionOptions {
@@ -79,6 +99,20 @@ export interface RelaySessionOptions {
   nodes: readonly SessionNode[];
   /** Injectable so units can pin the loss-log ordering; `[relay]`-voiced by default. */
   logError?: (message: string) => void;
+  /** The relay's own connection log (spec 008) — a no-op stand-in when a unit test supplies none. */
+  relayLog?: RelayLogPort;
+  /**
+   * A hard-stop for every node-log follow this session starts — never fired
+   * by the session ending on its own (a follow must outlive its client, so
+   * its own node can finish narrating first). `relay.ts` does not currently
+   * construct or pass one: a follow that never settles (a wedged node whose
+   * command socket stays up but whose log stream goes silent) is the same
+   * "a handler that ignores its signal keeps `close()` waiting — accepted;
+   * the spawner's SIGKILL is the backstop" trade-off the server itself makes
+   * on shutdown. Left as an explicit seam, not wired, so that trade-off can
+   * be revisited without another constructor change.
+   */
+  relaySignal?: AbortSignal;
 }
 
 // ── Frame shapes (structural — a router judges shape, never meaning) ───────
@@ -168,6 +202,8 @@ export class RelaySession {
   readonly #client: CloseableChannel;
   readonly #upstreams: UpstreamState[];
   readonly #logError: (message: string) => void;
+  readonly #relayLog: RelayLogPort;
+  readonly #relaySignal: AbortSignal | undefined;
 
   /** relay-minted opaque id → owner. Grows per allocation; never leaks a node name. */
   readonly #allocations = new Map<string, { up: UpstreamState; nodeAllocId: string }>();
@@ -184,9 +220,11 @@ export class RelaySession {
   readonly #fanouts = new Map<string, FanOut>();
   #closed = false;
 
-  constructor({ client, nodes, logError = relayError }: RelaySessionOptions) {
+  constructor({ client, nodes, logError = relayError, relayLog = NULL_RELAY_LOG, relaySignal }: RelaySessionOptions) {
     this.#client = client;
     this.#logError = logError;
+    this.#relayLog = relayLog;
+    this.#relaySignal = relaySignal;
     this.#upstreams = nodes.map((node) => ({
       node,
       alive: true,
@@ -257,10 +295,33 @@ export class RelaySession {
         this.#routeCancelRequest(msg);
         return;
       }
+      if (msg.method === LOG_METHOD) {
+        this.#onClientLog(msg);
+        return;
+      }
       // @issue DTX-7005: an unknown client notification (no id) is unroutable and dropped.
       return;
     }
     // @issue DTX-7005: a response from the client (the relay originates none) is malformed traffic, dropped.
+  }
+
+  /**
+   * Spec 008: a client `$/log` is judged and recorded in the
+   * relay's own lane first; only a step that survived judgment (a
+   * begin/end, never a plain line — see `RelayConnectionLog`) crosses the
+   * hop, forwarded verbatim through each currently-connected node's own
+   * FIFO so it can never overtake — or be overtaken by — a parked
+   * `installApp` upload.
+   */
+  #onClientLog(msg: Record<string, unknown>): void {
+    const params = isRecord(msg.params) ? (msg.params as RawLogFrame) : {};
+    if (!this.#relayLog.onClientLog(params)) return;
+    for (const up of this.#upstreams) {
+      if (!up.channel || !up.alive) continue;
+      this.#enqueue(up, () => {
+        up.channel?.send(msg);
+      });
+    }
   }
 
   #routeAddressedRequest(request: RequestFrame): void {
@@ -430,6 +491,11 @@ export class RelaySession {
     this.#allocations.clear();
     this.#unsentTasks.clear();
     this.#releaseIntents.clear();
+    // Spec 008: the client is gone, but the relay's own `conn`
+    // end waits for every node stream this session started following —
+    // each upstream socket just closed above cascades into the node's own
+    // graceful finish, which is what ends those follows naturally.
+    this.#relayLog.noteClientClosed();
   }
 
   // ── Node → relay ─────────────────────────────────────────────────────────
@@ -516,6 +582,12 @@ export class RelaySession {
 
       if (msg.method === '$/serverInfo') {
         // @issue DTX-7018: $/serverInfo from a node is consumed, not forwarded — version identity is hop-pairwise.
+        // Spec 008: the node's own `log.runId` is kept only as the follow's
+        // handle, never forwarded — the relay's own log announce carries a
+        // relay-minted id (see `relay.ts`).
+        const log = isRecord(params?.log) ? params.log : undefined;
+        const nodeRunId = typeof log?.runId === 'string' ? log.runId : undefined;
+        if (nodeRunId !== undefined) this.#startNodeFollow(up, nodeRunId);
         return;
       }
 
@@ -535,6 +607,40 @@ export class RelaySession {
       });
     }
   }
+
+  /**
+   * Spec 008: the moment a node names its own log, the relay
+   * follows it from here to the end — live, from the first frame, never a
+   * pull at the end. One follower per (session, node) socket; a node that
+   * reconnects mid-session (a fresh dial on the same slot) gets a fresh
+   * follower for its fresh runId.
+   */
+  #startNodeFollow(up: UpstreamState, nodeRunId: string): void {
+    if (!up.node.createLogDialer) return; // a unit test's fake node — nothing to follow
+    this.#relayLog.noteFollowerStarted();
+    const follow = followNodeLog({
+      dialer: up.node.createLogDialer(nodeRunId),
+      nodeName: up.node.name,
+      isAlive: () => up.alive,
+      onLine: (line) => this.#relayLog.mergeForeignLine(up.node.name, line),
+      onNodeGone: (name) => {
+        // Both voices: the relay's own connection log (spec 008 binds it to
+        // one warn line on the relay's own conn) and the operator's stdout,
+        // same as any other node loss this spec logs.
+        this.#relayLog.noteNodeGone(name);
+        this.#logError(
+          `connection to node "${name}" was lost — its log stops here; everything it wrote before is already recorded`,
+        );
+      },
+      signal: this.#relaySignal,
+    });
+    void follow.finally(this.#onFollowSettled);
+  }
+
+  /** Bound once, not a fresh closure per follow — a named target for the same reason as any other handler here. */
+  #onFollowSettled = (): void => {
+    this.#relayLog.noteFollowerFinished();
+  };
 
   #onUpstreamClose(up: UpstreamState): void {
     if (!up.alive) return;
@@ -858,6 +964,14 @@ export class RelaySession {
           channel.onError((err) => {
             this.#logError(`channel error toward node "${up.node.name}": ${err.message}`);
           });
+          // Spec 008: every currently open step is replayed, in
+          // begin order, before this socket's first request — sent directly
+          // (never through the FIFO, which has nothing queued on a fresh
+          // channel yet) and synchronously ahead of the `return` below, so
+          // no caller of this dial can ever get the channel first.
+          for (const frame of this.#relayLog.replayFrames()) {
+            channel.send(frame);
+          }
           return channel;
         },
         (err: unknown) => {

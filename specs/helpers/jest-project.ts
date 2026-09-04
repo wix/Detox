@@ -4,10 +4,11 @@
  * `node_modules` the fixture can actually resolve from: every top-level
  * entry of the repo's node_modules is symlinked in (jest 30 and its tree
  * among them), and `detox` is not the workspace package but the staged
- * pack — the `scripts/pack-client.js` tarball, unpacked once per accept
- * process — so `testEnvironment: 'detox/runners/jest/testEnvironment'` and
- * its three siblings are proven against the artifact users install, not
- * against workspace source.
+ * pack — `npm pack` of the `detox` package, the same tarball that gets
+ * published, unpacked once per accept process — so
+ * `testEnvironment: 'detox/runners/jest/testEnvironment'` and its three
+ * siblings are proven against the artifact users install, not against
+ * workspace source.
  *
  * Receipts: fixture tests write JSON files into the project directory (the
  * spawn contract fixes the runner's cwd to the CLI's own, which is the
@@ -59,12 +60,17 @@ let stagedPack: Promise<string> | undefined;
 export function stagePackedDetox(): Promise<string> {
   stagedPack ??= (async (): Promise<string> => {
     const dest = await mkdtemp(path.join(tmpdir(), 'detox-spec010-pack-'));
-    const { stdout } = await execFileAsync('node', [
-      path.join(REPO_ROOT, 'scripts', 'pack-client.js'),
-      dest,
-    ]);
-    const tarball = stdout.trim().split('\n').pop();
-    if (!tarball) throw new Error('pack-client.js printed no tarball path');
+    // `--ignore-scripts` skips the package's own prepack build: the accept
+    // runner has already built this tree, and a second full build per accept
+    // process would cost minutes for a byte-identical result.
+    const { stdout } = await execFileAsync(
+      'npm',
+      ['pack', '--pack-destination', dest, '--ignore-scripts'],
+      { cwd: path.join(REPO_ROOT, 'detox') },
+    );
+    const packed = stdout.trim().split('\n').pop();
+    if (!packed) throw new Error('npm pack printed no tarball name');
+    const tarball = path.join(dest, packed);
     await execFileAsync('tar', ['-xzf', tarball, '-C', dest]);
     const unpacked = path.join(dest, 'package');
     if (!existsSync(unpacked)) throw new Error(`no package/ dir after unpacking ${tarball}`);

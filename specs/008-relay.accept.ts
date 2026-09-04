@@ -1,13 +1,12 @@
 /**
  * Acceptance: spec 008 — the relay.
  *
- * This file is frozen. If a test here seems wrong or impossible, stop and
- * report it rather than weakening it or working around it.
+ * This file is frozen and append-only.
  *
  * Style is part of the contract: tests are STRAIGHT-LINE — a fence of awaits
  * against the public dialect plus the editable helpers, no function
  * definitions in this file. The relay adds NO client API: every test speaks
- * `init` from `detox/internals` pointed at a relay's address, exactly as it
+ * `connect` from `detox/client` pointed at a relay's address, exactly as it
  * would point at a server's. That sameness IS the product.
  *
  * Fixture policy (binding on this file): two real nodes on one Mac share the
@@ -22,8 +21,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { init, DetoxErrorCode } from 'detox/internals';
-import type { DetoxProgressEvent } from 'detox/internals';
+import { connect, DetoxErrorCode } from 'detox/client';
+import type { DetoxProgressEvent } from 'detox/client';
 
 import { startServer } from './helpers/server';
 import { startRelay, relayLostNode, nodeHolding } from './helpers/relay';
@@ -37,6 +36,10 @@ import {
   shutdownSimulatorExternally,
   waitUntil,
 } from './helpers/simctl';
+// The connection log through the relay — test 8.
+import { logOf } from './helpers/typed-door';
+import { dialConnectionLog, parseNdjson, settled } from './helpers/session-log';
+import { tokenOf } from './helpers/project';
 
 // Not a latency budget: "instant" means the relay never queues, sleeps or
 // re-polls waiting for capacity (no waiting machinery of any kind).
@@ -84,7 +87,7 @@ test('pointed at a relay instead of a server, a run cannot tell: allocate narrat
       nodes: [{ name: 'mac-a', server: node }],
       signal: t.signal,
     });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     const events: DetoxProgressEvent[] = [];
     await using device = await detox.allocateDevice({
@@ -139,7 +142,7 @@ test('a full Mac does not fail the run: allocation lands on a node with room', a
       ],
       signal: t.signal,
     });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     await using device = await detox.allocateDevice({
       type: 'ios.simulator',
@@ -178,7 +181,7 @@ test('a fleet with nothing free refuses once, instantly, naming every Mac', asyn
       ],
       signal: t.signal,
     });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     const before = Date.now();
     const err = assertDetoxError(
@@ -254,7 +257,7 @@ test('one run holds devices on two Macs; finishing with one leaves the other ali
       ],
       signal: t.signal,
     });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     const first = await detox.allocateDevice({
       type: 'ios.simulator',
@@ -315,7 +318,7 @@ test('a dead Mac costs its own devices only — typed errors, never a hang', asy
       { name: 'mac-b', server: nodeB },
     ];
     await using relay = await startRelay({ nodes, signal: t.signal });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     const first = await detox.allocateDevice({
       type: 'ios.simulator',
@@ -387,11 +390,11 @@ test('a finished run frees the whole farm: the next run gets the same device', a
       signal: t.signal,
     });
 
-    const firstRun = await init({ server: relay.address, signal: t.signal });
+    const firstRun = await connect({ server: relay.address, signal: t.signal });
     await firstRun.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } });
     await firstRun.disconnect();
 
-    await using secondRun = await init({ server: relay.address, signal: t.signal });
+    await using secondRun = await connect({ server: relay.address, signal: t.signal });
     let handoff: ReclaimedDevice | undefined;
     await waitUntil(
       async () => {
@@ -442,7 +445,7 @@ test('a cancelled allocation through the relay settles typed, and the device com
       nodes: [{ name: 'mac-a', server: node }],
       signal: t.signal,
     });
-    await using detox = await init({ server: relay.address, signal: t.signal });
+    await using detox = await connect({ server: relay.address, signal: t.signal });
 
     const controller = new AbortController();
     const reason = new Error('spec-008 cancels mid-boot');
@@ -479,6 +482,81 @@ test('a cancelled allocation through the relay settles typed, and the device com
       "the cancelled allocation's rollback freed the one-slot node — the fleet holds no ghost",
     );
   } finally {
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});
+
+/**
+ * Test 8 — one connection id, one LIVE log, through the relay. The relay
+ * announces its own connection log, so `log.begin` is live rather than a
+ * typed refusal. A `follow` on the relay sees the node's own boot begin
+ * (under `mac-a/`) BEFORE the allocation has resolved: node lines stream
+ * into the relay's file as they happen, not when the run ends — seeing what
+ * is breaking without ending the run is the point. A step opened before the
+ * allocation must cross the hop ahead of the allocation frame (the
+ * per-node FIFO plus replay-on-fresh-dial: the node is first dialed by
+ * this very allocation), which the node proves by parenting its own
+ * `allocateDevice` record to that step. The node is STOPPED before the
+ * final read, and the read still returns the node's lines — CI reads a
+ * finished run from the relay after the node has forgotten it.
+ */
+test('through a relay a run has one live log: node lines stream in before the allocation resolves, a step crosses the hop, and the node\'s lines outlive the node', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec008-log', t.signal);
+  const node = await startServer({ dedicated: true, maxPool: 1, isolatedLogRoot: true, signal: t.signal });
+  try {
+    await using relay = await startRelay({
+      nodes: [{ name: 'mac-a', server: node }],
+      isolatedLogRoot: true,
+      signal: t.signal,
+    });
+    const detox = await connect({ server: relay.address, signal: t.signal });
+    const trace = logOf(detox);
+    const runId = trace.runId;
+    assert.equal(typeof runId, 'string', 'the relay announces a connection log of its own');
+    const lane = dialConnectionLog(relay.address);
+
+    const follow = lane.follow(runId, { signal: t.signal });
+    const nodeBootSeen = follow.next((l) => l.kind === 'begin' && l.fields?.op === 'boot' && l.node.id.startsWith('mac-a/'));
+
+    const step = trace.log.begin({ kind: 'test', name: 'boots through the relay' });
+    const allocation = detox.allocateDevice({ type: 'ios.simulator', device: { deviceId: probe.udid } });
+    const allocationState = settled(allocation);
+    await nodeBootSeen;
+    assert.equal(allocationState.settled, false, "the node's boot begin reached the relay's stream before the allocation resolved: live, not end-of-run");
+    const device = await allocation;
+    assert.equal(device.info.udid, probe.udid);
+    await device.release();
+    step.end({ status: 'passed' });
+    await detox.disconnect();
+
+    assert.equal(await follow.closed(), true, 'the relay ended the stream after its own connection end');
+    await waitUntil(
+      async () => (await lane.index()).some((row) => row.runId === runId && row.endedAt !== undefined),
+      { signal: t.signal, timeoutMs: 120_000, description: 'the relay index to show the connection ended' },
+    );
+    await node.stop();
+
+    const text = await lane.fetch(runId);
+    const lines = parseNdjson(text);
+    lines.forEach((line, i) => assert.equal(line.seq, i + 1, 'seq is contiguous from 1 across the merged file'));
+    const last = lines[lines.length - 1];
+    assert.deepEqual({ id: last.node.id, kind: last.kind }, { id: 'conn', kind: 'end' }, "the relay's own connection end is the final line");
+
+    const spanBegin = lines.find((l) => l.kind === 'begin' && l.node.id === `step:${step.id}`);
+    assert.ok(spanBegin, "the step is in the relay's own lane");
+    const nodeAlloc = lines.find(
+      (l) => l.kind === 'begin' && l.node.type === 'rpc' && l.fields?.method === 'allocateDevice' && l.node.id.startsWith('mac-a/'),
+    );
+    assert.ok(nodeAlloc, "the node's own record of the allocation is in the relay's file, under the node's name, read after the node stopped");
+    assert.equal(nodeAlloc.node.parent, `mac-a/step:${step.id}`, 'the step crossed the hop ahead of the allocation: the node parented the request to it');
+    const bootChild = lines.find((l) => l.kind === 'begin' && l.fields?.op === 'boot' && l.node.parent === nodeAlloc.node.id);
+    assert.ok(bootChild, "the node's boot child sits under its allocation, ids rewritten consistently");
+
+    assert.ok(!text.includes(new URL(node.url).host), 'no node URL in the file');
+    assert.ok(!text.includes(tokenOf(node.address)), 'no node token in the file');
+  } finally {
+    await node.stop().catch(() => undefined);
     await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
     await deleteSimulatorExternally(probe.udid).catch(() => undefined);
   }

@@ -8,6 +8,8 @@ import path from 'node:path';
 import WebSocket from 'ws';
 import { PROTOCOL_VERSION, SERVER_INFO_METHOD, type ServerInfoNotification } from '@detox-remote/protocol';
 
+import { SERVER_SETTINGS } from '@detox-remote/server';
+
 import { UsageError } from './errors';
 
 const HELPER_ROOT_ENV = 'DETOX_LOCAL_HELPER_ROOT';
@@ -78,6 +80,23 @@ export async function ensureLocalHelper(signal?: AbortSignal): Promise<string> {
     const fresh = await spawnHelper(paths.cookiePath, signal);
     return fresh.url;
   });
+}
+
+/** What `detox logs` needs of the helper (spec 013): where it listens. The helper's tester door runs with auth off; the cookie's token is the admin token, never a bearer. */
+export interface LocalHelperAddress {
+  url: string;
+}
+
+/**
+ * The detached helper's address, when one is alive (spec 013's `detox
+ * logs`): the cookie read, nothing spawned, nothing locked — a reader must
+ * never start a server. `undefined` when there is no cookie or its pid is
+ * gone.
+ */
+export async function readLocalHelperAddress(): Promise<LocalHelperAddress | undefined> {
+  const existing = await readCookie(helperPaths().cookiePath);
+  if (existing === undefined || !isPidAlive(existing.pid)) return undefined;
+  return { url: existing.url };
 }
 
 export async function restartLocalHelper(signal?: AbortSignal): Promise<{ url: string; replacedActiveSessions: number }> {
@@ -414,17 +433,12 @@ function serverCliPath(): string {
   return found;
 }
 
+// The developer's own shell must not leak a setting into the helper's spawn.
+const SERVER_ENV_VARS = SERVER_SETTINGS.map((d) => d.env).filter((e) => e !== undefined);
+
 function helperEnv(token: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...process.env, [HELPER_TOKEN_ENV]: token };
-  for (const key of [
-    'PORT',
-    'DETOX_SERVER_HOST',
-    'DETOX_SERVER_TOKEN',
-    'DETOX_REMOTE_MAX_POOL',
-    'DETOX_REMOTE_KEEPALIVE_WINDOW',
-  ]) {
-    delete env[key];
-  }
+  for (const key of SERVER_ENV_VARS) delete env[key];
   return env;
 }
 

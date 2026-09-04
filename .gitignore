@@ -277,6 +277,6 @@ packages/*/src/**/*.d.ts.map
 detox/src/*.js
 detox/src/*.js.map
 detox/src/*.d.ts
-detox/src/internals/**/*.js
-detox/src/internals/**/*.js.map
-detox/src/internals/**/*.d.ts
+detox/src/client/**/*.js
+detox/src/client/**/*.js.map
+detox/src/client/**/*.d.ts

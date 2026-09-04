@@ -1,7 +1,7 @@
 // The 009↔010 seam (spec 009): `detox test` resolves the
 // config once and writes this shape to a 0600 temp file named by
 // DETOX_CONFIG_SNAPSHOT_PATH; the runner side (spec 010) JSON.parses it and
-// maps it onto compat's `init` options — it re-resolves nothing. The type
+// maps it onto compat's `connect` options — it re-resolves nothing. The type
 // lives here so 010 imports a type and structurally cannot import a
 // resolver. Unknown config keys ride through verbatim (the index
 // signatures), so a future consumer never changes the format.
@@ -23,7 +23,7 @@ export interface ConfigSnapshotClient {
 
 export interface ConfigSnapshotApp {
   name: string;
-  /** Optional — derived client-side at `init`, never invented here. */
+  /** Optional — derived client-side at `connect`, never invented here. */
   bundleId?: string;
   /** Resolved absolute against the CLI's cwd. */
   binaryPath?: string;

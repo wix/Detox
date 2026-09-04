@@ -8,16 +8,22 @@
  * simctl is faked. The "app" side is a plain WebSocket speaking the frozen
  * dialect — the protocol-faithful strict fake lives with the accept helpers.
  */
+import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import WsClient from 'ws';
-import type { DeviceInfo, InvokeResult } from '@detox-remote/protocol';
+import type { InvokeResult } from '@detox-remote/protocol';
+import type { DeviceInfo } from '@detox-remote/driver-ios';
 import { DetoxErrorCode } from '@detox-remote/core';
 
 import { AppGateway, ignoreSocketError } from '../AppGateway';
+import { requestScope, type RequestTrace } from '../request-scope';
 import { DetoxServerImpl } from '../DetoxServerImpl';
-import { DevicePool } from '../DevicePool';
 import type { DetoxServerPeer } from '../DetoxServerPeer';
-import type { SimulatorOps, TerminateAppArgs } from '../SimulatorOps';
+import type { SimulatorOps, TerminateAppArgs } from '@detox-remote/driver-ios';
+import { iosHost, type IosHost } from './_ios-harness';
 
 type UndoFn = () => void | Promise<void>;
 
@@ -208,8 +214,12 @@ interface LaunchResponse {
   appHandleId: string;
 }
 
+const ghHosts: IosHost[] = [];
 const gateways: AppGateway[] = [];
 afterEach(async () => {
+  for (const host of ghHosts.splice(0)) {
+    await host.close().catch(() => undefined);
+  }
   for (const gateway of gateways.splice(0)) {
     await gateway.close().catch(() => undefined);
   }
@@ -219,6 +229,8 @@ afterEach(async () => {
 interface LaunchSlice {
   bundleId: string;
   detox?: { serverUrl: string; sessionId: string };
+  /** Where the app's own stdout/stderr go (spec 013), when a request scope asked for them. */
+  output?: { stdout: string; stderr: string };
 }
 
 /** The node internals the RST test reaches for. */
@@ -248,11 +260,13 @@ interface ServerOptions {
    * launch handshake must keep its terminate-first step.
    */
   alreadyBooted?: boolean;
+  /** Every fake launch's arguments, in order (spec 013's capture paths ride here). */
+  launches?: LaunchSlice[];
+  /** The devices root the app-output capture files go under (spec 013). */
+  simulatorDevicesRoot?: string;
 }
 
 async function makeServer(options: ServerOptions = {}) {
-  const gateway = await AppGateway.listen();
-  gateways.push(gateway);
   const devices: DeviceInfo[] = [
     { name: 'iPhone 17', udid: 'udid-1', state: 'Shutdown', os: { platform: 'iOS' } },
   ] as DeviceInfo[];
@@ -270,21 +284,22 @@ async function makeServer(options: ServerOptions = {}) {
       if (options.eraseGate) await options.eraseGate;
     },
     resolveFrameworkPath: async () => '/fake/Detox.framework/Detox',
-    launch: async ({ bundleId, detox }: LaunchSlice) => {
+    launch: async (args: LaunchSlice) => {
+      const { bundleId, detox } = args;
+      options.launches?.push(args);
       if (options.launchGate) await options.launchGate;
-      // The claim URL the server hands the process — the fake app dials it
-      // verbatim, exactly as the real app reads its own argv.
-      options.onLaunch?.(detox?.serverUrl ?? gateway.url, bundleId);
+      // The per-device gateway URL the server hands the process — the fake app
+      // dials it verbatim, exactly as the real app reads its own argv.
+      options.onLaunch?.(detox?.serverUrl ?? '', bundleId);
       return 4242;
     },
   } as unknown as SimulatorOps;
-  const devicePool = new DevicePool({ simulatorOps, maxPool: 4 });
+  const host = iosHost(simulatorOps, { simulatorDevicesRoot: options.simulatorDevicesRoot });
+  ghHosts.push(host);
   const captured = capturingPeer();
   const impl = new DetoxServerImpl({
     serverPeer: captured.peer,
-    devicePool,
-    simulatorOps,
-    appGateway: gateway,
+    driverHost: host.host,
     config: { launchReadyTimeoutMs: options.launchReadyTimeoutMs },
   });
   const allocate = call<{ type: string }, AllocateResponse>(captured.handlers, 'allocateDevice');
@@ -327,7 +342,6 @@ async function makeServer(options: ServerOptions = {}) {
   );
   return {
     resetContentAndSettings,
-    gateway,
     impl,
     allocate,
     launchApp,
@@ -551,7 +565,7 @@ describe('launchApp cancelled after it succeeded', () => {
     // The device is picked up again — a different allocation id is exactly what
     // "somebody else's device" means to the registry, whoever holds it. A
     // rollback addressing the app by bundle id alone would reach into their
-    // session: the theft both reviews reproduced one level up.
+    // session — the same device-theft shape one level up.
     const next = await server.allocate({ type: 'ios.simulator' }, {});
     expect(next.device.udid).toBe(allocation.device.udid);
 
@@ -767,19 +781,15 @@ describe('launchApp cancelled after it succeeded', () => {
 describe('the login discipline of the app port', () => {
   /**
    * @issue DTX-6156
-   * The first frame of a connection must be the native's `login` (role
-   * `'app'`), arriving on a URL whose nonce names a waiting launch, with
-   * the session id that launch expects. Anything else is turned away —
-   * this port has no anonymous uses. A valid nonce with no launch
-   * waiting behind it (a stale redial, or something probing the port)
-   * is refused the same way.
+   * The first frame of a connection must be a well-formed native `login`
+   * (role `'app'`, a string session id). A wrong role or a non-login first
+   * frame is turned away — the dialect checks stay (spec 015). But whoever
+   * dials this per-device listener is on this device, so a well-formed login
+   * needs no nonce and no waiting launch: it is accepted unsolicited.
    */
-  it('turns away a login nobody is expecting, a wrong role, and a non-login first frame', async () => {
-    const gateway = await AppGateway.listen();
+  it('turns away a wrong role and a non-login first frame', async () => {
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-
-    const stray = dialApp(gateway.url, 'com.nobody.expects');
-    await stray.closed;
 
     const wrongRole = new WebSocket(gateway.url);
     const wrongRoleClosed = new Promise<void>((resolve) =>
@@ -807,7 +817,7 @@ describe('the login discipline of the app port', () => {
   });
 
   it('hangs up on a frame the dialect cannot parse', async () => {
-    const gateway = await AppGateway.listen();
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
     const socket = new WebSocket(gateway.url);
     const closed = new Promise<void>((resolve) => socket.addEventListener('close', () => resolve()));
@@ -816,60 +826,67 @@ describe('the login discipline of the app port', () => {
   });
 
   it('accepts binary frames — that is what the real native sends', async () => {
-    const gateway = await AppGateway.listen();
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-    const pending = gateway.expectApp({ udid: 'udid-1', sessionId: 'com.example.binary' });
-    dialApp(pending.url, 'com.example.binary', { binary: true });
+    const pending = gateway.expectLogin('com.example.binary');
+    dialApp(gateway.url, 'com.example.binary', { binary: true });
     const session = await pending.session;
     await session.ready;
     expect(session.dead).toBe(false);
   });
 
   /**
-   * @issue DTX-6153
-   * Same bundle id launched on two devices at once: session ids are
-   * bundle ids, guessable and identical across devices running the same
-   * app, so matching by session id alone would let two concurrent
-   * launches cross their handles. The claim is keyed by the nonce each
-   * launch was handed, so the app dialing in binds to its own launch —
-   * whichever order the two connect in.
+   * The objective (spec 015): an app started outside Detox — no waiter, no
+   * nonce — dials the device's listener with its bundle id and is attachable.
+   * The login is answered `loginSuccess` (echoing its id) and probed `isReady`;
+   * the session becomes attachable on its own `ready`, and `connected()` lists it.
    */
-  it('binds a login by the per-launch claim URL, never by session id alone', async () => {
-    const gateway = await AppGateway.listen();
+  it('accepts an unsolicited login, probes it, and lists it once ready', async () => {
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-    const bundleId = 'com.example.same';
-    const claimA = gateway.expectApp({ udid: 'udid-A', sessionId: bundleId });
-    const claimB = gateway.expectApp({ udid: 'udid-B', sessionId: bundleId });
-    expect(claimA.url).not.toBe(claimB.url);
+    const bundleId = 'com.example.outside';
 
-    // B's process dials in FIRST — under session-id matching it would have
-    // been handed A's (older) claim.
-    dialApp(claimB.url, bundleId);
-    const sessionB = await claimB.session;
-    expect(sessionB.udid).toBe('udid-B');
+    // No `expectLogin` first — the app dials in on its own.
+    const testee = dialApp(gateway.url, bundleId);
+    // The listener echoes loginSuccess and probes isReady (the fake answers ready).
+    const attached = await gateway.waitForReady(bundleId);
+    expect(attached.sessionId).toBe(bundleId);
+    expect(attached.bundleId).toBe(bundleId);
+    expect(attached.deviceId).toBe('udid-1');
+    expect(gateway.connected().map((s) => s.sessionId)).toEqual([bundleId]);
+    // A crash frees the id the moment the socket closes.
+    testee.close();
+    await vi.waitFor(() => expect(gateway.live(bundleId)).toBeUndefined());
+    expect(gateway.connected()).toEqual([]);
+  });
 
-    dialApp(claimA.url, bundleId);
-    const sessionA = await claimA.session;
-    expect(sessionA.udid).toBe('udid-A');
+  /**
+   * A raw login under an id whose session is still alive is turned away (the
+   * live session keeps the id; a crash frees it). Superseding a live app is
+   * `launch`'s job (it tombstones the old session explicitly before spawning),
+   * so this refusal also keeps an incidental second connection to the same app
+   * — e.g. an injected framework alongside a test's own testee — from killing
+   * the first (the behaviour frozen 003 relies on).
+   */
+  it('turns away a duplicate login under a live id; the first session keeps working', async () => {
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
+    gateways.push(gateway);
+    const bundleId = 'com.example.dup';
 
-    // A stale process redialing an already-claimed URL is refused, not
-    // crossed into someone else's launch.
-    const stale = dialApp(claimA.url, bundleId);
-    await stale.closed;
+    dialApp(gateway.url, bundleId);
+    const firstSession = await gateway.waitForReady(bundleId);
 
-    // A squatter that guessed the session id but not the nonce is refused.
-    const squatter = dialApp(`${gateway.url}/not-a-real-token`, bundleId);
-    await squatter.closed;
-
-    // A login whose session id does not match the claim behind the URL is
-    // refused even with a valid nonce.
-    const claimC = gateway.expectApp({ udid: 'udid-C', sessionId: 'com.example.other' });
-    const liar = dialApp(claimC.url, bundleId);
-    await liar.closed;
+    // A second login under the same id arrives on its own — it is refused, and
+    // the first session stays live and drivable.
+    const duplicate = dialApp(gateway.url, bundleId);
+    await duplicate.closed;
+    expect(gateway.live(bundleId)).toBe(firstSession);
+    expect(firstSession.dead).toBe(false);
+    expect(gateway.connected().map((s) => s.sessionId)).toEqual([bundleId]);
   });
 
   it('close() does not hang on a connected socket that never logs in', async () => {
-    const gateway = await AppGateway.listen({ closeGraceMs: 50 });
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1', closeGraceMs: 50 });
     const silent = new WsClient(gateway.url);
     await new Promise<void>((resolve) => silent.once('open', () => resolve()));
     // A peer that never even processes the polite close: pause the stream so
@@ -880,7 +897,7 @@ describe('the login discipline of the app port', () => {
   });
 
   it('reaps a connection that never presents a login', async () => {
-    const gateway = await AppGateway.listen({ loginDeadlineMs: 50 });
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1', loginDeadlineMs: 50 });
     gateways.push(gateway);
     const silent = new WsClient(gateway.url);
     const closed = new Promise<void>((resolve) => silent.once('close', () => resolve()));
@@ -889,10 +906,10 @@ describe('the login discipline of the app port', () => {
   });
 
   it('an abruptly reset socket dies through the shared death path', async () => {
-    const gateway = await AppGateway.listen();
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-    const pending = gateway.expectApp({ udid: 'udid-1', sessionId: 'com.example.rst' });
-    const raw = new WsClient(pending.url);
+    const pending = gateway.expectLogin('com.example.rst');
+    const raw = new WsClient(gateway.url);
     await new Promise<void>((resolve) => raw.once('open', () => resolve()));
     raw.send(
       JSON.stringify({ type: 'login', messageId: 0, params: { sessionId: 'com.example.rst', role: 'app' } }),
@@ -908,15 +925,13 @@ describe('the login discipline of the app port', () => {
    * @issue DTX-6152
    * A dying app sends both: the exception that explains the crash,
    * and then the signal handler's generic stack once `abort()` runs.
-   * v20 kept the first (`Client.js:344`) and so does this — keeping
-   * the last would replace "JS Exception: …" with "Signal 6 raised"
-   * in every crash error.
+   * v20 kept the first (`Client.js:344`) and so does this.
    */
   it('keeps the FIRST crash report, not the last — the diagnosis, not the symptom', async () => {
-    const gateway = await AppGateway.listen();
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-    const pending = gateway.expectApp({ udid: 'udid-1', sessionId: 'com.example.crash' });
-    const raw = new WsClient(pending.url);
+    const pending = gateway.expectLogin('com.example.crash');
+    const raw = new WsClient(gateway.url);
     await new Promise<void>((resolve) => raw.once('open', () => resolve()));
     raw.send(
       JSON.stringify({
@@ -944,14 +959,17 @@ describe('the login discipline of the app port', () => {
     });
   });
 
-  it('a cancelled claim rejects and later logins find nothing', async () => {
-    const gateway = await AppGateway.listen();
+  it('a cancelled claim rejects; a later login is accepted on its own', async () => {
+    const gateway = await AppGateway.listen({ deviceId: 'udid-1' });
     gateways.push(gateway);
-    const pending = gateway.expectApp({ udid: 'udid-1', sessionId: 'com.example.gone' });
+    const pending = gateway.expectLogin('com.example.gone');
     pending.cancel();
     await expect(pending.session).rejects.toMatchObject({ code: DetoxErrorCode.DETOX_APP_DIED });
-    const late = dialApp(pending.url, 'com.example.gone');
-    await late.closed;
+    // A login under the id after the claim was cancelled is now an unsolicited
+    // session — accepted, not turned away.
+    dialApp(gateway.url, 'com.example.gone');
+    const late = await gateway.waitForReady('com.example.gone');
+    expect(late.sessionId).toBe('com.example.gone');
   });
 });
 
@@ -1137,13 +1155,19 @@ describe('the invoke channel', () => {
     ).rejects.toMatchObject({ code: DetoxErrorCode.DETOX_APP_DIED });
   });
 
-  it('release closes the allocation’s app sessions', async () => {
+  it('release closes nothing — the running app is there for the device’s next owner (spec 015)', async () => {
     const { app, allocation, server } = await launched();
     await server.release({ allocationId: allocation.allocationId }, {});
-    await app.closed;
+    // The listener lives with the booted device; release is a ledger entry that
+    // closes no socket, so the app keeps running for whoever gets the device next.
+    const outcome = await Promise.race([
+      app.closed.then(() => 'closed' as const),
+      new Promise<'alive'>((resolve) => setTimeout(() => resolve('alive'), 100)),
+    ]);
+    expect(outcome).toBe('alive');
   });
 
-  it('release closes even a session whose launch completed DURING the reclaim barrier', async () => {
+  it('release keeps even a session whose launch completed DURING the reclaim barrier', async () => {
     let app!: FakeApp;
     let openGate!: () => void;
     const gate = new Promise<void>((resolve) => {
@@ -1164,8 +1188,12 @@ describe('the invoke channel', () => {
     openGate();
     await launching;
     await releasing;
-    // The session registered mid-barrier must not survive its allocation.
-    await app.closed;
+    // The session registered mid-barrier lives on with the device.
+    const outcome = await Promise.race([
+      app.closed.then(() => 'closed' as const),
+      new Promise<'alive'>((resolve) => setTimeout(() => resolve('alive'), 100)),
+    ]);
+    expect(outcome).toBe('alive');
   });
 
   it('a launch finishing into a dead connection unwinds instead of stranding the app', async () => {
@@ -1186,7 +1214,7 @@ describe('the invoke channel', () => {
       expect(app.received.some((frame) => frame.type === 'isReady')).toBe(true),
     );
     // The tester connection dies while the app is mid-handshake…
-    server.impl.release();
+    void server.impl.release();
     // …and the app then reports ready into a launch nobody will hear about.
     app.send({ type: 'ready', messageId: -1000 });
     await expect(launching).rejects.toMatchObject({ code: DetoxErrorCode.DETOX_ABORTED });
@@ -1376,5 +1404,49 @@ describe('the reload channel (reactNativeReload)', () => {
     await expect(server.reloadReactNative(address, {})).rejects.toMatchObject({
       code: DetoxErrorCode.DETOX_APP_DIED,
     });
+  });
+});
+
+describe('the app\'s own output (spec 013)', () => {
+  it('under a request scope, launch passes capture paths in the device data/tmp, the tail lands lines under the request, and terminate drains and removes them', async () => {
+    const launches: LaunchSlice[] = [];
+    const devicesRoot = mkdtempSync(path.join(tmpdir(), 'detox-devices-'));
+    const server = await makeServer({
+      launches,
+      simulatorDevicesRoot: devicesRoot,
+      onLaunch: (url, bundleId) => {
+        // The "app" prints as it comes up — into the file simctl would have created.
+        const paths = launches.at(-1)?.output;
+        if (paths) writeFileSync(paths.stdout, 'hello from the app\n');
+        dialApp(url, bundleId);
+      },
+    });
+    const written: Array<{ level: string; msg: string; fields?: Record<string, unknown> }> = [];
+    const trace: RequestTrace = {
+      beginSpawn: () => ({ end: () => undefined }),
+      line: (level, msg, fields) => written.push({ level, msg, ...(fields ? { fields } : {}) }),
+    };
+    const allocation = await server.allocate({ type: 'ios.simulator' }, {});
+    const launched = await requestScope.run(trace, () =>
+      server.launchApp({ allocationId: allocation.allocationId, appId: 'com.example.app' }, {}),
+    );
+    const paths = launches[0].output;
+    expect(paths?.stdout.startsWith(path.join(devicesRoot, 'udid-1', 'data', 'tmp', 'detox-launch-'))).toBe(true);
+    expect(paths?.stdout.endsWith('.out')).toBe(true);
+    expect(paths?.stderr.endsWith('.err')).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(written).toEqual([{ level: 'debug', msg: 'hello from the app', fields: { stream: 'stdout', pid: launched.pid, line: 1 } }]);
+
+    await server.terminateApp({ allocationId: allocation.allocationId, appHandleId: launched.appHandleId }, {});
+    expect(existsSync(paths!.stdout)).toBe(false);
+    expect(existsSync(paths!.stderr)).toBe(false);
+  });
+
+  it('with no request scope, launch asks simctl for no capture at all', async () => {
+    const launches: LaunchSlice[] = [];
+    const server = await makeServer({ launches, onLaunch: (url, bundleId) => dialApp(url, bundleId) });
+    const allocation = await server.allocate({ type: 'ios.simulator' }, {});
+    await server.launchApp({ allocationId: allocation.allocationId, appId: 'com.example.app' }, {});
+    expect(launches[0].output).toBeUndefined();
   });
 });

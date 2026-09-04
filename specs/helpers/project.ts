@@ -20,7 +20,7 @@ import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import type { DetoxServerAddress } from 'detox/internals';
+import type { DetoxServerAddress } from 'detox/client';
 
 import { waitUntil } from './simctl';
 
@@ -74,11 +74,11 @@ export function probeCommand(): string {
 /** The snapshot as the probe saw it — spec 009's 009↔010 seam, loosely typed. */
 export interface ProbeSnapshotView {
   readonly configurationName: string;
-  /** `token` only when one is configured — auth is opt-in and off (#62). */
+  /** `token` only when one is configured — auth is opt-in and off. */
   readonly client: { readonly server: string; readonly token?: string } & Record<string, unknown>;
   readonly apps: readonly ({
     readonly name: string;
-    /** Optional in the config (#63) — never invented by the snapshot. */
+    /** Optional in the config — never invented by the snapshot. */
     readonly bundleId?: string;
     readonly binaryPath?: string;
   } & Record<string, unknown>)[];
@@ -130,7 +130,7 @@ export function tokenOf(address: DetoxServerAddress): string {
   return token;
 }
 
-/** An address for `init` from a raw URL + token, the way a config carries them. */
+/** An address for `connect` from a raw URL + token, the way a config carries them. */
 export function bearerAddress(url: string, token: string): DetoxServerAddress {
   return { url, headers: { Authorization: `Bearer ${token}` } };
 }

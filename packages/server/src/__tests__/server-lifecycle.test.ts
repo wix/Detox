@@ -9,7 +9,8 @@ import { PROTOCOL_VERSION, SERVER_INFO_METHOD } from '@detox-remote/protocol';
 
 import { createDetoxRemoteServer, DEFAULT_HOST } from '../server';
 import { generateToken, type AuthConfig } from '../auth';
-import type { SimulatorOps } from '../SimulatorOps';
+import type { SimulatorOps } from '@detox-remote/driver-ios';
+import { serverLog } from '../log-sink';
 
 /** The private-but-stable `ws` internal we reach into to simulate a frozen peer. */
 interface SocketPausableForTest {
@@ -50,6 +51,12 @@ function isolatedBlobs() {
   return { root: mkdtempSync(path.join(tmpdir(), 'detox-blob-test-')) };
 }
 
+// Same for the connection log (spec 012): the root is one live server's —
+// its lock socket refuses a second — so every unit server gets its own.
+function isolatedLogs() {
+  return { root: mkdtempSync(path.join(tmpdir(), 'detox-log-test-')) };
+}
+
 async function startServer(overrides: { host?: string; auth?: AuthConfig } = {}) {
   return createDetoxRemoteServer({
     port: 0,
@@ -57,6 +64,7 @@ async function startServer(overrides: { host?: string; auth?: AuthConfig } = {})
     auth,
     simulatorOps,
     blobs: isolatedBlobs(),
+    logs: isolatedLogs(),
     ...overrides,
   });
 }
@@ -226,6 +234,7 @@ describe('Detox Server startup failure cleanup', () => {
         auth,
         simulatorOps,
         blobs: isolatedBlobs(),
+        logs: isolatedLogs(),
         keepalive: { intervalMs: 0, maxMissedPongs: 3 },
       }),
     ).rejects.toThrow(/keepalive intervalMs/);
@@ -247,6 +256,7 @@ describe('Detox Server startup failure cleanup', () => {
           auth,
           simulatorOps,
           blobs: isolatedBlobs(),
+          logs: isolatedLogs(),
         }),
       ).rejects.toThrow();
     } finally {
@@ -276,7 +286,9 @@ describe('Detox Server channel error surfacing', () => {
       client.once('error', reject);
     });
 
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Spec 012: `console` left the server; a channel error is narrated into
+    // the connection's log and echoed to stdout through the sink.
+    const errorSpy = vi.spyOn(serverLog, 'echo');
     WebSocket.prototype.send = function patchedSend(this: WebSocket, ...args: unknown[]) {
       if (this === client) return callOriginalSend(this, args);
       throw new Error('boom: simulated send failure on the server side');
@@ -289,7 +301,7 @@ describe('Detox Server channel error surfacing', () => {
       client.send(JSON.stringify({ jsonrpc: '2.0', id: '1', method: 'no.such.method', params: {} }));
 
       await vi.waitFor(() =>
-        expect(errorSpy).toHaveBeenCalledWith('[detox-remote] channel error:', expect.any(Error)),
+        expect(errorSpy).toHaveBeenCalledWith('error', expect.stringContaining('channel error: '), expect.any(Number)),
       );
     } finally {
       restoreOriginalSend();

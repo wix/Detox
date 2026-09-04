@@ -15,7 +15,7 @@
  *  - A non-element receiver is an instructive matcher failure naming the expected receiver —
  *    never a bare TypeError from a property read.
  */
-import { DetoxErrorCode, type AppExpectation } from 'detox/internals';
+import { DetoxErrorCode, type AppExpectation } from 'detox/client';
 
 import { expect as expectElement } from '../index';
 import { detoxCodeName } from './taxonomy';

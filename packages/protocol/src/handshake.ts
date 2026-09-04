@@ -33,4 +33,12 @@ export const VERSION_SKEW_CLOSE_CODE = 4002;
 export interface ServerInfoNotification {
   protocol: number;
   server: string;
+  /**
+   * Present only when this endpoint records and serves a connection log
+   * (spec 012): the id of this very connection's file. Absent on an older
+   * server and on today's relay, where `detox.log.begin` refuses typed and
+   * `detox.runId` is `undefined`. A relay never passes a node's
+   * through — identity is hop-pairwise, like the rest of this frame.
+   */
+  log?: { runId: string };
 }

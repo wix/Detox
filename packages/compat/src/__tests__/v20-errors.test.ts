@@ -4,7 +4,7 @@
  * URL-blacklist serializer. All three are pure — no transport, no simulator.
  */
 import { describe, it, expect } from 'vitest';
-import { DetoxError, DetoxErrorCode } from 'detox/internals';
+import { DetoxError, DetoxErrorCode } from 'detox/client';
 
 import { toV20Error, withV20Errors, NOT_CONNECTED_MESSAGE } from '../v20-errors';
 import { LaunchArgsEditor } from '../launch-args';

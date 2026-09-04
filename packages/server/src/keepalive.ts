@@ -1,4 +1,5 @@
 import type { WebSocketServer, WebSocket } from 'ws';
+import { serverLog } from './log-sink';
 
 export interface KeepaliveOptions {
   /** How often the server pings every connected client. */
@@ -104,8 +105,9 @@ export function startKeepalive(
 
       if (acc.missed >= maxMissedPongs) {
         const silentFor = formatSeconds(acc.missed * intervalMs);
-        console.error(
+        serverLog.warn(
           `${logPrefix} client went silent for ${acc.missed} pings (~${silentFor}) — closing its connection`,
+          { missed: acc.missed },
         );
         // @issue DTX-6144: a close frame first, terminate one tick later — a paused peer can read why its session ended.
         ws.close(4001, `keepalive: no pong within ~${silentFor} — a long pause ends your session`);
