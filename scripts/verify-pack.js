@@ -63,7 +63,9 @@ const project = fs.mkdtempSync(path.join(os.tmpdir(), 'detox-verify-pack-project
 try {
   // `npm pack` runs the package's own `prepack` (the build + the iOS
   // framework check), so this is the publish path end to end, not a shortcut.
-  const packed = run('npm', ['pack', '--pack-destination', packDest], {
+  // `--ignore-scripts=false`: a user-level `ignore-scripts=true` in ~/.npmrc would
+  // otherwise skip prepack and verify whatever stale dist/ happens to lie around.
+  const packed = run('npm', ['pack', '--ignore-scripts=false', '--pack-destination', packDest], {
     cwd: path.join(repoRoot, 'detox'),
   })
     .trim()

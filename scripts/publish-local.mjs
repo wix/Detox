@@ -203,7 +203,9 @@ function packPackages(version) {
   const tarballs = {};
   for (const pkg of PACKAGES) {
     const dir = path.join(repoRoot, pkg);
-    const out = execFileSync('npm', ['pack'], { cwd: dir, encoding: 'utf8' }).trim().split('\n').pop();
+    // `--ignore-scripts=false`: a user-level `ignore-scripts=true` in ~/.npmrc would
+    // otherwise skip prepack, publishing whatever stale dist/ happens to lie around.
+    const out = execFileSync('npm', ['pack', '--ignore-scripts=false'], { cwd: dir, encoding: 'utf8' }).trim().split('\n').pop();
     const file = path.join(dir, out);
     if (!fs.existsSync(file)) die(`npm pack in ${pkg} produced no tarball (${out})`);
     tarballs[pkg] = file;
