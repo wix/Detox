@@ -136,6 +136,7 @@ class RuntimeDevice {
     const baseLaunchArgs = {
       ...this._currentAppLaunchArgs.get(),
       ...params.launchArgs,
+      newInstance,
     };
 
     if (params.url) {

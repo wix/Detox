@@ -49,7 +49,7 @@ High velocity native mobile development requires us to adopt continuous integrat
 
 The most difficult part of automated testing on mobile is the tip of the testing pyramid - E2E. The core problem with E2E tests is flakiness - tests are usually not deterministic. We believe the only way to tackle flakiness head on is by moving from black box testing to gray box testing. That’s where Detox comes into play.
 
-- **Cross Platform:** Write end-to-end tests in JavaScript for React Native apps (Android & iOS).
+- **Cross Platform:** Write end-to-end tests in JavaScript for React Native apps (Android, iOS, and HarmonyOS).
 - **Debuggable:** Modern async-await API allows breakpoints in asynchronous tests to work as expected.
 - **Automatically Synchronized:** Stops flakiness at the core by monitoring asynchronous operations in your app.
 - **Made For CI:** Execute your E2E tests on CI platforms like Travis CI, Circle CI or Jenkins without grief.
@@ -67,6 +67,21 @@ the _official_ versions compatibility is provided according to the following:
   Newer RN versions might work with Detox, but they've not been thoroughly tested by the Detox team yet.
 
 Although we do not officially support older React Native versions, we do our best to keep Detox compatible with them.
+
+### HarmonyOS (OpenHarmony) Support
+
+HarmonyOS support is available as a third-party driver package:
+
+- **Platform:** HarmonyOS 6.1.0+ (API 23+), for [RNOH](https://gitcode.com/CPF-RN/ohos_react_native) apps (React Native on HarmonyOS)
+- **Driver:** [`detox-driver-harmony`](detox-driver-harmony/) — uses Detox's External driver mechanism (zero changes to Detox core)
+- **UI Engine:** `@kit.TestKit` (HarmonyOS built-in UI testing API)
+- **Verified:** 61/61 e2e tests pass on real device (matchers, actions, expectations, waits, device ops, gray-box sync)
+
+```sh
+npm install detox-driver-harmony --save-dev
+```
+
+See the [driver README](detox-driver-harmony/README.md) for setup and usage.
 
 > In case of a problem with an unsupported version of React Native, please [submit an issue](https://github.com/wix/Detox/issues/new/choose) or write us in our [Discord server](https://discord.gg/CkD5QKheF5) and we will do our best to help out.
 
