@@ -45,7 +45,7 @@
   "scripts": {
     "build": "cd .. && yarn build && yarn build:types",
     "clean": "rm -rf dist",
-    "prepack": "npm run build && node scripts/check_ios_framework.js",
+    "prepack": "npm run clean && npm run build && node scripts/check_ios_framework.js",
     "postinstall": "node scripts/postinstall.js"
   },
   "dependencies": {
