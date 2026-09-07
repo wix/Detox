@@ -18,6 +18,13 @@ export interface ConfigSnapshotClient {
   server: string;
   /** Only when one is configured — auth is opt-in and off by default. */
   token?: string;
+  /**
+   * Milliseconds `allocateDevice` keeps asking while every device is busy
+   * (spec 018). Declared rather than left to the index signature, so the
+   * writer (`compose`) and the reader (the runner's snapshot mapping) are
+   * bound by one type and a rename on either side stops compiling.
+   */
+  allocationTimeout?: number;
   [key: string]: unknown;
 }
 

@@ -4,6 +4,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 
 import WebSocket from 'ws';
 import { Peer, createWebSocketChannel, type WebSocketChannel } from '@detox-remote/core';
@@ -43,7 +44,7 @@ import type {
   DeviceState,
   DeviceType,
 } from '../client';
-import { AbortError, DetoxConnectionError, DetoxError, DetoxErrorCode } from './errors';
+import { AbortError, DetoxConnectionError, DetoxError, DetoxErrorCode, DevicePoolExhaustedError } from './errors';
 import { DetoxAppImpl } from './app';
 import { OperationImpl, OperationRegistry } from './operations';
 import { BlobLaneClient, archiveAppBundle, ensureBlobUploaded } from './blob-upload';
@@ -85,6 +86,16 @@ interface InternalInitOptions {
  */
 const ANNOUNCE_TIMEOUT_MS = 30_000;
 
+/**
+ * How often a waiting `allocateDevice` asks again (spec 018), jittered by
+ * ±20% — jest starts `maxWorkers` waiters in the same instant, and
+ * un-jittered they would knock in lockstep. Not a knob: `allocationTimeout`
+ * is the only promise made about waiting.
+ */
+const POOL_POLL_MS = 5_000;
+
+const nextPollMs = (): number => POOL_POLL_MS * (0.8 + Math.random() * 0.4);
+
 /** The underlying net.Socket handle `ws` keeps private — reached only to unref it. */
 interface UnrefableNetSocket {
   unref?: () => void;
@@ -97,6 +108,20 @@ interface WsWithNetSocket {
 export async function connectSession(options: DetoxConnectOptions): Promise<Detox> {
   const address: DetoxServerAddress =
     typeof options.server === 'string' ? { url: options.server } : options.server;
+  // Spec 018: absence, not `0`, is how a caller says "do not wait". Checked
+  // here because this door has no schema behind it: a `NaN` deadline never
+  // expires, and Node clamps a `NaN` timer to 1ms.
+  const { allocationTimeout } = options;
+  if (
+    allocationTimeout !== undefined &&
+    (!Number.isFinite(allocationTimeout) || allocationTimeout <= 0)
+  ) {
+    throw new DetoxError(
+      `allocationTimeout must be a positive number of milliseconds, got ${JSON.stringify(allocationTimeout)} — ` +
+        'omit it entirely to keep the default, which is not to wait at all',
+      { code: DetoxErrorCode.DETOX_INVALID_ARGUMENT, details: { allocationTimeout } },
+    );
+  }
   const internal = options as DetoxConnectOptions & InternalInitOptions;
   const registry = new OperationRegistry(options.signal, internal.ambient);
 
@@ -122,6 +147,7 @@ export async function connectSession(options: DetoxConnectOptions): Promise<Deto
     address,
     signal: options.signal,
     ambient: internal.ambient,
+    allocationTimeout: options.allocationTimeout,
   });
   // The announce is the server's first frame; since spec 012 it
   // also carries the connection's log id, so the handle is not ready until
@@ -295,6 +321,8 @@ interface DetoxSessionInit {
   signal?: AbortSignal;
   /** The runner-integration ambient provider (@internal) — see {@link connectSession}. */
   ambient?: () => AbortSignal | undefined;
+  /** `allocateDevice`'s patience with a full pool (spec 018), already validated by `connectSession`; absent = none. */
+  allocationTimeout?: number;
 }
 
 class DetoxSession implements Detox {
@@ -304,6 +332,7 @@ class DetoxSession implements Detox {
   readonly #blobLane: BlobLaneClient;
   readonly #sessionSignal: AbortSignal | undefined;
   readonly #ambient: (() => AbortSignal | undefined) | undefined;
+  readonly #allocationTimeout: number | undefined;
   /** Which step the caller is inside (spec 013): read by every request frame and every `$/log` begin. */
   readonly #steps = new StepContext();
   readonly #devices = new Map<string, DetoxDeviceImpl>();
@@ -323,13 +352,14 @@ class DetoxSession implements Detox {
     this.#rejectAnnounced = reject;
   });
 
-  constructor({ socket, channel, registry, address, signal, ambient }: DetoxSessionInit) {
+  constructor({ socket, channel, registry, address, signal, ambient, allocationTimeout }: DetoxSessionInit) {
     this.#channel = channel ?? createWebSocketChannel(socket);
     this.#client = new DetoxClientPeer({ peer: Peer.create(this.#channel), stepOf: () => this.#steps.current() });
     this.#registry = registry;
     this.#blobLane = new BlobLaneClient(address);
     this.#sessionSignal = signal;
     this.#ambient = ambient;
+    this.#allocationTimeout = allocationTimeout;
 
     // The version announce: a server speaking a different wire protocol is
     // refused here, typed, before its frames can mean the wrong thing. The
@@ -401,14 +431,7 @@ class DetoxSession implements Detox {
       signal: options.signal,
       onProgress: options.onProgress,
       execute: async (op) => {
-        const response = await this.#client.allocateDevice(
-          // The query is the driver's own vocabulary, carried verbatim (spec 015).
-          { type: options.type, device: options.device },
-          {
-            signal: op.signal,
-            onProgress: (value) => this.#routeWireProgress(op, value),
-          },
-        );
+        const response = await this.#allocateWaiting(options, op);
         const device = new DetoxDeviceImpl({
           deps: this.#deviceDeps(),
           type: options.type,
@@ -424,6 +447,52 @@ class DetoxSession implements Detox {
       },
     });
     return operation as unknown as DetoxOperation<DetoxDevice<DeviceInfoOf<T>>, 'allocateDevice'>;
+  }
+
+  /**
+   * One allocation attempt, or several inside `allocationTimeout` (spec 018).
+   * `DETOX_POOL_EXHAUSTED` is the only refusal a device released elsewhere can
+   * turn into a success; everything else is the server's final answer.
+   */
+  async #allocateWaiting<T extends DeviceType>(
+    options: AllocateDeviceOptions<T>,
+    op: OperationImpl<unknown>,
+  ): Promise<AllocateDeviceResponse> {
+    const startedAt = Date.now();
+    for (;;) {
+      try {
+        return await this.#client.allocateDevice(
+          // The query is the driver's own vocabulary, carried verbatim (spec 015).
+          { type: options.type, device: options.device },
+          {
+            signal: op.signal,
+            onProgress: (value) => this.#routeWireProgress(op, value),
+          },
+        );
+      } catch (err) {
+        const window = this.#allocationTimeout;
+        if (window === undefined || !(err instanceof DevicePoolExhaustedError)) throw err;
+        const remainingMs = startedAt + window - Date.now();
+        if (remainingMs <= 0) {
+          throw new DevicePoolExhaustedError(err.message, {
+            cause: err,
+            details: { ...err.details, waitedMs: Date.now() - startedAt },
+          });
+        }
+        // The last sleep is trimmed to the window, so the final attempt lands
+        // on the deadline rather than a whole poll short of it.
+        //
+        // The abort is re-thrown as Detox's own `AbortError`: Node's timer
+        // rejects with one that is *also* named `AbortError`, and
+        // `OperationRegistry` skips mapping anything already so named — the
+        // caller would get an error with no numeric `code`.
+        try {
+          await sleep(Math.min(nextPollMs(), remainingMs), undefined, { signal: op.signal });
+        } catch {
+          throw new AbortError(op.signal.reason);
+        }
+      }
+    }
   }
 
   /** Resolves once `$/serverInfo` has arrived; rejects if the socket dies or `signal` aborts first. */

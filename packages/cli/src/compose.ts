@@ -544,6 +544,7 @@ export function composeRun({ config, configPath, configurationName, cwd, env }: 
     client: {
       ...(client.server !== undefined ? { server: client.server } : {}),
       ...(token !== undefined ? { token } : {}),
+      ...(client.allocationTimeout !== undefined ? { allocationTimeout: client.allocationTimeout } : {}),
     } as ConfigSnapshot['client'],
     apps,
     device,

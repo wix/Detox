@@ -14,6 +14,17 @@ export const CLIENT_SETTINGS = [
     help: 'The Detox Server (or relay) this project dials, ws:// or wss://',
   },
   {
+    key: 'allocationTimeout',
+    // Milliseconds, positive: `0` would read as "wait forever" to one reader
+    // and "never wait" to the next, so absence is the only way to say "no
+    // waiting" (spec 018).
+    schema: z.coerce
+      .number('expected a number of milliseconds, e.g. 600000')
+      .positive('expected a positive number of milliseconds; omit the key to not wait'),
+    env: 'DETOX_CLIENT_ALLOCATION_TIMEOUT',
+    help: 'How long allocateDevice keeps asking while every device is busy, in ms (default: it does not)',
+  },
+  {
     key: 'token',
     schema: z.string().min(1),
     // No `strictEnv`: unlike a daemon's own token, this one presents to a

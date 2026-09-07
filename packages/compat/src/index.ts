@@ -107,6 +107,14 @@ export interface CompatConfig {
    * server can import.
    */
   deviceType?: DeviceType;
+  /**
+   * `client.allocationTimeout` (spec 018), in milliseconds: how long init
+   * keeps asking for a device while the fleet is full. Jest starts
+   * `maxWorkers` environments at once and puts no timeout of its own on
+   * `setup()`, so without this a full fleet fails whole files on contention
+   * alone.
+   */
+  allocationTimeout?: number;
 }
 
 /**
@@ -285,6 +293,7 @@ async function doInit(config: CompatConfig, signal?: AbortSignal): Promise<void>
   // before init and false anywhere else.
   const initOptions = {
     server: { url: config.server.url, headers: config.server.headers },
+    ...(config.allocationTimeout !== undefined ? { allocationTimeout: config.allocationTimeout } : {}),
     signal,
     ambient: () => box.ambient,
     unrefSocket: box.unrefSocket,

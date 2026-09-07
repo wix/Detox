@@ -40,6 +40,7 @@ const FIXTURES: Record<string, { wire: string; parsed: unknown }> = {
   appOutputBudget: { wire: '1048576', parsed: 1048576 },
   server: { wire: 'ws://127.0.0.1:8080', parsed: 'ws://127.0.0.1:8080' },
   autostart: { wire: 'n/a — config-only, no flag or env', parsed: false },
+  allocationTimeout: { wire: '600000', parsed: 600_000 },
 };
 
 describe.each(Object.entries(SECTIONS))('%s settings', (_sectionName, descriptors) => {

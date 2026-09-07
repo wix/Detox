@@ -100,6 +100,10 @@ export function mapSnapshot(snapshot: ConfigSnapshot): CompatConfig {
         ? { headers: { Authorization: `Bearer ${client.token}` } }
         : {}),
     },
+    // Spec 018: milliseconds, straight through to `connect` — the CLI validated it.
+    ...(client.allocationTimeout !== undefined
+      ? { allocationTimeout: client.allocationTimeout }
+      : {}),
     // Verbatim: the snapshot app shape is the compat app shape (name,
     // bundleId?, binaryPath?, launchArgs? all ride through).
     apps: (snapshot.apps ?? []),

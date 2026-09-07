@@ -210,6 +210,19 @@ export interface DetoxCallOptions {
 export interface DetoxConnectOptions extends DetoxCallOptions {
   /** The Detox Server: a URL for the simple case, an address for the rest. */
   server: string | DetoxServerAddress;
+  /**
+   * How long {@link Detox.allocateDevice} keeps asking when every slot is
+   * taken (spec 018), in milliseconds. Absent: one attempt, and a full pool
+   * refuses immediately — the behaviour every version so far has had.
+   *
+   * Only `DETOX_POOL_EXHAUSTED` is waited out: a refusal that can never
+   * change (no such device, bad token) is answered on the first attempt
+   * whatever this says. When the window closes, that same
+   * `DevicePoolExhaustedError` is thrown, with `details.waitedMs` added.
+   *
+   * Same name and same milliseconds in the config file: `client.allocationTimeout`.
+   */
+  allocationTimeout?: number;
 }
 
 /** Narrowing query describing which device to allocate. */
