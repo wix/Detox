@@ -5,7 +5,6 @@ describe('Network Synchronization', () => {
 
   beforeAll(async () => {
     mockServer.init();
-    await device.reverseTcpPort(mockServer.port);
   });
 
   afterAll(async () => {

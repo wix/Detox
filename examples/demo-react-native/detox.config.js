@@ -51,8 +51,7 @@ module.exports = {
       type: "ios.simulator",
       headless: Boolean(process.env.CI),
       device: {
-        type: "iPhone 15 Pro Max",
-        os: "17.0.1"
+        type: "iPhone 17 Pro"
       }
     },
     emulator: {
@@ -95,18 +94,6 @@ module.exports = {
     "ios.sim.debug": {
       "device": "simulator",
       "app": "ios.debug"
-    },
-    "ios.manual": {
-      "type": "ios.manual",
-      "behavior": {
-        "launchApp": "manual"
-      },
-      "artifacts": false,
-      "session": {
-        "autoStart": true,
-        "server": "ws://localhost:8099",
-        "sessionId": "com.wix.demo.react.native"
-      }
     },
     "android.emu.debug": {
       "device": "emulator",

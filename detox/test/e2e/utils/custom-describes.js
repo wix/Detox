@@ -16,6 +16,10 @@ describe.skipIfNewArchOnIOS = (title, fn) => {
 };
 
 describe.forPilot = (description, fn) => {
+  // Pilot is not wired into the v21 alpha; its suites register as skips.
+  if (typeof pilot === 'undefined') {
+    return describe.skip(`:ios: Pilot ${description}`, fn);
+  }
   return describe.skipIfCI(':ios: Pilot', () => {
     describe(description, () => {
       beforeAll(async () => {

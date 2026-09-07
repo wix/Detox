@@ -254,3 +254,29 @@ Detox-ios.tbz
 yalc.lock
 /scripts/publishing-e2e/
 .npmrc
+
+############
+# Detox v21
+############
+# Build output
+detox/dist/
+*.tgz
+
+# Test receipts (written by scripts/accept.js and scripts/parity.js)
+.detox-accept-receipt.json
+.detox-accept-census.json
+.detox-parity-census.json
+
+# Stray tsc emit next to sources (never invoke tsc directly on a file)
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+# The jest `expect` augmentation is hand-written, not tsc output.
+!packages/compat/src/jest/expect-augmentation.d.ts
+detox/src/*.js
+detox/src/*.js.map
+detox/src/*.d.ts
+detox/src/client/**/*.js
+detox/src/client/**/*.js.map
+detox/src/client/**/*.d.ts

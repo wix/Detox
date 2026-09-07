@@ -1,12 +1,11 @@
 {
   "name": "detox-demo-native-ios",
-  "version": "20.46.0",
+  "version": "21.0.0-alpha.0",
   "private": true,
   "devDependencies": {
     "detox": "workspace:*"
   },
   "detox": {
-    "specs": "",
     "apps": {
       "ios.debug": {
         "type": "ios.app",
@@ -23,8 +22,7 @@
       "simulator": {
         "type": "ios.simulator",
         "device": {
-          "type": "iPhone 15 Pro Max",
-          "os": "17.0.1"
+          "type": "iPhone 17 Pro"
         }
       }
     },

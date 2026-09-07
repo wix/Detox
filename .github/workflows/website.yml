@@ -25,12 +25,16 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Install and build
+      - name: Security check (npq)
+        continue-on-error: true
         working-directory: ./website
         env:
           NPQ_PKG_MGR: yarn
+        run: npx npq install --dry-run
+      - name: Install and build
+        working-directory: ./website
         run: |
-          yes | npx npq install
+          yarn install
           yarn build
   gh-release:
     if: github.event_name != 'pull_request'
@@ -50,15 +54,20 @@ jobs:
           echo "${{ secrets.GH_PAGES_DEPLOY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Security check (npq)
+        continue-on-error: true
+        working-directory: ./website
+        env:
+          NPQ_PKG_MGR: yarn
+        run: npx npq install --dry-run
       - name: Release to GitHub Pages
         env:
           USE_SSH: true
           GIT_USER: git
-          NPQ_PKG_MGR: yarn
         run: |
           git config --global user.email "mobile1@wix.com"
           git config --global user.name "mobilewix"
           cd website/
-          yes | npx npq install
+          yarn install
           yarn build
           yarn docusaurus deploy

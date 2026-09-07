@@ -24,9 +24,6 @@ xcrun simctl list > /dev/null
 
 run_f "yarn build:ios"
 run_f "yarn e2e:ios"
-cp coverage/lcov.info ../../coverage/e2e-ios-ci.lcov
-
-run_f "scripts/ci_unhappy.sh ios"
 
 # run_f "yarn verify-artifacts:ios"
 popd

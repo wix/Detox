@@ -1,0 +1,14 @@
+{
+  "name": "detox-compat",
+  "version": "21.0.0-alpha.0",
+  "private": true,
+  "description": "Detox 20 compatibility surface over the Detox v21 client",
+  "main": "src/index.ts",
+  "dependencies": {
+    "detox": "workspace:*"
+  },
+  "devDependencies": {
+    "@detox-remote/protocol": "workspace:*"
+  },
+  "license": "MIT"
+}

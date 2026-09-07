@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@detox-remote/protocol": ["packages/protocol/src/index.ts"],
+      "@detox-remote/core": ["packages/core/src/index.ts"],
+      "@detox-remote/server": ["packages/server/src/index.ts"],
+      "@detox-remote/driver-ios": ["packages/driver-ios/src/index.ts"],
+      "@detox-remote/perfetto": ["packages/perfetto/src/index.ts"],
+      "detox-relay": ["packages/relay/src/index.ts"],
+      "detox": ["packages/compat/src/index.ts"],
+      "detox/client": ["detox/src/client.ts"],
+      "detox/server": ["packages/server/src/index.ts"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "detox/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

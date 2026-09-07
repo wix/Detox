@@ -24,3 +24,20 @@ if [ -f yarn.lock ] && git diff --cached --name-only | grep -q "yarn.lock"; then
     exit 1
   }
 fi
+
+# Whole-repo typecheck must stay green.
+yarn typecheck || exit 1
+
+# Lint only STAGED .ts/.mjs/.cjs/.js files that the v21 eslint config covers
+# (dist and the legacy workspaces are ignored by eslint.config.mjs).
+staged=$(git diff --cached --name-only --diff-filter=ACM --find-renames=100% \
+  | { grep -E '\.(ts|mjs|cjs|js)$' || true; } \
+  | { grep -vE '(^|/)dist/' || true; })
+
+if [ -n "$staged" ]; then
+  echo "pre-commit: linting staged files:"
+  echo "$staged"
+  echo "$staged" | xargs yarn eslint --no-warn-ignored || exit 1
+else
+  echo "pre-commit: no staged .ts/.mjs/.js files to lint"
+fi

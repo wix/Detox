@@ -1,0 +1,366 @@
+/**
+ * Acceptance criterion for spec 005.
+ *
+ * This file is frozen and append-only. It speaks only the public dialect:
+ * `detox/client` — never `@detox-remote/*`. The only other import allowed is
+ * `./helpers/*`, which is test scaffolding, not product API.
+ *
+ * The utilities dialect is reached through `./helpers/typed-door` — a
+ * TEMPORARY shim carrying the forward-declared surface, because accept files
+ * are frozen and carry no scaffolding types: when the implementation widens
+ * `DetoxDevice`, the shim collapses to re-exports and an identity
+ * `utilitiesOf`, and this frozen file starts typechecking against the real
+ * public API without changing.
+ *
+ * Every test runs on a PROBE simulator the test itself creates and deletes.
+ * Stock simulators on this Mac belong to a human; boots and shutdowns are the
+ * fixture tradition's accepted spending, but this spec's tests mutate device
+ * CONTENT — erase, app installs, keychain, status bar — and a developer's
+ * own simulator is not the suite's to wipe. A probe starts clean and is
+ * deleted in `finally`.
+ */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import { connect, DetoxErrorCode } from 'detox/client';
+import type { DetoxProgressEvent } from 'detox/client';
+
+import { startServer } from './helpers/server';
+import { utilitiesOf } from './helpers/typed-door';
+import { assertDetoxError, rejectionOf } from './helpers/errors';
+import {
+  buildStubAppExternally,
+  installAppExternally,
+  isAppInstalledExternally,
+} from './helpers/apps';
+import { startProbeWebServer } from './helpers/probe-server';
+import {
+  biometricEnrollmentState,
+  createSimulatorExternally,
+  deleteSimulatorExternally,
+  launchAppExternally,
+  shutdownSimulatorExternally,
+  simulatorState,
+  statusBarOverrides,
+  waitUntil,
+} from './helpers/simctl';
+
+const namesOf = (events: readonly DetoxProgressEvent[]): string[] =>
+  events.map((event) => event.name);
+
+/**
+ * Test 1 — the wipe hands back a live device, and the wipe is real.
+ *
+ * Stated as observations: after `await resetContentAndSettings()` the handle
+ * says `booted`, `simctl` says `Booted`, and a planted app is GONE — erasure
+ * proven physically, liveness proven physically, no `device.boot()` required
+ * in the caller's hands. The physical boot reports a `boot` child operation
+ * (the child exists iff a physical boot happens — here one always does).
+ */
+test('resetContentAndSettings hands back a live, erased device', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec005-reset', t.signal);
+  try {
+    await using server = await startServer({ signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
+    await using device = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+    assert.equal(device.info.udid, probe.udid);
+
+    const appPath = await buildStubAppExternally('com.detox.spec005.planted', t.signal);
+    await installAppExternally(probe.udid, appPath, t.signal);
+    assert.ok(
+      await isAppInstalledExternally(probe.udid, 'com.detox.spec005.planted', t.signal),
+      'precondition: the planted app must be visible before the wipe',
+    );
+
+    const onProgress = t.mock.fn((_event: DetoxProgressEvent): void => {});
+    await utilitiesOf(device).resetContentAndSettings({ onProgress });
+
+    assert.equal(device.state, 'booted', 'the wipe returns a live device');
+    assert.equal(
+      await simulatorState(probe.udid, t.signal),
+      'Booted',
+      'liveness is physical, not a cached handle state',
+    );
+    assert.ok(
+      !(await isAppInstalledExternally(probe.udid, 'com.detox.spec005.planted', t.signal)),
+      'the wipe is physical: the planted app must be gone',
+    );
+    assert.ok(
+      namesOf(onProgress.mock.calls.map(({ arguments: [event] }) => event)).includes('boot'),
+      'a physical boot happened, so a boot child must be reported',
+    );
+  } finally {
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});
+
+/**
+ * Test 2 — a cancelled wipe stops the choreography and corrupts nothing.
+ *
+ * The abort lands after the wipe demonstrably started (the device left
+ * `Booted`). The binding rule — an in-flight `simctl erase` child is NEVER
+ * killed, only awaited — is not deterministically reachable from here: erase
+ * completes in well under a second, so no public-dialect test can pin the
+ * abort inside it. That rule is gated at unit level; what the public dialect
+ * CAN pin is the choreography half: the rejection is a typed abort carrying
+ * the caller's reason, a cancelled wipe never boots the device back up, and
+ * the device comes out cold but UNCORRUPTED and still owned — the same handle
+ * boots it cleanly afterwards. Whether the erase itself had run to completion
+ * or had not started is deliberately unobservable and unpinned.
+ */
+test('a cancelled reset stops the choreography and corrupts nothing', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec005-abort', t.signal);
+  try {
+    await using server = await startServer({ signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
+    await using device = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+
+    const controller = new AbortController();
+    const reason = new Error('spec-005 cancels the wipe');
+    const resetting = utilitiesOf(device).resetContentAndSettings({
+      signal: controller.signal,
+    });
+    // Adopted before anything can reject it: a red run must read as an
+    // assertion failure, never as an unhandled rejection racing a timeout.
+    const rejection = rejectionOf(resetting, 'cancelled wipe');
+
+    await waitUntil(
+      async () => (await simulatorState(probe.udid, t.signal)) !== 'Booted',
+      {
+        signal: t.signal,
+        intervalMs: 50,
+        description: 'the wipe to demonstrably start (the device leaves Booted)',
+      },
+    );
+    controller.abort(reason);
+
+    const err = assertDetoxError(await rejection, 'cancelled wipe');
+    assert.equal(err.name, 'AbortError');
+    assert.equal(err.cause, reason, 'the rejection carries the caller\'s reason');
+
+    // A cancelled wipe never boots: the device settles cold and stays there.
+    await waitUntil(
+      async () => (await simulatorState(probe.udid, t.signal)) === 'Shutdown',
+      {
+        timeoutMs: 60_000,
+        signal: t.signal,
+        description: 'the cancelled wipe to settle cold (a cancelled wipe never boots)',
+      },
+    );
+
+    // Uncorrupted and still owned: the same handle brings it back to life.
+    await device.boot();
+    assert.equal(
+      device.state,
+      'booted',
+      'the allocation survives its cancelled wipe, and the device boots cleanly',
+    );
+  } finally {
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});
+
+/**
+ * Test 3 — utilities are addressed by the registry, never by the device.
+ *
+ * The owner-check rule, inherited by the new surface before it exists: a
+ * released handle's utility call answers typed `DETOX_STALE_HANDLE` and never
+ * touches the device's next owner. `resetContentAndSettings` is the
+ * load-bearing case — a stale wipe that leaked through would ERASE someone
+ * else's session. The probe is allocated by udid, so "the next owner holds
+ * the very device the dead handle used to name" is a fact, not a probability.
+ */
+test('a released handle cannot reach the utilities — or wipe its successor', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec005-stale', t.signal);
+  try {
+    await using server = await startServer({ signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
+
+    const first = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+    await first.release();
+
+    // The same device moves on to its next owner…
+    await using second = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+    assert.equal(second.info.udid, probe.udid);
+
+    // …and the dead handle reaches nothing, wipe included.
+    const stale = utilitiesOf(first);
+    for (const [label, call] of [
+      ['setLocation', () => stale.setLocation(32.0853, 34.7818)],
+      ['resetContentAndSettings', () => stale.resetContentAndSettings()],
+    ] as const) {
+      const err = assertDetoxError(
+        await rejectionOf(call(), `${label} on a released handle`),
+        `stale ${label}`,
+      );
+      assert.equal(err.code, DetoxErrorCode.DETOX_STALE_HANDLE, `stale ${label}`);
+    }
+    assert.equal(
+      await simulatorState(probe.udid, t.signal),
+      'Booted',
+      'the refused calls must not have touched the next owner — no shutdown, no wipe',
+    );
+    assert.equal(second.state, 'booted', 'the next owner\'s handle must be unaffected');
+  } finally {
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});
+
+/**
+ * Test 4 — `uninstallApp` removes exactly what it names, tolerates absence,
+ * and honors an already-lost race.
+ *
+ * Three gates in one allocation: an aborted-before-start call touches nothing
+ * (AbortSignal-first, priced at the cheapest observable point); a real
+ * uninstall removes the named app and ONLY the named app (as with
+ * `sendToHome`, a utility that guesses or over-reaches is invisible without a
+ * sibling to witness); and a repeat of the same uninstall resolves —
+ * idempotent by the tool's own semantics (see the dialect pin above).
+ */
+test('uninstallApp removes exactly what it names, and absence is success', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec005-uninstall', t.signal);
+  try {
+    await using server = await startServer({ signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
+    await using device = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+
+    for (const bundleId of ['com.detox.spec005.doomed', 'com.detox.spec005.witness']) {
+      const appPath = await buildStubAppExternally(bundleId, t.signal);
+      await installAppExternally(probe.udid, appPath, t.signal);
+      assert.ok(
+        await isAppInstalledExternally(probe.udid, bundleId, t.signal),
+        `precondition: ${bundleId} must be installed`,
+      );
+    }
+    const utils = utilitiesOf(device);
+
+    const reason = new Error('spec-005 aborts before the call');
+    const err = assertDetoxError(
+      await rejectionOf(
+        utils.uninstallApp('com.detox.spec005.doomed', { signal: AbortSignal.abort(reason) }),
+        'uninstall with a pre-aborted signal',
+      ),
+      'pre-aborted uninstall',
+    );
+    assert.equal(err.name, 'AbortError');
+    assert.ok(
+      await isAppInstalledExternally(probe.udid, 'com.detox.spec005.doomed', t.signal),
+      'an aborted-before-start call must touch nothing',
+    );
+
+    await utils.uninstallApp('com.detox.spec005.doomed');
+    assert.ok(
+      !(await isAppInstalledExternally(probe.udid, 'com.detox.spec005.doomed', t.signal)),
+      'the named app must be gone',
+    );
+    assert.ok(
+      await isAppInstalledExternally(probe.udid, 'com.detox.spec005.witness', t.signal),
+      'the sibling app must be untouched — uninstall removes exactly what it names',
+    );
+
+    await utils.uninstallApp('com.detox.spec005.doomed');
+    assert.ok(
+      await isAppInstalledExternally(probe.udid, 'com.detox.spec005.witness', t.signal),
+      'uninstalling an absent app succeeds and still touches nothing else',
+    );
+  } finally {
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});
+
+/**
+ * Test 5 — the quick utilities act on the owned device, and every utility
+ * with ANY external observable is gated on it.
+ *
+ * Plain resolution alone cannot expose a no-op — prove what is provable.
+ * Three ground truths exist without an app under test, and this test uses
+ * all three:
+ *  - the status bar: `simctl status_bar list` reads overrides back;
+ *  - `openURL`: the simulator shares the host's loopback, so a URL pointing
+ *    at a witness server MUST produce a request bearing the token path —
+ *    Safari is warmed externally first because its cold first open can
+ *    outlive `simctl openurl`'s own ack timeout;
+ *  - biometric enrollment: a persistent notify state `notifyutil -g` reads
+ *    back on the device itself.
+ * The rest — location, face/finger match events, keychain — have no external
+ * observable without an app under test (match events are one-shot
+ * notifications, not state; Safari's geolocation sits behind an untappable
+ * permission prompt): their gate here is plain resolution on an owned,
+ * booted device, and the unit suite must pin the exact command each verb
+ * issues — a silent no-op fails there, not here. Their end-to-end truth is
+ * covered by the app-gateway spec's scenarios.
+ */
+test('the quick utilities act on the owned device; every external observable gates', async (t) => {
+  const probe = await createSimulatorExternally('detox-spec005-utils', t.signal);
+  const web = await startProbeWebServer();
+  try {
+    await using server = await startServer({ signal: t.signal });
+    await using detox = await connect({ server: server.address, signal: t.signal });
+    await using device = await detox.allocateDevice({
+      type: 'ios.simulator',
+      device: { deviceId: probe.udid },
+    });
+    const utils = utilitiesOf(device);
+
+    await utils.setStatusBar({ time: '12:34' });
+    assert.match(
+      await statusBarOverrides(probe.udid, t.signal),
+      /12:34/,
+      'the override is physical: simctl itself must report it',
+    );
+    await utils.resetStatusBar();
+    assert.doesNotMatch(
+      await statusBarOverrides(probe.udid, t.signal),
+      /12:34/,
+      'reset clears the override physically',
+    );
+
+    // Fixture preparation, not contract: a cold Safari is too slow to gate on.
+    await launchAppExternally(probe.udid, 'com.apple.mobilesafari', t.signal);
+    await utils.openURL(web.urlFor('/opened-by-spec005'));
+    await web.sawRequest('/opened-by-spec005', { signal: t.signal });
+
+    await utils.setBiometricEnrollment(true);
+    assert.equal(
+      await biometricEnrollmentState(probe.udid, t.signal),
+      '1',
+      'enrollment is physical: the device itself must report it',
+    );
+    await utils.matchFace();
+    await utils.unmatchFace();
+    await utils.matchFinger();
+    await utils.unmatchFinger();
+    await utils.setBiometricEnrollment(false);
+    assert.equal(
+      await biometricEnrollmentState(probe.udid, t.signal),
+      '0',
+      'un-enrollment reads back too',
+    );
+
+    await utils.setLocation(32.0853, 34.7818);
+    await utils.clearKeychain();
+  } finally {
+    await web.close();
+    await shutdownSimulatorExternally(probe.udid).catch(() => undefined);
+    await deleteSimulatorExternally(probe.udid).catch(() => undefined);
+  }
+});

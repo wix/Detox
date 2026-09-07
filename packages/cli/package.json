@@ -1,0 +1,18 @@
+{
+  "name": "@detox-remote/cli",
+  "version": "21.0.0-alpha.0",
+  "private": true,
+  "description": "The `detox` bin — test/build/server/relay verbs and the config reader",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@detox-remote/core": "workspace:*",
+    "@detox-remote/perfetto": "workspace:*",
+    "@detox-remote/protocol": "workspace:*",
+    "@detox-remote/server": "workspace:*",
+    "detox-relay": "workspace:*",
+    "ws": "^8.18.0",
+    "zod": "^4.4.3"
+  },
+  "license": "MIT"
+}

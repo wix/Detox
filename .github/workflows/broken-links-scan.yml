@@ -16,8 +16,11 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Install dependencies
-        run: yes | npx npq install --immutable
+      - name: Security check (npq)
+        continue-on-error: true
+        run: npx npq install --immutable --dry-run
         env:
           NPQ_PKG_MGR: yarn
+      - name: Install dependencies
+        run: yarn install --immutable
       - run: yarn remark -r .remarkrc.nightly.mjs .
