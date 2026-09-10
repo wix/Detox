@@ -125,6 +125,8 @@ const webViewFormWithScrolling = `
             <label for="fname">Your name:</label><br>
             <input type="text" id="fname" name="fname" maxlength="10"><br>
             <input type="submit" id="submit" value="Submit" onclick="document.getElementById('resultFname').innerHTML = document.getElementById('fname').value; return false;">
+
+            <input type="text" id="uncapped" name="uncapped"><br>
         </form>
 
         <h2>Form Results</h2>
