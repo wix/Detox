@@ -26,8 +26,21 @@ static BOOL __subviewFound = NO;
 static UIView* __subview = nil;
 static __weak UIView* __targetBar = nil;
 
-static BOOL _dtx_shouldSkipForVisibility(UIView* view)
+static UIView* _dtx_owningView(CALayer* layer)
 {
+	for (; layer != nil; layer = layer.superlayer)
+	{
+		if ([layer.delegate isKindOfClass:UIView.class])
+		{
+			return (UIView*)layer.delegate;
+		}
+	}
+	return nil;
+}
+
+static BOOL _dtx_shouldSkipForVisibility(CALayer* layer)
+{
+	UIView* view = _dtx_owningView(layer);
 	if (!view) return NO;
 	
 	if (__targetBar && [view isDescendantOfView:__targetBar])
@@ -142,7 +155,7 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 							
 							if(__subviewFound == YES)
 							{
-								if(_dtx_shouldSkipForVisibility(delegate))
+								if(_dtx_shouldSkipForVisibility(self))
 								{
 									return;
 								}
@@ -179,7 +192,7 @@ static void (*__orig_VKMapView_renderInContext)(id self, SEL _cmd, CGContextRef 
 								return;
 							}
 							
-							if(_dtx_shouldSkipForVisibility(delegate))
+							if(_dtx_shouldSkipForVisibility(self))
 							{
 								return;
 							}
