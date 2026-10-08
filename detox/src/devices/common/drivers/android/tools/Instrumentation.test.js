@@ -146,6 +146,23 @@ describe('Instrumentation', () => {
       await invokeTerminationCallback();
       expect(userTerminationCallback).toHaveBeenCalled();
     });
+
+    it('should ignore a late close of a process that was already replaced by a relaunch', async () => {
+      await uut.launch(deviceId, bundleId, []);
+      const staleTerminationFn = extractTerminationCallback();
+      await uut.terminate();
+
+      const nextChildProcess = { on: jest.fn(), stdout: { setEncoding: jest.fn(), on: jest.fn() } };
+      const nextInstrumentationProcess = { childProcess: nextChildProcess };
+      adb.spawnInstrumentation.mockReturnValue(nextInstrumentationProcess);
+      await uut.launch(deviceId, bundleId, []);
+
+      await staleTerminationFn();
+
+      expect(childProcessUtils.interruptProcess).not.toHaveBeenCalledWith(nextInstrumentationProcess);
+      expect(userTerminationCallback).not.toHaveBeenCalled();
+      expect(uut.isRunning()).toEqual(true);
+    });
   });
 
   describe('user-initiated termination', () => {

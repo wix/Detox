@@ -20,10 +20,11 @@ class Instrumentation {
 
     const testRunner = await this.adb.getInstrumentationRunner(deviceId, bundleId);
 
-    this.instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnArgs, testRunner);
-    this.instrumentationProcess.childProcess.stdout.setEncoding('utf8');
-    this.instrumentationProcess.childProcess.stdout.on('data', this._onLogData);
-    this.instrumentationProcess.childProcess.on('close', this._onTerminated);
+    const instrumentationProcess = this.adb.spawnInstrumentation(deviceId, spawnArgs, testRunner);
+    this.instrumentationProcess = instrumentationProcess;
+    instrumentationProcess.childProcess.stdout.setEncoding('utf8');
+    instrumentationProcess.childProcess.stdout.on('data', this._onLogData);
+    instrumentationProcess.childProcess.on('close', () => this._onTerminated(instrumentationProcess));
   }
 
   async terminate() {
@@ -48,8 +49,9 @@ class Instrumentation {
     await this.userLogListenFn(data);
   }
 
-  async _onTerminated() {
-    if (this.instrumentationProcess) {
+  async _onTerminated(closedProcess) {
+    // A killed process can emit 'close' after a relaunch has spawned its successor; it must not tear that one down
+    if (this.instrumentationProcess && this.instrumentationProcess === closedProcess) {
       await this._killProcess();
       await this.userTerminationFn();
     }
