@@ -1,7 +1,7 @@
-jest.mock('proper-lockfile');
+jest.mock('@bybrave/proper-lockfile2');
 
+const plock = require('@bybrave/proper-lockfile2');
 const fs = require('fs-extra');
-const plock = require('proper-lockfile');
 
 const ExclusiveLockFile = require('./ExclusiveLockfile');
 const tempfile = require('./tempfile');
