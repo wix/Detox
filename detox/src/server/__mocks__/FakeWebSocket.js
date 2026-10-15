@@ -5,12 +5,17 @@ class FakeWebSocket {
     this._events = {};
 
     this.send = jest.fn(this.send.bind(this));
+    this.terminate = jest.fn();
     this.socket = new FakeNetworkSocket(this);
   }
 
   on(eventType, callback) {
     this._events[eventType] = this._events[eventType] || [];
     this._events[eventType].push(callback);
+  }
+
+  removeListener(eventType, callback) {
+    this._events[eventType] = (this._events[eventType] || []).filter(cb => cb !== callback);
   }
 
   send() {}
