@@ -17060,7 +17060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.x, lodash@npm:4.x.x, lodash@npm:^4.14.1, lodash@npm:^4.17.11, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5":
+"lodash@npm:^4.14.1, lodash@npm:^4.17.11, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
@@ -23413,10 +23413,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root@workspace:."
   dependencies:
-    chalk: "npm:^4.0.0"
     dictionary-en: "npm:^3.1.0"
     husky: "npm:^9.0.0"
-    lodash: "npm:4.17.x"
     markdownlint-cli: "npm:^0.29.0"
     remark: "npm:^14.0.1"
     remark-cli: "npm:^10.0.0"
@@ -23442,8 +23440,6 @@ __metadata:
     retext-spell: "npm:^5.1.0"
     retext-syntax-mentions: "npm:^3.1.0"
     retext-syntax-urls: "npm:^3.1.1"
-    semver: "npm:5.x.x"
-    shell-utils: "npm:1.x.x"
     surge: "npm:^0.24.0"
     unified: "npm:^10.1.0"
     zx: "npm:^8.0.0"
@@ -23851,7 +23847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:2 || 3 || 4 || 5, semver@npm:5.x.x, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0, semver@npm:^5.7.2":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.3.0, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0, semver@npm:^5.7.2":
   version: 5.7.2
   resolution: "semver@npm:5.7.2"
   bin:
@@ -24142,15 +24138,6 @@ __metadata:
   version: 1.8.3
   resolution: "shell-quote@npm:1.8.3"
   checksum: 10/5473e354637c2bd698911224129c9a8961697486cff1fb221f234d71c153fc377674029b0223d1d3c953a68d451d79366abfe53d1a0b46ee1f28eb9ade928f4c
-  languageName: node
-  linkType: hard
-
-"shell-utils@npm:1.x.x":
-  version: 1.0.10
-  resolution: "shell-utils@npm:1.0.10"
-  dependencies:
-    lodash: "npm:4.x.x"
-  checksum: 10/bfdd08082ec15f6443f71fec403b4bf28291acb83869370b82b92aff6d3f34bc389d72fdb96be148949773c04a4dda4a6bf0e5ae1a70741cce217c596d9d0256
   languageName: node
   linkType: hard
 
