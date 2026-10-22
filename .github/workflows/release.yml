@@ -63,6 +63,7 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
+          submodules: recursive
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
           node-version: '24.22.1'
