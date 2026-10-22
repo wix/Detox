@@ -4,6 +4,9 @@ inputs:
   documentation-version:
     description: Docs snapshot to build and validate; empty to skip
     default: ''
+  xcode-version:
+    description: Xcode that builds the shipped iOS framework and XCUITest runner (the runner image defaults to an older one)
+    default: '26.1.1'
 runs:
   using: composite
   steps:
@@ -23,6 +26,13 @@ runs:
         node ../.yarn/releases/yarn-4.12.0.cjs lint
         node ../.yarn/releases/yarn-4.12.0.cjs unit
         node --test ../scripts/release/*.test.cjs
+    - name: Select Xcode
+      shell: bash
+      env:
+        XCODE_VERSION: ${{ inputs.xcode-version }}
+      run: |
+        sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
+        xcodebuild -version
     - name: Build iOS artifacts
       shell: bash
       working-directory: detox
