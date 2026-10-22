@@ -1,0 +1,39 @@
+name: Build release packages
+description: Install, test and build the native artifacts that the detox and detox-cli tarballs contain. Expects plan.json in RELEASE_DIR.
+inputs:
+  documentation-version:
+    description: Docs snapshot to build and validate; empty to skip
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Install locked dependencies
+      shell: bash
+      env:
+        DETOX_DISABLE_POSTINSTALL: true
+        DETOX_DISABLE_POD_INSTALL: true
+      run: node .yarn/releases/yarn-4.12.0.cjs install --immutable
+    - name: Set version and generate documentation for stable releases
+      shell: bash
+      run: node scripts/release/index.cjs set-version
+    - name: Test
+      shell: bash
+      working-directory: detox
+      run: |
+        node ../.yarn/releases/yarn-4.12.0.cjs lint
+        node ../.yarn/releases/yarn-4.12.0.cjs unit
+        node --test ../scripts/release/*.test.cjs
+    - name: Build iOS artifacts
+      shell: bash
+      working-directory: detox
+      run: scripts/pack_ios.sh
+    - name: Build Android artifacts
+      shell: bash
+      working-directory: detox/android
+      run: ./gradlew clean detox:publish -Dversion="$(node -p "require('../package.json').version")"
+      env:
+        JAVA_HOME: ${{ env.JAVA_HOME_17_arm64 }}
+    - name: Validate versioned documentation
+      if: inputs.documentation-version != ''
+      shell: bash
+      run: node .yarn/releases/yarn-4.12.0.cjs workspace website build

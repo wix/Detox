@@ -60,7 +60,7 @@ function validatePackageFiles(files, pkg) {
 function pack(directory) {
   check(
     compareVersions(exec('npm', ['--version']).trim(), '11.17.0') >= 0,
-    'Package preparation requires npm >=11.17.0 (Node 24.19.0); older npm can run prepare despite --ignore-scripts'
+    'Package preparation requires npm >=11.17.0 (Node 24.22.1); older npm can run prepare despite --ignore-scripts'
   );
   fs.mkdirSync(directory, { recursive: true });
   return adapter.packages.map((spec) => {
