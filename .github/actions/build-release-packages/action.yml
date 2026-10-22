@@ -30,9 +30,11 @@ runs:
     - name: Build Android artifacts
       shell: bash
       working-directory: detox/android
-      run: ./gradlew clean detox:publish -Dversion="$(node -p "require('../package.json').version")"
-      env:
-        JAVA_HOME: ${{ env.JAVA_HOME_17_arm64 }}
+      # The env context only holds workflow-defined variables, not the runner image's.
+      run: |
+        : "${JAVA_HOME_17_arm64:?Java 17 is not available on this runner}"
+        export JAVA_HOME="$JAVA_HOME_17_arm64"
+        ./gradlew clean detox:publish -Dversion="$(node -p "require('../package.json').version")"
     - name: Validate versioned documentation
       if: inputs.documentation-version != ''
       shell: bash
