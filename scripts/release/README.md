@@ -64,4 +64,6 @@ Artifacts are kept for 90 days.
 node --test scripts/release/*.test.cjs
 ```
 
-Packing needs the macOS-built native artifacts, so a Release dry run is the end-to-end check.
+The `Release prepare check` workflow runs on pull requests that touch release or native build files.
+It uses the same build steps as the Release workflow (`.github/actions/build-release-packages`) under a throwaway version, then packs and validates both tarballs and uploads them for 3 days.
+It publishes nothing and does not check authorization, native CI or the release commit; a Release dry run on `master` covers those.

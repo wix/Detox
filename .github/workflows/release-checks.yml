@@ -5,11 +5,13 @@ on:
     branches: [master]
     paths:
       - '.github/workflows/release*.yml'
+      - '.github/actions/build-release-packages/**'
       - 'scripts/release/**'
   push:
     branches: [master]
     paths:
       - '.github/workflows/release*.yml'
+      - '.github/actions/build-release-packages/**'
       - 'scripts/release/**'
 
 permissions:
@@ -25,8 +27,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
-          node-version: '24.19.0'
+          node-version: '24.22.1'
           package-manager-cache: false
-      # Packing needs the macOS-built native artifacts; a Release dry run covers it.
+      # Packing needs the macOS-built native artifacts; the Release prepare check covers it.
       - name: Test release authorization and recovery
         run: node --test scripts/release/*.test.cjs

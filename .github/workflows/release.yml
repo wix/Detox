@@ -39,7 +39,6 @@ env:
   RELEASE_NPM_TAG: ${{ inputs.npm_tag }}
   RELEASE_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
   RELEASE_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLISH_ENABLED }}
-  RELEASE_DIR: ${{ github.workspace }}/../release-artifacts
   GH_TOKEN: ${{ github.token }}
 
 jobs:
@@ -57,6 +56,8 @@ jobs:
       artifact_id: ${{ steps.upload.outputs.artifact-id || steps.resume.outputs.artifact_id }}
       source_run_id: ${{ steps.resume.outputs.source_run_id || github.run_id }}
     steps:
+      - name: Set release directory
+        run: echo "RELEASE_DIR=$RUNNER_TEMP/release-artifacts" >> "$GITHUB_ENV"
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ github.sha }}
@@ -64,7 +65,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
-          node-version: '24.19.0'
+          node-version: '24.22.1'
           package-manager-cache: false
       - name: Check admin authorization
         run: node scripts/release/index.cjs authorize
@@ -87,39 +88,14 @@ jobs:
         if: inputs.operation != 'resume'
         id: plan
         run: node scripts/release/index.cjs plan
-      - name: Install locked dependencies
+      - uses: ./.github/actions/build-release-packages
         if: inputs.operation != 'resume'
-        env:
-          DETOX_DISABLE_POSTINSTALL: true
-          DETOX_DISABLE_POD_INSTALL: true
-        run: node .yarn/releases/yarn-4.12.0.cjs install --immutable
-      - name: Set version and generate documentation for stable releases
-        if: inputs.operation != 'resume'
-        run: node scripts/release/index.cjs set-version
-      - name: Test
-        if: inputs.operation != 'resume'
-        working-directory: detox
-        run: |
-          node ../.yarn/releases/yarn-4.12.0.cjs lint
-          node ../.yarn/releases/yarn-4.12.0.cjs unit
-          node --test ../scripts/release/*.test.cjs
-      - name: Build iOS artifacts
-        if: inputs.operation != 'resume'
-        working-directory: detox
-        run: scripts/pack_ios.sh
-      - name: Build Android artifacts
-        if: inputs.operation != 'resume'
-        working-directory: detox/android
-        run: ./gradlew clean detox:publish -Dversion="$(node -p "require('../package.json').version")"
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME_17_arm64 }}
-      - name: Validate versioned documentation
-        if: inputs.operation != 'resume' && steps.plan.outputs.documentation_version != ''
-        run: node .yarn/releases/yarn-4.12.0.cjs workspace website build
+        with:
+          documentation-version: ${{ steps.plan.outputs.documentation_version }}
       - name: Pack and record immutable release inputs
         if: inputs.operation != 'resume'
         run: node scripts/release/index.cjs prepare-artifact
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: inputs.operation != 'resume'
         id: upload
         with:
@@ -139,6 +115,8 @@ jobs:
       actions: read
       statuses: read
     steps:
+      - name: Set release directory
+        run: echo "RELEASE_DIR=$RUNNER_TEMP/release-artifacts" >> "$GITHUB_ENV"
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ github.sha }}
@@ -146,7 +124,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
-          node-version: '24.19.0'
+          node-version: '24.22.1'
           package-manager-cache: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -169,6 +147,8 @@ jobs:
       statuses: read
       id-token: write
     steps:
+      - name: Set release directory
+        run: echo "RELEASE_DIR=$RUNNER_TEMP/release-artifacts" >> "$GITHUB_ENV"
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ github.sha }}
@@ -176,7 +156,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
-          node-version: '24.19.0'
+          node-version: '24.22.1'
           package-manager-cache: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -200,6 +180,8 @@ jobs:
       pull-requests: write
       issues: write
     steps:
+      - name: Set release directory
+        run: echo "RELEASE_DIR=$RUNNER_TEMP/release-artifacts" >> "$GITHUB_ENV"
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ github.sha }}
@@ -207,7 +189,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
         with:
-          node-version: '24.19.0'
+          node-version: '24.22.1'
           package-manager-cache: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:

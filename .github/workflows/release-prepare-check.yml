@@ -1,0 +1,56 @@
+name: Release prepare check
+
+# Builds and packs both packages with the same steps as the Release workflow's prepare job,
+# under a throwaway version. Nothing is published and no refs are created.
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/actions/build-release-packages/**'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/release-prepare-check.yml'
+      - 'scripts/release/**'
+      - 'scripts/pack_ios.sh'
+      - 'detox/scripts/**'
+      - 'detox/android/**'
+      - 'detox/ios/**'
+      - 'detox/package.json'
+      - 'detox-cli/package.json'
+      - 'package.json'
+      - 'yarn.lock'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-prepare-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    if: github.repository == 'wix/Detox'
+    runs-on: macos-15
+    timeout-minutes: 120
+    steps:
+      - name: Set release directory
+        run: echo "RELEASE_DIR=$RUNNER_TEMP/release-artifacts" >> "$GITHUB_ENV"
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - name: Write a test plan
+        run: |
+          mkdir -p "$RELEASE_DIR"
+          echo '{"documentationVersion":"","packages":[{"version":"0.0.0-pr-check.${{ github.run_id }}"}]}' > "$RELEASE_DIR/plan.json"
+      - uses: ./.github/actions/build-release-packages
+      - name: Pack and validate both packages
+        run: node scripts/release/index.cjs pack-check
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-prepare-check-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.RELEASE_DIR }}/*.tgz
+          if-no-files-found: error
+          retention-days: 3
