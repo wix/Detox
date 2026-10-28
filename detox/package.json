@@ -88,6 +88,7 @@
     "wtfnode": "^0.9.1"
   },
   "dependencies": {
+    "@bybrave/proper-lockfile2": "^5.1.0",
     "@wix-pilot/core": "^3.4.2",
     "@wix-pilot/detox": "^1.0.13",
     "ajv": "^8.6.3",
@@ -108,7 +109,6 @@
     "multipipe": "^4.0.0",
     "node-ipc": "9.2.1",
     "promisify-child-process": "^4.1.2",
-    "proper-lockfile": "^3.0.2",
     "resolve-from": "^5.0.0",
     "sanitize-filename": "^1.6.1",
     "semver": "^7.0.0",

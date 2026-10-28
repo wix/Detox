@@ -2220,6 +2220,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bybrave/proper-lockfile2@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@bybrave/proper-lockfile2@npm:5.1.0"
+  dependencies:
+    graceful-fs: "npm:^4.2.11"
+    retry: "npm:^0.13.1"
+    signal-exit: "npm:^3.0.7"
+  checksum: 10/91a6d40f60068aa4686cf4257112524523ffb878fcea8878c2628e690d355e8424bceb3b2b47492c376417931c2559cddde02355c55dbaefd00d31d25fd8936a
+  languageName: node
+  linkType: hard
+
 "@colors/colors@npm:1.5.0":
   version: 1.5.0
   resolution: "@colors/colors@npm:1.5.0"
@@ -10169,6 +10180,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "detox@workspace:detox"
   dependencies:
+    "@bybrave/proper-lockfile2": "npm:^5.1.0"
     "@react-native-community/cli": "npm:20.1.0"
     "@react-native-community/cli-platform-android": "npm:20.1.0"
     "@react-native-community/cli-platform-ios": "npm:20.1.0"
@@ -10217,7 +10229,6 @@ __metadata:
     node-ipc: "npm:9.2.1"
     prettier: "npm:^3.1.1"
     promisify-child-process: "npm:^4.1.2"
-    proper-lockfile: "npm:^3.0.2"
     react-native: "npm:0.85.2"
     react-native-codegen: "npm:^0.0.8"
     resolve-from: "npm:^5.0.0"
@@ -21562,17 +21573,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proper-lockfile@npm:^3.0.2":
-  version: 3.2.0
-  resolution: "proper-lockfile@npm:3.2.0"
-  dependencies:
-    graceful-fs: "npm:^4.1.11"
-    retry: "npm:^0.12.0"
-    signal-exit: "npm:^3.0.2"
-  checksum: 10/5025248895fbd69f115cdfe9a5cd63627357eefe67aa95d95175d87249dd5fe34a116bcc1d8b7cd126b24c8e4c875777f48ccdb5d2962079ee09a6e50f6ace72
-  languageName: node
-  linkType: hard
-
 "properties@npm:^1.2.1":
   version: 1.2.1
   resolution: "properties@npm:1.2.1"
@@ -24202,7 +24202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^3.0.0, signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3":
+"signal-exit@npm:^3.0.0, signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.3, signal-exit@npm:^3.0.7":
   version: 3.0.7
   resolution: "signal-exit@npm:3.0.7"
   checksum: 10/a2f098f247adc367dffc27845853e9959b9e88b01cb301658cfe4194352d8d2bb32e18467c786a7fe15f1d44b233ea35633d076d5e737870b7139949d1ab6318

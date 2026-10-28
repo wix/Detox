@@ -12,7 +12,7 @@ If no simulator is available for that worker, the worker will create one with th
 ## Lock File
 
 Since any attached device can potentially be used simultaneously by multiple workers, Detox needs to maintain a lock file to make sure that doesn't happen.
-Therefore, Detox maintains `device.registry.json`, a file with exclusive access based on `proper-lockfile`, controlled by Detox, that registers all simulators and emulators
+Therefore, Detox maintains `device.registry.json`, a file with exclusive access based on [`@bybrave/proper-lockfile2`](https://github.com/bybraveHQ/proper-lockfile2), controlled by Detox, that registers all simulators and emulators
 currently in use by Detox instances.
 
 The lock file location is determined by the OS, and [defined here](https://github.com/wix/detox/blob/master/detox/src/utils/appdatapath.js).
