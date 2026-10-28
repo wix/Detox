@@ -2220,14 +2220,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bybrave/proper-lockfile2@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@bybrave/proper-lockfile2@npm:5.0.0"
+"@bybrave/proper-lockfile2@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@bybrave/proper-lockfile2@npm:5.1.0"
   dependencies:
     graceful-fs: "npm:^4.2.11"
     retry: "npm:^0.13.1"
     signal-exit: "npm:^3.0.7"
-  checksum: 10/4d437c50e03a4d2d30fae540d42b651d17ed7107788eaa173f1d23c2e927b33851e2511963773e8167e0d2318bbda2ec4960db27046779a4d540acf6f44c9670
+  checksum: 10/91a6d40f60068aa4686cf4257112524523ffb878fcea8878c2628e690d355e8424bceb3b2b47492c376417931c2559cddde02355c55dbaefd00d31d25fd8936a
   languageName: node
   linkType: hard
 
@@ -10180,7 +10180,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "detox@workspace:detox"
   dependencies:
-    "@bybrave/proper-lockfile2": "npm:^5.0.0"
+    "@bybrave/proper-lockfile2": "npm:^5.1.0"
     "@react-native-community/cli": "npm:20.1.0"
     "@react-native-community/cli-platform-android": "npm:20.1.0"
     "@react-native-community/cli-platform-ios": "npm:20.1.0"
