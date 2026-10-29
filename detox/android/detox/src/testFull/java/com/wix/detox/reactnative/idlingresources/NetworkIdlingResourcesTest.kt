@@ -4,10 +4,14 @@ import com.wix.detox.UTHelpers.yieldToOtherThreads
 import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
 import org.assertj.core.api.Assertions.assertThat
 
+import okhttp3.Call
 import okhttp3.Dispatcher
+import okhttp3.Request
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.robolectric.RobolectricTestRunner
 import java.util.concurrent.Executors
 
@@ -61,5 +65,38 @@ class NetworkIdlingResourcesTest {
         }
         yieldToOtherThreads(localExecutor)
         assertThat(idle).isTrue
+    }
+
+    @Test
+    fun `should consider calls from every supplied dispatcher`() {
+        val busyDispatcher = mockDispatcherWithRunningCall(
+            Request.Builder().url("https://example.com/query").build()
+        )
+        uut = NetworkIdlingResource { listOf(dispatcher, busyDispatcher) }
+
+        assertThat(uut.isIdleNow).isFalse
+        assertThat(uut.getBusyHint()["urls"] as List<*>).containsExactly("https://example.com/query")
+    }
+
+    @Test
+    fun `should not consider a websocket call busy`() {
+        val webSocketDispatcher = mockDispatcherWithRunningCall(
+            Request.Builder()
+                .url("https://example.com/realtime")
+                .header("Upgrade", "websocket")
+                .build()
+        )
+        uut = NetworkIdlingResource { listOf(webSocketDispatcher) }
+
+        assertThat(uut.isIdleNow).isTrue
+    }
+
+    private fun mockDispatcherWithRunningCall(request: Request): Dispatcher {
+        val call = mock<Call> {
+            on { request() } doReturn request
+        }
+        return mock<Dispatcher> {
+            on { runningCalls() } doReturn listOf(call)
+        }
     }
 }

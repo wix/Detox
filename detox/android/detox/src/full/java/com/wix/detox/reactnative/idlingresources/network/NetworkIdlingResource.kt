@@ -12,16 +12,26 @@ import java.util.regex.PatternSyntaxException
 /**
  * Created by simonracz on 09/10/2017.
  *
- * Idling Resource which monitors React Native's OkHttpClient.
+ * Idling Resource which monitors React Native's OkHttpClients.
  *
  *
  * Must call stop() on it, before removing it from Espresso.
  */
-class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingResource(),
+class NetworkIdlingResource(private val dispatchersSupplier: () -> List<Dispatcher>) : DetoxIdlingResource(),
     Choreographer.FrameCallback {
     private val busyResources: MutableSet<String> = HashSet()
 
-    constructor(reactContext: ReactContext) : this(NetworkingModuleReflected(reactContext).getHttpClient()!!.dispatcher)
+    constructor(dispatcher: Dispatcher) : this({ listOf(dispatcher) })
+
+    // The NetworkingModule's client no longer serves all JS networking — modules like
+    // expo/fetch (the global `fetch` on Expo SDK 56+) build their own clients through
+    // OkHttpClientProvider. Resolve the full set lazily on every check: under bridgeless
+    // RN, modules and their clients can also be (re)created after registration.
+    constructor(reactContext: ReactContext) : this({
+        (listOfNotNull(NetworkingModuleReflected(reactContext).getHttpClient()?.dispatcher) +
+            DetoxOkHttpClientTracker.dispatchers())
+            .distinctBy { System.identityHashCode(it) }
+    })
 
     override fun getName(): String {
         return NetworkIdlingResource::class.java.name
@@ -52,12 +62,20 @@ class NetworkIdlingResource(private val dispatcher: Dispatcher) : DetoxIdlingRes
     override fun checkIdle(): Boolean {
         busyResources.clear()
 
-        val calls = dispatcher.runningCalls()
-        for (call in calls) {
-            val url = call.request().url.toString()
+        for (dispatcher in dispatchersSupplier()) {
+            for (call in dispatcher.runningCalls()) {
+                // A WebSocket occupies a running-calls slot for its entire lifetime
+                // (its reader loop runs inside the response callback). It is a
+                // long-lived channel, not pending work — never busy.
+                if (call.request().header("Upgrade").equals("websocket", ignoreCase = true)) {
+                    continue
+                }
 
-            if (!isUrlBlacklisted(url)) {
-                busyResources.add(url)
+                val url = call.request().url.toString()
+
+                if (!isUrlBlacklisted(url)) {
+                    busyResources.add(url)
+                }
             }
         }
 

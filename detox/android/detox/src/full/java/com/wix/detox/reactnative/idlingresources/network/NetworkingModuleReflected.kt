@@ -15,8 +15,15 @@ private const val FIELD_OKHTTP_CLIENT_PRE80 = "mClient"
 private const val FIELD_OKHTTP_CLIENT = "client"
 
 internal class NetworkingModuleReflected(private val reactContext: ReactContext) {
+    private companion object {
+        // getHttpClient() runs on every idle check; log failures only once.
+        private var loggedReflectException = false
+    }
+
     fun getHttpClient(): OkHttpClient? {
-        val networkNativeModule = reactContext.getNativeModule(NetworkingModule::class.java)
+        // Under bridgeless RN, TurboModules are lazy — the module may not exist yet.
+        val networkNativeModule =
+            reactContext.getNativeModule(NetworkingModule::class.java) ?: return null
         try {
             val fieldName = if ( ReactNativeInfo.rnVersion().minor > 79) {
                 FIELD_OKHTTP_CLIENT
@@ -26,7 +33,10 @@ internal class NetworkingModuleReflected(private val reactContext: ReactContext)
 
             return Reflect.on(networkNativeModule).field(fieldName).get()
         } catch (e: ReflectException) {
-            Log.e(LOG_TAG, "Can't set up Networking Module listener", e)
+            if (!loggedReflectException) {
+                loggedReflectException = true
+                Log.e(LOG_TAG, "Can't set up Networking Module listener", e)
+            }
             return null
         }
     }
