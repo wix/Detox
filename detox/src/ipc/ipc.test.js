@@ -392,5 +392,73 @@ describe('IPC', () => {
         await expect(ipcClient1.deallocateDevice({ id: 'device-1' })).rejects.toThrow('foo');
       });
     });
+
+    describe('onSocketDisconnected', () => {
+      it('should free the devices a disconnected client still holds', async () => {
+        callbacks.onAllocateDevice
+          .mockResolvedValueOnce({ id: 'device-1' })
+          .mockResolvedValueOnce({ id: 'device-2' });
+        await ipcClient1.allocateDevice(deviceConfig);
+        await ipcClient1.allocateDevice(deviceConfig);
+
+        await ipcClient1.dispose();
+        await sleep(10); // the server learns about the disconnection with a delay
+
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledWith({ id: 'device-1' });
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledWith({ id: 'device-2' });
+        expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('Freeing device device-1'));
+      });
+
+      it('should not free the devices the client has deallocated', async () => {
+        callbacks.onAllocateDevice.mockResolvedValue({ id: 'device-1' });
+        await ipcClient1.allocateDevice(deviceConfig);
+        await ipcClient1.deallocateDevice({ id: 'device-1' });
+
+        await ipcClient1.dispose();
+        await sleep(10);
+
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledTimes(1);
+      });
+
+      it('should not free the devices other clients hold', async () => {
+        await ipcClient2.init();
+        callbacks.onAllocateDevice
+          .mockResolvedValueOnce({ id: 'device-1' })
+          .mockResolvedValueOnce({ id: 'device-2' });
+        await ipcClient1.allocateDevice(deviceConfig);
+        await ipcClient2.allocateDevice(deviceConfig);
+
+        await ipcClient1.dispose();
+        await sleep(10);
+
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledTimes(1);
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledWith({ id: 'device-1' });
+      });
+
+      it('should free a device whose allocation finishes after the client disconnected', async () => {
+        let finishAllocation;
+        callbacks.onAllocateDevice.mockReturnValue(new Promise((resolve) => { finishAllocation = resolve; }));
+        ipcClient1.allocateDevice(deviceConfig); // never settles, the client is gone by then
+        await sleep(10);
+
+        await ipcClient1.dispose();
+        await sleep(10);
+        finishAllocation({ id: 'device-1' });
+        await sleep(10);
+
+        expect(callbacks.onDeallocateDevice).toHaveBeenCalledWith({ id: 'device-1' });
+      });
+
+      it('should log an error if freeing a device fails', async () => {
+        callbacks.onAllocateDevice.mockResolvedValue({ id: 'device-1' });
+        callbacks.onDeallocateDevice.mockRejectedValue(new Error('foo'));
+        await ipcClient1.allocateDevice(deviceConfig);
+
+        await ipcClient1.dispose();
+        await sleep(10);
+
+        expect(logger.error).toHaveBeenCalledWith({ err: new Error('foo') }, 'Failed to free device device-1');
+      });
+    });
   });
 });
