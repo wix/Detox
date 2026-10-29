@@ -339,6 +339,25 @@ class CaptureViewHierarchy extends Action {
   }
 }
 
+class InjectLayoutJson extends Action {
+  constructor(params) {
+    super('injectLayoutJson', params);
+  }
+
+  get isAtomic() {
+    return false;
+  }
+
+  get timeout() {
+    return 0;
+  }
+
+  async handle(response) {
+    this.expectResponseOfType(response, 'injectLayoutJsonDone');
+    return response;
+  }
+}
+
 module.exports = {
   Action,
   Login,
@@ -355,5 +374,6 @@ module.exports = {
   SetOrientation,
   SetInstrumentsRecordingState,
   CaptureViewHierarchy,
-  GenerateViewHierarchyXml
+  GenerateViewHierarchyXml,
+  InjectLayoutJson
 };

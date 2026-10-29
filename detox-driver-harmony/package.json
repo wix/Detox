@@ -1,0 +1,33 @@
+{
+  "name": "detox-driver-harmony",
+  "version": "0.1.0-beta.1",
+  "description": "HarmonyOS (OpenHarmony) driver for Detox — test RNOH apps with the same Detox API as iOS/Android",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"no tests yet\""
+  },
+  "peerDependencies": {
+    "detox": "^20.51.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.0.0"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/RuiYangLian/Detox",
+  "keywords": [
+    "detox",
+    "harmonyos",
+    "openharmony",
+    "react-native",
+    "rnoh",
+    "e2e",
+    "testing"
+  ],
+  "eslintConfig": {
+    "root": true,
+    "env": { "node": true, "es2022": true },
+    "parserOptions": { "ecmaVersion": 2022, "sourceType": "commonjs" },
+    "extends": ["eslint:recommended"],
+    "rules": {}
+  }
+}

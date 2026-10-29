@@ -39,6 +39,10 @@ class Client {
     this._isCleaningUp = false;
     this._pendingAppCrash = null;
     this._appTerminationHandle = null;
+    this._fetchLayoutHandler = null;
+    this._gestureInjectHandler = null;
+    this._onDetoxFetchLayout = this._onDetoxFetchLayout.bind(this);
+    this._onDetoxInjectGesture = this._onDetoxInjectGesture.bind(this);
 
     this._successfulTestRun = true; // flag for cleanup
     this._asyncWebSocket = new AsyncWebSocket({ url: server, ignoreUnexpectedMessages });
@@ -50,6 +54,38 @@ class Client {
     this.setEventCallback('AppWillTerminateWithError', this._onBeforeAppCrash);
     this.setEventCallback('appDisconnected', this._onAppDisconnected);
     this.setEventCallback('serverError', this._onUnhandledServerError);
+    this.setEventCallback('detoxFetchLayout', this._onDetoxFetchLayout);
+    this.setEventCallback('detoxInjectGesture', this._onDetoxInjectGesture);
+  }
+
+  /** HarmonyOS: app-side snapshot fetch requests are served by the runtime driver. */
+  setFetchLayoutHandler(handler) {
+    this._fetchLayoutHandler = handler;
+  }
+
+  /** HarmonyOS: app-side gesture injection requests (toward-top scrolls need
+   *  a host `uinput -T -m` drag — in-app slow injections are ignored by
+   *  FlatList, fast ones carry refresh-firing fling momentum). */
+  setGestureInjectHandler(handler) {
+    this._gestureInjectHandler = handler;
+  }
+
+  _onDetoxInjectGesture(event) {
+    const cmd = event && event.params && event.params.cmd;
+    if (this._gestureInjectHandler) {
+      Promise.resolve().then(() => this._gestureInjectHandler(cmd)).catch((e) => {
+        log.debug({ event: 'DETOX_INJECT_GESTURE' }, e.message);
+      });
+    }
+  }
+
+  _onDetoxFetchLayout() {
+    log.info({ event: 'DETOX_FETCH_LAYOUT' }, 'app requested a layout snapshot');
+    if (this._fetchLayoutHandler) {
+      Promise.resolve().then(() => this._fetchLayoutHandler()).catch((e) => {
+        log.debug({ event: 'DETOX_FETCH_LAYOUT' }, e.message);
+      });
+    }
   }
 
   /**
@@ -230,6 +266,10 @@ class Client {
     return await this.sendAction(new actions.GenerateViewHierarchyXml({
       shouldInjectTestIds
     }));
+  }
+
+  async injectLayoutJson({ layoutJson }) {
+    await this.sendAction(new actions.InjectLayoutJson({ layoutJson }));
   }
 
   async currentStatus() {

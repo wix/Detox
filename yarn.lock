@@ -10110,6 +10110,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"detox-driver-harmony@workspace:detox-driver-harmony":
+  version: 0.0.0-use.local
+  resolution: "detox-driver-harmony@workspace:detox-driver-harmony"
+  dependencies:
+    fs-extra: "npm:^11.0.0"
+  peerDependencies:
+    detox: ^20.51.0
+  languageName: unknown
+  linkType: soft
+
 "detox-test@workspace:detox/test":
   version: 0.0.0-use.local
   resolution: "detox-test@workspace:detox/test"
