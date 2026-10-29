@@ -163,6 +163,93 @@ describe('Detox server integration', () => {
     appSocket.mockClose();
   });
 
+  describe('app reconnects while its previous connection is still open', () => {
+    let testerSocket, oldAppSocket, newAppSocket;
+
+    beforeEach(() => {
+      testerSocket = new FakeWebSocket({ remotePort: 0x7 });
+      oldAppSocket = new FakeWebSocket({ remotePort: 0xA });
+      newAppSocket = new FakeWebSocket({ remotePort: 0xB });
+
+      sessionManager.registerConnection(testerSocket, testerSocket.socket);
+      testerSocket.mockLogin({ role: 'tester' });
+      sessionManager.registerConnection(oldAppSocket, oldAppSocket.socket);
+      oldAppSocket.mockLogin({ role: 'app' });
+      testerSocket.send.mockClear();
+    });
+
+    function reconnectApp() {
+      sessionManager.registerConnection(newAppSocket, newAppSocket.socket);
+      newAppSocket.mockLogin({ role: 'app' });
+    }
+
+    test('re-sends a pending isReady to the new connection', () => {
+      const isReady = { type: 'isReady', params: {}, messageId: -1000 };
+      testerSocket.mockMessage(isReady);
+      reconnectApp();
+
+      expect(oldAppSocket.terminate).toHaveBeenCalled();
+      expect(sentTypes(newAppSocket)).toEqual(['loginSuccess', 'isReady']);
+      expect(newAppSocket.send).toHaveBeenLastCalledWith(aMessage(isReady));
+      expect(sentTypes(testerSocket)).toEqual(['appConnected']);
+      expect(getLoggerMsg('warn')).toMatchSnapshot();
+
+      newAppSocket.mockMessage({ type: 'ready', messageId: -1000 });
+      expect(testerSocket.send).toHaveBeenLastCalledWith(aMessage({ type: 'ready', messageId: -1000 }));
+    });
+
+    test('tells the tester the app disconnected when any other request was in flight', () => {
+      testerSocket.mockMessage({ type: 'invoke', params: {}, messageId: 5 });
+      reconnectApp();
+
+      expect(oldAppSocket.terminate).toHaveBeenCalled();
+      expect(sentTypes(testerSocket)).toEqual(['appDisconnected', 'appConnected']);
+      expect(sentTypes(newAppSocket)).toEqual(['loginSuccess']);
+
+      testerSocket.mockMessage({ type: 'invoke', params: {}, messageId: 6 });
+      expect(newAppSocket.send).toHaveBeenLastCalledWith(aMessage({ type: 'invoke', params: {}, messageId: 6 }));
+
+      newAppSocket.mockMessage({ type: 'invokeResult', messageId: 6 });
+      expect(testerSocket.send).toHaveBeenLastCalledWith(aMessage({ type: 'invokeResult', messageId: 6 }));
+    });
+
+    test('does not re-send an isReady the old connection already answered', () => {
+      testerSocket.mockMessage({ type: 'isReady', params: {}, messageId: -1000 });
+      oldAppSocket.mockMessage({ type: 'ready', messageId: -1000 });
+      testerSocket.send.mockClear();
+      reconnectApp();
+
+      expect(sentTypes(testerSocket)).toEqual(['appDisconnected', 'appConnected']);
+      expect(sentTypes(newAppSocket)).toEqual(['loginSuccess']);
+    });
+
+    test('forgets the old connection', () => {
+      reconnectApp();
+      oldAppSocket.mockClose();
+
+      expect(sessionManager.unregisterConnection).not.toHaveBeenCalled();
+      expect(logger.error).not.toHaveBeenCalled();
+
+      newAppSocket.mockClose();
+      expect(testerSocket.send).toHaveBeenLastCalledWith(aMessage({ type: 'appDisconnected' }));
+    });
+
+    test('does not re-send an isReady to an app that connects after a clean disconnect', () => {
+      testerSocket.mockMessage({ type: 'isReady', params: {}, messageId: -1000 });
+      oldAppSocket.mockClose();
+      testerSocket.send.mockClear();
+      reconnectApp();
+
+      expect(oldAppSocket.terminate).not.toHaveBeenCalled();
+      expect(sentTypes(testerSocket)).toEqual(['appConnected']);
+      expect(sentTypes(newAppSocket)).toEqual(['loginSuccess']);
+    });
+
+    function sentTypes(webSocket) {
+      return webSocket.send.mock.calls.map(([message]) => JSON.parse(message).type);
+    }
+  });
+
   describe('edge cases', () => {
     let webSocket;
 

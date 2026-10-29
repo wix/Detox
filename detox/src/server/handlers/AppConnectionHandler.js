@@ -14,7 +14,7 @@ class AppConnectionHandler extends RegisteredConnectionHandler {
     }
 
     if (this._session.tester) {
-      this._session.tester.sendAction(action);
+      this._session.sendToTester(action);
       return true;
     }
 
