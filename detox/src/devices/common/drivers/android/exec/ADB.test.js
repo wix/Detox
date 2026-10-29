@@ -474,4 +474,34 @@ describe('ADB', () => {
         .rejects.toThrow('Unexpected error');
     });
   });
+
+  describe('reverseRemove', () => {
+    it('should remove the reverse port forwarding', async () => {
+      await adb.reverseRemove(deviceId, 8081);
+      expect(execWithRetriesAndLogs).toHaveBeenCalledWith(
+        `"${adbBinPath}" -s "${deviceId}" reverse --remove tcp:8081`,
+        expect.any(Object)
+      );
+    });
+
+    it('should treat an already-removed listener as removed', async () => {
+      execWithRetriesAndLogs.mockRejectedValueOnce({
+        stderr: `adb: error: listener 'tcp:8081' not found\n`,
+        message: `Command failed: adb reverse --remove tcp:8081`,
+      });
+
+      await expect(adb.reverseRemove(deviceId, 8081)).resolves.not.toThrow();
+    });
+
+    it('should re-throw unexpected errors', async () => {
+      execWithRetriesAndLogs.mockRejectedValueOnce({
+        stderr: 'adb: error: device offline',
+        message: 'Command failed: adb reverse --remove tcp:8081',
+      });
+
+      await expect(adb.reverseRemove(deviceId, 8081)).rejects.toEqual(expect.objectContaining({
+        stderr: 'adb: error: device offline',
+      }));
+    });
+  });
 });
