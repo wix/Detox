@@ -242,6 +242,38 @@ class AndroidDriver extends DeviceDriverBase {
     return tempPath;
   }
 
+  async matchFace() {
+    throw new DetoxRuntimeError({
+      message: 'matchFace() is only supported on Android emulators (AVDs).',
+      hint: 'Use an emulator (AVD) and call setBiometricEnrollment(true, { androidFace: true }) once before matchFace(). If face-specific simulation is not required, matchFinger() works without any opt-in.',
+    });
+  }
+
+  async unmatchFace() {
+    throw new DetoxRuntimeError({
+      message: 'unmatchFace() is only supported on Android emulators (AVDs).',
+      hint: 'Use an emulator (AVD) and call setBiometricEnrollment(true, { androidFace: true }) once before unmatchFace(). If face-specific simulation is not required, unmatchFinger() works without any opt-in.',
+    });
+  }
+
+  async setBiometricEnrollment(_yesOrNo, _options) {
+    throw new DetoxRuntimeError({
+      message: 'setBiometricEnrollment() is only supported on Android emulators (AVDs).',
+    });
+  }
+
+  async matchFinger() {
+    throw new DetoxRuntimeError({
+      message: 'matchFinger() is only supported on Android emulators (AVDs).',
+    });
+  }
+
+  async unmatchFinger() {
+    throw new DetoxRuntimeError({
+      message: 'unmatchFinger() is only supported on Android emulators (AVDs).',
+    });
+  }
+
   async setOrientation(orientation) {
     const orientationMapping = {
       landscape: 1, // top at left side landscape
