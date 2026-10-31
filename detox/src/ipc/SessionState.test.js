@@ -76,6 +76,28 @@ describe('SessionState', () => {
     expect(sessionState.stringify()).toEqual(expected);
   });
 
+  describe('RegExp serialization', () => {
+    it('should round-trip a RegExp value through stringify/parse', () => {
+      const regex = /^https:\/\/x\.com\/foo bar$/i;
+      const state = new SessionState({ detoxConfig: { detoxURLBlacklistRegex: [regex] } });
+
+      const parsed = SessionState.parse(state.stringify());
+
+      expect(parsed.detoxConfig.detoxURLBlacklistRegex[0]).toBeInstanceOf(RegExp);
+      expect(parsed.detoxConfig.detoxURLBlacklistRegex[0].source).toBe(regex.source);
+      expect(parsed.detoxConfig.detoxURLBlacklistRegex[0].flags).toBe(regex.flags);
+    });
+
+    it('should not corrupt a plain string when a RegExp is also present', () => {
+      const state = new SessionState({ detoxConfig: { detoxURLBlacklistRegex: [/foo/i, 'bar.*'] } });
+
+      const parsed = SessionState.parse(state.stringify());
+
+      expect(parsed.detoxConfig.detoxURLBlacklistRegex[0]).toBeInstanceOf(RegExp);
+      expect(parsed.detoxConfig.detoxURLBlacklistRegex[1]).toBe('bar.*');
+    });
+  });
+
   it('should parse stringified session state to class instance', () => {
     const stringified = '{"id":"123",' +
       '"detoxConfig":{"someFunction":{"$fn":"(() => {\\n      return \'foo\';\\n    })"}},' +

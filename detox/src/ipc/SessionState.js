@@ -29,7 +29,7 @@ class SessionState {
   }
 
   stringify() {
-    return cycle.stringify(this, SessionState._stringifier);
+    return cycle.stringify(SessionState._preprocessRegExps(this), SessionState._stringifier);
   }
 
   /**
@@ -42,19 +42,39 @@ class SessionState {
   }
 
   static _reviver(key, val) {
-    if (typeof val === 'object' && val !== null && typeof val.$fn == 'string') {
-      return vm.runInContext(val.$fn, context);
-    } else {
-      return val;
+    if (typeof val === 'object' && val !== null) {
+      if (typeof val.$fn == 'string') {
+        return vm.runInContext(val.$fn, context);
+      }
+      if (typeof val.$regexp == 'object' && val.$regexp !== null) {
+        return new RegExp(val.$regexp.source, val.$regexp.flags);
+      }
     }
+    return val;
   }
 
   static _stringifier(key, val) {
     if (typeof val === 'function') {
       return { $fn: `(${val})` };
-    } else {
-      return val;
     }
+    return val;
+  }
+
+  static _preprocessRegExps(value) {
+    if (value instanceof RegExp) {
+      return { $regexp: { source: value.source, flags: value.flags } };
+    }
+    if (Array.isArray(value)) {
+      return value.map(SessionState._preprocessRegExps);
+    }
+    if (value !== null && typeof value === 'object') {
+      const result = {};
+      for (const key of Object.keys(value)) {
+        result[key] = SessionState._preprocessRegExps(value[key]);
+      }
+      return result;
+    }
+    return value;
   }
 }
 
