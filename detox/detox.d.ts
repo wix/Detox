@@ -133,6 +133,7 @@ declare global {
         interface DetoxSessionConfig {
             autoStart?: boolean;
             debugSynchronization?: number;
+            loginTimeout?: number;
             ignoreUnexpectedMessages?: boolean;
             server?: string;
             sessionId?: string;
