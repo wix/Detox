@@ -6,6 +6,7 @@
     "detox",
     "detox-cli",
     "detox/test",
+    "detox-driver-harmony",
     "examples/*",
     "generation",
     "website"
