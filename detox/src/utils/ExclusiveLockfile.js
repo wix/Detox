@@ -1,6 +1,6 @@
+const plockfile = require('@bybrave/proper-lockfile2');
 const fs = require('fs-extra');
 const _ = require('lodash');
-const plockfile = require('proper-lockfile');
 
 const DetoxRuntimeError = require('../errors/DetoxRuntimeError');
 
