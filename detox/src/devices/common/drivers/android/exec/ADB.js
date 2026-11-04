@@ -380,7 +380,15 @@ class ADB {
   }
 
   async reverseRemove(deviceId, port) {
-    return this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    try {
+      await this.adbCmd(deviceId, `reverse --remove tcp:${port}`);
+    } catch (e) {
+      // The forward may already be gone, e.g. removed twice on teardown or dropped by adb when the device reconnects
+      const message = e.stderr || e.message || '';
+      if (!/listener '.*' not found/.test(message)) {
+        throw e;
+      }
+    }
   }
 
   async emuKill(deviceId) {
