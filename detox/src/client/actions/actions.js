@@ -28,12 +28,13 @@ class Action {
 }
 
 class Login extends Action {
-  constructor(sessionId) {
+  constructor(sessionId, timeout) {
     const params = {
       sessionId: sessionId,
       role: 'tester'
     };
     super('login', params);
+    this._timeout = timeout;
   }
 
   get isAtomic() {
@@ -41,7 +42,7 @@ class Login extends Action {
   }
 
   get timeout() {
-    return 1000;
+    return this._timeout != null ? this._timeout : 1000;
   }
 
   async handle(response) {

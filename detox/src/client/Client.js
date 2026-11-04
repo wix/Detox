@@ -20,8 +20,9 @@ class Client {
    * @param {string} server
    * @param {string} sessionId
    * @param {boolean} [ignoreUnexpectedMessages]
+   * @param {number} [loginTimeout]
    */
-  constructor({ debugSynchronization, server, sessionId, ignoreUnexpectedMessages }) {
+  constructor({ debugSynchronization, server, sessionId, ignoreUnexpectedMessages, loginTimeout }) {
     this._onAppConnected = this._onAppConnected.bind(this);
     this._onAppReady = this._onAppReady.bind(this);
     this._onAppUnresponsive = this._onAppUnresponsive.bind(this);
@@ -31,6 +32,7 @@ class Client {
     this._logError = this._logError.bind(this);
 
     this._sessionId = sessionId;
+    this._loginTimeout = loginTimeout;
     this._slowInvocationTimeout = debugSynchronization;
     this._slowInvocationStatusHandle = null;
     this._whenAppIsConnected = this._invalidState('before connecting to the app');
@@ -72,7 +74,7 @@ class Client {
 
   async connect() {
     await this.open();
-    const sessionStatus = await this.sendAction(new actions.Login(this._sessionId));
+    const sessionStatus = await this.sendAction(new actions.Login(this._sessionId, this._loginTimeout));
     if (sessionStatus.appConnected) {
       this._onAppConnected();
     }
