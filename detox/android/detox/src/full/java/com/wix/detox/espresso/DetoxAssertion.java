@@ -9,8 +9,10 @@ import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
 
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.matcher.RootMatchers;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -32,9 +34,14 @@ public class DetoxAssertion {
 
     /**
      * Asserts the given matcher for the provided view interaction.
+     * Falls back to dialog root if the assertion fails in the default root.
      */
     public static ViewInteraction assertMatcher(ViewInteraction viewInteraction, Matcher<View> viewMatcher) {
-        return viewInteraction.check(matches(viewMatcher));
+        try {
+            return viewInteraction.check(matches(viewMatcher));
+        } catch (NoMatchingViewException e) {
+            return viewInteraction.inRoot(RootMatchers.isDialog()).check(matches(viewMatcher));
+        }
     }
 
     /**
@@ -60,6 +67,7 @@ public class DetoxAssertion {
 
     /**
      * Waits until the provided matcher matches the view interaction or a timeout occurs.
+     * Tries both the default root and dialog root on each iteration.
      */
     public static void waitForAssertMatcher(final ViewInteraction viewInteraction, final Matcher<View> viewMatcher, double timeoutSeconds) {
         final long startTime = System.nanoTime();
@@ -77,7 +85,21 @@ public class DetoxAssertion {
                 viewInteraction.check(matches(viewMatcher));
                 break;
             } catch (AssertionFailedError err) {
-                UiAutomatorHelper.espressoSync(20);
+                // Try dialog root as fallback
+                try {
+                    viewInteraction.inRoot(RootMatchers.isDialog()).check(matches(viewMatcher));
+                    break;
+                } catch (Exception dialogErr) {
+                    UiAutomatorHelper.espressoSync(20);
+                }
+            } catch (NoMatchingViewException e) {
+                // Try dialog root as fallback
+                try {
+                    viewInteraction.inRoot(RootMatchers.isDialog()).check(matches(viewMatcher));
+                    break;
+                } catch (Exception dialogErr) {
+                    UiAutomatorHelper.espressoSync(20);
+                }
             }
         }
     }
