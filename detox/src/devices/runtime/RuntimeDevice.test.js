@@ -740,7 +740,7 @@ describe('Device', () => {
     const device = await aValidDevice();
     await device.setBiometricEnrollment(true);
 
-    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith('YES');
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith('YES', undefined);
     expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledTimes(1);
   });
 
@@ -748,8 +748,15 @@ describe('Device', () => {
     const device = await aValidDevice();
     await device.setBiometricEnrollment(false);
 
-    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith('NO');
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith('NO', undefined);
     expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledTimes(1);
+  });
+
+  it(`setBiometricEnrollment(true, { androidFace: true }) should forward options to device driver`, async () => {
+    const device = await aValidDevice();
+    await device.setBiometricEnrollment(true, { androidFace: true });
+
+    expect(driverMock.driver.setBiometricEnrollment).toHaveBeenCalledWith('YES', { androidFace: true });
   });
 
   it(`matchFace() should pass to device driver`, async () => {
