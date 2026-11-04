@@ -22,6 +22,19 @@ exports[`Detox server integration "tester" connects first, and then disconnects 
 ]
 `;
 
+exports[`Detox server integration app reconnects while its previous connection is still open re-sends a pending isReady to the new connection 1`] = `
+[
+  {
+    "cat": "ws-server,ws-session",
+    "id": 11,
+    "role": "app",
+    "sessionId": "aSession",
+    "trackingId": "app",
+  },
+  "the app reconnected to the session aSession, dropping its previous connection",
+]
+`;
+
 exports[`Detox server integration edge cases .registerSession - calling twice 1`] = `
 [
   {

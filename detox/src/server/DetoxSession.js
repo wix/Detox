@@ -16,6 +16,8 @@ class DetoxSession {
     this._pendingAppStatus = null;
     /** @type {boolean | null} */
     this._pendingTesterStatus = null;
+    /** @type {object | null} The tester's `isReady` request, until the app answers it. */
+    this._pendingReadyAction = null;
 
     log.trace(`created session ${id}`);
   }
@@ -37,6 +39,7 @@ class DetoxSession {
       this._assertAppIsConnected();
       this._app = null;
       this._pendingAppStatus = false;
+      this._pendingReadyAction = null;
     }
   }
 
@@ -53,6 +56,7 @@ class DetoxSession {
       this._assertTesterIsConnected();
       this._tester = null;
       this._pendingTesterStatus = false;
+      this._pendingReadyAction = null;
     }
   }
 
@@ -79,6 +83,44 @@ class DetoxSession {
 
     this._pendingTesterStatus = null;
     this._pendingAppStatus = null;
+  }
+
+  sendToApp(action) {
+    if (action.type === 'isReady') {
+      this._pendingReadyAction = action;
+    }
+
+    this._app.sendAction(action);
+  }
+
+  sendToTester(action) {
+    if (action.type === 'ready') {
+      this._pendingReadyAction = null;
+    }
+
+    this._tester.sendAction(action);
+  }
+
+  /**
+   * The app logged in again while its previous connection still holds the session: that socket
+   * died without a close ever reaching the server, so whatever the tester sent to it is lost.
+   * A pending `isReady` is re-sent to the new connection (see `notify()`); anything else is
+   * reported to the tester as a disconnect, so its pending requests reject instead of hanging.
+   *
+   * @param {DetoxConnection} connection
+   */
+  replaceApp(connection) {
+    log.warn(`the app reconnected to the session ${this.id}, dropping its previous connection`);
+    this._app.terminate();
+
+    if (this._pendingReadyAction) {
+      this._app = connection;
+      this._pendingAppStatus = true;
+    } else {
+      this.app = null;
+      this.notify();
+      this.app = connection;
+    }
   }
 
   disconnect(connection) {
@@ -129,6 +171,10 @@ class DetoxSession {
     this._tester.sendAction({
       type: 'appConnected',
     });
+
+    if (this._pendingReadyAction) {
+      this._app.sendAction(this._pendingReadyAction);
+    }
   }
 
   _notifyAboutAppDisconnect() {

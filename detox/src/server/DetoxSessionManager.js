@@ -54,7 +54,15 @@ class DetoxSessionManager {
     }
 
     this._sessionsByConnection.set(connection, session);
-    session[role] = connection;
+
+    const staleApp = role === 'app' && session.app !== connection ? session.app : null;
+    if (staleApp) {
+      this._forgetConnection(staleApp);
+      session.replaceApp(connection);
+    } else {
+      session[role] = connection;
+    }
+
     return session;
   }
 
@@ -89,6 +97,16 @@ class DetoxSessionManager {
     }
 
     this._connectionsByWs.delete(webSocket);
+  }
+
+  _forgetConnection(connection) {
+    for (const [webSocket, registered] of this._connectionsByWs) {
+      if (registered === connection) {
+        this._connectionsByWs.delete(webSocket);
+      }
+    }
+
+    this._sessionsByConnection.delete(connection);
   }
 
   _assertWebSocketIsNotUsed(webSocket) {

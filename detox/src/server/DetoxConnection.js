@@ -41,6 +41,16 @@ class DetoxConnection {
     });
   }
 
+  /**
+   * Closes the socket without reporting back to the session manager — for a connection that has
+   * already been replaced in its session.
+   */
+  terminate() {
+    this._webSocket.removeListener('close', this._onClose);
+    this._webSocket.terminate();
+    this._log.debug.end();
+  }
+
   sendAction(action) {
     const messageAsString = JSON.stringify(action);
     this._log.trace({ data: action }, 'send');
