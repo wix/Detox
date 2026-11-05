@@ -13,8 +13,11 @@
 - (UIImage *)dtx_imageByCroppingInRect:(CGRect)rect
 {
 	rect = CGRectMake(rect.origin.x * self.scale, rect.origin.y * self.scale, rect.size.width * self.scale, rect.size.height * self.scale);
-	
-	return [UIImage imageWithCGImage:CGImageCreateWithImageInRect(self.CGImage, rect) scale:1 orientation:self.imageOrientation];
+
+	CGImageRef cropped = CGImageCreateWithImageInRect(self.CGImage, rect);
+	UIImage* rv = [UIImage imageWithCGImage:cropped scale:1 orientation:self.imageOrientation];
+	CGImageRelease(cropped);
+	return rv;
 }
 
 - (NSUInteger)dtx_numberOfVisiblePixelsWithAlphaThreshold:(CGFloat)threshold totalPixels:(NSUInteger*)totalPixels

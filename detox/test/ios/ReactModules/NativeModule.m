@@ -6,6 +6,7 @@
 #import "NativeModule.h"
 #import <React/RCTRootView.h>
 #import <React/RCTBridge.h>
+#import <mach/mach.h>
 
 @implementation NativeModule
 
@@ -53,6 +54,20 @@ RCT_EXPORT_METHOD(echoWithResponse:(NSString *)str
                   rejecter:(RCTPromiseRejectBlock)reject) {
     self.callCounter++;
     resolve(str);
+}
+
+// MARK: - Memory Methods
+// The app's physical memory footprint in MB (the number Xcode's memory gauge and jetsam use).
+RCT_EXPORT_METHOD(getPhysFootprintMB:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    task_vm_info_data_t info;
+    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+    kern_return_t kr = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&info, &count);
+    if (kr != KERN_SUCCESS) {
+        reject(@"task_info_failed", @"task_info(TASK_VM_INFO) failed", nil);
+        return;
+    }
+    resolve(@(info.phys_footprint / (1024.0 * 1024.0)));
 }
 
 // MARK: - Timing Methods

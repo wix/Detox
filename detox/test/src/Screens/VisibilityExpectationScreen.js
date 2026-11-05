@@ -5,6 +5,8 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
+  NativeModules,
+  Platform,
 } from 'react-native';
 
 export default class VisibilityExpectationScreen extends Component {
@@ -12,9 +14,15 @@ export default class VisibilityExpectationScreen extends Component {
     super(props);
 
     this.state = {
-      shouldMoveElement: false
+      shouldMoveElement: false,
+      memoryMB: '',
     };
   }
+
+  measureMemory = async () => {
+    const mb = await NativeModules.NativeModule.getPhysFootprintMB();
+    this.setState({ memoryMB: String(Math.round(mb)) });
+  };
 
   render() {
     const shouldMoveElement = this.state.shouldMoveElement;
@@ -27,6 +35,12 @@ export default class VisibilityExpectationScreen extends Component {
         <Text style={styles.header}>Move Element Button</Text>
         <Text style={styles.text}>Element should be 1/4 visible after button is pressed.</Text>
         <Button title={"Move That Element"} testID={"moveHalfVisible"} onPress={() => { this.setState({shouldMoveElement: true}) }} />
+        {Platform.OS === 'ios' && (
+          <>
+            <Button title={"Measure Memory"} testID={"measureMemory"} onPress={this.measureMemory} />
+            <Text style={styles.text} testID={"memoryMB"}>{this.state.memoryMB}</Text>
+          </>
+        )}
       </SafeAreaView>
     );
   }
