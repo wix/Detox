@@ -1,4 +1,5 @@
 const { scrollViewDriver } = require('./drivers/fs-scroll-driver');
+const jestExpect = require('expect').default;
 
 
 describe('visibility expectation', () => {
@@ -30,6 +31,32 @@ describe('visibility expectation', () => {
     it(`should be falsy when at least 26% visibility is required`, async () => {
       await waitFor(halfVisibleElement).not.toBeVisible(26).withTimeout(2000);
     });
+  });
+});
+
+describe(':ios: visibility expectation memory', () => {
+  async function memoryMB() {
+    await element(by.id('measureMemory')).tap();
+    const attributes = await element(by.id('memoryMB')).getAttributes();
+    return Number(attributes.text);
+  }
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
+    await element(by.text('Visibility Expectation')).tap();
+  });
+
+  // Each visibility check renders the window and crops it to the element. The cropped CGImage must be
+  // released, or every check leaks it (~0.6 MB per check here; a long suite that polls with waitFor
+  // makes thousands of checks and grows the app by gigabytes). Measured on iPhone 17 Pro / iOS 26.1:
+  // 100 checks grow the app by ~60 MB without the release, by ~5 MB with it.
+  it(`should not grow the app's memory with repeated visibility checks`, async () => {
+    const before = await memoryMB();
+    for (let i = 0; i < 100; i++) {
+      await expect(element(by.id('moveHalfVisible'))).toBeVisible();
+    }
+    const after = await memoryMB();
+    jestExpect(after - before).toBeLessThan(30);
   });
 });
 
