@@ -59,7 +59,8 @@ extension WebCodeBuilder {
 	let currentIndex = 0;
 	const delay = \(typeCharacterDelay);
 	const typeCharacters = () => {
-		if (isInputField && (element.value.length >= element.getAttribute('maxlength'))) {
+		const maxLength = element.getAttribute('maxlength');
+		if (isInputField && maxLength !== null && (element.value.length >= Number(maxLength))) {
 		  return;
 		}
 

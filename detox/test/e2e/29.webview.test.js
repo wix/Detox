@@ -85,6 +85,7 @@ describe('WebView', () => {
     describe('actions', () => {
       describe('input', () => {
         const inputElement = web.element(by.web.id('fname'));
+        const inputElement2 = web.element(by.web.id('uncapped'));
 
         describe(':ios:', () => {
           it('should type text in input regardless of content-editable parameter on ios', async () => {
@@ -92,6 +93,13 @@ describe('WebView', () => {
             await inputElement.typeText('er', true);
 
             await expect(inputElement).toHaveText('Tester');
+          });
+
+          it('should type text in input with no maxlength', async () => {
+            await inputElement2.typeText('Test', false);
+            await inputElement2.typeText('er', true);
+
+            await expect(inputElement2).toHaveText('Tester');
           });
 
           it('should type text in input', async () => {
@@ -427,7 +435,7 @@ describe(':ios: WebView CORS (inner frame)', () => {
     });
 
     it('should find elements in cross-origin frame by type with `asSecured()`', async () => {
-      await expect(web.element(by.web.type('textField')).atIndex(1).asSecured()).toExist();
+      await expect(web.element(by.web.type('textField')).atIndex(2).asSecured()).toExist();
     });
 
     it('should find elements in cross-origin frame by label with `asSecured()`', async () => {
@@ -435,18 +443,18 @@ describe(':ios: WebView CORS (inner frame)', () => {
     });
 
     it('should type text in cross-origin frame with `asSecured()`', async () => {
-      await web.element(by.web.type('textField')).atIndex(1).asSecured().typeText('Test');
+      await web.element(by.web.type('textField')).atIndex(2).asSecured().typeText('Test');
       await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.type-text-in', 0.97);
 
-      await web.element(by.web.type('textField')).asSecured().atIndex(1).replaceText('Test 2');
+      await web.element(by.web.type('textField')).asSecured().atIndex(2).replaceText('Test 2');
       await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.replace-text', 0.97);
 
-      await web.element(by.web.type('textField')).asSecured().atIndex(1).clearText();
+      await web.element(by.web.type('textField')).asSecured().atIndex(2).clearText();
       await expectElementSnapshotToMatch(webviewElement, 'cross-origin-frame.clear-text', 0.97);
     });
 
     it('should tap on cross-origin frame element with `asSecured()`', async () => {
-      await web.element(by.web.type('textField')).asSecured().atIndex(1).typeText('Test');
+      await web.element(by.web.type('textField')).asSecured().atIndex(2).typeText('Test');
       await web.element(by.web.label('Submit')).asSecured().tap();
 
       await expectElementSnapshotToMatch(webviewElement, 'tap-on-cross-origin-frame-element');
