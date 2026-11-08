@@ -17,6 +17,7 @@ Detox-specific policy lives in `detox.cjs`, so the two copies can later be compa
    A dry run stops here.
 2. **Record**: pushes the release commit to `ci/update-version-<version>`.
 3. **Publish** (`ubuntu-24.04`, `id-token: write`): publishes the saved tarballs in order, without installing or rebuilding anything.
+   npm scans each new version before exposing it, so the job polls the registry (up to 30 minutes per package) until the version is visible.
 4. **Finalize**: verifies registry integrity, tags the source commit with the bare version, creates a GitHub release with notes generated from conventional commits (`feat` and `fix` only, grouped by `ios`/`android` scope), and opens the version PR labeled `release`.
 
 Snapshots skip steps 2 and 4: they get a `<base>-snapshot.gha.<run_id>` version and the `snapshot` dist-tag only.
@@ -25,6 +26,8 @@ Snapshots skip steps 2 and 4: they get a `<base>-snapshot.gha.<run_id>` version 
 
 1. Create the GitHub environment `npm-release`, restricted to the `master` branch.
 2. For **each** of `detox` and `detox-cli`, add an npm trusted publisher: organization `wix`, repository `Detox`, workflow `release.yml`, environment `npm-release`, direct `npm publish` allowed.
+   From the CLI that needs an npm with `--allow-publish` (11.17.0 has it; 11.12.1 fails with an unexplained `E400`):
+   `npm trust github <package> --file release.yml --repo wix/Detox --env npm-release --allow-publish`.
 3. Allow workflow-created pull requests, and make sure repository rules let GitHub Actions create `ci/update-version-*` branches and version tags.
    The active incident rules from 2026-10-04 (one for branches, one for tags) currently block both, which would fail a release after npm publication.
 4. Run a dry run and inspect its artifact.
@@ -56,6 +59,7 @@ Merging the PR deploys the refreshed documentation through the Website workflow.
 Use **Re-run failed jobs** on the original run, or dispatch `operation=resume` with `source_run_id`.
 Resume reuses the saved tarballs, so a package already on npm with the same integrity is skipped, and a conflicting one stops the run.
 Never retry with a different version.
+`E409 Cannot publish over previously staged version` means npm still hides an earlier upload of that version; wait until it is visible and resume again.
 Artifacts are kept for 90 days.
 
 ## Validate changes to the release tooling
