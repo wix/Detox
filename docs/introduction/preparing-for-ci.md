@@ -154,6 +154,31 @@ workflows:
     after_run: []
 ```
 
+### • Running Detox on [Appcircle](https://appcircle.io/)
+
+Appcircle is a mobile CI/CD platform, available as a cloud service or self-hosted. Its built-in [React Native UI Test](https://docs.appcircle.io/workflows/react-native-specific-workflow-steps/react-native-ui-test) workflow step runs your Detox tests without a custom script. The step:
+
+- installs `applesimutils` on macOS build machines,
+- runs `detox build` and `detox test` with the configuration you select,
+- collects the test reports and Detox artifacts (such as screenshots) for the build.
+
+To run Detox on Appcircle:
+
+1. Add [`jest-junit`](https://github.com/jest-community/jest-junit) to your project as a development dependency, and add it to the `reporters` in `e2e/jest.config.js`. The step reads the results from `test-reports/*-report.xml` at the project root:
+
+   ```js
+   reporters: [
+     'detox/runners/jest/reporter',
+     ['jest-junit', { outputDirectory: './test-reports', outputName: 'e2e-report.xml' }],
+   ],
+   ```
+
+1. In the workflow of your React Native build profile, add the **React Native UI Test** step after **Install Node**, **NPM/Yarn Commands** and either **CocoaPods Install** (iOS) or **Wait for Android Emulator** (Android).
+1. In the step inputs, set **Detox Configuration Name** (`AC_RN_DETOX_CONFIGURATION`) to a release configuration, such as `ios.sim.release`. Use **Detox Extra Arguments** (`AC_RN_DETOX_TEST_ARGS`) for extra `detox test` options, for example `--take-screenshots failing --cleanup`.
+1. Add the **Test Reports for React Native** step after it to show the results in the Appcircle UI.
+
+For Android, the build must run on a machine that can start an emulator. On Appcircle Cloud, this is the Linux (x86_64) pool. See the Appcircle [Detox guide](https://docs.appcircle.io/continuous-testing/react-native-testing/react-native-ui-test-with-detox) for more details.
+
 ### • Running Detox on [GitLab CI](https://docs.gitlab.com/ee/ci/README.html) - Android Only
 
 GitLab is also a popular git management service which also include a built-in CI system. They provide free runner up to 2000 minutes for private projects, however, the runners provided by them cannot be used to run Detox due to the lack of KVM support (in order to run Android Emulators). You can, instead, [create your own runner](https://docs.gitlab.com/ee/ci/runners/README.html) with KVM support. Some example of cloud providers offering this are: [Digital Ocean](https://www.digitalocean.com/products/droplets/), AWS (with [C5 instance types](https://aws.amazon.com/ec2/instance-types/c5/)), [Google Cloud](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances) and [Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nested-virtualization)
