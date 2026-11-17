@@ -21,7 +21,7 @@ Please note that you **cannot** apply mocking techniques familiar from the prior
 jest.mock('./src/myModule'); // NO, THIS WON'T WORK
 ```
 
-All the mocking must be conducted with the help of [Metro bundler](https://facebook.github.io/metro), which powers React Native under the hood.
+All the mocking must be conducted with the help of [Metro bundler](https://metrobundler.dev/), which powers React Native under the hood.
 Thanks to Metro bundler, there are two modes your React Native application can run in:
 
 1. **Debug mode**. Running `npx react-native start` spawns the _Metro bundler_ on port 8081 (by default). It serves JavaScript files of your app over HTTP, expecting that the native code will request it right upon the launch on the mobile device. Thus, the native app keeps re-downloading and executing the new code every time you change the code locally.
@@ -122,7 +122,7 @@ Please note that preparing React Native apps for the release mode requires groun
 As you might have noticed, this tutorial has no direct connection to Detox itself, which is a correct observation.
 The suggested mocking techniques are a part of the React Native world itself, so please consult the further resources:
 
-- <https://facebook.github.io/metro/>
+- <https://metrobundler.dev/>
 - <https://github.com/react-native-community/cli/blob/master/docs/commands.md>
 
 Happy Detoxing!
