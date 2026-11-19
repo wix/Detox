@@ -1,11 +1,11 @@
 import React from 'react';
 import DocPage from '@theme/DocPage';
-import StandWithUkraine from '@site/src/components/CustomBanner/StandWithUkraine';
+import ArchivedNotice from '@site/src/components/CustomBanner/ArchivedNotice';
 
 const CustomLayout = (props) => {
   return (
     <>
-      <StandWithUkraine />
+      <ArchivedNotice />
       <DocPage {...props} />
     </>
   );

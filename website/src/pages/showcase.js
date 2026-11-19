@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from '@docusaurus/Head';
 import Layout from '@theme/Layout';
-import StandWithUkraine from '@site/src/components/CustomBanner/StandWithUkraine';
+import ArchivedNotice from '@site/src/components/CustomBanner/ArchivedNotice';
 import * as Showcase from '@site/src/components/Showcase';
 
 export default function ShowcasePage() {
@@ -10,7 +10,7 @@ export default function ShowcasePage() {
       <Head>
         <title>Showcase | Detox</title>
       </Head>
-      <StandWithUkraine />
+      <ArchivedNotice />
       <Layout>
         <main>
           <Showcase.Hero />
