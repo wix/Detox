@@ -1,0 +1,91 @@
+// The banner has to catch the eye, so it borrows the look of caution tape.
+// Light theme: white with orange. Dark theme: black with yellow.
+$attention-bg: #fff;
+$attention-accent: #ff6d00;
+$attention-text: #c2410c;
+$attention-link: #111;
+
+$attention-bg-dark: #111;
+$attention-accent-dark: #ffd600;
+$attention-text-dark: #ffd600;
+$attention-link-dark: #fff;
+
+@mixin attention-tape($accent, $bg) {
+  background: repeating-linear-gradient(
+    -45deg,
+    $accent 0,
+    $accent 10px,
+    $bg 10px,
+    $bg 20px
+  );
+}
+
+.banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $attention-bg;
+  padding: 0.75em 0.5em;
+  position: relative;
+
+  // tape along the top and bottom edges
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 6px;
+    @include attention-tape($attention-accent, $attention-bg);
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+  }
+}
+
+.text {
+  color: $attention-text;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.link {
+  color: $attention-link;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: $attention-link;
+  text-decoration: none;
+}
+
+[data-theme='dark'] {
+  .banner {
+    background-color: $attention-bg-dark;
+
+    &::before,
+    &::after {
+      @include attention-tape($attention-accent-dark, $attention-bg-dark);
+    }
+  }
+
+  .text {
+    color: $attention-text-dark;
+  }
+
+  .link,
+  .link:hover {
+    color: $attention-link-dark;
+  }
+}
+
+@media (min-width: 768px) {
+  .banner {
+    min-height: 56px;
+  }
+}

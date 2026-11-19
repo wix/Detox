@@ -1,6 +1,11 @@
 <!-- markdownlint-configure-file { "first-line-heading": 0 } -->
 
-[![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://stand-with-ukraine.pp.ua)
+> **This repository is archived and no longer maintained by Wix (November 2026).**
+> The `detox` package on npm is deprecated and will not receive further updates.
+>
+> Looking for community-maintained versions, fixes, and updates?
+> Check [community forks tagged `detox-community-fork`](https://github.com/topics/detox-community-fork) or [GitHub forks](https://github.com/wix/Detox/forks).
+> Forks may publish under their own package names, for example a scoped `@scope/detox`.
 
 <p align="center">
   <img alt="Detox" width=380 src="https://raw.githubusercontent.com/wix/Detox/master/docs/img/DetoxLogo.png"/>
@@ -99,3 +104,7 @@ Dive into Detox core by reading the [Detox Contribution Guide](https://wix.githu
 ## Non-English Resources (Community)
 
 - [Getting Started (Brazilian Portuguese)](https://medium.com/quia-digital/iniciando-com-detox-framework-1-4-ce31ad7ae812)
+
+---
+
+[![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://stand-with-ukraine.pp.ua)
